@@ -189,7 +189,7 @@ exports.createQuiz = async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error: ' + err.message);
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -209,7 +209,7 @@ exports.joinByCode = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -219,7 +219,7 @@ exports.getMyQuizzes = async (req, res) => {
         res.json(quizzes);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -241,7 +241,7 @@ exports.deleteQuiz = async (req, res) => {
         res.json({ msg: 'Quiz removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -262,7 +262,7 @@ exports.getLiveQuizzes = async (req, res) => {
         res.json(quizzesWithAttempts);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -277,7 +277,7 @@ exports.getQuizById = async (req, res) => {
         res.json(quiz);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -329,7 +329,7 @@ exports.submitQuiz = async (req, res) => {
         res.json(result);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -343,7 +343,7 @@ exports.getLeaderboard = async (req, res) => {
         res.json(results);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -367,7 +367,7 @@ exports.publishQuiz = async (req, res) => {
         res.json(quiz);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 
@@ -400,7 +400,7 @@ exports.getTeacherStats = async (req, res) => {
         res.json(stats);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
 

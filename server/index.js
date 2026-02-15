@@ -22,7 +22,7 @@ app.use('/api/quiz', require('./routes/quiz'));
 // Socket.io Setup
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // Vite default port
+        origin: "*", // Allow all origins for the live app
         methods: ["GET", "POST"]
     }
 });
