@@ -101,37 +101,46 @@ export default function CreateQuizTopic() {
                             </select>
                         </div>
                     </div>
-
-                    className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
-                    required
-                    />
-            </div>
-
-            <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                    <input
-                        type="checkbox"
-                        checked={isLive}
-                        onChange={(e) => setIsLive(e.target.checked)}
-                        className="w-5 h-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                    />
-                    <div className="flex items-center gap-2">
-                        <Radio className="text-indigo-600" size={18} />
-                        <span className="text-sm font-bold text-indigo-800 uppercase tracking-wide">Create Live Room</span>
+                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
+                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
+                            <Clock size={18} /> Timer per Question (Seconds)
+                        </label>
+                        <input
+                            type="number"
+                            min="10"
+                            max="300"
+                            value={timer}
+                            onChange={(e) => setTimer(parseInt(e.target.value) || 0)}
+                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
+                            required
+                        />
                     </div>
-                </label>
-                <p className="text-xs text-indigo-600 mt-2 ml-8">Students join with a code and see live leaderboard</p>
-            </div>
 
-            <button
-                type="submit"
-                disabled={loading || !topic}
-                className="w-full flex items-center justify-center gap-3 bg-green-600 text-white px-8 py-5 rounded-2xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl font-black text-xl uppercase tracking-widest mt-4"
-            >
-                {loading ? <Loader2 className="animate-spin" size={24} /> : <CheckCircle size={24} />}
-                {loading ? 'Generating Quiz...' : 'Generate AI Quiz'}
-            </button>
-        </form>
+                    <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                checked={isLive}
+                                onChange={(e) => setIsLive(e.target.checked)}
+                                className="w-5 h-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                            />
+                            <div className="flex items-center gap-2">
+                                <Radio className="text-indigo-600" size={18} />
+                                <span className="text-sm font-bold text-indigo-800 uppercase tracking-wide">Create Live Room</span>
+                            </div>
+                        </label>
+                        <p className="text-xs text-indigo-600 mt-2 ml-8">Students join with a code and see live leaderboard</p>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading || !topic}
+                        className="w-full flex items-center justify-center gap-3 bg-green-600 text-white px-8 py-5 rounded-2xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl font-black text-xl uppercase tracking-widest mt-4"
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={24} /> : <CheckCircle size={24} />}
+                        {loading ? 'Generating Quiz...' : 'Generate AI Quiz'}
+                    </button>
+                </form>
             </div >
         </DashboardLayout >
     );
