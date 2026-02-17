@@ -175,9 +175,9 @@ export default function LiveRoomTeacher() {
                             {participants.map((p, idx) => (
                                 <div key={idx} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3 animate-in fade-in zoom-in duration-300">
                                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold uppercase">
-                                        {p.username[0]}
+                                        {p.username ? p.username[0] : '?'}
                                     </div>
-                                    <span className="font-bold text-gray-800 truncate">{p.username}</span>
+                                    <span className="font-bold text-gray-800 truncate">{p.username || 'Unknown'}</span>
                                 </div>
                             ))}
                             {participants.length === 0 && (
@@ -193,8 +193,8 @@ export default function LiveRoomTeacher() {
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
                                 <div className="divide-y divide-gray-100">
                                     {participants.map((p) => (
-                                        <div key={p.username} className="py-3 flex items-center justify-between">
-                                            <span className="font-medium text-gray-700 w-32 truncate">{p.username}</span>
+                                        <div key={p.username || idx} className="py-3 flex items-center justify-between">
+                                            <span className="font-medium text-gray-700 w-32 truncate">{p.username || 'Unknown'}</span>
                                             <div className="flex-1 flex items-center gap-1 overflow-x-auto">
                                                 {quiz?.questions.map((_, idx) => {
                                                     const isAnswered = studentProgress[p._id || p.username] && studentProgress[p._id || p.username][idx];
