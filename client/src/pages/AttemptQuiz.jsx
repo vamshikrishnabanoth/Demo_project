@@ -46,9 +46,24 @@ export default function AttemptQuiz() {
             if (questionIndex >= 0 && questionIndex < (quiz?.questions?.length || 0)) {
                 setCurrentQuestion(questionIndex);
                 setIsWaiting(false); // Reset waiting state on new question
+                // Also reset local timer since we moved to a new question
+                // If per-question timer is used, it should reset.
+                // If global timer is used, it continues.
+                if (!quiz.duration) {
+                    setTimeLeft(quiz.timerPerQuestion || 30);
+                }
             }
         });
-        return () => socket.off('change_question');
+
+        socket.on('quiz_ended', () => {
+            alert("The teacher has ended the quiz.");
+            submitQuiz();
+        });
+
+        return () => {
+            socket.off('change_question');
+            socket.off('quiz_ended');
+        };
     }, [quiz]);
 
     const handleTimeUp = () => {

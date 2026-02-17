@@ -44,7 +44,13 @@ export default function LiveRoomTeacher() {
         socket.on('participants_update', (participantsList) => {
             console.log('Participants updated:', participantsList);
             // Filter out teachers, only show students
-            const students = participantsList.filter(p => p.role !== 'teacher');
+            // Also filter out 'Unknown' or invalid names to be safe
+            const students = participantsList.filter(p =>
+                p.role !== 'teacher' &&
+                p.username &&
+                p.username.toLowerCase() !== 'unknown' &&
+                p.username.toLowerCase() !== 'student'
+            );
             setParticipants(students);
         });
 
@@ -266,7 +272,7 @@ export default function LiveRoomTeacher() {
                                 </button>
                             </div>
 
-                            <div className="border-t border-indigo-500/30 pt-4">
+                            <div className="border-t border-indigo-500/30 pt-4 space-y-3">
                                 <button
                                     onClick={handleStartQuiz}
                                     // disabled={participants.length === 0} 
@@ -274,6 +280,19 @@ export default function LiveRoomTeacher() {
                                 >
                                     <Play size={20} fill="currentColor" />
                                     Start / Sync Students
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        if (window.confirm('Are you sure you want to END the quiz? This will submit for all students.')) {
+                                            socket.emit('end_quiz', quiz._id);
+                                            // Optional: Navigate to leaderboard
+                                            // navigate(`/leaderboard/${quiz._id}`);
+                                        }
+                                    }}
+                                    className="w-full bg-red-500/20 text-red-100 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-red-500/40 transition-all"
+                                >
+                                    Stop & End Quiz
                                 </button>
                             </div>
 
