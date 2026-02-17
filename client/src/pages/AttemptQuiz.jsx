@@ -172,9 +172,6 @@ export default function AttemptQuiz() {
                     if (prevResult.status === 'in-progress') {
                         console.log('Resuming quiz attempt...');
                         setAnswersFromHistory(prevResult.answers);
-                        // We also need to sync local storage if strictly newer?
-                        // For now, let's rely on server state as truth for "Resume" across devices
-                        // But we can check localStorage for ANY unsaved answers for this specific quiz
                         const localSaved = localStorage.getItem(`quiz_answers_${id}`);
                         if (localSaved) {
                             const localAnswers = JSON.parse(localSaved);
@@ -193,7 +190,22 @@ export default function AttemptQuiz() {
         fetchQuiz();
 
         // Listen for new questions added by teacher
-        socket.emit('join_room', { quizId: id, user: { username: 'student', role: 'student' } });
+        const token = localStorage.getItem('token');
+        let user = { username: 'Guest', role: 'student' };
+        if (token) {
+            try {
+                const decoded = JSON.parse(atob(token.split('.')[1]));
+                user = {
+                    username: decoded.user.username,
+                    role: 'student',
+                    _id: decoded.user.id // Send ID so Teacher can map progress
+                };
+            } catch (e) {
+                console.error("Token decode error:", e);
+            }
+        }
+
+        socket.emit('join_room', { quizId: id, user });
 
         socket.on('new_question_added', ({ question, questionIndex, totalQuestions }) => {
             console.log('New question received:', question);
@@ -469,9 +481,9 @@ export default function AttemptQuiz() {
                                 return (
                                     <button
                                         key={idx}
-                                        disabled={isReviewMode}
+                                        disabled={isReviewMode || answers[currentQuestion]}
                                         onClick={() => handleOptionSelect(option)}
-                                        className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center justify-between group ${containerClass}`}
+                                        className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center justify-between group ${containerClass} disabled:cursor-not-allowed`}
                                     >
                                         <span className="font-medium">{option}</span>
                                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isReviewMode
@@ -524,10 +536,10 @@ export default function AttemptQuiz() {
                         ) : (
                             <button
                                 onClick={handleSingleQuestionSubmit}
-                                disabled={isWaiting || !answers[currentQuestion]}
+                                disabled={isWaiting || !answers[currentQuestion] || (answers[currentQuestion] && isWaiting)}
                                 className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                             >
-                                {quiz?.isLive ? 'Submit Answer' : 'Next'} <ChevronRight size={20} />
+                                {answers[currentQuestion] ? 'Answer Submitted' : (quiz?.isLive ? 'Submit Answer' : 'Next')} <ChevronRight size={20} />
                             </button>
                         )}
                     </div>

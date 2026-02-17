@@ -166,8 +166,6 @@ io.on('connection', (socket) => {
 
                 await result.save();
 
-                await result.save();
-
                 // Broadcast student progress to teacher
                 io.to(quizId).emit('student_progress_update', {
                     studentId: studentId.toString(), /* Ensure string ID */

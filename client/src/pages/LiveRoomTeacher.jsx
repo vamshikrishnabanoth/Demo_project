@@ -14,6 +14,8 @@ export default function LiveRoomTeacher() {
     const [loading, setLoading] = useState(true);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [studentProgress, setStudentProgress] = useState({}); // { studentId: { [questionIndex]: true } }
+    const [timeLeft, setTimeLeft] = useState(30); // Teacher-side timer
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -79,10 +81,34 @@ export default function LiveRoomTeacher() {
     const handleStartQuiz = () => {
         if (quiz) {
             socket.emit('start_quiz', quiz._id);
-            // Don't navigate away, stay to control
-            // navigate(`/leaderboard/${quiz._id}`); 
+            setIsTimerRunning(true); // Start local timer
         }
     };
+
+    // Timer Logic for Auto-Advance
+    useEffect(() => {
+        if (!isTimerRunning || !quiz) return;
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    // Time's up for this question
+                    // Auto-advance if not the last question
+                    if (currentQuestionIndex < quiz.questions.length - 1) {
+                        handleNavigation('next');
+                    } else {
+                        // End of quiz? Or just stop timer? 
+                        // Usually we stop here.
+                        setIsTimerRunning(false);
+                    }
+                    return 0; // Reset or hold at 0
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isTimerRunning, quiz, currentQuestionIndex]);
 
     const handleNavigation = (direction) => {
         if (!quiz) return;
@@ -97,6 +123,9 @@ export default function LiveRoomTeacher() {
         if (newIndex !== currentQuestionIndex) {
             setCurrentQuestionIndex(newIndex);
             socket.emit('change_question', { quizId: quiz._id, questionIndex: newIndex });
+            // Reset timer for next question
+            setTimeLeft(quiz.timerPerQuestion || 30);
+            setIsTimerRunning(true);
         }
     };
 
@@ -198,6 +227,10 @@ export default function LiveRoomTeacher() {
 
                             <div className="flex items-center justify-between bg-indigo-800/30 p-4 rounded-xl">
                                 <span className="text-sm font-bold">Current Question: {currentQuestionIndex + 1} / {quiz?.questions.length}</span>
+                                <div className={`flex items-center gap-2 px-3 py-1 rounded-lg font-mono font-bold ${timeLeft <= 5 ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-900 text-indigo-100'}`}>
+                                    <span className="text-xs uppercase opacity-75">Timer</span>
+                                    <span>{timeLeft}s</span>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
