@@ -101,7 +101,13 @@ io.on('connection', (socket) => {
         roomState.set(quizId, { ...state, status: 'ended' });
 
         io.to(quizId).emit('quiz_ended');
-        // Optionally clear data after some time?
+        io.to(quizId).emit('quiz_ended');
+
+        // Clear room data after 1 hour to free memory
+        setTimeout(() => {
+            roomParticipants.delete(quizId);
+            roomState.delete(quizId);
+        }, 3600000);
     });
 
     // Update quiz status in database
@@ -115,10 +121,10 @@ io.on('connection', (socket) => {
 
     io.to(quizId).emit('quiz_started');
 
-    // Clean up participants after quiz starts
-    setTimeout(() => {
-        roomParticipants.delete(quizId);
-    }, 5000);
+    // Clean up participants ONLY when explicitly ended or after a long timeout
+    // setTimeout(() => {
+    //    roomParticipants.delete(quizId);
+    // }, 5000);
 });
 
 // Add question to live quiz

@@ -57,12 +57,18 @@ export default function AttemptQuiz() {
 
         socket.on('quiz_ended', async () => {
             alert("The teacher has ended the quiz. You will be redirected to the dashboard.");
+
+            // Safety timeout to force redirect if submit hangs
+            const redirectTimer = setTimeout(() => {
+                navigate('/student-dashboard');
+            }, 2000);
+
             try {
                 await submitQuiz();
             } catch (e) {
                 console.error("Auto-submit failed", e);
             } finally {
-                // Force redirect regardless of submit success
+                clearTimeout(redirectTimer);
                 navigate('/student-dashboard');
             }
         });
