@@ -71,6 +71,10 @@ io.on('connection', (socket) => {
             if (state.currentQuestion !== undefined) {
                 socket.emit('change_question', { questionIndex: state.currentQuestion });
             }
+            // Send persisted progress to teacher
+            if (state.progress && user.role === 'teacher') {
+                socket.emit('progress_history', state.progress);
+            }
         }
     });
 
@@ -151,6 +155,16 @@ socket.on('change_question', ({ quizId, questionIndex }) => {
 // Handle individual question submission during live quiz
 socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
     console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
+
+    // PERSISTENCE: Save to In-Memory Room State for immediate access/recovery
+    const state = roomState.get(quizId) || {};
+    const currentProgress = state.progress || {};
+
+    if (!currentProgress[studentId]) currentProgress[studentId] = {};
+    currentProgress[studentId][questionIndex] = true;
+
+    roomState.set(quizId, { ...state, progress: currentProgress });
+
     try {
         const Quiz = require('./models/Quiz');
         const Result = require('./models/Result');
