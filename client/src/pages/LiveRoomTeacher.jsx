@@ -61,14 +61,21 @@ export default function LiveRoomTeacher() {
         });
 
         // Listen for new student progress
-        socket.on('student_progress_update', ({ studentId, questionIndex }) => {
-            setStudentProgress(prev => ({
-                ...prev,
-                [studentId]: {
-                    ...(prev[studentId] || {}),
-                    [questionIndex]: true
+        socket.on('student_progress_update', ({ studentId, username, questionIndex }) => {
+            setStudentProgress(prev => {
+                const newState = { ...prev };
+
+                // Update by ID
+                if (studentId) {
+                    newState[studentId] = { ...(newState[studentId] || {}), [questionIndex]: true };
                 }
-            }));
+                // Update by Username (fallback)
+                if (username) {
+                    newState[username] = { ...(newState[username] || {}), [questionIndex]: true };
+                }
+
+                return newState;
+            });
         });
 
         // Keep user_joined for backward compatibility
@@ -240,9 +247,11 @@ export default function LiveRoomTeacher() {
                                             <span className="font-medium text-gray-700 w-32 truncate">{p.username || 'Unknown'}</span>
                                             <div className="flex-1 flex items-center gap-1 overflow-x-auto">
                                                 {quiz?.questions?.map((_, idx) => {
-                                                    const isAnswered = studentProgress[p._id || p.username] && studentProgress[p._id || p.username][idx];
-                                                    // Note: We might need to ensure p._id is reliable, or map locally spawned users carefully
-                                                    // In live room, socket users usually have an ID or we map by username if unique required
+                                                    // Chech by ID OR Username to be safe
+                                                    const byId = p._id && studentProgress[p._id] && studentProgress[p._id][idx];
+                                                    const byName = p.username && studentProgress[p.username] && studentProgress[p.username][idx];
+                                                    const isAnswered = byId || byName;
+
                                                     const isCurrent = idx === currentQuestionIndex;
 
                                                     return (

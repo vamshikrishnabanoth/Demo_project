@@ -55,11 +55,17 @@ export default function AttemptQuiz() {
             }
         });
 
-        socket.on('quiz_ended', () => {
-            alert("The teacher has ended the quiz.");
-            submitQuiz();
+        socket.on('quiz_ended', async () => {
+            alert("The teacher has ended the quiz. You will be redirected to the dashboard.");
+            try {
+                await submitQuiz();
+            } catch (e) {
+                console.error("Auto-submit failed", e);
+            } finally {
+                // Force redirect regardless of submit success
+                navigate('/student-dashboard');
+            }
         });
-
         return () => {
             socket.off('change_question');
             socket.off('quiz_ended');
