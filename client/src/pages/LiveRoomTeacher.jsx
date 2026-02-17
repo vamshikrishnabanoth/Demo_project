@@ -87,7 +87,9 @@ export default function LiveRoomTeacher() {
 
     // Timer Logic for Auto-Advance
     useEffect(() => {
-        if (!isTimerRunning || !quiz) return;
+        // Only run timer if it's running AND we are NOT in global timer mode (duration > 0)
+        // If duration > 0, the teacher controls it manually without auto-advance
+        if (!isTimerRunning || !quiz || quiz.duration > 0) return;
 
         const timer = setInterval(() => {
             setTimeLeft(prev => {
@@ -227,9 +229,9 @@ export default function LiveRoomTeacher() {
 
                             <div className="flex items-center justify-between bg-indigo-800/30 p-4 rounded-xl">
                                 <span className="text-sm font-bold">Current Question: {currentQuestionIndex + 1} / {quiz?.questions.length}</span>
-                                <div className={`flex items-center gap-2 px-3 py-1 rounded-lg font-mono font-bold ${timeLeft <= 5 ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-900 text-indigo-100'}`}>
+                                <div className={`flex items-center gap-2 px-3 py-1 rounded-lg font-mono font-bold ${timeLeft <= 5 && !quiz?.duration ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-900 text-indigo-100'}`}>
                                     <span className="text-xs uppercase opacity-75">Timer</span>
-                                    <span>{timeLeft}s</span>
+                                    <span>{quiz?.duration > 0 ? 'MANUAL' : `${timeLeft}s`}</span>
                                 </div>
                             </div>
 

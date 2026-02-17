@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
-import { Trophy, Award, Medal, Users, Home, ArrowRight, Loader2, Plus, X } from 'lucide-react';
+import { Trophy, Award, Medal, Users, Home, ArrowRight, Loader2, Plus, X, Play } from 'lucide-react';
 
 export default function Leaderboard() {
     const { quizId } = useParams();
@@ -187,13 +187,36 @@ export default function Leaderboard() {
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
                     {user.role === 'teacher' && (
-                        <button
-                            onClick={() => setShowAddQuestion(true)}
-                            className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
-                        >
-                            <Plus size={20} />
-                            Add Another Question
-                        </button>
+                        <>
+                            <button
+                                onClick={() => setShowAddQuestion(true)}
+                                className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
+                            >
+                                <Plus size={20} />
+                                Add Another Question
+                            </button>
+                            {/* Resume Live Control Button */}
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        // We need the join code to navigate back
+                                        const res = await api.get(`/quiz/${quizId}`);
+                                        if (res.data && res.data.joinCode) {
+                                            navigate(`/live-room-teacher/${res.data.joinCode}`);
+                                        } else {
+                                            navigate('/teacher-dashboard');
+                                        }
+                                    } catch (e) {
+                                        console.error("Error fetching quiz for join code", e);
+                                        navigate('/teacher-dashboard');
+                                    }
+                                }}
+                                className="flex items-center gap-2 bg-green-500 text-white px-8 py-4 rounded-2xl font-black hover:bg-green-600 transition-all shadow-lg active:scale-95"
+                            >
+                                <Play size={20} fill="currentColor" />
+                                Resume Live Control
+                            </button>
+                        </>
                     )}
                     <button
                         onClick={() => {
