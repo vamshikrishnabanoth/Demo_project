@@ -43,9 +43,18 @@ io.on('connection', (socket) => {
         }
 
         // Add user to room participants if not already there
+        // Add or Update user in room participants
         const participants = roomParticipants.get(quizId);
-        if (!participants.find(p => p.username === user.username)) {
-            participants.push(user);
+        const existingIdx = participants.findIndex(p => p.username === user.username);
+
+        if (existingIdx !== -1) {
+            // Update existing user (e.g. if socket ID changed or role changed)
+            participants[existingIdx] = user;
+        } else {
+            // Only add if not "student" (unless that's their actual name, but we want to avoid the default ghost)
+            if (user.username && user.username.toLowerCase() !== 'student') {
+                participants.push(user);
+            }
         }
 
         // Broadcast updated participant list to everyone in the room (including sender)
