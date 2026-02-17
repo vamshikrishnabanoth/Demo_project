@@ -12,6 +12,8 @@ export default function LiveRoomTeacher() {
     const [participants, setParticipants] = useState([]);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [studentProgress, setStudentProgress] = useState({}); // { studentId: { [questionIndex]: true } }
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,6 +46,17 @@ export default function LiveRoomTeacher() {
             setParticipants(students);
         });
 
+        // Listen for new student progress
+        socket.on('student_progress_update', ({ studentId, questionIndex }) => {
+            setStudentProgress(prev => ({
+                ...prev,
+                [studentId]: {
+                    ...(prev[studentId] || {}),
+                    [questionIndex]: true
+                }
+            }));
+        });
+
         // Keep user_joined for backward compatibility
         socket.on('user_joined', (newUser) => {
             console.log('User joined:', newUser);
@@ -58,6 +71,7 @@ export default function LiveRoomTeacher() {
 
         return () => {
             socket.off('participants_update');
+            socket.off('student_progress_update');
             socket.off('user_joined');
         };
     }, [joinCode, user, navigate]);
@@ -65,8 +79,24 @@ export default function LiveRoomTeacher() {
     const handleStartQuiz = () => {
         if (quiz) {
             socket.emit('start_quiz', quiz._id);
-            // Navigate to leaderboard to see results as they come in
-            navigate(`/leaderboard/${quiz._id}`);
+            // Don't navigate away, stay to control
+            // navigate(`/leaderboard/${quiz._id}`); 
+        }
+    };
+
+    const handleNavigation = (direction) => {
+        if (!quiz) return;
+
+        let newIndex = currentQuestionIndex;
+        if (direction === 'next') {
+            newIndex = Math.min(quiz.questions.length - 1, currentQuestionIndex + 1);
+        } else {
+            newIndex = Math.max(0, currentQuestionIndex - 1);
+        }
+
+        if (newIndex !== currentQuestionIndex) {
+            setCurrentQuestionIndex(newIndex);
+            socket.emit('change_question', { quizId: quiz._id, questionIndex: newIndex });
         }
     };
 
@@ -125,21 +155,84 @@ export default function LiveRoomTeacher() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Student Progress Grid */}
+                        {participants.length > 0 && (
+                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mt-8">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
+                                <div className="divide-y divide-gray-100">
+                                    {participants.map((p) => (
+                                        <div key={p.username} className="py-3 flex items-center justify-between">
+                                            <span className="font-medium text-gray-700 w-32 truncate">{p.username}</span>
+                                            <div className="flex-1 flex items-center gap-1 overflow-x-auto">
+                                                {quiz?.questions.map((_, idx) => {
+                                                    const isAnswered = studentProgress[p._id || p.username] && studentProgress[p._id || p.username][idx];
+                                                    // Note: We might need to ensure p._id is reliable, or map locally spawned users carefully
+                                                    // In live room, socket users usually have an ID or we map by username if unique required
+                                                    const isCurrent = idx === currentQuestionIndex;
+
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 
+                                                                ${isAnswered ? 'bg-green-500 border-green-500 text-white' : 'bg-gray-50 border-gray-200 text-gray-400'}
+                                                                ${isCurrent ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
+                                                            `}
+                                                        >
+                                                            {idx + 1}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                     </div>
 
                     <div className="space-y-6">
                         <div className="bg-indigo-600 text-white p-8 rounded-3xl shadow-xl shadow-indigo-100 space-y-6">
-                            <h3 className="text-lg font-bold">Ready to Begin?</h3>
-                            <p className="text-indigo-100 text-sm leading-relaxed">
-                                Once all your students have joined the room, click the button below to start the assessment for everyone simultaneously.
-                            </p>
+                            <h3 className="text-lg font-bold">Live Controls</h3>
+
+                            <div className="flex items-center justify-between bg-indigo-800/30 p-4 rounded-xl">
+                                <span className="text-sm font-bold">Current Question: {currentQuestionIndex + 1} / {quiz?.questions.length}</span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => handleNavigation('prev')}
+                                    disabled={currentQuestionIndex === 0}
+                                    className="bg-white/10 hover:bg-white/20 p-3 rounded-xl text-sm font-bold disabled:opacity-50"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation('next')}
+                                    disabled={currentQuestionIndex === (quiz?.questions.length - 1)}
+                                    className="bg-white text-indigo-600 hover:bg-indigo-50 p-3 rounded-xl text-sm font-bold disabled:opacity-50"
+                                >
+                                    Next
+                                </button>
+                            </div>
+
+                            <div className="border-t border-indigo-500/30 pt-4">
+                                <button
+                                    onClick={handleStartQuiz}
+                                    // disabled={participants.length === 0} 
+                                    className="w-full bg-green-500 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-green-600 transition-all shadow-lg active:scale-95"
+                                >
+                                    <Play size={20} fill="currentColor" />
+                                    Start / Sync Students
+                                </button>
+                            </div>
+
                             <button
-                                onClick={handleStartQuiz}
-                                disabled={participants.length === 0}
-                                className="w-full bg-white text-indigo-600 py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-indigo-50 transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:scale-100"
+                                onClick={() => navigate(`/leaderboard/${quiz?._id}`)}
+                                className="w-full bg-indigo-800/30 text-indigo-100 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-800/50 transition-all"
                             >
-                                <Play size={20} fill="currentColor" />
-                                Start Quiz
+                                View Live Leaderboard
                             </button>
                         </div>
 

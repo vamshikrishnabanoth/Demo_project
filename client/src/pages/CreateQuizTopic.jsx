@@ -9,6 +9,7 @@ export default function CreateQuizTopic() {
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
     const [timer, setTimer] = useState(30);
+    const [duration, setDuration] = useState(0); // Global duration
     const [loading, setLoading] = useState(false);
     const [isLive, setIsLive] = useState(false);
 
@@ -23,7 +24,9 @@ export default function CreateQuizTopic() {
                 type: 'topic',
                 questionCount,
                 difficulty,
+                difficulty,
                 timerPerQuestion: timer,
+                duration,
                 isLive
             };
 
@@ -114,6 +117,24 @@ export default function CreateQuizTopic() {
                             className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
                             required
                         />
+                    </div>
+
+
+
+                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
+                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
+                            <Clock size={18} /> Global Timer (Minutes)
+                        </label>
+                        <input
+                            type="number"
+                            min="0"
+                            max="180"
+                            value={duration}
+                            onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
+                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
+                            placeholder="0 = No Limit"
+                        />
+                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set > 0</p>
                     </div>
 
                     <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">

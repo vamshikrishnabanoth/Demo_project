@@ -122,7 +122,7 @@ const generateJoinCode = () => {
 
 exports.createQuiz = async (req, res) => {
     try {
-        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive } = req.body;
+        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, duration } = req.body;
         let finalQuestions = [];
 
         if (manualQuestions && manualQuestions.length > 0) {
@@ -178,7 +178,10 @@ exports.createQuiz = async (req, res) => {
             isActive: true, // Auto-active for code joining
             joinCode,
             difficulty: difficulty || 'Medium',
+            joinCode,
+            difficulty: difficulty || 'Medium',
             timerPerQuestion: timerPerQuestion || 30,
+            duration: duration || 0, // 0 means no global limit
             topic: topic || '',
             isLive: isLive === 'true' || isLive === true,
             status: isLive ? 'waiting' : 'started'
@@ -202,10 +205,17 @@ exports.joinByCode = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found or not active' });
         }
 
+        // Check for existing result to handle resume/blocking
+        const existingResult = await Result.findOne({ quiz: quiz._id, student: req.user.id });
+
         res.json({
             quizId: quiz._id,
             isLive: quiz.isLive,
-            status: quiz.status
+            status: quiz.status,
+            previousAttempt: existingResult ? {
+                status: existingResult.status,
+                startedAt: existingResult.startedAt
+            } : null
         });
     } catch (err) {
         console.error(err.message);
@@ -274,7 +284,13 @@ exports.getQuizById = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        res.json(quiz);
+        // Attach previous result if it exists (for resume functionality)
+        const previousResult = await Result.findOne({ quiz: req.params.id, student: req.user.id });
+
+        res.json({
+            ...quiz.toObject(),
+            previousResult
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
@@ -311,6 +327,7 @@ exports.submitQuiz = async (req, res) => {
             existingResult.score = score;
             existingResult.answers = formattedAnswers;
             existingResult.totalQuestions = quiz.questions.length;
+            existingResult.status = 'completed';
             existingResult.completedAt = Date.now();
             await existingResult.save();
             return res.json(existingResult);
@@ -322,6 +339,8 @@ exports.submitQuiz = async (req, res) => {
             score,
             totalQuestions: quiz.questions.length,
             answers: formattedAnswers,
+            status: 'completed',
+            startedAt: Date.now(), // Fallback if no start time recorded
             completedAt: Date.now()
         });
 

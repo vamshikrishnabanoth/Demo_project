@@ -67,7 +67,14 @@ git push -u origin main
      - `VITE_API_URL`: Your Render backend URL (e.g., `https://quiz-backend.onrender.com/api`)
      - `VITE_SOCKET_URL`: Your Render backend URL (e.g., `https://quiz-backend.onrender.com`)
 
----
+> [!IMPORTANT]
+> **VITE_API_URL** must end with `/api`.
+> **Both URLs** must start with `https://`.
+> If these are missing or incorrect, you will see a "Network Error" or "An error occurred" on the live site.
+
+> [!NOTE]
+> Vercel may show a warning: *"VITE_ exposes this value to the browser"*. 
+> This is **normal and expected**. These URLs need to be public so the browser can connect to your backend. You can safely click **Save**.
 
 ## 4. Verification
 Once both are deployed, visit your Vercel URL. You should be able to log in, create quizzes, and host live rooms using the production URLs.

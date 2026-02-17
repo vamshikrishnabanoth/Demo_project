@@ -37,6 +37,10 @@ const QuizSchema = new mongoose.Schema({
         type: Number,
         default: 30 // seconds
     },
+    duration: {
+        type: Number,
+        default: 0 // minutes, 0 = no limit
+    },
     topic: {
         type: String
     },

@@ -8,6 +8,7 @@ export default function CreateQuizText() {
     const [title, setTitle] = useState('');
     const [loading, setLoading] = useState(false);
     const [timer, setTimer] = useState(30);
+    const [duration, setDuration] = useState(0); // Global duration in minutes
     const [isLive, setIsLive] = useState(false);
     const [questions, setQuestions] = useState([
         { questionText: '', options: ['', ''], correctAnswer: '', points: 10 }
@@ -51,7 +52,7 @@ export default function CreateQuizText() {
         e.preventDefault();
         setLoading(true);
         try {
-            const payload = { title, type: 'manual', questions, isLive, timerPerQuestion: timer };
+            const payload = { title, type: 'manual', questions, isLive, timerPerQuestion: timer, duration };
 
             const res = await api.post('/quiz/create', payload);
 
@@ -116,22 +117,40 @@ export default function CreateQuizText() {
                             />
                         </div>
 
-                        <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    checked={isLive}
-                                    onChange={(e) => setIsLive(e.target.checked)}
-                                    className="w-5 h-5 text-indigo-600 border-2 border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500"
-                                />
-                                <div className="flex items-center gap-2">
-                                    <Radio className="text-indigo-600" size={18} />
-                                    <span className="text-sm font-bold text-indigo-800 uppercase tracking-wide">Create Live Room</span>
-                                </div>
-                            </label>
-                            <p className="text-xs text-indigo-600 mt-2 ml-8">Students join with a code and see live leaderboard</p>
-                        </div>
                     </div>
+
+                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
+                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
+                            <Clock size={18} /> Global Timer (Minutes)
+                        </label>
+                        <input
+                            type="number"
+                            min="0"
+                            max="180"
+                            value={duration}
+                            onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
+                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
+                            placeholder="0 = No Limit"
+                        />
+                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set > 0</p>
+                    </div>
+
+                    <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                checked={isLive}
+                                onChange={(e) => setIsLive(e.target.checked)}
+                                className="w-5 h-5 text-indigo-600 border-2 border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500"
+                            />
+                            <div className="flex items-center gap-2">
+                                <Radio className="text-indigo-600" size={18} />
+                                <span className="text-sm font-bold text-indigo-800 uppercase tracking-wide">Create Live Room</span>
+                            </div>
+                        </label>
+                        <p className="text-xs text-indigo-600 mt-2 ml-8">Students join with a code and see live leaderboard</p>
+                    </div>
+
 
                     <div className="space-y-4">
                         {questions.map((q, qIndex) => (
@@ -214,7 +233,7 @@ export default function CreateQuizText() {
                         </button>
                     </div>
                 </form>
-            </div>
-        </DashboardLayout>
+            </div >
+        </DashboardLayout >
     );
 }

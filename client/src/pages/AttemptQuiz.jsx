@@ -38,6 +38,17 @@ export default function AttemptQuiz() {
         return () => clearInterval(timerId);
     }, [loading, isReviewMode, result, quiz, currentQuestion]);
 
+    // Listen for Teacher Navigation
+    useEffect(() => {
+        socket.on('change_question', ({ questionIndex }) => {
+            console.log('Teacher moved to question:', questionIndex);
+            if (questionIndex >= 0 && questionIndex < (quiz?.questions?.length || 0)) {
+                setCurrentQuestion(questionIndex);
+            }
+        });
+        return () => socket.off('change_question');
+    }, [quiz]);
+
     const handleTimeUp = () => {
         // For live quizzes, auto-submit answer and show leaderboard
         if (quiz?.isLive) {
@@ -88,10 +99,54 @@ export default function AttemptQuiz() {
     };
 
     useEffect(() => {
-        if (quiz && !isReviewMode) {
-            setTimeLeft(quiz.timerPerQuestion || 30);
+        if (quiz && !isReviewMode && !result) {
+            // GLOBAL TIMER LOGIC
+            if (quiz.duration && quiz.duration > 0) {
+                // Calculate remaining time based on start time
+                // We need to know WHEN it started. 
+                // If resuming, `quiz.previousResult.startedAt` would be the key.
+                // If new start, we need to track it.
+                // Let's assume we fetch `startedAt` or fallback to now.
+                const startTime = quiz.previousResult?.startedAt ? new Date(quiz.previousResult.startedAt).getTime() : Date.now();
+                const endTime = startTime + (quiz.duration * 60 * 1000);
+                const now = Date.now();
+
+                const remainingSeconds = Math.max(0, Math.floor((endTime - now) / 1000));
+                setTimeLeft(remainingSeconds);
+
+                // If using global timer, we don't reset per question
+            } else {
+                // PER QUESTION TIMER (Default)
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            }
         }
-    }, [currentQuestion, quiz, isReviewMode]);
+    }, [currentQuestion, quiz, isReviewMode, result]);
+
+    // Timer Tick
+    useEffect(() => {
+        if (loading || isReviewMode || result || !quiz) return;
+
+        const timerId = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    if (quiz.duration > 0) {
+                        // Global timer expired -> Submit Quiz
+                        clearInterval(timerId);
+                        submitQuiz();
+                        return 0;
+                    } else {
+                        // Per question timer expired -> Next Question
+                        clearInterval(timerId);
+                        handleTimeUp();
+                        return 0;
+                    }
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timerId);
+    }, [loading, isReviewMode, result, quiz, currentQuestion]);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -99,17 +154,31 @@ export default function AttemptQuiz() {
                 const res = await api.get(`/quiz/${id}`);
                 setQuiz(res.data);
 
-                // If there's a previous result, enter Review Mode
+                // If there's a previous result (Completed or In-Progress)
                 if (res.data.previousResult) {
-                    setIsReviewMode(true);
-                    setResult(res.data.previousResult);
+                    const prevResult = res.data.previousResult;
 
-                    // Map previous answers to state
-                    const prevAnswers = {};
-                    res.data.previousResult.answers.forEach((ans, idx) => {
-                        prevAnswers[idx] = ans.selectedOption;
-                    });
-                    setAnswers(prevAnswers);
+                    // BLOCK RE-ENTRY: If completed, forced review mode
+                    if (prevResult.status === 'completed') {
+                        setIsReviewMode(true);
+                        setResult(prevResult);
+                        setAnswersFromHistory(prevResult.answers);
+                        return; // Stop further loading
+                    }
+
+                    // RESUME: If in-progress, load state
+                    if (prevResult.status === 'in-progress') {
+                        console.log('Resuming quiz attempt...');
+                        setAnswersFromHistory(prevResult.answers);
+                        // We also need to sync local storage if strictly newer?
+                        // For now, let's rely on server state as truth for "Resume" across devices
+                        // But we can check localStorage for ANY unsaved answers for this specific quiz
+                        const localSaved = localStorage.getItem(`quiz_answers_${id}`);
+                        if (localSaved) {
+                            const localAnswers = JSON.parse(localSaved);
+                            setAnswers(prev => ({ ...prev, ...localAnswers }));
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching quiz', err);
@@ -148,12 +217,30 @@ export default function AttemptQuiz() {
         };
     }, [id, navigate]);
 
+    const setAnswersFromHistory = (historyAnswers) => {
+        const newAnswers = {};
+        historyAnswers.forEach((ans, idx) => {
+            // Find index by question text in case of shuffling (advanced), but here strictly by index for now or assume order
+            // Better to map by questionText if possible, but index is safe for now if static
+            // Actually, `answers` state is by index.
+            // We need to match existing questions.
+            const qIndex = quiz.questions.findIndex(q => q.questionText === ans.questionText);
+            if (qIndex >= 0) newAnswers[qIndex] = ans.selectedOption;
+        });
+        setAnswers(prev => ({ ...prev, ...newAnswers }));
+    };
+
     const handleOptionSelect = (option) => {
         if (isReviewMode) return; // Prevent selection in review mode
-        setAnswers({
+
+        const newAnswers = {
             ...answers,
             [currentQuestion]: option
-        });
+        };
+        setAnswers(newAnswers);
+
+        // Save to LocalStorage for immediate crash recovery
+        localStorage.setItem(`quiz_answers_${id}`, JSON.stringify(newAnswers));
     };
 
     const submitQuiz = async () => {
@@ -181,6 +268,8 @@ export default function AttemptQuiz() {
             }
         } finally {
             setSubmitting(false);
+            // Clear local storage on finish
+            localStorage.removeItem(`quiz_answers_${id}`);
         }
     };
 

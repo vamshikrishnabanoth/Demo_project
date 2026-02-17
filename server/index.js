@@ -100,6 +100,12 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Handle teacher changing question (Navigation)
+    socket.on('change_question', ({ quizId, questionIndex }) => {
+        console.log(`Teacher changed question to ${questionIndex} in quiz ${quizId}`);
+        io.to(quizId).emit('change_question', { questionIndex });
+    });
+
     // Handle individual question submission during live quiz
     socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
         console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
@@ -109,7 +115,8 @@ io.on('connection', (socket) => {
             const User = require('./models/User');
 
             const quiz = await Quiz.findById(quizId);
-            let result = await Result.findOne({ quiz: quizId, student: studentId });
+            // Populate student to get username for progress update
+            let result = await Result.findOne({ quiz: quizId, student: studentId }).populate('student', 'username');
 
             if (!result) {
                 // Create new result if doesn't exist
@@ -150,6 +157,22 @@ io.on('connection', (socket) => {
                     result.answers.push(answerData);
                     result.score += points;
                 }
+
+                // Ensure status is in-progress and tracking start time
+                result.status = 'in-progress';
+                if (!result.startedAt) {
+                    result.startedAt = Date.now();
+                }
+
+                await result.save();
+
+                // Broadcast student progress to teacher
+                io.to(quizId).emit('student_progress_update', {
+                    studentId,
+                    username: result.student ? result.student.username : 'Unknown', // Need to populate if not available
+                    questionIndex,
+                    answered: true
+                });
 
                 await result.save();
 

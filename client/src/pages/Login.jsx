@@ -33,8 +33,15 @@ export default function Login() {
             }
             navigate('/');
         } catch (err) {
-            console.error(err);
-            alert(err.response?.data?.msg || 'An error occurred');
+            console.error('Login/Signup error:', err);
+            const errorMsg = err.response?.data?.msg || err.message || 'An error occurred';
+            const status = err.response?.status ? ` (Status: ${err.response.status})` : '';
+
+            if (err.message === 'Network Error') {
+                alert('Network Error: Could not connect to the server. Please check if VITE_API_URL is configured correctly in Vercel.');
+            } else {
+                alert(`${errorMsg}${status}`);
+            }
         }
     };
 

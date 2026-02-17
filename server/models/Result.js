@@ -25,9 +25,17 @@ const ResultSchema = new mongoose.Schema({
         correctOption: String,
         isCorrect: Boolean
     }],
-    completedAt: {
+    status: {
+        type: String,
+        enum: ['in-progress', 'completed'],
+        default: 'in-progress'
+    },
+    startedAt: {
         type: Date,
         default: Date.now
+    },
+    completedAt: {
+        type: Date
     }
 });
 

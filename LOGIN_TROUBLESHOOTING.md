@@ -105,6 +105,21 @@ This is normal! After first login:
 2. Click confirm
 3. You'll be redirected to your dashboard
 
+### Issue 7: "Network Error" or "An error occurred" (On Vercel)
+
+**Symptoms:**
+- Error appears when trying to Login or Register on the live site.
+- Browser console (F12) shows: `⚠️ Frontend is running in PRODUCTION but VITE_API_URL is missing!`
+- Network requests show `net::ERR_CONNECTION_REFUSED` to `localhost:5000`.
+
+**Solution:**
+You need to add Environment Variables to your **Vercel Project Settings**:
+1. Go to **Vercel Dashboard** > Your Project > **Settings** > **Environment Variables**.
+2. Add:
+   - `VITE_API_URL`: `https://YOUR-BACKEND.onrender.com/api`
+   - `VITE_SOCKET_URL`: `https://YOUR-BACKEND.onrender.com`
+3. **Re-deploy** your project (or push a small change to GitHub).
+
 ---
 
 ## Testing Login Step-by-Step

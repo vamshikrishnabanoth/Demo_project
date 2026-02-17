@@ -10,6 +10,7 @@ export default function CreateQuizPDF() {
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
     const [timer, setTimer] = useState(30);
+    const [duration, setDuration] = useState(0); // Global duration in minutes
     const [loading, setLoading] = useState(false);
     const [isLive, setIsLive] = useState(false);
 
@@ -31,7 +32,9 @@ export default function CreateQuizPDF() {
             formData.append('type', 'pdf');
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
+            formData.append('difficulty', difficulty);
             formData.append('timerPerQuestion', timer.toString());
+            formData.append('duration', duration.toString());
             formData.append('isLive', isLive.toString());
 
             const res = await api.post('/quiz/create', formData, {
@@ -127,6 +130,24 @@ export default function CreateQuizPDF() {
                         />
                     </div>
 
+
+
+                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
+                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
+                            Global Timer (Minutes)
+                        </label>
+                        <input
+                            type="number"
+                            min="0"
+                            max="180"
+                            value={duration}
+                            onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
+                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
+                            placeholder="0 = No Limit"
+                        />
+                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set > 0</p>
+                    </div>
+
                     <div className="space-y-2">
                         <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">Select Document</label>
                         <div className="relative border-2 border-dashed border-gray-200 rounded-2xl hover:border-red-400 transition-colors bg-gray-50/50">
@@ -185,7 +206,7 @@ export default function CreateQuizPDF() {
                         {loading ? 'Processing Document...' : (isLive ? 'Create Live Room' : 'Generate AI Quiz')}
                     </button>
                 </form>
-            </div>
-        </DashboardLayout>
+            </div >
+        </DashboardLayout >
     );
 }
