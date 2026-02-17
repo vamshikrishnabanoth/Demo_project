@@ -506,13 +506,7 @@ export default function AttemptQuiz() {
                         {isLastQuestion ? (
                             isReviewMode ? (
                                 <button
-                                    onClick={() => {
-                                        if (window.history.length > 2) {
-                                            navigate(-1);
-                                        } else {
-                                            navigate('/student-dashboard');
-                                        }
-                                    }}
+                                    onClick={() => setIsReviewMode(false)}
                                     className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
                                 >
                                     <Home size={20} /> Finish Review

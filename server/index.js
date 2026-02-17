@@ -166,15 +166,15 @@ io.on('connection', (socket) => {
 
                 await result.save();
 
+                await result.save();
+
                 // Broadcast student progress to teacher
                 io.to(quizId).emit('student_progress_update', {
-                    studentId,
-                    username: result.student ? result.student.username : 'Unknown', // Need to populate if not available
+                    studentId: studentId.toString(), /* Ensure string ID */
+                    username: result.student ? result.student.username : 'Student',
                     questionIndex,
                     answered: true
                 });
-
-                await result.save();
 
                 // Get all results for this quiz to build leaderboard
                 const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
