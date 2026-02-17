@@ -54,6 +54,12 @@ export default function LiveRoomTeacher() {
             setParticipants(students);
         });
 
+        // Listen for progress history (on resume/refresh)
+        socket.on('progress_history', (history) => {
+            console.log("Restoring student progress:", history);
+            setStudentProgress(history);
+        });
+
         // Listen for new student progress
         socket.on('student_progress_update', ({ studentId, questionIndex }) => {
             setStudentProgress(prev => ({
@@ -71,8 +77,17 @@ export default function LiveRoomTeacher() {
             // Only add if not a teacher
             if (newUser.role !== 'teacher') {
                 setParticipants(prev => {
-                    if (prev.find(p => p.username === newUser.username)) return prev;
-                    return [...prev, newUser];
+                    // Deduplicate
+                    const exists = prev.find(p => p.username === newUser.username || (p._id && newUser._id && p._id === newUser._id));
+                    if (exists) {
+                        // Update existing
+                        return prev.map(p => (p.username === newUser.username || (p._id && newUser._id && p._id === newUser._id)) ? newUser : p);
+                    }
+                    // Add new if valid
+                    if (newUser.username && newUser.username.toLowerCase() !== 'unknown' && newUser.username.toLowerCase() !== 'student') {
+                        return [...prev, newUser];
+                    }
+                    return prev;
                 });
             }
         });
@@ -80,6 +95,7 @@ export default function LiveRoomTeacher() {
         return () => {
             socket.off('participants_update');
             socket.off('student_progress_update');
+            socket.off('progress_history');
             socket.off('user_joined');
         };
     }, [joinCode, user, navigate]);
@@ -88,6 +104,13 @@ export default function LiveRoomTeacher() {
         if (quiz) {
             socket.emit('start_quiz', quiz._id);
             setIsTimerRunning(true); // Start local timer
+        }
+    };
+
+    const handleEndQuiz = () => {
+        if (window.confirm('Are you sure you want to END the quiz? This will submit for all students.')) {
+            socket.emit('end_quiz', quiz._id);
+            navigate('/teacher-dashboard');
         }
     };
 
@@ -283,13 +306,7 @@ export default function LiveRoomTeacher() {
                                 </button>
 
                                 <button
-                                    onClick={() => {
-                                        if (window.confirm('Are you sure you want to END the quiz? This will submit for all students.')) {
-                                            socket.emit('end_quiz', quiz._id);
-                                            // Optional: Navigate to leaderboard
-                                            // navigate(`/leaderboard/${quiz._id}`);
-                                        }
-                                    }}
+                                    onClick={handleEndQuiz}
                                     className="w-full bg-red-500/20 text-red-100 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-red-500/40 transition-all"
                                 >
                                     Stop & End Quiz
