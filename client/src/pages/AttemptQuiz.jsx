@@ -15,6 +15,7 @@ export default function AttemptQuiz() {
     const [result, setResult] = useState(null);
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
+    const [isWaiting, setIsWaiting] = useState(false); // New waiting state
     const [newQuestionNotification, setNewQuestionNotification] = useState(null);
     const [showNewQuestionModal, setShowNewQuestionModal] = useState(false);
     const [showIntermediateLeaderboard, setShowIntermediateLeaderboard] = useState(false);
@@ -44,6 +45,7 @@ export default function AttemptQuiz() {
             console.log('Teacher moved to question:', questionIndex);
             if (questionIndex >= 0 && questionIndex < (quiz?.questions?.length || 0)) {
                 setCurrentQuestion(questionIndex);
+                setIsWaiting(false); // Reset waiting state on new question
             }
         });
         return () => socket.off('change_question');
@@ -241,6 +243,36 @@ export default function AttemptQuiz() {
 
         // Save to LocalStorage for immediate crash recovery
         localStorage.setItem(`quiz_answers_${id}`, JSON.stringify(newAnswers));
+
+        // Note: We removed the auto-advance logic to allow manual submission
+    };
+
+    const handleSingleQuestionSubmit = () => {
+        if (!answers[currentQuestion]) return alert("Please select an option first!");
+
+        // In live mode, we submit and wait
+        if (quiz?.isLive) {
+            const token = localStorage.getItem('token');
+            const userId = JSON.parse(atob(token.split('.')[1])).user.id;
+
+            socket.emit('submit_question_answer', {
+                quizId: id,
+                studentId: userId,
+                questionIndex: currentQuestion,
+                answer: answers[currentQuestion],
+                timeRemaining: timeLeft
+            });
+            setIsWaiting(true);
+        } else {
+            // Self-paced: just move next
+            if (currentQuestion < quiz.questions.length - 1) {
+                setCurrentQuestion(prev => prev + 1);
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            } else {
+                // End of quiz
+                submitQuiz();
+            }
+        }
     };
 
     const submitQuiz = async () => {
@@ -306,7 +338,13 @@ export default function AttemptQuiz() {
                     </button>
                     <div className="grid grid-cols-2 gap-3">
                         <button
-                            onClick={() => navigate('/student-dashboard')}
+                            onClick={() => {
+                                if (window.history.length > 2) {
+                                    navigate(-1);
+                                } else {
+                                    navigate('/student-dashboard');
+                                }
+                            }}
                             className="bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
                         >
                             <Home size={18} /> Home
@@ -365,6 +403,15 @@ export default function AttemptQuiz() {
                             style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                         />
                     </div>
+                    {/* Visual Progress Dots (Green/Gray) */}
+                    <div className="hidden md:flex items-center gap-1">
+                        {quiz.questions.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`w-2 h-2 rounded-full ${answers[idx] ? 'bg-green-500' : 'bg-gray-200'}`}
+                            />
+                        ))}
+                    </div>
                 </div>
             </header>
 
@@ -385,6 +432,15 @@ export default function AttemptQuiz() {
                                 </p>
                             </div>
                             <Award size={24} className="opacity-20" />
+                        </div>
+                    )}
+
+                    {/* WAITING STATE OVERLAY */}
+                    {isWaiting && !isReviewMode && (
+                        <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl">
+                            <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
+                            <h2 className="text-2xl font-bold text-gray-900">Answer Submitted!</h2>
+                            <p className="text-gray-500 font-medium mt-2">Waiting for teacher to continue...</p>
                         </div>
                     )}
 
@@ -450,7 +506,13 @@ export default function AttemptQuiz() {
                         {isLastQuestion ? (
                             isReviewMode ? (
                                 <button
-                                    onClick={() => navigate('/student-dashboard')}
+                                    onClick={() => {
+                                        if (window.history.length > 2) {
+                                            navigate(-1);
+                                        } else {
+                                            navigate('/student-dashboard');
+                                        }
+                                    }}
                                     className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
                                 >
                                     <Home size={20} /> Finish Review
@@ -467,11 +529,11 @@ export default function AttemptQuiz() {
                             )
                         ) : (
                             <button
-                                onClick={() => setCurrentQuestion(prev => prev + 1)}
-                                disabled={quiz?.isLive}
+                                onClick={handleSingleQuestionSubmit}
+                                disabled={isWaiting || !answers[currentQuestion]}
                                 className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                             >
-                                Next <ChevronRight size={20} />
+                                {quiz?.isLive ? 'Submit Answer' : 'Next'} <ChevronRight size={20} />
                             </button>
                         )}
                     </div>
@@ -479,107 +541,111 @@ export default function AttemptQuiz() {
             </main>
 
             {/* New Question Modal */}
-            {showNewQuestionModal && newQuestionNotification && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 animate-in fade-in zoom-in duration-300">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <Bell className="text-indigo-600" size={24} />
+            {
+                showNewQuestionModal && newQuestionNotification && (
+                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 animate-in fade-in zoom-in duration-300">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                                    <Bell className="text-indigo-600" size={24} />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-black text-gray-900">New Question Added!</h2>
+                                    <p className="text-sm text-gray-500">Your teacher added a bonus question</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-gray-900">New Question Added!</h2>
-                                <p className="text-sm text-gray-500">Your teacher added a bonus question</p>
+
+                            <div className="bg-indigo-50 rounded-2xl p-6 mb-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">{newQuestionNotification.question.questionText}</h3>
+                                <div className="space-y-3">
+                                    {newQuestionNotification.question.options.map((option, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                const token = localStorage.getItem('token');
+                                                const userId = JSON.parse(atob(token.split('.')[1])).user.id;
+
+                                                socket.emit('submit_new_question', {
+                                                    quizId: id,
+                                                    studentId: userId,
+                                                    questionIndex: newQuestionNotification.questionIndex,
+                                                    answer: option
+                                                });
+
+                                                setShowNewQuestionModal(false);
+                                                alert(`Answer submitted: ${option}`);
+                                            }}
+                                            className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700"
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
+
+                            <button
+                                onClick={() => setShowNewQuestionModal(false)}
+                                className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                            >
+                                Skip This Question
+                            </button>
                         </div>
-
-                        <div className="bg-indigo-50 rounded-2xl p-6 mb-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">{newQuestionNotification.question.questionText}</h3>
-                            <div className="space-y-3">
-                                {newQuestionNotification.question.options.map((option, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => {
-                                            const token = localStorage.getItem('token');
-                                            const userId = JSON.parse(atob(token.split('.')[1])).user.id;
-
-                                            socket.emit('submit_new_question', {
-                                                quizId: id,
-                                                studentId: userId,
-                                                questionIndex: newQuestionNotification.questionIndex,
-                                                answer: option
-                                            });
-
-                                            setShowNewQuestionModal(false);
-                                            alert(`Answer submitted: ${option}`);
-                                        }}
-                                        className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700"
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => setShowNewQuestionModal(false)}
-                            className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
-                        >
-                            Skip This Question
-                        </button>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Intermediate Leaderboard Modal */}
-            {showIntermediateLeaderboard && currentLeaderboard.length > 0 && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 animate-in fade-in zoom-in duration-300">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <Trophy className="text-indigo-600" size={24} />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-gray-900">Question {currentQuestion + 1} Leaderboard</h2>
-                                <p className="text-sm text-gray-500">Current standings after this question</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
-                            {currentLeaderboard.map((student) => (
-                                <div key={student.studentId} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${student.rank === 1 ? 'bg-yellow-500' :
-                                            student.rank === 2 ? 'bg-gray-400' :
-                                                student.rank === 3 ? 'bg-orange-600' :
-                                                    'bg-indigo-600'
-                                            }`}>
-                                            {student.rank}
-                                        </div>
-                                        <span className="font-bold text-gray-900">{student.username}</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-sm text-gray-500">{student.answeredQuestions} answered</span>
-                                        <div className="text-xl font-black text-indigo-600">
-                                            {student.currentScore} pts
-                                        </div>
-                                    </div>
+            {
+                showIntermediateLeaderboard && currentLeaderboard.length > 0 && (
+                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 animate-in fade-in zoom-in duration-300">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                                    <Trophy className="text-indigo-600" size={24} />
                                 </div>
-                            ))}
-                        </div>
+                                <div>
+                                    <h2 className="text-2xl font-black text-gray-900">Question {currentQuestion + 1} Leaderboard</h2>
+                                    <p className="text-sm text-gray-500">Current standings after this question</p>
+                                </div>
+                            </div>
 
-                        <button
-                            onClick={handleContinueToNext}
-                            className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                        >
-                            {currentQuestion < quiz.questions.length - 1 ? (
-                                <>Continue to Next Question <ChevronRight size={20} /></>
-                            ) : (
-                                <>View Final Results <Trophy size={20} /></>
-                            )}
-                        </button>
+                            <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
+                                {currentLeaderboard.map((student) => (
+                                    <div key={student.studentId} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${student.rank === 1 ? 'bg-yellow-500' :
+                                                student.rank === 2 ? 'bg-gray-400' :
+                                                    student.rank === 3 ? 'bg-orange-600' :
+                                                        'bg-indigo-600'
+                                                }`}>
+                                                {student.rank}
+                                            </div>
+                                            <span className="font-bold text-gray-900">{student.username}</span>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm text-gray-500">{student.answeredQuestions} answered</span>
+                                            <div className="text-xl font-black text-indigo-600">
+                                                {student.currentScore} pts
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={handleContinueToNext}
+                                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                            >
+                                {currentQuestion < quiz.questions.length - 1 ? (
+                                    <>Continue to Next Question <ChevronRight size={20} /></>
+                                ) : (
+                                    <>View Final Results <Trophy size={20} /></>
+                                )}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

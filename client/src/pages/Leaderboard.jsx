@@ -196,7 +196,13 @@ export default function Leaderboard() {
                         </button>
                     )}
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={() => {
+                            if (user.role === 'teacher') {
+                                navigate('/teacher-dashboard');
+                            } else {
+                                navigate('/student-dashboard');
+                            }
+                        }}
                         className="flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-lg active:scale-95"
                     >
                         <Home size={20} />
@@ -230,7 +236,7 @@ export default function Leaderboard() {
                                     value={newQuestion.questionText}
                                     onChange={(e) => setNewQuestion({ ...newQuestion, questionText: e.target.value })}
                                     className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:outline-none"
-                                    rows="3"
+                                    rows={3}
                                     placeholder="Enter your question..."
                                 />
                             </div>

@@ -132,7 +132,7 @@ export default function CreateQuizText() {
                             className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
                             placeholder="0 = No Limit"
                         />
-                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set > 0</p>
+                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set &gt; 0</p>
                     </div>
 
                     <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
