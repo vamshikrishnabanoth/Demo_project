@@ -144,6 +144,20 @@ export default function LiveRoomTeacher() {
         </DashboardLayout>
     );
 
+    if (!quiz) return (
+        <DashboardLayout role="teacher">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Quiz not found</h2>
+                <button
+                    onClick={() => navigate('/teacher-dashboard')}
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition"
+                >
+                    Return to Dashboard
+                </button>
+            </div>
+        </DashboardLayout>
+    );
+
     return (
         <DashboardLayout role="teacher">
             <div className="max-w-4xl mx-auto space-y-8">
@@ -192,11 +206,11 @@ export default function LiveRoomTeacher() {
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mt-8">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
                                 <div className="divide-y divide-gray-100">
-                                    {participants.map((p) => (
-                                        <div key={p.username || idx} className="py-3 flex items-center justify-between">
+                                    {participants.map((p, pIdx) => (
+                                        <div key={p.username || pIdx} className="py-3 flex items-center justify-between">
                                             <span className="font-medium text-gray-700 w-32 truncate">{p.username || 'Unknown'}</span>
                                             <div className="flex-1 flex items-center gap-1 overflow-x-auto">
-                                                {quiz?.questions.map((_, idx) => {
+                                                {quiz?.questions?.map((_, idx) => {
                                                     const isAnswered = studentProgress[p._id || p.username] && studentProgress[p._id || p.username][idx];
                                                     // Note: We might need to ensure p._id is reliable, or map locally spawned users carefully
                                                     // In live room, socket users usually have an ID or we map by username if unique required
@@ -228,7 +242,7 @@ export default function LiveRoomTeacher() {
                             <h3 className="text-lg font-bold">Live Controls</h3>
 
                             <div className="flex items-center justify-between bg-indigo-800/30 p-4 rounded-xl">
-                                <span className="text-sm font-bold">Current Question: {currentQuestionIndex + 1} / {quiz?.questions.length}</span>
+                                <span className="text-sm font-bold">Current Question: {currentQuestionIndex + 1} / {quiz?.questions?.length || 0}</span>
                                 <div className={`flex items-center gap-2 px-3 py-1 rounded-lg font-mono font-bold ${timeLeft <= 5 && !quiz?.duration ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-900 text-indigo-100'}`}>
                                     <span className="text-xs uppercase opacity-75">Timer</span>
                                     <span>{quiz?.duration > 0 ? 'MANUAL' : `${timeLeft}s`}</span>
@@ -245,7 +259,7 @@ export default function LiveRoomTeacher() {
                                 </button>
                                 <button
                                     onClick={() => handleNavigation('next')}
-                                    disabled={currentQuestionIndex === (quiz?.questions.length - 1)}
+                                    disabled={!quiz?.questions || currentQuestionIndex === (quiz.questions.length - 1)}
                                     className="bg-white text-indigo-600 hover:bg-indigo-50 p-3 rounded-xl text-sm font-bold disabled:opacity-50"
                                 >
                                     Next
