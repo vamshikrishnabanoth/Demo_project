@@ -526,7 +526,7 @@ export default function AttemptQuiz() {
                                 return (
                                     <button
                                         key={idx}
-                                        disabled={isReviewMode || answers[currentQuestion]}
+                                        disabled={isReviewMode || isWaiting || submitting}
                                         onClick={() => handleOptionSelect(option)}
                                         className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center justify-between group ${containerClass} disabled:cursor-not-allowed`}
                                     >

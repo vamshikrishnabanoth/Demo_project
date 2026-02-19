@@ -250,8 +250,13 @@ export default function LiveRoomTeacher() {
                                             <div className="flex-1 flex items-center gap-1 overflow-x-auto">
                                                 {quiz?.questions?.map((_, idx) => {
                                                     // Chech by ID OR Username to be safe
-                                                    const byId = p._id && studentProgress[p._id] && studentProgress[p._id][idx];
-                                                    const byName = p.username && studentProgress[p.username] && studentProgress[p.username][idx];
+                                                    // Robust check for index 0 and string/number mismatch
+                                                    const hasProgressId = p._id && studentProgress[p._id];
+                                                    const hasProgressName = p.username && studentProgress[p.username];
+
+                                                    const byId = hasProgressId && (studentProgress[p._id][idx] === true || studentProgress[p._id][idx.toString()] === true);
+                                                    const byName = hasProgressName && (studentProgress[p.username][idx] === true || studentProgress[p.username][idx.toString()] === true);
+
                                                     const isAnswered = byId || byName;
 
                                                     const isCurrent = idx === currentQuestionIndex;
