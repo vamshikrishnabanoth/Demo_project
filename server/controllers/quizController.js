@@ -178,8 +178,6 @@ exports.createQuiz = async (req, res) => {
             isActive: true, // Auto-active for code joining
             joinCode,
             difficulty: difficulty || 'Medium',
-            joinCode,
-            difficulty: difficulty || 'Medium',
             timerPerQuestion: timerPerQuestion || 30,
             duration: duration || 0, // 0 means no global limit
             topic: topic || '',
