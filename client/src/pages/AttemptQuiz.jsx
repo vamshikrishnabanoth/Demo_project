@@ -278,7 +278,7 @@ export default function AttemptQuiz() {
 
     const setAnswersFromHistory = (historyAnswers) => {
         const newAnswers = {};
-        historyAnswers.forEach((ans, idx) => {
+        historyAnswers.forEach((ans, _) => {
             // Find index by question text in case of shuffling (advanced), but here strictly by index for now or assume order
             // Better to map by questionText if possible, but index is safe for now if static
             // Actually, `answers` state is by index.
@@ -350,7 +350,8 @@ export default function AttemptQuiz() {
         } catch (err) {
             console.error('Error submitting quiz', err);
             // Handle "already attempted" gracefully
-            if (err.response?.status === 400 && err.response?.data?.msg === 'Quiz already attempted') {
+            const error = /** @type {any} */ (err);
+            if (error?.response?.status === 400 && error?.response?.data?.msg === 'Quiz already attempted') {
                 window.location.reload(); // Refresh to catch the result in useEffect
             } else {
                 alert('Submission failed. Please check your connection.');
