@@ -84,46 +84,17 @@ io.on('connection', (socket) => {
         const state = roomState.get(quizId) || {};
         roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0 }); // Start at 0
 
+        // Update quiz status in database
+        try {
+            const Quiz = require('./models/Quiz');
+            await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
+            console.log(`Quiz ${quizId} status updated to 'started'`);
+        } catch (err) {
+            console.error('Error updating quiz status:', err);
+        }
+
         io.to(quizId).emit('quiz_started');
     });
-
-    socket.on('change_question', ({ quizId, questionIndex }) => {
-        // Update state
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, currentQuestion: questionIndex });
-
-        io.to(quizId).emit('change_question', { questionIndex });
-    });
-
-    socket.on('end_quiz', (quizId) => {
-        console.log(`Ending quiz: ${quizId}`);
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, status: 'ended' });
-
-        io.to(quizId).emit('quiz_ended');
-
-        // Clear room data after 1 hour to free memory
-        setTimeout(() => {
-            roomParticipants.delete(quizId);
-            roomState.delete(quizId);
-        }, 3600000);
-    });
-
-    // Update quiz status in database
-    try {
-        const Quiz = require('./models/Quiz');
-        await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
-        console.log(`Quiz ${quizId} status updated to 'started'`);
-    } catch (err) {
-        console.error('Error updating quiz status:', err);
-    }
-
-    io.to(quizId).emit('quiz_started');
-
-    // Clean up participants ONLY when explicitly ended or after a long timeout
-    // setTimeout(() => {
-    //    roomParticipants.delete(quizId);
-    // }, 5000);
 });
 
 // Add question to live quiz
