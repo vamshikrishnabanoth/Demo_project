@@ -62,16 +62,18 @@ export default function LiveRoomTeacher() {
 
         // Listen for new student progress
         socket.on('student_progress_update', ({ studentId, username, questionIndex }) => {
+            console.log(`Progress Update: Student ${username} (${studentId}) - Question ${questionIndex}`);
             setStudentProgress(prev => {
                 const newState = { ...prev };
+                const qIdx = parseInt(questionIndex); // Ensure integer
 
                 // Update by ID
                 if (studentId) {
-                    newState[studentId] = { ...(newState[studentId] || {}), [questionIndex]: true };
+                    newState[studentId] = { ...(newState[studentId] || {}), [qIdx]: true };
                 }
                 // Update by Username (fallback)
                 if (username) {
-                    newState[username] = { ...(newState[username] || {}), [questionIndex]: true };
+                    newState[username] = { ...(newState[username] || {}), [qIdx]: true };
                 }
 
                 return newState;

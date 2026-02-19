@@ -56,20 +56,38 @@ export default function AttemptQuiz() {
         });
 
         socket.on('quiz_ended', async () => {
-            alert("The teacher has ended the quiz. You will be redirected to the dashboard.");
+            // Show non-blocking notification
+            setIsWaiting(true); // Reuse waiting state to show loader/message
+            setNewQuestionNotification(null); // Clear any other modals
+            setShowNewQuestionModal(false);
+
+            // Create a temporary "Quiz Ended" message if possible, or just redirect
+            const endMessage = document.createElement('div');
+            endMessage.innerHTML = `
+                <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#ef4444; color:white; padding:16px 24px; border-radius:12px; font-weight:bold; box-shadow:0 10px 25px -5px rgba(0,0,0,0.1); z-index:9999; display:flex; align-items:center; gap:12px;">
+                    <span>🛑 Quiz Ended by Teacher</span>
+                    <span style="font-size:0.8em; opacity:0.9">Redirecting...</span>
+                </div>
+            `;
+            document.body.appendChild(endMessage);
 
             // Safety timeout to force redirect if submit hangs
             const redirectTimer = setTimeout(() => {
                 navigate('/student-dashboard');
-            }, 2000);
+                if (document.body.contains(endMessage)) document.body.removeChild(endMessage);
+            }, 3000);
 
             try {
                 await submitQuiz();
             } catch (e) {
                 console.error("Auto-submit failed", e);
             } finally {
-                clearTimeout(redirectTimer);
-                navigate('/student-dashboard');
+                // We let the timer handle the redirect to ensure user sees the message for a bit
+                // Or if submit is fast, we wait for timer.
+                // Actually, if submit is fast, we should probably just wait for timer.
+                // But let's clear timer and redirect if it takes > 2s but finishes.
+                // Simplify: Just let the timer do it, or do it immediately if submit finishes?
+                // Let's ensure at least 2s delay so they see the message.
             }
         });
         return () => {

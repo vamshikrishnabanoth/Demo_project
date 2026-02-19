@@ -101,7 +101,6 @@ io.on('connection', (socket) => {
         roomState.set(quizId, { ...state, status: 'ended' });
 
         io.to(quizId).emit('quiz_ended');
-        io.to(quizId).emit('quiz_ended');
 
         // Clear room data after 1 hour to free memory
         setTimeout(() => {
@@ -160,6 +159,8 @@ socket.on('change_question', ({ quizId, questionIndex }) => {
 
 // Handle individual question submission during live quiz
 socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
+    // Ensure questionIndex is an integer
+    questionIndex = parseInt(questionIndex);
     console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
 
     // PERSISTENCE: Save to In-Memory Room State for immediate access/recovery
