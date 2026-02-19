@@ -95,188 +95,206 @@ io.on('connection', (socket) => {
 
         io.to(quizId).emit('quiz_started');
     });
-});
 
-// Add question to live quiz
-socket.on('add_question', async ({ quizId, question }) => {
-    console.log(`Adding question to quiz: ${quizId}`);
-    try {
-        const Quiz = require('./models/Quiz');
-        const quiz = await Quiz.findById(quizId);
+    socket.on('end_quiz', (quizId) => {
+        console.log(`Ending quiz: ${quizId}`);
+        const state = roomState.get(quizId) || {};
+        roomState.set(quizId, { ...state, status: 'ended' });
 
-        if (quiz) {
-            quiz.questions.push(question);
-            await quiz.save();
+        io.to(quizId).emit('quiz_ended');
 
-            // Broadcast new question to all students in the room
-            io.to(quizId).emit('new_question_added', {
-                question,
-                questionIndex: quiz.questions.length - 1,
-                totalQuestions: quiz.questions.length
-            });
+        // Clear room data after 1 hour to free memory
+        setTimeout(() => {
+            roomParticipants.delete(quizId);
+            roomState.delete(quizId);
+        }, 3600000);
+    });
 
-            console.log(`Question added successfully to quiz ${quizId}`);
+    // Add question to live quiz
+    socket.on('add_question', async ({ quizId, question }) => {
+        console.log(`Adding question to quiz: ${quizId}`);
+        try {
+            const Quiz = require('./models/Quiz');
+            const quiz = await Quiz.findById(quizId);
+
+            if (quiz) {
+                quiz.questions.push(question);
+                await quiz.save();
+
+                // Broadcast new question to all students in the room
+                io.to(quizId).emit('new_question_added', {
+                    question,
+                    questionIndex: quiz.questions.length - 1,
+                    totalQuestions: quiz.questions.length
+                });
+
+                console.log(`Question added successfully to quiz ${quizId}`);
+            }
+        } catch (err) {
+            console.error('Error adding question:', err);
         }
-    } catch (err) {
-        console.error('Error adding question:', err);
-    }
-});
+    });
 
-// Handle teacher changing question (Navigation)
-socket.on('change_question', ({ quizId, questionIndex }) => {
-    console.log(`Teacher changed question to ${questionIndex} in quiz ${quizId}`);
-    io.to(quizId).emit('change_question', { questionIndex });
-});
+    // Handle teacher changing question (Navigation)
+    socket.on('change_question', ({ quizId, questionIndex }) => {
+        console.log(`Teacher changed question to ${questionIndex} in quiz ${quizId}`);
 
-// Handle individual question submission during live quiz
-socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
-    // Ensure questionIndex is an integer
-    questionIndex = parseInt(questionIndex);
-    console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
+        // Update state
+        const state = roomState.get(quizId) || {};
+        roomState.set(quizId, { ...state, currentQuestion: questionIndex });
 
-    // PERSISTENCE: Save to In-Memory Room State for immediate access/recovery
-    const state = roomState.get(quizId) || {};
-    const currentProgress = state.progress || {};
+        io.to(quizId).emit('change_question', { questionIndex });
+    });
 
-    if (!currentProgress[studentId]) currentProgress[studentId] = {};
-    currentProgress[studentId][questionIndex] = true;
+    // Handle individual question submission during live quiz
+    socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
+        // Ensure questionIndex is an integer
+        questionIndex = parseInt(questionIndex);
+        console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
 
-    roomState.set(quizId, { ...state, progress: currentProgress });
+        // PERSISTENCE: Save to In-Memory Room State for immediate access/recovery
+        const state = roomState.get(quizId) || {};
+        const currentProgress = state.progress || {};
 
-    try {
-        const Quiz = require('./models/Quiz');
-        const Result = require('./models/Result');
-        const User = require('./models/User');
+        if (!currentProgress[studentId]) currentProgress[studentId] = {};
+        currentProgress[studentId][questionIndex] = true;
 
-        const quiz = await Quiz.findById(quizId);
-        // Populate student to get username for progress update
-        let result = await Result.findOne({ quiz: quizId, student: studentId }).populate('student', 'username');
+        roomState.set(quizId, { ...state, progress: currentProgress });
 
-        if (!result) {
-            // Create new result if doesn't exist
-            result = new Result({
-                quiz: quizId,
-                student: studentId,
-                score: 0,
-                totalQuestions: quiz.questions.length,
-                answers: []
-            });
+        try {
+            const Quiz = require('./models/Quiz');
+            const Result = require('./models/Result');
+            const User = require('./models/User');
+
+            const quiz = await Quiz.findById(quizId);
+            // Populate student to get username for progress update
+            let result = await Result.findOne({ quiz: quizId, student: studentId }).populate('student', 'username');
+
+            if (!result) {
+                // Create new result if doesn't exist
+                result = new Result({
+                    quiz: quizId,
+                    student: studentId,
+                    score: 0,
+                    totalQuestions: quiz.questions.length,
+                    answers: []
+                });
+            }
+
+            if (quiz && quiz.questions[questionIndex]) {
+                const question = quiz.questions[questionIndex];
+                const isCorrect = answer === question.correctAnswer;
+                const points = isCorrect ? (question.points || 10) : 0;
+
+                // Add or update answer for this question
+                const existingAnswerIndex = result.answers.findIndex(
+                    a => a.questionText === question.questionText
+                );
+
+                const answerData = {
+                    questionText: question.questionText,
+                    selectedOption: answer,
+                    correctOption: question.correctAnswer,
+                    isCorrect
+                };
+
+                if (existingAnswerIndex >= 0) {
+                    // Update existing answer
+                    const oldAnswer = result.answers[existingAnswerIndex];
+                    const oldPoints = oldAnswer.isCorrect ? (question.points || 10) : 0;
+                    result.score = result.score - oldPoints + points;
+                    result.answers[existingAnswerIndex] = answerData;
+                } else {
+                    // Add new answer
+                    result.answers.push(answerData);
+                    result.score += points;
+                }
+
+                // Ensure status is in-progress and tracking start time
+                result.status = 'in-progress';
+                if (!result.startedAt) {
+                    result.startedAt = Date.now();
+                }
+
+                await result.save();
+
+                // Broadcast student progress to teacher
+                io.to(quizId).emit('student_progress_update', {
+                    studentId: studentId.toString(), /* Ensure string ID */
+                    username: result.student ? result.student.username : 'Student',
+                    questionIndex,
+                    answered: true
+                });
+
+                // Get all results for this quiz to build leaderboard
+                const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
+                const leaderboard = allResults
+                    .map(r => ({
+                        studentId: r.student._id,
+                        username: r.student.username,
+                        currentScore: r.score,
+                        answeredQuestions: r.answers.length
+                    }))
+                    .sort((a, b) => b.currentScore - a.currentScore)
+                    .map((item, index) => ({ ...item, rank: index + 1 }));
+
+                // Broadcast leaderboard to all students in the room
+                io.to(quizId).emit('question_leaderboard', {
+                    questionIndex,
+                    leaderboard
+                });
+
+                console.log(`Answer submitted. Score: ${result.score}. Leaderboard broadcast.`);
+            }
+        } catch (err) {
+            console.error('Error submitting question answer:', err);
         }
+    });
 
-        if (quiz && quiz.questions[questionIndex]) {
-            const question = quiz.questions[questionIndex];
-            const isCorrect = answer === question.correctAnswer;
-            const points = isCorrect ? (question.points || 10) : 0;
+    // Handle student submission of new question
+    socket.on('submit_new_question', async ({ quizId, studentId, questionIndex, answer }) => {
+        console.log(`Student ${studentId} submitted answer for question ${questionIndex} in quiz ${quizId}`);
+        try {
+            const Quiz = require('./models/Quiz');
+            const Result = require('./models/Result');
 
-            // Add or update answer for this question
-            const existingAnswerIndex = result.answers.findIndex(
-                a => a.questionText === question.questionText
-            );
+            const quiz = await Quiz.findById(quizId);
+            const result = await Result.findOne({ quiz: quizId, student: studentId });
 
-            const answerData = {
-                questionText: question.questionText,
-                selectedOption: answer,
-                correctOption: question.correctAnswer,
-                isCorrect
-            };
+            if (quiz && result && quiz.questions[questionIndex]) {
+                const question = quiz.questions[questionIndex];
+                const isCorrect = answer === question.correctAnswer;
+                const points = isCorrect ? (question.points || 10) : 0;
 
-            if (existingAnswerIndex >= 0) {
-                // Update existing answer
-                const oldAnswer = result.answers[existingAnswerIndex];
-                const oldPoints = oldAnswer.isCorrect ? (question.points || 10) : 0;
-                result.score = result.score - oldPoints + points;
-                result.answers[existingAnswerIndex] = answerData;
-            } else {
-                // Add new answer
-                result.answers.push(answerData);
+                // Update result with new answer
+                result.answers.push({
+                    questionText: question.questionText,
+                    selectedOption: answer,
+                    correctOption: question.correctAnswer,
+                    isCorrect
+                });
+
                 result.score += points;
+                result.totalQuestions = quiz.questions.length;
+                await result.save();
+
+                // Broadcast updated score to the room
+                io.to(quizId).emit('score_updated', {
+                    studentId,
+                    newScore: result.score,
+                    questionIndex
+                });
+
+                console.log(`Answer submitted successfully. New score: ${result.score}`);
             }
-
-            // Ensure status is in-progress and tracking start time
-            result.status = 'in-progress';
-            if (!result.startedAt) {
-                result.startedAt = Date.now();
-            }
-
-            await result.save();
-
-            // Broadcast student progress to teacher
-            io.to(quizId).emit('student_progress_update', {
-                studentId: studentId.toString(), /* Ensure string ID */
-                username: result.student ? result.student.username : 'Student',
-                questionIndex,
-                answered: true
-            });
-
-            // Get all results for this quiz to build leaderboard
-            const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
-            const leaderboard = allResults
-                .map(r => ({
-                    studentId: r.student._id,
-                    username: r.student.username,
-                    currentScore: r.score,
-                    answeredQuestions: r.answers.length
-                }))
-                .sort((a, b) => b.currentScore - a.currentScore)
-                .map((item, index) => ({ ...item, rank: index + 1 }));
-
-            // Broadcast leaderboard to all students in the room
-            io.to(quizId).emit('question_leaderboard', {
-                questionIndex,
-                leaderboard
-            });
-
-            console.log(`Answer submitted. Score: ${result.score}. Leaderboard broadcast.`);
+        } catch (err) {
+            console.error('Error submitting new question answer:', err);
         }
-    } catch (err) {
-        console.error('Error submitting question answer:', err);
-    }
-});
+    });
 
-// Handle student submission of new question
-socket.on('submit_new_question', async ({ quizId, studentId, questionIndex, answer }) => {
-    console.log(`Student ${studentId} submitted answer for question ${questionIndex} in quiz ${quizId}`);
-    try {
-        const Quiz = require('./models/Quiz');
-        const Result = require('./models/Result');
-
-        const quiz = await Quiz.findById(quizId);
-        const result = await Result.findOne({ quiz: quizId, student: studentId });
-
-        if (quiz && result && quiz.questions[questionIndex]) {
-            const question = quiz.questions[questionIndex];
-            const isCorrect = answer === question.correctAnswer;
-            const points = isCorrect ? (question.points || 10) : 0;
-
-            // Update result with new answer
-            result.answers.push({
-                questionText: question.questionText,
-                selectedOption: answer,
-                correctOption: question.correctAnswer,
-                isCorrect
-            });
-
-            result.score += points;
-            result.totalQuestions = quiz.questions.length;
-            await result.save();
-
-            // Broadcast updated score to the room
-            io.to(quizId).emit('score_updated', {
-                studentId,
-                newScore: result.score,
-                questionIndex
-            });
-
-            console.log(`Answer submitted successfully. New score: ${result.score}`);
-        }
-    } catch (err) {
-        console.error('Error submitting new question answer:', err);
-    }
-});
-
-socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-});
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+    });
 });
 
 const PORT = process.env.PORT || 5000;
