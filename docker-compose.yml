@@ -9,6 +9,7 @@ services:
       - PORT=5000
       - MONGO_URI=mongodb://mongo:27017/ai-quiz-platform
       - JWT_SECRET=supersecretkey123
+      - GEMINI_API_KEY=AIzaSyAnBdstnyRbqZx4T9QCCzm1VUpUr0a-k_4
     depends_on:
       - mongo
     networks:

@@ -28,50 +28,49 @@ const io = new Server(server, {
 });
 
 // Store participants for each room
-const roomParticipants = new Map();
-// Store current state for each room (e.g. current question index)
-const roomState = new Map(); // { quizId: { currentQuestion: 0, status: 'waiting'|'started'|'ended' } }
+const roomParticipants = new Map(); // { quizId: [{ username, role, socketId }] }
+// Store current state for each room
+const roomState = new Map(); // { quizId: { currentQuestion: 0, status: 'started', endTime: TIMESTAMP } }
+// Map to track which room/user a socket belongs to
+const socketToUser = new Map(); // { socketId: { quizId, username } }
 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
     socket.on('join_room', ({ quizId, user }) => {
         socket.join(quizId);
-        console.log(`User ${user.username} (${user.role}) joined room: ${quizId}`);
 
-        // Initialize room if it doesn't exist
+        // Track this socket's association for disconnect cleanup
+        socketToUser.set(socket.id, { quizId, username: user.username });
+
         if (!roomParticipants.has(quizId)) {
             roomParticipants.set(quizId, []);
         }
 
-        // Add user to room participants if not already there
-        // Add or Update user in room participants
         const participants = roomParticipants.get(quizId);
         const existingIdx = participants.findIndex(p => p.username === user.username);
 
+        const userData = { ...user, socketId: socket.id };
         if (existingIdx !== -1) {
-            // Update existing user (e.g. if socket ID changed or role changed)
-            participants[existingIdx] = user;
-        } else {
-            // Only add if not "student" (unless that's their actual name, but we want to avoid the default ghost)
-            if (user.username && user.username.toLowerCase() !== 'student') {
-                participants.push(user);
-            }
+            participants[existingIdx] = userData;
+        } else if (user.username && user.username.toLowerCase() !== 'student') {
+            participants.push(userData);
         }
 
-        // Broadcast updated participant list
         io.to(quizId).emit('participants_update', participants);
 
-        // SYNC STATE: If room has a state (started, current question), send it to the joining user
+        // SYNC STATE
         const state = roomState.get(quizId);
         if (state) {
-            if (state.status === 'started') {
-                socket.emit('quiz_started');
+            if (state.status === 'started') socket.emit('quiz_started');
+            if (state.currentQuestion !== undefined) socket.emit('change_question', { questionIndex: state.currentQuestion });
+
+            // MASTER TIMER SYNC
+            if (state.endTime) {
+                const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                socket.emit('sync_timer', { timeLeft });
             }
-            if (state.currentQuestion !== undefined) {
-                socket.emit('change_question', { questionIndex: state.currentQuestion });
-            }
-            // Send persisted progress to teacher
+
             if (state.progress && user.role === 'teacher') {
                 socket.emit('progress_history', state.progress);
             }
@@ -79,35 +78,39 @@ io.on('connection', (socket) => {
     });
 
     socket.on('start_quiz', async (quizId) => {
-        console.log(`Starting quiz: ${quizId}`);
-        // Update state
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0 }); // Start at 0
-
-        // Update quiz status in database
         try {
             const Quiz = require('./models/Quiz');
-            await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
-            console.log(`Quiz ${quizId} status updated to 'started'`);
-        } catch (err) {
-            console.error('Error updating quiz status:', err);
-        }
+            const quiz = await Quiz.findById(quizId);
+            if (!quiz) return;
 
-        io.to(quizId).emit('quiz_started');
+            // Initialize Master Time
+            let endTime = null;
+            if (quiz.duration > 0) {
+                endTime = Date.now() + (quiz.duration * 60 * 1000);
+            } else {
+                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
+            }
+
+            const state = roomState.get(quizId) || {};
+            roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
+
+            await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
+            io.to(quizId).emit('quiz_started');
+            io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+        } catch (err) {
+            console.error('Error starting quiz:', err);
+        }
     });
 
-    socket.on('end_quiz', (quizId) => {
-        console.log(`Ending quiz: ${quizId}`);
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, status: 'ended' });
-
+    socket.on('end_quiz', async (quizId) => {
+        roomState.delete(quizId);
+        try {
+            const Quiz = require('./models/Quiz');
+            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
+        } catch (err) {
+            console.error('Error ending quiz:', err);
+        }
         io.to(quizId).emit('quiz_ended');
-
-        // Clear room data after 1 hour to free memory
-        setTimeout(() => {
-            roomParticipants.delete(quizId);
-            roomState.delete(quizId);
-        }, 3600000);
     });
 
     // Add question to live quiz
@@ -136,14 +139,53 @@ io.on('connection', (socket) => {
     });
 
     // Handle teacher changing question (Navigation)
-    socket.on('change_question', ({ quizId, questionIndex }) => {
-        console.log(`Teacher changed question to ${questionIndex} in quiz ${quizId}`);
+    socket.on('change_question', async ({ quizId, questionIndex }) => {
+        try {
+            const Quiz = require('./models/Quiz');
+            const quiz = await Quiz.findById(quizId);
+            if (!quiz) return;
 
-        // Update state
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, currentQuestion: questionIndex });
+            // Reset Master Time for the new question if it's per-question
+            let endTime = null;
+            if (quiz.duration === 0) {
+                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
+            }
 
-        io.to(quizId).emit('change_question', { questionIndex });
+            const state = roomState.get(quizId) || {};
+            if (endTime) state.endTime = endTime;
+
+            roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
+
+            io.to(quizId).emit('change_question', { questionIndex });
+            if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+        } catch (err) {
+            console.error('Error changing question:', err);
+        }
+    });
+
+    // Tracking which question a student is currently viewing
+    socket.on('student_question_focus', ({ quizId, studentId, username, questionIndex }) => {
+        console.log(`Student ${username} focused on question ${questionIndex} in quiz ${quizId}`);
+
+        // Broadcast to teacher only (or everyone in room if room UI needs it)
+        io.to(quizId).emit('student_focus_update', {
+            studentId,
+            username,
+            questionIndex
+        });
+    });
+
+    // Increase time for the current question
+    socket.on('increase_time', ({ quizId, additionalSeconds }) => {
+        const state = roomState.get(quizId);
+        if (state && state.endTime) {
+            state.endTime += (additionalSeconds * 1000);
+            roomState.set(quizId, state);
+
+            const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+            io.to(quizId).emit('timer_update', { additionalSeconds });
+            io.to(quizId).emit('sync_timer', { timeLeft });
+        }
     });
 
     // Handle individual question submission during live quiz
@@ -239,9 +281,42 @@ io.on('connection', (socket) => {
                     .map((item, index) => ({ ...item, rank: index + 1 }));
 
                 // Broadcast leaderboard to all students in the room
+                // Calculate insights: Hardest (most wrong), Easiest (most correct)
+                const questionStats = {};
+                allResults.forEach(r => {
+                    r.answers.forEach(ans => {
+                        if (!questionStats[ans.questionText]) {
+                            questionStats[ans.questionText] = { correct: 0, wrong: 0 };
+                        }
+                        if (ans.isCorrect) questionStats[ans.questionText].correct++;
+                        else questionStats[ans.questionText].wrong++;
+                    });
+                });
+
+                let hardestQuestion = null;
+                let easiestQuestion = null;
+                let maxWrong = -1;
+                let maxCorrect = -1;
+
+                Object.keys(questionStats).forEach(qText => {
+                    if (questionStats[qText].wrong > maxWrong) {
+                        maxWrong = questionStats[qText].wrong;
+                        hardestQuestion = qText;
+                    }
+                    if (questionStats[qText].correct > maxCorrect) {
+                        maxCorrect = questionStats[qText].correct;
+                        easiestQuestion = qText;
+                    }
+                });
+
                 io.to(quizId).emit('question_leaderboard', {
                     questionIndex,
-                    leaderboard
+                    leaderboard,
+                    liveInsights: {
+                        hardestQuestion,
+                        easiestQuestion,
+                        topStudent: leaderboard[0]?.username
+                    }
                 });
 
                 console.log(`Answer submitted. Score: ${result.score}. Leaderboard broadcast.`);
@@ -293,6 +368,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        const info = socketToUser.get(socket.id);
+        if (info) {
+            const { quizId, username } = info;
+            const participants = roomParticipants.get(quizId);
+            if (participants) {
+                const updatedList = participants.filter(p => p.socketId !== socket.id);
+                roomParticipants.set(quizId, updatedList);
+                io.to(quizId).emit('participants_update', updatedList);
+            }
+            socketToUser.delete(socket.id);
+        }
         console.log('User disconnected:', socket.id);
     });
 });

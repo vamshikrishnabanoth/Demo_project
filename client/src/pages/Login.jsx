@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { LogIn, UserPlus, Mail, Lock, User, ShieldCheck } from 'lucide-react';
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
@@ -46,60 +47,112 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6 text-center">{isLogin ? 'Login' : 'Sign Up'}</h2>
-                <form onSubmit={onSubmit} className="space-y-4">
-                    {!isLogin && (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Username</label>
-                            <input
-                                type="text"
-                                name="username"
-                                value={username}
-                                onChange={onChange}
-                                required={!isLogin}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
-                            />
-                        </div>
-                    )}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={onChange}
-                            required
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
-                        />
+        <div className="min-h-screen flex items-center justify-center bg-[#0f172a] relative overflow-hidden font-inter">
+            {/* Background Decorations */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff6b00]/10 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] -ml-48 -mb-48"></div>
+
+            <div className="w-full max-w-md p-8 relative z-10">
+                {/* Logo Area */}
+                <div className="flex flex-col items-center mb-10">
+                    <div className="w-20 h-20 bg-gradient-to-tr from-[#ff6b00] to-orange-400 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl shadow-orange-500/20 mb-6 group hover:rotate-0 transition-all duration-500">
+                        <ShieldCheck className="text-white -rotate-12 group-hover:rotate-0 transition-transform" size={40} />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={password}
-                            onChange={onChange}
-                            required
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 border p-2"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        {isLogin ? 'Login' : 'Sign Up'}
-                    </button>
-                </form>
-                <div className="mt-4 text-center">
-                    <button
-                        onClick={() => setIsLogin(!isLogin)}
-                        className="text-sm text-indigo-600 hover:text-indigo-500"
-                    >
-                        {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login'}
-                    </button>
+                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        KMIT <span className="text-[#ff6b00]">QUIZ</span>
+                    </h1>
+                    <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px] mt-2">Elite Assessment Portal</p>
                 </div>
+
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                    {/* Active Indicator */}
+                    <div className={`absolute top-0 h-1 bg-[#ff6b00] transition-all duration-500 ${isLogin ? 'left-0 w-1/2' : 'left-1/2 w-1/2'}`}></div>
+
+                    <h2 className="text-2xl font-black text-white mb-8 italic uppercase tracking-tight flex items-center gap-3">
+                        {isLogin ? <LogIn className="text-[#ff6b00]" /> : <UserPlus className="text-[#ff6b00]" />}
+                        {isLogin ? 'Sign In' : 'Create Account'}
+                    </h2>
+
+                    <form onSubmit={onSubmit} className="space-y-6">
+                        {!isLogin && (
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                                        <User size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        placeholder="Choose a handle"
+                                        value={username}
+                                        onChange={onChange}
+                                        required={!isLogin}
+                                        className="block w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/50 focus:border-transparent transition-all font-medium"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        <div className="space-y-2">
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                                    <Mail size={18} />
+                                </div>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="name@email.com"
+                                    value={email}
+                                    onChange={onChange}
+                                    required
+                                    className="block w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/50 focus:border-transparent transition-all font-medium"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                                    <Lock size={18} />
+                                </div>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={onChange}
+                                    required
+                                    className="block w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff6b00]/50 focus:border-transparent transition-all font-medium"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-[#ff6b00] hover:bg-orange-500 text-white rounded-2xl shadow-lg shadow-orange-500/20 text-sm font-black italic uppercase tracking-widest transition-all active:scale-[0.98] mt-4"
+                        >
+                            {isLogin ? 'Access Portal' : 'Register Now'}
+                            <LogIn size={18} />
+                        </button>
+                    </form>
+
+                    <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                        <button
+                            onClick={() => setIsLogin(!isLogin)}
+                            className="text-[10px] font-black text-gray-400 hover:text-[#ff6b00] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 mx-auto"
+                        >
+                            {isLogin ? "Don't have an account?" : "Already a member?"}
+                            <span className="text-[#ff6b00] underline underline-offset-4">
+                                {isLogin ? 'Create one here' : 'Sign in back'}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <p className="mt-8 text-center text-gray-600 text-[10px] font-bold uppercase tracking-widest">
+                    &copy; 2026 KMIT Advanced Assessment Logic
+                </p>
             </div>
         </div>
     );

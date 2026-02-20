@@ -8,7 +8,8 @@ import {
     LogOut,
     User,
     BarChart3,
-    Settings
+    Settings,
+    Clock
 } from 'lucide-react';
 
 export default function DashboardLayout({ children, role }) {
@@ -24,14 +25,14 @@ export default function DashboardLayout({ children, role }) {
     const isActive = (path) => location.pathname === path;
 
     const teacherLinks = [
-        { name: 'Dashboard', path: '/teacher-dashboard', icon: LayoutDashboard },
+        { name: 'Home', path: '/teacher-dashboard', icon: LayoutDashboard },
         { name: 'My Quizzes', path: '/my-quizzes', icon: BookOpen },
         { name: 'Performance', path: '/performance', icon: BarChart3 },
     ];
 
     const studentLinks = [
-        { name: 'Dashboard', path: '/student-dashboard', icon: LayoutDashboard },
-        { name: 'Available Quizzes', path: '/student-dashboard', icon: BookOpen }, // Placeholder
+        { name: 'Home', path: '/student-dashboard', icon: LayoutDashboard },
+        { name: 'Assessments', path: '/assessments', icon: BookOpen },
     ];
 
     const adminLinks = [
@@ -45,65 +46,76 @@ export default function DashboardLayout({ children, role }) {
     else if (role === 'admin') links = adminLinks;
 
     return (
-        <div className="flex h-screen bg-gray-50">
-            {/* Sidebar */}
-            <div className="w-64 bg-white shadow-lg flex flex-col">
-                <div className="p-6 border-b">
-                    <h1 className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
-                        <span>✨</span> KMIT Khaoot
-                    </h1>
-                    <p className="text-xs text-gray-500 mt-1 capitalize">{role} Portal</p>
-                </div>
+        <div className="min-h-screen bg-[#0f172a] text-slate-200 flex flex-col">
+            {/* Top Navbar */}
+            <header className="bg-[#0f172a]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between h-20">
+                        {/* Logo & Branding */}
+                        <div className="flex items-center gap-8">
+                            <div className="flex-shrink-0 flex items-center gap-3">
+                                <div className="bg-[#ff6b00] p-2 rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.3)]">
+                                    <span className="text-2xl">🔥</span>
+                                </div>
+                                <h1 className="text-2xl font-black text-white tracking-tight italic">
+                                    KMIT <span className="text-[#ff6b00]">Kahoot</span>
+                                </h1>
+                            </div>
 
-                <nav className="flex-1 p-4 space-y-2">
-                    {links.map((link) => {
-                        const Icon = link.icon;
-                        return (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(link.path)
-                                    ? 'bg-indigo-50 text-indigo-600 font-medium'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                    }`}
-                            >
-                                <Icon size={20} />
-                                {link.name}
-                            </Link>
-                        );
-                    })}
-                </nav>
-
-                <div className="p-4 border-t bg-gray-50">
-                    <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                            {user?.username?.[0]?.toUpperCase()}
+                            {/* Navigation Links */}
+                            <nav className="hidden md:flex space-x-4">
+                                {links.map((link) => {
+                                    const Icon = link.icon;
+                                    return (
+                                        <Link
+                                            key={link.path}
+                                            to={link.path}
+                                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${isActive(link.path)
+                                                ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20'
+                                                : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                                                }`}
+                                        >
+                                            <Icon size={18} />
+                                            {link.name}
+                                        </Link>
+                                    );
+                                })}
+                            </nav>
                         </div>
-                        <div className="overflow-hidden">
-                            <p className="text-sm font-medium text-gray-900 truncate">{user?.username}</p>
-                            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+
+                        {/* User Actions */}
+                        <div className="flex items-center gap-4">
+                            <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+                                <div className="w-8 h-8 rounded-full bg-[#ff6b00] flex items-center justify-center text-white font-black shadow-sm ring-2 ring-white/10">
+                                    {user?.username?.[0]?.toUpperCase()}
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-black text-white leading-none">{user?.username}</p>
+                                    <p className="text-[10px] text-[#ff6b00] font-bold uppercase mt-1 tracking-widest">{role}</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleLogout}
+                                className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-2xl transition-all border border-transparent hover:border-red-400/20"
+                                title="Logout"
+                            >
+                                <LogOut size={22} />
+                            </button>
                         </div>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                        <LogOut size={18} />
-                        Logout
-                    </button>
                 </div>
-            </div>
+            </header>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-auto">
-                <header className="bg-white shadow-sm p-4 flex justify-between items-center sm:hidden">
-                    <span className="font-bold">KMIT Khaoot Platform</span>
-                    {/* Mobile menu toggle would go here */}
-                </header>
-                <main className="p-8">
-                    {children}
-                </main>
-            </div>
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {children}
+            </main>
+
+            {/* Bottom Branding */}
+            <footer className="py-6 text-center text-slate-600 text-xs font-medium border-t border-white/5">
+                &copy; {new Date().getFullYear()} KMIT Educational Arena. Empowering Excellence.
+            </footer>
         </div>
     );
 }

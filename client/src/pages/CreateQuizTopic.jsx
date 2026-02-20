@@ -2,17 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Book, Loader2, CheckCircle, Hash, Gauge, Clock, Radio } from 'lucide-react';
+import { Book, Loader2, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles } from 'lucide-react';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
-    const [timer, setTimer] = useState(30);
-    const [duration, setDuration] = useState(0); // Global duration
     const [loading, setLoading] = useState(false);
-    const [isLive, setIsLive] = useState(false);
-
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -23,21 +19,19 @@ export default function CreateQuizTopic() {
                 topic,
                 type: 'topic',
                 questionCount,
-                difficulty,
-                difficulty,
-                timerPerQuestion: timer,
-                duration,
-                isLive
+                difficulty
             };
 
-            const res = await api.post('/quiz/create', payload);
+            const res = await api.post('/quiz/generate', payload);
 
-            if (isLive) {
-                navigate(`/live-room-teacher/${res.data.joinCode}`);
-            } else {
-                navigate('/teacher-dashboard');
-                alert('AI Quiz Generated from Topic Successfully!');
-            }
+            // Redirect to the editor with generated questions
+            navigate('/create-quiz/text', {
+                state: {
+                    questions: res.data.questions,
+                    title: res.data.title,
+                    duration: res.data.duration || 10
+                }
+            });
         } catch (err) {
             console.error(err);
             alert('Failed to generate quiz');
@@ -48,121 +42,85 @@ export default function CreateQuizTopic() {
 
     return (
         <DashboardLayout role="teacher">
-            <div className="max-w-2xl mx-auto py-8">
-                <div className="mb-8 flex items-center gap-3">
-                    <div className="bg-green-100 p-2 rounded-lg">
-                        <Book className="text-green-600" size={24} />
-                    </div>
+            <div className="max-w-4xl mx-auto pb-20 relative">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#ff6b00]/5 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
+
+                <div className="mb-12 flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Create from Topic</h1>
-                        <p className="text-gray-500">Enter a topic and let AI handle the rest.</p>
+                        <h1 className="text-4xl font-black text-white tracking-tight italic uppercase">
+                            AI <span className="text-[#ff6b00]">Topic Creator</span>
+                        </h1>
+                        <p className="text-slate-400 mt-2 font-bold uppercase tracking-wider text-sm italic">Generate 5 questions from any subject</p>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border-2 border-green-50 p-8 space-y-8">
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Enter Topic</label>
-                        <input
-                            type="text"
-                            value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
-                            className="w-full p-4 border-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-green-500"
-                            placeholder="e.g. World War II, Photosynthesis, Javascript Basics"
-                            required
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100">
-                            <label className="flex items-center gap-2 text-sm font-bold text-blue-800 mb-3 uppercase tracking-wide">
-                                <Hash size={18} /> Questions
-                            </label>
-                            <input
-                                type="number"
-                                min="1"
-                                max="20"
-                                value={questionCount}
-                                onChange={(e) => setQuestionCount(parseInt(e.target.value) || 0)}
-                                className="w-full p-4 border-2 border-blue-200 bg-white rounded-xl focus:ring-2 focus:ring-blue-500 font-black text-xl text-blue-900"
-                                required
-                            />
-                        </div>
-
-                        <div className="bg-purple-50 p-6 rounded-2xl border-2 border-purple-100">
-                            <label className="flex items-center gap-2 text-sm font-bold text-purple-800 mb-3 uppercase tracking-wide">
-                                <Gauge size={18} /> Difficulty
-                            </label>
-                            <select
-                                value={difficulty}
-                                onChange={(e) => setDifficulty(e.target.value)}
-                                className="w-full p-4 border-2 border-purple-200 bg-white rounded-xl focus:ring-2 focus:ring-purple-500 font-bold text-lg text-purple-900"
-                            >
-                                <option value="Easy">Easy</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Thinkable">Thinkable</option>
-                                <option value="Hard">Hard</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
-                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
-                            <Clock size={18} /> Timer per Question (Seconds)
-                        </label>
-                        <input
-                            type="number"
-                            min="10"
-                            max="300"
-                            value={timer}
-                            onChange={(e) => setTimer(parseInt(e.target.value) || 0)}
-                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
-                            required
-                        />
-                    </div>
-
-
-
-                    <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-100">
-                        <label className="flex items-center gap-2 text-sm font-bold text-orange-800 mb-3 uppercase tracking-wide">
-                            <Clock size={18} /> Global Timer (Minutes)
-                        </label>
-                        <input
-                            type="number"
-                            min="0"
-                            max="180"
-                            value={duration}
-                            onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
-                            className="w-full p-4 border-2 border-orange-200 bg-white rounded-xl focus:ring-2 focus:ring-orange-500 font-black text-xl text-orange-900"
-                            placeholder="0 = No Limit"
-                        />
-                        <p className="text-xs text-orange-600 mt-2">Optional: Overrides per-question timer if set > 0</p>
-                    </div>
-
-                    <div className="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 flex flex-col justify-center">
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                checked={isLive}
-                                onChange={(e) => setIsLive(e.target.checked)}
-                                className="w-5 h-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                            />
-                            <div className="flex items-center gap-2">
-                                <Radio className="text-indigo-600" size={18} />
-                                <span className="text-sm font-bold text-indigo-800 uppercase tracking-wide">Create Live Room</span>
+                <form onSubmit={handleSubmit} className="space-y-12">
+                    <div className="bg-white/5 rounded-[3rem] border border-white/10 p-12 ring-1 ring-white/5 relative overflow-hidden group">
+                        <div className="relative z-10 space-y-10">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Enter Topic</label>
+                                <input
+                                    type="text"
+                                    value={topic}
+                                    onChange={(e) => setTopic(e.target.value)}
+                                    className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[#ff6b00] transition-all font-black text-3xl text-white placeholder:text-slate-700 outline-none"
+                                    placeholder="e.g. Artificial Intelligence, History of India"
+                                    required
+                                />
                             </div>
-                        </label>
-                        <p className="text-xs text-indigo-600 mt-2 ml-8">Students join with a code and see live leaderboard</p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 flex items-center gap-6">
+                                    <div className="bg-[#ff6b00] w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                                        <Hash size={32} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Question Count</p>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="20"
+                                            value={questionCount}
+                                            onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                                            className="bg-transparent border-none text-2xl font-black text-white italic outline-none w-full"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 flex items-center gap-6">
+                                    <div className="bg-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                                        <Gauge size={32} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Difficulty</p>
+                                        <select
+                                            value={difficulty}
+                                            onChange={(e) => setDifficulty(e.target.value)}
+                                            className="bg-transparent border-none text-2xl font-black text-white italic outline-none w-full appearance-none cursor-pointer"
+                                        >
+                                            <option value="Easy" className="text-black">Easy</option>
+                                            <option value="Medium" className="text-black">Medium</option>
+                                            <option value="Thinkable" className="text-black">Thinkable</option>
+                                            <option value="Hard" className="text-black">Hard</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Book className="absolute -right-20 -bottom-20 opacity-[0.03] text-white group-hover:rotate-12 transition-transform duration-700" size={400} />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading || !topic}
-                        className="w-full flex items-center justify-center gap-3 bg-green-600 text-white px-8 py-5 rounded-2xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl font-black text-xl uppercase tracking-widest mt-4"
-                    >
-                        {loading ? <Loader2 className="animate-spin" size={24} /> : <CheckCircle size={24} />}
-                        {loading ? 'Generating Quiz...' : 'Generate AI Quiz'}
-                    </button>
+                    <div className="flex justify-center pt-8">
+                        <button
+                            type="submit"
+                            disabled={loading || !topic}
+                            className="group flex items-center gap-6 bg-[#ff6b00] text-white px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[#ff6b00]/20 font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[#cc5500]"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={32} /> : <Sparkles size={32} />}
+                            {loading ? 'ANALYZING...' : 'GENERATE QUIZ'}
+                        </button>
+                    </div>
                 </form>
-            </div >
-        </DashboardLayout >
+            </div>
+        </DashboardLayout>
     );
 }

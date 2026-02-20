@@ -48,6 +48,10 @@ const QuizSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isAssessment: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: String,
         enum: ['waiting', 'started', 'finished'],

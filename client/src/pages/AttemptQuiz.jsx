@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond } from 'lucide-react';
 
 export default function AttemptQuiz() {
     const { id } = useParams();
@@ -20,6 +20,9 @@ export default function AttemptQuiz() {
     const [showNewQuestionModal, setShowNewQuestionModal] = useState(false);
     const [showIntermediateLeaderboard, setShowIntermediateLeaderboard] = useState(false);
     const [currentLeaderboard, setCurrentLeaderboard] = useState([]);
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
+    const hasInitializedTimer = useRef(false);
 
     // Timer Logic
     useEffect(() => {
@@ -55,44 +58,47 @@ export default function AttemptQuiz() {
             }
         });
 
+        socket.on('timer_update', ({ additionalSeconds }) => {
+            console.log('Teacher increased time by:', additionalSeconds);
+            setTimeLeft(prev => prev + additionalSeconds);
+        });
+
         socket.on('quiz_ended', async () => {
             // Show non-blocking notification
-            setIsWaiting(true); // Reuse waiting state to show loader/message
-            setNewQuestionNotification(null); // Clear any other modals
+            setIsWaiting(true);
+            setNewQuestionNotification(null);
             setShowNewQuestionModal(false);
 
-            // Create a temporary "Quiz Ended" message if possible, or just redirect
             const endMessage = document.createElement('div');
             endMessage.innerHTML = `
-                <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#ef4444; color:white; padding:16px 24px; border-radius:12px; font-weight:bold; box-shadow:0 10px 25px -5px rgba(0,0,0,0.1); z-index:9999; display:flex; align-items:center; gap:12px;">
-                    <span>🛑 Quiz Ended by Teacher</span>
-                    <span style="font-size:0.8em; opacity:0.9">Redirecting...</span>
+                <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#ff6b00; color:white; padding:16px 24px; border-radius:12px; font-weight:bold; box-shadow:0 10px 25px -5px rgba(0,0,0,0.1); z-index:9999; display:flex; align-items:center; gap:12px; font-family: sans-serif; text-transform: uppercase; font-style: italic;">
+                    <span>🏁 Quiz Ended!</span>
+                    <span style="font-size:0.8em; opacity:0.9">Redirecting to Leaderboard...</span>
                 </div>
             `;
             document.body.appendChild(endMessage);
 
-            // Safety timeout to force redirect if submit hangs
             const redirectTimer = setTimeout(() => {
-                navigate('/student-dashboard');
+                navigate(`/leaderboard/${id}`);
                 if (document.body.contains(endMessage)) document.body.removeChild(endMessage);
-            }, 3000);
+            }, 2500);
 
             try {
                 await submitQuiz();
             } catch (e) {
                 console.error("Auto-submit failed", e);
-            } finally {
-                // We let the timer handle the redirect to ensure user sees the message for a bit
-                // Or if submit is fast, we wait for timer.
-                // Actually, if submit is fast, we should probably just wait for timer.
-                // But let's clear timer and redirect if it takes > 2s but finishes.
-                // Simplify: Just let the timer do it, or do it immediately if submit finishes?
-                // Let's ensure at least 2s delay so they see the message.
             }
         });
+        socket.on('sync_timer', ({ timeLeft }) => {
+            console.log('Syncing timer from server:', timeLeft);
+            setTimeLeft(timeLeft);
+        });
+
         return () => {
             socket.off('change_question');
             socket.off('quiz_ended');
+            socket.off('timer_update');
+            socket.off('sync_timer');
         };
     }, [quiz]);
 
@@ -129,16 +135,23 @@ export default function AttemptQuiz() {
             });
 
             // Show intermediate leaderboard
-            setShowIntermediateLeaderboard(true);
+            // Auto-advance logic for live quizzes
+            setTimeout(() => {
+                handleContinueToNext();
+            }, 1500); // 1.5s delay to show correct/incorrect state
         }
     };
 
     const handleContinueToNext = () => {
         setShowIntermediateLeaderboard(false);
+        setShowFeedback(false);
 
         if (currentQuestion < quiz.questions.length - 1) {
             setCurrentQuestion(prev => prev + 1);
-            setTimeLeft(quiz.timerPerQuestion || 30);
+            // Reset timer for next question if per-question timer exists
+            if (!quiz.duration) {
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            }
         } else {
             // Last question - navigate to final leaderboard
             navigate(`/leaderboard/${id}`);
@@ -147,31 +160,50 @@ export default function AttemptQuiz() {
 
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
-            // GLOBAL TIMER LOGIC
-            if (quiz.duration && quiz.duration > 0) {
-                // Calculate remaining time based on start time
-                // We need to know WHEN it started. 
-                // If resuming, `quiz.previousResult.startedAt` would be the key.
-                // If new start, we need to track it.
-                // Let's assume we fetch `startedAt` or fallback to now.
-                const startTime = quiz.previousResult?.startedAt ? new Date(quiz.previousResult.startedAt).getTime() : Date.now();
-                const endTime = startTime + (quiz.duration * 60 * 1000);
-                const now = Date.now();
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const decoded = JSON.parse(atob(token.split('.')[1]));
+                    socket.emit('student_question_focus', {
+                        quizId: id,
+                        studentId: decoded.user.id,
+                        username: decoded.user.username,
+                        questionIndex: currentQuestion
+                    });
+                } catch (e) {
+                    console.error("Focus emit error:", e);
+                }
+            }
+        }
+    }, [currentQuestion, quiz, isReviewMode, result, id]);
 
-                const remainingSeconds = Math.max(0, Math.floor((endTime - now) / 1000));
-                setTimeLeft(remainingSeconds);
-
-                // If using global timer, we don't reset per question
+    // Timer Initialization (Split from focus logic)
+    useEffect(() => {
+        if (quiz && !isReviewMode && !result) {
+            // Initialize global timer ONLY ONCE
+            if (quiz.duration > 0) {
+                if (!hasInitializedTimer.current) {
+                    setTimeLeft(quiz.duration * 60);
+                    hasInitializedTimer.current = true;
+                }
             } else {
-                // PER QUESTION TIMER (Default)
+                // Per question timer: reset on every question change
                 setTimeLeft(quiz.timerPerQuestion || 30);
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result]);
+    }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
 
-    // Timer Tick
     useEffect(() => {
-        if (loading || isReviewMode || result || !quiz) return;
+        if (loading || isReviewMode || !quiz) return;
+
+        // Only stop timer on result if it's NOT a live quiz
+        if (result && !quiz.isLive) return;
+
+        // Disable timer if both options are 0 (Assessment Mode)
+        if (quiz.timerPerQuestion === 0 && quiz.duration === 0) {
+            setTimeLeft(0);
+            return;
+        }
 
         const timerId = setInterval(() => {
             setTimeLeft(prev => {
@@ -307,7 +339,7 @@ export default function AttemptQuiz() {
     const handleSingleQuestionSubmit = () => {
         if (!answers[currentQuestion]) return alert("Please select an option first!");
 
-        // In live mode, we submit and wait
+        // In live mode, we submit and move to next (self-pacing)
         if (quiz?.isLive) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
@@ -319,7 +351,14 @@ export default function AttemptQuiz() {
                 answer: answers[currentQuestion],
                 timeRemaining: timeLeft
             });
-            setIsWaiting(true);
+
+            // Show feedback immediately
+            const isCorrect = answers[currentQuestion] === quiz.questions[currentQuestion].correctAnswer;
+            setIsCorrectFeedback(isCorrect);
+            setShowFeedback(true);
+
+            // Note: Manual progression now - we don't auto-advance anymore
+            // The "Next" button in the bottom bar will handle the advancement
         } else {
             // Self-paced: just move next
             if (currentQuestion < quiz.questions.length - 1) {
@@ -370,55 +409,88 @@ export default function AttemptQuiz() {
     );
 
     // Only show result summary immediately after submission, NOT in review mode
-    // In review mode we want to walk through questions
-    if (result && !isReviewMode) return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-in fade-in zoom-in duration-300">
-                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle size={48} />
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Quiz Completed!</h1>
-                <p className="text-gray-500 mb-8">Great job finishing the quiz. Here are your results:</p>
+    // For live quizzes, show a "Waiting" screen instead of the score summary
+    if (result && !isReviewMode) {
+        if (quiz?.isLive) {
+            return (
+                <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center p-6 text-white text-center font-inter relative overflow-hidden">
+                    {/* Background Decorations */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ff6b00]/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
 
-                <div className="bg-indigo-50 rounded-2xl p-6 mb-8">
-                    <p className="text-sm text-indigo-600 font-bold uppercase tracking-wider mb-1">Your Score</p>
-                    <div className="text-5xl font-black text-indigo-900">
-                        {result.score} <span className="text-xl text-indigo-400 font-medium">/ {result.totalQuestions * 10}</span>
+                    <div className="relative z-10 space-y-8 animate-in fade-in zoom-in duration-500 max-w-md w-full">
+                        <div className="w-24 h-24 bg-white/5 backdrop-blur-xl border border-white/20 rounded-[2rem] flex items-center justify-center mx-auto mb-4 animate-pulse">
+                            <Clock className="text-[#ff6b00]" size={40} />
+                        </div>
+                        <h1 className="text-4xl font-black italic uppercase tracking-tighter">Mission <span className="text-[#ff6b00]">Complete</span></h1>
+                        <p className="text-gray-400 font-bold uppercase tracking-widest text-xs leading-relaxed">
+                            Your data has been transmitted. The gateway will open when the synchronization sequence concludes.
+                        </p>
+                        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md space-y-4">
+                            <div className="flex flex-col items-center gap-2">
+                                <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Leaderboard appears in</span>
+                                <div className="text-5xl font-black italic text-[#ff6b00]">
+                                    {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-center gap-4 text-white/40">
+                                <Loader2 className="animate-spin" size={16} />
+                                <span className="font-black italic uppercase tracking-widest text-[10px]">Synchronizing Results...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            );
+        }
 
-                <div className="space-y-3">
-                    <button
-                        onClick={() => navigate(`/leaderboard/${id}`)}
-                        className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                    >
-                        <Trophy size={20} /> View Leaderboard
-                    </button>
-                    <div className="grid grid-cols-2 gap-3">
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle size={48} />
+                    </div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Quiz Completed!</h1>
+                    <p className="text-gray-500 mb-8">Great job finishing the quiz. Here are your results:</p>
+
+                    <div className="bg-indigo-50 rounded-2xl p-6 mb-8">
+                        <p className="text-sm text-indigo-600 font-bold uppercase tracking-wider mb-1">Your Score</p>
+                        <div className="text-5xl font-black text-indigo-900">
+                            {result.score} <span className="text-xl text-indigo-400 font-medium">/ {result.totalQuestions * 10}</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
                         <button
-                            onClick={() => {
-                                if (window.history.length > 2) {
-                                    navigate(-1);
-                                } else {
-                                    navigate('/student-dashboard');
-                                }
-                            }}
-                            className="bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                            onClick={() => navigate(`/leaderboard/${id}`)}
+                            className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                         >
-                            <Home size={18} /> Home
+                            <Trophy size={20} /> View Leaderboard
                         </button>
-                        <button
-                            onClick={() => setIsReviewMode(true)}
-                            className="bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-2"
-                        >
-                            Review
-                        </button>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => {
+                                    if (window.history.length > 2) {
+                                        navigate(-1);
+                                    } else {
+                                        navigate('/student-dashboard');
+                                    }
+                                }}
+                                className="bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                            >
+                                Home
+                            </button>
+                            <button
+                                onClick={() => setIsReviewMode(true)}
+                                className="bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-2"
+                            >
+                                Review
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
-
+        );
+    }
     const question = quiz.questions[currentQuestion];
     const isLastQuestion = currentQuestion === quiz.questions.length - 1;
 
@@ -443,11 +515,35 @@ export default function AttemptQuiz() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    {!isReviewMode && !result && (
-                        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-black transition-all ${timeLeft <= 5 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-orange-100 text-orange-600'
-                            }`}>
-                            <Clock size={18} />
-                            <span className="font-mono text-lg">{timeLeft}s</span>
+                    {!isReviewMode && !result && (quiz.timerPerQuestion > 0 || quiz.duration > 0) && (
+                        <div className="flex flex-col items-center">
+                            <div className="relative w-16 h-16">
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle
+                                        cx="32"
+                                        cy="32"
+                                        r="28"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        fill="transparent"
+                                        className="text-gray-100"
+                                    />
+                                    <circle
+                                        cx="32"
+                                        cy="32"
+                                        r="28"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        fill="transparent"
+                                        strokeDasharray={175.9}
+                                        strokeDashoffset={175.9 * (1 - timeLeft / (quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30)))}
+                                        className={`transition-all duration-1000 ${timeLeft <= 5 ? 'text-red-500' : 'text-[#ff6b00]'}`}
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className={`text-xl font-black ${timeLeft <= 5 ? 'text-red-600 animate-pulse' : 'text-gray-900'}`}>{timeLeft}</span>
+                                </div>
+                            </div>
                         </div>
                     )}
                     {isReviewMode && (
@@ -494,11 +590,30 @@ export default function AttemptQuiz() {
                     )}
 
                     {/* WAITING STATE OVERLAY */}
-                    {isWaiting && !isReviewMode && (
+                    {isWaiting && !isReviewMode && !showFeedback && (
                         <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl">
                             <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
-                            <h2 className="text-2xl font-bold text-gray-900">Answer Submitted!</h2>
-                            <p className="text-gray-500 font-medium mt-2">Waiting for teacher to continue...</p>
+                            <h2 className="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
+                            <p className="text-gray-500 font-medium mt-2">Waiting for teacher to end the session...</p>
+                        </div>
+                    )}
+
+                    {/* CORRECT/INCORRECT FEEDBACK OVERLAY */}
+                    {showFeedback && (
+                        <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-500/90' : 'bg-red-500/90'} backdrop-blur-sm text-white`}>
+                            {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
+                            <h2 className="text-4xl font-black uppercase italic tracking-tighter">
+                                {isCorrectFeedback ? 'Correct!' : 'Incorrect'}
+                            </h2>
+                            {!isCorrectFeedback && (
+                                <p className="mt-4 font-bold text-center px-8">
+                                    The correct answer was:<br />
+                                    <span className="text-2xl underline decoration-white/50">{quiz.questions[currentQuestion].correctAnswer}</span>
+                                </p>
+                            )}
+                            <div className="mt-8 flex items-center gap-2 text-white/60 font-black uppercase tracking-widest text-xs">
+                                <Loader2 className="animate-spin" size={12} /> Next Question...
+                            </div>
                         </div>
                     )}
 
@@ -510,35 +625,51 @@ export default function AttemptQuiz() {
                             {question.questionText}
                         </h1>
 
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {question.options.map((option, idx) => {
                                 const isSelected = answers[currentQuestion] === option;
                                 const isCorrect = questionResult?.correctOption === option;
 
-                                let containerClass = 'border-gray-100 text-gray-700 hover:border-indigo-200 hover:bg-gray-50';
+                                // Kahoot Colors & Shapes
+                                const kahootStyles = [
+                                    { color: 'bg-[#eb1727]', hover: 'hover:bg-[#c91422]', icon: Triangle },
+                                    { color: 'bg-[#1368ce]', hover: 'hover:bg-[#1056ab]', icon: Diamond },
+                                    { color: 'bg-[#d5a021]', hover: 'hover:bg-[#b0851b]', icon: Circle },
+                                    { color: 'bg-[#26890c]', hover: 'hover:bg-[#1e6d09]', icon: Square }
+                                ];
+                                const style = kahootStyles[idx % 4];
+                                const ShapeIcon = style.icon;
+
+                                let containerClass = `${style.color} ${style.hover} text-white shadow-lg`;
                                 if (isReviewMode) {
-                                    if (isCorrect) containerClass = 'border-green-500 bg-green-50 text-green-900';
-                                    else if (isSelected && !isCorrect) containerClass = 'border-red-500 bg-red-50 text-red-900';
-                                    else containerClass = 'border-gray-100 text-gray-400 opacity-60';
+                                    if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-200';
+                                    else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-200';
+                                    else containerClass = 'bg-gray-200 text-gray-400 opacity-40 grayscale';
                                 } else if (isSelected) {
-                                    containerClass = 'border-indigo-600 bg-indigo-50 text-indigo-900';
+                                    containerClass = `${style.color} ring-8 ring-white/30 scale-[0.98]`;
+                                }
+
+                                if (answers[currentQuestion] && !isSelected && !isReviewMode) {
+                                    containerClass += ' opacity-50 grayscale-[0.5]';
                                 }
 
                                 return (
                                     <button
                                         key={idx}
-                                        disabled={isReviewMode || isWaiting || submitting}
+                                        disabled={isReviewMode || isWaiting || submitting || (answers[currentQuestion] && !isSelected)}
                                         onClick={() => handleOptionSelect(option)}
-                                        className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center justify-between group ${containerClass} disabled:cursor-not-allowed`}
+                                        className={`relative h-24 md:h-32 text-left px-8 rounded-xl transition-all flex items-center gap-6 group ${containerClass} disabled:cursor-not-allowed overflow-hidden`}
                                     >
-                                        <span className="font-medium">{option}</span>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isReviewMode
-                                            ? (isCorrect ? 'border-green-500 bg-green-500 text-white' : (isSelected ? 'border-red-500 bg-red-500 text-white' : 'border-gray-200'))
-                                            : (isSelected ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-200 group-hover:border-indigo-300')
-                                            }`}>
-                                            {isSelected && isReviewMode && !isCorrect && <XCircle size={14} />}
-                                            {(isSelected || (isReviewMode && isCorrect)) && (isReviewMode ? isCorrect : isSelected) && <CheckCircle size={14} />}
+                                        <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+                                            <ShapeIcon size={28} fill="white" strokeWidth={0} />
                                         </div>
+                                        <span className="text-xl md:text-2xl font-black italic uppercase tracking-tight">{option}</span>
+
+                                        {isSelected && !isReviewMode && (
+                                            <div className="absolute top-2 right-2 bg-white text-gray-900 rounded-full p-1">
+                                                <CheckCircle size={16} />
+                                            </div>
+                                        )}
                                     </button>
                                 );
                             })}
@@ -571,21 +702,26 @@ export default function AttemptQuiz() {
                                 </button>
                             ) : (
                                 <button
-                                    onClick={submitQuiz}
-                                    disabled={submitting}
-                                    className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                                    onClick={answers[currentQuestion] && !showFeedback ? handleSingleQuestionSubmit : submitQuiz}
+                                    disabled={submitting || (quiz.isLive && !answers[currentQuestion])}
+                                    className="flex items-center gap-2 bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg shadow-[#ff6b00]/20 active:scale-95 disabled:opacity-50"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                                    {submitting ? 'Submitting...' : 'Finish Quiz'}
+                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : (showFeedback ? <Trophy size={20} /> : <Send size={20} />)}
+                                    {submitting ? 'Submitting...' : (showFeedback ? 'View Results' : (answers[currentQuestion] ? 'Submit Final' : 'Finish Quiz'))}
                                 </button>
                             )
                         ) : (
                             <button
-                                onClick={handleSingleQuestionSubmit}
-                                disabled={isWaiting || !answers[currentQuestion] || (answers[currentQuestion] && isWaiting)}
-                                className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                                onClick={answers[currentQuestion] && !showFeedback ? handleSingleQuestionSubmit : handleContinueToNext}
+                                disabled={isWaiting || (!answers[currentQuestion] && !showFeedback)}
+                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 ${showFeedback ? 'bg-indigo-600 text-white shadow-indigo-600/20' : 'bg-[#ff6b00] text-white shadow-[#ff6b00]/20'
+                                    }`}
                             >
-                                {answers[currentQuestion] ? 'Answer Submitted' : (quiz?.isLive ? 'Submit Answer' : 'Next')} <ChevronRight size={20} />
+                                {showFeedback ? (
+                                    <>Next Question <ChevronRight size={20} /></>
+                                ) : (
+                                    <>Submit Answer <Send size={20} /></>
+                                )}
                             </button>
                         )}
                     </div>

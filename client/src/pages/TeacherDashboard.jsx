@@ -2,17 +2,16 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Type, Book, Cpu, BarChart3, Users, PlayCircle } from 'lucide-react';
+import { FileText, Type, Book, Cpu, BarChart3, Users, PlayCircle, PlusCircle, Sparkles, X } from 'lucide-react';
 
 export default function TeacherDashboard() {
     const [stats, setStats] = useState({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
+    const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 const res = await api.get('/quiz/stats');
-
-                // API now returns array of quiz stats, calculate summary
                 const quizArray = res.data || [];
                 const totalQuizzes = quizArray.length;
                 const totalAttempts = quizArray.reduce((sum, quiz) => sum + quiz.completionCount, 0);
@@ -23,130 +22,71 @@ export default function TeacherDashboard() {
                 setStats({ totalQuizzes, totalAttempts, averageScore });
             } catch (err) {
                 console.error('Error fetching dashboard stats', err);
-                setStats({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
-            } finally {
-                // Done
             }
         };
         fetchStats();
     }, []);
 
     const creationOptions = [
-        {
-            title: 'From Text',
-            description: 'Paste text/Manual questions.',
-            icon: Type,
-            color: 'bg-blue-500',
-            path: '/create-quiz/text'
-        },
-        {
-            title: 'From PDF',
-            description: 'Upload a PDF document.',
-            icon: FileText,
-            color: 'bg-red-500',
-            path: '/create-quiz/pdf'
-        },
-        {
-            title: 'From Topic',
-            description: 'AI generates from topic.',
-            icon: Book,
-            color: 'bg-green-500',
-            path: '/create-quiz/topic'
-        },
-        {
-            title: 'Advanced AI',
-            description: 'Customize everything.',
-            icon: Cpu,
-            color: 'bg-purple-500',
-            path: '/create-quiz/advanced'
-        }
+        { title: 'From Text', description: 'Paste text or manual entry', icon: Type, color: 'hover:bg-blue-500', path: '/create-quiz/text' },
+        { title: 'From PDF', description: 'Upload and extract document', icon: FileText, color: 'hover:bg-red-500', path: '/create-quiz/pdf' },
+        { title: 'From Topic', description: 'AI generates from a prompt', icon: Book, color: 'hover:bg-green-500', path: '/create-quiz/topic' }
     ];
 
     return (
         <DashboardLayout role="teacher">
-            <div className="space-y-8 pb-12">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 font-outfit">Main Dashboard</h1>
-                    <p className="text-gray-500 mt-2">Welcome back! Here's a quick overview of your quiz activity.</p>
-                </div>
+            <div className="space-y-12 pb-20 relative">
+                {/* Immersive Background Element */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#ff6b00]/5 rounded-full blur-[150px] pointer-events-none -z-10 animate-pulse"></div>
 
-                {/* Quick Stats Banner */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-blue-100 text-sm font-medium uppercase tracking-wide">Total Quizzes</p>
-                                <p className="text-4xl font-black mt-2">{stats.totalQuizzes}</p>
-                            </div>
-                            <BarChart3 size={48} className="opacity-20" />
+                {/* Hero Section */}
+                <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10">
+                    {!showOptions ? (
+                        <div className="space-y-12 animate-in fade-in zoom-in duration-500">
+                            <button
+                                onClick={() => setShowOptions(true)}
+                                className="group relative bg-[#ff6b00] text-white px-20 py-10 rounded-[3rem] font-black text-4xl italic tracking-tighter hover:scale-105 transition-all shadow-[0_32px_64px_-16px_rgba(255,107,0,0.3)] active:scale-95 flex items-center gap-8 mx-auto overflow-hidden border-4 border-white/20"
+                            >
+                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <span className="relative">CREATE A QUIZ</span>
+                                <PlusCircle className="relative group-hover:rotate-90 transition-transform duration-500" size={48} />
+                            </button>
                         </div>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-green-100 text-sm font-medium uppercase tracking-wide">Total Attempts</p>
-                                <p className="text-4xl font-black mt-2">{stats.totalAttempts}</p>
-                            </div>
-                            <Users size={48} className="opacity-20" />
-                        </div>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-purple-100 text-sm font-medium uppercase tracking-wide">Avg Score</p>
-                                <p className="text-4xl font-black mt-2">{Math.round(stats.averageScore)}</p>
-                            </div>
-                            <PlayCircle size={48} className="opacity-20" />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Quiz Creation Options */}
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Quiz</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {creationOptions.map((option, idx) => {
-                            const Icon = option.icon;
-                            return (
-                                <Link
-                                    key={idx}
-                                    to={option.path}
-                                    className="group bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-indigo-500 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                    ) : (
+                        <div className="w-full space-y-12 animate-in slide-in-from-bottom-10 fade-in duration-500">
+                            <div className="flex items-center justify-between max-w-4xl mx-auto w-full px-4">
+                                <h2 className="text-4xl font-black text-[#ff6b00] italic tracking-tighter uppercase">Select Your Method</h2>
+                                <button
+                                    onClick={() => setShowOptions(false)}
+                                    className="p-4 bg-white/5 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all ring-1 ring-white/10"
                                 >
-                                    <div className={`${option.color} w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                        <Icon className="text-white" size={28} />
-                                    </div>
-                                    <h3 className="font-bold text-gray-900 text-lg mb-2">{option.title}</h3>
-                                    <p className="text-gray-500 text-sm">{option.description}</p>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </div>
+                                    <X size={28} />
+                                </button>
+                            </div>
 
-                {/* Quick Links */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">My Quizzes</h2>
-                        <p className="text-gray-600 text-sm mb-4">
-                            View and manage all your created quizzes, including join codes for live rooms.
-                        </p>
-                        <Link to="/my-quizzes" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors">
-                            View My Quizzes
-                        </Link>
-                    </div>
-
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">Performance</h2>
-                        <p className="text-gray-600 text-sm mb-4">
-                            View detailed analytics and student performance across all your quizzes.
-                        </p>
-                        <Link to="/performance" className="inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition-colors">
-                            View Performance
-                        </Link>
-                    </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-4">
+                                {creationOptions.map((option, idx) => {
+                                    const Icon = option.icon;
+                                    return (
+                                        <Link
+                                            key={idx}
+                                            to={option.path}
+                                            className="group bg-white/5 border border-white/10 rounded-[3rem] p-12 hover:border-[#ff6b00]/50 hover:shadow-2xl hover:shadow-[#ff6b00]/10 transition-all duration-300 text-left relative overflow-hidden ring-1 ring-white/5"
+                                        >
+                                            <div className="bg-white/5 w-20 h-20 rounded-3xl flex items-center justify-center text-[#ff6b00] mb-8 group-hover:bg-[#ff6b00] group-hover:text-white transition-all duration-300 shadow-xl ring-1 ring-white/10">
+                                                <Icon size={40} />
+                                            </div>
+                                            <h3 className="text-3xl font-black text-white italic tracking-tighter mb-4 group-hover:text-[#ff6b00] transition-colors uppercase leading-none">{option.title}</h3>
+                                            <p className="text-slate-400 font-bold text-base leading-relaxed">{option.description}</p>
+                                            <div className="mt-10 flex items-center gap-2 text-[#ff6b00] font-black text-sm uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all">
+                                                Launch <Sparkles size={18} />
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </DashboardLayout>

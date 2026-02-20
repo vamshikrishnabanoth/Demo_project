@@ -8,8 +8,8 @@ import TeacherDashboard from './pages/TeacherDashboard';
 import CreateQuizText from './pages/CreateQuizText';
 import CreateQuizPDF from './pages/CreateQuizPDF';
 import CreateQuizTopic from './pages/CreateQuizTopic';
-import CreateQuizAdvanced from './pages/CreateQuizAdvanced';
 import StudentDashboard from './pages/StudentDashboard';
+import Assessments from './pages/Assessments';
 import MyQuizzes from './pages/MyQuizzes';
 import AttemptQuiz from './pages/AttemptQuiz';
 import Performance from './pages/Performance';
@@ -71,11 +71,6 @@ function App() {
             </ProtectedRoute>
           } />
 
-          <Route path="/create-quiz/advanced" element={
-            <ProtectedRoute roles={['teacher']}>
-              <CreateQuizAdvanced />
-            </ProtectedRoute>
-          } />
 
           <Route path="/performance" element={
             <ProtectedRoute roles={['teacher']}>
@@ -94,6 +89,14 @@ function App() {
               <StudentDashboard />
             </ProtectedRoute>
           } />
+
+          <Route path="/assessments" element={
+            <ProtectedRoute roles={['student']}>
+              <Assessments />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/history" element={<Navigate to="/assessments" replace />} />
 
           <Route path="/quiz/attempt/:id" element={
             <ProtectedRoute roles={['student']}>

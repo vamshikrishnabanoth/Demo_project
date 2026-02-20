@@ -36,8 +36,8 @@ export default function Performance() {
             <div className="space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Student Performance</h1>
-                        <p className="text-gray-500 mt-1">Detailed insights into how your students are doing.</p>
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tight italic uppercase">Student <span className="text-indigo-600">Performance</span></h1>
+                        <p className="text-gray-500 font-medium mt-1">Detailed insights into class-wide quiz outcomes.</p>
                     </div>
 
                     <div className="relative">
@@ -54,33 +54,33 @@ export default function Performance() {
 
                 {/* Top Stats Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div className="bg-blue-50 p-4 rounded-xl text-blue-600">
-                            <Users size={28} />
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
+                        <div className="bg-indigo-50 p-4 rounded-2xl text-indigo-600">
+                            <Users size={32} />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">Total Attempts</p>
-                            <p className="text-3xl font-bold text-gray-900">{totalCompletions}</p>
+                            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-1">Total Attempts</p>
+                            <p className="text-4xl font-black text-gray-900 italic">{totalCompletions}</p>
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div className="bg-green-50 p-4 rounded-xl text-green-600">
-                            <Trophy size={28} />
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
+                        <div className="bg-green-50 p-4 rounded-2xl text-green-600">
+                            <Trophy size={32} />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">Avg. Score</p>
-                            <p className="text-3xl font-bold text-gray-900">{avgOverallScore.toFixed(1)}%</p>
+                            <p className="text-[10px] text-green-400 font-black uppercase tracking-widest mb-1">Avg. Score</p>
+                            <p className="text-4xl font-black text-gray-900 italic">{avgOverallScore.toFixed(1)}%</p>
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div className="bg-purple-50 p-4 rounded-xl text-purple-600">
-                            <BarChart3 size={28} />
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
+                        <div className="bg-purple-50 p-4 rounded-2xl text-purple-600">
+                            <BarChart3 size={32} />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">Active Quizzes</p>
-                            <p className="text-3xl font-bold text-gray-900">{stats.length}</p>
+                            <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-1">Active Quizzes</p>
+                            <p className="text-4xl font-black text-gray-900 italic">{stats.length}</p>
                         </div>
                     </div>
                 </div>

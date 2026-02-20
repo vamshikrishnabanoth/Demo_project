@@ -47,4 +47,16 @@ router.delete('/:id', auth, quizController.deleteQuiz);
 // @desc    Get leaderboard for a quiz
 router.get('/leaderboard/:quizId', auth, quizController.getLeaderboard);
 
+// @route   GET api/quiz/history
+// @desc    Get current student's quiz history (completed and missed)
+router.get('/history/student', auth, quizController.getStudentHistory);
+
+// @route   PUT api/quiz/:id
+// @desc    Update a quiz
+router.put('/:id', auth, quizController.updateQuiz);
+
+// @route   POST api/quiz/generate
+// @desc    Generate quiz questions without saving (for review)
+router.post('/generate', auth, upload.single('pdf'), quizController.generateQuizQuestions);
+
 module.exports = router;
