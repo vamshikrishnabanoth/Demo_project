@@ -22,6 +22,7 @@ export default function AttemptQuiz() {
     const [currentLeaderboard, setCurrentLeaderboard] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
     const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
+    const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
     const hasInitializedTimer = useRef(false);
 
     // Timer Logic
@@ -122,7 +123,7 @@ export default function AttemptQuiz() {
         const currentAnswer = answers[currentQuestion] || '';
 
         if (quiz.isLive) {
-            // For live quiz, emit socket event and show leaderboard
+            // For live quiz, emit socket event and wait for teacher to advance
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
 
@@ -134,11 +135,8 @@ export default function AttemptQuiz() {
                 timeRemaining: 0
             });
 
-            // Show intermediate leaderboard
-            // Auto-advance logic for live quizzes
-            setTimeout(() => {
-                handleContinueToNext();
-            }, 1500); // 1.5s delay to show correct/incorrect state
+            // Lock this question — wait for teacher's change_question to move on
+            setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
         }
     };
 
@@ -339,7 +337,7 @@ export default function AttemptQuiz() {
     const handleSingleQuestionSubmit = () => {
         if (!answers[currentQuestion]) return alert("Please select an option first!");
 
-        // In live mode, we submit and move to next (self-pacing)
+        // In live mode, lock the answer and wait for teacher to advance
         if (quiz?.isLive) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
@@ -352,13 +350,8 @@ export default function AttemptQuiz() {
                 timeRemaining: timeLeft
             });
 
-            // Show feedback immediately
-            const isCorrect = answers[currentQuestion] === quiz.questions[currentQuestion].correctAnswer;
-            setIsCorrectFeedback(isCorrect);
-            setShowFeedback(true);
-
-            // Note: Manual progression now - we don't auto-advance anymore
-            // The "Next" button in the bottom bar will handle the advancement
+            // Lock this question — no feedback shown, wait for teacher's change_question
+            setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
         } else {
             // Self-paced: just move next
             if (currentQuestion < quiz.questions.length - 1) {
@@ -590,7 +583,7 @@ export default function AttemptQuiz() {
                     )}
 
                     {/* WAITING STATE OVERLAY */}
-                    {isWaiting && !isReviewMode && !showFeedback && (
+                    {isWaiting && !isReviewMode && (
                         <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl">
                             <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
                             <h2 className="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
@@ -598,8 +591,8 @@ export default function AttemptQuiz() {
                         </div>
                     )}
 
-                    {/* CORRECT/INCORRECT FEEDBACK OVERLAY */}
-                    {showFeedback && (
+                    {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
+                    {showFeedback && !quiz?.isLive && (
                         <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-500/90' : 'bg-red-500/90'} backdrop-blur-sm text-white`}>
                             {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
                             <h2 className="text-4xl font-black uppercase italic tracking-tighter">
@@ -649,14 +642,18 @@ export default function AttemptQuiz() {
                                     containerClass = `${style.color} ring-8 ring-white/30 scale-[0.98]`;
                                 }
 
+                                // In live mode: lock only after submit, allow free re-selection before
+                                const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
+
+                                // Dim non-selected options once ANY option selected (visual feedback)
                                 if (answers[currentQuestion] && !isSelected && !isReviewMode) {
-                                    containerClass += ' opacity-50 grayscale-[0.5]';
+                                    containerClass += isSubmittedLive ? ' opacity-30 grayscale' : ' opacity-50 grayscale-[0.5]';
                                 }
 
                                 return (
                                     <button
                                         key={idx}
-                                        disabled={isReviewMode || isWaiting || submitting || (answers[currentQuestion] && !isSelected)}
+                                        disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
                                         onClick={() => handleOptionSelect(option)}
                                         className={`relative h-24 md:h-32 text-left px-8 rounded-xl transition-all flex items-center gap-6 group ${containerClass} disabled:cursor-not-allowed overflow-hidden`}
                                     >
@@ -684,15 +681,16 @@ export default function AttemptQuiz() {
                     </div>
 
                     <div className="flex items-center justify-between w-full">
-                        <button
-                            onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-                            disabled={currentQuestion === 0 || quiz?.isLive}
-                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-all"
-                        >
-                            <ChevronLeft size={20} /> Previous
-                        </button>
+                        {/* In live mode, student cannot navigate manually */}
+                        <div className="w-10" />
 
-                        {isLastQuestion ? (
+                        {/* Live mode: after submitting show waiting banner */}
+                        {quiz?.isLive && answeredQuestions.has(currentQuestion) ? (
+                            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200 text-indigo-700 px-6 py-3 rounded-2xl font-bold text-sm">
+                                <Loader2 className="animate-spin" size={16} />
+                                Answer submitted! Waiting for teacher...
+                            </div>
+                        ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
                                     onClick={() => setIsReviewMode(false)}
@@ -702,28 +700,44 @@ export default function AttemptQuiz() {
                                 </button>
                             ) : (
                                 <button
-                                    onClick={answers[currentQuestion] && !showFeedback ? handleSingleQuestionSubmit : submitQuiz}
-                                    disabled={submitting || (quiz.isLive && !answers[currentQuestion])}
+                                    onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
+                                    disabled={submitting || !answers[currentQuestion]}
                                     className="flex items-center gap-2 bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg shadow-[#ff6b00]/20 active:scale-95 disabled:opacity-50"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : (showFeedback ? <Trophy size={20} /> : <Send size={20} />)}
-                                    {submitting ? 'Submitting...' : (showFeedback ? 'View Results' : (answers[currentQuestion] ? 'Submit Final' : 'Finish Quiz'))}
+                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+                                    {submitting ? 'Submitting...' : (quiz?.isLive ? 'Submit Answer' : 'Finish Quiz')}
                                 </button>
                             )
                         ) : (
-                            <button
-                                onClick={answers[currentQuestion] && !showFeedback ? handleSingleQuestionSubmit : handleContinueToNext}
-                                disabled={isWaiting || (!answers[currentQuestion] && !showFeedback)}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 ${showFeedback ? 'bg-indigo-600 text-white shadow-indigo-600/20' : 'bg-[#ff6b00] text-white shadow-[#ff6b00]/20'
-                                    }`}
-                            >
-                                {showFeedback ? (
-                                    <>Next Question <ChevronRight size={20} /></>
-                                ) : (
-                                    <>Submit Answer <Send size={20} /></>
-                                )}
-                            </button>
+                            isReviewMode ? (
+                                // Review mode: allow manual prev/next
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+                                        disabled={currentQuestion === 0}
+                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-all"
+                                    >
+                                        <ChevronLeft size={20} /> Prev
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentQuestion(prev => prev + 1)}
+                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 transition-all"
+                                    >
+                                        Next <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={handleSingleQuestionSubmit}
+                                    disabled={isWaiting || !answers[currentQuestion]}
+                                    className="flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 bg-[#ff6b00] text-white shadow-[#ff6b00]/20"
+                                >
+                                    Submit Answer <Send size={20} />
+                                </button>
+                            )
                         )}
+
+                        <div className="w-10" />
                     </div>
                 </div>
             </main>
