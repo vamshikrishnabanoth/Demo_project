@@ -339,40 +339,49 @@ export default function LiveRoomTeacher() {
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
                                 <div className="divide-y divide-gray-100">
-                                    {participants.map((p, pIdx) => (
-                                        <div key={p.username || pIdx} className="py-3 flex items-center justify-between">
-                                            <span className="font-medium text-gray-700 w-32 truncate">{p.username || 'Unknown'}</span>
-                                            <div className="flex-1 flex items-center gap-1 overflow-x-auto">
-                                                {quiz?.questions?.map((_, idx) => {
-                                                    // Check progress by _id first, then by username
-                                                    const byId = p._id &&
-                                                        studentProgress[p._id] &&
-                                                        (studentProgress[p._id][idx] === true ||
-                                                            studentProgress[p._id][idx.toString()] === true);
+                                    {participants.map((p, pIdx) => {
+                                        // Get this student's progress record (check by _id first, then username)
+                                        const progressById = p._id ? studentProgress[p._id] : null;
+                                        const progressByName = p.username ? studentProgress[p.username] : null;
+                                        const progress = progressById || progressByName || {};
 
-                                                    const byName = p.username &&
-                                                        studentProgress[p.username] &&
-                                                        (studentProgress[p.username][idx] === true ||
-                                                            studentProgress[p.username][idx.toString()] === true);
+                                        return (
+                                            <div key={p._id || p.username || pIdx} className="py-3 flex items-center gap-3">
+                                                <span className="font-medium text-gray-700 w-28 truncate text-sm">{p.username || 'Unknown'}</span>
+                                                <div className="flex-1 flex items-center gap-1 flex-wrap">
+                                                    {quiz?.questions?.map((_, idx) => {
+                                                        const isAnswered = progress[idx] === true || progress[idx.toString()] === true;
+                                                        const isPast = idx < currentQuestionIndex;
+                                                        const isCurrent = idx === currentQuestionIndex;
 
-                                                    const isAnswered = byId || byName;
-                                                    const isCurrent = idx === currentQuestionIndex;
+                                                        // Color logic:
+                                                        // answered → green
+                                                        // past & not answered → red (missed)
+                                                        // current or future → gray
+                                                        let dotClass = 'bg-gray-100 border-gray-200 text-gray-400'; // future/current unanswered
+                                                        if (isAnswered) {
+                                                            dotClass = 'bg-green-500 border-green-500 text-white';
+                                                        } else if (isPast) {
+                                                            dotClass = 'bg-red-400 border-red-400 text-white';
+                                                        }
 
-                                                    return (
-                                                        <div
-                                                            key={idx}
-                                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 
-                                                                ${isAnswered ? 'bg-green-500 border-green-500 text-white' : 'bg-gray-50 border-gray-200 text-gray-400'}
-                                                                ${isCurrent ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
-                                                            `}
-                                                        >
-                                                            {idx + 1}
-                                                        </div>
-                                                    );
-                                                })}
+                                                        return (
+                                                            <div
+                                                                key={idx}
+                                                                title={isAnswered ? 'Answered' : isPast ? 'Missed' : 'Pending'}
+                                                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all
+                                                                    ${dotClass}
+                                                                    ${isCurrent ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110' : ''}
+                                                                `}
+                                                            >
+                                                                {idx + 1}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
