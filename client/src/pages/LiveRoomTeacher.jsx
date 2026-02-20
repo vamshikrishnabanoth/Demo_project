@@ -283,6 +283,29 @@ export default function LiveRoomTeacher() {
                         <div className="bg-[#0f172a] rounded-[3rem] p-10 shadow-2xl border-b-[10px] border-slate-800">
                             <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 italic">Field Operations</h2>
                             <div className="space-y-6">
+
+                                {/* Question Navigation */}
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => handleNavigation('prev')}
+                                        disabled={currentQuestionIndex === 0}
+                                        className="flex-1 bg-slate-700 text-white p-5 rounded-[2rem] font-black italic uppercase tracking-tighter hover:bg-slate-600 transition active:scale-95 flex items-center justify-center gap-2 text-lg border-b-4 border-slate-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                                    >
+                                        <ChevronLeft size={22} /> Prev
+                                    </button>
+                                    <div className="flex flex-col items-center min-w-[60px]">
+                                        <span className="text-white font-black text-2xl italic">{currentQuestionIndex + 1}</span>
+                                        <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">/ {quiz?.questions?.length || 0}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleNavigation('next')}
+                                        disabled={currentQuestionIndex === (quiz?.questions?.length || 1) - 1}
+                                        className="flex-1 bg-indigo-600 text-white p-5 rounded-[2rem] font-black italic uppercase tracking-tighter hover:bg-indigo-500 transition active:scale-95 flex items-center justify-center gap-2 text-lg border-b-4 border-indigo-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                                    >
+                                        Next <ChevronRight size={22} />
+                                    </button>
+                                </div>
+
                                 <button
                                     onClick={handleIncreaseTime}
                                     className="w-full bg-[#ff6b00] text-white p-6 rounded-[2rem] font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-4 text-xl border-b-4 border-orange-700"
