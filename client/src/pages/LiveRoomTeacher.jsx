@@ -212,15 +212,32 @@ export default function LiveRoomTeacher() {
                         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[#ff6b00]/10 rounded-full blur-[100px]"></div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                        {participants.map((p, idx) => (
-                            <div key={idx} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-indigo-100/10 flex flex-col items-center gap-4 animate-in zoom-in fade-in duration-500">
-                                <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-black italic">
-                                    {p.username?.[0].toUpperCase()}
-                                </div>
-                                <span className="font-black text-gray-900 uppercase tracking-tight truncate w-full text-center italic">{p.username}</span>
+                    {/* Participants + Progress section in waiting room */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="md:col-span-2 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                    <Users className="text-blue-600" size={24} />
+                                    Participants ({participants.length})
+                                </h2>
                             </div>
-                        ))}
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {participants.map((p, idx) => (
+                                    <div key={idx} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3 animate-in fade-in zoom-in duration-300">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold uppercase">
+                                            {p.username ? p.username[0] : '?'}
+                                        </div>
+                                        <span className="font-bold text-gray-800 truncate">{p.username || 'Unknown'}</span>
+                                    </div>
+                                ))}
+                                {participants.length === 0 && (
+                                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                                        <p className="text-gray-400 font-medium italic">No students joined yet...</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </DashboardLayout>
@@ -279,7 +296,6 @@ export default function LiveRoomTeacher() {
                                     <MinusCircle size={24} /> TERMINATE SESSION
                                 </button>
                             </div>
-
                         </div>
 
                         {/* Top Performer Snippet */}
@@ -291,6 +307,44 @@ export default function LiveRoomTeacher() {
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Ringleader</p>
                                     <p className="text-2xl font-black italic uppercase">{liveInsights.topStudent}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Student Progress Grid */}
+                        {participants.length > 0 && (
+                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
+                                <div className="divide-y divide-gray-100">
+                                    {participants.map((p, pIdx) => (
+                                        <div key={p.username || pIdx} className="py-3 flex items-center justify-between">
+                                            <span className="font-medium text-gray-700 w-32 truncate">{p.username || 'Unknown'}</span>
+                                            <div className="flex-1 flex items-center gap-1 overflow-x-auto">
+                                                {quiz?.questions?.map((_, idx) => {
+                                                    const hasProgressId = p._id && studentProgress[p._id];
+                                                    const hasProgressName = p.username && studentProgress[p.username];
+
+                                                    const byId = hasProgressId && (studentProgress[p._id][idx] === true || studentProgress[p._id][idx.toString()] === true);
+                                                    const byName = hasProgressName && (studentProgress[p.username][idx] === true || studentProgress[p.username][idx.toString()] === true);
+
+                                                    const isAnswered = byId || byName;
+                                                    const isCurrent = idx === currentQuestionIndex;
+
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 
+                                                                ${isAnswered ? 'bg-green-500 border-green-500 text-white' : 'bg-gray-50 border-gray-200 text-gray-400'}
+                                                                ${isCurrent ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
+                                                            `}
+                                                        >
+                                                            {idx + 1}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         )}

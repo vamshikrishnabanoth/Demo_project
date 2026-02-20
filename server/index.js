@@ -70,8 +70,9 @@ io.on('connection', (socket) => {
                 const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
                 socket.emit('sync_timer', { timeLeft });
             }
-
-            if (state.progress && user.role === 'teacher') {
+            // Send persisted progress to teacher (or anyone who asks, to be safe for now)
+            if (state.progress) {
+                console.log(`Sending progress history to ${user.username} (${user.role})`);
                 socket.emit('progress_history', state.progress);
             }
         }
