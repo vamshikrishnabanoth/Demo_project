@@ -30,8 +30,13 @@ export default function LiveRoomStudent() {
                     return;
                 }
 
-                // Join socket room
-                socket.emit('join_room', { quizId: quizRes.data._id, user: { username: user.username, role: 'student' } });
+                // Join socket room - send _id so teacher can match progress by student ID
+                const token = localStorage.getItem('token');
+                let studentId = null;
+                if (token) {
+                    try { studentId = JSON.parse(atob(token.split('.')[1])).user.id; } catch (_) { }
+                }
+                socket.emit('join_room', { quizId: quizRes.data._id, user: { username: user.username, role: 'student', _id: studentId } });
 
             } catch (err) {
                 console.error(err);

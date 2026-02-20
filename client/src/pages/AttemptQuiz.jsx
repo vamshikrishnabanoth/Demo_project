@@ -65,29 +65,20 @@ export default function AttemptQuiz() {
         });
 
         socket.on('quiz_ended', async () => {
-            // Show non-blocking notification
-            setIsWaiting(true);
-            setNewQuestionNotification(null);
-            setShowNewQuestionModal(false);
+            // Navigate to leaderboard immediately
+            navigate(`/leaderboard/${id}`);
 
-            const endMessage = document.createElement('div');
-            endMessage.innerHTML = `
-                <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#ff6b00; color:white; padding:16px 24px; border-radius:12px; font-weight:bold; box-shadow:0 10px 25px -5px rgba(0,0,0,0.1); z-index:9999; display:flex; align-items:center; gap:12px; font-family: sans-serif; text-transform: uppercase; font-style: italic;">
-                    <span>🏁 Quiz Ended!</span>
-                    <span style="font-size:0.8em; opacity:0.9">Redirecting to Leaderboard...</span>
-                </div>
-            `;
-            document.body.appendChild(endMessage);
-
-            const redirectTimer = setTimeout(() => {
-                navigate(`/leaderboard/${id}`);
-                if (document.body.contains(endMessage)) document.body.removeChild(endMessage);
-            }, 2500);
-
+            // Try to submit answers in background (best effort)
             try {
-                await submitQuiz();
+                const formattedAnswers = quiz?.questions?.map((q, idx) => ({
+                    questionText: q.questionText,
+                    selectedOption: answers[idx] || ''
+                })) || [];
+
+                await api.post('/quiz/submit', { quizId: id, answers: formattedAnswers });
             } catch (e) {
-                console.error("Auto-submit failed", e);
+                // Ignore errors — student may have already submitted or quiz already finished
+                console.warn('Background submit on quiz_ended:', e?.message);
             }
         });
         socket.on('sync_timer', ({ timeLeft }) => {
