@@ -47,16 +47,11 @@ export default function AttemptQuiz() {
     useEffect(() => {
         socket.on('change_question', ({ questionIndex }) => {
             console.log('Teacher moved to question:', questionIndex);
-            if (questionIndex >= 0 && questionIndex < (quiz?.questions?.length || 0)) {
-                setCurrentQuestion(questionIndex);
-                setIsWaiting(false); // Reset waiting state on new question
-                // Also reset local timer since we moved to a new question
-                // If per-question timer is used, it should reset.
-                // If global timer is used, it continues.
-                if (!quiz.duration) {
-                    setTimeLeft(quiz.timerPerQuestion || 30);
-                }
-            }
+            setNewQuestionNotification({
+                title: 'Teacher Navigation',
+                message: `The teacher is now discussing question ${questionIndex + 1}`
+            });
+            setTimeout(() => setNewQuestionNotification(null), 3000);
         });
 
         socket.on('timer_update', ({ additionalSeconds }) => {
@@ -170,51 +165,36 @@ export default function AttemptQuiz() {
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
             // Initialize global timer ONLY ONCE
-            if (quiz.duration > 0) {
-                if (!hasInitializedTimer.current) {
+            if (!hasInitializedTimer.current) {
+                // If the quiz is live, we wait for sync_timer from socket
+                // If it's a static assessment, we use the quiz.duration
+                if (quiz.isLive) {
+                    // Initial guess until sync arrives
+                    setTimeLeft(quiz.duration ? quiz.duration * 60 : 600);
+                } else if (quiz.duration > 0) {
                     setTimeLeft(quiz.duration * 60);
-                    hasInitializedTimer.current = true;
                 }
-            } else {
-                // Per question timer: reset on every question change
-                setTimeLeft(quiz.timerPerQuestion || 30);
+                hasInitializedTimer.current = true;
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
+    }, [quiz, isReviewMode, result, id]);
 
     useEffect(() => {
-        if (loading || isReviewMode || !quiz) return;
-
-        // Only stop timer on result if it's NOT a live quiz
-        if (result && !quiz.isLive) return;
-
-        // Disable timer if both options are 0 (Assessment Mode)
-        if (quiz.timerPerQuestion === 0 && quiz.duration === 0) {
-            setTimeLeft(0);
-            return;
-        }
+        if (loading || isReviewMode || !quiz || result) return;
 
         const timerId = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
-                    if (quiz.duration > 0) {
-                        // Global timer expired -> Submit Quiz
-                        clearInterval(timerId);
-                        submitQuiz();
-                        return 0;
-                    } else {
-                        // Per question timer expired -> Next Question
-                        clearInterval(timerId);
-                        handleTimeUp();
-                        return 0;
-                    }
+                    clearInterval(timerId);
+                    submitQuiz(); // Global timeout submit
+                    return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
 
         return () => clearInterval(timerId);
-    }, [loading, isReviewMode, result, quiz, currentQuestion]);
+    }, [loading, isReviewMode, result, quiz]);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -300,10 +280,6 @@ export default function AttemptQuiz() {
     const setAnswersFromHistory = (historyAnswers) => {
         const newAnswers = {};
         historyAnswers.forEach((ans, _) => {
-            // Find index by question text in case of shuffling (advanced), but here strictly by index for now or assume order
-            // Better to map by questionText if possible, but index is safe for now if static
-            // Actually, `answers` state is by index.
-            // We need to match existing questions.
             const qIndex = quiz.questions.findIndex(q => q.questionText === ans.questionText);
             if (qIndex >= 0) newAnswers[qIndex] = ans.selectedOption;
         });
@@ -322,37 +298,29 @@ export default function AttemptQuiz() {
         // Save to LocalStorage for immediate crash recovery
         localStorage.setItem(`quiz_answers_${id}`, JSON.stringify(newAnswers));
 
-        // Note: We removed the auto-advance logic to allow manual submission
-    };
+        // Lock the answer locally and emit via socket for real-time progress
+        setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
 
-    const handleSingleQuestionSubmit = () => {
-        if (!answers[currentQuestion]) return alert("Please select an option first!");
-
-        // In live mode, lock the answer and wait for teacher to advance
-        if (quiz?.isLive) {
-            const token = localStorage.getItem('token');
-            const userId = JSON.parse(atob(token.split('.')[1])).user.id;
-
-            socket.emit('submit_question_answer', {
-                quizId: id,
-                studentId: userId,
-                questionIndex: currentQuestion,
-                answer: answers[currentQuestion],
-                timeRemaining: timeLeft
-            });
-
-            // Lock this question — no feedback shown, wait for teacher's change_question
-            setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
-        } else {
-            // Self-paced: just move next
-            if (currentQuestion < quiz.questions.length - 1) {
-                setCurrentQuestion(prev => prev + 1);
-                setTimeLeft(quiz.timerPerQuestion || 30);
-            } else {
-                // End of quiz
-                submitQuiz();
+        const token = localStorage.getItem('token');
+        let userId = 'unknown';
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                userId = payload.user.id;
+            } catch (e) {
+                console.error('Error decoding token:', e);
             }
         }
+
+        socket.emit('submit_question_answer', {
+            quizId: id,
+            studentId: userId,
+            questionIndex: currentQuestion,
+            answer: option,
+            timeRemaining: timeLeft
+        });
+
+        // Note: We removed the auto-advance logic to allow manual navigation
     };
 
     const submitQuiz = async () => {
@@ -525,7 +493,7 @@ export default function AttemptQuiz() {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className={`text-xl font-black ${timeLeft <= 5 ? 'text-red-600 animate-pulse' : 'text-gray-900'}`}>{timeLeft}</span>
+                                    <span className={`text-xl font-black ${timeLeft <= 30 ? 'text-red-600 animate-pulse' : 'text-gray-900'}`}>{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</span>
                                 </div>
                             </div>
                         </div>
@@ -582,22 +550,19 @@ export default function AttemptQuiz() {
                         </div>
                     )}
 
-                    {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
-                    {showFeedback && !quiz?.isLive && (
-                        <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-500/90' : 'bg-red-500/90'} backdrop-blur-sm text-white`}>
-                            {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
-                            <h2 className="text-4xl font-black uppercase italic tracking-tighter">
-                                {isCorrectFeedback ? 'Correct!' : 'Incorrect'}
-                            </h2>
-                            {!isCorrectFeedback && (
-                                <p className="mt-4 font-bold text-center px-8">
-                                    The correct answer was:<br />
-                                    <span className="text-2xl underline decoration-white/50">{quiz.questions[currentQuestion].correctAnswer}</span>
-                                </p>
-                            )}
-                            <div className="mt-8 flex items-center gap-2 text-white/60 font-black uppercase tracking-widest text-xs">
-                                <Loader2 className="animate-spin" size={12} /> Next Question...
+                    {/* NEW QUESTION NOTIFICATION BANNER */}
+                    {newQuestionNotification && (
+                        <div className="mb-6 p-4 bg-[#ff6b00] text-white rounded-2xl flex items-center justify-between animate-in slide-in-from-top duration-500 shadow-lg">
+                            <div className="flex items-center gap-3">
+                                <Bell size={20} className="animate-bounce" />
+                                <div>
+                                    <p className="text-xs font-black uppercase tracking-widest">{newQuestionNotification.title || 'Notification'}</p>
+                                    <p className="text-sm font-bold italic">{newQuestionNotification.message || 'Updated!'}</p>
+                                </div>
                             </div>
+                            <button onClick={() => setNewQuestionNotification(null)} className="text-white/50 hover:text-white">
+                                <XCircle size={20} />
+                            </button>
                         </div>
                     )}
 
@@ -652,83 +617,70 @@ export default function AttemptQuiz() {
                                             <ShapeIcon size={28} fill="white" strokeWidth={0} />
                                         </div>
                                         <span className="text-xl md:text-2xl font-black italic uppercase tracking-tight">{option}</span>
-
-                                        {isSelected && !isReviewMode && (
-                                            <div className="absolute top-2 right-2 bg-white text-gray-900 rounded-full p-1">
-                                                <CheckCircle size={16} />
-                                            </div>
-                                        )}
                                     </button>
                                 );
                             })}
                         </div>
 
-                        {isReviewMode && !questionResult?.isCorrect && (
-                            <div className="mt-6 p-4 bg-green-50 rounded-xl flex items-center gap-3 text-green-800 border border-green-100">
-                                <CheckCircle size={18} />
-                                <p className="text-xs font-bold">The correct answer was: <span className="underline">{questionResult?.correctOption}</span></p>
-                            </div>
-                        )}
+                        {/* QUESTION PALETTE */}
+                        <div className="mt-8 flex items-center justify-center gap-2 flex-wrap pb-4">
+                            {quiz.questions.map((_, idx) => {
+                                const isAnswered = answeredQuestions.has(idx) || answers[idx];
+                                const isCurrent = currentQuestion === idx;
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setCurrentQuestion(idx)}
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center font-black transition-all border-b-4 
+                                            ${isCurrent ? 'bg-indigo-600 text-white border-indigo-900 scale-110 -translate-y-1' :
+                                                isAnswered ? 'bg-green-500 text-white border-green-700' : 'bg-white text-slate-400 border-slate-100'}
+                                        `}
+                                    >
+                                        {idx + 1}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {
+                            isReviewMode && !questionResult?.isCorrect && (
+                                <div className="mt-6 p-4 bg-green-50 rounded-xl flex items-center gap-3 text-green-800 border border-green-100">
+                                    <CheckCircle size={18} />
+                                    <p className="text-xs font-bold">The correct answer was: <span className="underline">{questionResult?.correctOption}</span></p>
+                                </div>
+                            )
+                        }
                     </div>
 
                     <div className="flex items-center justify-between w-full">
-                        {/* In live mode, student cannot navigate manually */}
-                        <div className="w-10" />
+                        <button
+                            onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+                            disabled={currentQuestion === 0}
+                            className="flex-1 max-w-[140px] bg-slate-200 text-slate-600 p-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-300 transition active:scale-95 flex items-center justify-center gap-2 border-b-4 border-slate-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft size={20} /> Prev
+                        </button>
 
-                        {/* Live mode: after submitting show waiting banner */}
-                        {quiz?.isLive && answeredQuestions.has(currentQuestion) ? (
-                            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200 text-indigo-700 px-6 py-3 rounded-2xl font-bold text-sm">
-                                <Loader2 className="animate-spin" size={16} />
-                                Answer submitted! Waiting for teacher...
-                            </div>
-                        ) : isLastQuestion ? (
-                            isReviewMode ? (
+                        <div className="flex-1" />
+
+                        {isLastQuestion ? (
+                            !isReviewMode && (
                                 <button
-                                    onClick={() => setIsReviewMode(false)}
-                                    className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
+                                    onClick={submitQuiz}
+                                    disabled={submitting}
+                                    className="flex-1 max-w-[140px] bg-indigo-600 text-white p-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-indigo-700 transition active:scale-95 flex items-center justify-center gap-2 border-b-4 border-indigo-900"
                                 >
-                                    <Home size={20} /> Finish Review
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
-                                    disabled={submitting || !answers[currentQuestion]}
-                                    className="flex items-center gap-2 bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg shadow-[#ff6b00]/20 active:scale-95 disabled:opacity-50"
-                                >
-                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                                    {submitting ? 'Submitting...' : (quiz?.isLive ? 'Submit Answer' : 'Finish Quiz')}
+                                    Finish <Send size={20} />
                                 </button>
                             )
                         ) : (
-                            isReviewMode ? (
-                                // Review mode: allow manual prev/next
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-                                        disabled={currentQuestion === 0}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-all"
-                                    >
-                                        <ChevronLeft size={20} /> Prev
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentQuestion(prev => prev + 1)}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 transition-all"
-                                    >
-                                        Next <ChevronRight size={20} />
-                                    </button>
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={handleSingleQuestionSubmit}
-                                    disabled={isWaiting || !answers[currentQuestion]}
-                                    className="flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 bg-[#ff6b00] text-white shadow-[#ff6b00]/20"
-                                >
-                                    Submit Answer <Send size={20} />
-                                </button>
-                            )
+                            <button
+                                onClick={() => setCurrentQuestion(prev => Math.min(quiz.questions.length - 1, prev + 1))}
+                                className="flex-1 max-w-[140px] bg-slate-200 text-slate-600 p-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-300 transition active:scale-95 flex items-center justify-center gap-2 border-b-4 border-slate-400"
+                            >
+                                Next <ChevronRight size={20} />
+                            </button>
                         )}
-
-                        <div className="w-10" />
                     </div>
                 </div>
             </main>
@@ -827,18 +779,14 @@ export default function AttemptQuiz() {
 
                             <button
                                 onClick={handleContinueToNext}
-                                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all"
                             >
-                                {currentQuestion < quiz.questions.length - 1 ? (
-                                    <>Continue to Next Question <ChevronRight size={20} /></>
-                                ) : (
-                                    <>View Final Results <Trophy size={20} /></>
-                                )}
+                                Continue
                             </button>
                         </div>
                     </div>
                 )
             }
-        </div >
+        </div>
     );
 }

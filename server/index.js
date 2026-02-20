@@ -84,20 +84,22 @@ io.on('connection', (socket) => {
             const quiz = await Quiz.findById(quizId);
             if (!quiz) return;
 
-            // Initialize Master Time
+            // Initialize Master Time (Per Quiz Timer)
             let endTime = null;
-            if (quiz.duration > 0) {
-                endTime = Date.now() + (quiz.duration * 60 * 1000);
-            } else {
-                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
-            }
+            const quizDurationMin = quiz.duration || 10; // Default 10 mins if not specified
+            endTime = Date.now() + (quizDurationMin * 60 * 1000);
 
             const state = roomState.get(quizId) || {};
             roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
 
             await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
             io.to(quizId).emit('quiz_started');
-            io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+            
+            // Broadcast initial timer sync
+            const timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+            io.to(quizId).emit('sync_timer', { timeLeft });
+            
+            console.log(`Quiz ${quizId} started with ${quizDurationMin} minutes.`);
         } catch (err) {
             console.error('Error starting quiz:', err);
         }
@@ -142,23 +144,17 @@ io.on('connection', (socket) => {
     // Handle teacher changing question (Navigation)
     socket.on('change_question', async ({ quizId, questionIndex }) => {
         try {
-            const Quiz = require('./models/Quiz');
-            const quiz = await Quiz.findById(quizId);
-            if (!quiz) return;
-
-            // Reset Master Time for the new question if it's per-question
-            let endTime = null;
-            if (quiz.duration === 0) {
-                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
-            }
-
             const state = roomState.get(quizId) || {};
-            if (endTime) state.endTime = endTime;
-
             roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
 
+            // Just broadcast the change, do NOT reset timer (as requested: per quiz timer only)
             io.to(quizId).emit('change_question', { questionIndex });
-            if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+            
+            // Optional: periodically sync timer on navigation to keep clients aligned
+            if (state.endTime) {
+                const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                io.to(quizId).emit('sync_timer', { timeLeft });
+            }
         } catch (err) {
             console.error('Error changing question:', err);
         }

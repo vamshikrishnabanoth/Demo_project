@@ -24,8 +24,25 @@ export default function Assessments() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const res = await api.get('/quiz/live');
-                setQuizzes(res.data);
+                const [liveRes, historyRes] = await Promise.all([
+                    api.get('/quiz/live'),
+                    api.get('/quiz/history/student')
+                ]);
+
+                // Merge and remove duplicates by _id
+                const liveQuizzes = liveRes.data;
+                const historyQuizzes = historyRes.data;
+
+                const allQuizzes = [...liveQuizzes];
+                const liveIds = new Set(liveQuizzes.map(q => q._id));
+
+                historyQuizzes.forEach(historyQuiz => {
+                    if (!liveIds.has(historyQuiz._id)) {
+                        allQuizzes.push(historyQuiz);
+                    }
+                });
+
+                setQuizzes(allQuizzes);
             } catch (err) {
                 console.error('Error fetching quizzes', err);
             } finally {
@@ -156,8 +173,8 @@ export default function Assessments() {
                                                 <button
                                                     onClick={() => navigate(`/quiz/attempt/${quiz._id}`)}
                                                     className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${quiz.isAttempted
-                                                            ? 'bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white'
-                                                            : 'bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-[#ff6b00]/10 shadow-lg'
+                                                        ? 'bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white'
+                                                        : 'bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-[#ff6b00]/10 shadow-lg'
                                                         }`}
                                                 >
                                                     {quiz.isAttempted ? 'Review' : 'Start'} <ChevronRight size={14} />

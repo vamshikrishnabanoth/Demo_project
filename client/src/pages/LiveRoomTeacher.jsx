@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, CheckCircle, ChevronLeft, ChevronRight, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle } from 'lucide-react';
+import { Award, CheckCircle, ChevronLeft, ChevronRight, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, Plus } from 'lucide-react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -14,8 +14,15 @@ export default function LiveRoomTeacher() {
     const [loading, setLoading] = useState(true);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [studentProgress, setStudentProgress] = useState({});
-    const [timeLeft, setTimeLeft] = useState(30);
+    const [timeLeft, setTimeLeft] = useState(600); // Default 10 mins
     const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
+    const [newQuestionData, setNewQuestionData] = useState({
+        questionText: '',
+        options: ['', '', '', ''],
+        correctAnswer: '',
+        points: 10
+    });
     const [leaderboard, setLeaderboard] = useState([]);
     const [liveInsights, setLiveInsights] = useState(null);
     const hasInitializedTimer = useRef(false);
@@ -53,11 +60,16 @@ export default function LiveRoomTeacher() {
         });
 
         socket.on('student_progress_update', ({ studentId, username, questionIndex }) => {
+            console.log('Received progress update:', { studentId, username, questionIndex });
             setStudentProgress(prev => {
                 const newState = { ...prev };
                 const qIdx = parseInt(questionIndex);
-                if (studentId) newState[studentId] = { ...(newState[studentId] || {}), [qIdx]: true };
-                else if (username) newState[username] = { ...(newState[username] || {}), [qIdx]: true };
+                if (studentId) {
+                    newState[studentId] = { ...(newState[studentId] || {}), [qIdx]: true };
+                }
+                if (username) {
+                    newState[username] = { ...(newState[username] || {}), [qIdx]: true };
+                }
                 return newState;
             });
         });
@@ -107,35 +119,20 @@ export default function LiveRoomTeacher() {
     };
 
     useEffect(() => {
-        if (!quiz) return;
-
-        // Initialize timer logic
-        if (quiz.duration > 0) {
-            // Global timer
-            if (!hasInitializedTimer.current) {
-                setTimeLeft(quiz.duration * 60);
-                hasInitializedTimer.current = true;
-            }
-        } else if (!isTimerRunning && quiz.status === 'started' && timeLeft === 30) {
-            // Initial question timer
-            setTimeLeft(quiz.timerPerQuestion || 30);
-            setIsTimerRunning(true);
-        }
-
-        if (!isTimerRunning || quiz.status !== 'started') return;
+        if (!quiz || !isTimerRunning || quiz.status !== 'started') return;
 
         const timer = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
-                    if (currentQuestionIndex < (quiz.questions?.length || 0) - 1) handleNavigation('next');
-                    else setIsTimerRunning(false);
+                    clearInterval(timer);
+                    setIsTimerRunning(false);
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [isTimerRunning, quiz, currentQuestionIndex]);
+    }, [isTimerRunning, quiz?.status]);
 
     const handleIncreaseTime = () => {
         socket.emit('increase_time', { quizId: quiz._id, additionalSeconds: 30 });
@@ -151,8 +148,7 @@ export default function LiveRoomTeacher() {
         if (newIndex !== currentQuestionIndex) {
             setCurrentQuestionIndex(newIndex);
             socket.emit('change_question', { quizId: quiz._id, questionIndex: newIndex });
-            setTimeLeft(quiz.timerPerQuestion || 30);
-            setIsTimerRunning(true);
+            // Note: Timer is global, so we don't reset it here
         }
     };
 
@@ -175,7 +171,9 @@ export default function LiveRoomTeacher() {
         </DashboardLayout>
     );
 
-    const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
+    const maxScore = leaderboard.length > 0
+        ? Math.max(...leaderboard.map(l => l.currentScore || 0), 1)
+        : 100;
 
     const isWaitingRoom = !quiz || quiz.status === 'waiting';
 
@@ -196,6 +194,20 @@ export default function LiveRoomTeacher() {
                                 </div>
                             </div>
                             <div className="pt-10 flex flex-col items-center gap-6">
+                                <div className="flex flex-col items-center gap-2 mb-4">
+                                    <p className="text-white/40 font-bold uppercase tracking-widest text-sm">Set Quiz Duration (Minutes)</p>
+                                    <input
+                                        type="number"
+                                        value={Math.floor(timeLeft / 60)}
+                                        onChange={(e) => {
+                                            const mins = parseInt(e.target.value) || 1;
+                                            setTimeLeft(mins * 60);
+                                            // Optional: Sync this duration to DB via API if needed, but socket 'start_quiz' will handle it
+                                            api.put(`/quiz/${quiz._id}`, { duration: mins });
+                                        }}
+                                        className="bg-white/5 border border-white/20 text-white text-5xl font-black rounded-2xl p-4 w-32 text-center focus:outline-none focus:border-[#ff6b00]"
+                                    />
+                                </div>
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
@@ -283,6 +295,12 @@ export default function LiveRoomTeacher() {
                         <div className="bg-[#0f172a] rounded-[3rem] p-10 shadow-2xl border-b-[10px] border-slate-800">
                             <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 italic">Field Operations</h2>
                             <div className="space-y-6">
+                                <button
+                                    onClick={() => setShowAddQuestionModal(true)}
+                                    className="w-full bg-indigo-600 text-white p-6 rounded-[2rem] font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-indigo-500/20 active:scale-95 flex items-center justify-center gap-4 text-xl border-b-4 border-indigo-900"
+                                >
+                                    <Plus size={24} /> ADD LIVE QUESTION
+                                </button>
 
                                 {/* Question Navigation */}
                                 <div className="flex items-center gap-3">
@@ -435,6 +453,80 @@ export default function LiveRoomTeacher() {
                     </div>
                 </div>
             </div>
+
+            {/* Add Question Modal */}
+            {showAddQuestionModal && (
+                <div className="fixed inset-0 bg-[#0f172a]/95 backdrop-blur-xl z-[100] flex items-center justify-center p-6 overflow-y-auto">
+                    <div className="bg-white rounded-[3.5rem] p-12 max-w-2xl w-full shadow-2xl border border-slate-100 animate-in zoom-in duration-300">
+                        <div className="flex items-center justify-between mb-10">
+                            <div>
+                                <h3 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter">Quick <span className="text-[#ff6b00]">Add</span></h3>
+                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-1">Deploy a new challenge instantly</p>
+                            </div>
+                            <button onClick={() => setShowAddQuestionModal(false)} className="text-slate-300 hover:text-slate-900 transition-colors">
+                                <MinusCircle size={32} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Question Text</label>
+                                <input
+                                    type="text"
+                                    value={newQuestionData.questionText}
+                                    onChange={(e) => setNewQuestionData({ ...newQuestionData, questionText: e.target.value })}
+                                    className="w-full bg-slate-50 border-2 border-transparent focus:border-indigo-600 focus:bg-white rounded-3xl p-6 font-bold text-slate-800 outline-none transition-all"
+                                    placeholder="Enter your spontaneous question..."
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {newQuestionData.options.map((opt, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <div className="flex items-center justify-between px-4">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Option {idx + 1}</label>
+                                            <input
+                                                type="radio"
+                                                name="correct-option"
+                                                checked={newQuestionData.correctAnswer === opt && opt !== ''}
+                                                onChange={() => setNewQuestionData({ ...newQuestionData, correctAnswer: opt })}
+                                                className="w-4 h-4 text-indigo-600 border-slate-200 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={opt}
+                                            onChange={(e) => {
+                                                const newOpts = [...newQuestionData.options];
+                                                newOpts[idx] = e.target.value;
+                                                setNewQuestionData({ ...newQuestionData, options: newOpts });
+                                            }}
+                                            className="w-full bg-slate-50 border-2 border-transparent focus:border-indigo-600 focus:bg-white rounded-2xl p-4 font-bold text-slate-800 outline-none transition-all text-sm"
+                                            placeholder={`Likely answer ${idx + 1}`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    if (!newQuestionData.questionText || !newQuestionData.correctAnswer) {
+                                        return alert("Please fill in question and select correct answer!");
+                                    }
+                                    socket.emit('add_question', { quizId: quiz._id, question: { ...newQuestionData, type: 'multiple-choice' } });
+                                    setQuiz(prev => ({ ...prev, questions: [...prev.questions, { ...newQuestionData, type: 'multiple-choice' }] }));
+                                    setShowAddQuestionModal(false);
+                                    setNewQuestionData({ questionText: '', options: ['', '', '', ''], correctAnswer: '', points: 10 });
+                                    alert('Question broadcasted to all students!');
+                                }}
+                                className="w-full bg-[#ff6b00] text-white p-6 rounded-[2rem] font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-2xl shadow-orange-500/30 active:scale-95 text-2xl border-b-8 border-orange-700"
+                            >
+                                DEPLOY QUESTION
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }
