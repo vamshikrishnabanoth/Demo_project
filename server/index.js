@@ -84,13 +84,15 @@ io.on('connection', (socket) => {
             const quiz = await Quiz.findById(quizId);
             if (!quiz) return;
 
-            // Initialize Master Time
-            let endTime = null;
+            // Calculate duration in ms
+            let durationMs = 0;
             if (quiz.duration > 0) {
-                endTime = Date.now() + (quiz.duration * 60 * 1000);
+                durationMs = quiz.duration * 60 * 1000;
             } else {
-                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
+                // Per-question: estimate total time
+                durationMs = (quiz.questions.length * (quiz.timerPerQuestion || 30)) * 1000;
             }
+            const endTime = Date.now() + durationMs;
 
             const state = roomState.get(quizId) || {};
             roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
@@ -98,6 +100,23 @@ io.on('connection', (socket) => {
             await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+
+            // Auto-terminate when global timer expires (for duration-based quizzes)
+            if (quiz.duration > 0) {
+                setTimeout(async () => {
+                    const currentState = roomState.get(quizId.toString());
+                    if (currentState && currentState.status !== 'finished') {
+                        roomState.delete(quizId.toString());
+                        try {
+                            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
+                        } catch (err2) {
+                            console.error('Error auto-finishing quiz:', err2);
+                        }
+                        io.to(quizId).emit('quiz_ended');
+                        console.log(`Quiz ${quizId} auto-terminated after global timer expired.`);
+                    }
+                }, durationMs + 3000); // small buffer
+            }
         } catch (err) {
             console.error('Error starting quiz:', err);
         }

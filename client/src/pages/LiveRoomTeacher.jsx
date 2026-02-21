@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, CheckCircle, ChevronLeft, ChevronRight, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle } from 'lucide-react';
+import { Award, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy } from 'lucide-react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -12,12 +12,13 @@ export default function LiveRoomTeacher() {
     const [participants, setParticipants] = useState([]);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [studentProgress, setStudentProgress] = useState({});
     const [timeLeft, setTimeLeft] = useState(30);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     const [liveInsights, setLiveInsights] = useState(null);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [isQuizEnded, setIsQuizEnded] = useState(false);
     const hasInitializedTimer = useRef(false);
     const navigate = useNavigate();
 
@@ -83,12 +84,18 @@ export default function LiveRoomTeacher() {
             if (timeLeft > 0) setIsTimerRunning(true);
         });
 
+        socket.on('quiz_ended', () => {
+            setIsQuizEnded(true);
+            setIsTimerRunning(false);
+        });
+
         return () => {
             socket.off('participants_update');
             socket.off('student_progress_update');
             socket.off('progress_history');
             socket.off('question_leaderboard');
             socket.off('sync_timer');
+            socket.off('quiz_ended');
         };
     }, [joinCode, user, navigate]);
 
@@ -109,15 +116,13 @@ export default function LiveRoomTeacher() {
     useEffect(() => {
         if (!quiz) return;
 
-        // Initialize timer logic
+        // Initialize timer
         if (quiz.duration > 0) {
-            // Global timer
             if (!hasInitializedTimer.current) {
                 setTimeLeft(quiz.duration * 60);
                 hasInitializedTimer.current = true;
             }
         } else if (!isTimerRunning && quiz.status === 'started' && timeLeft === 30) {
-            // Initial question timer
             setTimeLeft(quiz.timerPerQuestion || 30);
             setIsTimerRunning(true);
         }
@@ -127,33 +132,35 @@ export default function LiveRoomTeacher() {
         const timer = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
-                    if (currentQuestionIndex < (quiz.questions?.length || 0) - 1) handleNavigation('next');
-                    else setIsTimerRunning(false);
+                    setIsTimerRunning(false);
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [isTimerRunning, quiz, currentQuestionIndex]);
+    }, [isTimerRunning, quiz]);
+
+    // Offline / Reconnect handling
+    useEffect(() => {
+        const handleOffline = () => setIsOnline(false);
+        const handleOnline = () => {
+            setIsOnline(true);
+            if (quiz) {
+                socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+            }
+        };
+        window.addEventListener('offline', handleOffline);
+        window.addEventListener('online', handleOnline);
+        return () => {
+            window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('online', handleOnline);
+        };
+    }, [quiz, user]);
 
     const handleIncreaseTime = () => {
         socket.emit('increase_time', { quizId: quiz._id, additionalSeconds: 30 });
         alert('Added 30 seconds to the clock!');
-    };
-
-    const handleNavigation = (direction) => {
-        if (!quiz) return;
-        let newIndex = currentQuestionIndex;
-        if (direction === 'next') newIndex = Math.min(quiz.questions.length - 1, currentQuestionIndex + 1);
-        else newIndex = Math.max(0, currentQuestionIndex - 1);
-
-        if (newIndex !== currentQuestionIndex) {
-            setCurrentQuestionIndex(newIndex);
-            socket.emit('change_question', { quizId: quiz._id, questionIndex: newIndex });
-            setTimeLeft(quiz.timerPerQuestion || 30);
-            setIsTimerRunning(true);
-        }
     };
 
     const copyCode = () => {
@@ -174,6 +181,35 @@ export default function LiveRoomTeacher() {
             </div>
         </DashboardLayout>
     );
+
+    // Quiz ended (auto or manually) — show fallback screen
+    if (isQuizEnded || quiz?.status === 'finished') {
+        return (
+            <DashboardLayout role="teacher">
+                <div className="max-w-2xl mx-auto py-24 text-center space-y-8">
+                    <div className="w-24 h-24 bg-indigo-100 rounded-[2rem] flex items-center justify-center mx-auto">
+                        <Trophy className="text-indigo-600" size={48} />
+                    </div>
+                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-gray-900">Quiz <span className="text-[#ff6b00]">Ended</span></h1>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button
+                            onClick={() => navigate(`/leaderboard/${quiz._id}`)}
+                            className="bg-[#ff6b00] text-white px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:scale-105 transition shadow-xl shadow-orange-500/20 active:scale-95 border-b-4 border-orange-700"
+                        >
+                            View Leaderboard
+                        </button>
+                        <button
+                            onClick={() => navigate('/teacher-dashboard')}
+                            className="bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:bg-gray-200 transition"
+                        >
+                            Dashboard
+                        </button>
+                    </div>
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
 
@@ -280,30 +316,20 @@ export default function LiveRoomTeacher() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Controls & Insights */}
                     <div className="lg:col-span-4 space-y-8">
+                        {/* Offline Banner */}
+                        {!isOnline && (
+                            <div className="bg-orange-500 rounded-2xl px-6 py-4 flex items-center gap-3 text-white font-bold text-sm">
+                                <WifiOff size={18} />
+                                You are offline — reconnecting...
+                            </div>
+                        )}
                         <div className="bg-[#0f172a] rounded-[3rem] p-10 shadow-2xl border-b-[10px] border-slate-800">
-                            <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 italic">Field Operations</h2>
+                            <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 italic">Session Controls</h2>
                             <div className="space-y-6">
-
-                                {/* Question Navigation */}
-                                <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={() => handleNavigation('prev')}
-                                        disabled={currentQuestionIndex === 0}
-                                        className="flex-1 bg-slate-700 text-white p-5 rounded-[2rem] font-black italic uppercase tracking-tighter hover:bg-slate-600 transition active:scale-95 flex items-center justify-center gap-2 text-lg border-b-4 border-slate-900 disabled:opacity-30 disabled:cursor-not-allowed"
-                                    >
-                                        <ChevronLeft size={22} /> Prev
-                                    </button>
-                                    <div className="flex flex-col items-center min-w-[60px]">
-                                        <span className="text-white font-black text-2xl italic">{currentQuestionIndex + 1}</span>
-                                        <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">/ {quiz?.questions?.length || 0}</span>
-                                    </div>
-                                    <button
-                                        onClick={() => handleNavigation('next')}
-                                        disabled={currentQuestionIndex === (quiz?.questions?.length || 1) - 1}
-                                        className="flex-1 bg-indigo-600 text-white p-5 rounded-[2rem] font-black italic uppercase tracking-tighter hover:bg-indigo-500 transition active:scale-95 flex items-center justify-center gap-2 text-lg border-b-4 border-indigo-900 disabled:opacity-30 disabled:cursor-not-allowed"
-                                    >
-                                        Next <ChevronRight size={22} />
-                                    </button>
+                                {/* Students navigate questions themselves — teacher monitors only */}
+                                <div className="bg-slate-800/50 rounded-2xl p-4 text-center">
+                                    <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Students self-navigate</p>
+                                    <p className="text-white font-bold text-lg mt-1">{quiz?.questions?.length || 0} Questions</p>
                                 </div>
 
                                 <button
@@ -340,7 +366,6 @@ export default function LiveRoomTeacher() {
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
                                 <div className="divide-y divide-gray-100">
                                     {participants.map((p, pIdx) => {
-                                        // Get this student's progress record (check by _id first, then username)
                                         const progressById = p._id ? studentProgress[p._id] : null;
                                         const progressByName = p.username ? studentProgress[p.username] : null;
                                         const progress = progressById || progressByName || {};
@@ -351,28 +376,15 @@ export default function LiveRoomTeacher() {
                                                 <div className="flex-1 flex items-center gap-1 flex-wrap">
                                                     {quiz?.questions?.map((_, idx) => {
                                                         const isAnswered = progress[idx] === true || progress[idx.toString()] === true;
-                                                        const isPast = idx < currentQuestionIndex;
-                                                        const isCurrent = idx === currentQuestionIndex;
-
-                                                        // Color logic:
-                                                        // answered → green
-                                                        // past & not answered → red (missed)
-                                                        // current or future → gray
-                                                        let dotClass = 'bg-gray-100 border-gray-200 text-gray-400'; // future/current unanswered
-                                                        if (isAnswered) {
-                                                            dotClass = 'bg-green-500 border-green-500 text-white';
-                                                        } else if (isPast) {
-                                                            dotClass = 'bg-red-400 border-red-400 text-white';
-                                                        }
+                                                        const dotClass = isAnswered
+                                                            ? 'bg-green-500 border-green-500 text-white'
+                                                            : 'bg-gray-100 border-gray-200 text-gray-400';
 
                                                         return (
                                                             <div
                                                                 key={idx}
-                                                                title={isAnswered ? 'Answered' : isPast ? 'Missed' : 'Pending'}
-                                                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all
-                                                                    ${dotClass}
-                                                                    ${isCurrent ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110' : ''}
-                                                                `}
+                                                                title={isAnswered ? 'Answered' : 'Pending'}
+                                                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${dotClass}`}
                                                             >
                                                                 {idx + 1}
                                                             </div>

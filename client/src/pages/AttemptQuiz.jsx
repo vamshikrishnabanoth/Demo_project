@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff } from 'lucide-react';
 
 export default function AttemptQuiz() {
     const { id } = useParams();
@@ -24,6 +24,8 @@ export default function AttemptQuiz() {
     const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
     const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
     const hasInitializedTimer = useRef(false);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [missionComplete, setMissionComplete] = useState(false);
 
     // Timer Logic
     useEffect(() => {
@@ -43,63 +45,87 @@ export default function AttemptQuiz() {
         return () => clearInterval(timerId);
     }, [loading, isReviewMode, result, quiz, currentQuestion]);
 
-    // Listen for Teacher Navigation
+    // Listen for Teacher Events (timer sync, quiz end only — students navigate themselves)
     useEffect(() => {
-        socket.on('change_question', ({ questionIndex }) => {
-            console.log('Teacher moved to question:', questionIndex);
-            if (questionIndex >= 0 && questionIndex < (quiz?.questions?.length || 0)) {
-                setCurrentQuestion(questionIndex);
-                setIsWaiting(false); // Reset waiting state on new question
-                // Also reset local timer since we moved to a new question
-                // If per-question timer is used, it should reset.
-                // If global timer is used, it continues.
-                if (!quiz.duration) {
-                    setTimeLeft(quiz.timerPerQuestion || 30);
-                }
-            }
-        });
-
         socket.on('timer_update', ({ additionalSeconds }) => {
             console.log('Teacher increased time by:', additionalSeconds);
             setTimeLeft(prev => prev + additionalSeconds);
         });
 
         socket.on('quiz_ended', async () => {
-            // Navigate to leaderboard immediately
             navigate(`/leaderboard/${id}`);
-
-            // Try to submit answers in background (best effort)
             try {
                 const formattedAnswers = quiz?.questions?.map((q, idx) => ({
                     questionText: q.questionText,
                     selectedOption: answers[idx] || ''
                 })) || [];
-
                 await api.post('/quiz/submit', { quizId: id, answers: formattedAnswers });
             } catch (e) {
-                // Ignore errors — student may have already submitted or quiz already finished
                 console.warn('Background submit on quiz_ended:', e?.message);
             }
         });
+
         socket.on('sync_timer', ({ timeLeft }) => {
             console.log('Syncing timer from server:', timeLeft);
             setTimeLeft(timeLeft);
         });
 
         return () => {
-            socket.off('change_question');
             socket.off('quiz_ended');
             socket.off('timer_update');
             socket.off('sync_timer');
         };
     }, [quiz]);
 
+    // Offline / Reconnect detection — restore session and re-join room on reconnect
+    useEffect(() => {
+        const handleOffline = () => setIsOnline(false);
+        const handleOnline = () => {
+            setIsOnline(true);
+            if (quiz?.isLive) {
+                // Restore saved session position
+                const saved = localStorage.getItem(`live_quiz_session_${id}`);
+                if (saved) {
+                    try {
+                        const { currentQuestion: savedQ, answers: savedAnswers } = JSON.parse(saved);
+                        if (savedQ !== undefined) setCurrentQuestion(savedQ);
+                        if (savedAnswers) setAnswers(prev => ({ ...prev, ...savedAnswers }));
+                    } catch (e) { console.error('Session restore error:', e); }
+                }
+                // Re-join room so teacher participant count updates
+                const token = localStorage.getItem('token');
+                if (token) {
+                    try {
+                        const decoded = JSON.parse(atob(token.split('.')[1]));
+                        socket.emit('join_room', {
+                            quizId: id, user: {
+                                username: decoded.user.username,
+                                role: 'student',
+                                _id: decoded.user.id
+                            }
+                        });
+                    } catch (e) { console.error('Rejoin error:', e); }
+                }
+            }
+        };
+        window.addEventListener('offline', handleOffline);
+        window.addEventListener('online', handleOnline);
+        return () => {
+            window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('online', handleOnline);
+        };
+    }, [id, quiz]);
+
     const handleTimeUp = () => {
-        // For live quizzes, auto-submit answer and show leaderboard
         if (quiz?.isLive) {
-            handleAutoSubmitAnswer();
+            // Auto-advance locally when per-question timer expires (treated as unanswered)
+            if (currentQuestion < quiz.questions.length - 1) {
+                setCurrentQuestion(prev => prev + 1);
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            } else {
+                setMissionComplete(true);
+            }
         } else {
-            // For non-live quizzes, just move to next question
             if (currentQuestion < quiz.questions.length - 1) {
                 setCurrentQuestion(prev => prev + 1);
                 setTimeLeft(quiz.timerPerQuestion || 30);
@@ -110,23 +136,14 @@ export default function AttemptQuiz() {
     };
 
     const handleAutoSubmitAnswer = async () => {
-        // Auto-submit current answer when timer expires
         const currentAnswer = answers[currentQuestion] || '';
-
-        if (quiz.isLive) {
-            // For live quiz, emit socket event and wait for teacher to advance
+        if (quiz.isLive && isOnline) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
-
             socket.emit('submit_question_answer', {
-                quizId: id,
-                studentId: userId,
-                questionIndex: currentQuestion,
-                answer: currentAnswer,
-                timeRemaining: 0
+                quizId: id, studentId: userId,
+                questionIndex: currentQuestion, answer: currentAnswer, timeRemaining: 0
             });
-
-            // Lock this question — wait for teacher's change_question to move on
             setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
         }
     };
@@ -311,48 +328,53 @@ export default function AttemptQuiz() {
     };
 
     const handleOptionSelect = (option) => {
-        if (isReviewMode) return; // Prevent selection in review mode
-
-        const newAnswers = {
-            ...answers,
-            [currentQuestion]: option
-        };
+        if (isReviewMode) return;
+        const newAnswers = { ...answers, [currentQuestion]: option };
         setAnswers(newAnswers);
-
-        // Save to LocalStorage for immediate crash recovery
         localStorage.setItem(`quiz_answers_${id}`, JSON.stringify(newAnswers));
-
-        // Note: We removed the auto-advance logic to allow manual submission
+        // Persist full live session state for offline recovery
+        if (quiz?.isLive) {
+            localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion, answers: newAnswers }));
+        }
     };
 
     const handleSingleQuestionSubmit = () => {
-        if (!answers[currentQuestion]) return alert("Please select an option first!");
+        if (!answers[currentQuestion]) return alert('Please select an option first!');
 
-        // In live mode, lock the answer and wait for teacher to advance
         if (quiz?.isLive) {
+            if (!isOnline) {
+                return alert('You are offline! Wait for your connection to restore before submitting.');
+            }
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
-
             socket.emit('submit_question_answer', {
-                quizId: id,
-                studentId: userId,
+                quizId: id, studentId: userId,
                 questionIndex: currentQuestion,
                 answer: answers[currentQuestion],
                 timeRemaining: timeLeft
             });
-
-            // Lock this question — no feedback shown, wait for teacher's change_question
             setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+            // Show mission complete screen after last question submitted
+            if (currentQuestion === quiz.questions.length - 1) {
+                setMissionComplete(true);
+            }
         } else {
-            // Self-paced: just move next
             if (currentQuestion < quiz.questions.length - 1) {
                 setCurrentQuestion(prev => prev + 1);
                 setTimeLeft(quiz.timerPerQuestion || 30);
             } else {
-                // End of quiz
                 submitQuiz();
             }
         }
+    };
+
+    // Student advances to next question themselves (live mode)
+    const handleNextQuestion = () => {
+        const nextQ = currentQuestion + 1;
+        setCurrentQuestion(nextQ);
+        if (!quiz.duration) setTimeLeft(quiz.timerPerQuestion || 30);
+        // Persist new position offline
+        localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextQ, answers }));
     };
 
     const submitQuiz = async () => {
@@ -391,6 +413,37 @@ export default function AttemptQuiz() {
             <Loader2 className="animate-spin text-indigo-600" size={48} />
         </div>
     );
+
+    // Mission Complete: student finished all live quiz questions — wait for quiz_ended
+    if (missionComplete && quiz?.isLive) {
+        return (
+            <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center p-6 text-white text-center font-inter relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ff6b00]/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+                <div className="relative z-10 space-y-8 animate-in fade-in zoom-in duration-500 max-w-md w-full">
+                    <div className="w-24 h-24 bg-white/5 backdrop-blur-xl border border-white/20 rounded-[2rem] flex items-center justify-center mx-auto mb-4 animate-pulse">
+                        <Clock className="text-[#ff6b00]" size={40} />
+                    </div>
+                    <h1 className="text-4xl font-black italic uppercase tracking-tighter">Mission <span className="text-[#ff6b00]">Complete</span></h1>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs leading-relaxed">
+                        All answers submitted! The leaderboard will appear when the quiz session ends.
+                    </p>
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md space-y-4">
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Time remaining</span>
+                            <div className="text-5xl font-black italic text-[#ff6b00]">
+                                {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-center gap-4 text-white/40">
+                            <Loader2 className="animate-spin" size={16} />
+                            <span className="font-black italic uppercase tracking-widest text-[10px]">Waiting for quiz to end...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // Only show result summary immediately after submission, NOT in review mode
     // For live quizzes, show a "Waiting" screen instead of the score summary
@@ -485,7 +538,14 @@ export default function AttemptQuiz() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+            {/* Offline Banner */}
+            {!isOnline && (
+                <div className="fixed top-0 left-0 right-0 z-[100] bg-orange-500 text-white px-6 py-3 flex items-center justify-center gap-3 font-bold text-sm shadow-lg">
+                    <WifiOff size={18} />
+                    You are offline — progress saved locally. Submissions paused until reconnected.
+                </div>
+            )}
+            <header className={`bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky z-50 ${!isOnline ? 'top-10' : 'top-0'}`}>
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/student-dashboard')}
@@ -675,12 +735,14 @@ export default function AttemptQuiz() {
                         {/* In live mode, student cannot navigate manually */}
                         <div className="w-10" />
 
-                        {/* Live mode: after submitting show waiting banner */}
-                        {quiz?.isLive && answeredQuestions.has(currentQuestion) ? (
-                            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200 text-indigo-700 px-6 py-3 rounded-2xl font-bold text-sm">
-                                <Loader2 className="animate-spin" size={16} />
-                                Answer submitted! Waiting for teacher...
-                            </div>
+                        {/* Live mode: after submitting show Next Question button */}
+                        {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
+                            <button
+                                onClick={handleNextQuestion}
+                                className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95"
+                            >
+                                Next Question <ChevronRight size={20} />
+                            </button>
                         ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
@@ -692,11 +754,11 @@ export default function AttemptQuiz() {
                             ) : (
                                 <button
                                     onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
-                                    disabled={submitting || !answers[currentQuestion]}
+                                    disabled={submitting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
                                     className="flex items-center gap-2 bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg shadow-[#ff6b00]/20 active:scale-95 disabled:opacity-50"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                                    {submitting ? 'Submitting...' : (quiz?.isLive ? 'Submit Answer' : 'Finish Quiz')}
+                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : (!isOnline && quiz?.isLive) ? <WifiOff size={20} /> : <Send size={20} />}
+                                    {submitting ? 'Submitting...' : (!isOnline && quiz?.isLive) ? 'Offline...' : (quiz?.isLive ? 'Submit Answer' : 'Finish Quiz')}
                                 </button>
                             )
                         ) : (
@@ -720,10 +782,10 @@ export default function AttemptQuiz() {
                             ) : (
                                 <button
                                     onClick={handleSingleQuestionSubmit}
-                                    disabled={isWaiting || !answers[currentQuestion]}
+                                    disabled={isWaiting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
                                     className="flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 bg-[#ff6b00] text-white shadow-[#ff6b00]/20"
                                 >
-                                    Submit Answer <Send size={20} />
+                                    {!isOnline && quiz?.isLive ? <><WifiOff size={20} /> Offline...</> : <>Submit Answer <Send size={20} /></>}
                                 </button>
                             )
                         )}
