@@ -33,8 +33,13 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     // Initialize Gemini Client Lazily to ensure ENV is loaded
     try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // Fallback to gemini-pro if flash fails or key is restricted
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        let model;
+        // Try gemini-2.0-flash first, fallback to gemini-1.5-flash
+        try {
+            model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        } catch {
+            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        }
 
         // Validate content (Relaxed for Topic)
         if (!content || (type !== 'topic' && content.trim().length < 20)) {
@@ -71,14 +76,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         const responseText = result.response.text().trim();
 
         // Handling Gemini's occasional markdown wrap
-        const cleanJSON = responseText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+        const cleanJSON = responseText.replace(/^```json\n?/, '').replace(/\n?```$/, '').replace(/^```\n?/, '');
         console.log('--- DEBUG: RAW JSON ---', cleanJSON.substring(0, 50) + '...');
         const data = JSON.parse(cleanJSON);
 
         console.log('✅ Gemini generated', data.questions?.length || 0, 'questions');
         return Array.isArray(data.questions) ? data.questions : data;
     } catch (err) {
-        console.error('❌ Gemini Error Detailed:', err);
+        console.error('❌ Gemini Error:', err.status, err.message?.substring(0, 200));
         return generateMockQuestions(count);
     }
 };
