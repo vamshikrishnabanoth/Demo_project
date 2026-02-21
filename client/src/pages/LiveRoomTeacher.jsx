@@ -168,6 +168,21 @@ export default function LiveRoomTeacher() {
         alert('Join Code copied!');
     };
 
+    // ⚠️ Must be before any early returns (Rules of Hooks)
+    const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
+
+    // Merge participants (connected) + leaderboard (submitted) so reconnected students always show
+    const allStudents = useMemo(() => {
+        const map = new Map();
+        participants.forEach(p => map.set(p.username, p));
+        leaderboard.forEach(l => {
+            if (!map.has(l.username)) {
+                map.set(l.username, { username: l.username, _id: l.studentId?.toString(), role: 'student' });
+            }
+        });
+        return Array.from(map.values());
+    }, [participants, leaderboard]);
+
     if (loading) return (
         <DashboardLayout role="teacher">
             <div className="flex flex-col items-center justify-center min-h-[70vh]">
@@ -210,20 +225,6 @@ export default function LiveRoomTeacher() {
             </DashboardLayout>
         );
     }
-
-    const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
-
-    // Merge participants (connected) + leaderboard (submitted) so reconnected students always show
-    const allStudents = useMemo(() => {
-        const map = new Map();
-        participants.forEach(p => map.set(p.username, p));
-        leaderboard.forEach(l => {
-            if (!map.has(l.username)) {
-                map.set(l.username, { username: l.username, _id: l.studentId?.toString(), role: 'student' });
-            }
-        });
-        return Array.from(map.values());
-    }, [participants, leaderboard]);
 
     const isWaitingRoom = !quiz || quiz.status === 'waiting';
 
