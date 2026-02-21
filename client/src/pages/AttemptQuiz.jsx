@@ -239,29 +239,63 @@ export default function AttemptQuiz() {
                 const res = await api.get(`/quiz/${id}`);
                 setQuiz(res.data);
 
-                // If there's a previous result (Completed or In-Progress)
-                if (res.data.previousResult) {
-                    const prevResult = res.data.previousResult;
-
-                    // BLOCK RE-ENTRY: If completed, forced review mode
-                    if (prevResult.status === 'completed') {
-                        setIsReviewMode(true);
-                        setResult(prevResult);
-                        setAnswersFromHistory(prevResult.answers);
-                        return; // Stop further loading
+                // LIVE QUIZ PAGE REFRESH: restore session from localStorage and auto-rejoin
+                if (res.data.isLive && res.data.status === 'started') {
+                    const saved = localStorage.getItem(`live_quiz_session_${id}`);
+                    if (saved) {
+                        try {
+                            const { currentQuestion: savedQ, answers: savedAnswers } = JSON.parse(saved);
+                            if (savedQ !== undefined) setCurrentQuestion(savedQ);
+                            if (savedAnswers) {
+                                setAnswers(savedAnswers);
+                                // Mark previously submitted questions as answered
+                                const answeredSet = new Set(
+                                    Object.keys(savedAnswers).map(Number)
+                                );
+                                setAnsweredQuestions(answeredSet);
+                            }
+                        } catch (e) { console.error('Session restore on refresh:', e); }
                     }
+                    // Re-emit join_room so server adds student back to room
+                    const t = localStorage.getItem('token');
+                    if (t) {
+                        try {
+                            const dec = JSON.parse(atob(t.split('.')[1]));
+                            socket.emit('join_room', {
+                                quizId: id, user: {
+                                    username: dec.user.username,
+                                    role: 'student',
+                                    _id: dec.user.id
+                                }
+                            });
+                        } catch (e) { console.error('Rejoin on refresh error:', e); }
+                    }
+                    // Skip previousResult handling — live quiz session is restored
+                } else {
+                    // If there's a previous result (Completed or In-Progress)
+                    if (res.data.previousResult) {
+                        const prevResult = res.data.previousResult;
 
-                    // RESUME: If in-progress, load state
-                    if (prevResult.status === 'in-progress') {
-                        console.log('Resuming quiz attempt...');
-                        setAnswersFromHistory(prevResult.answers);
-                        const localSaved = localStorage.getItem(`quiz_answers_${id}`);
-                        if (localSaved) {
-                            const localAnswers = JSON.parse(localSaved);
-                            setAnswers(prev => ({ ...prev, ...localAnswers }));
+                        // BLOCK RE-ENTRY: If completed, forced review mode
+                        if (prevResult.status === 'completed') {
+                            setIsReviewMode(true);
+                            setResult(prevResult);
+                            setAnswersFromHistory(prevResult.answers);
+                            return; // Stop further loading
+                        }
+
+                        // RESUME: If in-progress, load state
+                        if (prevResult.status === 'in-progress') {
+                            console.log('Resuming quiz attempt...');
+                            setAnswersFromHistory(prevResult.answers);
+                            const localSaved = localStorage.getItem(`quiz_answers_${id}`);
+                            if (localSaved) {
+                                const localAnswers = JSON.parse(localSaved);
+                                setAnswers(prev => ({ ...prev, ...localAnswers }));
+                            }
                         }
                     }
-                }
+                } // end else (non-live or not started)
             } catch (err) {
                 console.error('Error fetching quiz', err);
                 alert('Quiz not found');

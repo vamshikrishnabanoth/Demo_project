@@ -70,10 +70,18 @@ io.on('connection', (socket) => {
                 const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
                 socket.emit('sync_timer', { timeLeft });
             }
-            // Send persisted progress to teacher (or anyone who asks, to be safe for now)
+            // Send persisted progress to teacher
             if (state.progress) {
                 console.log(`Sending progress history to ${user.username} (${user.role})`);
                 socket.emit('progress_history', state.progress);
+            }
+            // Restore leaderboard for teacher refresh
+            if (state.leaderboard && user.role === 'teacher') {
+                socket.emit('question_leaderboard', {
+                    questionIndex: state.currentQuestion || 0,
+                    leaderboard: state.leaderboard,
+                    liveInsights: state.liveInsights || null
+                });
             }
         }
     });
@@ -329,14 +337,20 @@ io.on('connection', (socket) => {
                     }
                 });
 
+                const liveInsights = {
+                    hardestQuestion,
+                    easiestQuestion,
+                    topStudent: leaderboard[0]?.username
+                };
+
+                // Persist leaderboard in roomState for teacher refresh recovery
+                const updatedState = roomState.get(quizId) || {};
+                roomState.set(quizId, { ...updatedState, leaderboard, liveInsights });
+
                 io.to(quizId).emit('question_leaderboard', {
                     questionIndex,
                     leaderboard,
-                    liveInsights: {
-                        hardestQuestion,
-                        easiestQuestion,
-                        topStudent: leaderboard[0]?.username
-                    }
+                    liveInsights
                 });
 
                 console.log(`Answer submitted. Score: ${result.score}. Leaderboard broadcast.`);
