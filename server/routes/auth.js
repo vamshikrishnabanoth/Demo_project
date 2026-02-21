@@ -7,53 +7,28 @@ const auth = require('../middleware/authMiddleware');
 
 // Register User
 router.post('/register', async (req, res) => {
+    // BLOCK ALL REGISTRATION (as requested to prevent students from creating accounts)
+    return res.status(403).json({ msg: 'Self-registration is disabled. Please contact the administrator.' });
+
+    /* Original logic commented out for preservation if needed by admin
     const { username, email, password } = req.body;
-
-    try {
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ msg: 'User already exists' });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        user = new User({
-            username,
-            email,
-            password: hashedPassword
-        });
-
-        await user.save();
-
-        const payload = {
-            user: {
-                id: user.id,
-                role: user.role
-            }
-        };
-
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' },
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token, role: user.role });
-            }
-        );
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Server error: ' + err.message });
-    }
+    ... 
+    */
 });
 
 // Login User
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // 'email' field used for Roll Number or Email
 
     try {
-        let user = await User.findOne({ email });
+        // Search by both email (Roll Number) and username (Full Name)
+        let user = await User.findOne({
+            $or: [
+                { email: email },
+                { username: email }
+            ]
+        });
+
         if (!user) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }
