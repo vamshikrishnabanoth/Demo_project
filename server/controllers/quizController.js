@@ -18,77 +18,92 @@ const generateMockQuestions = (count = 5) => {
     return questions;
 };
 
-// GEMINI AI Generation - Content-Specific Questions
+// GEMINI AI Generation - Direct REST API call (more reliable than SDK)
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
-    console.log('--- DEBUG: PREPARING GENERATION ---');
-    console.log('Key Status:', process.env.GEMINI_API_KEY ? 'Present' : 'Missing');
-    if (process.env.GEMINI_API_KEY) console.log('Key Preview:', process.env.GEMINI_API_KEY.substring(0, 10) + '...');
+    const apiKey = process.env.GEMINI_API_KEY;
+    console.log('Key Status:', apiKey ? 'Present (' + apiKey.substring(0, 10) + '...)' : 'Missing');
 
-    // Fallback to mock if API key is not provided or is placeholder
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AIzaSyPlaceholder') {
+    if (!apiKey || apiKey === 'AIzaSyPlaceholder') {
         console.log('⚠️  Using Mock Quiz Generation (No Gemini API Key)');
         return generateMockQuestions(count);
     }
 
-    // Initialize Gemini Client Lazily to ensure ENV is loaded
-    try {
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        let model;
-        // Try gemini-2.0-flash first, fallback to gemini-1.5-flash
-        try {
-            model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        } catch {
-            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
-        }
-
-        // Validate content (Relaxed for Topic)
-        if (!content || (type !== 'topic' && content.trim().length < 20)) {
-            console.error('❌ Content too short or empty:', content ? content.length : 'null');
-            return generateMockQuestions(count);
-        }
-
-        const prompt = `You are an expert educational quiz generator. Create exactly ${count} questions with a difficulty level of "${difficulty}".
-        
-        CONTEXT/TOPIC:
-        "${content.substring(0, 30000)}"
-
-        CRITICAL RULES:
-        1. If the input is a TOPIC (short text), generate relevant questions based on general knowledge of that topic.
-        2. If the input is TEXT/PDF CONTENT (long text), ALL questions MUST be answerable using ONLY that content.
-        3. Difficulty ${difficulty}: Adjust vocabulary and complexity accordingly.
-        4. Format: Return a VALID JSON object with this exact structure:
-        {
-          "questions": [
-            {
-              "questionText": "string",
-              "options": ["string", "string", "string", "string"],
-              "correctAnswer": "string (must match one option exactly)",
-              "points": 10,
-              "type": "multiple-choice"
-            }
-          ]
-        }
-        
-        Generate ONLY the JSON object. No preamble or markdown formatting.`;
-
-        console.log(`🤖 Generating ${count} questions via Gemini...`);
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text().trim();
-
-        // Handling Gemini's occasional markdown wrap
-        const cleanJSON = responseText.replace(/^```json\n?/, '').replace(/\n?```$/, '').replace(/^```\n?/, '');
-        console.log('--- DEBUG: RAW JSON ---', cleanJSON.substring(0, 50) + '...');
-        const data = JSON.parse(cleanJSON);
-
-        console.log('✅ Gemini generated', data.questions?.length || 0, 'questions');
-        return Array.isArray(data.questions) ? data.questions : data;
-    } catch (err) {
-        console.error('❌ Gemini Error:', err.status, err.message?.substring(0, 200));
+    if (!content || (type !== 'topic' && content.trim().length < 20)) {
+        console.error('❌ Content too short or empty');
         return generateMockQuestions(count);
     }
+
+    const prompt = `You are an expert educational quiz generator. Create exactly ${count} multiple choice questions. Difficulty: ${difficulty}.
+
+TOPIC/CONTENT: "${content.substring(0, 20000)}"
+
+RULES:
+- For a TOPIC: generate general knowledge questions about it.
+- For PDF CONTENT: questions must be answerable from the provided text only.
+- Return ONLY valid JSON, no markdown, no explanation.
+
+JSON FORMAT:
+{"questions":[{"questionText":"string","options":["A","B","C","D"],"correctAnswer":"A","points":10,"type":"multiple-choice"}]}`;
+
+    const makeRequest = (model) => new Promise((resolve, reject) => {
+        const https = require('https');
+        const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] });
+        const options = {
+            hostname: 'generativelanguage.googleapis.com',
+            path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+        };
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => resolve({ status: res.statusCode, body: data }));
+        });
+        req.on('error', reject);
+        req.write(body);
+        req.end();
+    });
+
+    const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-latest'];
+
+    for (const model of models) {
+        try {
+            console.log(`🤖 Trying ${model}...`);
+            let { status, body } = await makeRequest(model);
+
+            // Retry once on 429
+            if (status === 429) {
+                console.log('⏳ Rate limited, waiting 3s...');
+                await new Promise(r => setTimeout(r, 3000));
+                ({ status, body } = await makeRequest(model));
+            }
+
+            if (status !== 200) {
+                console.log(`❌ ${model} failed with status ${status}:`, body.substring(0, 150));
+                continue;
+            }
+
+            const parsed = JSON.parse(body);
+            const rawText = parsed.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+            if (!rawText) { console.log(`❌ ${model} returned empty text`); continue; }
+
+            const cleanJSON = rawText.replace(/^```json\n?/, '').replace(/\n?```$/, '').replace(/^```\n?/, '').trim();
+            const data = JSON.parse(cleanJSON);
+            const questions = Array.isArray(data.questions) ? data.questions : data;
+            console.log(`✅ ${model} generated ${questions.length} questions`);
+            return questions;
+
+        } catch (err) {
+            console.error(`❌ ${model} error:`, err.message?.substring(0, 100));
+        }
+    }
+
+    console.log('⚠️  All models failed — using mock questions');
+    return generateMockQuestions(count);
 };
 
 const generateJoinCode = () => {
+
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
