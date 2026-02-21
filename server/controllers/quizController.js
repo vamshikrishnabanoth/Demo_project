@@ -378,10 +378,12 @@ exports.publishQuiz = async (req, res) => {
 
 exports.getTeacherStats = async (req, res) => {
     try {
-        const quizzes = await Quiz.find({ createdBy: req.user.id });
+        const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
 
         const stats = await Promise.all(quizzes.map(async (quiz) => {
-            const results = await Result.find({ quiz: quiz._id }).populate('student', 'username email');
+            const results = await Result.find({ quiz: quiz._id })
+                .populate('student', 'username email')
+                .sort({ completedAt: -1 });
 
             const completionCount = results.length;
             const averageScore = completionCount > 0
