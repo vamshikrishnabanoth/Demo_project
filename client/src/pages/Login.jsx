@@ -94,15 +94,15 @@ export default function Login() {
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Roll Number / Email</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
                                     <Mail size={18} />
                                 </div>
                                 <input
-                                    type="email"
+                                    type="text"
                                     name="email"
-                                    placeholder="name@email.com"
+                                    placeholder="Enter your Roll Number"
                                     value={email}
                                     onChange={onChange}
                                     required
