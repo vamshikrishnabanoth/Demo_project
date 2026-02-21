@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Award, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy } from 'lucide-react';
 import api from '../utils/api';
@@ -213,6 +213,18 @@ export default function LiveRoomTeacher() {
 
     const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
 
+    // Merge participants (connected) + leaderboard (submitted) so reconnected students always show
+    const allStudents = useMemo(() => {
+        const map = new Map();
+        participants.forEach(p => map.set(p.username, p));
+        leaderboard.forEach(l => {
+            if (!map.has(l.username)) {
+                map.set(l.username, { username: l.username, _id: l.studentId?.toString(), role: 'student' });
+            }
+        });
+        return Array.from(map.values());
+    }, [participants, leaderboard]);
+
     const isWaitingRoom = !quiz || quiz.status === 'waiting';
 
     if (isWaitingRoom) {
@@ -361,18 +373,23 @@ export default function LiveRoomTeacher() {
                         )}
 
                         {/* Student Progress Grid */}
-                        {participants.length > 0 && (
+                        {allStudents.length > 0 && (
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">Student Progress</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-1">Student Progress</h3>
+                                <p className="text-xs text-gray-400 mb-4">{participants.length} connected · {allStudents.length} total</p>
                                 <div className="divide-y divide-gray-100">
-                                    {participants.map((p, pIdx) => {
+                                    {allStudents.map((p, pIdx) => {
                                         const progressById = p._id ? studentProgress[p._id] : null;
                                         const progressByName = p.username ? studentProgress[p.username] : null;
                                         const progress = progressById || progressByName || {};
+                                        const isConnected = participants.some(pp => pp.username === p.username);
 
                                         return (
                                             <div key={p._id || p.username || pIdx} className="py-3 flex items-center gap-3">
-                                                <span className="font-medium text-gray-700 w-28 truncate text-sm">{p.username || 'Unknown'}</span>
+                                                <div className="flex items-center gap-1.5 w-28">
+                                                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isConnected ? 'bg-green-400' : 'bg-gray-300'}`} title={isConnected ? 'Online' : 'Offline'} />
+                                                    <span className="font-medium text-gray-700 truncate text-sm">{p.username || 'Unknown'}</span>
+                                                </div>
                                                 <div className="flex-1 flex items-center gap-1 flex-wrap">
                                                     {quiz?.questions?.map((_, idx) => {
                                                         const isAnswered = progress[idx] === true || progress[idx.toString()] === true;

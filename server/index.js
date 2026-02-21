@@ -288,6 +288,24 @@ io.on('connection', (socket) => {
 
                 await result.save();
 
+                // Ensure submitting student is always visible in participants list
+                // (covers reconnect race conditions where join_room may have been missed)
+                const roomParts = roomParticipants.get(quizId) || [];
+                const studentUsername = result.student ? result.student.username : null;
+                if (studentUsername) {
+                    const alreadyInRoom = roomParts.findIndex(p => p.username === studentUsername);
+                    if (alreadyInRoom === -1) {
+                        roomParts.push({
+                            username: studentUsername,
+                            _id: studentId,
+                            role: 'student',
+                            socketId: socket.id
+                        });
+                        roomParticipants.set(quizId, roomParts);
+                        io.to(quizId).emit('participants_update', roomParts);
+                    }
+                }
+
                 // Broadcast student progress to teacher
                 io.to(quizId).emit('student_progress_update', {
                     studentId: studentId.toString(), /* Ensure string ID */
