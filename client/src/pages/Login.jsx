@@ -94,7 +94,7 @@ export default function Login() {
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Roll Number / Email</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Roll Number</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
                                     <Mail size={18} />
@@ -132,21 +132,15 @@ export default function Login() {
                             type="submit"
                             className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-[#ff6b00] hover:bg-orange-500 text-white rounded-2xl shadow-lg shadow-orange-500/20 text-sm font-black italic uppercase tracking-widest transition-all active:scale-[0.98] mt-4"
                         >
-                            {isLogin ? 'Access Portal' : 'Register Now'}
+                            {isLogin ? 'Access Portal' : 'Action Forbidden'}
                             <LogIn size={18} />
                         </button>
                     </form>
 
                     <div className="mt-8 pt-8 border-t border-white/5 text-center">
-                        <button
-                            onClick={() => setIsLogin(!isLogin)}
-                            className="text-[10px] font-black text-gray-400 hover:text-[#ff6b00] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 mx-auto"
-                        >
-                            {isLogin ? "Don't have an account?" : "Already a member?"}
-                            <span className="text-[#ff6b00] underline underline-offset-4">
-                                {isLogin ? 'Create one here' : 'Sign in back'}
-                            </span>
-                        </button>
+                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                            Official Student Assessment Gateway
+                        </p>
                     </div>
                 </div>
 
