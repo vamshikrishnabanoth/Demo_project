@@ -34,7 +34,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         // Fallback to gemini-pro if flash fails or key is restricted
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // Validate content (Relaxed for Topic)
         if (!content || (type !== 'topic' && content.trim().length < 20)) {
