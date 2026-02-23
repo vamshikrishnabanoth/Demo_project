@@ -1,0 +1,32 @@
+[
+    {
+        "username": "Teacher1",
+        "email": "teacher1@kmit.in",
+        "password": "$2b$10$kYZkXK1MB87fVF8nKapCWe1/Egc3yvQihZ.QlJdx291g6AIZ6RBR2",
+        "role": "teacher",
+        "name": "Teacher One",
+        "createdAt": {
+            "$date": "2026-02-23T12:50:00.000Z"
+        }
+    },
+    {
+        "username": "Teacher2",
+        "email": "teacher2@kmit.in",
+        "password": "$2b$10$kYZkXK1MB87fVF8nKapCWe1/Egc3yvQihZ.QlJdx291g6AIZ6RBR2",
+        "role": "teacher",
+        "name": "Teacher Two",
+        "createdAt": {
+            "$date": "2026-02-23T12:50:00.000Z"
+        }
+    },
+    {
+        "username": "Teacher3",
+        "email": "teacher3@kmit.in",
+        "password": "$2b$10$kYZkXK1MB87fVF8nKapCWe1/Egc3yvQihZ.QlJdx291g6AIZ6RBR2",
+        "role": "teacher",
+        "name": "Teacher Three",
+        "createdAt": {
+            "$date": "2026-02-23T12:50:00.000Z"
+        }
+    }
+]

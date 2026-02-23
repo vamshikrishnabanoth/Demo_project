@@ -98,15 +98,15 @@ export default function Performance() {
                         </div>
                     ) : filteredStats.length > 0 ? (
                         <div className="grid grid-cols-1 gap-6">
-                            {filteredStats.map((quiz) => (
+                            {filteredStats.map((quiz, idx) => (
                                 <div key={quiz.quizId} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-indigo-600">
                                     <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <FileText size={16} className="text-gray-400" />
                                                 <h3 className="text-lg font-bold text-gray-900">{quiz.title}</h3>
-                                                {i === 0 && (
-                                                    <span className="bg-green-100 text-green-700 text-[10px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse">Current</span>
+                                                {idx === 0 && (
+                                                    <span className="bg-green-100 text-green-700 text-[10px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse">Latest</span>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-4 text-sm text-gray-500">

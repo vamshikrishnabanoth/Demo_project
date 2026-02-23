@@ -1,0 +1,211 @@
+MongoDB Connected: localhost
+
+--- USERS ---
+┌─────────┬──────────────────────────────────────────┬──────────────────────────────────────┬───────────────────────┬───────────┐
+│ (index) │ id                                       │ username                             │ email                 │ role      │
+├─────────┼──────────────────────────────────────────┼──────────────────────────────────────┼───────────────────────┼───────────┤
+│ 0       │ new ObjectId('698e16805abe404c9e65adf7') │ 'vamshi'                             │ 'vamshi123@gmail.com' │ 'teacher' │
+│ 1       │ new ObjectId('6999c4c3e338c1fc1d5e1d06') │ 'MAISE SUSHAANTH KUMAR'              │ '24BD1A050Z'          │ 'student' │
+│ 2       │ new ObjectId('6999c4c3e338c1fc1d5e1d07') │ 'MANDA SRIHITHA REDDY'               │ '24BD1A0511'          │ 'student' │
+│ 3       │ new ObjectId('6999c4c3e338c1fc1d5e1d08') │ 'MANDADI SRI NIDHI'                  │ '24BD1A0512'          │ 'student' │
+│ 4       │ new ObjectId('6999c4c3e338c1fc1d5e1d09') │ 'MARIKANTI SHREE NITHYA'             │ '24BD1A0513'          │ 'student' │
+│ 5       │ new ObjectId('6999c4c3e338c1fc1d5e1d0a') │ 'MOHAMMED SHAHRUKH'                  │ '24BD1A0514'          │ 'student' │
+│ 6       │ new ObjectId('6999c4c3e338c1fc1d5e1d0b') │ 'NALLARI RANGA SAI SHIVANI'          │ '24BD1A0515'          │ 'student' │
+│ 7       │ new ObjectId('6999c4c3e338c1fc1d5e1d0c') │ 'NANDIGAMA SRAVANTHI'                │ '24BD1A0516'          │ 'student' │
+│ 8       │ new ObjectId('6999c4c3e338c1fc1d5e1d0d') │ 'NAYEKAM SAHITHI'                    │ '24BD1A0517'          │ 'student' │
+│ 9       │ new ObjectId('6999c4c3e338c1fc1d5e1d0e') │ 'NEELARAPU ABHINAV'                  │ '24BD1A0518'          │ 'student' │
+│ 10      │ new ObjectId('6999c4c3e338c1fc1d5e1d0f') │ 'NELLUTLA SAI RAMANUJA'              │ '24BD1A0519'          │ 'student' │
+│ 11      │ new ObjectId('6999c4c3e338c1fc1d5e1d10') │ 'NIDHI SACHIN SHAH'                  │ '24BD1A051A'          │ 'student' │
+│ 12      │ new ObjectId('6999c4c3e338c1fc1d5e1d11') │ 'PAKALA KIRITESHWAR REDDY'           │ '24BD1A051B'          │ 'student' │
+│ 13      │ new ObjectId('6999c4c3e338c1fc1d5e1d12') │ 'PULLETIKURTHI VENKATA SAI ABHIROOP' │ '24BD1A051C'          │ 'student' │
+│ 14      │ new ObjectId('6999c4c3e338c1fc1d5e1d13') │ 'PUTTA VENKATA SAI'                  │ '24BD1A051D'          │ 'student' │
+│ 15      │ new ObjectId('6999c4c3e338c1fc1d5e1d14') │ 'RAHUL JUPELLI'                      │ '24BD1A051E'          │ 'student' │
+│ 16      │ new ObjectId('6999c4c3e338c1fc1d5e1d15') │ 'ROLAKANTI ROHITH REDDY'             │ '24BD1A051F'          │ 'student' │
+│ 17      │ new ObjectId('6999c4c3e338c1fc1d5e1d16') │ 'SAKAM SAI TEJA REDDY'               │ '24BD1A051G'          │ 'student' │
+│ 18      │ new ObjectId('6999c4c3e338c1fc1d5e1d17') │ 'SANJANA JAIN'                       │ '24BD1A051H'          │ 'student' │
+│ 19      │ new ObjectId('6999c4c3e338c1fc1d5e1d18') │ 'SHAIK MOHAMMED OMAR'                │ '24BD1A051J'          │ 'student' │
+│ 20      │ new ObjectId('6999c4c3e338c1fc1d5e1d19') │ 'SHOAIB SADIQ SALEHMOHAMED'          │ '24BD1A051K'          │ 'student' │
+│ 21      │ new ObjectId('6999c4c3e338c1fc1d5e1d1a') │ 'SHREYA PITLA'                       │ '24BD1A051L'          │ 'student' │
+│ 22      │ new ObjectId('6999c4c3e338c1fc1d5e1d1b') │ 'SHUBHAM INNANI'                     │ '24BD1A051M'          │ 'student' │
+│ 23      │ new ObjectId('6999c4c3e338c1fc1d5e1d1c') │ 'SRIGHAKOLLAPU SRIRAMA MITHILESH'    │ '24BD1A051N'          │ 'student' │
+│ 24      │ new ObjectId('6999c4c3e338c1fc1d5e1d1d') │ 'SURUKANTI RITHVIK REDDY'            │ '24BD1A051P'          │ 'student' │
+│ 25      │ new ObjectId('6999c4c3e338c1fc1d5e1d1e') │ 'T VENKATA SAI AMRUTHA'              │ '24BD1A051Q'          │ 'student' │
+│ 26      │ new ObjectId('6999c4c3e338c1fc1d5e1d1f') │ 'TADASINA SAIVIGNESH REDDY'          │ '24BD1A051R'          │ 'student' │
+│ 27      │ new ObjectId('6999c4c3e338c1fc1d5e1d20') │ 'TANISHQ JAIN'                       │ '24BD1A051T'          │ 'student' │
+│ 28      │ new ObjectId('6999c4c3e338c1fc1d5e1d21') │ 'TARANG HARSOLA'                     │ '24BD1A051U'          │ 'student' │
+│ 29      │ new ObjectId('6999c4c3e338c1fc1d5e1d22') │ 'TATTARI MEGHAV'                     │ '24BD1A051V'          │ 'student' │
+│ 30      │ new ObjectId('6999c4c3e338c1fc1d5e1d23') │ 'THARLAPALLY PRIYANKA'               │ '24BD1A051W'          │ 'student' │
+│ 31      │ new ObjectId('6999c4c3e338c1fc1d5e1d24') │ 'THORAM HIMANESH'                    │ '24BD1A051X'          │ 'student' │
+│ 32      │ new ObjectId('6999c4c3e338c1fc1d5e1d25') │ 'VANDANPU SATHWIKH SAI'              │ '24BD1A051Y'          │ 'student' │
+│ 33      │ new ObjectId('6999c4c3e338c1fc1d5e1d26') │ 'VANGURI SUSHANTH REDDY'             │ '24BD1A051Z'          │ 'student' │
+│ 34      │ new ObjectId('6999c4c3e338c1fc1d5e1d27') │ 'VARANASI SNEHA'                     │ '24BD1A05K1'          │ 'student' │
+│ 35      │ new ObjectId('6999c4c3e338c1fc1d5e1d28') │ 'VUPPALA ADVAITH'                    │ '24BD1A05K2'          │ 'student' │
+│ 36      │ new ObjectId('6999c4c3e338c1fc1d5e1d29') │ 'VUPPALA SHIVA KARTHIK'              │ '24BD1A05K3'          │ 'student' │
+│ 37      │ new ObjectId('6999c4c3e338c1fc1d5e1d2a') │ 'A ANAGHA'                           │ '24BD1A0521'          │ 'student' │
+│ 38      │ new ObjectId('6999c4c3e338c1fc1d5e1d2b') │ 'AKKALA SWEEHAR'                     │ '24BD1A0522'          │ 'student' │
+│ 39      │ new ObjectId('6999c4c3e338c1fc1d5e1d2c') │ 'ANUGULA LOKESH REDDY'               │ '24BD1A0523'          │ 'student' │
+│ 40      │ new ObjectId('6999c4c3e338c1fc1d5e1d2d') │ 'ARUN CHITYALA'                      │ '24BD1A0524'          │ 'student' │
+│ 41      │ new ObjectId('6999c4c3e338c1fc1d5e1d2e') │ 'BALASUBRAMANIAN THEERTH'            │ '24BD1A0525'          │ 'student' │
+│ 42      │ new ObjectId('6999c4c3e338c1fc1d5e1d2f') │ 'BIJIGIRI KARTHIKEYA'                │ '24BD1A0526'          │ 'student' │
+│ 43      │ new ObjectId('6999c4c3e338c1fc1d5e1d30') │ 'BIKNOOR AKSHAY BHARADWAJ'           │ '24BD1A0527'          │ 'student' │
+│ 44      │ new ObjectId('6999c4c3e338c1fc1d5e1d31') │ 'BOLLAM SAI SHASHANK'                │ '24BD1A0528'          │ 'student' │
+│ 45      │ new ObjectId('6999c4c3e338c1fc1d5e1d32') │ 'CHOWLAPALLY ADARSH REDDY'           │ '24BD1A0529'          │ 'student' │
+│ 46      │ new ObjectId('6999c4c3e338c1fc1d5e1d33') │ 'DABBUGALLA PRINCY'                  │ '24BD1A052A'          │ 'student' │
+│ 47      │ new ObjectId('6999c4c3e338c1fc1d5e1d34') │ 'DHAMSHETTY ANOOSH'                  │ '24BD1A052B'          │ 'student' │
+│ 48      │ new ObjectId('6999c4c3e338c1fc1d5e1d35') │ 'EADARA POORNA ASHIK'                │ '24BD1A052C'          │ 'student' │
+│ 49      │ new ObjectId('6999c4c3e338c1fc1d5e1d36') │ 'G SREEJA REDDY'                     │ '24BD1A052D'          │ 'student' │
+│ 50      │ new ObjectId('6999c4c3e338c1fc1d5e1d37') │ 'GANGADHARI NIKSHITHA'               │ '24BD1A052E'          │ 'student' │
+│ 51      │ new ObjectId('6999c4c3e338c1fc1d5e1d38') │ 'GARLAPATI DINESH REDDY'             │ '24BD1A052F'          │ 'student' │
+│ 52      │ new ObjectId('6999c4c3e338c1fc1d5e1d39') │ 'GOKA SWARAJ REDDY'                  │ '24BD1A052G'          │ 'student' │
+│ 53      │ new ObjectId('6999c4c3e338c1fc1d5e1d3a') │ 'GOLI SAI PRASANNA'                  │ '24BD1A052H'          │ 'student' │
+│ 54      │ new ObjectId('6999c4c3e338c1fc1d5e1d3b') │ 'GOLLA BHARATH'                      │ '24BD1A052J'          │ 'student' │
+│ 55      │ new ObjectId('6999c4c3e338c1fc1d5e1d3c') │ 'GOPU ABHINAV REDDY'                 │ '24BD1A052K'          │ 'student' │
+│ 56      │ new ObjectId('6999c4c3e338c1fc1d5e1d3d') │ 'GUDIPELLY SRISHANTH KUMAR'          │ '24BD1A052L'          │ 'student' │
+│ 57      │ new ObjectId('6999c4c3e338c1fc1d5e1d3e') │ 'GUMMADAVELLI SAI BALAJI KOUSHIK'    │ '24BD1A052M'          │ 'student' │
+│ 58      │ new ObjectId('6999c4c3e338c1fc1d5e1d3f') │ 'GUNDU HIMANISH'                     │ '24BD1A052N'          │ 'student' │
+│ 59      │ new ObjectId('6999c4c3e338c1fc1d5e1d40') │ 'J VARSHA'                           │ '24BD1A052P'          │ 'student' │
+│ 60      │ new ObjectId('6999c4c3e338c1fc1d5e1d41') │ 'JAKKALA ABHINAV YADAV'              │ '24BD1A052Q'          │ 'student' │
+│ 61      │ new ObjectId('6999c4c3e338c1fc1d5e1d42') │ 'JALLA AKHIL'                        │ '24BD1A052R'          │ 'student' │
+│ 62      │ new ObjectId('6999c4c3e338c1fc1d5e1d43') │ 'KATIKA MANISH YADAV'                │ '24BD1A052T'          │ 'student' │
+│ 63      │ new ObjectId('6999c4c3e338c1fc1d5e1d44') │ 'KATIKANENI SAI VIKYATH'             │ '24BD1A052U'          │ 'student' │
+│ 64      │ new ObjectId('6999c4c3e338c1fc1d5e1d45') │ 'KEETHA SUDHEER KUMAR'               │ '24BD1A052V'          │ 'student' │
+│ 65      │ new ObjectId('6999c4c3e338c1fc1d5e1d46') │ 'KONDAVEETI PRANAV SURAJ'            │ '24BD1A052W'          │ 'student' │
+│ 66      │ new ObjectId('6999c4c3e338c1fc1d5e1d47') │ 'KONETI SATVIKA'                     │ '24BD1A052X'          │ 'student' │
+│ 67      │ new ObjectId('6999c4c3e338c1fc1d5e1d48') │ 'KUKKADAPU HARIKA'                   │ '24BD1A052Y'          │ 'student' │
+│ 68      │ new ObjectId('6999c4c3e338c1fc1d5e1d49') │ 'KUNTA GANESH TEJAS KUMAR'           │ '24BD1A052Z'          │ 'student' │
+│ 69      │ new ObjectId('6999c4c3e338c1fc1d5e1d4a') │ 'M SANJAY'                           │ '24BD1A0531'          │ 'student' │
+│ 70      │ new ObjectId('6999c4c3e338c1fc1d5e1d4b') │ 'MACHARLA ROSHEENI'                  │ '24BD1A0532'          │ 'student' │
+│ 71      │ new ObjectId('6999c4c3e338c1fc1d5e1d4c') │ 'MADDULA LAKSHMI SRI VANI'           │ '24BD1A0533'          │ 'student' │
+│ 72      │ new ObjectId('6999c4c3e338c1fc1d5e1d4d') │ 'MALLAMPETA UDAY KIRAN'              │ '24BD1A0534'          │ 'student' │
+│ 73      │ new ObjectId('6999c4c3e338c1fc1d5e1d4e') │ 'MANAPADI NAGA SHARANYA'             │ '24BD1A0535'          │ 'student' │
+│ 74      │ new ObjectId('6999c4c3e338c1fc1d5e1d4f') │ 'MARTHA SAKETH SHOWRY'               │ '24BD1A0536'          │ 'student' │
+│ 75      │ new ObjectId('6999c4c3e338c1fc1d5e1d50') │ 'NASEHA JABEEN'                      │ '24BD1A0537'          │ 'student' │
+│ 76      │ new ObjectId('6999c4c3e338c1fc1d5e1d51') │ 'NOMULA ANIRUDH REDDY'               │ '24BD1A0538'          │ 'student' │
+│ 77      │ new ObjectId('6999c4c3e338c1fc1d5e1d52') │ 'PABBATHI BHARGAVI'                  │ '24BD1A0539'          │ 'student' │
+│ 78      │ new ObjectId('6999c4c3e338c1fc1d5e1d53') │ 'PANNALA SAI RISHWANTH REDDY'        │ '24BD1A053A'          │ 'student' │
+│ 79      │ new ObjectId('6999c4c3e338c1fc1d5e1d54') │ 'PASUPULETI PRAGNA'                  │ '24BD1A053B'          │ 'student' │
+│ 80      │ new ObjectId('6999c4c3e338c1fc1d5e1d55') │ 'PATLORI ANIRUDH UMESH'              │ '24BD1A053C'          │ 'student' │
+│ 81      │ new ObjectId('6999c4c3e338c1fc1d5e1d56') │ 'PEDURU SUNAND'                      │ '24BD1A053D'          │ 'student' │
+│ 82      │ new ObjectId('6999c4c3e338c1fc1d5e1d57') │ 'PENUMUDI RAKSHITHA'                 │ '24BD1A053E'          │ 'student' │
+│ 83      │ new ObjectId('6999c4c3e338c1fc1d5e1d58') │ 'PIDAMARTHY RAMCHARAN'               │ '24BD1A053F'          │ 'student' │
+│ 84      │ new ObjectId('6999c4c3e338c1fc1d5e1d59') │ 'POLAPALLY MANOJ KUMAR'              │ '24BD1A053G'          │ 'student' │
+│ 85      │ new ObjectId('6999c4c3e338c1fc1d5e1d5a') │ 'POLISETTY ABHISHEK'                 │ '24BD1A053H'          │ 'student' │
+│ 86      │ new ObjectId('6999c4c3e338c1fc1d5e1d5b') │ 'PONNURU LAKSHMI RITHIKA'            │ '24BD1A053J'          │ 'student' │
+│ 87      │ new ObjectId('6999c4c3e338c1fc1d5e1d5c') │ 'PRANAY GAURAV AIRVA'                │ '24BD1A053K'          │ 'student' │
+│ 88      │ new ObjectId('6999c4c3e338c1fc1d5e1d5d') │ 'PRATAPAGIRI VARSHITH MAHENDRA'      │ '24BD1A053L'          │ 'student' │
+│ 89      │ new ObjectId('6999c4c3e338c1fc1d5e1d5e') │ 'RAMPELLI SRI CHARAN'                │ '24BD1A053M'          │ 'student' │
+│ 90      │ new ObjectId('6999c4c3e338c1fc1d5e1d5f') │ 'RAVIKANTI LAHARI'                   │ '24BD1A053N'          │ 'student' │
+│ 91      │ new ObjectId('6999c4c3e338c1fc1d5e1d60') │ 'RISHIKESH MANE'                     │ '24BD1A053P'          │ 'student' │
+│ 92      │ new ObjectId('6999c4c3e338c1fc1d5e1d61') │ 'RYALI SAMPATH LALITH KUMAR'         │ '24BD1A053Q'          │ 'student' │
+│ 93      │ new ObjectId('6999c4c3e338c1fc1d5e1d62') │ 'SAMALA MEGHANA'                     │ '24BD1A053R'          │ 'student' │
+│ 94      │ new ObjectId('6999c4c3e338c1fc1d5e1d63') │ 'SAMUDRALA SAI GANESH'               │ '24BD1A053T'          │ 'student' │
+│ 95      │ new ObjectId('6999c4c3e338c1fc1d5e1d64') │ 'SHEELAM SAI KRISHNA'                │ '24BD1A053U'          │ 'student' │
+│ 96      │ new ObjectId('6999c4c3e338c1fc1d5e1d65') │ 'THULA AVINASH'                      │ '24BD1A053V'          │ 'student' │
+│ 97      │ new ObjectId('6999c4c3e338c1fc1d5e1d66') │ 'UDARI PHANITH'                      │ '24BD1A053W'          │ 'student' │
+│ 98      │ new ObjectId('6999c4c3e338c1fc1d5e1d67') │ 'V ANURAG KRISHNA'                   │ '24BD1A053X'          │ 'student' │
+│ 99      │ new ObjectId('6999c4c3e338c1fc1d5e1d68') │ 'VAISHNAVI KOOSAM'                   │ '24BD1A053Y'          │ 'student' │
+│ 100     │ new ObjectId('6999c4c3e338c1fc1d5e1d69') │ 'VEMPATI BINDU SREE'                 │ '24BD1A053Z'          │ 'student' │
+│ 101     │ new ObjectId('6999c4c3e338c1fc1d5e1d6a') │ 'VUNDHYALA AKESH REDDY'              │ '24BD1A05K4'          │ 'student' │
+│ 102     │ new ObjectId('6999c4c3e338c1fc1d5e1d6b') │ 'YEDMA CHARANYA KEERTHI'             │ '24BD1A05K5'          │ 'student' │
+│ 103     │ new ObjectId('6999c4c3e338c1fc1d5e1d6c') │ 'AKAVEETI NISHANTH KUMAR'            │ '24BD1A0541'          │ 'student' │
+│ 104     │ new ObjectId('6999c4c4e338c1fc1d5e1d6d') │ 'ALLAGADAPA SRIKAR'                  │ '24BD1A0542'          │ 'student' │
+│ 105     │ new ObjectId('6999c4c4e338c1fc1d5e1d6e') │ 'ALLURI SUNDEEP'                     │ '24BD1A0543'          │ 'student' │
+│ 106     │ new ObjectId('6999c4c4e338c1fc1d5e1d6f') │ 'B VAMSHI TEJA'                      │ '24BD1A0544'          │ 'student' │
+│ 107     │ new ObjectId('6999c4c4e338c1fc1d5e1d70') │ 'BUKKA VAISHNAVI'                    │ '24BD1A0545'          │ 'student' │
+│ 108     │ new ObjectId('6999c4c4e338c1fc1d5e1d71') │ 'BURRA V S S R DHEERAJ KUMAR'        │ '24BD1A0546'          │ 'student' │
+│ 109     │ new ObjectId('6999c4c4e338c1fc1d5e1d72') │ 'BYREDDY ROHAN REDDY'                │ '24BD1A0547'          │ 'student' │
+│ 110     │ new ObjectId('6999c4c4e338c1fc1d5e1d73') │ 'CHERUKUMALLI VENKATA HIMA VARSHINI' │ '24BD1A0548'          │ 'student' │
+│ 111     │ new ObjectId('6999c4c4e338c1fc1d5e1d74') │ 'DASARI SAHASRA SHIVATHMIKA'         │ '24BD1A0549'          │ 'student' │
+│ 112     │ new ObjectId('6999c4c4e338c1fc1d5e1d75') │ 'GADDE VIVEK'                        │ '24BD1A054A'          │ 'student' │
+│ 113     │ new ObjectId('6999c4c4e338c1fc1d5e1d76') │ 'GARAPATI RAMA KRISHNA'              │ '24BD1A054B'          │ 'student' │
+│ 114     │ new ObjectId('6999c4c4e338c1fc1d5e1d77') │ 'GODAVARI SRIVAISHNAVI'              │ '24BD1A054C'          │ 'student' │
+│ 115     │ new ObjectId('6999c4c4e338c1fc1d5e1d78') │ 'GUBBALA PRUDHVI'                    │ '24BD1A054D'          │ 'student' │
+│ 116     │ new ObjectId('6999c4c4e338c1fc1d5e1d79') │ 'GUDA SRI VRINDA VARSHITHA'          │ '24BD1A054E'          │ 'student' │
+│ 117     │ new ObjectId('6999c4c4e338c1fc1d5e1d7a') │ 'GUNDU VIVEK'                        │ '24BD1A054F'          │ 'student' │
+│ 118     │ new ObjectId('6999c4c4e338c1fc1d5e1d7b') │ 'HEMANTH TIWARI'                     │ '24BD1A054G'          │ 'student' │
+│ 119     │ new ObjectId('6999c4c4e338c1fc1d5e1d7c') │ 'JAMBOJU SRIVARUN'                   │ '24BD1A054H'          │ 'student' │
+│ 120     │ new ObjectId('6999c4c4e338c1fc1d5e1d7d') │ 'K VARSHIK REDDY'                    │ '24BD1A054J'          │ 'student' │
+│ 121     │ new ObjectId('6999c4c4e338c1fc1d5e1d7e') │ 'KALAKOTI SAICHARAN'                 │ '24BD1A054K'          │ 'student' │
+│ 122     │ new ObjectId('6999c4c4e338c1fc1d5e1d7f') │ 'KALVA BHARATH'                      │ '24BD1A054L'          │ 'student' │
+│ 123     │ new ObjectId('6999c4c4e338c1fc1d5e1d80') │ 'KAMATHAM ASRITHA'                   │ '24BD1A054M'          │ 'student' │
+│ 124     │ new ObjectId('6999c4c4e338c1fc1d5e1d81') │ 'KAMISETTI JOSHUA'                   │ '24BD1A054N'          │ 'student' │
+│ 125     │ new ObjectId('6999c4c4e338c1fc1d5e1d82') │ 'KONDAGUDURU ABHIRAM'                │ '24BD1A054P'          │ 'student' │
+│ 126     │ new ObjectId('6999c4c4e338c1fc1d5e1d83') │ 'KOTHURU KEERTHANA'                  │ '24BD1A054Q'          │ 'student' │
+│ 127     │ new ObjectId('6999c4c4e338c1fc1d5e1d84') │ 'KOTLA SHIVA TARUN'                  │ '24BD1A054R'          │ 'student' │
+│ 128     │ new ObjectId('6999c4c4e338c1fc1d5e1d85') │ 'KOTTAM SAI SPOORTHY REDDY'          │ '24BD1A054T'          │ 'student' │
+│ 129     │ new ObjectId('6999c4c4e338c1fc1d5e1d86') │ 'KOUKUNTLA HARIHARAN'                │ '24BD1A054U'          │ 'student' │
+│ 130     │ new ObjectId('6999c4c4e338c1fc1d5e1d87') │ 'KURELLA TEJASHWINI'                 │ '24BD1A054V'          │ 'student' │
+│ 131     │ new ObjectId('6999c4c4e338c1fc1d5e1d88') │ 'MADUNALA SATHVIK'                   │ '24BD1A054W'          │ 'student' │
+│ 132     │ new ObjectId('6999c4c4e338c1fc1d5e1d89') │ 'MALAVATH DHEERAJ'                   │ '24BD1A054X'          │ 'student' │
+│ 133     │ new ObjectId('6999c4c4e338c1fc1d5e1d8a') │ 'MANGALI SIDDHARTHA'                 │ '24BD1A054Y'          │ 'student' │
+│ 134     │ new ObjectId('6999c4c4e338c1fc1d5e1d8b') │ 'MANGARAPU SREE ARNAV'               │ '24BD1A054Z'          │ 'student' │
+│ 135     │ new ObjectId('6999c4c4e338c1fc1d5e1d8c') │ 'MANSANI SPOORTHY'                   │ '24BD1A0551'          │ 'student' │
+│ 136     │ new ObjectId('6999c4c4e338c1fc1d5e1d8d') │ 'MOHD FARHAN AHMED'                  │ '24BD1A0552'          │ 'student' │
+│ 137     │ new ObjectId('6999c4c4e338c1fc1d5e1d8e') │ 'NAKKALA ADITHYA REDDY'              │ '24BD1A0553'          │ 'student' │
+│ 138     │ new ObjectId('6999c4c4e338c1fc1d5e1d8f') │ 'NALAM VENKAT'                       │ '24BD1A0554'          │ 'student' │
+│ 139     │ new ObjectId('6999c4c4e338c1fc1d5e1d90') │ 'NANNURI ROHAN KUMAR REDDY'          │ '24BD1A0555'          │ 'student' │
+│ 140     │ new ObjectId('6999c4c4e338c1fc1d5e1d91') │ 'NEHA ROY'                           │ '24BD1A0556'          │ 'student' │
+│ 141     │ new ObjectId('6999c4c4e338c1fc1d5e1d92') │ 'NOOKA SHASHANK'                     │ '24BD1A0557'          │ 'student' │
+│ 142     │ new ObjectId('6999c4c4e338c1fc1d5e1d93') │ 'NOOKALA VAMSI KRISHNA'              │ '24BD1A0558'          │ 'student' │
+│ 143     │ new ObjectId('6999c4c4e338c1fc1d5e1d94') │ 'ORUGANTI SAI SAURISH'               │ '24BD1A0559'          │ 'student' │
+│ 144     │ new ObjectId('6999c4c4e338c1fc1d5e1d95') │ 'PADURI BHAVYA TEJA'                 │ '24BD1A055A'          │ 'student' │
+│ 145     │ new ObjectId('6999c4c4e338c1fc1d5e1d96') │ 'PARIGALA SRI HARSHA'                │ '24BD1A055B'          │ 'student' │
+│ 146     │ new ObjectId('6999c4c4e338c1fc1d5e1d97') │ 'PASHAM PRAGNAY REDDY'               │ '24BD1A055C'          │ 'student' │
+│ 147     │ new ObjectId('6999c4c4e338c1fc1d5e1d98') │ 'PENTYALA SAMANVITH CHOWDHARY'       │ '24BD1A055D'          │ 'student' │
+│ 148     │ new ObjectId('6999c4c4e338c1fc1d5e1d99') │ 'PICHALA DEEPESH REDDY'              │ '24BD1A055E'          │ 'student' │
+│ 149     │ new ObjectId('6999c4c4e338c1fc1d5e1d9a') │ 'POGULAKONDA LAKSHMI MADHURYA'       │ '24BD1A055F'          │ 'student' │
+│ 150     │ new ObjectId('6999c4c4e338c1fc1d5e1d9b') │ 'RACHA VIGNESH'                      │ '24BD1A055G'          │ 'student' │
+│ 151     │ new ObjectId('6999c4c4e338c1fc1d5e1d9c') │ 'RAMINI SIDHARDH REDDY'              │ '24BD1A055H'          │ 'student' │
+│ 152     │ new ObjectId('6999c4c4e338c1fc1d5e1d9d') │ 'SAHARSH MACHENDRA BATTE'            │ '24BD1A055J'          │ 'student' │
+│ 153     │ new ObjectId('6999c4c4e338c1fc1d5e1d9e') │ 'SAI AKSHITH REDDY GURIJALA'         │ '24BD1A055K'          │ 'student' │
+│ 154     │ new ObjectId('6999c4c4e338c1fc1d5e1d9f') │ 'SAMALA SREEHARSHINI'                │ '24BD1A055L'          │ 'student' │
+│ 155     │ new ObjectId('6999c4c4e338c1fc1d5e1da0') │ 'SOMALA MANU SIDDHARTHA REDDY'       │ '24BD1A055M'          │ 'student' │
+│ 156     │ new ObjectId('6999c4c4e338c1fc1d5e1da1') │ 'SURUKONTI SHASHI PREETHAM REDDY'    │ '24BD1A055N'          │ 'student' │
+│ 157     │ new ObjectId('6999c4c4e338c1fc1d5e1da2') │ 'SYED IBRAHIM MEHDI'                 │ '24BD1A055P'          │ 'student' │
+│ 158     │ new ObjectId('6999c4c4e338c1fc1d5e1da3') │ 'THATIPALLY HASINI'                  │ '24BD1A055Q'          │ 'student' │
+│ 159     │ new ObjectId('6999c4c4e338c1fc1d5e1da4') │ 'THOTA AISHWARYA'                    │ '24BD1A055R'          │ 'student' │
+│ 160     │ new ObjectId('6999c4c4e338c1fc1d5e1da5') │ 'TINGIRIKAR LOKESH'                  │ '24BD1A055T'          │ 'student' │
+│ 161     │ new ObjectId('6999c4c4e338c1fc1d5e1da6') │ 'UPPUGANDLA SRAVIKA'                 │ '24BD1A055U'          │ 'student' │
+│ 162     │ new ObjectId('6999c4c4e338c1fc1d5e1da7') │ 'VANGAPALLY RAMYA'                   │ '24BD1A055V'          │ 'student' │
+│ 163     │ new ObjectId('6999c4c4e338c1fc1d5e1da8') │ 'VIVEKANANDA REDDY CHALLA'           │ '24BD1A055W'          │ 'student' │
+│ 164     │ new ObjectId('6999c4c4e338c1fc1d5e1da9') │ 'VUNDAVALLI SAI RUTHVIK'             │ '24BD1A055X'          │ 'student' │
+│ 165     │ new ObjectId('6999c4c4e338c1fc1d5e1daa') │ 'VURA SURYA VENKAT'                  │ '24BD1A055Y'          │ 'student' │
+└─────────┴──────────────────────────────────────────┴──────────────────────────────────────┴───────────────────────┴───────────┘
+
+--- QUIZZES ---
+┌─────────┬──────────────────────────────────────────┬─────────────────┬───────┬───────────┬───────────┐
+│ (index) │ id                                       │ title           │ topic │ creator   │ questions │
+├─────────┼──────────────────────────────────────────┼─────────────────┼───────┼───────────┼───────────┤
+│ 0       │ new ObjectId('698e26a144cacdb2aad7a3f4') │ 'testing'       │ ''    │ undefined │ 1         │
+│ 1       │ new ObjectId('698ea76b6e0b29952a828c0e') │ 'kfalhk'        │ ''    │ undefined │ 1         │
+│ 2       │ new ObjectId('698ed4185b5e662c5b1618ac') │ 'first'         │ ''    │ undefined │ 1         │
+│ 3       │ new ObjectId('698ed5ff085b308887ac635b') │ 'tfrgyhj'       │ ''    │ undefined │ 1         │
+│ 4       │ new ObjectId('698edae3ddb0e3381c913bfc') │ 'fjsg;lf'       │ ''    │ undefined │ 2         │
+│ 5       │ new ObjectId('698ef3fd8ca319a99d704363') │ 'ghj'           │ ''    │ undefined │ 1         │
+│ 6       │ new ObjectId('698ef74573c445c10a8a36a9') │ 'a;ofhiuldsfhf' │ ''    │ undefined │ 2         │
+│ 7       │ new ObjectId('698f01f1536b8dd4b04fd647') │ 'jdhfaf'        │ ''    │ undefined │ 2         │
+│ 8       │ new ObjectId('698f02e5536b8dd4b050b983') │ 'egbfsvcbesv'   │ ''    │ undefined │ 2         │
+│ 9       │ new ObjectId('698f3363961ee696a51c3bdf') │ 'fasijfa;dosf'  │ ''    │ undefined │ 2         │
+│ 10      │ new ObjectId('69901f63983b799e87e95dc1') │ 'test'          │ ''    │ undefined │ 1         │
+└─────────┴──────────────────────────────────────────┴─────────────────┴───────┴───────────┴───────────┘
+
+--- RESULTS ---
+┌─────────┬──────────────────────────────────────────┬───────────┬─────────────────┬───────┐
+│ (index) │ id                                       │ student   │ quiz            │ score │
+├─────────┼──────────────────────────────────────────┼───────────┼─────────────────┼───────┤
+│ 0       │ new ObjectId('698e26c644cacdb2aad7b390') │ undefined │ 'testing'       │ 10    │
+│ 1       │ new ObjectId('698e26e144cacdb2aad7b3ba') │ undefined │ 'testing'       │ 10    │
+│ 2       │ new ObjectId('698e274144cacdb2aad7b426') │ undefined │ undefined       │ 0     │
+│ 3       │ new ObjectId('698ed60d085b308887ac6460') │ undefined │ 'first'         │ 0     │
+│ 4       │ new ObjectId('698ed60d085b308887ac6463') │ undefined │ 'first'         │ 0     │
+│ 5       │ new ObjectId('698ed615085b308887ac6a2d') │ undefined │ 'tfrgyhj'       │ 10    │
+│ 6       │ new ObjectId('698ed636085b308887ac6a7f') │ undefined │ 'tfrgyhj'       │ 10    │
+│ 7       │ new ObjectId('698edb01ddb0e3381c915ad8') │ undefined │ 'fjsg;lf'       │ 10    │
+│ 8       │ new ObjectId('698edb07ddb0e3381c915ae4') │ undefined │ 'fjsg;lf'       │ 0     │
+│ 9       │ new ObjectId('698edb6fddb0e3381c915c44') │ undefined │ undefined       │ 0     │
+│ 10      │ new ObjectId('698ef76e73c445c10a8a46db') │ undefined │ 'a;ofhiuldsfhf' │ 10    │
+│ 11      │ new ObjectId('698f338e961ee696a51c4955') │ undefined │ 'fasijfa;dosf'  │ 20    │
+│ 12      │ new ObjectId('698f338e961ee696a51c495c') │ undefined │ 'fasijfa;dosf'  │ 0     │
+│ 13      │ new ObjectId('69901fbe983b799e87e9b922') │ undefined │ 'test'          │ 0     │
+│ 14      │ new ObjectId('6990207d983b799e87e9b9ea') │ undefined │ 'test'          │ 0     │
+└─────────┴──────────────────────────────────────────┴───────────┴─────────────────┴───────┘

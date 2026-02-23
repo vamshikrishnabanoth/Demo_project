@@ -3,16 +3,24 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 const User = require('./models/User');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // --- CONFIGURATION ---
-// PASTE YOUR ATLAS URI HERE (from your .env or Atlas dashboard)
-const REMOTE_MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ai-quiz-platform';
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+const REMOTE_MONGO_URI = process.env.MONGO_URI;
 const DEFAULT_PASSWORD = 'kmit';
 // ---------------------
 
 async function populateRemote() {
     try {
-        console.log('Connecting to Database...');
+        if (!REMOTE_MONGO_URI) {
+            console.error('ERROR: MONGO_URI is missing from .env file!');
+            process.exit(1);
+        }
+
+        const sanitizedUri = REMOTE_MONGO_URI.replace(/:([^@]+)@/, ':****@');
+        console.log(`Connecting to: ${sanitizedUri}`);
+
         await mongoose.connect(REMOTE_MONGO_URI);
         console.log('Connected successfully.');
 

@@ -75,8 +75,8 @@ io.on('connection', (socket) => {
                 console.log(`Sending progress history to ${user.username} (${user.role})`);
                 socket.emit('progress_history', state.progress);
             }
-            // Restore leaderboard for teacher refresh
-            if (state.leaderboard && user.role === 'teacher') {
+            // Sync leaderboard for all participants (Teacher and Students) on join/reconnect
+            if (state.leaderboard) {
                 socket.emit('question_leaderboard', {
                     questionIndex: state.currentQuestion || 0,
                     leaderboard: state.leaderboard,
@@ -134,11 +134,27 @@ io.on('connection', (socket) => {
         roomState.delete(quizId);
         try {
             const Quiz = require('./models/Quiz');
+            const Result = require('./models/Result');
+
+            // 1. Mark quiz as finished
             await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
+
+            // 2. Finalize all in-progress student results
+            const updateResult = await Result.updateMany(
+                { quiz: quizId, status: 'in-progress' },
+                {
+                    $set: {
+                        status: 'completed',
+                        completedAt: Date.now()
+                    }
+                }
+            );
+            console.log(`Quiz ${quizId} ended. Finalized ${updateResult.modifiedCount} results.`);
+
+            io.to(quizId).emit('quiz_ended');
         } catch (err) {
             console.error('Error ending quiz:', err);
         }
-        io.to(quizId).emit('quiz_ended');
     });
 
     // Add question to live quiz

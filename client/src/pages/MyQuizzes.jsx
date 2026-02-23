@@ -122,12 +122,12 @@ export default function MyQuizzes() {
                                     ) : (
                                         <div className="flex items-center gap-4">
                                             <div className={`border rounded-2xl px-6 py-4 flex items-center gap-4 ${quiz.status === 'started' ? 'bg-[#ff6b00]/10 border-[#ff6b00]/20 text-[#ff6b00]' :
-                                                    quiz.status === 'waiting' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500' :
-                                                        'bg-white/5 border-white/10 text-slate-500'
+                                                quiz.status === 'waiting' ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500' :
+                                                    'bg-white/5 border-white/10 text-slate-500'
                                                 }`}>
                                                 <div className={`w-3 h-3 rounded-full ${quiz.status === 'started' ? 'bg-[#ff6b00] animate-pulse' :
-                                                        quiz.status === 'waiting' ? 'bg-indigo-500 animate-pulse' :
-                                                            'bg-slate-700'
+                                                    quiz.status === 'waiting' ? 'bg-indigo-500 animate-pulse' :
+                                                        'bg-slate-700'
                                                     }`}></div>
                                                 <span className="font-black italic uppercase tracking-tighter text-lg">
                                                     {quiz.status === 'started' ? 'Live Now' :
@@ -141,6 +141,14 @@ export default function MyQuizzes() {
                                                     title="View Room"
                                                 >
                                                     <ExternalLink size={20} />
+                                                </Link>
+                                            )}
+                                            {quiz.status === 'finished' && (
+                                                <Link
+                                                    to={`/leaderboard/${quiz._id}`}
+                                                    className="bg-green-500/10 text-green-500 border border-green-500/20 px-6 py-4 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-green-500 hover:text-white active:scale-95 flex items-center gap-3"
+                                                >
+                                                    <Trophy size={20} /> Results
                                                 </Link>
                                             )}
                                         </div>
@@ -173,6 +181,6 @@ export default function MyQuizzes() {
                     </div>
                 )}
             </div>
-        </DashboardLayout>
+        </DashboardLayout >
     );
 }
