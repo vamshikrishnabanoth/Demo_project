@@ -60,6 +60,18 @@ const QuizSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    finalLeaderboard: [{
+        studentId: String,
+        username: String,
+        currentScore: Number,
+        answeredQuestions: Number,
+        rank: Number
+    }],
+    finalInsights: {
+        hardestQuestion: String,
+        easiestQuestion: String,
+        topStudent: String
     }
 });
 
