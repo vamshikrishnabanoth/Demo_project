@@ -9,6 +9,7 @@ export default function Leaderboard() {
     const { quizId } = useParams();
     const { user } = useContext(AuthContext);
     const [results, setResults] = useState([]);
+    const [insights, setInsights] = useState(null);
     const [loading, setLoading] = useState(true);
     const [quiz, setQuiz] = useState(null);
     const [showAddQuestion, setShowAddQuestion] = useState(false);
@@ -25,7 +26,14 @@ export default function Leaderboard() {
         const fetchData = async () => {
             try {
                 const res = await api.get(`/quiz/leaderboard/${quizId}`);
-                setResults(res.data);
+                // New API returns { results: [], insights: {} }
+                if (res.data.results) {
+                    setResults(res.data.results);
+                    if (res.data.insights) setInsights(res.data.insights);
+                } else {
+                    setResults(res.data);
+                }
+
                 const quizRes = await api.get(`/quiz/${quizId}`);
                 setQuiz(quizRes.data);
             } catch (err) {
@@ -74,7 +82,7 @@ export default function Leaderboard() {
         </div>
     );
 
-    const maxScore = results.length > 0 ? Math.max(...results.map(r => r.score), 1) : 100;
+    const maxScore = results.length > 0 ? Math.max(...results.map(r => r.currentScore), 1) : 100;
 
     return (
         <div className="min-h-screen bg-[#0f172a] text-white py-12 px-4 relative overflow-hidden font-inter">
@@ -112,20 +120,20 @@ export default function Leaderboard() {
                             {results.length > 0 ? (
                                 <div className="flex items-end justify-between gap-4 h-80 px-4 mt-8">
                                     {results.slice(0, 10).map((res, idx) => {
-                                        const isCurrentUser = res.student._id === user.id;
+                                        const isCurrentUser = res.studentId === user.id;
                                         return (
                                             <div key={idx} className="flex flex-col items-center flex-1 group h-full justify-end">
                                                 <div className={`mb-4 text-xs font-black italic transition-all ${isCurrentUser ? 'text-[#ff6b00] opacity-100' : 'text-indigo-300 opacity-0 group-hover:opacity-100'}`}>
-                                                    {res.score}
+                                                    {res.currentScore}
                                                 </div>
                                                 <div
                                                     className={`w-full rounded-t-2xl transition-all duration-[1500ms] ease-out shadow-2xl relative ${isCurrentUser ? 'bg-gradient-to-t from-[#ff6b00] to-orange-400 ring-4 ring-orange-500/20' :
-                                                            idx === 0 ? 'bg-indigo-500' :
-                                                                idx === 1 ? 'bg-indigo-600' :
-                                                                    idx === 2 ? 'bg-indigo-700' :
-                                                                        'bg-white/10 group-hover:bg-white/20'
+                                                        idx === 0 ? 'bg-indigo-500' :
+                                                            idx === 1 ? 'bg-indigo-600' :
+                                                                idx === 2 ? 'bg-indigo-700' :
+                                                                    'bg-white/10 group-hover:bg-white/20'
                                                         }`}
-                                                    style={{ height: `${Math.max((res.score / (maxScore || 1)) * 100, 10)}%` }}
+                                                    style={{ height: `${Math.max((res.currentScore / (maxScore || 1)) * 100, 10)}%` }}
                                                 >
                                                     {isCurrentUser && (
                                                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-[#ff6b00] animate-bounce">
@@ -136,7 +144,7 @@ export default function Leaderboard() {
                                                     )}
                                                 </div>
                                                 <div className={`mt-6 text-[10px] font-black uppercase tracking-tighter truncate w-full text-center italic ${isCurrentUser ? 'text-[#ff6b00]' : 'text-gray-400'}`}>
-                                                    {res.student.username}
+                                                    {res.username}
                                                 </div>
                                             </div>
                                         );
@@ -150,7 +158,16 @@ export default function Leaderboard() {
                             )}
 
                             {isStudent && (
-                                <div className="mt-16 flex justify-center">
+                                <div className="mt-16 flex flex-col sm:flex-row justify-center gap-6">
+                                    {insights && (
+                                        <div className="flex flex-col gap-4 bg-white/5 border border-white/10 p-6 rounded-3xl text-left">
+                                            <div className="flex items-center gap-3">
+                                                <TrendingUp className="text-red-400" size={20} />
+                                                <p className="text-[10px] font-black uppercase text-gray-500">Toughest Bit</p>
+                                            </div>
+                                            <p className="text-xs font-bold text-white italic truncate max-w-xs">{insights.hardestQuestion || 'N/A'}</p>
+                                        </div>
+                                    )}
                                     <button
                                         onClick={() => navigate('/student-dashboard')}
                                         className="group flex items-center gap-6 bg-[#ff6b00] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-orange-600/20 active:scale-95 text-2xl border-b-8 border-orange-700"
