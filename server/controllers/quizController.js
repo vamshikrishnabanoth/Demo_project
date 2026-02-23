@@ -360,12 +360,35 @@ exports.submitQuiz = async (req, res) => {
 
 exports.getLeaderboard = async (req, res) => {
     try {
+        const quiz = await Quiz.findById(req.params.quizId);
+        if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
+
+        // If quiz is finished and has stored leaderboard, return that
+        if (quiz.status === 'finished' && quiz.finalLeaderboard && quiz.finalLeaderboard.length > 0) {
+            return res.json({
+                results: quiz.finalLeaderboard,
+                insights: quiz.finalInsights,
+                isFinal: true
+            });
+        }
+
+        // Otherwise (or for live updates), fetch from Results model
         const results = await Result.find({ quiz: req.params.quizId })
             .populate('student', 'username email')
-            .sort({ score: -1, completedAt: 1 })
-            .limit(10);
+            .sort({ score: -1, completedAt: 1 });
 
-        res.json(results);
+        const leaderboard = results.map((r, index) => ({
+            studentId: r.student._id,
+            username: r.student.username,
+            currentScore: r.score,
+            answeredQuestions: r.answers.length,
+            rank: index + 1
+        }));
+
+        res.json({
+            results: leaderboard,
+            isFinal: quiz.status === 'finished'
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
@@ -401,13 +424,33 @@ exports.getTeacherStats = async (req, res) => {
         const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
 
         const stats = await Promise.all(quizzes.map(async (quiz) => {
-            const results = await Result.find({ quiz: quiz._id })
-                .populate('student', 'username email')
-                .sort({ completedAt: -1 });
+            let results;
+
+            if (quiz.status === 'finished' && quiz.finalLeaderboard && quiz.finalLeaderboard.length > 0) {
+                // Use stored results for finished quizzes
+                results = quiz.finalLeaderboard.map(r => ({
+                    studentName: r.username,
+                    score: r.currentScore,
+                    totalQuestions: quiz.questions.length,
+                    completedAt: quiz.updatedAt || quiz.createdAt // Approximate
+                }));
+            } else {
+                // Fetch live/active results
+                const dbResults = await Result.find({ quiz: quiz._id })
+                    .populate('student', 'username email')
+                    .sort({ completedAt: -1 });
+
+                results = dbResults.map(r => ({
+                    studentName: r.student?.username || 'Unknown',
+                    score: r.score,
+                    totalQuestions: r.totalQuestions,
+                    completedAt: r.completedAt
+                }));
+            }
 
             const completionCount = results.length;
             const averageScore = completionCount > 0
-                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount / quiz.questions.length / 10) * 100
+                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount / (quiz.questions.length * 10)) * 100
                 : 0;
 
             return {
@@ -415,12 +458,7 @@ exports.getTeacherStats = async (req, res) => {
                 title: quiz.title,
                 completionCount,
                 averageScore,
-                results: results.map(r => ({
-                    studentName: r.student.username,
-                    score: r.score,
-                    totalQuestions: r.totalQuestions,
-                    completedAt: r.completedAt
-                }))
+                results
             };
         }));
 
