@@ -86,6 +86,47 @@ io.on('connection', (socket) => {
         }
     });
 
+    const finalizeQuiz = async (quizId) => {
+        try {
+            const Quiz = require('./models/Quiz');
+            const Result = require('./models/Result');
+
+            // 1. Get current state to capture leaderboard
+            const state = roomState.get(quizId.toString());
+            const finalLeaderboard = state?.leaderboard || [];
+            const finalInsights = state?.liveInsights || null;
+
+            // 2. Mark quiz as finished and store final standings
+            await Quiz.findByIdAndUpdate(quizId, {
+                status: 'finished',
+                isActive: false,
+                finalLeaderboard,
+                finalInsights
+            });
+
+            // 3. Finalize all in-progress student results
+            const updateResult = await Result.updateMany(
+                { quiz: quizId, status: 'in-progress' },
+                {
+                    $set: {
+                        status: 'completed',
+                        completedAt: Date.now()
+                    }
+                }
+            );
+
+            console.log(`Quiz ${quizId} finalized. Standings saved. Updated ${updateResult.modifiedCount} results.`);
+
+            // 4. Cleanup state
+            roomState.delete(quizId.toString());
+
+            // 5. Notify all in room
+            io.to(quizId).emit('quiz_ended');
+        } catch (err) {
+            console.error('Error in finalizeQuiz:', err);
+        }
+    };
+
     socket.on('start_quiz', async (quizId) => {
         try {
             const Quiz = require('./models/Quiz');
@@ -109,21 +150,15 @@ io.on('connection', (socket) => {
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
 
-            // Auto-terminate when global timer expires (for duration-based quizzes)
+            // Auto-terminate when global timer expires
             if (quiz.duration > 0) {
                 setTimeout(async () => {
                     const currentState = roomState.get(quizId.toString());
                     if (currentState && currentState.status !== 'finished') {
-                        roomState.delete(quizId.toString());
-                        try {
-                            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
-                        } catch (err2) {
-                            console.error('Error auto-finishing quiz:', err2);
-                        }
-                        io.to(quizId).emit('quiz_ended');
+                        await finalizeQuiz(quizId);
                         console.log(`Quiz ${quizId} auto-terminated after global timer expired.`);
                     }
-                }, durationMs + 3000); // small buffer
+                }, durationMs + 3000);
             }
         } catch (err) {
             console.error('Error starting quiz:', err);
@@ -131,30 +166,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('end_quiz', async (quizId) => {
-        roomState.delete(quizId);
-        try {
-            const Quiz = require('./models/Quiz');
-            const Result = require('./models/Result');
-
-            // 1. Mark quiz as finished
-            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
-
-            // 2. Finalize all in-progress student results
-            const updateResult = await Result.updateMany(
-                { quiz: quizId, status: 'in-progress' },
-                {
-                    $set: {
-                        status: 'completed',
-                        completedAt: Date.now()
-                    }
-                }
-            );
-            console.log(`Quiz ${quizId} ended. Finalized ${updateResult.modifiedCount} results.`);
-
-            io.to(quizId).emit('quiz_ended');
-        } catch (err) {
-            console.error('Error ending quiz:', err);
-        }
+        await finalizeQuiz(quizId);
     });
 
     // Add question to live quiz
