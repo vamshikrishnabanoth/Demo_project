@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Send, CheckCircle, Clock, Trash2, AlertCircle, PlayCircle, XCircle, Users, Activity, ExternalLink } from 'lucide-react';
+import { FileText, Send, CheckCircle, Clock, Trash2, AlertCircle, PlayCircle, XCircle, Users, Activity, ExternalLink, Trophy } from 'lucide-react';
 
 export default function MyQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
