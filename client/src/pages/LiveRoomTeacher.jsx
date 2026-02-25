@@ -17,6 +17,7 @@ export default function LiveRoomTeacher() {
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0); // Track current question for navigation
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isQuizEnded, setIsQuizEnded] = useState(false);
     const hasInitializedTimer = useRef(false);
     const navigate = useNavigate();
