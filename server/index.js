@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
         const participants = roomParticipants.get(quizId);
         const existingIdx = participants.findIndex(p => p.username === user.username);
 
-        const userData = { ...user, socketId: socket.id };
+        const userData = { ...user, socketId: socket.id, isOnline: true };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
         } else if (user.username && user.username.toLowerCase() !== 'student') {
@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
 
             roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
 
-            io.to(quizId).emit('change_question', { questionIndex });
+            io.to(quizId).emit('change_question', { questionIndex: parseInt(questionIndex) });
             if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
         } catch (err) {
             console.error('Error changing question:', err);
@@ -327,7 +327,8 @@ io.on('connection', (socket) => {
                             username: studentUsername,
                             _id: studentId,
                             role: 'student',
-                            socketId: socket.id
+                            socketId: socket.id,
+                            isOnline: true
                         });
                         roomParticipants.set(quizId, roomParts);
                         io.to(quizId).emit('participants_update', roomParts);
@@ -339,7 +340,8 @@ io.on('connection', (socket) => {
                     studentId: studentId.toString(), /* Ensure string ID */
                     username: result.student ? result.student.username : 'Student',
                     questionIndex,
-                    answered: true
+                    answered: true,
+                    isCorrect: isCorrect // Pass correctness to teacher
                 });
 
                 // Get all results for this quiz to build leaderboard
@@ -453,9 +455,13 @@ io.on('connection', (socket) => {
             const { quizId, username } = info;
             const participants = roomParticipants.get(quizId);
             if (participants) {
-                const updatedList = participants.filter(p => p.socketId !== socket.id);
-                roomParticipants.set(quizId, updatedList);
-                io.to(quizId).emit('participants_update', updatedList);
+                // Instead of filtering out, mark as offline so teacher dashboard can show status
+                const idx = participants.findIndex(p => p.socketId === socket.id);
+                if (idx !== -1) {
+                    participants[idx].isOnline = false;
+                    participants[idx].socketId = null; // Clear socket ID
+                }
+                io.to(quizId).emit('participants_update', participants);
             }
             socketToUser.delete(socket.id);
         }
