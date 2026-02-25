@@ -70,10 +70,29 @@ export default function AttemptQuiz() {
             setTimeLeft(timeLeft);
         });
 
+        socket.on('change_question', ({ questionIndex }) => {
+            console.log('Teacher changed question to:', questionIndex);
+            const nextIdx = parseInt(questionIndex);
+            setCurrentQuestion(nextIdx);
+
+            // Reset state for new question
+            if (quiz && !quiz.duration) {
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            }
+            // Persist new position offline
+            localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
+        });
+
+        socket.on('connect', () => setIsOnline(true));
+        socket.on('disconnect', () => setIsOnline(false));
+
         return () => {
             socket.off('quiz_ended');
             socket.off('timer_update');
             socket.off('sync_timer');
+            socket.off('change_question');
+            socket.off('connect');
+            socket.off('disconnect');
         };
     }, [quiz]);
 
@@ -116,25 +135,6 @@ export default function AttemptQuiz() {
         };
     }, [id, quiz]);
 
-    const handleTimeUp = () => {
-        if (quiz?.isLive) {
-            // Auto-advance locally when per-question timer expires (treated as unanswered)
-            if (currentQuestion < quiz.questions.length - 1) {
-                setCurrentQuestion(prev => prev + 1);
-                setTimeLeft(quiz.timerPerQuestion || 30);
-            } else {
-                setMissionComplete(true);
-            }
-        } else {
-            if (currentQuestion < quiz.questions.length - 1) {
-                setCurrentQuestion(prev => prev + 1);
-                setTimeLeft(quiz.timerPerQuestion || 30);
-            } else {
-                submitQuiz();
-            }
-        }
-    };
-
     const handleAutoSubmitAnswer = async () => {
         const currentAnswer = answers[currentQuestion] || '';
         if (quiz.isLive && isOnline) {
@@ -145,6 +145,19 @@ export default function AttemptQuiz() {
                 questionIndex: currentQuestion, answer: currentAnswer, timeRemaining: 0
             });
             setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+        }
+    };
+
+    const handleTimeUp = () => {
+        if (quiz?.isLive) {
+            handleAutoSubmitAnswer();
+        } else {
+            if (currentQuestion < quiz.questions.length - 1) {
+                setCurrentQuestion(prev => prev + 1);
+                setTimeLeft(quiz.timerPerQuestion || 30);
+            } else {
+                submitQuiz();
+            }
         }
     };
 
@@ -404,11 +417,8 @@ export default function AttemptQuiz() {
 
     // Student advances to next question themselves (live mode)
     const handleNextQuestion = () => {
-        const nextQ = currentQuestion + 1;
-        setCurrentQuestion(nextQ);
-        if (!quiz.duration) setTimeLeft(quiz.timerPerQuestion || 30);
-        // Persist new position offline
-        localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextQ, answers }));
+        // Disabled in strict mode - teacher controls navigation
+        console.log("Manual navigation disabled in live mode.");
     };
 
     const submitQuiz = async () => {
@@ -640,12 +650,33 @@ export default function AttemptQuiz() {
                         {quiz.questions.map((_, idx) => (
                             <div
                                 key={idx}
-                                className={`w-2 h-2 rounded-full ${answers[idx] ? 'bg-green-500' : 'bg-gray-200'}`}
+                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'scale-125 ring-2 ring-indigo-500 ring-offset-2' : ''} ${answers[idx] ? 'bg-green-500' : 'bg-gray-200'}`}
                             />
                         ))}
                     </div>
                 </div>
             </header>
+
+            {/* Strict Mode Waiting Overlay */}
+            {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
+                <div className="fixed inset-0 z-[60] bg-[#0f172a]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
+                    <div className="relative mb-12">
+                        <div className="absolute inset-0 animate-ping bg-[#ff6b00] opacity-20 rounded-full"></div>
+                        <div className="relative bg-white/5 p-12 rounded-[3rem] border border-white/10">
+                            <Clock className="text-[#ff6b00] animate-pulse" size={64} />
+                        </div>
+                    </div>
+                    <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-4 text-[#ff6b00]">Strict Mode</h2>
+                    <h3 className="text-3xl font-black italic uppercase tracking-tighter mb-8">Synchronizing Answers...</h3>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-lg max-w-md animate-pulse">
+                        Waiting for teacher to move to the next question…
+                    </p>
+                    <div className="mt-12 flex items-center gap-4 text-white/40">
+                        <Loader2 className="animate-spin" size={24} />
+                        <span className="font-black italic uppercase tracking-widest text-[10px]">REAL-TIME SYNC ACTIVE</span>
+                    </div>
+                </div>
+            )}
 
             <main className="flex-1 flex flex-col items-center justify-center p-6 pb-24">
                 <div className="max-w-2xl w-full">
@@ -771,12 +802,9 @@ export default function AttemptQuiz() {
 
                         {/* Live mode: after submitting show Next Question button */}
                         {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
-                            <button
-                                onClick={handleNextQuestion}
-                                className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95"
-                            >
-                                Next Question <ChevronRight size={20} />
-                            </button>
+                            <div className="px-8 py-4 bg-gray-100/50 rounded-2xl text-gray-400 font-black italic uppercase tracking-widest text-xs">
+                                Waiting for Teacher...
+                            </div>
                         ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
