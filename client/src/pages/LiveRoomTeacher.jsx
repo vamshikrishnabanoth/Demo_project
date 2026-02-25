@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy } from 'lucide-react';
+import { Award, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -16,6 +16,7 @@ export default function LiveRoomTeacher() {
     const [timeLeft, setTimeLeft] = useState(30);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
+    const [liveInsights, setLiveInsights] = useState(null);
     const [currentQuestion, setCurrentQuestion] = useState(0); // Track current question for navigation
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isQuizEnded, setIsQuizEnded] = useState(false);
