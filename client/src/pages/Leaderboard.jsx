@@ -3,13 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
-import { Trophy, Award, Medal, Users, Home, ArrowRight, Loader2, Plus, X, Play, BarChart3, TrendingUp } from 'lucide-react';
+import { Trophy, Award, Medal, Users, Home, ArrowRight, Loader2, Plus, X, Play, BarChart3, TrendingUp, Info } from 'lucide-react';
+import StudentPerformanceSummary from '../components/StudentPerformanceSummary';
 
 export default function Leaderboard() {
     const { quizId } = useParams();
     const { user } = useContext(AuthContext);
     const [results, setResults] = useState([]);
     const [insights, setInsights] = useState(null);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [quiz, setQuiz] = useState(null);
     const [showAddQuestion, setShowAddQuestion] = useState(false);
@@ -26,13 +28,11 @@ export default function Leaderboard() {
         const fetchData = async () => {
             try {
                 const res = await api.get(`/quiz/leaderboard/${quizId}`);
-                // New API returns { results: [], insights: {} }
                 if (res.data.results) {
                     setResults(res.data.results);
-                    if (res.data.insights) setInsights(res.data.insights);
-                } else {
-                    setResults(res.data);
                 }
+                if (res.data.insights) setInsights(res.data.insights);
+                if (res.data.stats) setStats(res.data.stats);
 
                 const quizRes = await api.get(`/quiz/${quizId}`);
                 setQuiz(quizRes.data);
@@ -104,80 +104,75 @@ export default function Leaderboard() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Performance Graph (Show for everyone, but bigger for students) */}
+                    {/* Performance View */}
                     <div className={`${isStudent ? 'lg:col-span-3' : 'lg:col-span-2'} space-y-8`}>
-                        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
-                            <div className="flex items-center justify-between mb-12">
-                                <h2 className="text-3xl font-black italic uppercase tracking-tight">
-                                    Live <span className="text-[#ff6b00]">Performance Graph</span>
-                                </h2>
-                                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                                    <Users size={18} className="text-[#ff6b00]" />
-                                    <span className="text-xs font-black uppercase tracking-widest">{results.length} Participants</span>
+                        {isStudent ? (
+                            <StudentPerformanceSummary stats={stats} totalQuestions={quiz?.questions?.length || 0} />
+                        ) : (
+                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
+                                <div className="flex items-center justify-between mb-12">
+                                    <h2 className="text-3xl font-black italic uppercase tracking-tight">
+                                        Live <span className="text-[#ff6b00]">Performance Graph</span>
+                                    </h2>
+                                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+                                        <Users size={18} className="text-[#ff6b00]" />
+                                        <span className="text-xs font-black uppercase tracking-widest">{results.length} Participants</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {results.length > 0 ? (
-                                <div className="flex items-end justify-between gap-4 h-80 px-4 mt-8">
-                                    {results.slice(0, 10).map((res, idx) => {
-                                        const isCurrentUser = res.studentId === user.id;
-                                        return (
-                                            <div key={idx} className="flex flex-col items-center flex-1 group h-full justify-end">
-                                                <div className={`mb-4 text-xs font-black italic transition-all ${isCurrentUser ? 'text-[#ff6b00] opacity-100' : 'text-indigo-300 opacity-0 group-hover:opacity-100'}`}>
-                                                    {res.currentScore}
-                                                </div>
-                                                <div
-                                                    className={`w-full rounded-t-2xl transition-all duration-[1500ms] ease-out shadow-2xl relative ${isCurrentUser ? 'bg-gradient-to-t from-[#ff6b00] to-orange-400 ring-4 ring-orange-500/20' :
-                                                        idx === 0 ? 'bg-indigo-500' :
-                                                            idx === 1 ? 'bg-indigo-600' :
-                                                                idx === 2 ? 'bg-indigo-700' :
-                                                                    'bg-white/10 group-hover:bg-white/20'
-                                                        }`}
-                                                    style={{ height: `${Math.max((res.currentScore / (maxScore || 1)) * 100, 10)}%` }}
-                                                >
-                                                    {isCurrentUser && (
-                                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-[#ff6b00] animate-bounce">
-                                                            <div className="bg-white rounded-full p-1 shadow-xl">
-                                                                <Award size={20} />
+                                {results.length > 0 ? (
+                                    <div className="flex items-end justify-between gap-4 h-80 px-4 mt-8">
+                                        {results.slice(0, 10).map((res, idx) => {
+                                            const isCurrentUser = res.studentId === user.id;
+                                            return (
+                                                <div key={idx} className="flex flex-col items-center flex-1 group h-full justify-end">
+                                                    <div className={`mb-4 text-xs font-black italic transition-all ${isCurrentUser ? 'text-[#ff6b00] opacity-100' : 'text-indigo-300 opacity-0 group-hover:opacity-100'}`}>
+                                                        {res.currentScore}
+                                                    </div>
+                                                    <div
+                                                        className={`w-full rounded-t-2xl transition-all duration-[1500ms] ease-out shadow-2xl relative ${isCurrentUser ? 'bg-gradient-to-t from-[#ff6b00] to-orange-400 ring-4 ring-orange-500/20' :
+                                                            idx === 0 ? 'bg-indigo-500' :
+                                                                idx === 1 ? 'bg-indigo-600' :
+                                                                    idx === 2 ? 'bg-indigo-700' :
+                                                                        'bg-white/10 group-hover:bg-white/20'
+                                                            }`}
+                                                        style={{ height: `${Math.max((res.currentScore / (maxScore || 1)) * 100, 10)}%` }}
+                                                    >
+                                                        {isCurrentUser && (
+                                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-[#ff6b00] animate-bounce">
+                                                                <div className="bg-white rounded-full p-1 shadow-xl">
+                                                                    <Award size={20} />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
+                                                    </div>
+                                                    <div className={`mt-6 text-[10px] font-black uppercase tracking-tighter truncate w-full text-center italic ${isCurrentUser ? 'text-[#ff6b00]' : 'text-gray-400'}`}>
+                                                        {res.username}
+                                                    </div>
                                                 </div>
-                                                <div className={`mt-6 text-[10px] font-black uppercase tracking-tighter truncate w-full text-center italic ${isCurrentUser ? 'text-[#ff6b00]' : 'text-gray-400'}`}>
-                                                    {res.username}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            ) : (
-                                <div className="py-24 text-center">
-                                    <BarChart3 className="mx-auto text-white/5 mb-6" size={80} />
-                                    <p className="text-gray-500 font-bold uppercase tracking-widest italic">No statistical data available</p>
-                                </div>
-                            )}
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="py-24 text-center">
+                                        <BarChart3 className="mx-auto text-white/5 mb-6" size={80} />
+                                        <p className="text-gray-500 font-bold uppercase tracking-widest italic">No statistical data available</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
-                            {isStudent && (
-                                <div className="mt-16 flex flex-col sm:flex-row justify-center gap-6">
-                                    {insights && (
-                                        <div className="flex flex-col gap-4 bg-white/5 border border-white/10 p-6 rounded-3xl text-left">
-                                            <div className="flex items-center gap-3">
-                                                <TrendingUp className="text-red-400" size={20} />
-                                                <p className="text-[10px] font-black uppercase text-gray-500">Toughest Bit</p>
-                                            </div>
-                                            <p className="text-xs font-bold text-white italic truncate max-w-xs">{insights.hardestQuestion || 'N/A'}</p>
-                                        </div>
-                                    )}
-                                    <button
-                                        onClick={() => navigate('/student-dashboard')}
-                                        className="group flex items-center gap-6 bg-[#ff6b00] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-orange-600/20 active:scale-95 text-2xl border-b-8 border-orange-700"
-                                    >
-                                        <Home size={30} className="group-hover:-translate-y-1 transition-transform" />
-                                        BACK TO ACADEMY
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                        {isStudent && (
+                            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-6">
+                                <button
+                                    onClick={() => navigate('/student-dashboard')}
+                                    className="group flex items-center gap-6 bg-[#ff6b00] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-orange-600/20 active:scale-95 text-2xl border-b-8 border-orange-700"
+                                >
+                                    <Home size={30} className="group-hover:-translate-y-1 transition-transform" />
+                                    BACK TO ACADEMY
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Teacher-Only Podium & List */}

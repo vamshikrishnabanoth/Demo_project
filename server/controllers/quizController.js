@@ -363,31 +363,67 @@ exports.getLeaderboard = async (req, res) => {
         const quiz = await Quiz.findById(req.params.quizId);
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
 
-        // If quiz is finished and has stored leaderboard, return that
-        if (quiz.status === 'finished' && quiz.finalLeaderboard && quiz.finalLeaderboard.length > 0) {
-            return res.json({
-                results: quiz.finalLeaderboard,
-                insights: quiz.finalInsights,
-                isFinal: true
-            });
-        }
+        const isTeacher = req.user.id === quiz.createdBy.toString();
+        const isAdmin = req.user.role === 'admin';
+        const canSeeFullLeaderboard = isTeacher || isAdmin;
 
-        // Otherwise (or for live updates), fetch from Results model
-        const results = await Result.find({ quiz: req.params.quizId })
+        // Fetch all results for this quiz to calculate rankings and stats
+        const allResults = await Result.find({ quiz: req.params.quizId })
             .populate('student', 'username email')
             .sort({ score: -1, completedAt: 1 });
 
-        const leaderboard = results.map((r, index) => ({
-            studentId: r.student._id,
-            username: r.student.username,
-            currentScore: r.score,
-            answeredQuestions: r.answers.length,
-            rank: index + 1
-        }));
+        if (allResults.length === 0) {
+            return res.json({
+                results: [],
+                stats: {
+                    averageScore: 0,
+                    highestScore: 0,
+                    totalParticipants: 0
+                },
+                isFinal: quiz.status === 'finished'
+            });
+        }
+
+        const totalParticipants = allResults.length;
+        const totalScore = allResults.reduce((sum, r) => sum + r.score, 0);
+        const averageScore = totalScore / totalParticipants;
+        const highestScore = allResults[0].score;
+
+        // Find current student's result and rank
+        const studentResultIndex = allResults.findIndex(r => r.student._id.toString() === req.user.id);
+        const studentRank = studentResultIndex !== -1 ? studentResultIndex + 1 : null;
+        const studentResult = studentResultIndex !== -1 ? allResults[studentResultIndex] : null;
+
+        let leaderboardData = [];
+        if (canSeeFullLeaderboard) {
+            leaderboardData = allResults.map((r, index) => ({
+                studentId: r.student._id,
+                username: r.student.username,
+                currentScore: r.score,
+                answeredQuestions: r.answers.length,
+                rank: index + 1
+            }));
+        } else if (studentResult) {
+            // Student only sees their own result in the results list (Privacy Protection)
+            leaderboardData = [{
+                studentId: studentResult.student._id,
+                username: studentResult.student.username,
+                currentScore: studentResult.score,
+                answeredQuestions: studentResult.answers.length,
+                rank: studentRank
+            }];
+        }
 
         res.json({
-            results: leaderboard,
-            isFinal: quiz.status === 'finished'
+            results: leaderboardData,
+            stats: {
+                averageScore,
+                highestScore,
+                totalParticipants,
+                userRank: studentRank,
+                userScore: studentResult ? studentResult.score : 0
+            },
+            isFinal: quiz.status === 'finished' || !quiz.isActive
         });
     } catch (err) {
         console.error(err.message);
