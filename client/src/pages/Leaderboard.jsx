@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
-import { Trophy, Award, Medal, Users, Home, ArrowRight, Loader2, Plus, X, Play, BarChart3, TrendingUp, Info } from 'lucide-react';
-import StudentPerformanceSummary from '../components/StudentPerformanceSummary';
+import { Trophy, Award, Medal, Users, Home, Loader2, Plus, X, Play, TrendingUp, CheckCircle, XCircle, ChevronLeft, ChevronRight, Minus, Star, Target, AlertCircle } from 'lucide-react';
 
 export default function Leaderboard() {
     const { quizId } = useParams();
@@ -21,27 +20,30 @@ export default function Leaderboard() {
         correctAnswer: '',
         points: 10
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const studentsPerPage = 10;
     const navigate = useNavigate();
     const isStudent = user?.role === 'student';
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await api.get(`/quiz/leaderboard/${quizId}`);
-                if (res.data.results) {
-                    setResults(res.data.results);
-                }
-                if (res.data.insights) setInsights(res.data.insights);
-                if (res.data.stats) setStats(res.data.stats);
-
-                const quizRes = await api.get(`/quiz/${quizId}`);
-                setQuiz(quizRes.data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
+    const fetchData = async () => {
+        try {
+            const res = await api.get(`/quiz/leaderboard/${quizId}`);
+            if (res.data.results) {
+                setResults(res.data.results);
             }
-        };
+            if (res.data.insights) setInsights(res.data.insights);
+            if (res.data.stats) setStats(res.data.stats);
+
+            const quizRes = await api.get(`/quiz/${quizId}`);
+            setQuiz(quizRes.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
 
         socket.emit('join_room', { quizId, user: { username: user.username, role: user.role } });
@@ -66,15 +68,6 @@ export default function Leaderboard() {
         alert('Question added successfully!');
     };
 
-    const getRankIcon = (index) => {
-        switch (index) {
-            case 0: return <Trophy className="text-yellow-400" size={32} fill="currentColor" />;
-            case 1: return <Award className="text-gray-300" size={28} fill="currentColor" />;
-            case 2: return <Medal className="text-amber-500" size={24} fill="currentColor" />;
-            default: return <span className="text-lg font-black text-gray-500">#{index + 1}</span>;
-        }
-    };
-
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f172a]">
             <Loader2 className="animate-spin text-[#ff6b00]" size={64} />
@@ -82,15 +75,147 @@ export default function Leaderboard() {
         </div>
     );
 
-    const maxScore = results.length > 0 ? Math.max(...results.map(r => r.currentScore), 1) : 100;
+    // Pagination for teacher view
+    const totalPages = Math.max(1, Math.ceil(results.length / studentsPerPage));
+    const paginatedResults = results.slice(
+        (currentPage - 1) * studentsPerPage,
+        currentPage * studentsPerPage
+    );
 
+    // Student view — find their rank and show only their position
+    if (isStudent) {
+        const userRank = stats?.userRank || 0;
+        const totalParticipants = stats?.totalParticipants || 0;
+        const userScore = stats?.userScore || 0;
+        const maxScore = (quiz?.questions?.length || 0) * 10;
+        const percentile = totalParticipants > 1 ? (1 - (userRank - 1) / (totalParticipants - 1)) * 100 : 100;
+
+        const getPerformanceZone = () => {
+            if (percentile >= 90) return {
+                label: 'Top 10%', color: 'text-yellow-400', bg: 'bg-yellow-400/10', border: 'border-yellow-400/20', icon: Trophy,
+                message: 'Exceptional performance! You mastered this arena.'
+            };
+            if (percentile >= 75) return {
+                label: 'Top 25%', color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/20', icon: Star,
+                message: "Great job! You're among the elite performers."
+            };
+            if (userScore > (stats?.averageScore || 0)) return {
+                label: 'Above Average', color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20', icon: TrendingUp,
+                message: 'Solid work! You performed better than most.'
+            };
+            if (userScore >= (stats?.averageScore || 0) * 0.8) return {
+                label: 'Average', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20', icon: Target,
+                message: "Good effort! You're keeping pace with the class."
+            };
+            return {
+                label: 'Needs Improvement', color: 'text-orange-400', bg: 'bg-orange-400/10', border: 'border-orange-400/20', icon: AlertCircle,
+                message: 'Keep practicing! Every attempt makes you stronger.'
+            };
+        };
+
+        const zone = getPerformanceZone();
+        const ZoneIcon = zone.icon;
+
+        return (
+            <div className="min-h-screen bg-[#0f172a] text-white py-12 px-4 relative overflow-hidden font-inter">
+                {/* Background Decorations */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ff6b00]/5 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+
+                <div className="max-w-2xl mx-auto space-y-10 relative z-10">
+                    {/* Header */}
+                    <div className="text-center space-y-6">
+                        <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 rounded-full border border-white/10 mb-4">
+                            <TrendingUp className="text-[#ff6b00]" size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Your Result</span>
+                        </div>
+                        <h1 className="text-5xl font-black italic uppercase tracking-tighter">
+                            {quiz?.title || 'Quiz'} <span className="text-[#ff6b00]">Result</span>
+                        </h1>
+                    </div>
+
+                    {/* Rank Card — The Main Focus */}
+                    <div className={`relative overflow-hidden bg-white/5 backdrop-blur-xl border ${zone.border} rounded-[3rem] p-10 md:p-14 shadow-2xl`}>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full -mr-32 -mt-32 blur-3xl opacity-20"></div>
+
+                        <div className="relative z-10 flex flex-col items-center text-center space-y-8">
+                            {/* Performance Zone Icon */}
+                            <div className={`w-32 h-32 ${zone.bg} rounded-[2.5rem] flex items-center justify-center border-4 ${zone.border} shadow-2xl relative group transition-transform duration-500 hover:scale-105`}>
+                                <ZoneIcon size={60} className={`${zone.color} drop-shadow-2xl`} />
+                                {percentile >= 75 && (
+                                    <div className="absolute -top-4 -right-4 bg-[#ff6b00] text-white p-2 rounded-full shadow-lg animate-bounce">
+                                        <Award size={24} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Rank Number — BIG */}
+                            <div className="space-y-2">
+                                <span className={`text-xs font-black uppercase tracking-[0.3em] ${zone.color}`}>{zone.label}</span>
+                                <h2 className="text-8xl font-black italic text-[#ff6b00]">
+                                    #{userRank}
+                                </h2>
+                                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">
+                                    out of {totalParticipants} participants
+                                </p>
+                            </div>
+
+                            {/* Message */}
+                            <p className="text-2xl font-black italic uppercase tracking-tighter text-white max-w-md">
+                                {zone.message}
+                            </p>
+
+                            {/* Score */}
+                            <div className="grid grid-cols-2 gap-6 w-full max-w-sm">
+                                <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] text-center">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Your Score</p>
+                                    <p className="text-3xl font-black italic text-[#ff6b00]">{userScore}</p>
+                                    <p className="text-[10px] font-bold text-gray-600">/ {maxScore}</p>
+                                </div>
+                                <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] text-center">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Your Rank</p>
+                                    <p className="text-3xl font-black italic text-white">#{userRank}</p>
+                                    <p className="text-[10px] font-bold text-gray-600">of {totalParticipants}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Motivational Quote */}
+                    <div className="bg-[#ff6b00]/10 border border-[#ff6b00]/20 p-6 rounded-3xl flex items-center gap-4">
+                        <div className="bg-[#ff6b00] p-2 rounded-xl text-white shadow-lg shadow-[#ff6b00]/20">
+                            <TrendingUp size={20} />
+                        </div>
+                        <p className="text-xs font-bold text-gray-300 italic">
+                            "Success is not final, failure is not fatal: it is the courage to continue that counts."
+                        </p>
+                    </div>
+
+                    {/* Back Button */}
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => navigate('/student-dashboard')}
+                            className="group flex items-center gap-6 bg-[#ff6b00] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-orange-600/20 active:scale-95 text-2xl border-b-8 border-orange-700"
+                        >
+                            <Home size={30} className="group-hover:-translate-y-1 transition-transform" />
+                            BACK TO ACADEMY
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ==========================================
+    // TEACHER VIEW — Student Tracker with Dots
+    // ==========================================
     return (
         <div className="min-h-screen bg-[#0f172a] text-white py-12 px-4 relative overflow-hidden font-inter">
             {/* Background Decorations */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ff6b00]/5 rounded-full blur-[120px] -mr-64 -mt-64"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px] -ml-64 -mb-64"></div>
 
-            <div className="max-w-6xl mx-auto space-y-12 relative z-10">
+            <div className="max-w-6xl mx-auto space-y-10 relative z-10">
                 {/* Header Section */}
                 <div className="text-center space-y-6">
                     <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 rounded-full border border-white/10 mb-4">
@@ -100,117 +225,203 @@ export default function Leaderboard() {
                     <h1 className="text-6xl font-black italic uppercase tracking-tighter">
                         {quiz?.title || 'Quiz'} <span className="text-[#ff6b00]">Results</span>
                     </h1>
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">A display of sheer brilliance and speed</p>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+                        {results.length} Participants · {quiz?.questions?.length || 0} Questions
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Performance View */}
-                    <div className={`${isStudent ? 'lg:col-span-3' : 'lg:col-span-2'} space-y-8`}>
-                        {isStudent ? (
-                            <StudentPerformanceSummary stats={stats} totalQuestions={quiz?.questions?.length || 0} />
-                        ) : (
-                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
-                                <div className="flex items-center justify-between mb-12">
-                                    <h2 className="text-3xl font-black italic uppercase tracking-tight">
-                                        Live <span className="text-[#ff6b00]">Performance Graph</span>
-                                    </h2>
-                                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                                        <Users size={18} className="text-[#ff6b00]" />
-                                        <span className="text-xs font-black uppercase tracking-widest">{results.length} Participants</span>
-                                    </div>
-                                </div>
-
-                                {results.length > 0 ? (
-                                    <div className="flex items-end justify-between gap-4 h-80 px-4 mt-8">
-                                        {results.slice(0, 10).map((res, idx) => {
-                                            const isCurrentUser = res.studentId === user.id;
-                                            return (
-                                                <div key={idx} className="flex flex-col items-center flex-1 group h-full justify-end">
-                                                    <div className={`mb-4 text-xs font-black italic transition-all ${isCurrentUser ? 'text-[#ff6b00] opacity-100' : 'text-indigo-300 opacity-0 group-hover:opacity-100'}`}>
-                                                        {res.currentScore}
-                                                    </div>
-                                                    <div
-                                                        className={`w-full rounded-t-2xl transition-all duration-[1500ms] ease-out shadow-2xl relative ${isCurrentUser ? 'bg-gradient-to-t from-[#ff6b00] to-orange-400 ring-4 ring-orange-500/20' :
-                                                            idx === 0 ? 'bg-indigo-500' :
-                                                                idx === 1 ? 'bg-indigo-600' :
-                                                                    idx === 2 ? 'bg-indigo-700' :
-                                                                        'bg-white/10 group-hover:bg-white/20'
-                                                            }`}
-                                                        style={{ height: `${Math.max((res.currentScore / (maxScore || 1)) * 100, 10)}%` }}
-                                                    >
-                                                        {isCurrentUser && (
-                                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-[#ff6b00] animate-bounce">
-                                                                <div className="bg-white rounded-full p-1 shadow-xl">
-                                                                    <Award size={20} />
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className={`mt-6 text-[10px] font-black uppercase tracking-tighter truncate w-full text-center italic ${isCurrentUser ? 'text-[#ff6b00]' : 'text-gray-400'}`}>
-                                                        {res.username}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <div className="py-24 text-center">
-                                        <BarChart3 className="mx-auto text-white/5 mb-6" size={80} />
-                                        <p className="text-gray-500 font-bold uppercase tracking-widest italic">No statistical data available</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {isStudent && (
-                            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-6">
-                                <button
-                                    onClick={() => navigate('/student-dashboard')}
-                                    className="group flex items-center gap-6 bg-[#ff6b00] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-orange-600/20 active:scale-95 text-2xl border-b-8 border-orange-700"
-                                >
-                                    <Home size={30} className="group-hover:-translate-y-1 transition-transform" />
-                                    BACK TO ACADEMY
-                                </button>
-                            </div>
-                        )}
+                {/* Student Tracker Table */}
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl">
+                    {/* Table Header */}
+                    <div className="px-8 py-4 bg-white/5 border-b border-white/10 flex items-center gap-4">
+                        <div className="w-14 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Rank</div>
+                        <div className="w-44 text-[10px] font-black text-gray-500 uppercase tracking-widest">Student</div>
+                        <div className="flex-1 text-[10px] font-black text-gray-500 uppercase tracking-widest">Answer Map</div>
+                        <div className="w-20 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Score</div>
+                        <div className="w-24 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Status</div>
                     </div>
 
-                    {/* Teacher-Only Podium & List */}
-                    {!isStudent && (
-                        <div className="space-y-8">
-                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-10 shadow-2xl">
-                                <h3 className="text-2xl font-black italic uppercase tracking-tight mb-8">Quick <span className="text-[#ff6b00]">Actions</span></h3>
-                                <div className="space-y-4">
-                                    <button
-                                        onClick={() => setShowAddQuestion(true)}
-                                        className="w-full flex items-center justify-between p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl transition-all group"
+                    {/* Rows */}
+                    {paginatedResults.length > 0 ? (
+                        <div className="divide-y divide-white/5">
+                            {paginatedResults.map((res, pIdx) => {
+                                const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
+                                const rank = globalIdx + 1;
+                                const totalQuestions = quiz?.questions?.length || 0;
+                                const maxScore = totalQuestions * 10;
+                                const answeredCount = res.answers?.length || 0;
+                                const correctCount = res.answers?.filter(a => a.isCorrect)?.length || 0;
+                                const wrongCount = answeredCount - correctCount;
+                                const notAttempted = totalQuestions - answeredCount;
+
+                                return (
+                                    <div
+                                        key={res.studentId || pIdx}
+                                        className={`px-8 py-5 flex items-center gap-4 transition-colors ${rank <= 3 ? 'bg-white/[0.03]' : ''} hover:bg-white/[0.05]`}
                                     >
-                                        <span className="font-bold uppercase tracking-widest text-xs">Add Question</span>
-                                        <Plus className="text-[#ff6b00] group-hover:rotate-90 transition-transform" />
-                                    </button>
+                                        {/* Rank */}
+                                        <div className="w-14 text-center">
+                                            {rank === 1 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/30">
+                                                    <Trophy size={18} className="text-white" />
+                                                </div>
+                                            ) : rank === 2 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-slate-300 to-slate-400 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <span className="text-white font-black text-sm">#2</span>
+                                                </div>
+                                            ) : rank === 3 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <span className="text-white font-black text-sm">#3</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-xl font-black text-gray-500 italic">#{rank}</span>
+                                            )}
+                                        </div>
+
+                                        {/* Student Name / Roll */}
+                                        <div className="w-44 min-w-0">
+                                            <p className="font-bold text-white truncate text-sm">{res.username || 'Unknown'}</p>
+                                            {res.studentId && (
+                                                <p className="text-[10px] text-gray-500 font-mono truncate">{res.studentId}</p>
+                                            )}
+                                        </div>
+
+                                        {/* Answer Dots */}
+                                        <div className="flex-1 flex items-center gap-1.5 flex-wrap">
+                                            {quiz?.questions?.map((q, idx) => {
+                                                const answer = res.answers?.find(a => a.questionText === q.questionText);
+                                                const isAnswered = !!answer;
+                                                const isCorrect = answer?.isCorrect === true;
+
+                                                let dotClass = 'bg-gray-700/50 border-gray-600 text-gray-500';
+                                                let Icon = null;
+
+                                                if (isAnswered) {
+                                                    if (isCorrect) {
+                                                        dotClass = 'bg-green-500 border-green-500 text-white';
+                                                        Icon = <CheckCircle size={13} />;
+                                                    } else {
+                                                        dotClass = 'bg-red-500 border-red-500 text-white';
+                                                        Icon = <XCircle size={13} />;
+                                                    }
+                                                } else {
+                                                    Icon = <Minus size={11} />;
+                                                }
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        title={isAnswered ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`) : `Q${idx + 1}: Not Attempted`}
+                                                        className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-black border transition-all ${dotClass}`}
+                                                    >
+                                                        {Icon}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Score */}
+                                        <div className="w-20 text-center">
+                                            <span className="text-xl font-black text-[#ff6b00] italic">{res.currentScore}</span>
+                                            <p className="text-[9px] text-gray-500 font-bold">/ {maxScore}</p>
+                                        </div>
+
+                                        {/* Status Summary */}
+                                        <div className="w-24 flex items-center gap-1">
+                                            <span className="text-[10px] font-bold text-green-400">{correctCount}✓</span>
+                                            <span className="text-[10px] font-bold text-red-400">{wrongCount}✗</span>
+                                            <span className="text-[10px] font-bold text-gray-500">{notAttempted}–</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="py-20 text-center">
+                            <Users className="mx-auto text-white/10 mb-4" size={48} />
+                            <p className="text-gray-500 font-bold uppercase tracking-widest italic text-xs">No results available</p>
+                        </div>
+                    )}
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="px-8 py-5 bg-white/5 border-t border-white/10 flex items-center justify-between">
+                            <p className="text-xs text-gray-500 font-bold">
+                                Showing {(currentPage - 1) * studentsPerPage + 1}–{Math.min(currentPage * studentsPerPage, results.length)} of {results.length}
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                                     <button
-                                        onClick={async () => {
-                                            try {
-                                                const res = await api.get(`/quiz/${quizId}`);
-                                                if (res.data?.joinCode) navigate(`/live-room-teacher/${res.data.joinCode}`);
-                                            } catch (e) { navigate('/teacher-dashboard'); }
-                                        }}
-                                        className="w-full flex items-center justify-between p-6 bg-[#ff6b00] hover:bg-orange-500 rounded-3xl transition-all shadow-lg shadow-orange-600/20 group"
+                                        key={page}
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`w-10 h-10 rounded-xl font-black text-sm transition ${page === currentPage
+                                            ? 'bg-[#ff6b00] text-white shadow-lg shadow-orange-500/20'
+                                            : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10'
+                                            }`}
                                     >
-                                        <span className="font-black italic uppercase tracking-tighter text-lg">Resume Control</span>
-                                        <Play fill="currentColor" size={20} className="group-hover:translate-x-1 transition-transform" />
+                                        {page}
                                     </button>
-                                    <button
-                                        onClick={() => navigate('/teacher-dashboard')}
-                                        className="w-full flex items-center justify-between p-6 bg-white/10 hover:bg-white/20 rounded-3xl transition-all group"
-                                    >
-                                        <span className="font-bold uppercase tracking-widest text-xs text-gray-300">Dashboard</span>
-                                        <Home size={18} className="group-hover:-translate-x-1 transition-transform" />
-                                    </button>
-                                </div>
+                                ))}
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronRight size={18} />
+                                </button>
                             </div>
                         </div>
                     )}
+
+                    {/* Legend */}
+                    <div className="px-8 py-4 border-t border-white/5 flex items-center justify-center gap-6">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-4 h-4 rounded bg-green-500"></div>
+                            <span className="text-[10px] font-bold text-gray-500">Correct</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-4 h-4 rounded bg-red-500"></div>
+                            <span className="text-[10px] font-bold text-gray-500">Wrong</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-4 h-4 rounded bg-gray-700/50 border border-gray-600"></div>
+                            <span className="text-[10px] font-bold text-gray-500">Not Attempted</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                        onClick={() => setShowAddQuestion(true)}
+                        className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 text-white px-8 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-lg hover:bg-white/10 transition active:scale-95"
+                    >
+                        <Plus size={22} /> Add Question
+                    </button>
+                    <button
+                        onClick={async () => {
+                            try {
+                                const res = await api.get(`/quiz/${quizId}`);
+                                if (res.data?.joinCode) navigate(`/live-room-teacher/${res.data.joinCode}`);
+                            } catch (e) { navigate('/teacher-dashboard'); }
+                        }}
+                        className="flex items-center justify-center gap-3 bg-[#ff6b00] text-white px-8 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-lg hover:scale-105 transition shadow-xl shadow-orange-500/20 active:scale-95 border-b-4 border-orange-700"
+                    >
+                        <Play fill="currentColor" size={20} /> Resume Control
+                    </button>
+                    <button
+                        onClick={() => navigate('/teacher-dashboard')}
+                        className="flex items-center justify-center gap-3 bg-white/10 text-white px-8 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-lg hover:bg-white/20 transition active:scale-95"
+                    >
+                        <Home size={20} /> Dashboard
+                    </button>
                 </div>
             </div>
 
