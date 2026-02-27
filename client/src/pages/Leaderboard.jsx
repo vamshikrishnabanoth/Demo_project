@@ -28,6 +28,7 @@ export default function Leaderboard() {
     const fetchData = async () => {
         try {
             const res = await api.get(`/quiz/leaderboard/${quizId}`);
+            console.log('Leaderboard API response:', res.data);
             if (res.data.results) {
                 setResults(res.data.results);
             }
@@ -37,7 +38,7 @@ export default function Leaderboard() {
             const quizRes = await api.get(`/quiz/${quizId}`);
             setQuiz(quizRes.data);
         } catch (err) {
-            console.error(err);
+            console.error('Leaderboard fetch error:', err?.response?.data || err.message);
         } finally {
             setLoading(false);
         }
