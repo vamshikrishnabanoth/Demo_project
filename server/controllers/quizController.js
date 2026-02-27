@@ -394,31 +394,32 @@ exports.getLeaderboard = async (req, res) => {
         const averageScore = totalScore / totalParticipants;
         const highestScore = allResults[0].score;
 
-        // Build ranked list with proper competition ranking
-        // Students with same score get the same rank; the next rank skips accordingly
-        const rankedResults = allResults.map((r, index, arr) => {
+        // Build ranked list with proper competition ranking using a for loop
+        // (Cannot use .map() because we need to reference previously built entries)
+        const rankedResults = [];
+        for (let i = 0; i < allResults.length; i++) {
+            const r = allResults[i];
             let rank = 1;
-            if (index > 0) {
-                const prev = arr[index - 1];
-                const prevRank = rankedResults[index - 1]?._rank || 1;
-                if (r.score === prev.score) {
+            if (i > 0) {
+                const prevResult = allResults[i - 1];
+                const prevRank = rankedResults[i - 1].rank;
+                if (r.score === prevResult.score) {
                     // Same score — assign same rank (competition ranking)
                     rank = prevRank;
                 } else {
-                    // Different score — rank = position (1-indexed)
-                    rank = index + 1;
+                    // Different score — rank = position (1-indexed, skips tied positions)
+                    rank = i + 1;
                 }
             }
-            return {
-                _rank: rank,
+            rankedResults.push({
                 studentId: r.student._id,
                 username: r.student.username,
                 currentScore: r.score,
                 answeredQuestions: r.answers.length,
                 answers: r.answers,
                 rank: rank
-            };
-        });
+            });
+        }
 
         // Find current student's rank
         const studentEntry = rankedResults.find(r => r.studentId.toString() === req.user.id);
@@ -427,10 +428,10 @@ exports.getLeaderboard = async (req, res) => {
 
         let leaderboardData = [];
         if (canSeeFullLeaderboard) {
-            leaderboardData = rankedResults.map(({ _rank, ...rest }) => rest);
+            leaderboardData = rankedResults.map(({ answers, ...rest }) => rest);
         } else if (studentEntry) {
             // Student only sees their own result (Privacy Protection)
-            const { _rank, ...cleanEntry } = studentEntry;
+            const { answers, ...cleanEntry } = studentEntry;
             leaderboardData = [cleanEntry];
         }
 
