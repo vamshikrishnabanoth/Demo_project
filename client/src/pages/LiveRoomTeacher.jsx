@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, BarChart3, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
+import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus } from 'lucide-react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -17,9 +17,11 @@ export default function LiveRoomTeacher() {
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     const [liveInsights, setLiveInsights] = useState(null);
-    const [currentQuestion, setCurrentQuestion] = useState(0); // Track current question for navigation
+    const [currentQuestion, setCurrentQuestion] = useState(0);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isQuizEnded, setIsQuizEnded] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const studentsPerPage = 10;
     const hasInitializedTimer = useRef(false);
     const navigate = useNavigate();
 
@@ -71,7 +73,6 @@ export default function LiveRoomTeacher() {
 
         socket.on('change_question', ({ questionIndex }) => {
             setCurrentQuestion(parseInt(questionIndex));
-            // Reset question timer if in per-question mode
             if (quiz && !quiz.duration) {
                 setTimeLeft(quiz.timerPerQuestion || 30);
                 setIsTimerRunning(true);
@@ -138,7 +139,6 @@ export default function LiveRoomTeacher() {
     useEffect(() => {
         if (!quiz) return;
 
-        // Initialize timer
         if (quiz.duration > 0) {
             if (!hasInitializedTimer.current) {
                 setTimeLeft(quiz.duration * 60);
@@ -190,25 +190,40 @@ export default function LiveRoomTeacher() {
         alert('Join Code copied!');
     };
 
-    // ⚠️ Must be before any early returns (Rules of Hooks)
-    const maxScore = leaderboard.length > 0 ? Math.max(...leaderboard.map(l => l.currentScore), 1) : 100;
-
     // Merge participants (connected) + leaderboard (submitted) so reconnected students always show
     const allStudents = useMemo(() => {
         const map = new Map();
-        participants.forEach(p => map.set(p.username, p));
+        // Build a leaderboard lookup for scores/rank
+        const lbMap = new Map();
+        leaderboard.forEach(l => lbMap.set(l.username, l));
+
+        participants.forEach(p => map.set(p.username, { ...p, lb: lbMap.get(p.username) }));
         leaderboard.forEach(l => {
             if (!map.has(l.username)) {
                 map.set(l.username, {
                     username: l.username,
                     _id: l.studentId?.toString(),
                     role: 'student',
-                    isOnline: false // If in leaderboard but not participants, they are likely offline
+                    isOnline: false,
+                    lb: l
                 });
             }
         });
-        return Array.from(map.values());
+
+        // Sort by score descending (those with leaderboard data first)
+        return Array.from(map.values()).sort((a, b) => {
+            const scoreA = a.lb?.currentScore ?? -1;
+            const scoreB = b.lb?.currentScore ?? -1;
+            return scoreB - scoreA;
+        });
     }, [participants, leaderboard]);
+
+    // Pagination
+    const totalPages = Math.max(1, Math.ceil(allStudents.length / studentsPerPage));
+    const paginatedStudents = allStudents.slice(
+        (currentPage - 1) * studentsPerPage,
+        currentPage * studentsPerPage
+    );
 
     if (loading) return (
         <DashboardLayout role="teacher">
@@ -288,7 +303,7 @@ export default function LiveRoomTeacher() {
                         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[#ff6b00]/10 rounded-full blur-[100px]"></div>
                     </div>
 
-                    {/* Participants + Progress section in waiting room */}
+                    {/* Participants in waiting room */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-2 space-y-6">
                             <div className="flex items-center justify-between">
@@ -322,7 +337,7 @@ export default function LiveRoomTeacher() {
 
     return (
         <DashboardLayout role="teacher">
-            <div className="max-w-6xl mx-auto space-y-10 pb-20">
+            <div className="max-w-6xl mx-auto space-y-8 pb-20">
                 {/* Global Status Bar */}
                 <div className="flex flex-col md:flex-row gap-6">
                     {/* Time & Title */}
@@ -338,7 +353,6 @@ export default function LiveRoomTeacher() {
                                 {quiz?.title || 'Active Session'}
                             </h1>
                         </div>
-                        {/* Decorative background element */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16"></div>
                     </div>
 
@@ -352,172 +366,241 @@ export default function LiveRoomTeacher() {
                     </div>
                 </div>
 
-                {/* Primary Action Hub & Visualization */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                    {/* Controls & Insights */}
-                    <div className="lg:col-span-4 space-y-8">
-                        {/* Offline Banner */}
-                        {!isOnline && (
-                            <div className="bg-orange-500 rounded-2xl px-6 py-4 flex items-center gap-3 text-white font-bold text-sm">
-                                <WifiOff size={18} />
-                                You are offline — reconnecting...
-                            </div>
-                        )}
-                        <div className="bg-[#0f172a] rounded-[3rem] p-10 shadow-2xl border-b-[10px] border-slate-800">
-                            <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 italic">Session Controls</h2>
-                            <div className="space-y-6">
-                                {/* Navigation Control */}
-                                <div className="bg-slate-800/50 rounded-2xl p-4 text-center">
-                                    <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Question Navigation</p>
-                                    <p className="text-white font-bold text-lg mt-1">Question {currentQuestion + 1} of {quiz?.questions?.length || 0}</p>
+                {/* Offline Banner */}
+                {!isOnline && (
+                    <div className="bg-orange-500 rounded-2xl px-6 py-4 flex items-center gap-3 text-white font-bold text-sm">
+                        <WifiOff size={18} />
+                        You are offline — reconnecting...
+                    </div>
+                )}
 
-                                    <button
-                                        onClick={handleNextQuestion}
-                                        disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                        className="mt-4 w-full bg-indigo-600 text-white p-4 rounded-xl font-bold uppercase tracking-tight hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                    >
-                                        Next Question <ChevronRight size={18} />
-                                    </button>
-                                </div>
-
-                                <button
-                                    onClick={handleIncreaseTime}
-                                    className="w-full bg-[#ff6b00] text-white p-6 rounded-[2rem] font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-4 text-xl border-b-4 border-orange-700"
-                                >
-                                    <Clock size={24} /> ADD +30 SECONDS
-                                </button>
-                                <button
-                                    onClick={handleEndQuiz}
-                                    className="w-full bg-red-600/10 border-2 border-red-600/20 text-red-500 p-6 rounded-[2rem] font-black italic uppercase tracking-tighter hover:bg-red-600 hover:text-white transition active:scale-95 flex items-center justify-center gap-4 text-xl"
-                                >
-                                    <MinusCircle size={24} /> TERMINATE SESSION
-                                </button>
-                            </div>
+                {/* Session Controls — Compact Row */}
+                <div className="bg-[#0f172a] rounded-[2rem] p-6 shadow-2xl border-b-[6px] border-slate-800">
+                    <div className="flex flex-col md:flex-row items-center gap-4">
+                        {/* Question Navigation */}
+                        <div className="flex items-center gap-3 bg-slate-800/50 rounded-xl px-5 py-3">
+                            <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Q{currentQuestion + 1}/{quiz?.questions?.length || 0}</p>
+                            <button
+                                onClick={handleNextQuestion}
+                                disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold uppercase tracking-tight text-sm hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                            >
+                                Next <ChevronRight size={16} />
+                            </button>
                         </div>
 
-                        {/* Top Performer Snippet */}
+                        <button
+                            onClick={handleIncreaseTime}
+                            className="bg-[#ff6b00] text-white px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-orange-500/20 active:scale-95 flex items-center gap-2 text-sm border-b-2 border-orange-700"
+                        >
+                            <Clock size={18} /> +30 SEC
+                        </button>
+
+                        <button
+                            onClick={handleEndQuiz}
+                            className="bg-red-600/10 border-2 border-red-600/20 text-red-500 px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:bg-red-600 hover:text-white transition active:scale-95 flex items-center gap-2 text-sm"
+                        >
+                            <MinusCircle size={18} /> END SESSION
+                        </button>
+
+                        {/* Top Performer */}
                         {liveInsights?.topStudent && (
-                            <div className="bg-emerald-500 rounded-[3rem] p-8 text-white shadow-xl shadow-emerald-500/20 flex items-center gap-6">
-                                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                                    <Award size={32} />
-                                </div>
+                            <div className="ml-auto flex items-center gap-3 bg-emerald-500 rounded-xl px-5 py-3 text-white">
+                                <Award size={20} />
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Ringleader</p>
-                                    <p className="text-2xl font-black italic uppercase">{liveInsights.topStudent}</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-80">Leader</p>
+                                    <p className="text-sm font-black italic uppercase">{liveInsights.topStudent}</p>
                                 </div>
                             </div>
                         )}
 
-                        {/* Student Progress Grid */}
-                        {allStudents.length > 0 && (
-                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-900 mb-1">Student Progress</h3>
-                                <p className="text-xs text-gray-400 mb-4">{participants.length} connected · {allStudents.length} total</p>
-                                <div className="divide-y divide-gray-100">
-                                    {allStudents.map((p, pIdx) => {
-                                        const progressById = p._id ? studentProgress[p._id] : null;
-                                        const progressByName = p.username ? studentProgress[p.username] : null;
-                                        const progress = progressById || progressByName || {};
-                                        const isConnected = participants.some(pp => pp.username === p.username);
+                        {/* Participants Count */}
+                        <div className="flex items-center gap-2 bg-white/5 px-4 py-3 rounded-xl border border-white/10">
+                            <Users size={16} className="text-[#ff6b00]" />
+                            <span className="text-xs font-black uppercase tracking-widest text-white">{participants.length} Online</span>
+                        </div>
+                    </div>
+                </div>
 
-                                        return (
-                                            <div key={p._id || p.username || pIdx} className="py-3 flex items-center gap-3">
-                                                <div className="flex items-center gap-1.5 w-28">
-                                                    <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${p.isOnline ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'}`} title={p.isOnline ? 'Online' : 'Offline'} />
-                                                    <div className="flex flex-col min-w-0">
-                                                        <span className="font-bold text-gray-800 truncate text-sm">{p.username || 'Unknown'}</span>
-                                                        <span className={`text-[10px] font-black uppercase tracking-tighter ${p.isOnline ? 'text-green-500' : 'text-red-500'}`}>
-                                                            {p.isOnline ? 'Online' : 'Offline'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 flex items-center gap-1.5 flex-wrap">
-                                                    {quiz?.questions?.map((_, idx) => {
-                                                        const data = progress[idx] || progress[idx.toString()];
-                                                        const isAnswered = data?.answered === true;
-                                                        const isCorrect = data?.isCorrect === true;
-
-                                                        let dotClass = 'bg-gray-100 border-gray-200 text-gray-400';
-                                                        let Icon = null;
-
-                                                        if (isAnswered) {
-                                                            if (isCorrect) {
-                                                                dotClass = 'bg-green-500 border-green-500 text-white';
-                                                                Icon = <CheckCircle size={14} />;
-                                                            } else {
-                                                                dotClass = 'bg-red-500 border-red-500 text-white';
-                                                                Icon = <XCircle size={14} />;
-                                                            }
-                                                        } else if (!p.isOnline && idx < currentQuestion) {
-                                                            // Student was offline during this question
-                                                            dotClass = 'bg-gray-50 border-gray-200 text-gray-300';
-                                                        }
-
-                                                        return (
-                                                            <div
-                                                                key={idx}
-                                                                title={isAnswered ? (isCorrect ? 'Correct' : 'Incorrect') : 'No Attempt'}
-                                                                className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm ${dotClass} ${idx === currentQuestion ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
-                                                            >
-                                                                {Icon ? Icon : idx + 1}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                {/* Student Progress — Full Width Table with Dots */}
+                <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-[#0f172a] px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">
+                                Live <span className="text-[#ff6b00]">Student Tracker</span>
+                            </h2>
+                            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">
+                                {allStudents.length} Total · {participants.length} Connected · Page {currentPage}/{totalPages}
+                            </p>
+                        </div>
+                        {/* Legend */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-4 h-4 rounded-md bg-green-500"></div>
+                                <span className="text-[10px] font-bold text-slate-400">Correct</span>
                             </div>
-                        )}
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-4 h-4 rounded-md bg-red-500"></div>
+                                <span className="text-[10px] font-bold text-slate-400">Wrong</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-4 h-4 rounded-md bg-gray-200 border border-gray-300"></div>
+                                <span className="text-[10px] font-bold text-slate-400">Not Attempted</span>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Performance Visualization (Vertical Bar Graph) */}
-                    <div className="lg:col-span-8">
-                        <div className="bg-white rounded-[4rem] p-12 shadow-2xl shadow-indigo-100/50 border border-slate-100 h-full flex flex-col">
-                            <div className="flex items-center justify-between mb-16">
-                                <div>
-                                    <h2 className="text-3xl font-black text-[#0f172a] italic uppercase tracking-tighter">Live <span className="text-[#ff6b00]">Leaderboard</span></h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-1">Real-time point distribution</p>
-                                </div>
-                                <BarChart3 className="text-slate-200" size={40} />
-                            </div>
+                    {/* Column Headers */}
+                    <div className="px-8 py-3 bg-slate-50 border-b border-slate-100 flex items-center gap-4">
+                        <div className="w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Rank</div>
+                        <div className="w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student</div>
+                        <div className="w-16 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</div>
+                        <div className="flex-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">Questions Progress</div>
+                        <div className="w-20 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Score</div>
+                    </div>
 
-                            {leaderboard.length > 0 ? (
-                                <div className="flex-1 flex items-end justify-between gap-6 min-h-[300px] px-4">
-                                    {leaderboard.slice(0, 5).map((student, idx) => (
-                                        <div key={idx} className="flex flex-col items-center flex-1 group h-full justify-end">
-                                            <div className="mb-4 bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-black italic opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                                                {student.currentScore}
-                                            </div>
-                                            <div
-                                                className={`w-full rounded-t-[1.5rem] transition-all duration-1000 ease-out shadow-2xl relative group-hover:brightness-110 ${idx === 0 ? 'bg-gradient-to-t from-[#ff6b00] to-orange-400 border-t-4 border-white' :
-                                                    idx === 1 ? 'bg-indigo-600' :
-                                                        idx === 2 ? 'bg-indigo-400' :
-                                                            'bg-slate-200 group-hover:bg-indigo-200'
-                                                    }`}
-                                                style={{ height: `${Math.max((student.currentScore / (maxScore || 1)) * 100, 10)}%` }}
-                                            >
-                                                {idx === 0 && (
-                                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-orange-500 animate-bounce">
-                                                        <Award size={24} fill="currentColor" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="mt-6 text-[10px] font-black uppercase tracking-tighter truncate w-full text-center text-[#0f172a] italic opacity-80 group-hover:opacity-100">
-                                                {student.username}
+                    {/* Student Rows */}
+                    {paginatedStudents.length > 0 ? (
+                        <div className="divide-y divide-slate-50">
+                            {paginatedStudents.map((p, pIdx) => {
+                                const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
+                                const rank = globalIdx + 1;
+                                const progressById = p._id ? studentProgress[p._id] : null;
+                                const progressByName = p.username ? studentProgress[p.username] : null;
+                                const progress = progressById || progressByName || {};
+                                const score = p.lb?.currentScore ?? 0;
+
+                                return (
+                                    <div
+                                        key={p._id || p.username || pIdx}
+                                        className="px-8 py-4 flex items-center gap-4 hover:bg-slate-50/80 transition-colors group"
+                                    >
+                                        {/* Rank */}
+                                        <div className="w-12 text-center">
+                                            {rank === 1 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
+                                                    <Trophy size={18} className="text-white" />
+                                                </div>
+                                            ) : rank === 2 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-slate-300 to-slate-400 rounded-xl flex items-center justify-center shadow-lg shadow-slate-400/20">
+                                                    <span className="text-white font-black text-sm">#2</span>
+                                                </div>
+                                            ) : rank === 3 ? (
+                                                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl flex items-center justify-center shadow-lg shadow-amber-700/20">
+                                                    <span className="text-white font-black text-sm">#3</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-lg font-black text-slate-300 italic">#{rank}</span>
+                                            )}
+                                        </div>
+
+                                        {/* Student Name / Roll No */}
+                                        <div className="w-40 min-w-0">
+                                            <p className="font-bold text-slate-800 truncate text-sm">{p.username || 'Unknown'}</p>
+                                            {p._id && (
+                                                <p className="text-[10px] text-slate-400 font-mono truncate">{p._id}</p>
+                                            )}
+                                        </div>
+
+                                        {/* Online/Offline Status */}
+                                        <div className="w-16 flex justify-center">
+                                            <div className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 ${p.isOnline
+                                                ? 'bg-green-50 text-green-600 border border-green-200'
+                                                : 'bg-red-50 text-red-500 border border-red-200'
+                                                }`}>
+                                                <div className={`w-1.5 h-1.5 rounded-full ${p.isOnline ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]' : 'bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]'}`}></div>
+                                                {p.isOnline ? 'ON' : 'OFF'}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center py-20 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-100">
-                                    <div className="w-20 h-20 bg-white rounded-full shadow-lg flex items-center justify-center text-slate-200 mb-6 font-black text-4xl">?</div>
-                                    <p className="text-slate-400 font-black uppercase tracking-widest italic text-xs">Waiting for the first strike...</p>
-                                </div>
-                            )}
+
+                                        {/* Question Dots */}
+                                        <div className="flex-1 flex items-center gap-1.5 flex-wrap">
+                                            {quiz?.questions?.map((_, idx) => {
+                                                const data = progress[idx] || progress[idx.toString()];
+                                                const isAnswered = data?.answered === true;
+                                                const isCorrect = data?.isCorrect === true;
+
+                                                let dotClass = 'bg-gray-100 border-gray-200 text-gray-400';
+                                                let Icon = null;
+
+                                                if (isAnswered) {
+                                                    if (isCorrect) {
+                                                        dotClass = 'bg-green-500 border-green-500 text-white';
+                                                        Icon = <CheckCircle size={14} />;
+                                                    } else {
+                                                        dotClass = 'bg-red-500 border-red-500 text-white';
+                                                        Icon = <XCircle size={14} />;
+                                                    }
+                                                } else if (!p.isOnline && idx < currentQuestion) {
+                                                    dotClass = 'bg-gray-50 border-gray-200 text-gray-300';
+                                                    Icon = <Minus size={12} />;
+                                                }
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        title={isAnswered ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`) : `Q${idx + 1}: Not Attempted`}
+                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm ${dotClass} ${idx === currentQuestion ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110' : ''}`}
+                                                    >
+                                                        {Icon ? Icon : idx + 1}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Score */}
+                                        <div className="w-20 text-center">
+                                            <span className="text-lg font-black text-[#ff6b00] italic">{score}</span>
+                                            <span className="text-[10px] text-slate-400 font-bold ml-0.5">pts</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    </div>
+                    ) : (
+                        <div className="py-20 text-center">
+                            <Users className="mx-auto text-slate-200 mb-4" size={48} />
+                            <p className="text-slate-400 font-bold uppercase tracking-widest italic text-xs">No students have joined yet...</p>
+                        </div>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                            <p className="text-xs text-slate-400 font-bold">
+                                Showing {(currentPage - 1) * studentsPerPage + 1}–{Math.min(currentPage * studentsPerPage, allStudents.length)} of {allStudents.length} students
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    <button
+                                        key={page}
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`w-10 h-10 rounded-xl font-black text-sm transition shadow-sm ${page === currentPage
+                                            ? 'bg-[#ff6b00] text-white shadow-orange-500/20'
+                                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                >
+                                    <ChevronRight size={18} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </DashboardLayout>
