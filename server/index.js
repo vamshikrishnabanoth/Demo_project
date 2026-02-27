@@ -364,21 +364,10 @@ io.on('connection', (socket) => {
                         return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                     });
 
-                // Assign competition ranking (tied scores get same rank)
-                const leaderboard = sortedResults.map((item, index, arr) => {
-                    let rank = 1;
-                    if (index > 0) {
-                        const prev = arr[index - 1];
-                        if (item.currentScore === prev.currentScore) {
-                            // Same score — check time tiebreaker to decide if truly tied or one is faster
-                            rank = prev._assignedRank; // Same rank if same score (competition ranking)
-                        } else {
-                            rank = index + 1; // Standard competition ranking (skip positions)
-                        }
-                    }
-                    item._assignedRank = rank;
-                    const { _assignedRank, answers: _a, lastAnsweredAt: _l, ...cleanItem } = item;
-                    return { ...cleanItem, rank };
+                // Assign unique positions (1, 2, 3...) — already sorted by score then time
+                const leaderboard = sortedResults.map((item, index) => {
+                    const { answers: _a, lastAnsweredAt: _l, ...cleanItem } = item;
+                    return { ...cleanItem, rank: index + 1 };
                 });
 
                 // Broadcast leaderboard to all students in the room
