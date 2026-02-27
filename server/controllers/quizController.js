@@ -335,6 +335,7 @@ exports.submitQuiz = async (req, res) => {
             existingResult.totalQuestions = quiz.questions.length;
             existingResult.status = 'completed';
             existingResult.completedAt = Date.now();
+            existingResult.lastAnsweredAt = Date.now();
             await existingResult.save();
             return res.json(existingResult);
         }
@@ -346,8 +347,9 @@ exports.submitQuiz = async (req, res) => {
             totalQuestions: quiz.questions.length,
             answers: formattedAnswers,
             status: 'completed',
-            startedAt: Date.now(), // Fallback if no start time recorded
-            completedAt: Date.now()
+            startedAt: Date.now(),
+            completedAt: Date.now(),
+            lastAnsweredAt: Date.now()
         });
 
         await result.save();
@@ -367,10 +369,11 @@ exports.getLeaderboard = async (req, res) => {
         const isAdmin = req.user.role === 'admin';
         const canSeeFullLeaderboard = isTeacher || isAdmin;
 
-        // Fetch all results for this quiz to calculate rankings and stats
+        // Fetch all results for this quiz
+        // Sort: score DESC, lastAnsweredAt ASC (who reached score first), startedAt ASC (fallback)
         const allResults = await Result.find({ quiz: req.params.quizId })
             .populate('student', 'username email')
-            .sort({ score: -1, completedAt: 1 });
+            .sort({ score: -1, lastAnsweredAt: 1, startedAt: 1 });
 
         if (allResults.length === 0) {
             return res.json({
@@ -378,7 +381,9 @@ exports.getLeaderboard = async (req, res) => {
                 stats: {
                     averageScore: 0,
                     highestScore: 0,
-                    totalParticipants: 0
+                    totalParticipants: 0,
+                    userRank: null,
+                    userScore: 0
                 },
                 isFinal: quiz.status === 'finished'
             });
@@ -389,29 +394,44 @@ exports.getLeaderboard = async (req, res) => {
         const averageScore = totalScore / totalParticipants;
         const highestScore = allResults[0].score;
 
-        // Find current student's result and rank
-        const studentResultIndex = allResults.findIndex(r => r.student._id.toString() === req.user.id);
-        const studentRank = studentResultIndex !== -1 ? studentResultIndex + 1 : null;
-        const studentResult = studentResultIndex !== -1 ? allResults[studentResultIndex] : null;
-
-        let leaderboardData = [];
-        if (canSeeFullLeaderboard) {
-            leaderboardData = allResults.map((r, index) => ({
+        // Build ranked list with proper competition ranking
+        // Students with same score get the same rank; the next rank skips accordingly
+        const rankedResults = allResults.map((r, index, arr) => {
+            let rank = 1;
+            if (index > 0) {
+                const prev = arr[index - 1];
+                const prevRank = rankedResults[index - 1]?._rank || 1;
+                if (r.score === prev.score) {
+                    // Same score — assign same rank (competition ranking)
+                    rank = prevRank;
+                } else {
+                    // Different score — rank = position (1-indexed)
+                    rank = index + 1;
+                }
+            }
+            return {
+                _rank: rank,
                 studentId: r.student._id,
                 username: r.student.username,
                 currentScore: r.score,
                 answeredQuestions: r.answers.length,
-                rank: index + 1
-            }));
-        } else if (studentResult) {
-            // Student only sees their own result in the results list (Privacy Protection)
-            leaderboardData = [{
-                studentId: studentResult.student._id,
-                username: studentResult.student.username,
-                currentScore: studentResult.score,
-                answeredQuestions: studentResult.answers.length,
-                rank: studentRank
-            }];
+                answers: r.answers,
+                rank: rank
+            };
+        });
+
+        // Find current student's rank
+        const studentEntry = rankedResults.find(r => r.studentId.toString() === req.user.id);
+        const studentRank = studentEntry ? studentEntry.rank : null;
+        const studentScore = studentEntry ? studentEntry.currentScore : 0;
+
+        let leaderboardData = [];
+        if (canSeeFullLeaderboard) {
+            leaderboardData = rankedResults.map(({ _rank, ...rest }) => rest);
+        } else if (studentEntry) {
+            // Student only sees their own result (Privacy Protection)
+            const { _rank, ...cleanEntry } = studentEntry;
+            leaderboardData = [cleanEntry];
         }
 
         res.json({
@@ -421,7 +441,7 @@ exports.getLeaderboard = async (req, res) => {
                 highestScore,
                 totalParticipants,
                 userRank: studentRank,
-                userScore: studentResult ? studentResult.score : 0
+                userScore: studentScore
             },
             isFinal: quiz.status === 'finished' || !quiz.isActive
         });
