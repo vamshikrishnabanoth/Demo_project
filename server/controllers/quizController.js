@@ -394,30 +394,19 @@ exports.getLeaderboard = async (req, res) => {
         const averageScore = totalScore / totalParticipants;
         const highestScore = allResults[0].score;
 
-        // Build ranked list with proper competition ranking using a for loop
-        // (Cannot use .map() because we need to reference previously built entries)
+        // Build ranked list with UNIQUE positions (no tied ranks)
+        // MongoDB already sorted by: score DESC, lastAnsweredAt ASC, startedAt ASC
+        // So position i+1 is the correct unique rank for each student
         const rankedResults = [];
         for (let i = 0; i < allResults.length; i++) {
             const r = allResults[i];
-            let rank = 1;
-            if (i > 0) {
-                const prevResult = allResults[i - 1];
-                const prevRank = rankedResults[i - 1].rank;
-                if (r.score === prevResult.score) {
-                    // Same score — assign same rank (competition ranking)
-                    rank = prevRank;
-                } else {
-                    // Different score — rank = position (1-indexed, skips tied positions)
-                    rank = i + 1;
-                }
-            }
             rankedResults.push({
                 studentId: r.student._id,
                 username: r.student.username,
                 currentScore: r.score,
                 answeredQuestions: r.answers.length,
                 answers: r.answers,
-                rank: rank
+                rank: i + 1  // Unique position — tiebroken by time
             });
         }
 
@@ -428,9 +417,10 @@ exports.getLeaderboard = async (req, res) => {
 
         let leaderboardData = [];
         if (canSeeFullLeaderboard) {
-            leaderboardData = rankedResults.map(({ answers, ...rest }) => rest);
+            // Teacher gets full data INCLUDING answers for the answer-map dots
+            leaderboardData = rankedResults;
         } else if (studentEntry) {
-            // Student only sees their own result (Privacy Protection)
+            // Student only sees their own result (Privacy Protection) — no answers needed
             const { answers, ...cleanEntry } = studentEntry;
             leaderboardData = [cleanEntry];
         }
