@@ -313,6 +313,8 @@ io.on('connection', (socket) => {
                 if (!result.startedAt) {
                     result.startedAt = Date.now();
                 }
+                // Track when the last answer was submitted for tiebreaking
+                result.lastAnsweredAt = new Date();
 
                 await result.save();
 
@@ -346,15 +348,38 @@ io.on('connection', (socket) => {
 
                 // Get all results for this quiz to build leaderboard
                 const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
-                const leaderboard = allResults
+                const sortedResults = allResults
                     .map(r => ({
                         studentId: r.student._id,
                         username: r.student.username,
                         currentScore: r.score,
-                        answeredQuestions: r.answers.length
+                        answeredQuestions: r.answers.length,
+                        lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
+                        answers: r.answers
                     }))
-                    .sort((a, b) => b.currentScore - a.currentScore)
-                    .map((item, index) => ({ ...item, rank: index + 1 }));
+                    .sort((a, b) => {
+                        // Primary: higher score first
+                        if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                        // Tiebreaker: whoever reached this score first (earlier lastAnsweredAt)
+                        return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
+                    });
+
+                // Assign competition ranking (tied scores get same rank)
+                const leaderboard = sortedResults.map((item, index, arr) => {
+                    let rank = 1;
+                    if (index > 0) {
+                        const prev = arr[index - 1];
+                        if (item.currentScore === prev.currentScore) {
+                            // Same score — check time tiebreaker to decide if truly tied or one is faster
+                            rank = prev._assignedRank; // Same rank if same score (competition ranking)
+                        } else {
+                            rank = index + 1; // Standard competition ranking (skip positions)
+                        }
+                    }
+                    item._assignedRank = rank;
+                    const { _assignedRank, answers: _a, lastAnsweredAt: _l, ...cleanItem } = item;
+                    return { ...cleanItem, rank };
+                });
 
                 // Broadcast leaderboard to all students in the room
                 // Calculate insights: Hardest (most wrong), Easiest (most correct)
