@@ -36,6 +36,10 @@ const ResultSchema = new mongoose.Schema({
     },
     completedAt: {
         type: Date
+    },
+    lastAnsweredAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
