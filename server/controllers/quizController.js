@@ -315,16 +315,19 @@ exports.submitQuiz = async (req, res) => {
         let score = 0;
         let totalTimeTaken = 0;
         const formattedAnswers = quiz.questions.map((q, idx) => {
-            const selectedOption = answers[idx]?.selectedOption || '';
-            const isCorrect = selectedOption.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase();
+            const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
+            const correctOption = (q.correctAnswer || '').toString().trim();
+
+            const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
             const qTimeTaken = 0; // Standard submit doesn't track per-question time yet
+
             if (isCorrect) {
                 score += q.points || 10;
             }
             return {
                 questionText: q.questionText,
                 selectedOption,
-                correctOption: q.correctAnswer,
+                correctOption,
                 isCorrect,
                 timeTaken: qTimeTaken
             };
@@ -339,6 +342,7 @@ exports.submitQuiz = async (req, res) => {
             existingResult.totalQuestions = quiz.questions.length;
             existingResult.status = 'completed';
             existingResult.completedAt = Date.now();
+            existingResult.lastAnsweredAt = Date.now();
             await existingResult.save();
             return res.json(existingResult);
         }
@@ -352,7 +356,8 @@ exports.submitQuiz = async (req, res) => {
             answers: formattedAnswers,
             status: 'completed',
             startedAt: Date.now(),
-            completedAt: Date.now()
+            completedAt: Date.now(),
+            lastAnsweredAt: Date.now()
         });
 
         await result.save();
@@ -372,10 +377,9 @@ exports.getLeaderboard = async (req, res) => {
         const isAdmin = req.user.role === 'admin';
         const canSeeFullLeaderboard = isTeacher || isAdmin;
 
-        // Fetch all results for this quiz to calculate rankings and stats
+        // Fetch all results for this quiz
         const allResults = await Result.find({ quiz: req.params.quizId })
-            .populate('student', 'username email')
-            .sort({ score: -1, totalTimeTaken: 1, completedAt: 1 });
+            .populate('student', 'username email');
 
         if (allResults.length === 0) {
             return res.json({
@@ -383,41 +387,74 @@ exports.getLeaderboard = async (req, res) => {
                 stats: {
                     averageScore: 0,
                     highestScore: 0,
-                    totalParticipants: 0
+                    totalParticipants: 0,
+                    userRank: null,
+                    userScore: 0
                 },
                 isFinal: quiz.status === 'finished'
             });
         }
 
-        const totalParticipants = allResults.length;
-        const totalScore = allResults.reduce((sum, r) => sum + r.score, 0);
+        // Calculate total time and sort: score DESC, totalTime ASC
+        const processedResults = allResults.map(r => {
+            const startedAt = r.startedAt ? new Date(r.startedAt).getTime() : 0;
+            const completedAt = r.completedAt ? new Date(r.completedAt).getTime() : Date.now();
+            const totalTime = completedAt - startedAt;
+            return {
+                ...r.toObject(),
+                totalTime
+            };
+        }).sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+            return a.totalTime - b.totalTime;
+        });
+
+        const totalParticipants = processedResults.length;
+        const totalScore = processedResults.reduce((sum, r) => sum + r.score, 0);
         const averageScore = totalScore / totalParticipants;
-        const highestScore = allResults[0].score;
+        const highestScore = processedResults[0].score;
 
-        // Find current student's result and rank
-        const studentResultIndex = allResults.findIndex(r => r.student._id.toString() === req.user.id);
-        const studentRank = studentResultIndex !== -1 ? studentResultIndex + 1 : null;
-        const studentResult = studentResultIndex !== -1 ? allResults[studentResultIndex] : null;
+        // Build ranked list with TIES (rank is same for same score & time)
+        const rankedResults = [];
+        let currentRank = 1;
 
-        let leaderboardData = [];
-        if (canSeeFullLeaderboard) {
-            leaderboardData = allResults.map((r, index) => ({
+        for (let i = 0; i < processedResults.length; i++) {
+            const r = processedResults[i];
+
+            // If not the first result and matches previous score AND totalTime, keep same rank
+            if (i > 0) {
+                const prev = processedResults[i - 1];
+                if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
+                    currentRank = i + 1;
+                }
+            }
+
+            rankedResults.push({
                 studentId: r.student._id,
                 username: r.student.username,
                 currentScore: r.score,
-                totalTimeTaken: r.totalTimeTaken || 0,
+                totalTimeTaken: r.totalTimeTaken || r.totalTime || 0,
                 answeredQuestions: r.answers.length,
-                rank: index + 1
-            }));
-        } else if (studentResult) {
-            // Student only sees their own result in the results list (Privacy Protection)
-            leaderboardData = [{
-                studentId: studentResult.student._id,
-                username: studentResult.student.username,
-                currentScore: studentResult.score,
-                answeredQuestions: studentResult.answers.length,
-                rank: studentRank
-            }];
+                answers: r.answers,
+                rank: currentRank
+            });
+        }
+
+        // Find current student's rank
+        const studentEntry = rankedResults.find(r => r.studentId.toString() === req.user.id);
+        const studentRank = studentEntry ? studentEntry.rank : null;
+        const studentScore = studentEntry ? studentEntry.currentScore : 0;
+
+        let leaderboardData = [];
+        if (canSeeFullLeaderboard) {
+            // Teacher gets full data INCLUDING answers for the answer-map dots
+            leaderboardData = rankedResults;
+        } else if (studentEntry) {
+            // Student only sees their own result (Privacy Protection) — no answers needed
+            const { answers, ...cleanEntry } = studentEntry;
+            leaderboardData = [cleanEntry];
         }
 
         res.json({
@@ -427,7 +464,7 @@ exports.getLeaderboard = async (req, res) => {
                 highestScore,
                 totalParticipants,
                 userRank: studentRank,
-                userScore: studentResult ? studentResult.score : 0
+                userScore: studentScore
             },
             isFinal: quiz.status === 'finished' || !quiz.isActive
         });
@@ -466,38 +503,29 @@ exports.getTeacherStats = async (req, res) => {
         const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
 
         const stats = await Promise.all(quizzes.map(async (quiz) => {
-            let results;
+            // Fetch live results for the quiz
+            const dbResults = await Result.find({ quiz: quiz._id })
+                .populate('student', 'username email')
+                .sort({ score: -1, completedAt: 1 });
 
-            if (quiz.status === 'finished' && quiz.finalLeaderboard && quiz.finalLeaderboard.length > 0) {
-                // Use stored results for finished quizzes
-                results = quiz.finalLeaderboard.map(r => ({
-                    studentName: r.username,
-                    score: r.currentScore,
-                    totalQuestions: quiz.questions.length,
-                    completedAt: quiz.updatedAt || quiz.createdAt // Approximate
-                }));
-            } else {
-                // Fetch live/active results
-                const dbResults = await Result.find({ quiz: quiz._id })
-                    .populate('student', 'username email')
-                    .sort({ completedAt: -1 });
-
-                results = dbResults.map(r => ({
-                    studentName: r.student?.username || 'Unknown',
-                    score: r.score,
-                    totalQuestions: r.totalQuestions,
-                    completedAt: r.completedAt
-                }));
-            }
+            const results = dbResults.map(r => ({
+                studentName: r.student?.username || 'Unknown',
+                score: r.score,
+                totalQuestions: r.totalQuestions,
+                completedAt: r.completedAt,
+                answers: r.answers
+            }));
 
             const completionCount = results.length;
             const averageScore = completionCount > 0
-                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount / (quiz.questions.length * 10)) * 100
+                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount)
                 : 0;
 
             return {
                 quizId: quiz._id,
                 title: quiz.title,
+                topic: quiz.topic,
+                createdAt: quiz.createdAt,
                 completionCount,
                 averageScore,
                 results

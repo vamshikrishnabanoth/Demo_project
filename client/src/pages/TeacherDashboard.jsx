@@ -14,9 +14,9 @@ export default function TeacherDashboard() {
                 const res = await api.get('/quiz/stats');
                 const quizArray = res.data || [];
                 const totalQuizzes = quizArray.length;
-                const totalAttempts = quizArray.reduce((sum, quiz) => sum + quiz.completionCount, 0);
+                const totalAttempts = quizArray.reduce((sum, quiz) => sum + (quiz.completionCount || 0), 0);
                 const averageScore = quizArray.length > 0
-                    ? quizArray.reduce((sum, quiz) => sum + quiz.averageScore, 0) / quizArray.length
+                    ? quizArray.reduce((sum, quiz) => sum + (quiz.averageScore || 0), 0) / quizArray.length
                     : 0;
 
                 setStats({ totalQuizzes, totalAttempts, averageScore });

@@ -273,7 +273,10 @@ io.on('connection', (socket) => {
 
             if (quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
-                const isCorrect = answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+                const studentAnswer = (answer || '').toString().trim().toLowerCase();
+                const correctAnswer = (question.correctAnswer || '').toString().trim().toLowerCase();
+
+                const isCorrect = studentAnswer === correctAnswer;
                 const points = isCorrect ? (question.points || 10) : 0;
 
                 const existingAnswerIndex = result.answers.findIndex(
@@ -305,6 +308,9 @@ io.on('connection', (socket) => {
                 result.status = 'in-progress';
                 if (!result.startedAt) result.startedAt = Date.now();
 
+                // Track when the last answer was submitted for tiebreaking
+                result.lastAnsweredAt = new Date();
+
                 await result.save();
 
                 // Broadcast student progress to teacher with isCorrect
@@ -324,6 +330,7 @@ io.on('connection', (socket) => {
                         username: r.student.username,
                         currentScore: r.score,
                         totalTimeTaken: r.totalTimeTaken || 0,
+                        lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
                         answeredQuestions: r.answers.length
                     }))
                     .sort((a, b) => {
@@ -332,7 +339,11 @@ io.on('connection', (socket) => {
                             return b.currentScore - a.currentScore;
                         }
                         // SECONDARY: Lowest Time (Fastest)
-                        return a.totalTimeTaken - b.totalTimeTaken;
+                        if (a.totalTimeTaken !== b.totalTimeTaken) {
+                            return a.totalTimeTaken - b.totalTimeTaken;
+                        }
+                        // TERTIARY: Whoever reached this state first
+                        return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                     })
                     .map((item, index) => ({ ...item, rank: index + 1 }));
 
