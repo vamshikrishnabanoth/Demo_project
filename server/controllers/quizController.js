@@ -370,10 +370,8 @@ exports.getLeaderboard = async (req, res) => {
         const canSeeFullLeaderboard = isTeacher || isAdmin;
 
         // Fetch all results for this quiz
-        // Sort: score DESC, lastAnsweredAt ASC (who reached score first), startedAt ASC (fallback)
         const allResults = await Result.find({ quiz: req.params.quizId })
-            .populate('student', 'username email')
-            .sort({ score: -1, lastAnsweredAt: 1, startedAt: 1 });
+            .populate('student', 'username email');
 
         if (allResults.length === 0) {
             return res.json({
@@ -389,24 +387,50 @@ exports.getLeaderboard = async (req, res) => {
             });
         }
 
-        const totalParticipants = allResults.length;
-        const totalScore = allResults.reduce((sum, r) => sum + r.score, 0);
-        const averageScore = totalScore / totalParticipants;
-        const highestScore = allResults[0].score;
+        // Calculate total time and sort: score DESC, totalTime ASC
+        const processedResults = allResults.map(r => {
+            const startedAt = r.startedAt ? new Date(r.startedAt).getTime() : 0;
+            const completedAt = r.completedAt ? new Date(r.completedAt).getTime() : Date.now();
+            const totalTime = completedAt - startedAt;
+            return {
+                ...r.toObject(),
+                totalTime
+            };
+        }).sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+            return a.totalTime - b.totalTime;
+        });
 
-        // Build ranked list with UNIQUE positions (no tied ranks)
-        // MongoDB already sorted by: score DESC, lastAnsweredAt ASC, startedAt ASC
-        // So position i+1 is the correct unique rank for each student
+        const totalParticipants = processedResults.length;
+        const totalScore = processedResults.reduce((sum, r) => sum + r.score, 0);
+        const averageScore = totalScore / totalParticipants;
+        const highestScore = processedResults[0].score;
+
+        // Build ranked list with TIES (rank is same for same score & time)
         const rankedResults = [];
-        for (let i = 0; i < allResults.length; i++) {
-            const r = allResults[i];
+        let currentRank = 1;
+
+        for (let i = 0; i < processedResults.length; i++) {
+            const r = processedResults[i];
+
+            // If not the first result and matches previous score AND totalTime, keep same rank
+            if (i > 0) {
+                const prev = processedResults[i - 1];
+                if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
+                    currentRank = i + 1;
+                }
+            }
+
             rankedResults.push({
                 studentId: r.student._id,
                 username: r.student.username,
                 currentScore: r.score,
+                totalTimeTaken: r.totalTime,
                 answeredQuestions: r.answers.length,
                 answers: r.answers,
-                rank: i + 1  // Unique position — tiebroken by time
+                rank: currentRank
             });
         }
 
@@ -481,11 +505,10 @@ exports.getTeacherStats = async (req, res) => {
                     totalQuestions: quiz.questions.length,
                     completedAt: quiz.updatedAt || quiz.createdAt // Approximate
                 }));
-            } else {
                 // Fetch live/active results
                 const dbResults = await Result.find({ quiz: quiz._id })
                     .populate('student', 'username email')
-                    .sort({ completedAt: -1 });
+                    .sort({ score: -1, completedAt: 1 }); // Sort by score descending, then by time
 
                 results = dbResults.map(r => ({
                     studentName: r.student?.username || 'Unknown',
