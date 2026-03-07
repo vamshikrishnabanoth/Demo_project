@@ -282,7 +282,19 @@ io.on('connection', (socket) => {
                 const studentAnswer = (answer || "").toString().trim().toLowerCase();
                 const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
 
-                const isCorrect = studentAnswer === correctAnswer;
+                let isCorrect = studentAnswer === correctAnswer;
+
+                // Fallback for AI-generated labels (A, B, C...) or indices (0, 1, 2...)
+                if (!isCorrect && question.options) {
+                    const labels = ['a', 'b', 'c', 'd', 'e'];
+                    const labelIdx = labels.indexOf(correctAnswer);
+                    if (labelIdx !== -1 && question.options[labelIdx]) {
+                        isCorrect = studentAnswer === question.options[labelIdx].toString().trim().toLowerCase();
+                    } else if (correctAnswer !== '' && !isNaN(correctAnswer) && question.options[parseInt(correctAnswer)]) {
+                        isCorrect = studentAnswer === question.options[parseInt(correctAnswer)].toString().trim().toLowerCase();
+                    }
+                }
+
                 const points = isCorrect ? (question.points || 10) : 0;
 
                 const existingAnswerIndex = result.answers.findIndex(
@@ -378,8 +390,22 @@ io.on('connection', (socket) => {
             const result = await Result.findOne({ quiz: quizId, student: studentId });
 
             if (quiz && result && quiz.questions[questionIndex]) {
-                const question = quiz.questions[questionIndex];
-                const isCorrect = answer === question.correctAnswer;
+                const studentAnswer = (answer || "").toString().trim().toLowerCase();
+                const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
+
+                let isCorrect = studentAnswer === correctAnswer;
+
+                // Fallback for AI-generated labels (A, B, C...) or indices (0, 1, 2...)
+                if (!isCorrect && question.options) {
+                    const labels = ['a', 'b', 'c', 'd', 'e'];
+                    const labelIdx = labels.indexOf(correctAnswer);
+                    if (labelIdx !== -1 && question.options[labelIdx]) {
+                        isCorrect = studentAnswer === question.options[labelIdx].toString().trim().toLowerCase();
+                    } else if (correctAnswer !== '' && !isNaN(correctAnswer) && question.options[parseInt(correctAnswer)]) {
+                        isCorrect = studentAnswer === question.options[parseInt(correctAnswer)].toString().trim().toLowerCase();
+                    }
+                }
+
                 const points = isCorrect ? (question.points || 10) : 0;
 
                 // Update result with new answer

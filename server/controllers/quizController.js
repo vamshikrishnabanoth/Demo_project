@@ -41,9 +41,10 @@ RULES:
 - For a TOPIC: generate general knowledge questions about it.
 - For PDF CONTENT: questions must be answerable from the provided text only.
 - Return ONLY valid JSON, no markdown, no explanation.
+- CRITICAL: "correctAnswer" MUST be the EXACT STRING from the "options" array. DO NOT use labels like "A", "B", "1", "2".
 
 JSON FORMAT:
-{"questions":[{"questionText":"string","options":["A","B","C","D"],"correctAnswer":"A","points":10,"type":"multiple-choice"}]}`;
+{"questions":[{"questionText":"What is 2+2?","options":["3","4","5","6"],"correctAnswer":"4","points":10,"type":"multiple-choice"}]}`;
 
     const makeRequest = (model) => new Promise((resolve, reject) => {
         const https = require('https');
@@ -318,7 +319,19 @@ exports.submitQuiz = async (req, res) => {
             const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
             const correctOption = (q.correctAnswer || '').toString().trim();
 
-            const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
+            let isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
+
+            // Fallback for labels (A, B, C...) or indices
+            if (!isCorrect && q.options) {
+                const labels = ['a', 'b', 'c', 'd', 'e'];
+                const labelIdx = labels.indexOf(correctOption.toLowerCase());
+                if (labelIdx !== -1 && q.options[labelIdx]) {
+                    isCorrect = selectedOption.toLowerCase() === q.options[labelIdx].toString().trim().toLowerCase();
+                } else if (correctOption !== '' && !isNaN(correctOption) && q.options[parseInt(correctOption)]) {
+                    isCorrect = selectedOption.toLowerCase() === q.options[parseInt(correctOption)].toString().trim().toLowerCase();
+                }
+            }
+
             const qTimeTaken = 0; // Standard submit doesn't track per-question time yet
 
             if (isCorrect) {
