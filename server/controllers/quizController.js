@@ -314,15 +314,18 @@ exports.submitQuiz = async (req, res) => {
 
         let score = 0;
         const formattedAnswers = quiz.questions.map((q, idx) => {
-            const selectedOption = answers[idx]?.selectedOption || '';
-            const isCorrect = selectedOption === q.correctAnswer;
+            const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
+            const correctOption = (q.correctAnswer || '').toString().trim();
+
+            const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
+
             if (isCorrect) {
                 score += q.points || 10;
             }
             return {
                 questionText: q.questionText,
                 selectedOption,
-                correctOption: q.correctAnswer,
+                correctOption,
                 isCorrect
             };
         });
@@ -495,37 +498,29 @@ exports.getTeacherStats = async (req, res) => {
         const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
 
         const stats = await Promise.all(quizzes.map(async (quiz) => {
-            let results;
+            // Fetch live results for the quiz
+            const dbResults = await Result.find({ quiz: quiz._id })
+                .populate('student', 'username email')
+                .sort({ score: -1, completedAt: 1 });
 
-            if (quiz.status === 'finished' && quiz.finalLeaderboard && quiz.finalLeaderboard.length > 0) {
-                // Use stored results for finished quizzes
-                results = quiz.finalLeaderboard.map(r => ({
-                    studentName: r.username,
-                    score: r.currentScore,
-                    totalQuestions: quiz.questions.length,
-                    completedAt: quiz.updatedAt || quiz.createdAt // Approximate
-                }));
-                // Fetch live/active results
-                const dbResults = await Result.find({ quiz: quiz._id })
-                    .populate('student', 'username email')
-                    .sort({ score: -1, completedAt: 1 }); // Sort by score descending, then by time
-
-                results = dbResults.map(r => ({
-                    studentName: r.student?.username || 'Unknown',
-                    score: r.score,
-                    totalQuestions: r.totalQuestions,
-                    completedAt: r.completedAt
-                }));
-            }
+            const results = dbResults.map(r => ({
+                studentName: r.student?.username || 'Unknown',
+                score: r.score,
+                totalQuestions: r.totalQuestions,
+                completedAt: r.completedAt,
+                answers: r.answers
+            }));
 
             const completionCount = results.length;
             const averageScore = completionCount > 0
-                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount / (quiz.questions.length * 10)) * 100
+                ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount)
                 : 0;
 
             return {
                 quizId: quiz._id,
                 title: quiz.title,
+                topic: quiz.topic,
+                createdAt: quiz.createdAt,
                 completionCount,
                 averageScore,
                 results

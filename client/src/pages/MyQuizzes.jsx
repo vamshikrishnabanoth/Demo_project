@@ -133,55 +133,89 @@ export default function MyQuizzes() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-4 z-10">
-                                    <div className="flex items-center gap-3 bg-white/5 p-2 rounded-3xl border border-white/5">
-                                        {quiz.isAssessment ? (
-                                            <>
-                                                {quiz.isActive ? (
-                                                    <button
-                                                        onClick={() => updateQuizMode(quiz._id, 'close')}
-                                                        className="bg-red-500/10 text-red-500 border border-red-500/20 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-red-500 hover:text-white active:scale-95 flex items-center gap-3"
-                                                    >
-                                                        <XCircle size={20} /> Close
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => updateQuizMode(quiz._id, 'assessment')}
-                                                        className="bg-[#ff6b00]/10 text-[#ff6b00] border border-[#ff6b00]/20 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-[#ff6b00] hover:text-white active:scale-95 flex items-center gap-3"
-                                                    >
-                                                        <Play size={20} /> Reopen
-                                                    </button>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {quiz.status !== 'finished' ? (
-                                                    <Link
-                                                        to={`/live-room-teacher/${quiz.joinCode}`}
-                                                        className="bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-lg shadow-[#ff6b00]/20"
-                                                    >
-                                                        <ExternalLink size={20} /> Enter Room
-                                                    </Link>
-                                                ) : (
-                                                    <Link
-                                                        to={`/leaderboard/${quiz._id}`}
-                                                        className="bg-green-500/10 text-green-500 border border-green-500/20 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-green-500 hover:text-white active:scale-95 flex items-center gap-3"
-                                                    >
-                                                        <Trophy size={20} /> View Results
-                                                    </Link>
-                                                )}
-                                            </>
-                                        )}
+                                <div className="flex flex-wrap items-center gap-4 z-10 w-full lg:w-auto">
+                                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/5 p-4 rounded-[2.5rem] border border-white/5 w-full lg:w-auto">
+                                        {/* Performance Stats */}
+                                        <div className="flex items-center gap-6 px-6 py-2 border-r border-white/10 hidden sm:flex">
+                                            <div className="text-center">
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Avg Score</p>
+                                                <p className="text-lg font-black text-white italic">{(quiz.averageScore || 0).toFixed(0)}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Students</p>
+                                                <p className="text-lg font-black text-[#ff6b00] italic">{quiz.completionCount || 0}</p>
+                                            </div>
+                                        </div>
 
-                                        <button
-                                            onClick={() => handleDelete(quiz._id)}
-                                            className="p-4 text-slate-700 hover:text-red-500 transition-all group/del"
-                                            title="Delete Permanently"
-                                        >
-                                            <Trash2 size={24} className="group-hover/del:scale-110 transition-transform" />
-                                        </button>
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                                            {quiz.isAssessment ? (
+                                                <>
+                                                    {quiz.isActive ? (
+                                                        <button
+                                                            onClick={() => updateQuizMode(quiz._id, 'close')}
+                                                            className="flex-1 sm:flex-none bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-red-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                        >
+                                                            <XCircle size={18} /> Close
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => updateQuizMode(quiz._id, 'assessment')}
+                                                            className="flex-1 sm:flex-none bg-[#ff6b00]/10 text-[#ff6b00] border border-[#ff6b00]/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-[#ff6b00] hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                        >
+                                                            <Play size={18} /> Reopen
+                                                        </button>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {quiz.status !== 'finished' ? (
+                                                        <Link
+                                                            to={`/live-room-teacher/${quiz.joinCode}`}
+                                                            className="flex-1 sm:flex-none bg-[#ff6b00] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[#ff6b00]/20 text-sm"
+                                                        >
+                                                            <ExternalLink size={18} /> Room
+                                                        </Link>
+                                                    ) : (
+                                                        <Link
+                                                            to={`/leaderboard/${quiz._id}`}
+                                                            className="flex-1 sm:flex-none bg-green-500/10 text-green-500 border border-green-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-green-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                        >
+                                                            <Trophy size={18} /> Results
+                                                        </Link>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            <button
+                                                onClick={() => handleDelete(quiz._id)}
+                                                className="p-3 text-slate-700 hover:text-red-500 transition-all group/del shrink-0"
+                                                title="Delete Quiz"
+                                            >
+                                                <Trash2 size={20} className="group-hover/del:scale-110 transition-transform" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Mini Leaderboard - Displayed within the card */}
+                                {quiz.results && quiz.results.length > 0 && (
+                                    <div className="w-full lg:w-72 bg-white/5 rounded-3xl p-6 border border-white/5 space-y-3">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Top Students</span>
+                                            <Trophy size={12} className="text-[#ff6b00]" />
+                                        </div>
+                                        {quiz.results.slice(0, 3).map((res, idx) => (
+                                            <div key={idx} className="flex items-center justify-between text-xs bg-black/20 rounded-xl p-3 border border-white/5">
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`font-black italic ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-slate-300' : 'text-amber-600'}`}>#{idx + 1}</span>
+                                                    <span className="font-bold text-white uppercase truncate w-24">{res.studentName}</span>
+                                                </div>
+                                                <span className="font-black text-[#ff6b00] italic">{res.score}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
                                 <div className="absolute -right-20 -bottom-20 opacity-[0.02] text-white group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
                                     <Activity size={300} />

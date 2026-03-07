@@ -281,7 +281,10 @@ io.on('connection', (socket) => {
 
             if (quiz && quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
-                const isCorrect = answer === question.correctAnswer;
+                const studentAnswer = (answer || '').toString().trim().toLowerCase();
+                const correctAnswer = (question.correctAnswer || '').toString().trim().toLowerCase();
+
+                const isCorrect = studentAnswer === correctAnswer;
                 const points = isCorrect ? (question.points || 10) : 0;
 
                 // Add or update answer for this question
