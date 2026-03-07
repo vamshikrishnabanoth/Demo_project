@@ -405,10 +405,10 @@ exports.getLeaderboard = async (req, res) => {
                 totalTime
             };
         }).sort((a, b) => {
-            if (b.score !== a.score) {
-                return b.score - a.score;
+            if ((b.score || 0) !== (a.score || 0)) {
+                return (b.score || 0) - (a.score || 0);
             }
-            return a.totalTime - b.totalTime;
+            return (a.totalTime || 0) - (b.totalTime || 0);
         });
 
         const totalParticipants = processedResults.length;

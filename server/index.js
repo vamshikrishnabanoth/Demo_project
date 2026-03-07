@@ -271,10 +271,16 @@ io.on('connection', (socket) => {
                 });
             }
 
+            // Ensure numeric values to avoid NaN
+            result.score = result.score || 0;
+            result.totalTimeTaken = result.totalTimeTaken || 0;
+
             if (quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
-                const studentAnswer = (answer || '').toString().trim().toLowerCase();
-                const correctAnswer = (question.correctAnswer || '').toString().trim().toLowerCase();
+
+                // Extra robust normalization
+                const studentAnswer = (answer || "").toString().trim().toLowerCase();
+                const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
 
                 const isCorrect = studentAnswer === correctAnswer;
                 const points = isCorrect ? (question.points || 10) : 0;

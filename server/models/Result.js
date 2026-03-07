@@ -13,7 +13,8 @@ const ResultSchema = new mongoose.Schema({
     },
     score: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
     totalQuestions: {
         type: Number,
