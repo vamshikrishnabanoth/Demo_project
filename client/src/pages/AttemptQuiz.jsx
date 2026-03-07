@@ -53,16 +53,11 @@ export default function AttemptQuiz() {
         });
 
         socket.on('quiz_ended', async () => {
-            navigate(`/leaderboard/${id}`);
-            try {
-                const formattedAnswers = quiz?.questions?.map((q, idx) => ({
-                    questionText: q.questionText,
-                    selectedOption: answers[idx] || ''
-                })) || [];
-                await api.post('/quiz/submit', { quizId: id, answers: formattedAnswers });
-            } catch (e) {
-                console.warn('Background submit on quiz_ended:', e?.message);
-            }
+            // Results are already saved via socket events during the quiz.
+            // Navigate to leaderboard after a small delay to allow server finalization.
+            setTimeout(() => {
+                navigate(`/leaderboard/${id}`);
+            }, 1500);
         });
 
         socket.on('sync_timer', ({ timeLeft }) => {

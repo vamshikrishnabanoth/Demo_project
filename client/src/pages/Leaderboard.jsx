@@ -25,11 +25,17 @@ export default function Leaderboard() {
     const navigate = useNavigate();
     const isStudent = user?.role === 'student';
 
-    const fetchData = async () => {
+    const fetchData = async (retryCount = 0) => {
         try {
             const res = await api.get(`/quiz/leaderboard/${quizId}`);
             console.log('Leaderboard API response:', res.data);
             if (res.data.results) {
+                // If no results yet and quiz just ended, retry up to 3 times
+                if (res.data.results.length === 0 && retryCount < 3) {
+                    console.log(`No results yet, retrying in 2s (attempt ${retryCount + 1}/3)...`);
+                    setTimeout(() => fetchData(retryCount + 1), 2000);
+                    return;
+                }
                 setResults(res.data.results);
             }
             if (res.data.insights) setInsights(res.data.insights);

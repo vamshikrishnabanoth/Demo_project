@@ -136,11 +136,8 @@ io.on('connection', (socket) => {
             const Quiz = require('./models/Quiz');
             const Result = require('./models/Result');
 
-            // 1. Mark quiz as finished
-            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
-
-            // 2. Finalize all in-progress student results
-            const updateResult = await Result.updateMany(
+            // 1. Finalize all in-progress student results FIRST
+            await Result.updateMany(
                 { quiz: quizId, status: 'in-progress' },
                 {
                     $set: {
@@ -149,11 +146,51 @@ io.on('connection', (socket) => {
                     }
                 }
             );
-            console.log(`Quiz ${quizId} ended. Finalized ${updateResult.modifiedCount} results.`);
 
+            // 2. Compute final leaderboard rankings from persisted Results
+            const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
+            const finalLeaderboard = allResults
+                .map(r => ({
+                    studentId: r.student?._id?.toString(),
+                    username: r.student?.username || 'Unknown',
+                    currentScore: r.score || 0,
+                    totalTimeTaken: r.totalTimeTaken || 0,
+                    lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
+                    answeredQuestions: r.answers?.length || 0
+                }))
+                .sort((a, b) => {
+                    if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                    if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
+                    return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
+                })
+                .map((item, index) => ({ ...item, rank: index + 1 }));
+
+            // 3. Save final leaderboard to Quiz document (for teacher My Quizzes view)
+            const topStudent = finalLeaderboard[0]?.username || null;
+            await Quiz.findByIdAndUpdate(quizId, {
+                status: 'finished',
+                finalLeaderboard: finalLeaderboard.map(r => ({
+                    studentId: r.studentId,
+                    username: r.username,
+                    currentScore: r.currentScore,
+                    answeredQuestions: r.answeredQuestions,
+                    rank: r.rank
+                })),
+                finalInsights: {
+                    topStudent,
+                    hardestQuestion: null,
+                    easiestQuestion: null
+                }
+            });
+
+            console.log(`Quiz ${quizId} ended. Finalized ${allResults.length} results. Top student: ${topStudent}`);
+
+            // 4. Emit quiz_ended AFTER data is saved — students will navigate with correct data
             io.to(quizId).emit('quiz_ended');
         } catch (err) {
             console.error('Error ending quiz:', err);
+            // Still emit so students aren't stuck
+            io.to(quizId).emit('quiz_ended');
         }
     });
 
