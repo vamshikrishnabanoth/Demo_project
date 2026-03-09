@@ -197,7 +197,7 @@ export default function LiveRoomTeacher() {
         const lbMap = new Map();
         leaderboard.forEach(l => lbMap.set(l.username, l));
 
-        participants.forEach(p => map.set(p.username, { ...p, lb: lbMap.get(p.username) }));
+        participants.forEach(p => map.set(p.username, { ...p, isOnline: true, lb: lbMap.get(p.username) }));
         leaderboard.forEach(l => {
             if (!map.has(l.username)) {
                 map.set(l.username, {

@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
         const participants = roomParticipants.get(quizId);
         const existingIdx = participants.findIndex(p => p.username === user.username);
 
-        const userData = { ...user, socketId: socket.id };
+        const userData = { ...user, socketId: socket.id, isOnline: true };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
         } else if (user.username) {
