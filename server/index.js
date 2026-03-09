@@ -53,10 +53,11 @@ io.on('connection', (socket) => {
         const userData = { ...user, socketId: socket.id };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
-        } else if (user.username && user.username.toLowerCase() !== 'student') {
+        } else if (user.username) {
             participants.push(userData);
         }
 
+        console.log(`User ${user.username} (${user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
         io.to(quizId).emit('participants_update', participants);
 
         // SYNC STATE
