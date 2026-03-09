@@ -55,6 +55,12 @@ export default function LiveRoomStudent() {
             }
         });
 
+        socket.on('connect', () => {
+            if (quiz && user) {
+                socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'student', _id: user._id } });
+            }
+        });
+
         return () => {
             socket.off('quiz_started');
         };

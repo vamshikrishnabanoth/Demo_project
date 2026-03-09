@@ -105,6 +105,12 @@ export default function LiveRoomTeacher() {
             setIsTimerRunning(false);
         });
 
+        socket.on('connect', () => {
+            if (quiz && user) {
+                socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+            }
+        });
+
         return () => {
             socket.off('participants_update');
             socket.off('student_progress_update');

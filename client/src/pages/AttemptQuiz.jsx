@@ -1,12 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff } from 'lucide-react';
+import AuthContext from '../context/AuthContext';
 
 export default function AttemptQuiz() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user: authUser } = useContext(AuthContext);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -78,7 +80,19 @@ export default function AttemptQuiz() {
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
         });
 
-        socket.on('connect', () => setIsOnline(true));
+        socket.on('connect', () => {
+            setIsOnline(true);
+            if (quiz?.isLive && authUser) {
+                socket.emit('join_room', {
+                    quizId: id,
+                    user: {
+                        username: authUser.username,
+                        role: 'student',
+                        _id: authUser._id
+                    }
+                });
+            }
+        });
         socket.on('disconnect', () => setIsOnline(false));
 
         return () => {
@@ -96,7 +110,7 @@ export default function AttemptQuiz() {
         const handleOffline = () => setIsOnline(false);
         const handleOnline = () => {
             setIsOnline(true);
-            if (quiz?.isLive) {
+            if (quiz?.isLive && authUser) {
                 // Restore saved session position
                 const saved = localStorage.getItem(`live_quiz_session_${id}`);
                 if (saved) {
@@ -107,19 +121,14 @@ export default function AttemptQuiz() {
                     } catch (e) { console.error('Session restore error:', e); }
                 }
                 // Re-join room so teacher participant count updates
-                const token = localStorage.getItem('token');
-                if (token) {
-                    try {
-                        const decoded = JSON.parse(atob(token.split('.')[1]));
-                        socket.emit('join_room', {
-                            quizId: id, user: {
-                                username: decoded.user.username,
-                                role: 'student',
-                                _id: decoded.user.id
-                            }
-                        });
-                    } catch (e) { console.error('Rejoin error:', e); }
-                }
+                socket.emit('join_room', {
+                    quizId: id,
+                    user: {
+                        username: authUser.username,
+                        role: 'student',
+                        _id: authUser._id
+                    }
+                });
             }
         };
         window.addEventListener('offline', handleOffline);
@@ -264,19 +273,15 @@ export default function AttemptQuiz() {
                             }
                         } catch (e) { console.error('Session restore on refresh:', e); }
                     }
-                    // Re-emit join_room so server adds student back to room
-                    const t = localStorage.getItem('token');
-                    if (t) {
-                        try {
-                            const dec = JSON.parse(atob(t.split('.')[1]));
-                            socket.emit('join_room', {
-                                quizId: id, user: {
-                                    username: dec.user.username,
-                                    role: 'student',
-                                    _id: dec.user.id
-                                }
-                            });
-                        } catch (e) { console.error('Rejoin on refresh error:', e); }
+                    if (authUser) {
+                        socket.emit('join_room', {
+                            quizId: id,
+                            user: {
+                                username: authUser.username,
+                                role: 'student',
+                                _id: authUser._id
+                            }
+                        });
                     }
                     // Skip previousResult handling — live quiz session is restored
                 } else {
@@ -314,23 +319,16 @@ export default function AttemptQuiz() {
         };
         fetchQuiz();
 
-        // Listen for new questions added by teacher
-        const token = localStorage.getItem('token');
-        let user = { username: 'Guest', role: 'student' };
-        if (token) {
-            try {
-                const decoded = JSON.parse(atob(token.split('.')[1]));
-                user = {
-                    username: decoded.user.username,
+        if (authUser) {
+            socket.emit('join_room', {
+                quizId: id,
+                user: {
+                    username: authUser.username,
                     role: 'student',
-                    _id: decoded.user.id // Send ID so Teacher can map progress
-                };
-            } catch (e) {
-                console.error("Token decode error:", e);
-            }
+                    _id: authUser._id
+                }
+            });
         }
-
-        socket.emit('join_room', { quizId: id, user });
 
         socket.on('new_question_added', ({ question, questionIndex, totalQuestions }) => {
             console.log('New question received:', question);
