@@ -110,6 +110,12 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/admin/users" element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+
           <Route path="/live-room-teacher/:joinCode" element={
             <ProtectedRoute roles={['teacher']}>
               <LiveRoomTeacher />
