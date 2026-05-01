@@ -837,16 +837,7 @@ const Quiz = require('../models/Quiz');
 const Result = require('../models/Result');
 const path = require('path');
 const fs = require('fs');
-const pdfParse = require('pdf-parse');
-const mammoth = require('mammoth');
-const Groq = require('groq-sdk');
-const officeParser = require('officeparser');
-const Tesseract = require('tesseract.js');
-
-// Initialize Groq with the environment variable
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
+const axios = require('axios'); // Added for Local AI communication
 
 // Mock AI Generation for fallback
 const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporarily unavailable.") => {
@@ -864,229 +855,33 @@ const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporari
 };
 
 
-// CLOUD AI Generation - Using Groq Llama-3 70B
+// LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
     try {
-        console.log(`☁️ Requesting Cloud AI (Groq): ${type} | Count: ${count}`);
+        // Use environment variable for the AI service URL, fallback to localhost
+        const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+        console.log(`🚀 Sending to AI Service at ${AI_SERVICE_URL}: ${type} | Count: ${count}`);
         
-        let contextText = content || "No content provided";
-
-        // If it's a file and we can extract it in the cloud, do it!
-        const cloudSupportedTypes = ['pdf', 'docx', 'pptx', 'image', 'txt'];
-        if (cloudSupportedTypes.includes(type) && fs.existsSync(content)) {
-            console.log(`📄 Extracting text from ${type} in the cloud...`);
-            const extracted = await extractCloudText(type, content);
-            if (extracted && extracted.trim().length > 0) {
-                contextText = extracted;
-                console.log(`✅ Extracted ${contextText.length} characters.`);
-            } else {
-                console.warn('⚠️ Extraction failed or empty - suppressing path leak');
-                return generateMockQuestions(count, "Failed to read text from file. Please ensure your document contains readable text and is not a scanned image.");
-            }
-            // Cleanup file immediately after extraction attempt
-            try { fs.unlinkSync(content); } catch(e) {}
-        }
-
-
-
-        let difficultyInstruction = "";
-        if (difficulty === 'Easy') {
-            difficultyInstruction = "Test basic definitions and recall. The wrong options (distractors) should be obviously incorrect.";
-        } else if (difficulty === 'Medium') {
-            difficultyInstruction = "Require understanding concepts, not just definitions. Use plausible distractors that might trick someone with surface-level knowledge.";
-        } else if (difficulty === 'Hard') {
-            difficultyInstruction = "Use scenario-based or application-based questions. The differences between the correct answer and the distractors should be subtle.";
-        } else {
-            difficultyInstruction = "Generate balanced questions.";
-        }
-
-        // --- Prompt ---
-        const prompt = `
-            You are an Expert Educator and Quiz Master. 
-            Generate exactly ${count} multiple-choice questions for the following content.
-            Difficulty Level: ${difficulty}
-            Difficulty Instructions: ${difficultyInstruction}
-            
-            CONTENT: ${contextText.substring(0, 30000)}
-
-            IMPORTANT RULES:
-            - Focus on logical reasoning and conceptual understanding relevant to the provided text.
-            - Ensure questions are directly based on the provided content.
-            - Do NOT generate generic or repetitive questions. Be highly creative to ensure maximum variety across attempts.
-            - Format MUST be a valid JSON object.
-            
-            JSON FORMAT:
-            {
-              "questions": [
-                {
-                  "questionText": "Question here?",
-                  "options": ["A", "B", "C", "D"],
-                  "correctAnswer": "Exact string of correct option",
-                  "explanation": "Why this is correct",
-                  "points": 10,
-                  "type": "multiple-choice"
-                }
-              ]
-            }
-        `;
-
-        const completion = await groq.chat.completions.create({
-            messages: [{ role: 'user', content: prompt }],
-            model: 'llama-3.3-70b-versatile',
-            temperature: 0.8,
-            response_format: { type: "json_object" }
+        const response = await axios.post(`${AI_SERVICE_URL}/generate`, {
+            type: type,
+            content: content, 
+            count: parseInt(count),
+            difficulty: difficulty
         });
 
-        const rawContent = completion.choices[0].message.content;
-        console.log('🤖 AI Response received. Parsing...');
-        
-        try {
-            // Clean the response: sometimes AI adds markdown code blocks
-            const cleanJson = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
-            const data = JSON.parse(cleanJson);
-            
-            // Critical Quality Filter: Remove any "System" or "Metadata" questions
-            const filteredQuestions = (data.questions || []).filter(q => {
-                const text = q.questionText.toLowerCase();
-                const badKeywords = ['file format', 'directory', 'opt/render', 'powerpoint', 'microsoft', 'location', 'path', 'extension'];
-                return !badKeywords.some(word => text.includes(word));
-            });
-
-            console.log(`✅ Cloud AI generated ${filteredQuestions.length} meaningful questions`);
-            
-            if (filteredQuestions.length === 0) {
-                console.warn('⚠️ All questions were filtered out as meta-junk. Retrying with fallback...');
-                return generateMockQuestions(count);
-            }
-            
-            return filteredQuestions;
-        } catch (parseErr) {
-            console.error('❌ JSON Parse Error. Raw content:', rawContent);
-            return generateMockQuestions(count);
+        if (response.data && response.data.questions) {
+            console.log(`✅ Received ${response.data.questions.length} questions from Local AI`);
+            return response.data.questions;
         }
-
+        
+        return generateMockQuestions(count, "AI Service returned empty data.");
     } catch (err) {
-        console.warn(`⚠️ Cloud AI (70B) error: ${err.message}. Triggering 8B Fallback Model!`);
-        
-        try {
-            // Re-attempt using smaller, faster model with higher token limits!
-            const fallbackCompletion = await groq.chat.completions.create({
-                messages: [{ role: 'user', content: prompt }],
-                model: 'llama-3.1-8b-instant',
-                temperature: 0.8,
-                response_format: { type: "json_object" }
-            });
-
-            const fallbackContent = fallbackCompletion.choices[0].message.content;
-            const cleanJson = fallbackContent.replace(/```json/g, '').replace(/```/g, '').trim();
-            const data = JSON.parse(cleanJson);
-            
-            const filteredQuestions = (data.questions || []).filter(q => {
-                const text = q.questionText.toLowerCase();
-                const badKeywords = ['file format', 'directory', 'powerpoint', 'path'];
-                return !badKeywords.some(word => text.includes(word));
-            });
-
-            if (filteredQuestions.length > 0) return filteredQuestions;
-            
-        } catch (fallbackErr) {
-            console.error('❌ Total Cloud AI Failure:', fallbackErr.message);
-        }
-
-        return generateMockQuestions(count, "AI generation is completely overloaded by request size. Try uploading a shorter document.");
+        console.error('❌ AI Service Error:', err.message);
+        return generateMockQuestions(count, "The Local AI Service is not running. Please start ai_service.py.");
     }
 };
 
-// HELPER: Extract text from any common document format in the cloud
-const extractCloudText = async (type, filePath) => {
-    try {
-        if (!fs.existsSync(filePath)) return null;
-
-        if (type === 'pdf') {
-            const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdfParse(dataBuffer);
-            return data.text;
-        } else if (type === 'docx') {
-            const result = await mammoth.extractRawText({ path: filePath });
-            let finalText = result && result.value ? result.value.trim() : "";
-
-            // Always sequentially check up to 5 embedded images to combine with text safely
-            console.log('👁️ Scanning DOCX for embedded images/graphs...');
-            try {
-                const AdmZip = require('adm-zip');
-                const zip = new AdmZip(filePath);
-                const zipEntries = zip.getEntries();
-                
-                const imageEntries = zipEntries.filter(entry => entry.entryName.startsWith('word/media/') && 
-                        (entry.entryName.toLowerCase().endsWith('.png') || entry.entryName.toLowerCase().endsWith('.jpg') || entry.entryName.toLowerCase().endsWith('.jpeg')));
-                
-                let ocrText = '';
-                const maxImages = Math.min(imageEntries.length, 5); // Limit to 5 images to prevent server timeout
-                
-                for (let i = 0; i < maxImages; i++) {
-                    console.log(`👁️ OCR scanning DOCX image ${i+1}/${maxImages}...`);
-                    const imageBuffer = imageEntries[i].getData();
-                    const ocrResult = await Tesseract.recognize(imageBuffer, 'eng');
-                    ocrText += ocrResult.data.text + '\n';
-                }
-                
-                if (ocrText.trim().length > 0) {
-                    finalText += '\n[Supplemental Image Data]:\n' + ocrText.trim();
-                    console.log(`✅ Recovered ${ocrText.trim().length} characters from images!`);
-                }
-            } catch (zipErr) {
-                console.log('⚠️ Image parsing skipped:', zipErr.message);
-            }
-            return finalText.length > 5 ? finalText : null;
-        } else if (type === 'pptx') {
-            console.log('📉 Deep Parsing PPTX slides using officeParser...');
-            const result = await officeParser.parseOffice(filePath);
-            let finalText = result && result.toText ? result.toText().trim() : "";
-            
-            // Always sequentially check up to 5 embedded images to combine with text safely
-            console.log('👁️ Scanning PPTX for embedded images/graphs...');
-            try {
-                const AdmZip = require('adm-zip');
-                const zip = new AdmZip(filePath);
-                const zipEntries = zip.getEntries();
-                
-                const imageEntries = zipEntries.filter(entry => entry.entryName.startsWith('ppt/media/') && 
-                        (entry.entryName.toLowerCase().endsWith('.png') || entry.entryName.toLowerCase().endsWith('.jpg') || entry.entryName.toLowerCase().endsWith('.jpeg')));
-                
-                let ocrText = '';
-                const maxImages = Math.min(imageEntries.length, 5); // Limit to 5 images to prevent server timeout
-                
-                for (let i = 0; i < maxImages; i++) {
-                    console.log(`👁️ OCR scanning PPTX image ${i+1}/${maxImages}...`);
-                    const imageBuffer = imageEntries[i].getData();
-                    const ocrResult = await Tesseract.recognize(imageBuffer, 'eng');
-                    ocrText += ocrResult.data.text + '\n';
-                }
-                
-                if (ocrText.trim().length > 0) {
-                    finalText += '\n[Supplemental Image Data]:\n' + ocrText.trim();
-                    console.log(`✅ Recovered ${ocrText.trim().length} characters from images!`);
-                }
-            } catch (zipErr) {
-                console.log('⚠️ Image parsing skipped:', zipErr.message);
-            }
-
-            console.log(`✅ Extracted PPTX Text: ${finalText.length} characters.`);
-            return finalText.length > 5 ? finalText : null;
-        } else if (type === 'txt') {
-            return fs.readFileSync(filePath, 'utf-8');
-        } else if (type === 'image') {
-            console.log('👁️ Running Cloud OCR (Tesseract)...');
-            const result = await Tesseract.recognize(filePath, 'eng');
-            return result.data.text;
-        }
-        
-        return null; // Return null effectively hides the "Path" from the AI
-    } catch (err) {
-        console.error(`❌ Extraction error (${type}):`, err.message);
-        return null;
-    }
-};
+// No longer need extractCloudText because the Python service handles it now
 
 const generateJoinCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
