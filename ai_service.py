@@ -23,11 +23,12 @@ from PyPDF2 import PdfReader
 # -----------------------------
 # 1. MODEL CONFIGURATION (PHASE 2 BRAIN)
 # -----------------------------
-# Pointing to your local extracted folder
-MODEL_PATH = "./llama_quiz_expert" 
+# We load the base Llama-3 brain and then attach your custom knowledge adapter
+BASE_MODEL = "unsloth/llama-3-8b-bnb-4bit" 
+ADAPTER_PATH = "./llama_quiz_expert" 
 
-print(f"Loading Fine-Tuned Brain from {MODEL_PATH}...")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+print(f"Loading Base Brain from {BASE_MODEL}...")
+tokenizer = AutoTokenizer.from_pretrained(ADAPTER_PATH)
 tokenizer.pad_token = tokenizer.eos_token
 
 bnb_config = BitsAndBytesConfig(
@@ -37,11 +38,18 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_quant_type="nf4"
 )
 
+# 1. Load the base model
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL_PATH,
+    BASE_MODEL,
     device_map="auto",
     quantization_config=bnb_config
 )
+
+# 2. Attach your Specialist Knowledge (LoRA Adapter)
+print(f"Attaching Fine-Tuned Adapter from {ADAPTER_PATH}...")
+from peft import PeftModel
+model = PeftModel.from_pretrained(model, ADAPTER_PATH)
+model.eval() # Set to evaluation mode
 
 # Initialize RAG Engine (Phase 3)
 print("Loading RAG Embedding Engine...")
