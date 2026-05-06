@@ -867,6 +867,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             content: content, 
             count: parseInt(count),
             difficulty: difficulty
+        }, {
+            headers: {
+                'Bypass-Tunnel-Reminder': 'true' // Bypasses the localtunnel landing page
+            }
         });
 
         if (response.data && response.data.questions) {
