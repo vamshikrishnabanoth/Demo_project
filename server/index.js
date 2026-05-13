@@ -3,17 +3,14 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const path = require('path'); // MISSING IMPORT FIXED
-const connectDB = require('./config/db');
+const path = require('path');
+const fs = require('fs');
+const prisma = require('./lib/prisma'); // Using Prisma
 
 const app = express();
 const server = http.createServer(app);
 
-// Connect Database
-connectDB();
-
 // Ensure uploads directory exists
-const fs = require('fs');
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -159,7 +156,7 @@ io.on('connection', (socket) => {
             participants.push(userData);
         }
 
-        console.log(`User ${user.username} (${user.role}) reconnected to room ${quizId}. ID: ${userData._id}`);
+        console.log(`User ${user.username} (${user.role}) reconnected to room ${quizId}. ID: ${user.id}`);
         io.to(quizId).emit('participants_update', participants);
 
         const sendRestoreState = async () => {
@@ -168,17 +165,18 @@ io.on('connection', (socket) => {
             // Re-fetch/Rebuild state logic ...
              if (!state.leaderboard || !state.progress) {
                  try {
-                     const Result = require('./models/Result');
-                     const Quiz = require('./models/Quiz');
-                     const quizInfo = await Quiz.findById(quizId);
+                     const quizInfo = await prisma.quiz.findUnique({ where: { id: quizId } });
                      
                      if (quizInfo) {
-                         const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
+                         const allResults = await prisma.result.findMany({
+                             where: { quizId: quizId },
+                             include: { student: { select: { username: true } } }
+                         });
                          
                          // Rebuild Leaderboard
                          const leaderboard = allResults
                              .map(r => ({
-                                 studentId: r.student?._id || null,
+                                 studentId: r.studentId,
                                  username: r.student?.username || 'Unknown',
                                  currentScore: r.score || 0,
                                  totalTimeTaken: r.totalTimeTaken || 0,
@@ -195,7 +193,7 @@ io.on('connection', (socket) => {
                          // Rebuild Progress Dictionary
                          const progress = {};
                          allResults.forEach(r => {
-                             const studentIdStr = r.student?._id?.toString();
+                             const studentIdStr = r.studentId;
                              if (studentIdStr) {
                                   progress[studentIdStr] = {};
                                   r.answers.forEach(ans => {
@@ -245,8 +243,7 @@ io.on('connection', (socket) => {
 
     socket.on('start_quiz', async (quizId) => {
         try {
-            const Quiz = require('./models/Quiz');
-            const quiz = await Quiz.findById(quizId);
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz) return;
 
             // Calculate duration in ms
@@ -262,7 +259,10 @@ io.on('connection', (socket) => {
             const state = roomState.get(quizId) || {};
             roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
 
-            await Quiz.findByIdAndUpdate(quizId, { status: 'started' });
+            await prisma.quiz.update({
+                where: { id: quizId },
+                data: { status: 'started' }
+            });
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
 
@@ -273,7 +273,10 @@ io.on('connection', (socket) => {
                     if (currentState && currentState.status !== 'finished') {
                         roomState.delete(quizId.toString());
                         try {
-                            await Quiz.findByIdAndUpdate(quizId, { status: 'finished' });
+                            await prisma.quiz.update({
+                                where: { id: quizId },
+                                data: { status: 'finished' }
+                            });
                         } catch (err2) {
                             console.error('Error auto-finishing quiz:', err2);
                         }
@@ -290,25 +293,24 @@ io.on('connection', (socket) => {
     socket.on('end_quiz', async (quizId) => {
         roomState.delete(quizId);
         try {
-            const Quiz = require('./models/Quiz');
-            const Result = require('./models/Result');
-
             // 1. Finalize all in-progress student results FIRST
-            await Result.updateMany(
-                { quiz: quizId, status: 'in-progress' },
-                {
-                    $set: {
-                        status: 'completed',
-                        completedAt: Date.now()
-                    }
+            await prisma.result.updateMany({
+                where: { quizId: quizId, status: 'in-progress' },
+                data: {
+                    status: 'completed',
+                    completedAt: new Date()
                 }
-            );
+            });
 
             // 2. Compute final leaderboard rankings from persisted Results
-            const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
+            const allResults = await prisma.result.findMany({
+                where: { quizId: quizId },
+                include: { student: { select: { username: true } } }
+            });
+
             const finalLeaderboard = allResults
                 .map(r => ({
-                    studentId: r.student?._id?.toString(),
+                    studentId: r.studentId,
                     username: r.student?.username || 'Unknown',
                     currentScore: r.score || 0,
                     totalTimeTaken: r.totalTimeTaken || 0,
@@ -324,19 +326,22 @@ io.on('connection', (socket) => {
 
             // 3. Save final leaderboard to Quiz document (for teacher My Quizzes view)
             const topStudent = finalLeaderboard[0]?.username || null;
-            await Quiz.findByIdAndUpdate(quizId, {
-                status: 'finished',
-                finalLeaderboard: finalLeaderboard.map(r => ({
-                    studentId: r.studentId,
-                    username: r.username,
-                    currentScore: r.currentScore,
-                    answeredQuestions: r.answeredQuestions,
-                    rank: r.rank
-                })),
-                finalInsights: {
-                    topStudent,
-                    hardestQuestion: null,
-                    easiestQuestion: null
+            await prisma.quiz.update({
+                where: { id: quizId },
+                data: {
+                    status: 'finished',
+                    finalLeaderboard: finalLeaderboard.map(r => ({
+                        studentId: r.studentId,
+                        username: r.username,
+                        currentScore: r.currentScore,
+                        answeredQuestions: r.answeredQuestions,
+                        rank: r.rank
+                    })),
+                    finalInsights: {
+                        topStudent,
+                        hardestQuestion: null,
+                        easiestQuestion: null
+                    }
                 }
             });
 
@@ -355,18 +360,20 @@ io.on('connection', (socket) => {
     socket.on('add_question', async ({ quizId, question }) => {
         console.log(`Adding question to quiz: ${quizId}`);
         try {
-            const Quiz = require('./models/Quiz');
-            const quiz = await Quiz.findById(quizId);
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
 
             if (quiz) {
-                quiz.questions.push(question);
-                await quiz.save();
+                const updatedQuestions = [...quiz.questions, question];
+                await prisma.quiz.update({
+                    where: { id: quizId },
+                    data: { questions: updatedQuestions }
+                });
 
                 // Broadcast new question to all students in the room
                 io.to(quizId).emit('new_question_added', {
                     question,
-                    questionIndex: quiz.questions.length - 1,
-                    totalQuestions: quiz.questions.length
+                    questionIndex: updatedQuestions.length - 1,
+                    totalQuestions: updatedQuestions.length
                 });
 
                 console.log(`Question added successfully to quiz ${quizId}`);
@@ -379,8 +386,7 @@ io.on('connection', (socket) => {
     // Handle teacher changing question (Navigation)
     socket.on('change_question', async ({ quizId, questionIndex }) => {
         try {
-            const Quiz = require('./models/Quiz');
-            const quiz = await Quiz.findById(quizId);
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz) return;
 
             // Reset Master Time for the new question if it's per-question
@@ -451,26 +457,29 @@ io.on('connection', (socket) => {
         roomState.set(quizId, { ...state, progress: currentProgress });
 
         try {
-            const Quiz = require('./models/Quiz');
-            const Result = require('./models/Result');
-
-            const quiz = await Quiz.findById(quizId);
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz) return;
 
             // Calculate time taken for this question
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
             const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
 
-            let result = await Result.findOne({ quiz: quizId, student: studentId }).populate('student', 'username');
+            let result = await prisma.result.findFirst({
+                where: { quizId: quizId, studentId: studentId },
+                include: { student: { select: { username: true } } }
+            });
 
             if (!result) {
-                result = new Result({
-                    quiz: quizId,
-                    student: studentId,
-                    score: 0,
-                    totalTimeTaken: 0,
-                    totalQuestions: quiz.questions.length,
-                    answers: []
+                result = await prisma.result.create({
+                    data: {
+                        quizId: quizId,
+                        studentId: studentId,
+                        score: 0,
+                        totalTimeTaken: 0,
+                        totalQuestions: quiz.questions.length,
+                        answers: []
+                    },
+                    include: { student: { select: { username: true } } }
                 });
             }
 
@@ -512,18 +521,22 @@ io.on('connection', (socket) => {
                     timeTaken: qTimeTaken
                 };
 
+                let updatedScore = result.score;
+                let updatedTime = result.totalTimeTaken;
+                let updatedAnswers = [...result.answers];
+
                 if (existingAnswerIndex >= 0) {
                     const oldAnswer = result.answers[existingAnswerIndex];
                     const oldPoints = oldAnswer.isCorrect ? (question.points || 10) : 0;
                     const oldTime = oldAnswer.timeTaken || 0;
 
-                    result.score = result.score - oldPoints + points;
-                    result.totalTimeTaken = result.totalTimeTaken - oldTime + qTimeTaken;
-                    result.answers[existingAnswerIndex] = answerData;
+                    updatedScore = result.score - oldPoints + points;
+                    updatedTime = result.totalTimeTaken - oldTime + qTimeTaken;
+                    updatedAnswers[existingAnswerIndex] = answerData;
                 } else {
-                    result.answers.push(answerData);
-                    result.score += points;
-                    result.totalTimeTaken += qTimeTaken;
+                    updatedAnswers.push(answerData);
+                    updatedScore += points;
+                    updatedTime += qTimeTaken;
                 }
                 
                 // Update in-memory state with the actual isCorrect value for reconnection sync
@@ -532,13 +545,16 @@ io.on('connection', (socket) => {
                 updatedProgress[studentId][questionIndex] = { answered: true, isCorrect };
                 roomState.set(quizId, { ...state, progress: updatedProgress });
 
-                result.status = 'in-progress';
-                if (!result.startedAt) result.startedAt = Date.now();
-
-                // Track when the last answer was submitted for tiebreaking
-                result.lastAnsweredAt = new Date();
-
-                await result.save();
+                await prisma.result.update({
+                    where: { id: result.id },
+                    data: {
+                        score: updatedScore,
+                        totalTimeTaken: updatedTime,
+                        answers: updatedAnswers,
+                        status: 'in-progress',
+                        lastAnsweredAt: new Date()
+                    }
+                });
 
                 // Broadcast student progress to teacher with isCorrect
                 io.to(quizId).emit('student_progress_update', {
@@ -546,30 +562,27 @@ io.on('connection', (socket) => {
                     username: result.student ? result.student.username : 'Student',
                     questionIndex,
                     answered: true,
-                    isCorrect // FIX: Added isCorrect to broadcast
+                    isCorrect
                 });
 
                 // Leaderboard calculation with speed tie-breaker
-                const allResults = await Result.find({ quiz: quizId }).populate('student', 'username');
+                const allResults = await prisma.result.findMany({
+                    where: { quizId: quizId },
+                    include: { student: { select: { username: true } } }
+                });
+
                 const leaderboard = allResults
                     .map(r => ({
-                        studentId: r.student._id,
-                        username: r.student.username,
+                        studentId: r.studentId,
+                        username: r.student?.username || 'Unknown',
                         currentScore: r.score,
                         totalTimeTaken: r.totalTimeTaken || 0,
                         lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
                         answeredQuestions: r.answers.length
                     }))
                     .sort((a, b) => {
-                        // PRIMARY: Highest Score
-                        if (b.currentScore !== a.currentScore) {
-                            return b.currentScore - a.currentScore;
-                        }
-                        // SECONDARY: Lowest Time (Fastest)
-                        if (a.totalTimeTaken !== b.totalTimeTaken) {
-                            return a.totalTimeTaken - b.totalTimeTaken;
-                        }
-                        // TERTIARY: Whoever reached this state first
+                        if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                        if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
                         return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                     })
                     .map((item, index) => ({ ...item, rank: index + 1 }));
@@ -588,17 +601,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Handle student submission of new question
+    // Handle student submission of new question (added by student)
     socket.on('submit_new_question', async ({ quizId, studentId, questionIndex, answer }) => {
         console.log(`Student ${studentId} submitted answer for question ${questionIndex} in quiz ${quizId}`);
         try {
-            const Quiz = require('./models/Quiz');
-            const Result = require('./models/Result');
-
-            const quiz = await Quiz.findById(quizId);
-            const result = await Result.findOne({ quiz: quizId, student: studentId });
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+            const result = await prisma.result.findFirst({ where: { quizId, studentId } });
 
             if (quiz && result && quiz.questions[questionIndex]) {
+                const question = quiz.questions[questionIndex];
                 const studentAnswer = (answer || "").toString().trim().toLowerCase();
                 const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
 
@@ -618,25 +629,30 @@ io.on('connection', (socket) => {
                 const points = isCorrect ? (question.points || 10) : 0;
 
                 // Update result with new answer
-                result.answers.push({
+                const updatedAnswers = [...result.answers, {
                     questionText: question.questionText,
                     selectedOption: answer,
                     correctOption: question.correctAnswer,
                     isCorrect
-                });
+                }];
 
-                result.score += points;
-                result.totalQuestions = quiz.questions.length;
-                await result.save();
+                const updatedResult = await prisma.result.update({
+                    where: { id: result.id },
+                    data: {
+                        answers: updatedAnswers,
+                        score: result.score + points,
+                        totalQuestions: quiz.questions.length
+                    }
+                });
 
                 // Broadcast updated score to the room
                 io.to(quizId).emit('score_updated', {
                     studentId,
-                    newScore: result.score,
+                    newScore: updatedResult.score,
                     questionIndex
                 });
 
-                console.log(`Answer submitted successfully. New score: ${result.score}`);
+                console.log(`Answer submitted successfully. New score: ${updatedResult.score}`);
             }
         } catch (err) {
             console.error('Error submitting new question answer:', err);

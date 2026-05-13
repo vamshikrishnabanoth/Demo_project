@@ -833,8 +833,7 @@
 // };
 
 
-const Quiz = require('../models/Quiz');
-const Result = require('../models/Result');
+const prisma = require('../lib/prisma'); // Using Prisma
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios'); // Added for Local AI communication
@@ -914,54 +913,52 @@ exports.createQuiz = async (req, res) => {
 
         if (isLive === 'true' || isLive === true) {
             // Automatic Cleanup: Deactivate existing active live quizzes for this teacher
-            await Quiz.updateMany(
-                {
-                    createdBy: req.user.id,
+            await prisma.quiz.updateMany({
+                where: {
+                    createdById: req.user.id,
                     isLive: true,
-                    status: { $in: ['waiting', 'started'] }
+                    status: { in: ['waiting', 'started'] }
                 },
-                {
-                    $set: {
-                        isActive: false,
-                        status: 'finished'
-                    }
+                data: {
+                    isActive: false,
+                    status: 'finished'
                 }
-            );
+            });
         }
 
         // Generate a unique join code
         let joinCode = generateJoinCode();
-        let codeExists = await Quiz.findOne({ joinCode });
+        let codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
         while (codeExists) {
             joinCode = generateJoinCode();
-            codeExists = await Quiz.findOne({ joinCode });
+            codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
         }
 
-        const newQuiz = new Quiz({
-            title: title || `${topic || content || 'Untitled'} Quiz`,
-            description: `Level: ${difficulty || 'Medium'}`,
-            questions: finalQuestions,
-            createdBy: req.user.id,
-            isActive: isActive === undefined ? true : (isActive === 'true' || isActive === true),
-            joinCode,
-            difficulty: difficulty || 'Medium',
-            timerPerQuestion: timerPerQuestion || 30,
-            duration: duration || 0,
-            topic: topic || content || '',
-            isLive: isLive === 'true' || isLive === true,
-            isAssessment: isAssessment === 'true' || isAssessment === true,
-            status: isLive === 'true' || isLive === true ? 'waiting' : 'finished'
+        const newQuiz = await prisma.quiz.create({
+            data: {
+                title: title || `${topic || content || 'Untitled'} Quiz`,
+                description: `Level: ${difficulty || 'Medium'}`,
+                questions: finalQuestions,
+                createdById: req.user.id,
+                isActive: isActive === undefined ? true : (isActive === 'true' || isActive === true),
+                joinCode,
+                difficulty: difficulty || 'Medium',
+                timerPerQuestion: timerPerQuestion || 30,
+                duration: duration || 0,
+                topic: topic || content || '',
+                isLive: isLive === 'true' || isLive === true,
+                isAssessment: isAssessment === 'true' || isAssessment === true,
+                status: isLive === 'true' || isLive === true ? 'waiting' : 'finished'
+            }
         });
 
-        await newQuiz.save();
         res.status(201).json(newQuiz);
 
     } catch (err) {
         console.error('❌ Final CreateQuiz Error:', err.message);
         res.status(500).json({ 
             message: 'Failed to create quiz', 
-            error: err.message,
-            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+            error: err.message
         });
     }
 };
@@ -971,19 +968,29 @@ exports.joinByCode = async (req, res) => {
     try {
         const { code } = req.body;
         console.log(`🔍 Try join by code: ${code} (User: ${req.user.id})`);
-        const quiz = await Quiz.findOne({ joinCode: code.toString(), isActive: true });
+        const quiz = await prisma.quiz.findFirst({
+            where: {
+                joinCode: code.toString(),
+                isActive: true
+            }
+        });
 
         if (!quiz) {
             console.log(`❌ Quiz not found or not active for code: ${code}`);
             return res.status(404).json({ msg: 'Quiz not found or not active' });
         }
-        console.log(`✅ Found quiz: ${quiz.title} (${quiz._id})`);
+        console.log(`✅ Found quiz: ${quiz.title} (${quiz.id})`);
 
         // Check for existing result to handle resume/blocking
-        const existingResult = await Result.findOne({ quiz: quiz._id, student: req.user.id });
+        const existingResult = await prisma.result.findFirst({
+            where: {
+                quizId: quiz.id,
+                studentId: req.user.id
+            }
+        });
 
         res.json({
-            quizId: quiz._id,
+            quizId: quiz.id,
             isLive: quiz.isLive,
             status: quiz.status,
             previousAttempt: existingResult ? {
@@ -999,16 +1006,21 @@ exports.joinByCode = async (req, res) => {
 
 exports.getMyQuizzes = async (req, res) => {
     try {
-        const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
+        const quizzes = await prisma.quiz.findMany({
+            where: { createdById: req.user.id },
+            orderBy: { createdAt: 'desc' }
+        });
 
         const enriched = await Promise.all(quizzes.map(async (quiz) => {
-            const results = await Result.find({ quiz: quiz._id });
+            const results = await prisma.result.findMany({
+                where: { quizId: quiz.id }
+            });
             const completionCount = results.length;
             const averageScore = completionCount > 0
                 ? results.reduce((sum, r) => sum + r.score, 0) / completionCount
                 : 0;
             return {
-                ...quiz.toObject(),
+                ...quiz,
                 completionCount,
                 averageScore,
                 results: results
@@ -1030,18 +1042,22 @@ exports.getMyQuizzes = async (req, res) => {
 
 exports.deleteQuiz = async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.id);
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.id }
+        });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
         // Check user
-        if (quiz.createdBy.toString() !== req.user.id) {
+        if (quiz.createdById !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        await Quiz.findByIdAndDelete(req.params.id);
+        await prisma.quiz.delete({
+            where: { id: req.params.id }
+        });
 
         res.json({ msg: 'Quiz removed' });
     } catch (err) {
@@ -1052,12 +1068,17 @@ exports.deleteQuiz = async (req, res) => {
 
 exports.getLiveQuizzes = async (req, res) => {
     try {
-        const quizzes = await Quiz.find({ isActive: true }).sort({ createdAt: -1 });
+        const quizzes = await prisma.quiz.findMany({
+            where: { isActive: true },
+            orderBy: { createdAt: 'desc' }
+        });
 
         const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
-            const result = await Result.findOne({ quiz: quiz._id, student: req.user.id });
+            const result = await prisma.result.findFirst({
+                where: { quizId: quiz.id, studentId: req.user.id }
+            });
             return {
-                ...quiz.toObject(),
+                ...quiz,
                 isAttempted: !!result,
                 score: result ? result.score : 0,
                 totalQuestions: quiz.questions.length
@@ -1073,17 +1094,21 @@ exports.getLiveQuizzes = async (req, res) => {
 
 exports.getQuizById = async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.id);
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.id }
+        });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
         // Attach previous result if it exists (for resume functionality)
-        const previousResult = await Result.findOne({ quiz: req.params.id, student: req.user.id });
+        const previousResult = await prisma.result.findFirst({
+            where: { quizId: req.params.id, studentId: req.user.id }
+        });
 
         res.json({
-            ...quiz.toObject(),
+            ...quiz,
             previousResult
         });
     } catch (err) {
@@ -1096,7 +1121,9 @@ exports.submitQuiz = async (req, res) => {
     try {
         const { quizId, answers } = req.body;
 
-        const quiz = await Quiz.findById(quizId);
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: quizId }
+        });
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
@@ -1120,8 +1147,6 @@ exports.submitQuiz = async (req, res) => {
                 }
             }
 
-            const qTimeTaken = 0; // Standard submit doesn't track per-question time yet
-
             if (isCorrect) {
                 score += q.points || 10;
             }
@@ -1130,38 +1155,45 @@ exports.submitQuiz = async (req, res) => {
                 selectedOption,
                 correctOption,
                 isCorrect,
-                timeTaken: qTimeTaken
+                timeTaken: 0
             };
         });
 
-        const existingResult = await Result.findOne({ quiz: quizId, student: req.user.id });
-
-        if (existingResult) {
-            existingResult.score = score;
-            existingResult.totalTimeTaken = totalTimeTaken;
-            existingResult.answers = formattedAnswers;
-            existingResult.totalQuestions = quiz.questions.length;
-            existingResult.status = 'completed';
-            existingResult.completedAt = Date.now();
-            existingResult.lastAnsweredAt = Date.now();
-            await existingResult.save();
-            return res.json(existingResult);
-        }
-
-        const result = new Result({
-            quiz: quizId,
-            student: req.user.id,
-            score,
-            totalTimeTaken,
-            totalQuestions: quiz.questions.length,
-            answers: formattedAnswers,
-            status: 'completed',
-            startedAt: Date.now(),
-            completedAt: Date.now(),
-            lastAnsweredAt: Date.now()
+        const existingResult = await prisma.result.findFirst({
+            where: { quizId: quizId, studentId: req.user.id }
         });
 
-        await result.save();
+        if (existingResult) {
+            const updated = await prisma.result.update({
+                where: { id: existingResult.id },
+                data: {
+                    score,
+                    totalTimeTaken,
+                    answers: formattedAnswers,
+                    totalQuestions: quiz.questions.length,
+                    status: 'completed',
+                    completedAt: new Date(),
+                    lastAnsweredAt: new Date()
+                }
+            });
+            return res.json(updated);
+        }
+
+        const result = await prisma.result.create({
+            data: {
+                quizId: quizId,
+                studentId: req.user.id,
+                score,
+                totalTimeTaken,
+                totalQuestions: quiz.questions.length,
+                answers: formattedAnswers,
+                status: 'completed',
+                startedAt: new Date(),
+                completedAt: new Date(),
+                lastAnsweredAt: new Date()
+            }
+        });
+
         res.json(result);
     } catch (err) {
         console.error(err.message);
@@ -1171,16 +1203,20 @@ exports.submitQuiz = async (req, res) => {
 
 exports.getLeaderboard = async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.quizId);
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.quizId }
+        });
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
 
-        const isTeacher = req.user.id === quiz.createdBy.toString();
+        const isTeacher = req.user.id === quiz.createdById;
         const isAdmin = req.user.role === 'admin';
         const canSeeFullLeaderboard = isTeacher || isAdmin;
 
         // Fetch all results for this quiz
-        const allResults = await Result.find({ quiz: req.params.quizId })
-            .populate('student', 'username email');
+        const allResults = await prisma.result.findMany({
+            where: { quizId: req.params.quizId },
+            include: { student: { select: { username: true, email: true } } }
+        });
 
         if (allResults.length === 0) {
             return res.json({
@@ -1202,7 +1238,7 @@ exports.getLeaderboard = async (req, res) => {
             const completedAt = r.completedAt ? new Date(r.completedAt).getTime() : Date.now();
             const totalTime = completedAt - startedAt;
             return {
-                ...r.toObject(),
+                ...r,
                 totalTime
             };
         }).sort((a, b) => {
@@ -1217,14 +1253,13 @@ exports.getLeaderboard = async (req, res) => {
         const averageScore = totalScore / totalParticipants;
         const highestScore = processedResults[0].score;
 
-        // Build ranked list with TIES (rank is same for same score & time)
+        // Build ranked list with TIES
         const rankedResults = [];
         let currentRank = 1;
 
         for (let i = 0; i < processedResults.length; i++) {
             const r = processedResults[i];
 
-            // If not the first result and matches previous score AND totalTime, keep same rank
             if (i > 0) {
                 const prev = processedResults[i - 1];
                 if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
@@ -1233,7 +1268,7 @@ exports.getLeaderboard = async (req, res) => {
             }
 
             rankedResults.push({
-                studentId: r.student._id,
+                studentId: r.studentId,
                 username: r.student.username,
                 currentScore: r.score,
                 totalTimeTaken: r.totalTimeTaken || r.totalTime || 0,
@@ -1243,17 +1278,14 @@ exports.getLeaderboard = async (req, res) => {
             });
         }
 
-        // Find current student's rank
-        const studentEntry = rankedResults.find(r => r.studentId.toString() === req.user.id);
+        const studentEntry = rankedResults.find(r => r.studentId === req.user.id);
         const studentRank = studentEntry ? studentEntry.rank : null;
         const studentScore = studentEntry ? studentEntry.currentScore : 0;
 
         let leaderboardData = [];
         if (canSeeFullLeaderboard) {
-            // Teacher gets full data INCLUDING answers for the answer-map dots
             leaderboardData = rankedResults;
         } else if (studentEntry) {
-            // Student only sees their own result (Privacy Protection) — no answers needed
             const { answers, ...cleanEntry } = studentEntry;
             leaderboardData = [cleanEntry];
         }
@@ -1275,24 +1307,26 @@ exports.getLeaderboard = async (req, res) => {
     }
 };
 
-// Missing functions that routes expect
 exports.publishQuiz = async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.id);
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.id }
+        });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        // Check user
-        if (quiz.createdBy.toString() !== req.user.id) {
+        if (quiz.createdById !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        quiz.isActive = !quiz.isActive;
-        await quiz.save();
+        const updated = await prisma.quiz.update({
+            where: { id: req.params.id },
+            data: { isActive: !quiz.isActive }
+        });
 
-        res.json(quiz);
+        res.json(updated);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
@@ -1301,13 +1335,17 @@ exports.publishQuiz = async (req, res) => {
 
 exports.getTeacherStats = async (req, res) => {
     try {
-        const quizzes = await Quiz.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
+        const quizzes = await prisma.quiz.findMany({
+            where: { createdById: req.user.id },
+            orderBy: { createdAt: 'desc' }
+        });
 
         const stats = await Promise.all(quizzes.map(async (quiz) => {
-            // Fetch live results for the quiz
-            const dbResults = await Result.find({ quiz: quiz._id })
-                .populate('student', 'username email')
-                .sort({ score: -1, completedAt: 1 });
+            const dbResults = await prisma.result.findMany({
+                where: { quizId: quiz.id },
+                include: { student: { select: { username: true, email: true } } },
+                orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
+            });
 
             const results = dbResults.map(r => ({
                 studentName: r.student?.username || 'Unknown',
@@ -1323,7 +1361,7 @@ exports.getTeacherStats = async (req, res) => {
                 : 0;
 
             return {
-                quizId: quiz._id,
+                quizId: quiz.id,
                 title: quiz.title,
                 topic: quiz.topic,
                 createdAt: quiz.createdAt,
@@ -1341,7 +1379,6 @@ exports.getTeacherStats = async (req, res) => {
 };
 
 exports.submitAttempt = async (req, res) => {
-    // Alias for submitQuiz
     return exports.submitQuiz(req, res);
 };
 
@@ -1349,68 +1386,63 @@ exports.updateQuiz = async (req, res) => {
     try {
         const { title, description, questions, difficulty, timerPerQuestion, duration, isLive, isActive, isAssessment } = req.body;
 
-        let quiz = await Quiz.findById(req.params.id);
+        let quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.id }
+        });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        // Check user
-        if (quiz.createdBy.toString() !== req.user.id) {
+        if (quiz.createdById !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        // Update fields
-        if (title) quiz.title = title;
-        if (description) quiz.description = description;
+        const updateData = {};
+        if (title) updateData.title = title;
+        if (description) updateData.description = description;
         if (questions) {
-            quiz.questions = Array.isArray(questions) ? questions : JSON.parse(questions);
+            updateData.questions = Array.isArray(questions) ? questions : JSON.parse(questions);
         }
-        if (difficulty) quiz.difficulty = difficulty;
-        if (timerPerQuestion !== undefined) quiz.timerPerQuestion = timerPerQuestion;
-        if (duration !== undefined) quiz.duration = duration;
-        if (isAssessment !== undefined) quiz.isAssessment = isAssessment === 'true' || isAssessment === true;
+        if (difficulty) updateData.difficulty = difficulty;
+        if (timerPerQuestion !== undefined) updateData.timerPerQuestion = parseInt(timerPerQuestion);
+        if (duration !== undefined) updateData.duration = parseInt(duration);
+        if (isAssessment !== undefined) updateData.isAssessment = isAssessment === 'true' || isAssessment === true;
 
-        // Activation / Deactivation logic
         if (isActive !== undefined) {
             const requestedActive = isActive === 'true' || isActive === true;
-
             if (requestedActive && !quiz.isActive) {
-                // Automatic Cleanup: Deactivate other active sessions for this teacher
-                await Quiz.updateMany(
-                    {
-                        createdBy: req.user.id,
+                await prisma.quiz.updateMany({
+                    where: {
+                        createdById: req.user.id,
                         isActive: true,
-                        _id: { $ne: quiz._id }
+                        id: { not: quiz.id }
                     },
-                    {
-                        $set: {
-                            isActive: false,
-                            status: 'finished'
-                        }
+                    data: {
+                        isActive: false,
+                        status: 'finished'
                     }
-                );
-
-                quiz.isActive = true;
-                // If turning on, sync status
-                if (quiz.isLive) quiz.status = 'waiting';
-                else quiz.status = 'started';
+                });
+                updateData.isActive = true;
+                updateData.status = quiz.isLive ? 'waiting' : 'started';
             } else if (!requestedActive) {
-                quiz.isActive = false;
-                if (quiz.isLive) quiz.status = 'finished';
+                updateData.isActive = false;
+                if (quiz.isLive) updateData.status = 'finished';
             }
         }
 
-        // Handle isLive change
         if (isLive !== undefined) {
-            quiz.isLive = isLive === 'true' || isLive === true;
-            if (quiz.isActive) {
-                quiz.status = quiz.isLive ? 'waiting' : 'started';
+            updateData.isLive = isLive === 'true' || isLive === true;
+            if (quiz.isActive || updateData.isActive) {
+                updateData.status = updateData.isLive ? 'waiting' : 'started';
             }
         }
 
-        await quiz.save();
-        res.json(quiz);
+        const updated = await prisma.quiz.update({
+            where: { id: req.params.id },
+            data: updateData
+        });
+        res.json(updated);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
@@ -1425,10 +1457,7 @@ exports.generateQuizQuestions = async (req, res) => {
         let sourceType = type || 'topic';
 
         if (req.file) {
-            console.log(`📄 Processing file for preview: ${req.file.originalname}`);
             const absolutePath = path.resolve(req.file.path);
-            
-            // Determine file type from extension
             const ext = path.extname(req.file.originalname).toLowerCase();
             if (['.jpg', '.jpeg', '.png'].includes(ext)) sourceType = 'image';
             else if (ext === '.docx') sourceType = 'docx';
@@ -1455,19 +1484,23 @@ exports.generateQuizQuestions = async (req, res) => {
 
 exports.getStudentHistory = async (req, res) => {
     try {
-        // Find all quizzes that are finished
-        const finishedQuizzes = await Quiz.find({
-            $or: [
-                { status: 'finished' },
-                { isActive: false }
-            ]
-        }).sort({ createdAt: -1 });
+        const finishedQuizzes = await prisma.quiz.findMany({
+            where: {
+                OR: [
+                    { status: 'finished' },
+                    { isActive: false }
+                ]
+            },
+            orderBy: { createdAt: 'desc' }
+        });
 
         const history = await Promise.all(finishedQuizzes.map(async (quiz) => {
-            const result = await Result.findOne({ quiz: quiz._id, student: req.user.id });
+            const result = await prisma.result.findFirst({
+                where: { quizId: quiz.id, studentId: req.user.id }
+            });
 
             return {
-                _id: quiz._id,
+                id: quiz.id,
                 title: quiz.title,
                 topic: quiz.topic,
                 description: quiz.description,

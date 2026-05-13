@@ -2,31 +2,69 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const prisma = require('../lib/prisma'); // Using Prisma
 const auth = require('../middleware/authMiddleware');
 
-// Register User
-router.post('/register', async (req, res) => {
-    // BLOCK ALL REGISTRATION (as requested to prevent students from creating accounts)
-    return res.status(403).json({ msg: 'Self-registration is disabled. Please contact the administrator.' });
+// @route   POST api/auth/register
+// @desc    Register user (Admin Only)
+// @access  Private/Admin
+router.post('/register', auth, async (req, res) => {
+    // --- RULE 1: Admin Authorization ---
+    try {
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!adminUser || adminUser.role !== 'admin') {
+            return res.status(403).json({ msg: 'Only administrators can create new accounts.' });
+        }
 
-    /* Original logic commented out for preservation if needed by admin
-    const { username, email, password } = req.body;
-    ... 
-    */
+        const { username, email, password, role } = req.body;
+
+        // --- RULE 2: Role Handling ---
+        // Any number of teachers/students can be added by the admin
+
+        let user = await prisma.user.findFirst({
+            where: {
+                OR: [{ email }, { username }]
+            }
+        });
+
+        if (user) {
+            return res.status(400).json({ msg: 'User already exists' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hashedPassword,
+                role: role || 'student'
+            }
+        });
+
+        res.json({ msg: 'User created successfully', user: { id: user.id, username: user.username, role: user.role } });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 });
 
-// Login User
+// @route   POST api/auth/login
+// @desc    Authenticate user & get token
+// @access  Public
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body; // 'email' field used for Roll Number or Email
+    const { email, password } = req.body; // email field is used for Roll Number/Username
 
     try {
-        // Search by both email (Roll Number) and username (Full Name)
-        let user = await User.findOne({
-            $or: [
-                { email: email },
-                { username: email }
-            ]
+        // --- RULE 3: Support Username or Email for Login ---
+        let user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: email },
+                    { username: email }
+                ]
+            }
         });
 
         if (!user) {
@@ -63,7 +101,16 @@ router.post('/login', async (req, res) => {
 // Get User
 router.get('/me', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                role: true,
+                createdAt: true
+            }
+        });
         res.json(user);
     } catch (err) {
         console.error(err.message);
@@ -80,17 +127,19 @@ router.post('/set-role', auth, async (req, res) => {
     }
 
     try {
-        let user = await User.findById(req.user.id);
+        let user = await prisma.user.findUnique({
+            where: { id: req.user.id }
+        });
 
         if (user.role !== 'none') {
             return res.status(400).json({ msg: 'Role already set. Cannot change.' });
         }
 
-        user.role = role;
-        await user.save();
+        user = await prisma.user.update({
+            where: { id: req.user.id },
+            data: { role: role }
+        });
 
-        // Update token with new role? Or just rely on DB check next time.
-        // Ideally reissue token.
         const payload = {
             user: {
                 id: user.id,
