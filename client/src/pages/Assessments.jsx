@@ -170,15 +170,22 @@ export default function Assessments() {
                                                 )}
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <button
-                                                    onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
-                                                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${quiz.isAttempted
-                                                        ? 'bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white'
-                                                        : 'bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-[#ff6b00]/10 shadow-lg'
-                                                        }`}
-                                                >
-                                                    {quiz.isAttempted ? 'Review' : 'Start'} <ChevronRight size={14} />
-                                                </button>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {quiz.isAttempted && (
+                                                        <button
+                                                            onClick={() => navigate(`/quiz/review/${quiz.id}`)}
+                                                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white"
+                                                        >
+                                                            Review <ChevronRight size={14} />
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
+                                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-lg shadow-[#ff6b00]/10"
+                                                    >
+                                                        {quiz.isAttempted ? 'Retry' : 'Start'} <ChevronRight size={14} />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
