@@ -1400,9 +1400,28 @@ export default function CreateQuizText() {
         }))
     );
 
+    // Detect mock/fallback questions produced when AI service is offline
+    const isMockQuestion = (q) =>
+        typeof q.questionText === 'string' &&
+        /^Sample Question \d+:/i.test(q.questionText);
+
     useEffect(() => {
         if (location.state) {
-            if (location.state.questions) setQuestions(location.state.questions);
+            if (location.state.questions) {
+                const qs = location.state.questions;
+                // If every question is a mock placeholder, start with blank templates
+                const allMock = qs.length > 0 && qs.every(isMockQuestion);
+                if (allMock) {
+                    setQuestions(Array(5).fill(null).map(() => ({
+                        questionText: '',
+                        options: ['', '', '', ''],
+                        correctAnswer: '',
+                        points: 10
+                    })));
+                } else {
+                    setQuestions(qs);
+                }
+            }
             if (location.state.title) setTitle(location.state.title);
             if (location.state.duration) setDuration(location.state.duration);
             if (location.state.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
@@ -1513,16 +1532,15 @@ export default function CreateQuizText() {
                         {aikenLoaded && activeTab !== 'manual' && <span className="ml-1 w-2 h-2 bg-green-400 rounded-full inline-block"></span>}
                     </button>
                     {!isGeneratedSource && (
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('aiken')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
-                            ${activeTab === 'aiken' ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-slate-400 hover:text-white'}`}
-                    >
-                        <Upload size={16} />
-                        Upload AIKEN
-                    </button>
-                    )}
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab('aiken')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
+                                ${activeTab === 'aiken' ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            <Upload size={16} />
+                            Upload AIKEN
+                        </button>
                     )}
                 </div>
 
