@@ -69,11 +69,19 @@ export default function LiveRoomTeacher() {
             setStudentProgress(prev => {
                 const newState = { ...prev };
                 const qIdx = parseInt(questionIndex);
-                const id = studentId || username;
-                if (id) {
-                    newState[id] = {
-                        ...(newState[id] || {}),
-                        [qIdx]: { answered: true, isCorrect }
+                const progressEntry = { answered: true, isCorrect };
+                // Store under UUID (studentId) so p._id lookup works
+                if (studentId) {
+                    newState[studentId] = {
+                        ...(newState[studentId] || {}),
+                        [qIdx]: progressEntry
+                    };
+                }
+                // Also store under username as fallback key
+                if (username) {
+                    newState[username] = {
+                        ...(newState[username] || {}),
+                        [qIdx]: progressEntry
                     };
                 }
                 return newState;
@@ -539,7 +547,11 @@ export default function LiveRoomTeacher() {
                             {paginatedStudents.map((p, pIdx) => {
                                 const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
                                 const rank = globalIdx + 1;
-                                const progressById = p.id ? studentProgress[p.id] : null;
+                                // Participants from socket store DB id as _id (PostgreSQL UUID)
+                                // Progress dict is keyed by studentId (UUID) or username as fallback
+                                const progressById = (p._id && studentProgress[p._id]) ? studentProgress[p._id]
+                                    : (p.id && studentProgress[p.id]) ? studentProgress[p.id]
+                                    : null;
                                 const progressByName = p.username ? studentProgress[p.username] : null;
                                 const progress = progressById || progressByName || {};
                                 const score = p.lb?.currentScore ?? 0;
