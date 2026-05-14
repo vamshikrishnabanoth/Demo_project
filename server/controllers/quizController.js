@@ -840,6 +840,31 @@ const axios = require('axios');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const officeParser = require('officeparser');
+const Groq = require('groq-sdk');
+
+// Initialize Groq for Whisper (Transcription)
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
+});
+
+/**
+ * Transcribes audio file using Groq Whisper
+ */
+const transcribeAudio = async (filePath) => {
+    try {
+        console.log('🎙️ Transcribing audio with Groq Whisper...');
+        const transcription = await groq.audio.transcriptions.create({
+            file: fs.createReadStream(filePath),
+            model: "whisper-large-v3",
+            prompt: "This is a transcript of a classroom lecture. Focus on educational concepts. Ignore classroom management talk like 'sit down' or 'be quiet'.", // Context hint
+            response_format: "text",
+        });
+        return transcription;
+    } catch (err) {
+        console.error('❌ Transcription Error:', err.message);
+        return null;
+    }
+};
 
 // Mock AI Generation for fallback
 const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporarily unavailable.") => {
@@ -1544,5 +1569,46 @@ exports.getStudentHistory = async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
+    }
+};
+
+exports.generateQuizFromVoice = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ msg: 'No audio file uploaded' });
+        }
+
+        const { questionCount, difficulty } = req.body;
+        const absolutePath = path.resolve(req.file.path);
+        
+        // 1. Transcribe
+        const transcript = await transcribeAudio(absolutePath);
+        
+        if (!transcript || transcript.trim().length < 20) {
+            try { fs.unlinkSync(absolutePath); } catch(e) {}
+            return res.status(400).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
+        }
+
+        console.log(`✅ Transcript length: ${transcript.length} chars`);
+
+        // 2. Filter & Generate
+        const finalQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium');
+
+        // 3. Cleanup
+        try { fs.unlinkSync(absolutePath); } catch(e) {}
+
+        res.json({
+            questions: finalQuestions,
+            title: `Voice Quiz: ${new Date().toLocaleTimeString()}`,
+            transcript: transcript,
+            duration: 10
+        });
+
+    } catch (err) {
+        console.error('❌ Voice Generation Error:', err.message);
+        if (req.file) {
+            try { fs.unlinkSync(path.resolve(req.file.path)); } catch(e) {}
+        }
+        res.status(500).json({ msg: 'Voice Generation Error: ' + err.message });
     }
 };

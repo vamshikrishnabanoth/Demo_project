@@ -1025,7 +1025,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, Minus, CheckCircle, Clock, Upload, FileText, AlertCircle, Eye, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Type, Loader2, Plus, Minus, CheckCircle, Clock, Upload, FileText, AlertCircle, Eye, Trash2, ChevronDown, ChevronUp, Mic } from 'lucide-react';
+import LiveRecordPanel from '../components/LiveRecordPanel';
 
 // ─── AIKEN PARSER ────────────────────────────────────────────────────────────
 // Robust state-machine parser: works whether questions are separated by
@@ -1522,11 +1523,31 @@ export default function CreateQuizText() {
                         Upload AIKEN
                     </button>
                     )}
+                    {!isGeneratedSource && (
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('live')}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
+                            ${activeTab === 'live' ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-slate-400 hover:text-white'}`}
+                    >
+                        <Mic size={16} />
+                        Live Class
+                    </button>
+                    )}
                 </div>
 
                 {/* AIKEN Tab */}
                 {activeTab === 'aiken' && (
                     <AikenUploadPanel onQuestionsLoaded={handleAikenLoad} />
+                )}
+
+                {/* Live Record Tab */}
+                {activeTab === 'live' && (
+                    <LiveRecordPanel onQuestionsLoaded={(parsedQuestions, generatedTitle) => {
+                        setQuestions(parsedQuestions);
+                        if (generatedTitle) setTitle(generatedTitle);
+                        setActiveTab('manual');
+                    }} />
                 )}
 
                 {/* Manual Tab */}

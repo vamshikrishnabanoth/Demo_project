@@ -129,7 +129,8 @@ async def generate_questions(req: GeneratorRequest):
     for i in range(req.count):
         try:
             # Tell the AI which question number this is to help it differentiate
-            prompt = f"Topic: {req.content}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. Return a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
+            short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
+            prompt = f"Topic: {short_topic}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. Return a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
             
             response = requests.post(
                 OLLAMA_URL,
@@ -139,7 +140,7 @@ async def generate_questions(req: GeneratorRequest):
                     "stream": False,
                     "format": "json" # Back to JSON mode for single objects (more stable)
                 },
-                timeout=30 # Short timeout per question
+                timeout=120 # Increased timeout for heavy document reading
             )
             raw_text = response.json().get("response", "")
             data = json.loads(raw_text)

@@ -19,7 +19,10 @@ const storage = multer.diskStorage({
 const upload = multer({ 
     storage: storage,
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['.pdf', '.docx', '.pptx', '.jpg', '.jpeg', '.png'];
+        const allowedTypes = [
+            '.pdf', '.docx', '.pptx', '.jpg', '.jpeg', '.png', 
+            '.mp3', '.wav', '.m4a', '.webm', '.ogg'
+        ];
         const ext = path.extname(file.originalname).toLowerCase();
         if (allowedTypes.includes(ext)) {
             cb(null, true);
@@ -28,6 +31,10 @@ const upload = multer({
         }
     }
 });
+
+// @route   POST api/quiz/generate-voice
+// @desc    Transcribe audio and generate quiz questions
+router.post('/generate-voice', auth, upload.single('file'), quizController.generateQuizFromVoice);
 
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
