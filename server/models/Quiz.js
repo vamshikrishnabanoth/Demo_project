@@ -1,79 +1,95 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/authMiddleware');
+const quizController = require('../controllers/quizController');
+const multer = require('multer');
+const path = require('path');
 
-const QuizSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true
+// Configure disk storage for the AI service to pick up files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
     },
-    description: {
-        type: String
-    },
-    questions: [{
-        questionText: { type: String, required: true },
-        options: [{ type: String }],
-        correctAnswer: { type: String, required: true },
-        explanation: { type: String },
-        points: { type: Number, default: 10 },
-        type: { type: String, enum: ['multiple-choice', 'true-false', 'input'], default: 'multiple-choice' }
-    }],
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    isActive: {
-        type: Boolean,
-        default: true // Making it active by default for live join
-    },
-    joinCode: {
-        type: String,
-        unique: true
-    },
-    difficulty: {
-        type: String,
-        enum: ['Easy', 'Medium', 'Thinkable', 'Hard'],
-        default: 'Medium'
-    },
-    timerPerQuestion: {
-        type: Number,
-        default: 30 // seconds
-    },
-    duration: {
-        type: Number,
-        default: 0 // minutes, 0 = no limit
-    },
-    topic: {
-        type: String
-    },
-    isLive: {
-        type: Boolean,
-        default: false
-    },
-    isAssessment: {
-        type: Boolean,
-        default: false
-    },
-    status: {
-        type: String,
-        enum: ['waiting', 'started', 'finished'],
-        default: 'waiting' // Live quizzes start in waiting, changed when teacher starts
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    finalLeaderboard: [{
-        studentId: String,
-        username: String,
-        currentScore: Number,
-        answeredQuestions: Number,
-        rank: Number
-    }],
-    finalInsights: {
-        hardestQuestion: String,
-        easiestQuestion: String,
-        topStudent: String
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-module.exports = mongoose.model('Quiz', QuizSchema);
+const upload = multer({ 
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = [
+            '.pdf', '.docx', '.pptx', '.jpg', '.jpeg', '.png', 
+            '.mp3', '.wav', '.m4a', '.webm', '.ogg'
+        ];
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (allowedTypes.includes(ext)) {
+            cb(null, true);
+        } else {
+            cb(null, true); 
+        }
+    }
+});
+
+// @route   POST api/quiz/generate-voice
+// @desc    Transcribe audio and generate quiz questions
+router.post('/generate-voice', auth, upload.single('file'), quizController.generateQuizFromVoice);
+
+// @route   POST api/quiz/create
+// @desc    Create a new quiz (Manual or AI generated)
+router.post('/create', auth, upload.single('file'), quizController.createQuiz);
+
+// @route   POST api/quiz/join
+// @desc    Join a quiz by code
+router.post('/join', auth, quizController.joinByCode);
+
+// @route   GET api/quiz/my-quizzes
+// @desc    Get all quizzes created by current user
+router.get('/my-quizzes', auth, quizController.getMyQuizzes);
+
+// @route   PUT api/quiz/publish/:id
+// @desc    Publish/Unpublish a quiz
+router.put('/publish/:id', auth, quizController.publishQuiz);
+
+// @route   GET api/quiz/live
+// @desc    Get all active quizzes for students
+router.get('/live', auth, quizController.getLiveQuizzes);
+
+// @route   GET api/quiz/stats
+// @desc    Get performance stats for teacher
+router.get('/stats', auth, quizController.getTeacherStats);
+
+// @route   GET api/quiz/:id
+// @desc    Get quiz by ID
+router.get('/:id', auth, quizController.getQuizById);
+
+// @route   POST api/quiz/submit
+// @desc    Submit a quiz attempt
+router.post('/submit', auth, quizController.submitAttempt);
+
+// @route   DELETE api/quiz/:id
+// @desc    Delete a quiz
+router.delete('/:id', auth, quizController.deleteQuiz);
+
+// @route   GET api/quiz/leaderboard/:quizId
+// @desc    Get leaderboard for a quiz
+router.get('/leaderboard/:quizId', auth, quizController.getLeaderboard);
+
+// @route   GET api/quiz/history
+// @desc    Get current student's quiz history (completed and missed)
+router.get('/history/student', auth, quizController.getStudentHistory);
+
+// @route   PUT api/quiz/:id
+// @desc    Update a quiz
+router.put('/:id', auth, quizController.updateQuiz);
+
+// @route   POST api/quiz/generate
+// @desc    Generate quiz questions without saving (for review)
+router.post('/generate', auth, upload.single('file'), quizController.generateQuizQuestions);
+
+// @route   GET api/quiz/result/:quizId
+// @desc    Get the latest completed result for a quiz (student review)
+router.get('/result/:quizId', auth, quizController.getLatestResult);
+
+module.exports = router;
