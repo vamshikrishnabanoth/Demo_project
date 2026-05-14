@@ -543,6 +543,12 @@ io.on('connection', (socket) => {
                 const updatedProgress = state.progress || {};
                 if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
                 updatedProgress[studentId][questionIndex] = { answered: true, isCorrect };
+                // ALSO store by username so teacher UI can find it regardless of key type
+                const studentUsername = result.student ? result.student.username : null;
+                if (studentUsername) {
+                    if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
+                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect };
+                }
                 roomState.set(quizId, { ...state, progress: updatedProgress });
 
                 await prisma.result.update({
