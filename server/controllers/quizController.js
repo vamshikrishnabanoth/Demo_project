@@ -1145,6 +1145,45 @@ exports.getLiveQuizzes = async (req, res) => {
     }
 };
 
+// Helper: Normalize a questions array from PostgreSQL JSON field.
+// Prisma returns Json columns as plain JS values, but edge cases (double-
+// serialized strings, objects instead of strings in the options array) can
+// appear after a MongoDB→PostgreSQL migration.  This function guarantees
+// every question object has:
+//   questionText  – string
+//   options       – array of strings (never null / undefined / object)
+//   correctAnswer – string
+const normalizeQuestions = (questions) => {
+    if (!Array.isArray(questions)) {
+        // Prisma may return a JSON string in rare Supabase/direct-SQL inserts
+        try { questions = JSON.parse(questions); } catch (_) { return []; }
+    }
+    return questions.map((q) => {
+        // Normalize options: always produce an array of strings
+        let options = q.options;
+        if (!Array.isArray(options)) {
+            // options might be an object like { a: "...", b: "..." }
+            if (options && typeof options === 'object') {
+                options = Object.values(options).map(String);
+            } else {
+                options = ['Option A', 'Option B', 'Option C', 'Option D'];
+            }
+        } else {
+            // Make sure every element is a plain string (not an object)
+            options = options.map((o) =>
+                typeof o === 'string' ? o : (o?.text || o?.label || String(o))
+            );
+        }
+        return {
+            ...q,
+            questionText: q.questionText || q.question || '',
+            options,
+            correctAnswer: q.correctAnswer || q.correct_answer || '',
+            points: q.points || 10,
+        };
+    });
+};
+
 exports.getQuizById = async (req, res) => {
     try {
         const quiz = await prisma.quiz.findUnique({
@@ -1160,8 +1199,12 @@ exports.getQuizById = async (req, res) => {
             where: { quizId: req.params.id, studentId: req.user.id }
         });
 
+        // Normalize questions to guarantee options are plain strings
+        const normalizedQuestions = normalizeQuestions(quiz.questions);
+
         res.json({
             ...quiz,
+            questions: normalizedQuestions,
             previousResult
         });
     } catch (err) {
