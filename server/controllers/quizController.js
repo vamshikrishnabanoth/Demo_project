@@ -1255,6 +1255,26 @@ exports.submitQuiz = async (req, res) => {
             };
         });
 
+        // Assessments allow unlimited re-attempts → always create a new record.
+        // Live quizzes keep the old upsert behaviour.
+        if (quiz.isAssessment) {
+            const result = await prisma.result.create({
+                data: {
+                    quizId: quizId,
+                    studentId: req.user.id,
+                    score,
+                    totalTimeTaken,
+                    totalQuestions: quiz.questions.length,
+                    answers: formattedAnswers,
+                    status: 'completed',
+                    startedAt: new Date(),
+                    completedAt: new Date(),
+                    lastAnsweredAt: new Date()
+                }
+            });
+            return res.json(result);
+        }
+
         const existingResult = await prisma.result.findFirst({
             where: { quizId: quizId, studentId: req.user.id }
         });
@@ -1291,6 +1311,33 @@ exports.submitQuiz = async (req, res) => {
         });
 
         res.json(result);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
+    }
+};
+
+// GET /quiz/result/:quizId  – latest completed result for the current student
+// Used by the Review page to show question-by-question breakdown.
+exports.getLatestResult = async (req, res) => {
+    try {
+        const result = await prisma.result.findFirst({
+            where: { quizId: req.params.quizId, studentId: req.user.id, status: 'completed' },
+            orderBy: { completedAt: 'desc' }
+        });
+
+        if (!result) {
+            return res.status(404).json({ msg: 'No completed attempt found for this quiz.' });
+        }
+
+        // Also return the quiz questions so the review page can show correct answers
+        const quiz = await prisma.quiz.findUnique({ where: { id: req.params.quizId } });
+
+        res.json({
+            ...result,
+            quizTitle: quiz ? quiz.title : '',
+            questions: quiz ? quiz.questions : []
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
