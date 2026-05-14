@@ -61,8 +61,8 @@ router.post('/login', async (req, res) => {
         let user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    { email: email },
-                    { username: email }
+                    { email: { equals: email, mode: 'insensitive' } },
+                    { username: { equals: email, mode: 'insensitive' } }
                 ]
             }
         });

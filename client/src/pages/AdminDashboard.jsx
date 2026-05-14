@@ -51,7 +51,7 @@ function UserModal({ user, onClose, onSave, isNew }) {
             } else {
                 const payload = { ...form };
                 if (!payload.password) delete payload.password;
-                const res = await api.put(`/admin/users/${user._id}`, payload);
+                const res = await api.put(`/admin/users/${user.id}`, payload);
                 onSave(res.data, 'updated');
             }
         } catch (err) {
@@ -144,7 +144,7 @@ function DeleteConfirm({ user, onClose, onDelete }) {
     const [loading, setLoading] = useState(false);
     const handle = async () => {
         setLoading(true);
-        try { await api.delete(`/admin/users/${user._id}`); onDelete(user._id); }
+        try { await api.delete(`/admin/users/${user.id}`); onDelete(user.id); }
         catch (err) { console.error(err); setLoading(false); }
     };
     return (
@@ -205,14 +205,14 @@ export default function AdminDashboard() {
 
     const handleSave = (savedUser, action) => {
         if (action === 'created') setUsers(prev => [savedUser, ...prev]);
-        else setUsers(prev => prev.map(u => u._id === savedUser._id ? savedUser : u));
+        else setUsers(prev => prev.map(u => u.id === savedUser.id ? savedUser : u));
         fetchStats();
         setModal(null);
         showToast(`User ${action} successfully!`);
     };
 
     const handleDelete = (deletedId) => {
-        setUsers(prev => prev.filter(u => u._id !== deletedId));
+        setUsers(prev => prev.filter(u => u.id !== deletedId));
         fetchStats();
         setModal(null);
         showToast('User deleted.', 'error');
@@ -435,7 +435,7 @@ export default function AdminDashboard() {
                                         </thead>
                                         <tbody>
                                             {filtered.map((u, i) => (
-                                                <tr key={u._id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
+                                                <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-9 h-9 rounded-full bg-[#ff6b00]/15 flex items-center justify-center text-[#ff6b00] font-black text-sm flex-shrink-0">
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
                                                                 <Edit3 size={15} />
                                                             </button>
                                                             <button onClick={() => setModal({ type: 'delete', user: u })}
-                                                                disabled={u._id === user?._id}
+                                                                disabled={u.id === user?.id}
                                                                 className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed" title="Delete">
                                                                 <Trash2 size={15} />
                                                             </button>

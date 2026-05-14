@@ -833,10 +833,13 @@
 // };
 
 
-const prisma = require('../lib/prisma'); // Using Prisma
+const prisma = require('../lib/prisma');
 const path = require('path');
 const fs = require('fs');
-const axios = require('axios'); // Added for Local AI communication
+const axios = require('axios');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+const officeParser = require('officeparser');
 
 // Mock AI Generation for fallback
 const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporarily unavailable.") => {
@@ -851,6 +854,32 @@ const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporari
         });
     }
     return questions;
+};
+
+// Text Extraction Helper
+const extractText = async (filePath) => {
+    try {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.pdf') {
+            const dataBuffer = fs.readFileSync(filePath);
+            const data = await pdfParse(dataBuffer);
+            return data.text;
+        } else if (ext === '.docx') {
+            const result = await mammoth.extractRawText({ path: filePath });
+            return result.value;
+        } else if (['.pptx', '.xlsx'].includes(ext)) {
+            return new Promise((resolve, reject) => {
+                officeParser.parseOffice(filePath, (data, err) => {
+                    if (err) return reject(err);
+                    resolve(data);
+                });
+            });
+        }
+        return fs.readFileSync(filePath, 'utf8');
+    } catch (err) {
+        console.error('❌ Extraction Error:', err.message);
+        return null;
+    }
 };
 
 
@@ -869,7 +898,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         }, {
             headers: {
                 'Bypass-Tunnel-Reminder': 'true' // Bypasses the localtunnel landing page
-            }
+            },
+            timeout: 120000 // Increase timeout to 2 minutes for slow AI generation
         });
 
         if (response.data && response.data.questions) {
@@ -899,14 +929,12 @@ exports.createQuiz = async (req, res) => {
             finalQuestions = Array.isArray(manualQuestions) ? manualQuestions : JSON.parse(manualQuestions);
         } else if (req.file) {
             const absolutePath = path.resolve(req.file.path);
-            let fileType = type;
-            const ext = path.extname(req.file.originalname).toLowerCase();
-            if (['.jpg', '.jpeg', '.png'].includes(ext)) fileType = 'image';
-            else if (ext === '.docx') fileType = 'docx';
-            else if (ext === '.pptx') fileType = 'pptx';
-            else if (ext === '.pdf') fileType = 'pdf';
-
-            finalQuestions = await generateQuestions(fileType, absolutePath, questionCount, difficulty);
+            const extractedText = await extractText(absolutePath);
+            if (extractedText) {
+                finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
+            } else {
+                finalQuestions = await generateQuestions(type, absolutePath, questionCount, difficulty);
+            }
         } else if (content || topic) {
             finalQuestions = await generateQuestions('topic', content || topic, questionCount, difficulty);
         }
@@ -1458,13 +1486,12 @@ exports.generateQuizQuestions = async (req, res) => {
 
         if (req.file) {
             const absolutePath = path.resolve(req.file.path);
-            const ext = path.extname(req.file.originalname).toLowerCase();
-            if (['.jpg', '.jpeg', '.png'].includes(ext)) sourceType = 'image';
-            else if (ext === '.docx') sourceType = 'docx';
-            else if (ext === '.pptx') sourceType = 'pptx';
-            else if (ext === '.pdf') sourceType = 'pdf';
-
-            finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty);
+            const extractedText = await extractText(absolutePath);
+            if (extractedText) {
+                finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
+            } else {
+                finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty);
+            }
             extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, "");
         } else if (topic) {
             finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty);

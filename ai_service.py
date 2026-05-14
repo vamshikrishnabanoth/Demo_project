@@ -117,38 +117,65 @@ async def generate_questions(req: GeneratorRequest):
     if not source_text or len(source_text) < 10:
         raise HTTPException(status_code=400, detail="Content too short or file unreadable.")
 
-    query = req.content if req.type == 'topic' else "Important core concepts"
-    context = get_relevant_context(source_text, query, top_k=2)
+    query = "Important core concepts" if req.type != 'topic' else req.content[:100]
+    context = get_relevant_context(source_text, query, top_k=5)
 
-    questions = []
-    for _ in range(req.count):
+    prompt = f"""
+    CONTEXT: {context}
+    
+    TASK: Based on the context above, create {req.count} high-quality Multiple Choice Questions (MCQs).
+    DIFFICULTY: {req.difficulty}
+    
+    FORMAT: You must respond with a JSON array of objects. 
+    Each object must have: "questionText", "options" (array of 4 strings), and "correctAnswer" (must be one of the options).
+    
+    Example Output:
+    [
+      {{"questionText": "What is...?", "options": ["A", "B", "C", "D"], "correctAnswer": "A"}}
+    ]
+    """
+
+    try:
+        response = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": MODEL_NAME,
+                "prompt": prompt,
+                "stream": False,
+                "format": "json" # Force JSON output if Ollama supports it
+            },
+            timeout=110 # Slightly less than Node's 120s
+        )
+        response_json = response.json()
+        raw_text = response_json.get("response", "")
+        
+        # Parse the JSON response
         try:
-            response = requests.post(
-                OLLAMA_URL,
-                json={
-                    "model": MODEL_NAME,
-                    "prompt": context,
-                    "stream": False
-                }
-            )
-            response_json = response.json()
-            raw_text = response_json.get("response", "")
+            questions = json.loads(raw_text)
+            if not isinstance(questions, list):
+                # If it returned a single object instead of a list
+                questions = [questions]
             
-            # Extract JSON from the text
-            json_match = re.search(r'\{.*\}', raw_text, re.DOTALL)
+            # Normalize for the frontend
+            for q in questions:
+                if "question" in q and "questionText" not in q: q["questionText"] = q["question"]
+                if "answer" in q and "correctAnswer" not in q: q["correctAnswer"] = q["answer"]
+                q["points"] = 10
+                q["type"] = "multiple-choice"
+                
+            return {"questions": questions[:req.count]}
+        except Exception as json_err:
+            print(f"JSON Parse Error: {json_err}\nRaw text: {raw_text}")
+            # Fallback extraction
+            json_match = re.search(r'\[.*\]', raw_text, re.DOTALL)
             if json_match:
-                q_data = json.loads(json_match.group())
-                q_data["points"] = 10
-                q_data["type"] = "multiple-choice"
-                questions.append(q_data)
-        except Exception as e:
-            print(f"Ollama Error: {e}")
-            continue
+                questions = json.loads(json_match.group())
+                return {"questions": questions[:req.count]}
+            raise HTTPException(status_code=500, detail="AI returned invalid JSON format.")
 
-    if not questions:
-        raise HTTPException(status_code=500, detail="Local AI failed to generate valid JSON.")
-
-    return {"questions": questions}
+    except Exception as e:
+        print(f"Ollama Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     print(f"AI Service starting on port 8000 using local model: {MODEL_NAME}")
