@@ -924,7 +924,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             headers: {
                 'Bypass-Tunnel-Reminder': 'true' // Bypasses the localtunnel landing page
             },
-            timeout: 120000 // Increase timeout to 2 minutes for slow AI generation
+            timeout: 300000 // Increased timeout to 5 minutes for slow local AI generation
         });
 
         if (response.data && response.data.questions) {

@@ -124,13 +124,16 @@ async def generate_questions(req: GeneratorRequest):
     context = get_relevant_context(source_text, query, top_k=5)
 
     questions = []
+    generated_so_far = ""
     print(f"🚀 Starting sequential generation for {req.count} questions...")
 
     for i in range(req.count):
         try:
-            # Tell the AI which question number this is to help it differentiate
+            # Inject history to prevent repetition
+            history_clause = f"\nAvoid repeating these questions: {generated_so_far}" if generated_so_far else ""
+            
             short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
-            prompt = f"Topic: {short_topic}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. Return a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
+            prompt = f"Topic: {short_topic}\nDifficulty: {req.difficulty}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. {history_clause}\nReturn a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
             
             response = requests.post(
                 OLLAMA_URL,
@@ -138,9 +141,9 @@ async def generate_questions(req: GeneratorRequest):
                     "model": MODEL_NAME,
                     "prompt": prompt,
                     "stream": False,
-                    "format": "json" # Back to JSON mode for single objects (more stable)
+                    "format": "json"
                 },
-                timeout=120 # Increased timeout for heavy document reading
+                timeout=300
             )
             raw_text = response.json().get("response", "")
             data = json.loads(raw_text)
@@ -159,6 +162,9 @@ async def generate_questions(req: GeneratorRequest):
                     "type": "multiple-choice"
                 })
                 print(f"✅ Generated question {len(questions)}/{req.count}")
+                
+                # Add to history for diversity
+                generated_so_far += f" [{q_text}] "
             
         except Exception as e:
             print(f"⚠️ Error on question {i+1}: {e}")

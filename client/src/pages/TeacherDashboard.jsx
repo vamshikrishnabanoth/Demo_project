@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Type, Book, Cpu, BarChart3, Users, PlayCircle, PlusCircle, Sparkles, X } from 'lucide-react';
+import { FileText, Type, Book, Cpu, BarChart3, Users, PlayCircle, PlusCircle, Sparkles, X, Mic } from 'lucide-react';
 
 export default function TeacherDashboard() {
     const [stats, setStats] = useState({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
@@ -30,7 +30,8 @@ export default function TeacherDashboard() {
     const creationOptions = [
         { title: 'From Text', description: 'Paste text or manual entry', icon: Type, color: 'hover:bg-blue-500', path: '/create-quiz/text' },
         { title: 'From PDF', description: 'Upload and extract document', icon: FileText, color: 'hover:bg-red-500', path: '/create-quiz/pdf' },
-        { title: 'From Topic', description: 'AI generates from a prompt', icon: Book, color: 'hover:bg-green-500', path: '/create-quiz/topic' }
+        { title: 'From Topic', description: 'AI generates from a prompt', icon: Book, color: 'hover:bg-green-500', path: '/create-quiz/topic' },
+        { title: 'From Voice', description: 'Live recording to MCQ', icon: Mic, color: 'hover:bg-purple-500', path: '/create-quiz/voice' }
     ];
 
     return (

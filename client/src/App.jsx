@@ -8,6 +8,7 @@ import TeacherDashboard from './pages/TeacherDashboard';
 import CreateQuizText from './pages/CreateQuizText';
 import CreateQuizPDF from './pages/CreateQuizPDF';
 import CreateQuizTopic from './pages/CreateQuizTopic';
+import CreateQuizVoice from './pages/CreateQuizVoice';
 import StudentDashboard from './pages/StudentDashboard';
 import Assessments from './pages/Assessments';
 import MyQuizzes from './pages/MyQuizzes';
@@ -68,6 +69,12 @@ function App() {
           <Route path="/create-quiz/topic" element={
             <ProtectedRoute roles={['teacher']}>
               <CreateQuizTopic />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/create-quiz/voice" element={
+            <ProtectedRoute roles={['teacher']}>
+              <CreateQuizVoice />
             </ProtectedRoute>
           } />
 

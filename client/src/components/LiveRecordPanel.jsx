@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Square, Pause, Play, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../utils/api';
 
-export default function LiveRecordPanel({ onQuestionsLoaded }) {
+export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, difficulty = 'Medium' }) {
     const [isRecording, setIsRecording] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
@@ -97,8 +97,8 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
         try {
             const formData = new FormData();
             formData.append('file', blob, 'live_lesson.webm');
-            formData.append('questionCount', 5);
-            formData.append('difficulty', 'Medium');
+            formData.append('questionCount', questionCount.toString());
+            formData.append('difficulty', difficulty);
 
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
