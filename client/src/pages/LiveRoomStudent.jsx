@@ -26,7 +26,7 @@
 //                 // Check if quiz has already started
 //                 if (quizRes.data.status === 'started') {
 //                     console.log('Quiz already started, redirecting to quiz...');
-//                     navigate(`/quiz/attempt/${quizRes.data._id}`);
+//                     navigate(`/quiz/attempt/${quizRes.data.id}`);
 //                     return;
 //                 }
 
@@ -36,7 +36,7 @@
 //                 if (token) {
 //                     try { studentId = JSON.parse(atob(token.split('.')[1])).user.id; } catch (_) { }
 //                 }
-//                 socket.emit('join_room', { quizId: quizRes.data._id, user: { username: user.username, role: 'student', _id: studentId } });
+//                 socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'student', _id: studentId } });
 
 //             } catch (err) {
 //                 console.error(err);
@@ -51,13 +51,13 @@
 
 //         socket.on('quiz_started', () => {
 //             if (quiz) {
-//                 navigate(`/quiz/attempt/${quiz._id}`);
+//                 navigate(`/quiz/attempt/${quiz.id}`);
 //             }
 //         });
 
 //         socket.on('connect', () => {
 //             if (quiz && user) {
-//                 socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'student', _id: user._id } });
+//                 socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'student', _id: user.id } });
 //             }
 //         });
 
@@ -167,7 +167,7 @@ export default function LiveRoomStudent() {
                 // Check if quiz has already started
                 if (quizRes.data.status === 'started') {
                     console.log('Quiz already started, redirecting to quiz...');
-                    navigate(`/quiz/attempt/${quizRes.data._id}`);
+                    navigate(`/quiz/attempt/${quizRes.data.id}`);
                     return;
                 }
 
@@ -179,14 +179,14 @@ export default function LiveRoomStudent() {
                 }
                 
                 const sessionData = {
-                    quizId: quizRes.data._id,
+                    quizId: quizRes.data.id,
                     username: user.username,
                     role: 'student',
-                    _id: studentId || user._id
+                    _id: studentId || user.id
                 };
-                localStorage.setItem(`live_quiz_session_student_${quizRes.data._id}`, JSON.stringify(sessionData));
+                localStorage.setItem(`live_quiz_session_student_${quizRes.data.id}`, JSON.stringify(sessionData));
 
-                socket.emit('join_room', { quizId: quizRes.data._id, user: { username: user.username, role: 'student', _id: studentId } });
+                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'student', _id: studentId } });
 
             } catch (err) {
                 console.error(err);
@@ -201,22 +201,22 @@ export default function LiveRoomStudent() {
 
         socket.on('quiz_started', () => {
             if (quiz) {
-                navigate(`/quiz/attempt/${quiz._id}`);
+                navigate(`/quiz/attempt/${quiz.id}`);
             }
         });
 
         socket.on('connect', () => {
             if (quiz && user) {
-                const sessionStr = localStorage.getItem(`live_quiz_session_student_${quiz._id}`);
+                const sessionStr = localStorage.getItem(`live_quiz_session_student_${quiz.id}`);
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
-                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
+                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess.id } });
                     } catch (e) {
-                        socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'student', _id: user._id } });
+                        socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'student', _id: user.id } });
                     }
                 } else {
-                    socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'student', _id: user._id } });
+                    socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'student', _id: user.id } });
                 }
             }
         });
@@ -230,7 +230,7 @@ export default function LiveRoomStudent() {
     useEffect(() => {
         if (!quiz || !user) return;
         const heartbeatId = setInterval(() => {
-            socket.emit('heartbeat', { quizId: quiz._id, userId: user._id });
+            socket.emit('heartbeat', { quizId: quiz.id, userId: user.id });
         }, 5000);
         return () => clearInterval(heartbeatId);
     }, [quiz, user]);

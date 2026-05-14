@@ -51,7 +51,7 @@
 //     useEffect(() => {
 //         if (!quiz || !authUser || isReviewMode || result) return;
 //         const heartbeatTimer = setInterval(() => {
-//             socket.emit('heartbeat', { quizId: id, userId: authUser._id });
+//             socket.emit('heartbeat', { quizId: id, userId: authUser.id });
 //         }, 5000);
 //         return () => clearInterval(heartbeatTimer);
 //     }, [quiz, authUser, id, isReviewMode, result]);
@@ -93,8 +93,8 @@
 //             setCurrentQuestion(state.currentQuestionIndex);
             
 //             // Check if student has already answered this question
-//             if (authUser && state.progress && state.progress[authUser._id]) {
-//                  const studentProgress = state.progress[authUser._id];
+//             if (authUser && state.progress && state.progress[authUser.id]) {
+//                  const studentProgress = state.progress[authUser.id];
                  
 //                  // Restore answered tracking for logic
 //                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress[qIdx].answered);
@@ -124,14 +124,14 @@
 //                 if (sessionStr) {
 //                     try {
 //                         const sess = JSON.parse(sessionStr);
-//                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
+//                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess.id } });
 //                     } catch (e) {
 //                         socket.emit('join_room', {
 //                             quizId: id,
 //                             user: {
 //                                 username: authUser.username,
 //                                 role: 'student',
-//                                 _id: authUser._id
+//                                 _id: authUser.id
 //                             }
 //                         });
 //                     }
@@ -141,7 +141,7 @@
 //                         user: {
 //                             username: authUser.username,
 //                             role: 'student',
-//                             _id: authUser._id
+//                             _id: authUser.id
 //                         }
 //                     });
 //                 }
@@ -187,7 +187,7 @@
 //                             user: {
 //                                 username: authUser.username,
 //                                 role: 'student',
-//                                 _id: authUser._id
+//                                 _id: authUser.id
 //                             }
 //                         });
 //                     }
@@ -197,7 +197,7 @@
 //                         user: {
 //                             username: authUser.username,
 //                             role: 'student',
-//                             _id: authUser._id
+//                             _id: authUser.id
 //                         }
 //                     });
 //                 }
@@ -350,7 +350,7 @@
 //                             quizId: id,
 //                             username: authUser.username,
 //                             role: 'student',
-//                             _id: authUser._id
+//                             _id: authUser.id
 //                         };
 //                         localStorage.setItem(`live_quiz_session_student_${id}`, JSON.stringify(sessionData));
 //                         socket.emit('join_room', {
@@ -358,7 +358,7 @@
 //                             user: {
 //                                 username: authUser.username,
 //                                 role: 'student',
-//                                 _id: authUser._id
+//                                 _id: authUser.id
 //                             }
 //                         });
 //                     }
@@ -404,7 +404,7 @@
 //                 user: {
 //                     username: authUser.username,
 //                     role: 'student',
-//                     _id: authUser._id
+//                     _id: authUser.id
 //                 }
 //             });
 //         }
@@ -1104,7 +1104,7 @@ export default function AttemptQuiz() {
     useEffect(() => {
         if (!quiz || !authUser || isReviewMode || result) return;
         const heartbeatTimer = setInterval(() => {
-            socket.emit('heartbeat', { quizId: id, userId: authUser._id });
+            socket.emit('heartbeat', { quizId: id, userId: authUser.id });
         }, 5000);
         return () => clearInterval(heartbeatTimer);
     }, [quiz, authUser, id, isReviewMode, result]);
@@ -1150,8 +1150,8 @@ export default function AttemptQuiz() {
             setCurrentQuestion(state.currentQuestionIndex);
             
             // Check if student has already answered this question
-            if (authUser && state.progress && state.progress[authUser._id]) {
-                 const studentProgress = state.progress[authUser._id];
+            if (authUser && state.progress && state.progress[authUser.id]) {
+                 const studentProgress = state.progress[authUser.id];
                  
                  // Restore answered tracking for logic
                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress[qIdx].answered);
@@ -1183,14 +1183,14 @@ export default function AttemptQuiz() {
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
-                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
+                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess.id } });
                     } catch (e) {
                         socket.emit('join_room', {
                             quizId: id,
                             user: {
                                 username: authUser.username,
                                 role: 'student',
-                                _id: authUser._id
+                                _id: authUser.id
                             }
                         });
                     }
@@ -1200,7 +1200,7 @@ export default function AttemptQuiz() {
                         user: {
                             username: authUser.username,
                             role: 'student',
-                            _id: authUser._id
+                            _id: authUser.id
                         }
                     });
                 }
@@ -1238,7 +1238,7 @@ export default function AttemptQuiz() {
                             user: {
                                 username: authUser.username,
                                 role: 'student',
-                                _id: authUser._id
+                                _id: authUser.id
                             }
                         });
                     }
@@ -1248,7 +1248,7 @@ export default function AttemptQuiz() {
                         user: {
                             username: authUser.username,
                             role: 'student',
-                            _id: authUser._id
+                            _id: authUser.id
                         }
                     });
                 }
@@ -1455,14 +1455,14 @@ export default function AttemptQuiz() {
             quizId: id,
             username: authUser.username,
             role: 'student',
-            _id: authUser._id
+            _id: authUser.id
         };
         if (quiz.isLive) {
             localStorage.setItem(`live_quiz_session_student_${id}`, JSON.stringify(sessionData));
         }
         socket.emit('join_room', {
             quizId: id,
-            user: { username: authUser.username, role: 'student', _id: authUser._id }
+            user: { username: authUser.username, role: 'student', _id: authUser.id }
         });
     }, [authUser, quiz, id]);
 

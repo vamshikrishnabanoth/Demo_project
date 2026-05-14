@@ -50,7 +50,7 @@ export default function MyQuizzes() {
             }
 
             const res = await api.put(`/quiz/${quizId}`, payload);
-            setQuizzes(quizzes.map(q => q._id === quizId ? res.data : q));
+            setQuizzes(quizzes.map(q => q.id === quizId ? res.data : q));
         } catch (err) {
             console.error('Error updating quiz mode', err);
             alert(err.response?.data?.msg || 'Failed to update quiz mode');
@@ -64,7 +64,7 @@ export default function MyQuizzes() {
 
         try {
             await api.delete(`/quiz/${quizId}`);
-            setQuizzes(quizzes.filter(q => q._id !== quizId));
+            setQuizzes(quizzes.filter(q => q.id !== quizId));
         } catch (err) {
             console.error('Error deleting quiz', err);
             alert('Failed to delete quiz');
@@ -107,7 +107,7 @@ export default function MyQuizzes() {
                 ) : filteredQuizzes.length > 0 ? (
                     <div className="grid grid-cols-1 gap-8">
                         {filteredQuizzes.map((quiz) => (
-                            <div key={quiz._id} className="bg-white/5 rounded-[3rem] border border-white/10 p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:bg-white/10 transition-all group relative overflow-hidden ring-1 ring-white/5">
+                            <div key={quiz.id} className="bg-white/5 rounded-[3rem] border border-white/10 p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:bg-white/10 transition-all group relative overflow-hidden ring-1 ring-white/5">
                                 <div className="flex flex-col sm:flex-row items-start gap-8 z-10">
                                     <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-2xl ${quiz.isActive ? 'bg-[#ff6b00] text-white' : 'bg-white/5 text-slate-700 border border-white/10'}`}>
                                         <FileText size={40} />
@@ -153,14 +153,14 @@ export default function MyQuizzes() {
                                                 <>
                                                     {quiz.isActive ? (
                                                         <button
-                                                            onClick={() => updateQuizMode(quiz._id, 'close')}
+                                                            onClick={() => updateQuizMode(quiz.id, 'close')}
                                                             className="flex-1 sm:flex-none bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-red-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
                                                         >
                                                             <XCircle size={18} /> Close
                                                         </button>
                                                     ) : (
                                                         <button
-                                                            onClick={() => updateQuizMode(quiz._id, 'assessment')}
+                                                            onClick={() => updateQuizMode(quiz.id, 'assessment')}
                                                             className="flex-1 sm:flex-none bg-[#ff6b00]/10 text-[#ff6b00] border border-[#ff6b00]/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-[#ff6b00] hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
                                                         >
                                                             <Play size={18} /> Reopen
@@ -178,7 +178,7 @@ export default function MyQuizzes() {
                                                         </Link>
                                                     ) : (
                                                         <Link
-                                                            to={`/leaderboard/${quiz._id}`}
+                                                            to={`/leaderboard/${quiz.id}`}
                                                             className="flex-1 sm:flex-none bg-green-500/10 text-green-500 border border-green-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-green-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
                                                         >
                                                             <Trophy size={18} /> Results
@@ -188,7 +188,7 @@ export default function MyQuizzes() {
                                             )}
 
                                             <button
-                                                onClick={() => handleDelete(quiz._id)}
+                                                onClick={() => handleDelete(quiz.id)}
                                                 className="p-3 text-slate-700 hover:text-red-500 transition-all group/del shrink-0"
                                                 title="Delete Quiz"
                                             >

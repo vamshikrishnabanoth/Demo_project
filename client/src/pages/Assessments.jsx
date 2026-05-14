@@ -34,10 +34,10 @@ export default function Assessments() {
                 const historyQuizzes = historyRes.data;
 
                 const allQuizzes = [...liveQuizzes];
-                const liveIds = new Set(liveQuizzes.map(q => q._id));
+                const liveIds = new Set(liveQuizzes.map(q => q.id));
 
                 historyQuizzes.forEach(historyQuiz => {
-                    if (!liveIds.has(historyQuiz._id)) {
+                    if (!liveIds.has(historyQuiz.id)) {
                         allQuizzes.push(historyQuiz);
                     }
                 });
@@ -134,7 +134,7 @@ export default function Assessments() {
                                     </tr>
                                 ) : filteredQuizzes.length > 0 ? (
                                     filteredQuizzes.map((quiz) => (
-                                        <tr key={quiz._id} className="group hover:bg-white/2 transition-colors">
+                                        <tr key={quiz.id} className="group hover:bg-white/2 transition-colors">
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-4">
                                                     <div className={`p-3 rounded-xl ${quiz.isAttempted ? 'bg-[#ff6b00]/10 text-[#ff6b00]' : 'bg-blue-400/10 text-blue-400'}`}>
@@ -171,7 +171,7 @@ export default function Assessments() {
                                             </td>
                                             <td className="px-8 py-6 text-right">
                                                 <button
-                                                    onClick={() => navigate(`/quiz/attempt/${quiz._id}`)}
+                                                    onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
                                                     className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${quiz.isAttempted
                                                         ? 'bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white'
                                                         : 'bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-[#ff6b00]/10 shadow-lg'

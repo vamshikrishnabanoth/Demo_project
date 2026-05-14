@@ -34,13 +34,13 @@ export default function LiveRoomTeacher() {
                 
                 // Persist Teacher Session
                 const sessionData = {
-                    quizId: quizRes.data._id,
+                    quizId: quizRes.data.id,
                     username: user.username,
                     role: 'teacher'
                 };
                 localStorage.setItem(`live_quiz_session_teacher_${joinCode}`, JSON.stringify(sessionData));
 
-                socket.emit('join_room', { quizId: quizRes.data._id, user: { username: user.username, role: 'teacher' } });
+                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'teacher' } });
             } catch (err) {
                 console.error(err);
                 alert('Error loading quiz');
@@ -149,10 +149,10 @@ export default function LiveRoomTeacher() {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
                     } catch (e) {
-                         socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+                         socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
                     }
                 } else {
-                    socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+                    socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
                 }
             }
         });
@@ -174,20 +174,20 @@ export default function LiveRoomTeacher() {
     useEffect(() => {
         if (!quiz || !user) return;
         const heartbeatId = setInterval(() => {
-            socket.emit('heartbeat', { quizId: quiz._id, userId: user._id || user.username });
+            socket.emit('heartbeat', { quizId: quiz.id, userId: user.id || user.username });
         }, 5000);
         return () => clearInterval(heartbeatId);
     }, [quiz, user]);
     const handleStartQuiz = () => {
         if (quiz) {
-            socket.emit('start_quiz', quiz._id);
+            socket.emit('start_quiz', quiz.id);
             setIsTimerRunning(true);
         }
     };
 
     const handleEndQuiz = () => {
         if (window.confirm('End this quiz session?')) {
-            socket.emit('end_quiz', quiz._id);
+            socket.emit('end_quiz', quiz.id);
             navigate('/teacher-dashboard');
         }
     };
@@ -195,7 +195,7 @@ export default function LiveRoomTeacher() {
     const handleNextQuestion = () => {
         if (quiz && currentQuestion < quiz.questions.length - 1) {
             const nextIdx = currentQuestion + 1;
-            socket.emit('change_question', { quizId: quiz._id, questionIndex: nextIdx });
+            socket.emit('change_question', { quizId: quiz.id, questionIndex: nextIdx });
         }
     };
 
@@ -238,10 +238,10 @@ export default function LiveRoomTeacher() {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
                     } catch (e) {
-                         socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+                         socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
                     }
                 } else {
-                    socket.emit('join_room', { quizId: quiz._id, user: { username: user.username, role: 'teacher' } });
+                    socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
                 }
             }
         };
@@ -254,7 +254,7 @@ export default function LiveRoomTeacher() {
     }, [quiz, user]);
 
     const handleIncreaseTime = () => {
-        socket.emit('increase_time', { quizId: quiz._id, additionalSeconds: 30 });
+        socket.emit('increase_time', { quizId: quiz.id, additionalSeconds: 30 });
         alert('Added 30 seconds to the clock!');
     };
 
@@ -324,7 +324,7 @@ export default function LiveRoomTeacher() {
                     <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => navigate(`/leaderboard/${quiz._id}`)}
+                            onClick={() => navigate(`/leaderboard/${quiz.id}`)}
                             className="bg-[#ff6b00] text-white px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:scale-105 transition shadow-xl shadow-orange-500/20 active:scale-95 border-b-4 border-orange-700"
                         >
                             View Leaderboard
@@ -539,14 +539,14 @@ export default function LiveRoomTeacher() {
                             {paginatedStudents.map((p, pIdx) => {
                                 const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
                                 const rank = globalIdx + 1;
-                                const progressById = p._id ? studentProgress[p._id] : null;
+                                const progressById = p.id ? studentProgress[p.id] : null;
                                 const progressByName = p.username ? studentProgress[p.username] : null;
                                 const progress = progressById || progressByName || {};
                                 const score = p.lb?.currentScore ?? 0;
 
                                 return (
                                     <div
-                                        key={p._id || p.username || pIdx}
+                                        key={p.id || p.username || pIdx}
                                         className="px-8 py-4 flex items-center gap-4 hover:bg-slate-50/80 transition-colors group"
                                     >
                                         {/* Rank */}
@@ -571,8 +571,8 @@ export default function LiveRoomTeacher() {
                                         {/* Student Name / Roll No */}
                                         <div className="w-40 min-w-0">
                                             <p className="font-bold text-slate-800 truncate text-sm">{p.username || 'Unknown'}</p>
-                                            {p._id && (
-                                                <p className="text-[10px] text-slate-400 font-mono truncate">{p._id}</p>
+                                            {p.id && (
+                                                <p className="text-[10px] text-slate-400 font-mono truncate">{p.id}</p>
                                             )}
                                         </div>
 
