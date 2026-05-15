@@ -130,7 +130,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Book, Loader2, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles } from 'lucide-react';
+import { Book, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles } from 'lucide-react';
+import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
@@ -168,6 +169,8 @@ export default function CreateQuizTopic() {
             setLoading(false);
         }
     };
+
+    if (loading) return <AIThinkingLoader message="AI Generating Questions..." />;
 
     return (
         <DashboardLayout role="teacher">

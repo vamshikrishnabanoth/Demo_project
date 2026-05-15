@@ -31,9 +31,9 @@ export default function RoleSelection() {
                     <img src="/logo.png" alt="KMIT Logo" className="h-16 w-auto" />
                 </div>
                 <h1 className="text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter">
-                    Identify Your <span className="text-[var(--text-accent)]">Status</span>
+                    Choose Your <span className="text-[var(--text-accent)]">Role</span>
                 </h1>
-                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px]">Security clearance required for gateway access</p>
+                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px]">Select your role to get started</p>
                 <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[var(--bg-accent)] to-transparent mx-auto mt-6"></div>
             </div>
 
@@ -48,9 +48,9 @@ export default function RoleSelection() {
                         <Presentation size={32} />
                     </div>
                     <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tight mb-2">Educator</h2>
-                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Architect complex assessments, track real-time analytics, and mentor students.</p>
+                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Create quizzes, run live sessions, and track student performance.</p>
                     <div className="flex items-center gap-2 text-[var(--text-accent)] font-black italic uppercase tracking-widest text-[10px] group-hover:translate-x-2 transition-transform">
-                        INITIALIZE PORTAL <ChevronRight size={14} />
+                        Enter Portal <ChevronRight size={14} />
                     </div>
                 </button>
 
@@ -64,9 +64,9 @@ export default function RoleSelection() {
                         <GraduationCap size={32} />
                     </div>
                     <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tight mb-2">Challenger</h2>
-                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Engage in high-stakes live sessions, dominate leaderboards, and excel.</p>
+                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Join live quizzes, climb the leaderboard, and track your progress.</p>
                     <div className="flex items-center gap-2 text-white font-black italic uppercase tracking-widest text-[10px] group-hover:translate-x-2 transition-transform bg-[var(--bg-accent)] w-fit px-4 py-2 rounded-full">
-                        JOIN THE ARENA <ChevronRight size={14} />
+                        Join the Arena <ChevronRight size={14} />
                     </div>
                 </button>
 
@@ -80,15 +80,15 @@ export default function RoleSelection() {
                         <ShieldCheck size={32} />
                     </div>
                     <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tight mb-2">Systems</h2>
-                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Maintain infrastructure integrity, manage global user datasets, and oversee operations.</p>
+                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed mb-8">Manage users, monitor the platform, and control settings.</p>
                     <div className="flex items-center gap-2 text-[var(--text-secondary)] font-black italic uppercase tracking-widest text-[10px] group-hover:translate-x-2 transition-transform">
-                        ADMIN OVERRIDE <ChevronRight size={14} />
+                        Admin Panel <ChevronRight size={14} />
                     </div>
                 </button>
             </div>
 
             <p className="mt-16 text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-[0.5em] opacity-50 relative z-10">
-                CRITICAL: Role selection is permanent for this identity.
+                Your role will be saved to your account.
             </p>
         </div>
     );

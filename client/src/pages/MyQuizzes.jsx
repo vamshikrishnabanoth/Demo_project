@@ -79,29 +79,29 @@ export default function MyQuizzes() {
     return (
         <DashboardLayout role="teacher">
             <div className="space-y-12 pb-20 relative">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D7AC28]/5 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--bg-accent)]/5 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-5xl font-black text-white tracking-tight italic uppercase">Quiz <span className="text-[#D7AC28]">Library</span></h1>
+                        <h1 className="text-5xl font-black text-white tracking-tight italic uppercase">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
                         <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-sm italic">Manage your knowledge assets</p>
                     </div>
 
                     <div className="relative w-full md:w-80 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#D7AC28] transition-colors" size={20} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--text-accent)] transition-colors" size={20} />
                         <input
                             type="text"
                             placeholder="SEARCH LIBRARY..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#D7AC28]/20 focus:border-[#D7AC28]/50 transition-all uppercase tracking-tighter"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent)]/20 focus:border-[var(--bg-accent)]/50 transition-all uppercase tracking-tighter"
                         />
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="bg-white/5 rounded-[3rem] border border-white/10 p-24 text-center ring-1 ring-white/5">
-                        <Activity className="animate-spin text-[#D7AC28] mx-auto mb-8" size={64} />
+                        <Activity className="animate-spin text-[var(--bg-accent)] mx-auto mb-8" size={64} />
                         <p className="font-black text-slate-500 uppercase tracking-[0.3em] italic text-sm">Syncing with KMIT database...</p>
                     </div>
                 ) : filteredQuizzes.length > 0 ? (
@@ -109,21 +109,21 @@ export default function MyQuizzes() {
                         {filteredQuizzes.map((quiz) => (
                             <div key={quiz.id} className="bg-white/5 rounded-[3rem] border border-white/10 p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:bg-white/10 transition-all group relative overflow-hidden ring-1 ring-white/5">
                                 <div className="flex flex-col sm:flex-row items-start gap-8 z-10">
-                                    <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-2xl ${quiz.isActive ? 'bg-[#D7AC28] text-white' : 'bg-[#D7AC28]/10 text-[#D7AC28]/40 border border-[#D7AC28]/20'}`}>
+                                    <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-2xl ${quiz.isActive ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-accent)]/10 text-[var(--text-accent)]/40 border border-[var(--bg-accent)]/20'}`}>
                                         <FileText size={40} />
                                     </div>
                                     <div className="space-y-4">
                                         <div className="space-y-1">
-                                            <h3 className="text-4xl font-black text-[#D7AC28] tracking-tighter uppercase italic leading-none transition-colors">{quiz.title}</h3>
+                                            <h3 className="text-4xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors">{quiz.title}</h3>
                                             <p className="text-slate-500 font-bold uppercase tracking-widest text-xs italic">{quiz.topic || 'General Knowledge'}</p>
                                         </div>
 
                                         <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
                                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                                                <Calendar size={14} className="text-[#D7AC28]" /> {new Date(quiz.createdAt).toLocaleDateString()}
+                                                <Calendar size={14} className="text-[var(--text-accent)]" /> {new Date(quiz.createdAt).toLocaleDateString()}
                                             </div>
                                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                                                <HelpCircle size={14} className="text-[#D7AC28]" /> {quiz.questions?.length || 0} Questions
+                                                <HelpCircle size={14} className="text-[var(--text-accent)]" /> {quiz.questions?.length || 0} Questions
                                             </div>
                                             <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[0.2em] italic ${quiz.isActive ? 'text-green-500 border-green-500/20 bg-green-500/5' : 'text-slate-600 border-white/5 bg-white/5'}`}>
                                                 <div className={`w-2 h-2 rounded-full ${quiz.isActive ? 'bg-green-500 animate-pulse' : 'bg-slate-700'}`}></div>
@@ -143,7 +143,7 @@ export default function MyQuizzes() {
                                             </div>
                                             <div className="text-center">
                                                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Students</p>
-                                                <p className="text-lg font-black text-[#D7AC28] italic">{quiz.completionCount || 0}</p>
+                                                <p className="text-lg font-black text-[var(--text-accent)] italic">{quiz.completionCount || 0}</p>
                                             </div>
                                         </div>
 
@@ -161,7 +161,7 @@ export default function MyQuizzes() {
                                                     ) : (
                                                         <button
                                                             onClick={() => updateQuizMode(quiz.id, 'assessment')}
-                                                            className="flex-1 sm:flex-none bg-[#D7AC28]/10 text-[#D7AC28] border border-[#D7AC28]/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-[#D7AC28] hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                            className="flex-1 sm:flex-none bg-[var(--bg-accent)]/10 text-[var(--text-accent)] border border-[var(--bg-accent)]/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-[var(--bg-accent)] hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
                                                         >
                                                             <Play size={18} /> Reopen
                                                         </button>
@@ -172,7 +172,7 @@ export default function MyQuizzes() {
                                                     {quiz.status !== 'finished' ? (
                                                         <Link
                                                             to={`/live-room-teacher/${quiz.joinCode}`}
-                                                            className="flex-1 sm:flex-none bg-[#D7AC28] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[#D7AC28]/20 text-sm"
+                                                            className="flex-1 sm:flex-none bg-[var(--bg-accent)] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[var(--bg-accent)]/20 text-sm"
                                                         >
                                                             <ExternalLink size={18} /> Room
                                                         </Link>
@@ -203,7 +203,7 @@ export default function MyQuizzes() {
                                     <div className="w-full lg:w-72 bg-white/5 rounded-3xl p-6 border border-white/5 space-y-3">
                                         <div className="flex items-center justify-between mb-2">
                                             <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Top Students</span>
-                                            <Trophy size={12} className="text-[#D7AC28]" />
+                                            <Trophy size={12} className="text-[var(--text-accent)]" />
                                         </div>
                                         {quiz.results.slice(0, 3).map((res, idx) => (
                                             <div key={idx} className="flex items-center justify-between text-xs bg-black/20 rounded-xl p-3 border border-white/5">
@@ -211,7 +211,7 @@ export default function MyQuizzes() {
                                                     <span className={`font-black italic ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-slate-300' : 'text-amber-600'}`}>#{idx + 1}</span>
                                                     <span className="font-bold text-white uppercase truncate w-24">{res.studentName}</span>
                                                 </div>
-                                                <span className="font-black text-[#D7AC28] italic">{res.score}</span>
+                                                <span className="font-black text-[var(--text-accent)] italic">{res.score}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -233,7 +233,7 @@ export default function MyQuizzes() {
                             {searchTerm ? `No results found for "${searchTerm}"` : "Your knowledge base is waiting for its first entry. Let's create something extraordinary."}
                         </p>
                         {!searchTerm && (
-                            <Link to="/" className="inline-block mt-12 bg-[#D7AC28] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-[#D7AC28]/20">
+                            <Link to="/" className="inline-block mt-12 bg-[var(--bg-accent)] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/20">
                                 Build First Quiz
                             </Link>
                         )}

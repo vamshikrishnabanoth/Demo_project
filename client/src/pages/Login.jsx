@@ -133,7 +133,7 @@ export default function Login() {
                     <h1 className="text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-none">
                         KMIT <span className="text-[var(--text-accent)] drop-shadow-[0_0_15px_var(--bg-accent-glow)]">KAHOOT</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[9px] mt-3 opacity-60">Elite Assessment Infrastructure</p>
+                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[9px] mt-3 opacity-60">Interactive Quiz & Assessment Platform</p>
                 </motion.div>
 
                 {/* ─── LOGIN CARD ─────────────────────────────────────────── */}
@@ -180,7 +180,7 @@ export default function Login() {
                                     <LogIn size={28} className="text-[var(--text-accent)]" /> : 
                                     <UserPlus size={28} className="text-[var(--text-accent)]" />
                                 }
-                                {isLogin ? 'Initialize' : 'Register'}
+                                {isLogin ? 'Sign In' : 'Create Account'}
                             </h2>
 
                             <form onSubmit={onSubmit} className="space-y-8">
@@ -192,7 +192,7 @@ export default function Login() {
                                             exit={{ opacity: 0, y: -10 }}
                                             className="space-y-2"
                                         >
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Identity Handle</label>
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Username</label>
                                             <div className="relative group/input">
                                                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
                                                     <User size={20} />
@@ -212,7 +212,7 @@ export default function Login() {
                                 </AnimatePresence>
 
                                 <div className="space-y-2">
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">System Identifier</label>
+                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Email / Roll Number</label>
                                     <div className="relative group/input">
                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
                                             <Mail size={20} />
@@ -230,7 +230,7 @@ export default function Login() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Security Key</label>
+                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Password</label>
                                     <div className="relative group/input">
                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
                                             <Lock size={20} />
@@ -283,11 +283,11 @@ export default function Login() {
                                     {isSubmitting ? (
                                         <Loader2 size={24} className="animate-spin" />
                                     ) : submitStatus === 'success' ? (
-                                        <><CheckCircle2 size={24} /> Authorized</>
+                                        <><CheckCircle2 size={24} /> Welcome!</>
                                     ) : submitStatus === 'error' ? (
-                                        <><XCircle size={24} /> Denied</>
+                                        <><XCircle size={24} /> Try Again</>
                                     ) : (
-                                        <>{isLogin ? 'Establish Link' : 'Register'} <LogIn size={20} /></>
+                                        <>{isLogin ? 'Sign In' : 'Create Account'} <LogIn size={20} /></>
                                     )}
                                 </motion.button>
                             </form>
@@ -297,7 +297,7 @@ export default function Login() {
                                     onClick={() => setIsLogin(!isLogin)}
                                     className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.3em] hover:text-[var(--text-accent)] transition-all duration-300 opacity-40 hover:opacity-100"
                                 >
-                                    {isLogin ? "Generate New Identity" : "Already Identified? Access"}
+                                    {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
                                 </button>
                             </div>
                         </div>
@@ -311,7 +311,7 @@ export default function Login() {
                     className="mt-12 text-center"
                 >
                     <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.5em] opacity-20">
-                        &copy; 2026 KMIT Advanced Assessment Logic
+                        © 2026 KMIT Quiz Platform
                     </p>
                 </motion.div>
             </motion.div>

@@ -5,7 +5,7 @@ import api from '../utils/api';
 import socket from '../utils/socket';
 import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
-import PremiumLoading from '../components/PremiumLoading';
+import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import { Zap, Clock, ShieldCheck, Activity, Users, ArrowRight } from 'lucide-react';
 
 export default function LiveRoomStudent() {
@@ -88,7 +88,7 @@ export default function LiveRoomStudent() {
         return () => clearInterval(heartbeatId);
     }, [quiz, user]);
 
-    if (loading) return <PremiumLoading message="Joining Arena..." />;
+    if (loading) return <WaitingRoomLoader message="Joining Quiz..." />;
 
     return (
         <DashboardLayout role="student">
@@ -132,13 +132,13 @@ export default function LiveRoomStudent() {
                                     transition={{ duration: 2, repeat: Infinity }}
                                     className="inline-block px-6 py-2 rounded-full text-xs font-black uppercase tracking-[0.3em] border border-[var(--bg-accent)]/30 text-[var(--text-accent)]"
                                 >
-                                    Mission Status: Ready
+                                    ● Quiz is Ready
                                 </motion.div>
                                 <h1 className="text-6xl font-black tracking-tighter text-[var(--text-primary)] uppercase italic leading-none">
                                     {quiz?.title}
                                 </h1>
                                 <p className="text-[var(--text-secondary)] max-w-lg mx-auto font-bold text-lg leading-relaxed">
-                                    Encrypted connection established. You are currently in the lobby waiting for the host to initialize the sequence.
+                                    You're in the waiting room. The quiz will start once your teacher begins the session.
                                 </p>
                             </div>
                         </motion.div>
@@ -159,10 +159,10 @@ export default function LiveRoomStudent() {
                             </div>
 
                             <div className="space-y-3 text-center">
-                                <h3 className="text-4xl font-black text-[var(--text-primary)] uppercase italic tracking-tight">Synchronizing...</h3>
+                                <h3 className="text-4xl font-black text-[var(--text-primary)] uppercase italic tracking-tight">Waiting for Host...</h3>
                                 <p className="text-[var(--text-secondary)] font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2">
                                     <Activity size={16} className="text-green-500" />
-                                    Stand by for teacher authorization
+                                    Waiting for your teacher to start
                                 </p>
                             </div>
                         </div>
@@ -200,7 +200,7 @@ export default function LiveRoomStudent() {
                     {/* Footer Info */}
                     <div className="bg-[var(--bg-primary)]/50 p-8 border-t border-[var(--border-color)] text-center">
                         <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] italic opacity-60">
-                            Protocol 2.6 // Do not refresh this terminal
+                            Don't refresh this page — you'll lose your spot!
                         </p>
                     </div>
                 </motion.div>
@@ -213,7 +213,7 @@ export default function LiveRoomStudent() {
                             exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-[var(--bg-primary)] z-50 flex items-center justify-center"
                         >
-                            <PremiumLoading message="Arena Found" />
+                            <WaitingRoomLoader message="Quiz Found!" />
                         </motion.div>
                     )}
                 </AnimatePresence>

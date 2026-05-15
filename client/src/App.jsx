@@ -17,7 +17,6 @@ import AttemptQuiz from './pages/AttemptQuiz';
 import AssessmentAttempt from './pages/AssessmentAttempt';
 import AssessmentReview from './pages/AssessmentReview';
 import Profile from './pages/Profile';
-import Performance from './pages/Performance';
 import AdminDashboard from './pages/AdminDashboard';
 import LiveRoomTeacher from './pages/LiveRoomTeacher';
 import LiveRoomStudent from './pages/LiveRoomStudent';
@@ -61,7 +60,7 @@ function AnimatedRoutes() {
         <Route path="/create-quiz/pdf" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizPDF /></ProtectedRoute></PageTransition>} />
         <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />
         <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
-        <Route path="/performance" element={<PageTransition><ProtectedRoute roles={['teacher']}><Performance /></ProtectedRoute></PageTransition>} />
+
         <Route path="/my-quizzes" element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
         <Route path="/student-dashboard" element={<PageTransition><ProtectedRoute roles={['student']}><StudentDashboard /></ProtectedRoute></PageTransition>} />
         <Route path="/assessments" element={<PageTransition><ProtectedRoute roles={['student']}><Assessments /></ProtectedRoute></PageTransition>} />

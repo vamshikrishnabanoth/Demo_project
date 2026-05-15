@@ -15,13 +15,15 @@ import {
 import { showSuccess, showConfirm } from '../utils/alerts';
 import CinematicBackground from './CinematicBackground';
 
+import { StatusBadge, UserProfileCard } from './UserIdentity';
+
 export default function DashboardLayout({ children, role }) {
     const { logout, user } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        const result = await showConfirm('End Session?', 'Are you sure you want to log out of the arena?');
+        const result = await showConfirm('Log Out?', 'Are you sure you want to log out?');
         if (result.isConfirmed) {
             logout();
             showSuccess('Logged Out', 'See you soon, Champion!');
@@ -34,7 +36,6 @@ export default function DashboardLayout({ children, role }) {
     const teacherLinks = [
         { name: 'Home', path: '/teacher-dashboard', icon: LayoutDashboard },
         { name: 'My Quizzes', path: '/my-quizzes', icon: BookOpen },
-        { name: 'Performance', path: '/performance', icon: BarChart3 },
     ];
 
     const studentLinks = [
@@ -76,7 +77,7 @@ export default function DashboardLayout({ children, role }) {
                             </Link>
 
                             {/* Navigation Links */}
-                            <nav className="hidden md:flex space-x-2">
+                            <nav className="hidden md:flex space-x-6">
                                 {links.map((link) => {
                                     const Icon = link.icon;
                                     const active = isActive(link.path);
@@ -99,27 +100,8 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* User Actions */}
                         <div className="flex items-center gap-4">
-                            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Live</span>
-                            </div>
-
-                            <Link
-                                to="/profile"
-                                className="hidden sm:flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/5 hover:border-[var(--text-accent)]/50 hover:bg-white/5 transition-all duration-500 cursor-pointer group btn-cinematic"
-                                title="View Profile"
-                            >
-                                <div className="relative">
-                                    <div className="w-9 h-9 rounded-full bg-[var(--bg-accent)] flex items-center justify-center text-[var(--text-on-accent)] font-black shadow-lg shadow-[var(--bg-accent)]/20 ring-2 ring-white/10 group-hover:scale-110 transition-transform">
-                                        {role === 'teacher' ? <UserCheck size={18} /> : role === 'student' ? <GraduationCap size={18} /> : role === 'admin' ? <ShieldCheck size={18} /> : <User size={18} />}
-                                    </div>
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[var(--bg-secondary)] shadow-sm animate-pulse" />
-                                </div>
-                                <div className="text-left">
-                                    <p className="text-[11px] font-black text-[var(--text-primary)] leading-none group-hover:text-[var(--text-accent)] transition-colors">{user?.username}</p>
-                                    <p className="text-[9px] text-[var(--text-accent)] font-black uppercase mt-1 tracking-[0.2em] opacity-60">{role}</p>
-                                </div>
-                            </Link>
+                            <StatusBadge label="Live" />
+                            <UserProfileCard user={user} role={role} />
 
                             <button
                                 onClick={handleLogout}
@@ -146,7 +128,7 @@ export default function DashboardLayout({ children, role }) {
 
             {/* Bottom Branding */}
             <footer className="py-8 text-center text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.5em] opacity-30 relative z-10">
-                &copy; {new Date().getFullYear()} KMIT Educational Arena • Zero-Trust Assessment Infrastructure
+            © {new Date().getFullYear()} KMIT Quiz Platform — All rights reserved
             </footer>
         </div>
     );

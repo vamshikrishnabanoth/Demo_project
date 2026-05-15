@@ -116,10 +116,10 @@ export default function StudentDashboard() {
                             <Trophy size={48} className="relative z-10" />
                         </motion.div>
                         <h1 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                            ENTER THE <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">ARENA</span>
+                            ENTER THE <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">QUIZ CODE</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] max-w-sm mx-auto opacity-40">
-                            Neural Authentication Protocol Required
+                            Type your 6-digit quiz code to join
                         </p>
                     </div>
 
@@ -216,7 +216,7 @@ export default function StudentDashboard() {
                                 <Loader2 size={28} className="animate-spin" />
                             ) : (
                                 <>
-                                    SYNC INTERFACE
+                                    JOIN QUIZ
                                     <Zap size={24} fill="currentColor" className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
                                 </>
                             )}
@@ -230,9 +230,9 @@ export default function StudentDashboard() {
                                     <ShieldCheck size={20} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-accent)] mb-2">Protocol Verified</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-accent)] mb-2">Monitored Session</p>
                                     <p className="text-white/30 font-black text-[11px] uppercase tracking-wider leading-relaxed">
-                                        Active session monitoring enabled. Unauthorized interface switching is strictly logged.
+                                        All activity is logged. Tab switching during a quiz is tracked.
                                     </p>
                                 </div>
                             </div>

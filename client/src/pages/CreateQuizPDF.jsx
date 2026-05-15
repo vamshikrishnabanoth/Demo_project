@@ -157,7 +157,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Upload, Loader2, CheckCircle, FilePlus, Hash, Activity } from 'lucide-react';
+import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity } from 'lucide-react';
+import FileUploadLoader from '../components/loaders/FileUploadLoader';
+import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
 
 export default function CreateQuizPDF() {
     const [file, setFile] = useState(null);
@@ -201,6 +203,8 @@ export default function CreateQuizPDF() {
             setLoading(false);
         }
     };
+
+    if (loading) return <AIThinkingLoader message="Analyzing Document..." />;
 
     return (
         <DashboardLayout role="teacher">

@@ -4,7 +4,7 @@ import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import {
-    Users, Shield, Ban, Settings, Activity, LayoutDashboard, LogOut,
+    Users, Shield, Ban, Settings, Activity, LayoutDashboard,
     Plus, Trash2, Edit3, X, Check, Eye, EyeOff, Search,
     RefreshCw, UserCheck, GraduationCap, ShieldCheck, AlertTriangle,
     ChevronDown, Save, Loader2
@@ -70,8 +70,8 @@ function UserModal({ user, onClose, onSave, isNew }) {
             <div className="bg-[#1e293b] border border-white/10 rounded-3xl w-full max-w-md shadow-2xl">
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-[#ff6b00]/15 rounded-xl">
-                            {isNew ? <Plus size={20} className="text-[#ff6b00]" /> : <Edit3 size={20} className="text-[#ff6b00]" />}
+                        <div className="p-2.5 bg-[var(--bg-accent)]/15 rounded-xl">
+                            {isNew ? <Plus size={20} className="text-[var(--bg-accent)]" /> : <Edit3 size={20} className="text-[var(--bg-accent)]" />}
                         </div>
                         <div>
                             <h2 className="text-white font-black text-lg">{isNew ? 'Provision New User' : 'Edit User'}</h2>
@@ -90,14 +90,14 @@ function UserModal({ user, onClose, onSave, isNew }) {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">Name / Username *</label>
-                            <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff6b00]/50 transition"
+                            <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[var(--bg-accent)]/50 transition"
                                 placeholder="e.g. John Doe" value={form.username}
                                 onChange={e => setForm(f => ({ ...f, username: e.target.value }))} />
                         </div>
                         <div>
                             <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">Role *</label>
                             <div className="relative">
-                                <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#ff6b00]/50 transition appearance-none cursor-pointer"
+                                <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--bg-accent)]/50 transition appearance-none cursor-pointer"
                                     value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
                                     <option value="student" className="bg-[#1e293b]">Student</option>
                                     <option value="teacher" className="bg-[#1e293b]">Teacher</option>
@@ -110,7 +110,7 @@ function UserModal({ user, onClose, onSave, isNew }) {
                     </div>
                     <div>
                         <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">Email / Roll Number *</label>
-                        <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff6b00]/50 transition"
+                        <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[var(--bg-accent)]/50 transition"
                             placeholder="admin@kmit.in" value={form.email}
                             onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                     </div>
@@ -120,7 +120,7 @@ function UserModal({ user, onClose, onSave, isNew }) {
                         </label>
                         <div className="relative">
                             <input type={showPw ? 'text' : 'password'}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff6b00]/50 transition"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[var(--bg-accent)]/50 transition"
                                 placeholder="••••••••" value={form.password}
                                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
                             <button onClick={() => setShowPw(p => !p)}
@@ -134,7 +134,7 @@ function UserModal({ user, onClose, onSave, isNew }) {
                 <div className="flex gap-3 p-6 pt-0">
                     <button onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-white/10 text-slate-400 font-bold text-sm hover:bg-white/5 transition">Cancel</button>
                     <button onClick={handleSubmit} disabled={loading}
-                        className="flex-1 px-4 py-3 rounded-xl bg-[#ff6b00] text-white font-black text-sm hover:bg-[#e55f00] transition shadow-lg shadow-[#ff6b00]/20 disabled:opacity-60 flex items-center justify-center gap-2">
+                        className="flex-1 px-4 py-3 rounded-xl bg-[var(--bg-accent)] text-white font-black text-sm hover:bg-[var(--bg-accent-hover)] transition shadow-lg shadow-[var(--bg-accent)]/20 disabled:opacity-60 flex items-center justify-center gap-2">
                         {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         {isNew ? 'Create User' : 'Save Changes'}
                     </button>
@@ -144,6 +144,8 @@ function UserModal({ user, onClose, onSave, isNew }) {
     );
 }
 
+
+import DashboardLayout from '../components/DashboardLayout';
 
 export default function AdminDashboard() {
     const { user, logout }  = useContext(AuthContext);
@@ -158,14 +160,8 @@ export default function AdminDashboard() {
     const [roleFilter, setRoleFilter] = useState('all');
     const [modal, setModal]         = useState(null);
 
-    const handleLogout = async () => {
-        const result = await showConfirm('End Session?', 'Are you sure you want to log out of the admin arena?');
-        if (result.isConfirmed) {
-            logout();
-            showSuccess('Logged Out', 'System access terminated safely.');
-            navigate('/login');
-        }
-    };
+    // ... handleStatusChange, fetchStats, fetchUsers, etc ...
+    // (I'll keep the existing logic, just changing the return structure)
 
     // Listen for global status updates
     useEffect(() => {
@@ -233,65 +229,9 @@ export default function AdminDashboard() {
             && (roleFilter === 'all' || u.role === roleFilter);
     });
 
-    const navLinks = [
-        { name: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
-        { name: 'Users',     path: '/admin/users',     icon: Users },
-    ];
-
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-300">
-            {/* Navbar */}
-            <header className="bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border-color)] sticky top-0 z-50 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-20">
-                        <div className="flex items-center gap-8">
-                            <Link to="/admin-dashboard" className="flex items-center gap-3">
-                                <div className="bg-white p-1 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.1)] overflow-hidden">
-                                    <img src="/logo.png" alt="KMIT Logo" className="h-10 w-auto object-contain" />
-                                </div>
-                                <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tight italic"><span className="text-[var(--text-accent)]">Kahoot</span></h1>
-                            </Link>
-                            <nav className="hidden md:flex space-x-2">
-                                {navLinks.map(link => {
-                                    const Icon = link.icon;
-                                    const active = location.pathname === link.path;
-                                    return (
-                                        <Link key={link.path} to={link.path}
-                                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300
-                                                ${active ? 'bg-[var(--bg-accent)] text-white shadow-lg shadow-[var(--bg-accent)]/20' : 'text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]'}`}>
-                                            <Icon size={18} /> {link.name}
-                                        </Link>
-                                    );
-                                })}
-                            </nav>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Link to="/profile" className="hidden sm:flex items-center gap-3 px-4 py-2 bg-[var(--glass-bg)] rounded-2xl border border-[var(--border-color)] hover:border-[var(--text-accent)]/50 transition-all group">
-                                <div className="w-8 h-8 rounded-full bg-[var(--bg-accent)] flex items-center justify-center text-white font-black ring-2 ring-white/10 shadow-lg shadow-[var(--bg-accent)]/20 group-hover:scale-110 transition-transform">
-                                    <ShieldCheck size={16} strokeWidth={2.5} />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-black text-[var(--text-primary)] leading-none group-hover:text-[var(--text-accent)] transition-colors">{user?.username}</p>
-                                    <p className="text-[10px] text-[var(--text-accent)] font-bold uppercase mt-1 tracking-widest">Admin</p>
-                                </div>
-                            </Link>
-                            <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wide">Live</span>
-                            </div>
-                            <button onClick={handleLogout}
-                                className="p-3 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-400/10 rounded-2xl transition-all border border-transparent hover:border-red-400/20"
-                                title="Logout">
-                                <LogOut size={22} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-                {/* ── DASHBOARD TAB ── */}
+        <DashboardLayout role="admin">
+            {/* ── DASHBOARD TAB ── */}
                 {!isUsersTab && (
                     <div className="space-y-8">
                         <div>
@@ -501,15 +441,9 @@ export default function AdminDashboard() {
                         <p className="text-[var(--text-secondary)] text-xs text-right opacity-60">Showing {filtered.length} of {users.length} users</p>
                     </div>
                 )}
-            </main>
-
-            <footer className="py-6 text-center text-[var(--text-secondary)] text-xs font-medium border-t border-[var(--border-color)]">
-                © {new Date().getFullYear()} KMIT Educational Arena. Admin Console.
-            </footer>
-
-
+            
             {modal?.type === 'create' && <UserModal isNew user={null} onClose={() => setModal(null)} onSave={handleSave} />}
             {modal?.type === 'edit'   && <UserModal isNew={false} user={modal.user} onClose={() => setModal(null)} onSave={handleSave} />}
-        </div>
+        </DashboardLayout>
     );
 }

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
-import PremiumLoading from '../components/PremiumLoading';
+import ResultsLoader from '../components/loaders/ResultsLoader';
 import DashboardLayout from '../components/DashboardLayout';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Medal, Play, TrendingUp, CheckCircle, XCircle, Minus, Star, Target } from 'lucide-react';
@@ -60,7 +60,7 @@ export default function Leaderboard() {
         };
     }, [quizId, user]);
 
-    if (loading) return <PremiumLoading message="Finalizing Rankings..." />;
+    if (loading) return <ResultsLoader message="Finalizing Rankings..." />;
 
     const totalPages = Math.max(1, Math.ceil(results.length / studentsPerPage));
     const paginatedResults = results.slice(
@@ -76,7 +76,7 @@ export default function Leaderboard() {
         const percentile = totalParticipants > 1 ? (1 - (userRank - 1) / (totalParticipants - 1)) * 100 : 100;
 
         const getPerformanceZone = () => {
-            if (percentile >= 90) return { label: 'Top 10%', color: 'text-yellow-400', bg: 'bg-yellow-400/10', border: 'border-yellow-400/20', icon: Trophy, message: 'Exceptional performance! You mastered this arena.' };
+            if (percentile >= 90) return { label: 'Top 10%', color: 'text-[var(--text-accent)]', bg: 'bg-[var(--text-accent)]/10', border: 'border-[var(--text-accent)]/20', icon: Trophy, message: 'Exceptional performance! You mastered this arena.' };
             if (percentile >= 75) return { label: 'Top 25%', color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/20', icon: Star, message: "Great job! You're among the elite performers." };
             if (userScore > (stats?.averageScore || 0)) return { label: 'Above Average', color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20', icon: TrendingUp, message: 'Solid work! You performed better than most.' };
             return { label: 'Average', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20', icon: Target, message: "Good effort! Keep pushing forward." };
@@ -112,7 +112,7 @@ export default function Leaderboard() {
                                 #{userRank}
                             </h2>
                             <p className="text-white/20 font-black uppercase tracking-[0.3em] text-xs">
-                                out of {totalParticipants} system identities
+                                out of {totalParticipants} students
                             </p>
                         </div>
 
@@ -122,12 +122,12 @@ export default function Leaderboard() {
 
                         <div className="grid grid-cols-2 gap-8 w-full max-w-lg">
                             <div className="bg-white/[0.03] border border-white/5 p-8 rounded-[2.5rem] text-center btn-cinematic">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mb-2">Combat Efficiency</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mb-2">Your Score</p>
                                 <p className="text-4xl font-black italic text-[var(--text-accent)]">{userScore}</p>
                                 <p className="text-[10px] font-black text-white/20 uppercase mt-1">/ {maxScore} points</p>
                             </div>
                             <div className="bg-white/[0.03] border border-white/5 p-8 rounded-[2.5rem] text-center btn-cinematic">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mb-2">Arena Ranking</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mb-2">Your Rank</p>
                                 <p className="text-4xl font-black italic text-white">#{userRank}</p>
                                 <p className="text-[10px] font-black text-white/20 uppercase mt-1">Global percentile</p>
                             </div>
@@ -136,12 +136,12 @@ export default function Leaderboard() {
                 </div>
 
                 <div className="flex justify-center pt-4">
-                    <button
-                        onClick={() => navigate('/student-dashboard')}
-                        className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-16 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-xl btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30"
-                    >
-                        Return to Academy
-                    </button>
+                        <button
+                            onClick={() => navigate('/student-dashboard')}
+                            className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-16 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-xl btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30"
+                        >
+                            Back to Dashboard
+                        </button>
                 </div>
             </div>
         );
@@ -156,17 +156,17 @@ export default function Leaderboard() {
                             Arena <span className="text-[var(--text-accent)] drop-shadow-[0_0_15px_var(--bg-accent-glow)]">Standings</span>
                         </h1>
                         <p className="text-white/20 font-black uppercase tracking-[0.5em] text-[10px]">
-                            {results.length} Active Participants • {quiz?.questions?.length || 0} Evaluated Parameters
+                            {results.length} Students • {quiz?.questions?.length || 0} Questions
                         </p>
                     </div>
 
                     <div className="glass-panel rounded-[3.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
                         <div className="px-10 py-8 bg-white/[0.05] border-b border-white/5 flex items-center gap-6">
                             <div className="w-16 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Rank</div>
-                            <div className="w-56 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Operator</div>
-                            <div className="flex-1 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Neural Answer Mapping</div>
-                            <div className="w-24 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Efficiency</div>
-                            <div className="w-28 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Status</div>
+                            <div className="w-56 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Student</div>
+                            <div className="flex-1 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Answers</div>
+                            <div className="w-24 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Score</div>
+                            <div className="w-28 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Correct / Wrong</div>
                         </div>
 
                         <div className="divide-y divide-white/5 bg-white/[0.02]">
@@ -182,7 +182,7 @@ export default function Leaderboard() {
                                             className={`px-10 py-7 flex items-center gap-6 hover:bg-white/[0.05] transition-all duration-500 group ${rank <= 3 ? 'bg-[var(--bg-accent)]/5' : ''}`}
                                         >
                                             <div className="w-16 text-center">
-                                                {rank === 1 ? <Trophy size={34} className="text-yellow-400 mx-auto drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" /> :
+                                                {rank === 1 ? <Trophy size={34} className="text-[var(--text-accent)] mx-auto drop-shadow-[0_0_15px_var(--bg-accent-glow)]" /> :
                                                  rank === 2 ? <Medal size={30} className="text-slate-200 mx-auto drop-shadow-[0_0_10px_rgba(226,232,240,0.4)]" /> :
                                                  rank === 3 ? <Medal size={30} className="text-amber-500 mx-auto drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]" /> :
                                                  <div className="flex flex-col items-center justify-center text-white/20 group-hover:text-white/60 transition-all">
@@ -221,7 +221,7 @@ export default function Leaderboard() {
                                             </div>
 
                                             <div className="w-24 text-center">
-                                                <span className="text-3xl font-black text-[var(--text-accent)] italic tracking-tighter">{res.currentScore}</span>
+                                                <span className="text-3xl font-black text-[var(--text-accent)] italic tracking-tighter">{res.currentScore} pts</span>
                                             </div>
 
                                             <div className="w-28 flex items-center justify-center gap-3">
@@ -244,10 +244,10 @@ export default function Leaderboard() {
 
                     <div className="flex justify-center gap-8 pt-6">
                         <button onClick={() => navigate('/teacher-dashboard')} className="bg-white/5 border border-white/5 text-white/50 px-12 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-lg btn-cinematic hover:text-white hover:border-white/20 transition-all">
-                            Terminal
+                            Back to Dashboard
                         </button>
                         <button onClick={() => window.location.reload()} className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-16 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-xl btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30">
-                            Sync Arena
+                            Refresh Results
                         </button>
                     </div>
                 </div>

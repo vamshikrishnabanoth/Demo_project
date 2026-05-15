@@ -328,12 +328,12 @@ export default function LiveRoomTeacher() {
                     <div className="w-24 h-24 bg-indigo-100 rounded-[2rem] flex items-center justify-center mx-auto">
                         <Trophy className="text-indigo-600" size={48} />
                     </div>
-                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-gray-900">Quiz <span className="text-[#ff6b00]">Ended</span></h1>
+                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-gray-900">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
                     <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={() => navigate(`/leaderboard/${quiz.id}`)}
-                            className="bg-[#ff6b00] text-white px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:scale-105 transition shadow-xl shadow-orange-500/20 active:scale-95 border-b-4 border-orange-700"
+                            className="bg-[var(--bg-accent)] text-white px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:scale-105 transition shadow-xl shadow-[var(--bg-accent)]/20 active:scale-95 border-b-4 border-orange-700"
                         >
                             View Leaderboard
                         </button>
@@ -360,18 +360,18 @@ export default function LiveRoomTeacher() {
                             <div className="inline-block px-6 py-2 bg-white/10 rounded-full border border-white/20">
                                 <span className="text-indigo-200 font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
                             </div>
-                            <h1 className="text-7xl font-black italic uppercase tracking-tighter">Waiting for <span className="text-[#ff6b00]">Participants</span></h1>
+                            <h1 className="text-7xl font-black italic uppercase tracking-tighter">Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
                             <div className="flex flex-col items-center gap-4">
                                 <p className="text-indigo-300 font-bold uppercase tracking-widest text-lg">Join Code</p>
                                 <div onClick={copyCode} className="bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all rounded-3xl p-10 cursor-pointer group active:scale-95">
-                                    <p className="text-8xl font-black tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[#ff6b00] decoration-8 underline-offset-[16px]">{joinCode}</p>
+                                    <p className="text-8xl font-black tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-8 underline-offset-[16px]">{joinCode}</p>
                                 </div>
                             </div>
                             <div className="pt-10 flex flex-col items-center gap-6">
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex items-center gap-10 bg-[#ff6b00] text-white px-24 py-10 rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[#ff6b00]/30 font-black text-5xl italic uppercase tracking-tighter active:scale-95 border-b-[12px] border-[#cc5500] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group flex items-center gap-10 bg-[var(--bg-accent)] text-white px-24 py-10 rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-5xl italic uppercase tracking-tighter active:scale-95 border-b-[12px] border-[#cc5500] disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <Play size={60} fill="currentColor" className="group-hover:translate-x-2 transition-transform" />
                                     START GAME
@@ -381,7 +381,7 @@ export default function LiveRoomTeacher() {
                         </div>
                         {/* Background Decorations */}
                         <div className="absolute -top-20 -left-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-[100px]"></div>
-                        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[#ff6b00]/10 rounded-full blur-[100px]"></div>
+                        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[var(--bg-accent)]/10 rounded-full blur-[100px]"></div>
                     </div>
 
                     {/* Participants in waiting room */}
@@ -440,7 +440,7 @@ export default function LiveRoomTeacher() {
                     {/* Join Code Hub */}
                     <div onClick={copyCode} className="bg-indigo-900 rounded-[3rem] p-8 text-white shadow-2xl flex flex-col items-center justify-center min-w-[280px] cursor-pointer group hover:bg-indigo-950 transition-all active:scale-95 border-b-[8px] border-indigo-950">
                         <p className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] mb-2">ACCESS CODE</p>
-                        <p className="text-6xl font-black tracking-[0.1em] italic text-[#ff6b00] group-hover:scale-110 transition-transform">{joinCode}</p>
+                        <p className="text-6xl font-black tracking-[0.1em] italic text-[var(--text-accent)] group-hover:scale-110 transition-transform">{joinCode}</p>
                         <p className="mt-4 flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-widest opacity-60">
                             <Copy size={12} /> CLICK TO SYNC
                         </p>
@@ -472,7 +472,7 @@ export default function LiveRoomTeacher() {
 
                         <button
                             onClick={handleIncreaseTime}
-                            className="bg-[#ff6b00] text-white px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-orange-500/20 active:scale-95 flex items-center gap-2 text-sm border-b-2 border-orange-700"
+                            className="bg-[var(--bg-accent)] text-white px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-[var(--bg-accent)]/20 active:scale-95 flex items-center gap-2 text-sm border-b-2 border-orange-700"
                         >
                             <Clock size={18} /> +30 SEC
                         </button>
@@ -497,7 +497,7 @@ export default function LiveRoomTeacher() {
 
                         {/* Participants Count */}
                         <div className="flex items-center gap-2 bg-white/5 px-4 py-3 rounded-xl border border-white/10">
-                            <Users size={16} className="text-[#ff6b00]" />
+                            <Users size={16} className="text-[var(--text-accent)]" />
                             <span className="text-xs font-black uppercase tracking-widest text-white">{participants.length} Online</span>
                         </div>
                     </div>
@@ -509,7 +509,7 @@ export default function LiveRoomTeacher() {
                     <div className="bg-[#0f172a] px-8 py-5 flex items-center justify-between">
                         <div>
                             <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">
-                                Live <span className="text-[#ff6b00]">Student Tracker</span>
+                                Live <span className="text-[var(--text-accent)]">Student Tracker</span>
                             </h2>
                             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">
                                 {allStudents.length} Total · {participants.length} Connected · Page {currentPage}/{totalPages}
@@ -636,7 +636,7 @@ export default function LiveRoomTeacher() {
 
                                         {/* Score */}
                                         <div className="w-20 text-center">
-                                            <span className="text-lg font-black text-[#ff6b00] italic">{score}</span>
+                                            <span className="text-lg font-black text-[var(--text-accent)] italic">{score}</span>
                                             <span className="text-[10px] text-slate-400 font-bold ml-0.5">pts</span>
                                         </div>
                                     </div>
@@ -669,7 +669,7 @@ export default function LiveRoomTeacher() {
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`w-10 h-10 rounded-xl font-black text-sm transition shadow-sm ${page === currentPage
-                                            ? 'bg-[#ff6b00] text-white shadow-orange-500/20'
+                                            ? 'bg-[var(--bg-accent)] text-white shadow-[var(--bg-accent)]/20'
                                             : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                                             }`}
                                     >

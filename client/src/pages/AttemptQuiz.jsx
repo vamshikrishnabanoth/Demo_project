@@ -4,7 +4,8 @@ import api from '../utils/api';
 import socket from '../utils/socket';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
-import PremiumLoading from '../components/PremiumLoading';
+import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
+import ResultsLoader from '../components/loaders/ResultsLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AttemptQuiz() {
@@ -518,9 +519,9 @@ export default function AttemptQuiz() {
         }
     };
 
-    if (loading) return <PremiumLoading message="Initializing Arena..." />;
+    if (loading) return <WaitingRoomLoader message="Initializing Arena..." />;
 
-    if (waitingForState) return <PremiumLoading message="Synchronizing Session..." />;
+    if (waitingForState) return <ResultsLoader message="Synchronizing Session..." />;
 
     // Mission Complete: student finished all live quiz questions — wait for quiz_ended
     if (missionComplete && quiz?.isLive) {
