@@ -44,13 +44,17 @@ router.post('/create', auth, upload.single('file'), quizController.createQuiz);
 // @desc    Join a quiz by code
 router.post('/join', auth, quizController.joinByCode);
 
+// @route   POST api/quiz/submit
+// @desc    Submit a quiz attempt
+router.post('/submit', auth, quizController.submitAttempt);
+
+// @route   POST api/quiz/generate
+// @desc    Generate quiz questions without saving (for review)
+router.post('/generate', auth, upload.single('file'), quizController.generateQuizQuestions);
+
 // @route   GET api/quiz/my-quizzes
 // @desc    Get all quizzes created by current user
 router.get('/my-quizzes', auth, quizController.getMyQuizzes);
-
-// @route   PUT api/quiz/publish/:id
-// @desc    Publish/Unpublish a quiz
-router.put('/publish/:id', auth, quizController.publishQuiz);
 
 // @route   GET api/quiz/live
 // @desc    Get all active quizzes for students
@@ -60,32 +64,35 @@ router.get('/live', auth, quizController.getLiveQuizzes);
 // @desc    Get performance stats for teacher
 router.get('/stats', auth, quizController.getTeacherStats);
 
+// @route   GET api/quiz/leaderboard/:quizId
+// @desc    Get leaderboard for a quiz
+router.get('/leaderboard/:quizId', auth, quizController.getLeaderboard);
+
+// @route   GET api/quiz/history/student
+// @desc    Get current student's quiz history (completed and missed)
+router.get('/history/student', auth, quizController.getStudentHistory);
+
+// @route   GET api/quiz/result/:quizId
+// @desc    Get the latest completed result for a quiz (student review)
+// NOTE: Must be above the /:id wildcard route or Express will match "result" as an id!
+router.get('/result/:quizId', auth, quizController.getLatestResult);
+
+// ── Wildcard param routes – must come LAST so specific paths above are matched first ──
+
 // @route   GET api/quiz/:id
 // @desc    Get quiz by ID
 router.get('/:id', auth, quizController.getQuizById);
 
-// @route   POST api/quiz/submit
-// @desc    Submit a quiz attempt
-router.post('/submit', auth, quizController.submitAttempt);
+// @route   PUT api/quiz/publish/:id
+// @desc    Publish/Unpublish a quiz
+router.put('/publish/:id', auth, quizController.publishQuiz);
 
 // @route   DELETE api/quiz/:id
 // @desc    Delete a quiz
 router.delete('/:id', auth, quizController.deleteQuiz);
 
-// @route   GET api/quiz/leaderboard/:quizId
-// @desc    Get leaderboard for a quiz
-router.get('/leaderboard/:quizId', auth, quizController.getLeaderboard);
-
-// @route   GET api/quiz/history
-// @desc    Get current student's quiz history (completed and missed)
-router.get('/history/student', auth, quizController.getStudentHistory);
-
 // @route   PUT api/quiz/:id
 // @desc    Update a quiz
 router.put('/:id', auth, quizController.updateQuiz);
-
-// @route   POST api/quiz/generate
-// @desc    Generate quiz questions without saving (for review)
-router.post('/generate', auth, upload.single('file'), quizController.generateQuizQuestions);
 
 module.exports = router;
