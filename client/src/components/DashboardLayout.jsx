@@ -85,15 +85,19 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* User Actions */}
                         <div className="flex items-center gap-4">
-                            <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+                            <Link
+                                to="/profile"
+                                className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-[#ff6b00]/30 transition-all cursor-pointer group"
+                                title="View Profile"
+                            >
                                 <div className="w-8 h-8 rounded-full bg-[#ff6b00] flex items-center justify-center text-white font-black shadow-sm ring-2 ring-white/10">
                                     {user?.username?.[0]?.toUpperCase()}
                                 </div>
                                 <div className="text-left">
-                                    <p className="text-xs font-black text-white leading-none">{user?.username}</p>
+                                    <p className="text-xs font-black text-white leading-none group-hover:text-[#ff6b00] transition-colors">{user?.username}</p>
                                     <p className="text-[10px] text-[#ff6b00] font-bold uppercase mt-1 tracking-widest">{role}</p>
                                 </div>
-                            </div>
+                            </Link>
 
                             <button
                                 onClick={handleLogout}
