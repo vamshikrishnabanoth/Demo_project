@@ -5,7 +5,10 @@ const quizController = require('../controllers/quizController');
 const multer = require('multer');
 const path = require('path');
 
-// Configure disk storage for the AI service to pick up files
+const rateLimit = require('express-rate-limit');
+
+const { check, validationResult } = require('express-validator');
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
@@ -16,21 +19,47 @@ const storage = multer.diskStorage({
     }
 });
 
+// File upload security: Strict types and size limits
 const upload = multer({ 
     storage: storage,
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB limit
+    },
     fileFilter: (req, file, cb) => {
         const allowedTypes = [
             '.pdf', '.docx', '.pptx', '.jpg', '.jpeg', '.png', 
-            '.mp3', '.wav', '.m4a', '.webm', '.ogg'
+            '.mp3', '.wav', '.m4a', '.webm', '.ogg', '.txt'
         ];
         const ext = path.extname(file.originalname).toLowerCase();
         if (allowedTypes.includes(ext)) {
             cb(null, true);
         } else {
-            cb(null, true); 
+            cb(new Error('Invalid file type. Only documents, images, and audio files are allowed.'), false);
         }
     }
 });
+
+// Rate limiter for joining quizzes (prevents brute force on codes)
+const joinLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: 'Too many attempts to join quizzes. Please try again later.'
+});
+
+const quizValidation = [
+    check('title', 'Title must be at least 3 characters').optional().isLength({ min: 3 }).trim().escape(),
+    check('questionCount', 'Question count must be between 1 and 50').optional().isInt({ min: 1, max: 50 }),
+    check('difficulty', 'Invalid difficulty').optional().isIn(['Easy', 'Medium', 'Hard']),
+    check('timerPerQuestion', 'Timer must be between 5 and 300 seconds').optional().isInt({ min: 5, max: 300 }),
+];
+
+const validate = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+};
 
 // @route   POST api/quiz/generate-voice
 // @desc    Transcribe audio and generate quiz questions
@@ -38,11 +67,11 @@ router.post('/generate-voice', auth, upload.single('file'), quizController.gener
 
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
-router.post('/create', auth, upload.single('file'), quizController.createQuiz);
+router.post('/create', auth, upload.single('file'), quizValidation, validate, quizController.createQuiz);
 
 // @route   POST api/quiz/join
 // @desc    Join a quiz by code
-router.post('/join', auth, quizController.joinByCode);
+router.post('/join', auth, joinLimiter, quizController.joinByCode);
 
 // @route   POST api/quiz/submit
 // @desc    Submit a quiz attempt
@@ -50,7 +79,7 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions without saving (for review)
-router.post('/generate', auth, upload.single('file'), quizController.generateQuizQuestions);
+router.post('/generate', auth, upload.single('file'), quizValidation, validate, quizController.generateQuizQuestions);
 
 // @route   GET api/quiz/my-quizzes
 // @desc    Get all quizzes created by current user
@@ -59,6 +88,10 @@ router.get('/my-quizzes', auth, quizController.getMyQuizzes);
 // @route   GET api/quiz/live
 // @desc    Get all active quizzes for students
 router.get('/live', auth, quizController.getLiveQuizzes);
+
+// @route   GET api/quiz/available
+// @desc    Get all available quizzes for the assessment arena
+router.get('/available', auth, quizController.getLiveQuizzes);
 
 // @route   GET api/quiz/stats
 // @desc    Get performance stats for teacher

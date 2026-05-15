@@ -1193,13 +1193,13 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
     return (
         <div className="space-y-8">
             {/* Format Guide */}
-            <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-3xl p-8">
+            <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-3xl p-8 premium-glass">
                 <div className="flex items-center gap-3 mb-4">
                     <FileText size={20} className="text-indigo-400" />
                     <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">AIKEN Format Guide</span>
                 </div>
-                <pre className="text-slate-300 text-sm font-mono leading-loose whitespace-pre-wrap">{`What is the capital of France?\nA. Berlin\nB. Paris\nC. Madrid\nD. Rome\nANSWER: B\n\nWhich planet is closest to the Sun?\nA. Venus\nB. Earth\nC. Mercury\nD. Mars\nANSWER: C`}</pre>
-                <p className="text-slate-500 text-xs font-bold mt-4 uppercase tracking-wider">
+                <pre className="text-[var(--text-secondary)] text-sm font-mono leading-loose whitespace-pre-wrap">{`What is the capital of France?\nA. Berlin\nB. Paris\nC. Madrid\nD. Rome\nANSWER: B\n\nWhich planet is closest to the Sun?\nA. Venus\nB. Earth\nC. Mercury\nD. Mars\nANSWER: C`}</pre>
+                <p className="text-[var(--text-secondary)] text-xs font-bold mt-4 uppercase tracking-wider opacity-60">
                     • One question per block • Separate blocks with a blank line • ANSWER: uses the option letter
                 </p>
             </div>
@@ -1210,8 +1210,8 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`relative border-4 border-dashed rounded-[2.5rem] p-12 text-center cursor-pointer transition-all duration-300
-                    ${dragOver ? 'border-[#ff6b00] bg-[#ff6b00]/10 scale-[1.01]' : 'border-white/10 bg-white/2 hover:border-[#ff6b00]/40 hover:bg-white/5'}`}
+                className={`relative border-4 border-dashed rounded-[2.5rem] p-12 text-center cursor-pointer transition-all duration-300 glass-panel
+                    ${dragOver ? 'border-[var(--bg-accent)] bg-[var(--bg-accent-glow)] scale-[1.01]' : 'border-[var(--border-color)] hover:border-[var(--bg-accent)]/40 hover:bg-white/5'}`}
             >
                 <input
                     ref={fileInputRef}
@@ -1220,16 +1220,16 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
                     className="hidden"
                     onChange={(e) => handleFile(e.target.files[0])}
                 />
-                <Upload size={48} className={`mx-auto mb-4 transition-colors ${dragOver ? 'text-[#ff6b00]' : 'text-slate-600'}`} />
+                <Upload size={48} className={`mx-auto mb-4 transition-colors ${dragOver ? 'text-[var(--bg-accent)]' : 'text-[var(--text-secondary)] opacity-40'}`} />
                 {fileName ? (
                     <div>
-                        <p className="font-black text-xl text-[#ff6b00] italic uppercase">{fileName}</p>
-                        <p className="text-slate-500 text-sm font-bold mt-1">Click to change file</p>
+                        <p className="font-black text-xl text-[var(--bg-accent)] italic uppercase">{fileName}</p>
+                        <p className="text-[var(--text-secondary)] text-sm font-bold mt-1">Click to change file</p>
                     </div>
                 ) : (
                     <div>
-                        <p className="font-black text-2xl text-white italic uppercase tracking-tight">Drop your AIKEN file here</p>
-                        <p className="text-slate-500 font-bold mt-2">or click to browse — .txt or .aiken files</p>
+                        <p className="font-black text-2xl text-[var(--text-primary)] italic uppercase tracking-tight">Drop your AIKEN file here</p>
+                        <p className="text-[var(--text-secondary)] font-bold mt-2">or click to browse — .txt or .aiken files</p>
                     </div>
                 )}
             </div>
@@ -1254,11 +1254,11 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
                     value={rawText}
                     onChange={handleTextChange}
                     rows={10}
-                    className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/8 focus:border-[#ff6b00] transition-all font-mono text-sm text-slate-300 placeholder:text-slate-700 outline-none resize-none"
+                    className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/8 focus:border-[var(--bg-accent)] transition-all font-mono text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none resize-none input-cinematic"
                     placeholder={"What is the capital of France?\nA. Berlin\nB. Paris\nC. Madrid\nD. Rome\nANSWER: B\n\nNext question here..."}
                 />
                 {rawText && (
-                    <button type="button" onClick={handleClear} className="absolute top-4 right-4 p-2 text-slate-600 hover:text-red-400 transition-colors">
+                    <button type="button" onClick={handleClear} className="absolute top-4 right-4 p-2 text-[var(--text-secondary)] hover:text-red-400 transition-colors">
                         <Trash2 size={16} />
                     </button>
                 )}
@@ -1279,17 +1279,17 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
             {parsed && (
                 <div className="space-y-6">
                     {/* Stats Banner */}
-                    <div className="flex items-center gap-6 bg-white/5 rounded-2xl p-6 border border-white/10">
+                    <div className="flex items-center gap-6 bg-white/5 rounded-2xl p-6 border border-[var(--border-color)] premium-glass">
                         <div className="text-center">
-                            <p className="font-black text-4xl text-[#ff6b00] italic">{parsed.questions.length}</p>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Questions Found</p>
+                            <p className="font-black text-4xl text-[var(--bg-accent)] italic">{parsed.questions.length}</p>
+                            <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Questions Found</p>
                         </div>
                         <div className="w-px h-12 bg-white/10"></div>
                         <div className="text-center">
                             <p className={`font-black text-4xl italic ${parsed.errors.length > 0 ? 'text-red-400' : 'text-green-400'}`}>
                                 {parsed.errors.length}
                             </p>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Errors</p>
+                            <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Errors</p>
                         </div>
                         <div className="flex-1"></div>
                         {parsed.errors.length > 0 && (
@@ -1329,10 +1329,10 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
                                     {parsed.questions.map((q, qi) => (
                                         <div key={qi} className="bg-white/5 border border-white/10 rounded-3xl p-8">
                                             <div className="flex items-start gap-4 mb-6">
-                                                <span className="bg-[#ff6b00]/20 text-[#ff6b00] font-black text-lg w-10 h-10 rounded-xl flex items-center justify-center shrink-0 italic">
+                                                <span className="bg-[var(--bg-accent)]/20 text-[var(--bg-accent)] font-black text-lg w-10 h-10 rounded-xl flex items-center justify-center shrink-0 italic">
                                                     {qi + 1}
                                                 </span>
-                                                <p className="font-bold text-white text-lg leading-snug">{q.questionText}</p>
+                                                <p className="font-bold text-[var(--text-primary)] text-lg leading-snug">{q.questionText}</p>
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 {q.options.map((opt, oi) => (
@@ -1359,7 +1359,7 @@ function AikenUploadPanel({ onQuestionsLoaded }) {
                             <button
                                 type="button"
                                 onClick={handleLoadQuestions}
-                                className="w-full flex items-center justify-center gap-4 bg-[#ff6b00] hover:scale-[1.02] active:scale-95 text-white font-black text-xl italic uppercase tracking-tight p-7 rounded-[2rem] transition-all shadow-2xl shadow-[#ff6b00]/20 border-b-4 border-[#cc5500]"
+                                className="w-full flex items-center justify-center gap-4 bg-[var(--bg-accent)] hover:scale-[1.02] active:scale-95 text-[var(--text-on-accent)] font-black text-xl italic uppercase tracking-tight p-7 rounded-[2rem] transition-all shadow-2xl shadow-[var(--bg-accent-glow)] border-b-4 border-[var(--bg-accent-hover)] btn-cinematic"
                             >
                                 <CheckCircle size={26} />
                                 Load {parsed.questions.length} Question{parsed.questions.length !== 1 ? 's' : ''} into Editor
@@ -1495,8 +1495,8 @@ export default function CreateQuizText() {
         <DashboardLayout role="teacher">
             <div className="max-w-4xl mx-auto pb-20">
                 <div className="mb-12">
-                    <h1 className="text-4xl font-black text-white tracking-tight italic uppercase">
-                        Create <span className="text-[#ff6b00]">New Quiz</span>
+                    <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
+                        Create <span className="text-[var(--bg-accent)]">New Quiz</span>
                     </h1>
                 </div>
 
@@ -1506,7 +1506,7 @@ export default function CreateQuizText() {
                         type="button"
                         onClick={() => setActiveTab('manual')}
                         className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
-                            ${activeTab === 'manual' ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-slate-400 hover:text-white'}`}
+                            ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                     >
                         <Type size={16} />
                         Manual Entry
@@ -1517,7 +1517,7 @@ export default function CreateQuizText() {
                             type="button"
                             onClick={() => setActiveTab('aiken')}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
-                                ${activeTab === 'aiken' ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-slate-400 hover:text-white'}`}
+                                ${activeTab === 'aiken' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                         >
                             <Upload size={16} />
                             Upload AIKEN
@@ -1554,44 +1554,44 @@ export default function CreateQuizText() {
 
                         <form onSubmit={handleSubmit} className="space-y-12">
                             <div className="space-y-8">
-                                <div className="bg-white/5 rounded-[2.5rem] border border-white/10 p-10 ring-1 ring-white/5 w-full">
-                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Quiz Title</label>
+                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-10 ring-1 ring-white/5 w-full glass-panel">
+                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">Quiz Title</label>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/10 focus:border-[#ff6b00] transition-all font-black text-2xl text-white placeholder:text-slate-700 outline-none"
+                                        className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-2xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none input-cinematic"
                                         placeholder="Enter quiz title..."
                                         required
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="bg-white/5 rounded-[2.5rem] border border-white/10 p-10 ring-1 ring-white/5 h-full">
-                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Quiz Mode</label>
+                                    <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-10 ring-1 ring-white/5 h-full glass-panel">
+                                        <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-6">Quiz Mode</label>
                                         <label className="flex items-center gap-4 cursor-pointer group/toggle">
                                             <div className="relative w-16 h-10">
                                                 <input type="checkbox" className="sr-only peer" checked={isAssessment} onChange={(e) => setIsAssessment(e.target.checked)} />
-                                                <div className="w-16 h-10 bg-white/10 peer-checked:bg-[#ff6b00] rounded-full transition-all duration-300 ring-1 ring-white/10 shadow-inner"></div>
+                                                <div className="w-16 h-10 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all duration-300 ring-1 ring-white/10 shadow-inner"></div>
                                                 <div className="absolute left-1 top-1 w-8 h-8 bg-white rounded-full transition-all duration-300 peer-checked:translate-x-6 shadow-lg"></div>
                                             </div>
                                             <div>
-                                                <span className="block font-black text-xl text-white tracking-tighter italic uppercase group-hover/toggle:text-[#ff6b00] transition-colors">Assessment Mode</span>
-                                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Fixed Link • No Timers</span>
+                                                <span className="block font-black text-xl text-[var(--text-primary)] tracking-tighter italic uppercase group-hover/toggle:text-[var(--bg-accent)] transition-colors">Assessment Mode</span>
+                                                <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Fixed Link • No Timers</span>
                                             </div>
                                         </label>
                                     </div>
 
                                     {!isAssessment ? (
-                                        <div className="bg-[#ff6b00] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-[#ff6b00]/20 min-h-[160px]">
+                                        <div className="bg-[var(--bg-accent)] rounded-[2.5rem] p-10 text-[var(--text-on-accent)] relative overflow-hidden shadow-2xl shadow-[var(--bg-accent-glow)] min-h-[160px]">
                                             <div className="relative z-10">
-                                                <label className="flex items-center gap-2 text-[10px] font-black text-white/70 uppercase tracking-widest mb-4">
+                                                <label className="flex items-center gap-2 text-[10px] font-black text-[var(--text-on-accent)] opacity-70 uppercase tracking-widest mb-4">
                                                     <Clock size={16} /> Total Time (Mins)
                                                 </label>
                                                 <input
                                                     type="number" min="1" max="180" value={duration}
                                                     onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
-                                                    className="w-full bg-transparent border-none p-0 font-black text-5xl text-white outline-none focus:ring-0"
+                                                    className="w-full bg-transparent border-none p-0 font-black text-5xl text-[var(--text-on-accent)] outline-none focus:ring-0"
                                                     required
                                                 />
                                             </div>
@@ -1612,7 +1612,7 @@ export default function CreateQuizText() {
 
                             <div className="space-y-12">
                                 {questions.map((q, qIndex) => (
-                                    <div key={qIndex} className="bg-white/5 rounded-[3rem] border border-white/10 p-12 space-y-10 relative group ring-1 ring-white/5 overflow-hidden">
+                                    <div key={qIndex} className="bg-white/5 rounded-[3rem] border border-[var(--border-color)] p-12 space-y-10 relative group ring-1 ring-white/5 overflow-hidden glass-panel">
                                         <div className="absolute top-0 right-0 p-8 flex items-center gap-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                                             <button
                                                 type="button"
@@ -1625,16 +1625,16 @@ export default function CreateQuizText() {
 
                                         <div className="flex flex-col gap-10">
                                             <div className="flex items-center gap-6">
-                                                <div className="bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center text-slate-700 font-black text-2xl group-hover:bg-[#ff6b00] group-hover:text-white transition-all duration-300 shrink-0 border border-white/10 italic">
+                                                <div className="bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-secondary)] font-black text-2xl group-hover:bg-[var(--bg-accent)] group-hover:text-[var(--text-on-accent)] transition-all duration-300 shrink-0 border border-[var(--border-color)] italic">
                                                     {qIndex + 1}
                                                 </div>
                                                 <div className="flex-1">
-                                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Question Text</label>
+                                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-2">Question Text</label>
                                                     <input
                                                         type="text"
                                                         value={q.questionText}
                                                         onChange={(e) => updateQuestion(qIndex, 'questionText', e.target.value)}
-                                                        className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/10 focus:border-[#ff6b00] transition-all font-black text-xl text-white placeholder:text-slate-700 outline-none"
+                                                        className="w-full p-6 bg-white/5 border-2 border-transparent rounded-2xl focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none input-cinematic"
                                                         placeholder="Ask your question here..."
                                                         required
                                                     />
@@ -1691,7 +1691,7 @@ export default function CreateQuizText() {
                                 <button
                                     type="button"
                                     onClick={addQuestion}
-                                    className="w-full flex items-center justify-center gap-4 p-10 rounded-[3rem] border-4 border-dashed border-white/10 text-slate-500 hover:border-[#ff6b00]/50 hover:text-[#ff6b00] transition-all group/addq bg-white/2"
+                                    className="w-full flex items-center justify-center gap-4 p-10 rounded-[3rem] border-4 border-dashed border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--bg-accent)]/50 hover:text-[var(--bg-accent)] transition-all group/addq bg-white/2"
                                 >
                                     <Plus size={32} className="group-hover/addq:scale-125 transition-transform" />
                                     <span className="font-black text-2xl uppercase tracking-widest italic">Add New Question</span>
@@ -1702,7 +1702,7 @@ export default function CreateQuizText() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="group flex items-center gap-6 bg-[#ff6b00] text-white px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[#ff6b00]/20 font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[#cc5500]"
+                                    className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
                                 >
                                     {loading ? <Loader2 className="animate-spin" size={32} /> : <CheckCircle size={32} />}
                                     {loading ? 'PUBLISHING...' : (isAssessment ? 'PUBLISH ASSESSMENT' : 'CREATE LIVE QUIZ')}

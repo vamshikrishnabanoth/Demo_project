@@ -1,12 +1,37 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Type, Book, Cpu, BarChart3, Users, PlayCircle, PlusCircle, Sparkles, X, Mic } from 'lucide-react';
+import { 
+    FileText, Type, Book, Cpu, BarChart3, Users, 
+    Sparkles, X, Mic, Plus, Trophy, Activity, Target, Zap
+} from 'lucide-react';
+
+// CountUp Component for stats
+const CountUp = ({ end, duration = 1 }) => {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const increment = end / (duration * 60);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+                setCount(end);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 1000 / 60);
+        return () => clearInterval(timer);
+    }, [end, duration]);
+    return <span>{count}</span>;
+};
 
 export default function TeacherDashboard() {
     const [stats, setStats] = useState({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
     const [showOptions, setShowOptions] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -15,78 +40,169 @@ export default function TeacherDashboard() {
                 const quizArray = res.data || [];
                 const totalQuizzes = quizArray.length;
                 const totalAttempts = quizArray.reduce((sum, quiz) => sum + (quiz.completionCount || 0), 0);
-                const averageScore = quizArray.length > 0
+                const avg = quizArray.length > 0
                     ? quizArray.reduce((sum, quiz) => sum + (quiz.averageScore || 0), 0) / quizArray.length
                     : 0;
 
-                setStats({ totalQuizzes, totalAttempts, averageScore });
+                setStats({ totalQuizzes, totalAttempts, averageScore: Math.round(avg) });
             } catch (err) {
                 console.error('Error fetching dashboard stats', err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchStats();
     }, []);
 
     const creationOptions = [
-        { title: 'From Text', description: 'Paste text or manual entry', icon: Type, color: 'hover:bg-blue-500', path: '/create-quiz/text' },
-        { title: 'From PDF', description: 'Upload and extract document', icon: FileText, color: 'hover:bg-red-500', path: '/create-quiz/pdf' },
-        { title: 'From Topic', description: 'AI generates from a prompt', icon: Book, color: 'hover:bg-green-500', path: '/create-quiz/topic' },
-        { title: 'From Voice', description: 'Live recording to MCQ', icon: Mic, color: 'hover:bg-purple-500', path: '/create-quiz/voice' }
+        { title: 'Neural Text', description: 'AI processing from raw text', icon: Type, path: '/create-quiz/text' },
+        { title: 'Doc Extractor', description: 'Deep scan PDF parameters', icon: FileText, path: '/create-quiz/pdf' },
+        { title: 'Core Topic', description: 'Generative AI from prompt', icon: Book, path: '/create-quiz/topic' },
+        { title: 'Vocal Input', description: 'Real-time sonic conversion', icon: Mic, path: '/create-quiz/voice' }
+    ];
+
+    const statCards = [
+        { label: 'Active Modules', value: stats.totalQuizzes, icon: FileText, color: 'text-[var(--text-accent)]', glow: 'var(--bg-accent-glow)' },
+        { label: 'Neural Links', value: stats.totalAttempts, icon: Users, color: 'text-blue-400', glow: 'rgba(59,130,246,0.2)' },
+        { label: 'Sync Efficiency', value: stats.averageScore, icon: Target, color: 'text-green-400', suffix: '%', glow: 'rgba(34,197,94,0.2)' }
     ];
 
     return (
         <DashboardLayout role="teacher">
-            <div className="space-y-12 pb-20 relative">
-                {/* Immersive Background Element */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#ff6b00]/5 rounded-full blur-[150px] pointer-events-none -z-10 animate-pulse"></div>
+            <div className="relative min-h-[75vh] flex flex-col items-center py-10 font-inter">
+                
+                <div className="w-full max-w-6xl px-6 relative z-10 space-y-20">
+                    
+                    {/* Header System */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: -30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="text-center space-y-6"
+                    >
+                        <h1 className="text-6xl md:text-7xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                            COMMAND <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">CENTER</span>
+                        </h1>
+                        <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] opacity-40">Architecting Global Intelligence Protocols</p>
+                    </motion.div>
 
-                {/* Hero Section */}
-                <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10">
-                    {!showOptions ? (
-                        <div className="space-y-12 animate-in fade-in zoom-in duration-500">
-                            <button
-                                onClick={() => setShowOptions(true)}
-                                className="group relative bg-[#ff6b00] text-white px-20 py-10 rounded-[3rem] font-black text-4xl italic tracking-tighter hover:scale-105 transition-all shadow-[0_32px_64px_-16px_rgba(255,107,0,0.3)] active:scale-95 flex items-center gap-8 mx-auto overflow-hidden border-4 border-white/20"
+                    {/* Elite Stats Visualization */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {statCards.map((stat, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="glass-panel p-10 rounded-[3rem] border border-white/5 group hover:border-white/10 transition-all duration-500 relative"
                             >
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                <span className="relative">CREATE A QUIZ</span>
-                                <PlusCircle className="relative group-hover:rotate-90 transition-transform duration-500" size={48} />
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="w-full space-y-12 animate-in slide-in-from-bottom-10 fade-in duration-500">
-                            <div className="flex items-center justify-between max-w-4xl mx-auto w-full px-4">
-                                <h2 className="text-4xl font-black text-[#ff6b00] italic tracking-tighter uppercase">Select Your Method</h2>
-                                <button
-                                    onClick={() => setShowOptions(false)}
-                                    className="p-4 bg-white/5 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all ring-1 ring-white/10"
-                                >
-                                    <X size={28} />
-                                </button>
-                            </div>
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-3xl rounded-full -mr-12 -mt-12 group-hover:bg-white/10 transition-colors" />
+                                <div className="flex items-center gap-8 relative z-10">
+                                    <div 
+                                        className={`w-20 h-20 rounded-[1.5rem] bg-white/[0.03] border border-white/10 flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform duration-500`}
+                                        style={{ boxShadow: `inset 0 0 20px ${stat.glow}` }}
+                                    >
+                                        <stat.icon size={36} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">{stat.label}</p>
+                                        <p className="text-4xl font-black text-white italic tracking-tighter">
+                                            <CountUp end={stat.value} />{stat.suffix}
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-4">
-                                {creationOptions.map((option, idx) => {
-                                    const Icon = option.icon;
-                                    return (
-                                        <Link
-                                            key={idx}
-                                            to={option.path}
-                                            className="group bg-white/5 border border-white/10 rounded-[3rem] p-12 hover:border-[#ff6b00]/50 hover:shadow-2xl hover:shadow-[#ff6b00]/10 transition-all duration-300 text-left relative overflow-hidden ring-1 ring-white/5"
+                    {/* Action Matrix */}
+                    <div className="flex flex-col items-center">
+                        <AnimatePresence mode="wait">
+                            {!showOptions ? (
+                                <motion.div
+                                    key="main-action"
+                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 1.1, opacity: 0 }}
+                                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                    className="w-full flex justify-center"
+                                >
+                                    <button
+                                        onClick={() => setShowOptions(true)}
+                                        className="group relative bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-24 py-14 rounded-[4rem] font-black text-5xl italic tracking-tighter hover:scale-105 transition-all duration-700 shadow-[0_30px_60px_var(--bg-accent-glow)] active:scale-95 flex items-center gap-10 overflow-hidden btn-cinematic"
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-700 blur-2xl" />
+                                        <span className="relative z-10">INITIATE CREATION</span>
+                                        <div className="relative z-10 bg-white/20 p-4 rounded-full group-hover:rotate-180 transition-transform duration-700">
+                                            <Plus size={56} />
+                                        </div>
+                                    </button>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="creation-grid"
+                                    initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    className="w-full space-y-12"
+                                >
+                                    <div className="flex items-center justify-between max-w-5xl mx-auto w-full">
+                                        <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">
+                                            CONSTRUCTION <span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">PROTOCOLS</span>
+                                        </h2>
+                                        <button
+                                            onClick={() => setShowOptions(false)}
+                                            className="p-5 bg-white/5 hover:bg-red-500/20 border border-white/5 hover:border-red-500/30 rounded-full text-white/20 hover:text-red-400 transition-all btn-cinematic"
                                         >
-                                            <div className="bg-white/5 w-20 h-20 rounded-3xl flex items-center justify-center text-[#ff6b00] mb-8 group-hover:bg-[#ff6b00] group-hover:text-white transition-all duration-300 shadow-xl ring-1 ring-white/10">
-                                                <Icon size={40} />
-                                            </div>
-                                            <h3 className="text-3xl font-black text-white italic tracking-tighter mb-4 group-hover:text-[#ff6b00] transition-colors uppercase leading-none">{option.title}</h3>
-                                            <p className="text-slate-400 font-bold text-base leading-relaxed">{option.description}</p>
-                                            <div className="mt-10 flex items-center gap-2 text-[#ff6b00] font-black text-sm uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all">
-                                                Launch <Sparkles size={18} />
-                                            </div>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                            <X size={32} />
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto w-full">
+                                        {creationOptions.map((option, idx) => (
+                                            <motion.div
+                                                key={idx}
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                            >
+                                                <Link
+                                                    to={option.path}
+                                                    className="group h-full glass-panel rounded-[3.5rem] p-12 hover:border-[var(--bg-accent)]/50 hover:bg-white/[0.08] transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden btn-cinematic"
+                                                >
+                                                    <div className="bg-white/5 w-24 h-24 rounded-[2rem] flex items-center justify-center text-[var(--text-accent)] mb-10 group-hover:bg-[var(--bg-accent)] group-hover:text-[var(--text-on-accent)] transition-all duration-700 shadow-2xl relative">
+                                                        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
+                                                        <option.icon size={44} className="relative z-10" />
+                                                    </div>
+                                                    <h3 className="text-3xl font-black text-white italic tracking-tighter mb-5 group-hover:text-[var(--text-accent)] transition-colors uppercase leading-none">{option.title}</h3>
+                                                    <p className="text-[var(--text-secondary)] font-black text-[11px] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">{option.description}</p>
+                                                    
+                                                    <div className="mt-10 flex items-center gap-3 text-[var(--text-accent)] font-black text-[10px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                                        ENGAGE MODULE <Zap size={16} fill="currentColor" className="animate-pulse" />
+                                                    </div>
+                                                </Link>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Navigation Sub-Matrix */}
+                    {!showOptions && (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            className="flex flex-wrap justify-center gap-8 pt-10"
+                        >
+                            <Link to="/my-quizzes" className="px-12 py-6 bg-white/[0.03] border border-white/5 rounded-[2rem] text-white/30 font-black italic uppercase tracking-[0.3em] text-[10px] hover:text-white hover:bg-white/10 hover:border-white/20 transition-all btn-cinematic">
+                                ACCESS REPOSITORY
+                            </Link>
+                            <Link to="/performance" className="px-12 py-6 bg-white/[0.03] border border-white/5 rounded-[2rem] text-white/30 font-black italic uppercase tracking-[0.3em] text-[10px] hover:text-white hover:bg-white/10 hover:border-white/20 transition-all btn-cinematic">
+                                NEURAL ANALYTICS
+                            </Link>
+                        </motion.div>
                     )}
                 </div>
             </div>

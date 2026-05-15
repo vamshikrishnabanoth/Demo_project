@@ -1,5 +1,23 @@
 require('dotenv').config();
+
+// Global Error Handlers to catch silent crashes
+process.on('uncaughtException', (err) => {
+    console.error('🔥 UNCAUGHT EXCEPTION:', err);
+    // Note: In production, you might want to gracefully shutdown
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('🌊 UNHANDLED REJECTION at:', promise, 'reason:', reason);
+});
+
 const express = require('express');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
+const morgan = require('morgan');
+
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
@@ -8,6 +26,50 @@ const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 
 const app = express();
+
+// Trust proxy for rate limiting (needed for Render/Vercel)
+app.set('trust proxy', 1);
+
+// --- SECURITY LOGGING ---
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'access.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
+app.use(morgan('dev')); // Keep dev logging for console
+
+// --- SECURITY MIDDLEWARE ---
+
+// 1. CORS - MUST BE FIRST to handle preflights correctly
+app.use(cors({
+    origin: ['https://kmit-khaoot.vercel.app', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token', 'Accept']
+}));
+
+// 2. Set Security HTTP Headers
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
+// 3. Rate Limiting (Brute Force / DOS protection)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again after 15 minutes'
+});
+app.use('/api/', limiter); // Apply to all API routes
+
+// 4. Body Parser with limit
+app.use(express.json({ limit: '10kb' })); 
+
+// 5. Data Sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// 6. Data Sanitization against XSS
+app.use(xss());
+
+// 7. Prevent HTTP Parameter Pollution
+app.use(hpp());
+
 const server = http.createServer(app);
 
 // Ensure uploads directory exists
@@ -18,23 +80,16 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Middleware
-app.use(cors({
-    origin: ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
-}));
-app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/quiz', require('./routes/quiz'));
 app.use('/api/admin', require('./routes/admin'));
 
-// Socket.io Setup
+// Socket.io Setup - Secure CORS
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow all origins for the live app
+        origin: ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'],
         methods: ["GET", "POST"]
     }
 });
@@ -64,8 +119,57 @@ setInterval(() => {
         }
     }
 }, 5000);
+
+// Global map to track user ID to socket IDs (one user can have multiple sockets)
+const userSockets = new Map(); // userId -> Set(socketIds)
+
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
+
+    // Global Identity: When user connects, they identify themselves
+    socket.on('identify', async (userId) => {
+        if (!userId) return;
+        
+        console.log(`User identified: ${userId} for socket ${socket.id}`);
+        
+        // Add to global tracking
+        if (!userSockets.has(userId)) {
+            userSockets.set(userId, new Set());
+        }
+        userSockets.get(userId).add(socket.id);
+        
+        // Store on socket for cleanup
+        socket.userId = userId;
+
+        try {
+            // Update DB if this is their first connection
+            await prisma.user.update({
+                where: { id: userId },
+                data: { isOnline: true }
+            });
+            
+            // Broadcast status change
+            io.emit('user_status_change', { userId, isOnline: true });
+        } catch (err) {
+            console.error('Error updating online status:', err);
+        }
+    });
+
+    socket.on('logout', async (userId) => {
+        if (!userId) return;
+        try {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { isOnline: false }
+            });
+            userSockets.delete(userId);
+            io.emit('user_status_change', { userId, isOnline: false });
+            console.log(`User ${userId} logged out and marked offline`);
+        } catch (err) {
+            console.error('Error on logout status update:', err);
+        }
+    });
+
 
     socket.on('join_room', ({ quizId, user }) => {
         socket.join(quizId);
@@ -665,7 +769,28 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
+        const userId = socket.userId;
+        if (userId && userSockets.has(userId)) {
+            const sockets = userSockets.get(userId);
+            sockets.delete(socket.id);
+            
+            // If no more sockets for this user, mark as offline
+            if (sockets.size === 0) {
+                userSockets.delete(userId);
+                try {
+                    await prisma.user.update({
+                        where: { id: userId },
+                        data: { isOnline: false }
+                    });
+                    io.emit('user_status_change', { userId, isOnline: false });
+                    console.log(`User ${userId} marked global offline`);
+                } catch (err) {
+                    console.error('Error marking user offline:', err);
+                }
+            }
+        }
+
         const info = socketToUser.get(socket.id);
         if (info) {
             const { quizId, username } = info;

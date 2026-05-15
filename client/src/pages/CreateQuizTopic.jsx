@@ -172,59 +172,59 @@ export default function CreateQuizTopic() {
     return (
         <DashboardLayout role="teacher">
             <div className="max-w-4xl mx-auto pb-20 relative">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#ff6b00]/5 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
                 <div className="mb-12 flex items-center justify-between">
                     <div>
-                        <h1 className="text-4xl font-black text-white tracking-tight italic uppercase">
-                            AI <span className="text-[#ff6b00]">Topic Creator</span>
+                        <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
+                            AI <span className="text-[var(--bg-accent)]">Topic Creator</span>
                         </h1>
-                        <p className="text-slate-400 mt-2 font-bold uppercase tracking-wider text-sm italic">Generate 5 questions from any subject</p>
+                        <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Generate 5 questions from any subject</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-12">
-                    <div className="bg-white/5 rounded-[3rem] border border-white/10 p-12 ring-1 ring-white/5 relative overflow-hidden group">
+                    <div className="bg-white/5 rounded-[3rem] border border-[var(--border-color)] p-12 ring-1 ring-white/5 relative overflow-hidden group glass-panel">
                         <div className="relative z-10 space-y-10">
                             <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Enter Topic</label>
+                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">Enter Topic</label>
                                 <input
                                     type="text"
                                     value={topic}
                                     onChange={(e) => setTopic(e.target.value)}
-                                    className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[#ff6b00] transition-all font-black text-3xl text-white placeholder:text-slate-700 outline-none"
+                                    className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-3xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none input-cinematic"
                                     placeholder="e.g. Artificial Intelligence, History of India"
                                     required
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 flex items-center gap-6">
-                                    <div className="bg-[#ff6b00] w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                                <div className="bg-white/5 p-8 rounded-[2rem] border border-[var(--border-color)] flex items-center gap-6 glass-panel">
+                                    <div className="bg-[var(--bg-accent)] w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-on-accent)] shadow-xl">
                                         <Hash size={32} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Question Count</p>
+                                        <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1">Question Count</p>
                                         <input
                                             type="number"
                                             min="1"
                                             max="20"
                                             value={questionCount}
                                             onChange={(e) => setQuestionCount(parseInt(e.target.value))}
-                                            className="bg-transparent border-none text-2xl font-black text-white italic outline-none w-full"
+                                            className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full"
                                         />
                                     </div>
                                 </div>
-                                <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 flex items-center gap-6">
+                                <div className="bg-white/5 p-8 rounded-[2rem] border border-[var(--border-color)] flex items-center gap-6 glass-panel">
                                     <div className="bg-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl">
                                         <Gauge size={32} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Difficulty</p>
+                                        <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1">Difficulty</p>
                                         <select
                                             value={difficulty}
                                             onChange={(e) => setDifficulty(e.target.value)}
-                                            className="bg-transparent border-none text-2xl font-black text-white italic outline-none w-full appearance-none cursor-pointer"
+                                            className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
                                         >
                                             <option value="Easy" className="text-black">Easy</option>
                                             <option value="Medium" className="text-black">Medium</option>
@@ -242,7 +242,7 @@ export default function CreateQuizTopic() {
                         <button
                             type="submit"
                             disabled={loading || !topic}
-                            className="group flex items-center gap-6 bg-[#ff6b00] text-white px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[#ff6b00]/20 font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[#cc5500]"
+                            className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
                         >
                             {loading ? <Loader2 className="animate-spin" size={32} /> : <Sparkles size={32} />}
                             {loading ? 'ANALYZING...' : 'GENERATE QUIZ'}

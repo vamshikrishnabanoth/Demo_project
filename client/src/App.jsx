@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import AuthContext from './context/AuthContext';
 import Login from './pages/Login';
 import RoleSelection from './pages/RoleSelection';
@@ -22,142 +23,68 @@ import LiveRoomTeacher from './pages/LiveRoomTeacher';
 import LiveRoomStudent from './pages/LiveRoomStudent';
 import Leaderboard from './pages/Leaderboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// Home component that redirects based on auth and role
+// Page Wrapper for transitions
+const PageTransition = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    {children}
+  </motion.div>
+);
+
 const Home = () => {
   const { user, loading } = useContext(AuthContext);
-
   if (loading) return null;
   if (!user) return <Navigate to="/login" />;
-
   if (user.role === 'none') return <Navigate to="/select-role" />;
   if (user.role === 'teacher') return <Navigate to="/teacher-dashboard" />;
   if (user.role === 'student') return <Navigate to="/student-dashboard" />;
   if (user.role === 'admin') return <Navigate to="/admin-dashboard" />;
-
   return <Navigate to="/login" />;
 };
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+        <Route path="/select-role" element={<PageTransition><ProtectedRoute allowNone={true}><RoleSelection /></ProtectedRoute></PageTransition>} />
+        <Route path="/teacher-dashboard" element={<PageTransition><ProtectedRoute roles={['teacher']}><TeacherDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/create-quiz/text" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizText /></ProtectedRoute></PageTransition>} />
+        <Route path="/create-quiz/pdf" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizPDF /></ProtectedRoute></PageTransition>} />
+        <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />
+        <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
+        <Route path="/performance" element={<PageTransition><ProtectedRoute roles={['teacher']}><Performance /></ProtectedRoute></PageTransition>} />
+        <Route path="/my-quizzes" element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
+        <Route path="/student-dashboard" element={<PageTransition><ProtectedRoute roles={['student']}><StudentDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/assessments" element={<PageTransition><ProtectedRoute roles={['student']}><Assessments /></ProtectedRoute></PageTransition>} />
+        <Route path="/quiz/attempt/:id" element={<PageTransition><ProtectedRoute roles={['student']}><AssessmentAttempt /></ProtectedRoute></PageTransition>} />
+        <Route path="/quiz/review/:id" element={<PageTransition><ProtectedRoute roles={['student']}><AssessmentReview /></ProtectedRoute></PageTransition>} />
+        <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/admin/users" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/live-room-teacher/:joinCode" element={<PageTransition><ProtectedRoute roles={['teacher']}><LiveRoomTeacher /></ProtectedRoute></PageTransition>} />
+        <Route path="/live-room-student/:joinCode" element={<PageTransition><ProtectedRoute roles={['student']}><LiveRoomStudent /></ProtectedRoute></PageTransition>} />
+        <Route path="/leaderboard/:quizId" element={<PageTransition><ProtectedRoute roles={['student', 'teacher']}><Leaderboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/profile" element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><Profile /></ProtectedRoute></PageTransition>} />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.1)' } }} />
       <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-
-          <Route path="/select-role" element={
-            <ProtectedRoute allowNone={true}>
-              <RoleSelection />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/teacher-dashboard" element={
-            <ProtectedRoute roles={['teacher']}>
-              <TeacherDashboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/create-quiz/text" element={
-            <ProtectedRoute roles={['teacher']}>
-              <CreateQuizText />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/create-quiz/pdf" element={
-            <ProtectedRoute roles={['teacher']}>
-              <CreateQuizPDF />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/create-quiz/topic" element={
-            <ProtectedRoute roles={['teacher']}>
-              <CreateQuizTopic />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/create-quiz/voice" element={
-            <ProtectedRoute roles={['teacher']}>
-              <CreateQuizVoice />
-            </ProtectedRoute>
-          } />
-
-
-          <Route path="/performance" element={
-            <ProtectedRoute roles={['teacher']}>
-              <Performance />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/my-quizzes" element={
-            <ProtectedRoute roles={['teacher']}>
-              <MyQuizzes />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/student-dashboard" element={
-            <ProtectedRoute roles={['student']}>
-              <StudentDashboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/assessments" element={
-            <ProtectedRoute roles={['student']}>
-              <Assessments />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/history" element={<Navigate to="/assessments" replace />} />
-
-          <Route path="/quiz/attempt/:id" element={
-            <ProtectedRoute roles={['student']}>
-              <AssessmentAttempt />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/quiz/review/:id" element={
-            <ProtectedRoute roles={['student']}>
-              <AssessmentReview />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/admin-dashboard" element={
-            <ProtectedRoute roles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/admin/users" element={
-            <ProtectedRoute roles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/live-room-teacher/:joinCode" element={
-            <ProtectedRoute roles={['teacher']}>
-              <LiveRoomTeacher />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/live-room-student/:joinCode" element={
-            <ProtectedRoute roles={['student']}>
-              <LiveRoomStudent />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/leaderboard/:quizId" element={
-            <ProtectedRoute roles={['student', 'teacher']}>
-              <Leaderboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/profile" element={
-            <ProtectedRoute roles={['student', 'teacher', 'admin']}>
-              <Profile />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/" element={<Home />} />
-        </Routes>
+        <AnimatedRoutes />
       </Router>
     </AuthProvider>
   );

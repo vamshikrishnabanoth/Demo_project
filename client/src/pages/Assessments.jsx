@@ -2,208 +2,208 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import {
-    BookOpen,
-    Clock,
-    CheckCircle,
-    Award,
-    Search,
-    Calendar,
-    ChevronRight,
-    Trophy,
-    Layout,
-    Loader2
-} from 'lucide-react';
+import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// CountUp Component for stats
+const CountUp = ({ end, duration = 1 }) => {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const increment = end / (duration * 60);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+                setCount(end);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 1000 / 60);
+        return () => clearInterval(timer);
+    }, [end, duration]);
+    return <span>{count}</span>;
+};
+
+// Skeleton Loader Component
+const SkeletonRow = () => (
+    <motion.div 
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 relative overflow-hidden"
+    >
+        <motion.div 
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
+        />
+        <div className="flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/5 rounded-xl"></div>
+                <div className="space-y-2">
+                    <div className="w-48 h-4 bg-white/10 rounded"></div>
+                    <div className="w-32 h-3 bg-white/5 rounded"></div>
+                </div>
+            </div>
+            <div className="w-24 h-10 bg-white/5 rounded-xl"></div>
+        </div>
+    </motion.div>
+);
 
 export default function Assessments() {
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [search, setSearch] = useState('');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const [liveRes, historyRes] = await Promise.all([
-                    api.get('/quiz/live'),
-                    api.get('/quiz/history/student')
-                ]);
-
-                // Merge and remove duplicates by _id
-                const liveQuizzes = liveRes.data;
-                const historyQuizzes = historyRes.data;
-
-                const allQuizzes = [...liveQuizzes];
-                const liveIds = new Set(liveQuizzes.map(q => q.id));
-
-                historyQuizzes.forEach(historyQuiz => {
-                    if (!liveIds.has(historyQuiz.id)) {
-                        allQuizzes.push(historyQuiz);
-                    }
-                });
-
-                setQuizzes(allQuizzes);
+                const res = await api.get('/quiz/available');
+                setQuizzes(res.data);
             } catch (err) {
-                console.error('Error fetching quizzes', err);
+                console.error(err);
             } finally {
-                setLoading(false);
+                setTimeout(() => setLoading(false), 800); // Small delay to show skeleton
             }
         };
         fetchQuizzes();
     }, []);
 
-    const filteredQuizzes = quizzes.filter(q =>
-        q.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        q.topic?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredQuizzes = quizzes.filter(q => 
+        q.title.toLowerCase().includes(search.toLowerCase()) ||
+        q.topic?.toLowerCase().includes(search.toLowerCase())
     );
 
-    const stats = {
-        total: quizzes.length,
-        completed: quizzes.filter(q => q.isAttempted).length,
-        available: quizzes.filter(q => !q.isAttempted).length,
-        avgScore: quizzes.filter(q => q.isAttempted).length > 0
-            ? quizzes.filter(q => q.isAttempted).reduce((acc, curr) => acc + curr.score, 0) / quizzes.filter(q => q.isAttempted).length
-            : 0
-    };
+    const stats = [
+        { label: 'Available', value: quizzes.length, icon: Play, color: 'text-[var(--text-accent)]' },
+        { label: 'Completed', value: 0, icon: CheckCircle, color: 'text-green-400' },
+        { label: 'Avg. Score', value: 0, icon: Trophy, color: 'text-blue-400', suffix: '%' }
+    ];
 
     return (
         <DashboardLayout role="student">
-            <div className="space-y-10 pb-12 relative">
-                {/* Background flair */}
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#ff6b00]/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
-
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="max-w-6xl mx-auto px-4 py-12"
+            >
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
-                        <h1 className="text-4xl font-black text-white tracking-tight italic">
-                            My <span className="text-[#ff6b00]">Assessments</span>
+                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-2">
+                            Assessment <span className="text-[var(--text-accent)]">Arena</span>
                         </h1>
-                        <p className="text-slate-400 mt-2 font-medium italic uppercase tracking-wider text-sm">Empowering Excellence through Assessment</p>
+                        <p className="text-white/40 font-bold uppercase tracking-widest text-xs">Select a challenge to begin your journey</p>
                     </div>
 
+                    {/* Animated Search Bar */}
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search your library..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-12 pr-6 py-3.5 border border-white/10 bg-white/5 text-white rounded-2xl focus:ring-2 focus:ring-[#ff6b00] shadow-sm w-full md:w-80 font-medium"
-                        />
+                        <motion.div 
+                            animate={{ width: isSearchFocused ? 320 : 240 }}
+                            className="relative group transition-all"
+                        >
+                            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchFocused ? 'text-[var(--text-accent)]' : 'text-white/20'}`} size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search challenges..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onFocus={() => setIsSearchFocused(true)}
+                                onBlur={() => setIsSearchFocused(false)}
+                                className="w-full bg-white/[0.06] border border-white/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:border-[var(--bg-accent)] focus:bg-white/[0.08] transition-all font-medium"
+                            />
+                        </motion.div>
                     </div>
                 </div>
 
-                {/* Performance Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[
-                        { label: 'Total Quizzes', value: stats.total, icon: Layout, color: 'text-[#ff6b00]', bg: 'bg-[#ff6b00]/10' },
-                        { label: 'Available', value: stats.available, icon: BookOpen, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-                        { label: 'Completed', value: stats.completed, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-400/10' },
-                        { label: 'Avg. Accuracy', value: `${stats.avgScore.toFixed(0)}%`, icon: Trophy, color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
-                    ].map((stat, idx) => (
-                        <div key={idx} className="bg-white/5 p-6 rounded-[2.5rem] border border-white/10 shadow-sm flex flex-col items-center text-center">
-                            <div className={`${stat.bg} ${stat.color} p-3 rounded-xl mb-3`}>
-                                <stat.icon size={20} />
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    {stats.map((stat, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bg-white/[0.02] border border-white/20 p-6 rounded-[2rem] flex items-center gap-5"
+                        >
+                            <div className={`w-14 h-14 rounded-2xl bg-white/[0.03] flex items-center justify-center ${stat.color}`}>
+                                <stat.icon size={28} />
                             </div>
-                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
-                            <p className="text-2xl font-black text-white">{stat.value}</p>
-                        </div>
+                            <div>
+                                <p className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+                                <p className="text-3xl font-black text-white italic">
+                                    <CountUp end={stat.value} />
+                                    {stat.suffix}
+                                </p>
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
 
-                {/* Combined Quiz List & History */}
-                <div className="bg-white/5 rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden backdrop-blur-sm">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-white/2 border-b border-white/5">
-                                <tr>
-                                    <th className="px-8 py-6 text-xs font-black text-slate-500 uppercase tracking-widest">Assessment</th>
-                                    <th className="px-8 py-6 text-xs font-black text-slate-500 uppercase tracking-widest hidden md:table-cell">Questions</th>
-                                    <th className="px-8 py-6 text-xs font-black text-slate-500 uppercase tracking-widest">Status</th>
-                                    <th className="px-8 py-6 text-xs font-black text-slate-500 uppercase tracking-widest">Score</th>
-                                    <th className="px-8 py-6 text-xs font-black text-slate-500 uppercase tracking-widest text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/2">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan="5" className="px-8 py-20 text-center">
-                                            <Loader2 size={32} className="animate-spin text-[#ff6b00] inline-block mb-3" />
-                                            <p className="text-slate-400 font-bold">Synchronizing assessments...</p>
-                                        </td>
-                                    </tr>
-                                ) : filteredQuizzes.length > 0 ? (
-                                    filteredQuizzes.map((quiz) => (
-                                        <tr key={quiz.id} className="group hover:bg-white/2 transition-colors">
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className={`p-3 rounded-xl ${quiz.isAttempted ? 'bg-[#ff6b00]/10 text-[#ff6b00]' : 'bg-blue-400/10 text-blue-400'}`}>
-                                                        {quiz.isAttempted ? <CheckCircle size={20} /> : <BookOpen size={20} />}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-black text-white uppercase tracking-tight italic group-hover:text-[#ff6b00] transition-colors">{quiz.title}</p>
-                                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-tighter">{quiz.topic || 'General Topic'}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6 hidden md:table-cell">
-                                                <div className="flex items-center gap-2 text-slate-400 font-bold text-sm">
-                                                    <Award size={14} className="text-[#ff6b00]" />
-                                                    {quiz.questions?.length || 0} Questions
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${quiz.isAttempted
-                                                    ? 'bg-green-400/10 text-green-400'
-                                                    : 'bg-blue-400/10 text-blue-400'
-                                                    }`}>
-                                                    {quiz.isAttempted ? 'Completed' : 'Available'}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                {quiz.isAttempted ? (
-                                                    <div className="flex items-center gap-1.5 font-black text-[#ff6b00] italic text-lg">
-                                                        {quiz.score} <span className="text-xs text-slate-600 not-italic uppercase font-bold text-[10px]">Pts</span>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-slate-700 font-black italic">--</span>
-                                                )}
-                                            </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    {quiz.isAttempted && (
-                                                        <button
-                                                            onClick={() => navigate(`/quiz/review/${quiz.id}`)}
-                                                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 bg-transparent border border-white/10 text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white"
-                                                        >
-                                                            Review <ChevronRight size={14} />
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
-                                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 bg-[#ff6b00] text-white hover:bg-[#ff8533] shadow-lg shadow-[#ff6b00]/10"
-                                                    >
-                                                        {quiz.isAttempted ? 'Retry' : 'Start'} <ChevronRight size={14} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="px-8 py-32 text-center">
-                                            <div className="bg-white/2 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-700">
-                                                <Search size={32} />
+                {/* Quizzes List */}
+                <div className="space-y-4">
+                    {loading ? (
+                        [...Array(4)].map((_, i) => <SkeletonRow key={i} />)
+                    ) : filteredQuizzes.length > 0 ? (
+                        <AnimatePresence>
+                            {filteredQuizzes.map((quiz, i) => (
+                                <motion.div
+                                    key={quiz._id}
+                                    initial={{ y: 30, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: i * 0.08 }}
+                                    className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-[var(--bg-accent)]/30 p-6 rounded-2xl transition-all duration-300"
+                                >
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-14 h-14 bg-[var(--bg-accent)]/10 rounded-2xl flex items-center justify-center text-[var(--text-accent)] group-hover:scale-110 transition-transform">
+                                                <BookOpen size={24} />
                                             </div>
-                                            <p className="text-slate-500 font-black uppercase tracking-widest italic">No assessments found</p>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                            <div>
+                                                <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors mb-1">{quiz.title}</h3>
+                                                <div className="flex items-center gap-4 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                                                    <span className="flex items-center gap-1.5"><Clock size={12} /> {quiz.questions?.length * 1} Min</span>
+                                                    <span className="flex items-center gap-1.5"><Filter size={12} /> {quiz.difficulty || 'Normal'}</span>
+                                                    <span className="flex items-center gap-1.5"><Trophy size={12} /> {quiz.questions?.length * 10} Pts</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => navigate(`/quiz/attempt/${quiz._id}`)}
+                                            className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
+                                        >
+                                            Start Challenge
+                                            <Play size={14} fill="currentColor" />
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    ) : (
+                        /* Empty State Illustration */
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="flex flex-col items-center justify-center py-24 text-center"
+                        >
+                            <div className="w-32 h-32 bg-white/[0.02] border-2 border-white/20 rounded-full flex items-center justify-center mb-8 relative">
+                                <Search size={48} className="text-white/40" />
+                                <motion.div 
+                                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                                    transition={{ duration: 3, repeat: Infinity }}
+                                    className="absolute inset-0 bg-[var(--bg-accent)]/5 rounded-full"
+                                />
+                            </div>
+                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight mb-2">No Challenges Found</h3>
+                            <p className="text-white/30 font-bold uppercase tracking-widest text-xs">The arena is currently quiet. Check back later!</p>
+                        </motion.div>
+                    )}
                 </div>
-            </div>
+            </motion.div>
         </DashboardLayout>
     );
 }

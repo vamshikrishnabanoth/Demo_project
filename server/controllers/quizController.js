@@ -834,6 +834,7 @@
 
 
 const prisma = require('../lib/prisma');
+const { moderateContent } = require('../lib/moderator');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -843,15 +844,25 @@ const officeParser = require('officeparser');
 const Groq = require('groq-sdk');
 
 // Initialize Groq for Whisper (Transcription)
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
+let groq;
+if (process.env.GROQ_API_KEY) {
+    groq = new Groq({
+        apiKey: process.env.GROQ_API_KEY
+    });
+} else {
+    console.warn('⚠️ GROQ_API_KEY is missing. Audio transcription (Whisper) will be disabled.');
+}
+
 
 /**
  * Transcribes audio file using Groq Whisper
  */
 const transcribeAudio = async (filePath) => {
     try {
+        if (!groq) {
+            console.error('❌ Transcription Error: Groq client not initialized (missing API key)');
+            return null;
+        }
         console.log('🎙️ Transcribing audio with Groq Whisper...');
         const transcription = await groq.audio.transcriptions.create({
             file: fs.createReadStream(filePath),
@@ -949,6 +960,21 @@ exports.createQuiz = async (req, res) => {
     try {
         let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration } = req.body;
         let finalQuestions = [];
+
+        // --- AI MODERATION GUARD ---
+        if (req.file) {
+            const ext = path.extname(req.file.originalname).toLowerCase();
+            const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
+            const moderation = await moderateContent(req.user.id, title || topic || '', isImage ? 'image' : 'text', path.resolve(req.file.path));
+            if (!moderation.isSafe) {
+                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
+            }
+        } else if (content || topic || title) {
+            const moderation = await moderateContent(req.user.id, `${title} ${topic} ${content}`, 'text');
+            if (!moderation.isSafe) {
+                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
+            }
+        }
 
         if (manualQuestions && manualQuestions.length > 0) {
             finalQuestions = Array.isArray(manualQuestions) ? manualQuestions : JSON.parse(manualQuestions);
@@ -1200,7 +1226,18 @@ exports.getQuizById = async (req, res) => {
         });
 
         // Normalize questions to guarantee options are plain strings
-        const normalizedQuestions = normalizeQuestions(quiz.questions);
+        let normalizedQuestions = normalizeQuestions(quiz.questions);
+
+        // SECURITY: Strip correct answers if user is not the creator or an admin
+        const isCreator = quiz.createdById === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+        
+        if (!isCreator && !isAdmin) {
+            normalizedQuestions = normalizedQuestions.map(q => {
+                const { correctAnswer, explanation, ...safeQuestion } = q;
+                return safeQuestion;
+            });
+        }
 
         res.json({
             ...quiz,
@@ -1280,6 +1317,11 @@ exports.submitQuiz = async (req, res) => {
         });
 
         if (existingResult) {
+            // SECURITY: Prevent re-submission if already completed
+            if (existingResult.status === 'completed') {
+                return res.status(403).json({ msg: 'Quiz already submitted. Answers cannot be changed.' });
+            }
+
             const updated = await prisma.result.update({
                 where: { id: existingResult.id },
                 data: {
@@ -1336,10 +1378,19 @@ exports.getLatestResult = async (req, res) => {
         // Also return the quiz questions so the review page can show correct answers
         const quiz = await prisma.quiz.findUnique({ where: { id: req.params.quizId } });
 
+        // SECURITY: If not completed, don't send questions with answers
+        let questions = quiz ? (quiz.questions || []) : [];
+        if (result.status !== 'completed') {
+            questions = questions.map(q => {
+                const { correctAnswer, explanation, ...safeQuestion } = q;
+                return safeQuestion;
+            });
+        }
+
         res.json({
             ...result,
             quizTitle: quiz ? quiz.title : '',
-            questions: quiz ? (quiz.questions || []) : []
+            questions
         });
     } catch (err) {
         console.error(err.message);
@@ -1361,7 +1412,7 @@ exports.getLeaderboard = async (req, res) => {
         // Fetch all results for this quiz
         const allResults = await prisma.result.findMany({
             where: { quizId: req.params.quizId },
-            include: { student: { select: { username: true, email: true } } }
+            include: { student: { select: { username: true, email: true, isOnline: true, isSuspended: true } } }
         });
 
         if (allResults.length === 0) {
@@ -1416,6 +1467,8 @@ exports.getLeaderboard = async (req, res) => {
             rankedResults.push({
                 studentId: r.studentId,
                 username: r.student.username,
+                isOnline: r.student.isOnline,
+                isSuspended: r.student.isSuspended,
                 currentScore: r.score,
                 totalTimeTaken: r.totalTimeTaken || r.totalTime || 0,
                 answeredQuestions: r.answers.length,
@@ -1602,6 +1655,21 @@ exports.generateQuizQuestions = async (req, res) => {
         let extractedTitle = topic || 'AI Generated Quiz';
         let sourceType = type || 'topic';
 
+        // --- AI MODERATION GUARD ---
+        if (req.file) {
+            const ext = path.extname(req.file.originalname).toLowerCase();
+            const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
+            const moderation = await moderateContent(req.user.id, topic || '', isImage ? 'image' : 'text', path.resolve(req.file.path));
+            if (!moderation.isSafe) {
+                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
+            }
+        } else if (topic) {
+            const moderation = await moderateContent(req.user.id, topic, 'text');
+            if (!moderation.isSafe) {
+                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
+            }
+        }
+
         if (req.file) {
             const absolutePath = path.resolve(req.file.path);
             const extractedText = await extractText(absolutePath);
@@ -1665,6 +1733,32 @@ exports.getStudentHistory = async (req, res) => {
     }
 };
 
+exports.getLiveQuizzes = async (req, res) => {
+    try {
+        const quizzes = await prisma.quiz.findMany({
+            where: { isActive: true },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
+            const result = await prisma.result.findFirst({
+                where: { quizId: quiz.id, studentId: req.user.id }
+            });
+            return {
+                ...quiz,
+                isAttempted: !!result,
+                score: result ? result.score : 0,
+                totalQuestions: quiz.questions.length
+            };
+        }));
+
+        res.json(quizzesWithAttempts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
+    }
+};
+
 exports.generateQuizFromVoice = async (req, res) => {
     try {
         if (!req.file) {
@@ -1680,6 +1774,13 @@ exports.generateQuizFromVoice = async (req, res) => {
         if (!transcript || transcript.trim().length < 20) {
             try { fs.unlinkSync(absolutePath); } catch(e) {}
             return res.status(400).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
+        }
+
+        // --- AI MODERATION GUARD ---
+        const moderation = await moderateContent(req.user.id, transcript, 'text');
+        if (!moderation.isSafe) {
+            try { fs.unlinkSync(absolutePath); } catch(e) {}
+            return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
         }
 
         console.log(`✅ Transcript length: ${transcript.length} chars`);

@@ -1,10 +1,203 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Default Theme: Celestial Gold (Dark Black) */
+  --bg-primary: #0a0a0b; /* Ultra Dark Black */
+  --bg-secondary: #161618; /* Charcoal Card Background */
+  --bg-accent: #D7AC28; /* Original Metallic Gold */
+  --bg-accent-hover: #C78D17; 
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-accent: #D7AC28;
+  --text-on-accent: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-blur: blur(20px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-inner-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --error-bg: #ef4444;
+  --success-bg: #22c55e;
+  --bg-accent-glow: rgba(215, 172, 40, 0.3);
+  
+  /* Neural Depth Tokens (Celestial) */
+  --neural-prime: var(--text-accent);
+  --neural-sub: #60a5fa;
+  --neural-neutral: var(--text-secondary);
+  
+  /* --- CINEMATIC MOTION TOKENS --- */
+  --motion-fast: 200ms;
+  --motion-medium: 400ms;
+  --motion-slow: 800ms;
+  --motion-cinematic: 2000ms;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --hover-scale: 1.02;
+  --glow-intensity: 0.8;
+  --blur-strength: 24px;
+  --parallax-strength: 1;
+
+  --app-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* --- GLASSMORPHISM 2.0 UTILITIES --- */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  -webkit-backdrop-filter: blur(var(--blur-strength));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* --- PREMIUM INTERACTION CLASSES --- */
+.btn-cinematic {
+  transition: all var(--motion-medium) var(--ease-premium);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cinematic:hover {
+  transform: translateY(-2px) scale(var(--hover-scale));
+  box-shadow: 0 0 30px var(--bg-accent-glow);
+}
+
+.input-cinematic {
+  transition: all var(--motion-medium) var(--ease-premium);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input-cinematic:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--bg-accent);
+  box-shadow: 0 0 40px var(--bg-accent-glow);
+  outline: none;
+}
+
+.premium-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-inner-shadow), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.royal-swal-popup {
+  border-radius: 2.5rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  font-family: 'Inter', sans-serif !important;
+  background-color: var(--bg-secondary) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+}
+
+[data-theme='imperial'] {
+  --bg-primary: #0F0529; /* Midnight Amethyst */
+  --bg-accent: #FFB700; /* Sovereign Gold */
+  --bg-accent-hover: #E6A600; 
+  --text-primary: #F3E5F5; /* Lavender Silk */
+  --text-secondary: #B371E0; 
+  --text-accent: #FFB700;
+  --text-on-accent: #0F0529;
+  --border-color: rgba(255, 215, 0, 0.15);
+  --glass-bg: rgba(31, 11, 94, 0.7);
+  --error-bg: #900C3F; /* Deep Claret */
+  --success-bg: #22c55e;
+  --bg-accent-glow: rgba(255, 183, 0, 0.3);
+
+  /* Neural Depth Tokens (Imperial) */
+  --neural-prime: var(--text-accent);
+  --neural-sub: #c084fc;
+  --neural-neutral: #8b5cf6;
+}
+
+[data-theme='drakor'] {
+  --bg-primary: #0D0D1A; /* Void Black */
+  --bg-secondary: #1B2A5E; /* Dragon Navy */
+  --bg-accent: #C0192A; /* Dragon Crimson */
+  --bg-accent-hover: #A01524; 
+  --text-primary: #E8E4D0; /* Horn Ivory */
+  --text-secondary: rgba(232, 228, 208, 0.7);
+  --text-accent: #1A7A7A; /* Mech Teal */
+  --border-color: rgba(232, 228, 208, 0.15);
+  --glass-bg: rgba(27, 42, 94, 0.6);
+  --error-bg: #2E1A1A; /* Shadow Maroon */
+  --success-bg: #1A7A7A; /* Mech Teal */
+  --bg-accent-glow: rgba(192, 25, 42, 0.3);
+  --text-on-accent: #ffffff;
+
+  /* Neural Depth Tokens (Drakor) */
+  --neural-prime: var(--bg-accent);
+  --neural-sub: var(--success-bg);
+  --neural-neutral: var(--text-primary);
+}
+
+.btn-press:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+.btn-hover-scale:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 25px -5px rgba(215, 172, 40, 0.3);
+}
+
+
+
+/* Font Definitions */
+:root {
+  --font-segoe: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-helvetica: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-arial: Arial, Helvetica, sans-serif;
+  --font-verdana: Verdana, Geneva, sans-serif;
+  --font-georgia: Georgia, 'Times New Roman', Times, serif;
+  --font-times: 'Times New Roman', Times, serif;
+  --font-courier: 'Courier New', Courier, monospace;
+}
+
+/* Font Switching */
+[data-font='segoe'] { --app-font: var(--font-segoe); }
+[data-font='helvetica'] { --app-font: var(--font-helvetica); }
+[data-font='arial'] { --app-font: var(--font-arial); }
+[data-font='verdana'] { --app-font: var(--font-verdana); }
+[data-font='georgia'] { --app-font: var(--font-georgia); }
+[data-font='times'] { --app-font: var(--font-times); }
+[data-font='courier'] { --app-font: var(--font-courier); }
+
 
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--app-font);
+  transition: background-color 0.3s ease, color 0.3s ease, font-family 0.3s ease;
 }
+
+/* Global transitions for themeable elements */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}/* GLOBAL CURSOR SYSTEM */
+html, body { cursor: default; }
+a, button, [role="button"], .clickable, .btn-press, .btn-hover-scale { cursor: pointer; }
+input, textarea, .selectable-text { cursor: text; }
+button:disabled, input:disabled, [disabled], .not-allowed { cursor: not-allowed !important; }
+.loading-overlay, .wait-cursor, .premium-loading-active { cursor: wait !important; }
+.help-trigger, [title] { cursor: help; }
+.precision-tool { cursor: crosshair; }
+.draggable { cursor: grab; }
+.draggable:active { cursor: grabbing; }
+.moveable { cursor: move; }

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import api from '../utils/api';
+import socket from '../utils/socket';
 
 const AuthContext = createContext(null);
 
@@ -48,15 +49,53 @@ export const AuthProvider = ({ children }) => {
     }
 
     const logout = () => {
+        if (user && socket) {
+            socket.emit('logout', user.id);
+        }
         localStorage.removeItem('token');
         setUser(null);
     };
 
+    // Global Presence: Identify user to socket server
+    useEffect(() => {
+        if (user && socket) {
+            socket.emit('identify', user.id);
+            
+            // Re-identify on reconnect
+            const handleConnect = () => socket.emit('identify', user.id);
+            socket.on('connect', handleConnect);
+            
+            return () => {
+                socket.off('connect', handleConnect);
+            };
+        }
+    }, [user]);
+
+    const [theme, setThemeState] = useState(localStorage.getItem('app-theme') || 'celestial');
+    const [font, setFontState] = useState(localStorage.getItem('app-font-key') || 'segoe');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('app-theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-font', font);
+        localStorage.setItem('app-font-key', font);
+    }, [font]);
+
+    const setTheme = (t) => setThemeState(t);
+    const setFont = (f) => setFontState(f);
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, setRole }}>
+        <AuthContext.Provider value={{ 
+            user, loading, login, register, logout, setRole,
+            theme, setTheme, font, setFont
+        }}>
             {children}
         </AuthContext.Provider>
     );
 };
+
 
 export default AuthContext;

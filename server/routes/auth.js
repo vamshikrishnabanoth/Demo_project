@@ -1,14 +1,42 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
+const { check, validationResult } = require('express-validator');
+
+// Rate limiter for authentication (Brute force protection)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 15, // limit each IP to 15 login attempts per window
+    message: 'Too many login attempts from this IP, please try again after 15 minutes'
+});
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma'); // Using Prisma
 const auth = require('../middleware/authMiddleware');
 
+// Validation Rules
+const registerValidation = [
+    check('username', 'Username is required and must be at least 3 characters').isLength({ min: 3 }).trim().escape(),
+    check('email', 'Please include a valid email or roll number').isLength({ min: 3 }),
+    check('password', 'Password must be 8+ chars, including 1 uppercase and 1 special char')
+        .isLength({ min: 8 })
+        .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])/)
+];
+
+const loginValidation = [
+    check('email', 'Username/Email is required').not().isEmpty().trim(),
+    check('password', 'Password is required').exists()
+];
+
 // @route   POST api/auth/register
 // @desc    Register user (Admin Only)
 // @access  Private/Admin
-router.post('/register', auth, async (req, res) => {
+router.post('/register', auth, authLimiter, registerValidation, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     // --- RULE 1: Admin Authorization ---
     try {
         const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
@@ -43,7 +71,15 @@ router.post('/register', auth, async (req, res) => {
             }
         });
 
-        res.json({ msg: 'User created successfully', user: { id: user.id, username: user.username, role: user.role } });
+        res.json({ 
+            msg: 'User created successfully', 
+            user: { 
+                id: user.id, 
+                username: user.username, 
+                role: user.role,
+                tokenVersion: user.tokenVersion
+            } 
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -53,7 +89,11 @@ router.post('/register', auth, async (req, res) => {
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, loginValidation, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { email, password } = req.body; // email field is used for Roll Number/Username
 
     try {
@@ -76,10 +116,19 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }
 
+        // --- RULE 4: Suspension Check (Applies to all: Students & Teachers) ---
+        if (user.isSuspended) {
+            return res.status(403).json({ 
+                msg: 'Account has been suspended!', 
+                reason: user.suspensionReason || 'Violation of community guidelines.' 
+            });
+        }
+
         const payload = {
             user: {
                 id: user.id,
-                role: user.role
+                role: user.role,
+                tokenVersion: user.tokenVersion
             }
         };
 
@@ -143,7 +192,8 @@ router.post('/set-role', auth, async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
-                role: user.role
+                role: user.role,
+                tokenVersion: user.tokenVersion
             }
         };
 
@@ -188,7 +238,10 @@ router.put('/change-password', auth, async (req, res) => {
 
         await prisma.user.update({
             where: { id: req.user.id },
-            data: { password: hashedPassword }
+            data: { 
+                password: hashedPassword,
+                tokenVersion: { increment: 1 } // SECURITY: Revoke all old sessions
+            }
         });
 
         res.json({ msg: 'Password updated successfully.' });

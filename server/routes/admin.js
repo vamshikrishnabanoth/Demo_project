@@ -26,6 +26,9 @@ router.get('/users', auth, adminOnly, async (req, res) => {
                 username: true,
                 email: true,
                 role: true,
+                isOnline: true,
+                isSuspended: true,
+                suspensionReason: true,
                 createdAt: true
             },
             orderBy: { createdAt: 'desc' }
@@ -139,6 +142,37 @@ router.get('/stats', auth, adminOnly, async (req, res) => {
         const admins = await prisma.user.count({ where: { role: 'admin' } });
         res.json({ total, teachers, students, admins });
     } catch (err) {
+        res.status(500).json({ msg: 'Server error' });
+    }
+});
+
+// PUT toggle suspension
+router.put('/users/suspend/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (user.id === req.user.id) {
+            return res.status(400).json({ msg: 'You cannot suspend yourself.' });
+        }
+
+        const updated = await prisma.user.update({
+            where: { id: req.params.id },
+            data: { 
+                isSuspended: !user.isSuspended,
+                suspensionReason: !user.isSuspended ? 'Suspended by Administrator' : null,
+                tokenVersion: { increment: 1 } // SECURITY: Force logout on suspension
+            },
+            select: {
+                id: true,
+                isSuspended: true,
+                suspensionReason: true
+            }
+        });
+
+        res.json(updated);
+    } catch (err) {
+        console.error(err.message);
         res.status(500).json({ msg: 'Server error' });
     }
 });
