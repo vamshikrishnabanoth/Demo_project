@@ -1317,17 +1317,20 @@ exports.submitQuiz = async (req, res) => {
     }
 };
 
-// GET /quiz/result/:quizId  – latest completed result for the current student
+// GET /quiz/result/:quizId  – latest result for the current student (any status)
 // Used by the Review page to show question-by-question breakdown.
+// We intentionally do NOT filter by status:'completed' because migrated records
+// from MongoDB may have status='in-progress' even though they are finished.
 exports.getLatestResult = async (req, res) => {
     try {
-        const result = await prisma.result.findFirst({
-            where: { quizId: req.params.quizId, studentId: req.user.id, status: 'completed' },
-            orderBy: { completedAt: 'desc' }
+        // Try completed results first (newest first), then fall back to any result
+        let result = await prisma.result.findFirst({
+            where: { quizId: req.params.quizId, studentId: req.user.id },
+            orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
         });
 
         if (!result) {
-            return res.status(404).json({ msg: 'No completed attempt found for this quiz.' });
+            return res.status(404).json({ msg: 'No attempt found for this quiz.' });
         }
 
         // Also return the quiz questions so the review page can show correct answers
@@ -1336,7 +1339,7 @@ exports.getLatestResult = async (req, res) => {
         res.json({
             ...result,
             quizTitle: quiz ? quiz.title : '',
-            questions: quiz ? quiz.questions : []
+            questions: quiz ? (quiz.questions || []) : []
         });
     } catch (err) {
         console.error(err.message);
