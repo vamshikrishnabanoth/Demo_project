@@ -15,6 +15,7 @@ import MyQuizzes from './pages/MyQuizzes';
 import AttemptQuiz from './pages/AttemptQuiz';
 import AssessmentAttempt from './pages/AssessmentAttempt';
 import AssessmentReview from './pages/AssessmentReview';
+import Profile from './pages/Profile';
 import Performance from './pages/Performance';
 import AdminDashboard from './pages/AdminDashboard';
 import LiveRoomTeacher from './pages/LiveRoomTeacher';
@@ -146,6 +147,12 @@ function App() {
           <Route path="/leaderboard/:quizId" element={
             <ProtectedRoute roles={['student', 'teacher']}>
               <Leaderboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/profile" element={
+            <ProtectedRoute roles={['student', 'teacher', 'admin']}>
+              <Profile />
             </ProtectedRoute>
           } />
 
