@@ -36,6 +36,8 @@ function UserModal({ user, onClose, onSave, isNew }) {
         email:    user?.email    || '',
         password: '',
         role:     user?.role     || 'student',
+        studentBranch: user?.studentBranch || '',
+        section: user?.section || '',
     });
     const [showPw, setShowPw]   = useState(false);
     const [loading, setLoading] = useState(false);
@@ -114,6 +116,22 @@ function UserModal({ user, onClose, onSave, isNew }) {
                             placeholder="admin@kmit.in" value={form.email}
                             onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                     </div>
+                    {form.role === 'student' && (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">Branch</label>
+                                <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[var(--bg-accent)]/50 transition"
+                                    placeholder="e.g. CSE" value={form.studentBranch}
+                                    onChange={e => setForm(f => ({ ...f, studentBranch: e.target.value }))} />
+                            </div>
+                            <div>
+                                <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">Section</label>
+                                <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[var(--bg-accent)]/50 transition"
+                                    placeholder="e.g. A" value={form.section}
+                                    onChange={e => setForm(f => ({ ...f, section: e.target.value }))} />
+                            </div>
+                        </div>
+                    )}
                     <div>
                         <label className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1.5 block">
                             {isNew ? 'Password *' : 'New Password (blank = keep current)'}
@@ -370,7 +388,7 @@ export default function AdminDashboard() {
                                     <table className="w-full text-sm">
                                         <thead>
                                             <tr className="border-b border-[var(--border-color)] bg-[var(--glass-bg)]">
-                                                {['User', 'Email / Roll No.', 'Role', 'Created', 'Actions'].map(h => (
+                                                {['User', 'Email / Roll No.', 'Role', 'Branch/Section', 'Created', 'Actions'].map(h => (
                                                     <th key={h} className={`px-6 py-4 text-[var(--text-secondary)] font-black uppercase tracking-widest text-[10px] ${h === 'Actions' ? 'text-right' : 'text-left'}`}>{h}</th>
                                                 ))}
                                             </tr>
@@ -409,6 +427,9 @@ export default function AdminDashboard() {
                                                     </td>
                                                     <td className="px-6 py-4 text-[var(--text-secondary)]">{u.email}</td>
                                                     <td className="px-6 py-4"><RoleBadge role={u.role} /></td>
+                                                    <td className="px-6 py-4 text-[var(--text-secondary)] text-xs font-bold uppercase tracking-wide">
+                                                        {u.role === 'student' ? `${u.studentBranch || '—'} / ${u.section || '—'}` : '—'}
+                                                    </td>
                                                     <td className="px-6 py-4 text-[var(--text-secondary)] opacity-60 text-xs">
                                                         {u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                                                     </td>

@@ -29,7 +29,11 @@ router.get('/users', auth, adminOnly, async (req, res) => {
                 isOnline: true,
                 isSuspended: true,
                 suspensionReason: true,
-                createdAt: true
+                studentBranch: true,
+                section: true,
+                createdAt: true,
+                updatedAt: true,
+                lastLogin: true
             },
             orderBy: { createdAt: 'desc' }
         });
@@ -66,12 +70,21 @@ router.post('/users', auth, adminOnly, async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const user = await prisma.user.create({
-            data: { username, email, password: hashedPassword, role },
+            data: { 
+                username, 
+                email, 
+                password: hashedPassword, 
+                role,
+                studentBranch: req.body.studentBranch || null,
+                section: req.body.section || null
+            },
             select: {
                 id: true,
                 username: true,
                 email: true,
                 role: true,
+                studentBranch: true,
+                section: true,
                 createdAt: true
             }
         });
@@ -99,6 +112,8 @@ router.put('/users/:id', auth, adminOnly, async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             updateData.password = await bcrypt.hash(password, salt);
         }
+        if (req.body.studentBranch !== undefined) updateData.studentBranch = req.body.studentBranch;
+        if (req.body.section !== undefined) updateData.section = req.body.section;
 
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
@@ -108,7 +123,11 @@ router.put('/users/:id', auth, adminOnly, async (req, res) => {
                 username: true,
                 email: true,
                 role: true,
-                createdAt: true
+                studentBranch: true,
+                section: true,
+                createdAt: true,
+                updatedAt: true,
+                lastLogin: true
             }
         });
 

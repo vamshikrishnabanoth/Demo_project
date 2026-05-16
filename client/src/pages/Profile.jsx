@@ -77,6 +77,10 @@ export default function Profile() {
         { icon: Hash, label: 'Roll Number', value: user?.username || '—' },
         { icon: Mail, label: 'Email', value: user?.email || '—' },
         { icon: Shield, label: 'Role', value: (user?.role || '—').toUpperCase() },
+        ...(user?.role === 'student' ? [
+            { icon: GraduationCap, label: 'Branch', value: user?.studentBranch || '—' },
+            { icon: GraduationCap, label: 'Section', value: user?.section || '—' },
+        ] : []),
         { icon: Activity, label: 'Account Status', value: 'ACTIVE' },
         { icon: Calendar, label: 'Member Since', value: memberSince },
     ];
