@@ -3,14 +3,33 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/png" href="/logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KMIT Khaoot</title>
+  <meta name="theme-color" content="#0a0a0b" />
+
+  <!-- SEO -->
+  <title>KMIT Kahoot — Interactive Quiz & Assessment Platform</title>
+  <meta name="description" content="KMIT Kahoot is an AI-powered interactive quiz and assessment platform for KMIT students and faculty. Create quizzes, join live sessions, and track performance." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Open Graph (WhatsApp, LinkedIn previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="KMIT Kahoot" />
+  <meta property="og:description" content="AI-powered interactive quiz platform for KMIT" />
+  <meta property="og:image" content="/logo.png" />
+
+  <!-- Prevent flash of unstyled content -->
+  <style>
+    html { background-color: #0a0a0b; }
+  </style>
 </head>
 
 <body>
+  <!-- Skip to main content — for screen readers and keyboard users -->
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
-</html> 
+</html>

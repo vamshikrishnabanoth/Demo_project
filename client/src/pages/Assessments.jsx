@@ -4,23 +4,25 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { useApiQuery } from '../hooks/useApiQuery';
 
-// CountUp Component for stats
+// CountUp — requestAnimationFrame instead of setInterval
 const CountUp = ({ end, duration = 1 }) => {
     const [count, setCount] = useState(0);
     useEffect(() => {
-        let start = 0;
-        const increment = end / (duration * 60);
-        const timer = setInterval(() => {
-            start += increment;
-            if (start >= end) {
-                setCount(end);
-                clearInterval(timer);
-            } else {
-                setCount(Math.floor(start));
-            }
-        }, 1000 / 60);
-        return () => clearInterval(timer);
+        if (end === 0) { setCount(0); return; }
+        let startTime = null;
+        const animate = (ts) => {
+            if (!startTime) startTime = ts;
+            const progress = Math.min((ts - startTime) / 1000 / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * end));
+            if (progress < 1) requestAnimationFrame(animate);
+            else setCount(end);
+        };
+        const id = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(id);
     }, [end, duration]);
     return <span>{count}</span>;
 };
@@ -51,25 +53,14 @@ const SkeletonRow = () => (
 );
 
 export default function Assessments() {
-    const [quizzes, setQuizzes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchQuizzes = async () => {
-            try {
-                const res = await api.get('/quiz/available');
-                setQuizzes(res.data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setTimeout(() => setLoading(false), 800); // Small delay to show skeleton
-            }
-        };
-        fetchQuizzes();
-    }, []);
+    // Integrated centralized data fetching with 30s caching
+    const { data: quizzes = [], loading, error, refetch } = useApiQuery('/quiz/available', {
+        errorMessage: 'Could not load intelligence dossiers'
+    });
 
     const filteredQuizzes = quizzes.filter(q => 
         q.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -149,9 +140,11 @@ export default function Assessments() {
                         [...Array(4)].map((_, i) => <SkeletonRow key={i} />)
                     ) : filteredQuizzes.length > 0 ? (
                         <AnimatePresence>
+                            <div role="list" aria-label="Available quizzes" aria-live="polite">
                             {filteredQuizzes.map((quiz, i) => (
                                 <motion.div
                                     key={quiz._id}
+                                    role="listitem"
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: i * 0.08 }}
@@ -182,6 +175,7 @@ export default function Assessments() {
                                     </div>
                                 </motion.div>
                             ))}
+                            </div>
                         </AnimatePresence>
                     ) : (
                         /* Empty State Illustration */

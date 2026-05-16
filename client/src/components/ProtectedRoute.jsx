@@ -1,40 +1,49 @@
 import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import { motion } from 'framer-motion';
+
+// Maps a role to its home route
+const ROLE_HOME = {
+    teacher: '/teacher-dashboard',
+    student: '/student-dashboard',
+    admin:   '/admin-dashboard',
+};
 
 const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
     const { user, loading } = useContext(AuthContext);
 
+    // While auth is being restored from localStorage, show a minimal spinner
+    // (not "Loading..." text — that's jarring and looks broken)
     if (loading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
+                <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                    className="w-6 h-6 rounded-full bg-[var(--bg-accent)]"
+                />
+            </div>
+        );
     }
 
-    if (!user) {
-        return <Navigate to="/login" />;
-    }
+    // Not logged in → go to login
+    if (!user) return <Navigate to="/login" replace />;
 
-    // If we are on role selection page (allowNone=true), checking if role is already set
+    // Role-selection page: redirect already-assigned users to their dashboard
     if (allowNone) {
         if (user.role !== 'none') {
-            if (user.role === 'teacher') return <Navigate to="/teacher-dashboard" />;
-            if (user.role === 'student') return <Navigate to="/student-dashboard" />;
-            if (user.role === 'admin') return <Navigate to="/admin-dashboard" />;
+            return <Navigate to={ROLE_HOME[user.role] ?? '/login'} replace />;
         }
         return children;
     }
 
-    // If user hasn't selected a role yet, force them to selection
-    if (user.role === 'none') {
-        return <Navigate to="/select-role" />;
-    }
+    // Role not set yet → force role selection
+    if (user.role === 'none') return <Navigate to="/select-role" replace />;
 
-    // Role based access control
-    if (roles && !roles.includes(user.role)) {
-        // Redirect to their appropriate dashboard
-        if (user.role === 'teacher') return <Navigate to="/teacher-dashboard" />;
-        if (user.role === 'student') return <Navigate to="/student-dashboard" />;
-        if (user.role === 'admin') return <Navigate to="/admin-dashboard" />;
-        return <Navigate to="/login" />; // Fallback
+    // Wrong role → redirect to their correct dashboard
+    if (roles.length > 0 && !roles.includes(user.role)) {
+        return <Navigate to={ROLE_HOME[user.role] ?? '/login'} replace />;
     }
 
     return children;

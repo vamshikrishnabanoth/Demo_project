@@ -24,6 +24,7 @@ export const royalAlert = Swal.mixin({
 // Theme-driven CSS injection for SweetAlert2
 export const injectSwalStyles = () => {
     const style = document.createElement('style');
+    style.id = 'royal-swal-styles'; // Used for idempotency check
     style.innerHTML = `
         @keyframes arenaIn {
             from {
@@ -133,19 +134,20 @@ export const injectSwalStyles = () => {
     document.head.appendChild(style);
 };
 
-// Auto-inject styles
-if (typeof document !== 'undefined') {
+// Auto-inject styles (idempotent — won't duplicate on HMR or re-imports)
+if (typeof document !== 'undefined' && !document.getElementById('royal-swal-styles')) {
     injectSwalStyles();
 }
 
-export const showSuccess = (title, text) => {
+export const showSuccess = (title, text, timer = 2000) => {
     return royalAlert.fire({
         title,
         text,
         icon: 'success',
         iconColor: 'var(--success-bg)',
         showConfirmButton: false,
-        timer: 2000
+        timer,
+        timerProgressBar: true,
     });
 };
 

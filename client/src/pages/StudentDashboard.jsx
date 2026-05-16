@@ -64,34 +64,37 @@ export default function StudentDashboard() {
             <div className="relative min-h-[75vh] flex flex-col items-center justify-center font-inter py-10">
                 
                 {/* Floating Atmospheric Tech Elements - Theme-Synchronized Neural Depth */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
                     <motion.div 
-                        animate={{ 
+                        whileInView={{ 
                             y: [0, -20, 0],
                             rotate: [0, 10, 0],
                             opacity: [0.08, 0.18, 0.08]
                         }}
+                        viewport={{ once: false, amount: 0.1 }}
                         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute top-[10%] left-[15%] text-[var(--neural-prime)]"
                     >
                         <Cpu size={120} strokeWidth={0.5} />
                     </motion.div>
                     <motion.div 
-                        animate={{ 
+                        whileInView={{ 
                             y: [0, 30, 0],
                             rotate: [0, -15, 0],
                             opacity: [0.06, 0.16, 0.06]
                         }}
+                        viewport={{ once: false, amount: 0.1 }}
                         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                         className="absolute bottom-[20%] right-[10%] text-[var(--neural-sub)]"
                     >
                         <Globe size={160} strokeWidth={0.5} />
                     </motion.div>
                     <motion.div 
-                        animate={{ 
+                        whileInView={{ 
                             x: [0, 20, 0],
                             opacity: [0.1, 0.2, 0.1]
                         }}
+                        viewport={{ once: false, amount: 0.1 }}
                         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                         className="absolute top-[40%] right-[20%] text-[var(--neural-neutral)]"
                     >

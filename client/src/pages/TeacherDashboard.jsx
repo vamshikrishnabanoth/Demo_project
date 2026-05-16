@@ -3,77 +3,72 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import toast from 'react-hot-toast';
 import { 
     FileText, Type, Book, Cpu, BarChart3, Users,
     Sparkles, X, Mic, Plus, Trophy, Activity, Target, Zap, RefreshCw
 } from 'lucide-react';
 
-// CountUp Component for stats
+// CountUp — uses requestAnimationFrame instead of setInterval
+// setInterval at 60fps was creating 180 state updates/second (60 × 3 cards)
 const CountUp = ({ end, duration = 1 }) => {
     const [count, setCount] = useState(0);
     useEffect(() => {
-        let start = 0;
-        const increment = end / (duration * 60);
-        const timer = setInterval(() => {
-            start += increment;
-            if (start >= end) {
-                setCount(end);
-                clearInterval(timer);
-            } else {
-                setCount(Math.floor(start));
-            }
-        }, 1000 / 60);
-        return () => clearInterval(timer);
+        if (end === 0) { setCount(0); return; }
+        let startTime = null;
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = (timestamp - startTime) / 1000;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease-out cubic for natural deceleration
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * end));
+            if (progress < 1) requestAnimationFrame(animate);
+            else setCount(end);
+        };
+        const frameId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(frameId);
     }, [end, duration]);
     return <span>{count}</span>;
 };
 
 export default function TeacherDashboard() {
-    const [stats, setStats] = useState({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
+    const [stats,       setStats]       = useState({ totalQuizzes: 0, totalAttempts: 0, averageScore: 0 });
     const [showOptions, setShowOptions] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+    const [loading,     setLoading]     = useState(true);
+    const [refreshing,  setRefreshing]  = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [statsError,  setStatsError]  = useState(false);
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const res = await api.get('/quiz/stats');
-                const quizArray = res.data || [];
-                const totalQuizzes = quizArray.length;
-                const totalAttempts = quizArray.reduce((sum, quiz) => sum + (quiz.completionCount || 0), 0);
-                const avg = quizArray.length > 0
-                    ? quizArray.reduce((sum, quiz) => sum + (quiz.averageScore || 0), 0) / quizArray.length
-                    : 0;
-                setStats({ totalQuizzes, totalAttempts, averageScore: Math.round(avg) });
-                setLastUpdated(new Date());
-            } catch (err) {
-                console.error('Error fetching dashboard stats', err);
-            } finally {
-                setLoading(false);
-                setRefreshing(false);
-            }
-        };
-        fetchStats();
-    }, []);
-
-    const handleRefresh = async () => {
-        setRefreshing(true);
+    const fetchStats = async () => {
         try {
+            setStatsError(false);
             const res = await api.get('/quiz/stats');
             const quizArray = res.data || [];
-            const totalQuizzes = quizArray.length;
-            const totalAttempts = quizArray.reduce((sum, quiz) => sum + (quiz.completionCount || 0), 0);
+            const totalQuizzes   = quizArray.length;
+            const totalAttempts  = quizArray.reduce((sum, q) => sum + (q.completionCount || 0), 0);
             const avg = quizArray.length > 0
-                ? quizArray.reduce((sum, quiz) => sum + (quiz.averageScore || 0), 0) / quizArray.length
+                ? quizArray.reduce((sum, q) => sum + (q.averageScore || 0), 0) / quizArray.length
                 : 0;
             setStats({ totalQuizzes, totalAttempts, averageScore: Math.round(avg) });
             setLastUpdated(new Date());
         } catch (err) {
-            console.error('Refresh failed', err);
+            console.error('Error fetching dashboard stats', err);
+            setStatsError(true);
+            toast.error('Could not load your stats. Check your connection.', {
+                style: { background: '#1e293b', color: '#fff', borderRadius: '1rem' },
+            });
         } finally {
+            setLoading(false);
             setRefreshing(false);
         }
+    };
+
+    useEffect(() => { fetchStats(); }, []);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await fetchStats();
     };
 
     const creationOptions = [
@@ -102,7 +97,7 @@ export default function TeacherDashboard() {
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="text-center space-y-6"
                     >
-                        <h1 className="text-6xl md:text-7xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white italic uppercase tracking-tighter leading-tight">
                             COMMAND <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">CENTER</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] opacity-40">Your quiz creation & management hub</p>
@@ -112,52 +107,76 @@ export default function TeacherDashboard() {
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px] opacity-50">Your Stats</p>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                                 {lastUpdated && (
-                                    <span className="text-[10px] font-bold text-[var(--text-secondary)] opacity-40 uppercase tracking-widest">
-                                        Updated {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
+                                    <p className="text-[9px] font-black text-white/10 uppercase tracking-widest italic" aria-live="polite">
+                                        Last sync: {lastUpdated.toLocaleTimeString()}
+                                    </p>
                                 )}
-                                <motion.button
-                                    onClick={handleRefresh}
-                                    disabled={refreshing}
-                                    animate={refreshing ? { rotate: 360 } : { rotate: 0 }}
-                                    transition={refreshing ? { duration: 0.7, repeat: Infinity, ease: 'linear' } : {}}
-                                    className="p-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:bg-[var(--bg-accent)]/10 border border-transparent hover:border-[var(--bg-accent)]/20 transition-all duration-300 disabled:opacity-40"
-                                    title="Refresh stats"
-                                >
-                                    <RefreshCw size={15} />
-                                </motion.button>
+                                <div className="flex gap-2">
+                                    <motion.button
+                                        onClick={handleRefresh}
+                                        disabled={refreshing || loading}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        animate={refreshing ? { rotate: 360 } : {}}
+                                        transition={refreshing ? { duration: 0.7, repeat: Infinity, ease: 'linear' } : {}}
+                                        className="p-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:bg-[var(--bg-accent)]/10 border border-transparent hover:border-[var(--bg-accent)]/20 transition-all duration-300 disabled:opacity-40"
+                                        aria-label="Refresh dashboard stats"
+                                    >
+                                        <RefreshCw size={15} />
+                                    </motion.button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {statCards.map((stat, i) => (
+                        {statsError ? (
                             <motion.div 
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className="glass-panel p-10 rounded-[3rem] border border-white/5 group hover:border-white/10 transition-all duration-500 relative"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="glass-panel p-8 rounded-[2rem] border border-red-500/10 bg-red-500/5 flex flex-col items-center gap-4 text-center"
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-3xl rounded-full -mr-12 -mt-12 group-hover:bg-white/10 transition-colors" />
-                                <div className="flex items-center gap-8 relative z-10">
-                                    <div 
-                                        className={`w-20 h-20 rounded-[1.5rem] bg-white/[0.03] border border-white/10 flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform duration-500`}
-                                        style={{ boxShadow: `inset 0 0 20px ${stat.glow}` }}
-                                    >
-                                        <stat.icon size={36} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-2">{stat.label}</p>
-                                        <p className="text-4xl font-black text-white italic tracking-tighter">
-                                            <CountUp end={stat.value} />{stat.suffix}
-                                        </p>
-                                    </div>
+                                <AlertCircle className="text-red-500" size={32} />
+                                <div>
+                                    <p className="text-white font-bold uppercase italic tracking-tight">Intelligence Feed Interrupted</p>
+                                    <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-1">Check your network connection to restore sync</p>
                                 </div>
+                                <button 
+                                    onClick={handleRefresh}
+                                    className="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-red-500/20"
+                                >
+                                    Retry Sync
+                                </button>
                             </motion.div>
-                        ))}
-                        </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {statCards.map((stat, i) => (
+                                    <motion.div 
+                                        key={i}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                        className="glass-panel p-6 md:p-10 rounded-[3rem] border border-white/5 group hover:border-white/10 transition-all duration-500 relative"
+                                    >
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-3xl rounded-full -mr-12 -mt-12 group-hover:bg-white/10 transition-colors" />
+                                        <div className="flex items-center gap-6 md:gap-8 relative z-10">
+                                            <div 
+                                                className={`w-16 h-16 md:w-20 md:h-20 rounded-[1.5rem] bg-white/[0.03] border border-white/10 flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform duration-500`}
+                                                style={{ boxShadow: `inset 0 0 20px ${stat.glow}` }}
+                                            >
+                                                <stat.icon size={28} className="md:w-9 md:h-9" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1 md:mb-2">{stat.label}</p>
+                                                <p className="text-3xl md:text-4xl font-black text-white italic tracking-tighter">
+                                                    <CountUp end={stat.value} />{stat.suffix}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Action Matrix */}

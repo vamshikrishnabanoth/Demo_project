@@ -7,6 +7,7 @@ import ResultsLoader from '../components/loaders/ResultsLoader';
 import DashboardLayout from '../components/DashboardLayout';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Medal, Play, TrendingUp, CheckCircle, XCircle, Minus, Star, Target } from 'lucide-react';
+import useSocketRoom from '../hooks/useSocketRoom';
 
 export default function Leaderboard() {
     const { quizId } = useParams();
@@ -45,20 +46,17 @@ export default function Leaderboard() {
 
     useEffect(() => {
         fetchData();
-        socket.emit('join_room', { quizId, user: { username: user.username, role: user.role } });
-        
-        socket.on('score_updated', () => fetchData());
-        
-        const handleStatusChange = ({ userId, isOnline }) => {
-            setResults(prev => prev.map(res => res.studentId === userId ? { ...res, isOnline } : res));
-        };
-        socket.on('user_status_change', handleStatusChange);
+    }, [quizId]);
 
-        return () => {
-            socket.off('score_updated');
-            socket.off('user_status_change', handleStatusChange);
-        };
-    }, [quizId, user]);
+    // useSocketRoom handles join, event binding, and cleanup correctly
+    useSocketRoom(quizId, user, {
+        score_updated: () => fetchData(),
+        user_status_change: ({ userId, isOnline }) => {
+            setResults(prev => prev.map(res =>
+                res.studentId === userId ? { ...res, isOnline } : res
+            ));
+        },
+    });
 
     if (loading) return <ResultsLoader message="Finalizing Rankings..." />;
 
@@ -108,7 +106,7 @@ export default function Leaderboard() {
 
                         <div className="space-y-3">
                             <span className={`text-sm font-black uppercase tracking-[0.4em] ${zone.color} opacity-80`}>{zone.label}</span>
-                            <h2 className="text-9xl font-black italic text-[var(--text-accent)] tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                            <h2 className="text-6xl md:text-9xl font-black italic text-[var(--text-accent)] tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
                                 #{userRank}
                             </h2>
                             <p className="text-white/20 font-black uppercase tracking-[0.3em] text-xs">
@@ -155,30 +153,36 @@ export default function Leaderboard() {
                         <h1 className="text-7xl font-black italic uppercase tracking-tighter leading-none">
                             Arena <span className="text-[var(--text-accent)] drop-shadow-[0_0_15px_var(--bg-accent-glow)]">Standings</span>
                         </h1>
-                        <p className="text-white/20 font-black uppercase tracking-[0.5em] text-[10px]">
+                        <p className="text-white/50 font-black uppercase tracking-[0.5em] text-[10px]">
                             {results.length} Students • {quiz?.questions?.length || 0} Questions
                         </p>
                     </div>
 
-                    <div className="glass-panel rounded-[3.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+                    <div className="glass-panel rounded-[3.5rem] overflow-x-auto shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
                         <div className="px-10 py-8 bg-white/[0.05] border-b border-white/5 flex items-center gap-6">
-                            <div className="w-16 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Rank</div>
-                            <div className="w-56 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Student</div>
-                            <div className="flex-1 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Answers</div>
-                            <div className="w-24 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Score</div>
-                            <div className="w-28 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-center">Correct / Wrong</div>
+                            <div className="w-16 text-[10px] font-black text-white/60 uppercase tracking-[0.3em] text-center">Rank</div>
+                            <div className="w-56 text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Student</div>
+                            <div className="flex-1 text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Answers</div>
+                            <div className="w-24 text-[10px] font-black text-white/60 uppercase tracking-[0.3em] text-center">Score</div>
+                            <div className="w-28 text-[10px] font-black text-white/60 uppercase tracking-[0.3em] text-center">Correct / Wrong</div>
                         </div>
 
-                        <div className="divide-y divide-white/5 bg-white/[0.02]">
+                        <div className="divide-y divide-white/5 bg-white/[0.02]" aria-live="polite" aria-label="Leaderboard results">
                             <AnimatePresence>
                                 {paginatedResults.map((res, pIdx) => {
                                     const rank = (currentPage - 1) * studentsPerPage + pIdx + 1;
+
+                                    // Build answer index as plain object — O(n) once per row
+                                    // useMemo cannot be used inside .map() (violates Rules of Hooks)
+                                    const answerMap = {};
+                                    res.answers?.forEach(a => { answerMap[a.questionText] = a; });
+
                                     return (
                                         <motion.div
                                             key={res.studentId || pIdx}
-                                            initial={{ x: -30, opacity: 0 }}
+                                            initial={{ x: -20, opacity: 0 }}
                                             animate={{ x: 0, opacity: 1 }}
-                                            transition={{ delay: pIdx * 0.05, ease: [0.16, 1, 0.3, 1], duration: 0.8 }}
+                                            transition={{ delay: pIdx * 0.03, ease: [0.22, 1, 0.36, 1], duration: 0.25 }}
                                             className={`px-10 py-7 flex items-center gap-6 hover:bg-white/[0.05] transition-all duration-500 group ${rank <= 3 ? 'bg-[var(--bg-accent)]/5' : ''}`}
                                         >
                                             <div className="w-16 text-center">
@@ -198,20 +202,20 @@ export default function Leaderboard() {
                                                     </p>
                                                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ${res.isOnline ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-white/10'}`} />
                                                 </div>
-                                                <p className="text-[10px] text-white/20 font-black uppercase tracking-widest mt-1 truncate">{res.studentId}</p>
+                                                <p className="text-[10px] text-white/50 font-black uppercase tracking-widest mt-1 truncate">{res.studentId}</p>
                                             </div>
 
                                             <div className="flex-1 flex items-center gap-2 flex-wrap">
                                                 {quiz?.questions?.map((q, idx) => {
-                                                    const answer = res.answers?.find(a => a.questionText === q.questionText);
+                                                    const answer    = answerMap[q.questionText]; // O(1)
                                                     const isCorrect = answer?.isCorrect === true;
                                                     return (
-                                                        <motion.div 
+                                                        <motion.div
                                                             key={idx}
                                                             whileHover={{ scale: 1.2, zIndex: 10 }}
                                                             className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] border shadow-lg transition-all duration-300 ${
                                                             !answer ? 'bg-white/5 border-white/10 text-white/10' :
-                                                            isCorrect ? 'bg-green-500/20 border-green-500/30 text-green-400' : 
+                                                            isCorrect ? 'bg-green-500/20 border-green-500/30 text-green-400' :
                                                             'bg-red-500/20 border-red-500/30 text-red-400'
                                                         }`}>
                                                             {!answer ? <Minus size={12} /> : isCorrect ? <CheckCircle size={14} /> : <XCircle size={14} />}
@@ -242,11 +246,20 @@ export default function Leaderboard() {
                         </div>
                     </div>
 
-                    <div className="flex justify-center gap-8 pt-6">
-                        <button onClick={() => navigate('/teacher-dashboard')} className="bg-white/5 border border-white/5 text-white/50 px-12 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-lg btn-cinematic hover:text-white hover:border-white/20 transition-all">
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+                        <button
+                            onClick={() => navigate('/teacher-dashboard')}
+                            className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white/60 px-8 py-4 rounded-2xl font-black italic uppercase tracking-widest text-sm hover:text-white hover:border-white/20 transition-all"
+                            aria-label="Back to dashboard"
+                        >
                             Back to Dashboard
                         </button>
-                        <button onClick={() => window.location.reload()} className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-16 py-6 rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-xl btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30">
+                        <button
+                            onClick={fetchData}
+                            className="flex items-center justify-center gap-2 px-10 py-4 rounded-2xl font-black italic uppercase tracking-widest text-sm text-[var(--text-on-accent)] transition-all"
+                            style={{ background: 'var(--bg-accent)', boxShadow: '0 10px 30px var(--bg-accent-glow)' }}
+                            aria-label="Refresh leaderboard results"
+                        >
                             Refresh Results
                         </button>
                     </div>

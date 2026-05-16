@@ -812,6 +812,27 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 5000;
 
+// ─── HEALTH CHECK ENDPOINT ────────────────────────────────────────────────────
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
+
+// ─── DATABASE KEEP-ALIVE PING ─────────────────────────────────────────────────
+// MongoDB Atlas M0 (free tier) pauses after 60 minutes of inactivity.
+// This causes a 5-10 second cold start delay on the first login after idle.
+// Pinging every 9 minutes keeps the connection warm.
+const DB_PING_INTERVAL = 9 * 60 * 1000; // 9 minutes
+setInterval(async () => {
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        console.log('[DB Keep-Alive] Ping OK -', new Date().toLocaleTimeString());
+    } catch (err) {
+        console.warn('[DB Keep-Alive] Ping failed:', err.message);
+    }
+}, DB_PING_INTERVAL);
+
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 });
+

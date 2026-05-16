@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import { showConfirm, showError } from '../utils/alerts';
+import toast from 'react-hot-toast';
 import {
     FileText,
     CheckCircle,
@@ -29,6 +31,9 @@ export default function MyQuizzes() {
             setQuizzes(res.data);
         } catch (err) {
             console.error('Error fetching quizzes', err);
+            toast.error('Could not load your quizzes. Please refresh.', {
+                style: { background: '#1e293b', color: '#fff', borderRadius: '1rem' },
+            });
         } finally {
             setLoading(false);
         }
@@ -41,33 +46,32 @@ export default function MyQuizzes() {
     const updateQuizMode = async (quizId, mode) => {
         try {
             let payload = {};
-            if (mode === 'assessment') {
-                payload = { isActive: true, isLive: false };
-            } else if (mode === 'live') {
-                payload = { isActive: true, isLive: true };
-            } else if (mode === 'close') {
-                payload = { isActive: false };
-            }
+            if (mode === 'assessment') payload = { isActive: true,  isLive: false };
+            else if (mode === 'live')  payload = { isActive: true,  isLive: true  };
+            else if (mode === 'close') payload = { isActive: false };
 
             const res = await api.put(`/quiz/${quizId}`, payload);
             setQuizzes(quizzes.map(q => q.id === quizId ? res.data : q));
         } catch (err) {
             console.error('Error updating quiz mode', err);
-            alert(err.response?.data?.msg || 'Failed to update quiz mode');
+            showError('Update Failed', err.response?.data?.msg || 'Could not update quiz mode.');
         }
     };
 
-    const handleDelete = async (quizId) => {
-        if (!window.confirm('Are you sure you want to delete this quiz? All results will be permanently removed.')) {
-            return;
-        }
+    const handleDelete = async (quizId, quizTitle) => {
+        const result = await showConfirm(
+            'Delete Quiz?',
+            `"${quizTitle}" and all its results will be permanently removed.`,
+            'Yes, Delete'
+        );
+        if (!result.isConfirmed) return;
 
         try {
             await api.delete(`/quiz/${quizId}`);
             setQuizzes(quizzes.filter(q => q.id !== quizId));
         } catch (err) {
             console.error('Error deleting quiz', err);
-            alert('Failed to delete quiz');
+            showError('Delete Failed', 'Could not delete this quiz. Please try again.');
         }
     };
 
@@ -188,8 +192,9 @@ export default function MyQuizzes() {
                                             )}
 
                                             <button
-                                                onClick={() => handleDelete(quiz.id)}
+                                                onClick={() => handleDelete(quiz.id, quiz.title)}
                                                 className="p-3 text-slate-700 hover:text-red-500 transition-all group/del shrink-0"
+                                                aria-label={`Delete quiz: ${quiz.title}`}
                                                 title="Delete Quiz"
                                             >
                                                 <Trash2 size={20} className="group-hover/del:scale-110 transition-transform" />

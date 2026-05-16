@@ -1,79 +1,16 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser]       = useState(null);
     const [loading, setLoading] = useState(true);
+    const [theme, setThemeState] = useState(() => localStorage.getItem('app-theme') || 'celestial');
+    const [font, setFontState]   = useState(() => localStorage.getItem('app-font-key') || 'segoe');
 
-    useEffect(() => {
-        const checkUser = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                // api.js handles setting the auth token interceptor
-                try {
-                    const res = await api.get('/auth/me');
-                    setUser(res.data);
-                } catch (err) {
-                    localStorage.removeItem('token');
-                }
-            }
-            setLoading(false);
-        };
-        checkUser();
-    }, []);
-
-    const login = async (email, password) => {
-        const res = await api.post('/auth/login', { email, password });
-        localStorage.setItem('token', res.data.token);
-        const userRes = await api.get('/auth/me');
-        setUser(userRes.data);
-        return userRes.data;
-    };
-
-    const register = async (username, email, password) => {
-        const res = await api.post('/auth/register', { username, email, password });
-        localStorage.setItem('token', res.data.token);
-        const userRes = await api.get('/auth/me');
-        setUser(userRes.data);
-        return userRes.data;
-    };
-
-    const setRole = async (role) => {
-        const res = await api.post('/auth/set-role', { role });
-        // Update user state with new role
-        setUser({ ...user, role: res.data.role });
-        return res.data;
-    }
-
-    const logout = () => {
-        if (user && socket) {
-            socket.emit('logout', user.id);
-        }
-        localStorage.removeItem('token');
-        setUser(null);
-    };
-
-    // Global Presence: Identify user to socket server
-    useEffect(() => {
-        if (user && socket) {
-            socket.emit('identify', user.id);
-            
-            // Re-identify on reconnect
-            const handleConnect = () => socket.emit('identify', user.id);
-            socket.on('connect', handleConnect);
-            
-            return () => {
-                socket.off('connect', handleConnect);
-            };
-        }
-    }, [user]);
-
-    const [theme, setThemeState] = useState(localStorage.getItem('app-theme') || 'celestial');
-    const [font, setFontState] = useState(localStorage.getItem('app-font-key') || 'segoe');
-
+    // ── Apply theme & font to DOM ────────────────────────────────────────────
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('app-theme', theme);
@@ -84,18 +21,86 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('app-font-key', font);
     }, [font]);
 
-    const setTheme = (t) => setThemeState(t);
-    const setFont = (f) => setFontState(f);
+    // ── Restore session on mount ─────────────────────────────────────────────
+    useEffect(() => {
+        const checkUser = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+            try {
+                const res = await api.get('/auth/me');
+                setUser(res.data);
+            } catch {
+                // Token is invalid/expired — clear it silently
+                localStorage.removeItem('token');
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkUser();
+    }, []);
+
+    // ── Socket: identify user & re-identify on reconnect ────────────────────
+    useEffect(() => {
+        if (!user || !socket) return;
+
+        socket.emit('identify', user.id);
+
+        const handleConnect = () => socket.emit('identify', user.id);
+        socket.on('connect', handleConnect);
+
+        return () => socket.off('connect', handleConnect);
+    }, [user]);
+
+    // ── Auth actions ─────────────────────────────────────────────────────────
+
+    const login = useCallback(async (email, password) => {
+        const res = await api.post('/auth/login', { email, password });
+        localStorage.setItem('token', res.data.token);
+        // Use token from login response directly — avoids a second round-trip to /me
+        // Fall back to /me if user data not included in login response
+        const userData = res.data.user ?? (await api.get('/auth/me')).data;
+        setUser(userData);
+        return userData;
+    }, []);
+
+    const register = useCallback(async (username, email, password) => {
+        const res = await api.post('/auth/register', { username, email, password });
+        localStorage.setItem('token', res.data.token);
+        const userData = res.data.user ?? (await api.get('/auth/me')).data;
+        setUser(userData);
+        return userData;
+    }, []);
+
+    const setRole = useCallback(async (role) => {
+        const res = await api.post('/auth/set-role', { role });
+        setUser(prev => ({ ...prev, role: res.data.role }));
+        return res.data;
+    }, []);
+
+    const logout = useCallback(() => {
+        if (user && socket) {
+            socket.emit('logout', user.id);
+        }
+        localStorage.removeItem('token');
+        setUser(null);
+    }, [user]);
+
+    const setTheme = useCallback((t) => setThemeState(t), []);
+    const setFont  = useCallback((f) => setFontState(f), []);
 
     return (
-        <AuthContext.Provider value={{ 
-            user, loading, login, register, logout, setRole,
-            theme, setTheme, font, setFont
+        <AuthContext.Provider value={{
+            user, loading,
+            login, register, logout, setRole,
+            theme, setTheme,
+            font, setFont,
         }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
 
 export default AuthContext;

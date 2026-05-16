@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from 'lucide-react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
 
 export default function Login() {
@@ -15,13 +15,22 @@ export default function Login() {
     const navigate = useNavigate();
     const controls = useAnimation();
 
-    // Premium Mouse Parallax State
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    // GPU-optimized parallax — useMotionValue bypasses React render cycle entirely (zero re-renders)
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const glow1X  = useTransform(mouseX, v => v * 50);
+    const glow1Y  = useTransform(mouseY, v => v * 50);
+    const glow2X  = useTransform(mouseX, v => v * -30);
+    const glow2Y  = useTransform(mouseY, v => v * -30);
+    const cardRY  = useTransform(mouseX, v => v * 5);
+    const cardRX  = useTransform(mouseY, v => v * -5);
+    const logoRY  = useTransform(mouseX, v => v * 10);
+    const logoRX  = useTransform(mouseY, v => v * -10);
+    const footerY = useTransform(mouseY, v => v * 10);
+
     const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        const x = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-        const y = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-        setMousePos({ x, y });
+        mouseX.set((e.clientX - window.innerWidth  / 2) / (window.innerWidth  / 2));
+        mouseY.set((e.clientY - window.innerHeight / 2) / (window.innerHeight / 2));
     };
 
     const [formData, setFormData] = useState({
@@ -92,20 +101,14 @@ export default function Login() {
             {/* ─── ENVIRONMENTAL LAYER ────────────────────────────────────── */}
             <CinematicBackground />
             
-            {/* Interactive Ambient Glows */}
-            <motion.div 
-                animate={{ 
-                    x: mousePos.x * 50, 
-                    y: mousePos.y * 50 
-                }}
-                className="absolute top-0 right-0 w-[800px] h-[800px] bg-[var(--bg-accent)]/10 rounded-full blur-[150px] -mr-96 -mt-96 pointer-events-none mix-blend-screen" 
+            {/* Interactive Ambient Glows — driven by motion values, not state */}
+            <motion.div
+                style={{ x: glow1X, y: glow1Y }}
+                className="absolute top-0 right-0 w-[800px] h-[800px] bg-[var(--bg-accent)]/10 rounded-full blur-[150px] -mr-96 -mt-96 pointer-events-none mix-blend-screen"
             />
-            <motion.div 
-                animate={{ 
-                    x: mousePos.x * -30, 
-                    y: mousePos.y * -30 
-                }}
-                className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[var(--bg-accent)]/5 rounded-full blur-[120px] -ml-80 -mb-80 pointer-events-none mix-blend-screen" 
+            <motion.div
+                style={{ x: glow2X, y: glow2Y }}
+                className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[var(--bg-accent)]/5 rounded-full blur-[120px] -ml-80 -mb-80 pointer-events-none mix-blend-screen"
             />
 
             <motion.div 
@@ -116,16 +119,11 @@ export default function Login() {
             >
                 {/* ─── LOGO SECTION ────────────────────────────────────────── */}
                 <motion.div variants={itemVariants} className="flex flex-col items-center mb-10">
-                    <motion.div 
+                    <motion.div
                         whileHover={{ scale: 1.05, rotate: 2 }}
-                        animate={{ 
-                            rotateY: mousePos.x * 10,
-                            rotateX: mousePos.y * -10,
-                            y: [0, -5, 0]
-                        }}
-                        transition={{ 
-                            y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                        }}
+                        style={{ rotateY: logoRY, rotateX: logoRX }}
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
                         className="w-22 h-22 bg-white/90 backdrop-blur-md rounded-[2rem] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] mb-6 overflow-hidden p-2.5 border border-white/20"
                     >
                         <img src="/logo.png" alt="KMIT Logo" className="w-full h-full object-contain" />
@@ -137,24 +135,18 @@ export default function Login() {
                 </motion.div>
 
                 {/* ─── LOGIN CARD ─────────────────────────────────────────── */}
-                <motion.div 
-                    variants={itemVariants}
-                    animate={controls}
-                    style={{
-                        perspective: 1000
-                    }}
-                >
                     <motion.div
-                        animate={{
-                            rotateY: mousePos.x * 5,
-                            rotateX: mousePos.y * -5,
-                        }}
-                        className="relative group"
+                        animate={controls}
+                        style={{ perspective: 1000 }}
                     >
+                        <motion.div
+                            style={{ rotateY: cardRY, rotateX: cardRX }}
+                            className="relative group"
+                        >
                         {/* Animated Border Shimmer */}
                         <div className="absolute -inset-[1px] bg-gradient-to-r from-transparent via-[var(--bg-accent)]/30 to-transparent rounded-[3rem] blur-sm group-hover:blur-md transition-all duration-1000 opacity-30"></div>
                         
-                        <div className="bg-[var(--bg-secondary)]/40 backdrop-blur-[32px] border border-white/10 p-10 rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500">
+                        <div className="bg-[var(--bg-secondary)]/40 backdrop-blur-[32px] border border-white/10 p-6 sm:p-10 rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500">
                             
                             {/* Card Content Shimmer */}
                             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
@@ -192,18 +184,21 @@ export default function Login() {
                                             exit={{ opacity: 0, y: -10 }}
                                             className="space-y-2"
                                         >
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Username</label>
+                                            <label htmlFor="username-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Username</label>
                                             <div className="relative group/input">
                                                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                                    <User size={20} />
+                                                    <User size={20} aria-hidden="true" />
                                                 </div>
                                                 <input
+                                                    id="username-input"
                                                     type="text"
                                                     name="username"
                                                     placeholder="Username"
                                                     value={username}
                                                     onChange={onChange}
                                                     required={!isLogin}
+                                                    aria-required={!isLogin}
+                                                    autoComplete="username"
                                                     className="block w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-5 pl-14 pr-5 text-[var(--text-primary)] placeholder-white/10 focus:outline-none focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)] transition-all duration-500 font-bold tracking-tight"
                                                 />
                                             </div>
@@ -212,30 +207,34 @@ export default function Login() {
                                 </AnimatePresence>
 
                                 <div className="space-y-2">
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Email / Roll Number</label>
+                                    <label htmlFor="email-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Email / Roll Number</label>
                                     <div className="relative group/input">
                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                            <Mail size={20} />
+                                            <Mail size={20} aria-hidden="true" />
                                         </div>
                                         <input
+                                            id="email-input"
                                             type="text"
                                             name="email"
                                             placeholder="Roll Number"
                                             value={email}
                                             onChange={onChange}
                                             required
+                                            aria-required="true"
+                                            autoComplete="username"
                                             className="block w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-5 pl-14 pr-5 text-[var(--text-primary)] placeholder-white/10 focus:outline-none focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)] transition-all duration-500 font-bold tracking-tight"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Password</label>
+                                    <label htmlFor="password-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Password</label>
                                     <div className="relative group/input">
                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                            <Lock size={20} />
+                                            <Lock size={20} aria-hidden="true" />
                                         </div>
                                         <motion.input
+                                            id="password-input"
                                             animate={submitStatus === 'error' ? { x: [0, -10, 10, -10, 10, 0] } : {}}
                                             type={showPassword ? 'text' : 'password'}
                                             name="password"
@@ -243,25 +242,33 @@ export default function Login() {
                                             value={password}
                                             onChange={onChange}
                                             required
+                                            aria-required="true"
+                                            autoComplete={isLogin ? 'current-password' : 'new-password'}
+                                            aria-describedby={errorMsg ? 'login-error' : undefined}
                                             className={`block w-full bg-white/[0.02] border rounded-[1.5rem] py-5 pl-14 pr-14 text-[var(--text-primary)] placeholder-white/10 focus:outline-none transition-all duration-500 font-bold tracking-tight
                                                 ${submitStatus === 'error' ? 'border-red-500/30 bg-red-500/5 focus:shadow-[0_0_30px_rgba(239,68,68,0.2)]' : 'border-white/5 focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)]'}`}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                            aria-pressed={showPassword}
                                             className="absolute inset-y-0 right-0 pr-5 flex items-center text-slate-500 hover:text-slate-400 transition-all cursor-pointer"
                                         >
-                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                            {showPassword ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
                                         </button>
                                     </div>
                                     <AnimatePresence>
                                         {errorMsg && (
                                             <motion.p 
+                                                id="login-error"
+                                                role="alert"
+                                                aria-live="assertive"
                                                 initial={{ opacity: 0, y: -5 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                className="text-red-400 text-[10px] font-black uppercase tracking-widest ml-2 mt-3 flex items-center gap-2"
+                                                className="text-red-400 text-xs font-black uppercase tracking-widest ml-2 mt-3 flex items-center gap-2"
                                             >
-                                                <XCircle size={12} /> {errorMsg}
+                                                <XCircle size={12} aria-hidden="true" /> {errorMsg}
                                             </motion.p>
                                         )}
                                     </AnimatePresence>
@@ -305,9 +312,9 @@ export default function Login() {
                 </motion.div>
 
                 {/* Footer Depth Layer */}
-                <motion.div 
-                    variants={itemVariants} 
-                    animate={{ y: mousePos.y * 10 }}
+                <motion.div
+                    variants={itemVariants}
+                    style={{ y: footerY }}
                     className="mt-12 text-center"
                 >
                     <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.5em] opacity-20">
