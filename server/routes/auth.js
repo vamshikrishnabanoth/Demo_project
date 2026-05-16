@@ -67,7 +67,9 @@ router.post('/register', auth, authLimiter, registerValidation, async (req, res)
                 username,
                 email,
                 password: hashedPassword,
-                role: role || 'student'
+                role: role || 'student',
+                studentBranch: req.body.studentBranch || null,
+                section: req.body.section || null
             }
         });
 
@@ -132,6 +134,12 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             }
         };
 
+        // Update last login
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLogin: new Date() }
+        });
+
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
@@ -157,7 +165,11 @@ router.get('/me', auth, async (req, res) => {
                 username: true,
                 email: true,
                 role: true,
-                createdAt: true
+                studentBranch: true,
+                section: true,
+                createdAt: true,
+                updatedAt: true,
+                lastLogin: true
             }
         });
         res.json(user);

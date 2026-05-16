@@ -6,7 +6,7 @@ import socket from '../utils/socket';
 import {
     Users, Shield, Ban, Activity, LayoutDashboard,
     Plus, Trash2, Edit3, Search, RefreshCw, UserCheck, 
-    GraduationCap, ShieldCheck, Loader2
+    GraduationCap, ShieldCheck, Loader2, AlertTriangle
 } from 'lucide-react';
 import { showSuccess, showConfirm } from '../utils/alerts';
 import DashboardLayout from '../components/DashboardLayout';
@@ -33,6 +33,7 @@ const RoleBadge = ({ role }) => {
 
 export default function AdminDashboard() {
     const location = useLocation();
+    const { user: currentUser } = useContext(AuthContext);
     const isUsersTab = location.pathname === '/admin/users';
 
     const [stats, setStats] = useState({ total: 0, teachers: 0, students: 0, admins: 0 });
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
     };
 
     const handleDelete = async (u) => {
+        if (u.id === currentUser?.id) return;
         const result = await showConfirm('Wipe Entity?', `Deleting ${u.username} is permanent. Continue?`, 'Confirm Erasure');
         if (result.isConfirmed) {
             try {
@@ -96,6 +98,7 @@ export default function AdminDashboard() {
     };
 
     const handleSuspend = async (u) => {
+        if (u.id === currentUser?.id) return;
         const action = u.isSuspended ? 'Reinstate' : 'Suspend';
         const result = await showConfirm(
             `${action} Access?`, 
@@ -171,7 +174,7 @@ export default function AdminDashboard() {
                             </div>
                             <div className="md:w-64">
                                 <select 
-                                    className="w-full h-[62px] bg-white/[0.03] border border-white/5 rounded-2xl px-6 text-white font-black text-xs uppercase tracking-widest focus:outline-none focus:border-[var(--bg-accent)]/50 transition-all appearance-none cursor-pointer"
+                                    className="w-full h-[62px] bg-[var(--bg-primary)] border border-white/5 rounded-2xl px-6 text-white font-black text-xs uppercase tracking-widest focus:outline-none focus:border-[var(--bg-accent)]/50 transition-all appearance-none cursor-pointer"
                                     value={roleFilter} 
                                     onChange={e => setRoleFilter(e.target.value)}
                                 >
@@ -212,14 +215,21 @@ export default function AdminDashboard() {
                                                         </div>
                                                         <div>
                                                             <div className="flex items-center gap-2">
-                                                                <p className="font-bold text-white tracking-tight">{u.username}</p>
+                                                                <p className={`font-bold tracking-tight ${u.isSuspended ? 'text-white/40' : 'text-white'}`}>{u.username}</p>
                                                                 {u.isSuspended && (
                                                                     <span className="text-[8px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-widest border border-red-500/30">
                                                                         Suspended
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-xs text-white/50 font-medium">{u.email}</p>
+                                                            <div className="flex flex-col gap-0.5">
+                                                                <p className="text-xs text-white/50 font-medium">{u.email}</p>
+                                                                {u.role === 'student' && (u.studentBranch || u.section) && (
+                                                                    <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest opacity-60">
+                                                                        {u.studentBranch || '—'} / {u.section || '—'}
+                                                                    </p>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -245,14 +255,16 @@ export default function AdminDashboard() {
                                                         </button>
                                                         <button 
                                                             onClick={() => handleSuspend(u)}
-                                                            className={`p-3 rounded-xl transition-all border shadow-sm active:scale-90 ${u.isSuspended ? 'text-red-500 bg-red-500/10 border-red-500/30' : 'text-amber-500 bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40'}`}
+                                                            disabled={u.id === currentUser?.id}
+                                                            className={`p-3 rounded-xl transition-all border shadow-sm active:scale-90 disabled:opacity-30 ${u.isSuspended ? 'text-red-500 bg-red-500/10 border-red-500/30' : 'text-amber-500 bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40'}`}
                                                             title={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
                                                         >
                                                             <Ban size={18} />
                                                         </button>
                                                         <button 
                                                             onClick={() => handleDelete(u)}
-                                                            className="p-3 text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 rounded-xl transition-all shadow-sm active:scale-90"
+                                                            disabled={u.id === currentUser?.id}
+                                                            className="p-3 text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 rounded-xl transition-all shadow-sm active:scale-90 disabled:opacity-30"
                                                             title="Purge Identity"
                                                         >
                                                             <Trash2 size={18} />

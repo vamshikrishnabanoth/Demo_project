@@ -7,8 +7,6 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -21,7 +19,11 @@ model User {
   isSuspended      Boolean  @default(false)
   suspensionReason String?
   isOnline         Boolean  @default(false)
+  studentBranch    String?
+  section          String?
   createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+  lastLogin        DateTime?
   quizzes          Quiz[]
   results          Result[]
 }
