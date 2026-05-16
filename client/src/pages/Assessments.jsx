@@ -58,17 +58,19 @@ export default function Assessments() {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
 
     // Integrated centralized data fetching with 30s caching
-    const { data: quizzes = [], loading, error, refetch } = useApiQuery('/quiz/available', {
-        errorMessage: 'Could not load intelligence dossiers'
+    const { data: quizzes, loading, error, refetch } = useApiQuery('/quiz/available', {
+        errorMessage: 'Could not load assessment records'
     });
 
-    const filteredQuizzes = quizzes.filter(q => 
+    const safeQuizzes = quizzes || [];
+
+    const filteredQuizzes = safeQuizzes.filter(q => 
         q.title.toLowerCase().includes(search.toLowerCase()) ||
         q.topic?.toLowerCase().includes(search.toLowerCase())
     );
 
     const stats = [
-        { label: 'Available', value: quizzes.length, icon: Play, color: 'text-[var(--text-accent)]' },
+        { label: 'Available', value: safeQuizzes.length, icon: Play, color: 'text-[var(--text-accent)]' },
         { label: 'Completed', value: 0, icon: CheckCircle, color: 'text-green-400' },
         { label: 'Avg. Score', value: 0, icon: Trophy, color: 'text-blue-400', suffix: '%' }
     ];
@@ -79,12 +81,12 @@ export default function Assessments() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                className="max-w-6xl mx-auto px-4 py-12"
+                className="max-w-7xl mx-auto px-4 py-12"
             >
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-2">
+                        <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter mb-4">
                             Assessment <span className="text-[var(--text-accent)]">Arena</span>
                         </h1>
                         <p className="text-white/40 font-bold uppercase tracking-widest text-xs">Select a challenge to begin your journey</p>
@@ -135,12 +137,11 @@ export default function Assessments() {
                 </div>
 
                 {/* Quizzes List */}
-                <div className="space-y-4">
+                <div className="space-y-6 sm:space-y-8" role="list" aria-label="Available quizzes" aria-live="polite">
                     {loading ? (
                         [...Array(4)].map((_, i) => <SkeletonRow key={i} />)
                     ) : filteredQuizzes.length > 0 ? (
                         <AnimatePresence>
-                            <div role="list" aria-label="Available quizzes" aria-live="polite">
                             {filteredQuizzes.map((quiz, i) => (
                                 <motion.div
                                     key={quiz._id}
@@ -148,7 +149,7 @@ export default function Assessments() {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: i * 0.08 }}
-                                    className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-[var(--bg-accent)]/30 p-6 rounded-2xl transition-all duration-300"
+                                    className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-[var(--bg-accent)]/30 p-6 sm:p-8 rounded-2xl transition-all duration-300"
                                 >
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="flex items-center gap-5">
@@ -175,7 +176,6 @@ export default function Assessments() {
                                     </div>
                                 </motion.div>
                             ))}
-                            </div>
                         </AnimatePresence>
                     ) : (
                         /* Empty State Illustration */

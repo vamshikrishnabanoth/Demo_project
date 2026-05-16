@@ -365,24 +365,31 @@ export default function Profile() {
                                         <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">Font Style</p>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {fonts.map((f) => (
                                         <button
                                             key={f.id}
                                             onClick={() => setFont(f.id)}
-                                            className={`p-3 rounded-xl border-2 transition-all text-center relative
-                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-lg shadow-[var(--text-accent)]/10' : 'border-[var(--border-color)] hover:bg-[var(--glass-bg)] hover:border-[var(--text-secondary)]/30'}`}
+                                            className={`p-5 rounded-2xl border-2 transition-all text-left relative flex items-center justify-between group
+                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-xl shadow-[var(--text-accent)]/10' : 'border-[var(--border-color)] hover:bg-[var(--glass-bg)] hover:border-[var(--text-secondary)]/30'}`}
                                         >
-                                            <p className={`text-xs font-bold text-[var(--text-primary)] truncate`}>{f.name}</p>
-                                            <p 
-                                                className="text-[11px] text-[var(--text-secondary)] mt-2 italic"
-                                                style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
-                                            >
-                                                Aa Bb Cc 123
-                                            </p>
-                                            {font === f.id && (
-                                                <div className="absolute -top-2 -right-2 bg-[var(--bg-accent)] text-white p-0.5 rounded-full shadow-lg">
-                                                    <Check size={8} />
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-black text-[var(--text-primary)] uppercase tracking-tight italic">{f.name}</p>
+                                                <p 
+                                                    className="text-lg text-[var(--text-secondary)] mt-1 font-medium"
+                                                    style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
+                                                >
+                                                    Aa123
+                                                </p>
+                                            </div>
+                                            
+                                            {font === f.id ? (
+                                                <div className="w-8 h-8 bg-[var(--bg-accent)] text-white rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
+                                                    <Check size={16} strokeWidth={4} />
+                                                </div>
+                                            ) : (
+                                                <div className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Type size={16} className="text-[var(--text-secondary)]" />
                                                 </div>
                                             )}
                                         </button>

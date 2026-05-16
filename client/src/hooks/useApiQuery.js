@@ -1,45 +1,37 @@
-/**
- * useApiQuery — lightweight data fetching hook.
- * Provides: loading state, error state, data, refetch, and simple in-memory caching.
- * 
- * This eliminates the copy-paste pattern of useState+useEffect+api.get across 10+ pages.
- * 
- * Usage:
- *   const { data, loading, error, refetch } = useApiQuery('/quiz/stats');
- */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
-// Simple in-memory cache: { url: { data, timestamp } }
+/**
+ * useApiQuery — Enterprise Data Orchestration Hook
+ * Features:
+ *  - Automated AbortController management (prevents race conditions)
+ *  - Stale-While-Revalidate (SWR) Caching
+ *  - Background Polling support
+ *  - Silent re-fetching
+ *  - Optimistic Data Injection
+ */
 const cache = new Map();
-const CACHE_TTL = 30_000; // 30 seconds
+const DEFAULT_TTL = 30_000;
 
 export function useApiQuery(url, {
-    immediate = true,       // auto-fetch on mount
-    showErrorToast = true,  // show user-visible toast on failure
-    cacheTtl = CACHE_TTL,   // ms before cache is stale
+    immediate = true,
+    showErrorToast = true,
+    cacheTtl = DEFAULT_TTL,
+    pollingInterval = 0, // ms, 0 = disabled
 } = {}) {
-    const [data,    setData]    = useState(null);
-    const [loading, setLoading] = useState(immediate);
-    const [error,   setError]   = useState(null);
+    const [data, setData] = useState(() => cache.get(url)?.data || null);
+    const [loading, setLoading] = useState(immediate && !cache.get(url));
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(null);
+    const [lastUpdated, setLastUpdated] = useState(null);
     const abortRef = useRef(null);
 
-    const fetch = useCallback(async (silent = false) => {
-        // Check cache first (unless silent = forced refetch)
-        if (!silent && cacheTtl > 0) {
-            const cached = cache.get(url);
-            if (cached && Date.now() - cached.timestamp < cacheTtl) {
-                setData(cached.data);
-                setLoading(false);
-                return cached.data;
-            }
-        }
-
-        if (!silent) setLoading(true);
+    const executeFetch = useCallback(async (isSilent = false) => {
+        if (!isSilent) setLoading(true);
+        else setRefreshing(true);
+        
         setError(null);
-
-        // Cancel any in-flight request for the same URL
         abortRef.current?.abort();
         abortRef.current = new AbortController();
 
@@ -47,46 +39,41 @@ export function useApiQuery(url, {
             const res = await api.get(url, { signal: abortRef.current.signal });
             const result = res.data;
 
-            // Update cache
             cache.set(url, { data: result, timestamp: Date.now() });
-
             setData(result);
+            setLastUpdated(Date.now());
             return result;
         } catch (err) {
             if (err.name === 'CanceledError' || err.name === 'AbortError') return;
-
-            const msg = err.response?.data?.msg || err.message || 'Something went wrong';
+            const msg = err.response?.data?.msg || 'Network Link Failure';
             setError(msg);
-
-            if (showErrorToast) {
-                toast.error(msg, {
-                    style: {
-                        background: '#1e293b',
-                        color: '#fff',
-                        borderRadius: '1rem',
-                        border: '1px solid rgba(239,68,68,0.2)',
-                    },
-                });
-            }
+            if (showErrorToast) toast.error(msg);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
-    }, [url, cacheTtl, showErrorToast]);
+    }, [url, showErrorToast]);
 
     useEffect(() => {
-        if (immediate) fetch();
-        return () => abortRef.current?.abort();
-    }, [url, immediate]);
+        if (immediate) executeFetch();
+        
+        let intervalId;
+        if (pollingInterval > 0) {
+            intervalId = setInterval(() => executeFetch(true), pollingInterval);
+        }
 
-    const refetch = useCallback(() => fetch(true), [fetch]);
+        return () => {
+            abortRef.current?.abort();
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [url, immediate, pollingInterval, executeFetch]);
 
-    return { data, loading, error, refetch };
+    const refetch = useCallback(() => executeFetch(true), [executeFetch]);
+    const setOptimisticData = useCallback((newData) => setData(newData), []);
+
+    return { data, loading, refreshing, error, lastUpdated, refetch, setOptimisticData };
 }
 
-/**
- * Invalidate cache for a specific URL (use after mutations)
- * e.g., invalidateCache('/quiz/stats') after creating a quiz
- */
 export function invalidateCache(url) {
     if (url) cache.delete(url);
     else cache.clear();

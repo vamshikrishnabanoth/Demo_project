@@ -2,43 +2,20 @@ import React, { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from 'lucide-react';
-import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
+import { PremiumButton, PremiumInput, GlassCard } from '../components/ui/Primitives';
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
     const { login, register } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error'
+    const [submitStatus, setSubmitStatus] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
     const navigate = useNavigate();
-    const controls = useAnimation();
 
-    // GPU-optimized parallax — useMotionValue bypasses React render cycle entirely (zero re-renders)
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const glow1X  = useTransform(mouseX, v => v * 50);
-    const glow1Y  = useTransform(mouseY, v => v * 50);
-    const glow2X  = useTransform(mouseX, v => v * -30);
-    const glow2Y  = useTransform(mouseY, v => v * -30);
-    const cardRY  = useTransform(mouseX, v => v * 5);
-    const cardRX  = useTransform(mouseY, v => v * -5);
-    const logoRY  = useTransform(mouseX, v => v * 10);
-    const logoRX  = useTransform(mouseY, v => v * -10);
-    const footerY = useTransform(mouseY, v => v * 10);
-
-    const handleMouseMove = (e) => {
-        mouseX.set((e.clientX - window.innerWidth  / 2) / (window.innerWidth  / 2));
-        mouseY.set((e.clientY - window.innerHeight / 2) / (window.innerHeight / 2));
-    };
-
-    const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        password: ''
-    });
-
+    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const { username, email, password } = formData;
 
     const onChange = e => {
@@ -55,273 +32,128 @@ export default function Login() {
         try {
             if (isLogin) {
                 await login(email, password);
-                setSubmitStatus('success');
-                setTimeout(() => navigate('/'), 1000);
             } else {
                 await register(username, email, password);
-                setSubmitStatus('success');
-                setTimeout(() => navigate('/'), 1000);
             }
+            setSubmitStatus('success');
+            setTimeout(() => navigate('/'), 800);
         } catch (err) {
-            console.error('Login/Signup error:', err);
-            const msg = err.response?.data?.msg || err.message || 'An error occurred';
             setSubmitStatus('error');
-            setErrorMsg(msg);
+            setErrorMsg(err.response?.data?.msg || err.message || 'Access Denied');
             setIsSubmitting(false);
-            
-            controls.start({
-                x: [-10, 10, -10, 10, 0],
-                transition: { duration: 0.4 }
-            });
-        }
-    };
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.15 }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: { 
-            y: 0, 
-            opacity: 1,
-            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
         }
     };
 
     return (
-        <div 
-            onMouseMove={handleMouseMove}
-            className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] relative overflow-hidden transition-colors duration-500 select-none cursor-default"
-        >
-            {/* ─── ENVIRONMENTAL LAYER ────────────────────────────────────── */}
+        <div className="min-h-screen bg-[var(--bg-primary)] relative overflow-y-auto py-12 sm:py-20 flex flex-col items-center justify-start">
             <CinematicBackground />
             
-            {/* Interactive Ambient Glows — driven by motion values, not state */}
-            <motion.div
-                style={{ x: glow1X, y: glow1Y }}
-                className="absolute top-0 right-0 w-[800px] h-[800px] bg-[var(--bg-accent)]/10 rounded-full blur-[150px] -mr-96 -mt-96 pointer-events-none mix-blend-screen"
-            />
-            <motion.div
-                style={{ x: glow2X, y: glow2Y }}
-                className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[var(--bg-accent)]/5 rounded-full blur-[120px] -ml-80 -mb-80 pointer-events-none mix-blend-screen"
-            />
-
-            <motion.div 
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="w-full max-w-md p-8 relative z-10"
-            >
-                {/* ─── LOGO SECTION ────────────────────────────────────────── */}
-                <motion.div variants={itemVariants} className="flex flex-col items-center mb-10">
-                    <motion.div
-                        whileHover={{ scale: 1.05, rotate: 2 }}
-                        style={{ rotateY: logoRY, rotateX: logoRX }}
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
-                        className="w-22 h-22 bg-white/90 backdrop-blur-md rounded-[2rem] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] mb-6 overflow-hidden p-2.5 border border-white/20"
-                    >
+            <div className="w-full max-w-md px-6 relative z-10 space-y-12 my-auto">
+                
+                {/* Branding Hierarchy */}
+                <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center"
+                >
+                    <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl mb-6 border border-white/20 p-3">
                         <img src="/logo.png" alt="KMIT Logo" className="w-full h-full object-contain" />
-                    </motion.div>
-                    <h1 className="text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-none">
-                        KMIT <span className="text-[var(--text-accent)] drop-shadow-[0_0_15px_var(--bg-accent-glow)]">KAHOOT</span>
+                    </div>
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_15px_var(--bg-accent-glow)]">
+                        KMIT <span className="text-[var(--text-accent)]">KAHOOT</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[9px] mt-3 opacity-60">Interactive Quiz & Assessment Platform</p>
+                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[9px] mt-2 opacity-70">Academic Assessment Hub</p>
                 </motion.div>
 
-                {/* ─── LOGIN CARD ─────────────────────────────────────────── */}
-                    <motion.div
-                        animate={controls}
-                        style={{ perspective: 1000 }}
-                    >
-                        <motion.div
-                            style={{ rotateY: cardRY, rotateX: cardRX }}
-                            className="relative group"
+                {/* Authentication Card */}
+                <GlassCard className="!p-8 sm:!p-10 shadow-2xl relative">
+                    <AnimatePresence mode="wait">
+                        <motion.div 
+                            key={isLogin ? 'signin' : 'signup'}
+                            initial={{ opacity: 0, x: isLogin ? -10 : 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: isLogin ? 10 : -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="space-y-8"
                         >
-                        {/* Animated Border Shimmer */}
-                        <div className="absolute -inset-[1px] bg-gradient-to-r from-transparent via-[var(--bg-accent)]/30 to-transparent rounded-[3rem] blur-sm group-hover:blur-md transition-all duration-1000 opacity-30"></div>
-                        
-                        <div className="bg-[var(--bg-secondary)]/40 backdrop-blur-[32px] border border-white/10 p-6 sm:p-10 rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] relative overflow-hidden transition-all duration-500">
-                            
-                            {/* Card Content Shimmer */}
-                            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-
-                            {/* Top Progress Bar */}
-                            <AnimatePresence>
-                                {isSubmitting && (
-                                    <motion.div 
-                                        initial={{ x: "-100%" }}
-                                        animate={{ x: "0%" }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                                        className="absolute top-0 left-0 w-full h-[3px] bg-[var(--bg-accent)] z-50 shadow-[0_0_15px_var(--bg-accent)]"
-                                    />
-                                )}
-                            </AnimatePresence>
-
-                            {/* Active Tab Indicator */}
-                            <div className={`absolute top-0 h-[2px] bg-[var(--bg-accent)] transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${isLogin ? 'left-0 w-1/2' : 'left-1/2 w-1/2'} ${isSubmitting ? 'opacity-0' : 'opacity-40'}`}></div>
-
-                            <h2 className="text-3xl font-black text-[var(--text-primary)] mb-10 italic uppercase tracking-tight flex items-center gap-4">
-                                {isLogin ? 
-                                    <LogIn size={28} className="text-[var(--text-accent)]" /> : 
-                                    <UserPlus size={28} className="text-[var(--text-accent)]" />
-                                }
+                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
+                                {isLogin ? <LogIn className="text-[var(--text-accent)]" /> : <UserPlus className="text-[var(--text-accent)]" />}
                                 {isLogin ? 'Sign In' : 'Create Account'}
                             </h2>
 
-                            <form onSubmit={onSubmit} className="space-y-8">
-                                <AnimatePresence mode="wait">
-                                    {!isLogin && (
-                                        <motion.div 
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            className="space-y-2"
-                                        >
-                                            <label htmlFor="username-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Username</label>
-                                            <div className="relative group/input">
-                                                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                                    <User size={20} aria-hidden="true" />
-                                                </div>
-                                                <input
-                                                    id="username-input"
-                                                    type="text"
-                                                    name="username"
-                                                    placeholder="Username"
-                                                    value={username}
-                                                    onChange={onChange}
-                                                    required={!isLogin}
-                                                    aria-required={!isLogin}
-                                                    autoComplete="username"
-                                                    className="block w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-5 pl-14 pr-5 text-[var(--text-primary)] placeholder-white/10 focus:outline-none focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)] transition-all duration-500 font-bold tracking-tight"
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                            <form onSubmit={onSubmit} className="space-y-6">
+                                {!isLogin && (
+                                    <PremiumInput
+                                        label="Username"
+                                        name="username"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={onChange}
+                                        icon={User}
+                                        required
+                                    />
+                                )}
 
-                                <div className="space-y-2">
-                                    <label htmlFor="email-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Email / Roll Number</label>
-                                    <div className="relative group/input">
-                                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                            <Mail size={20} aria-hidden="true" />
-                                        </div>
-                                        <input
-                                            id="email-input"
-                                            type="text"
-                                            name="email"
-                                            placeholder="Roll Number"
-                                            value={email}
-                                            onChange={onChange}
-                                            required
-                                            aria-required="true"
-                                            autoComplete="username"
-                                            className="block w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-5 pl-14 pr-5 text-[var(--text-primary)] placeholder-white/10 focus:outline-none focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)] transition-all duration-500 font-bold tracking-tight"
-                                        />
-                                    </div>
-                                </div>
+                                <PremiumInput
+                                    label="Roll Number / Email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={onChange}
+                                    icon={Mail}
+                                    required
+                                />
 
-                                <div className="space-y-2">
-                                    <label htmlFor="password-input" className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] ml-1 opacity-50">Password</label>
-                                    <div className="relative group/input">
-                                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-white/20 group-focus-within/input:text-[var(--text-accent)] transition-colors">
-                                            <Lock size={20} aria-hidden="true" />
-                                        </div>
-                                        <motion.input
-                                            id="password-input"
-                                            animate={submitStatus === 'error' ? { x: [0, -10, 10, -10, 10, 0] } : {}}
-                                            type={showPassword ? 'text' : 'password'}
-                                            name="password"
-                                            placeholder="••••••••"
-                                            value={password}
-                                            onChange={onChange}
-                                            required
-                                            aria-required="true"
-                                            autoComplete={isLogin ? 'current-password' : 'new-password'}
-                                            aria-describedby={errorMsg ? 'login-error' : undefined}
-                                            className={`block w-full bg-white/[0.02] border rounded-[1.5rem] py-5 pl-14 pr-14 text-[var(--text-primary)] placeholder-white/10 focus:outline-none transition-all duration-500 font-bold tracking-tight
-                                                ${submitStatus === 'error' ? 'border-red-500/30 bg-red-500/5 focus:shadow-[0_0_30px_rgba(239,68,68,0.2)]' : 'border-white/5 focus:border-[var(--bg-accent)]/30 focus:bg-white/[0.05] focus:shadow-[0_0_30px_var(--bg-accent-glow)]'}`}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
-                                            aria-pressed={showPassword}
-                                            className="absolute inset-y-0 right-0 pr-5 flex items-center text-slate-500 hover:text-slate-400 transition-all cursor-pointer"
-                                        >
-                                            {showPassword ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
-                                        </button>
-                                    </div>
-                                    <AnimatePresence>
-                                        {errorMsg && (
-                                            <motion.p 
-                                                id="login-error"
-                                                role="alert"
-                                                aria-live="assertive"
-                                                initial={{ opacity: 0, y: -5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                className="text-red-400 text-xs font-black uppercase tracking-widest ml-2 mt-3 flex items-center gap-2"
-                                            >
-                                                <XCircle size={12} aria-hidden="true" /> {errorMsg}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                <PremiumInput
+                                    label="Password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={onChange}
+                                    icon={Lock}
+                                    endIcon={showPassword ? EyeOff : Eye}
+                                    onEndIconClick={() => setShowPassword(!showPassword)}
+                                    required
+                                />
 
-                                <motion.button
+                                {errorMsg && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest p-4 rounded-xl flex items-center gap-3"
+                                    >
+                                        <XCircle size={16} /> {errorMsg}
+                                    </motion.div>
+                                )}
+
+                                <PremiumButton
                                     type="submit"
                                     disabled={isSubmitting}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className={`w-full flex justify-center items-center gap-4 py-5 px-8 rounded-[1.5rem] shadow-2xl text-base font-black italic uppercase tracking-[0.2em] transition-all duration-500 mt-6 relative overflow-hidden group/btn
-                                        ${submitStatus === 'success' ? 'bg-green-600 text-white shadow-green-600/30' : 
-                                          submitStatus === 'error' ? 'bg-red-600 text-white shadow-red-600/30' : 
-                                          'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[var(--bg-accent)]/30 hover:shadow-[var(--bg-accent)]/50'}`}
+                                    className="w-full py-5"
+                                    icon={isSubmitting ? Loader2 : (submitStatus === 'success' ? CheckCircle2 : LogIn)}
                                 >
-                                    {/* Button Magnetic Glow Effect */}
-                                    <div className="absolute inset-0 bg-white/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none translate-y-10 group-hover/btn:translate-y-0" />
-                                    
-                                    {isSubmitting ? (
-                                        <Loader2 size={24} className="animate-spin" />
-                                    ) : submitStatus === 'success' ? (
-                                        <><CheckCircle2 size={24} /> Welcome!</>
-                                    ) : submitStatus === 'error' ? (
-                                        <><XCircle size={24} /> Try Again</>
-                                    ) : (
-                                        <>{isLogin ? 'Sign In' : 'Create Account'} <LogIn size={20} /></>
-                                    )}
-                                </motion.button>
+                                    {isSubmitting ? 'VERIFYING...' : (isLogin ? 'SIGN IN' : 'INITIALIZE')}
+                                </PremiumButton>
                             </form>
 
-                            <div className="mt-10 pt-10 border-t border-white/5 text-center">
+                            <div className="pt-6 border-t border-white/5 text-center">
                                 <button 
                                     onClick={() => setIsLogin(!isLogin)}
-                                    className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.3em] hover:text-[var(--text-accent)] transition-all duration-300 opacity-40 hover:opacity-100"
+                                    className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] hover:text-[var(--text-accent)] transition-all"
                                 >
-                                    {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                                    {isLogin ? "Need new clearance? Sign up" : "Existing identity? Sign in"}
                                 </button>
                             </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
+                        </motion.div>
+                    </AnimatePresence>
+                </GlassCard>
 
-                {/* Footer Depth Layer */}
-                <motion.div
-                    variants={itemVariants}
-                    style={{ y: footerY }}
-                    className="mt-12 text-center"
-                >
-                    <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.5em] opacity-20">
-                        © 2026 KMIT Quiz Platform
-                    </p>
-                </motion.div>
-            </motion.div>
+                {/* Infrastructure Tag */}
+                <p className="text-center text-[9px] font-black uppercase tracking-[0.6em] text-white/50 italic">
+                    Academic Management Infrastructure v1.0
+                </p>
+            </div>
         </div>
     );
 }

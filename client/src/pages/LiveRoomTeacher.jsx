@@ -193,8 +193,13 @@ export default function LiveRoomTeacher() {
         }
     };
 
-    const handleEndQuiz = () => {
-        if (window.confirm('End this quiz session?')) {
+    const handleEndQuiz = async () => {
+        const result = await showConfirm(
+            'Terminate Session?',
+            'All live progress will be finalized. This action cannot be undone.',
+            'End Quiz'
+        );
+        if (result.isConfirmed) {
             socket.emit('end_quiz', quiz.id);
             navigate('/teacher-dashboard');
         }
@@ -328,7 +333,7 @@ export default function LiveRoomTeacher() {
                     <div className="w-24 h-24 bg-indigo-100 rounded-[2rem] flex items-center justify-center mx-auto">
                         <Trophy className="text-indigo-600" size={48} />
                     </div>
-                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-gray-900">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
+                    <h1 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-gray-900 text-balance">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
                     <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
@@ -360,20 +365,20 @@ export default function LiveRoomTeacher() {
                             <div className="inline-block px-6 py-2 bg-white/10 rounded-full border border-white/20">
                                 <span className="text-indigo-200 font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
                             </div>
-                            <h1 className="text-7xl font-black italic uppercase tracking-tighter">Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
+                            <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter text-balance">Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
                             <div className="flex flex-col items-center gap-4">
                                 <p className="text-indigo-300 font-bold uppercase tracking-widest text-lg">Join Code</p>
-                                <div onClick={copyCode} className="bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all rounded-3xl p-10 cursor-pointer group active:scale-95">
-                                    <p className="text-8xl font-black tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-8 underline-offset-[16px]">{joinCode}</p>
+                                <div onClick={copyCode} className="bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
+                                    <p className="text-5xl sm:text-7xl font-black tracking-[0.2em] sm:tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-4 sm:decoration-8 underline-offset-[16px] break-all">{joinCode}</p>
                                 </div>
                             </div>
                             <div className="pt-10 flex flex-col items-center gap-6">
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex items-center gap-10 bg-[var(--bg-accent)] text-white px-24 py-10 rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-5xl italic uppercase tracking-tighter active:scale-95 border-b-[12px] border-[#cc5500] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group flex flex-col sm:flex-row items-center gap-6 sm:gap-8 bg-[var(--bg-accent)] text-white px-10 sm:px-20 py-5 sm:py-8 rounded-[2.5rem] sm:rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-2xl sm:text-4xl italic uppercase tracking-tighter active:scale-95 border-b-[6px] sm:border-b-[10px] border-[#cc5500] disabled:opacity-50 disabled:cursor-not-allowed btn-glow"
                                 >
-                                    <Play size={60} fill="currentColor" className="group-hover:translate-x-2 transition-transform" />
+                                    <Play size={32} className="sm:w-[48px] sm:h-[48px] group-hover:translate-x-2 transition-transform" fill="currentColor" />
                                     START GAME
                                 </button>
                                 <p className="text-white/40 font-bold uppercase tracking-widest text-sm">{participants.length} Students Joined</p>
@@ -533,12 +538,12 @@ export default function LiveRoomTeacher() {
                     </div>
 
                     {/* Column Headers */}
-                    <div className="px-8 py-3 bg-slate-50 border-b border-slate-100 flex items-center gap-4">
-                        <div className="w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Rank</div>
-                        <div className="w-40 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student</div>
-                        <div className="w-16 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</div>
-                        <div className="flex-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">Questions Progress</div>
-                        <div className="w-20 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Score</div>
+                    <div className="bg-slate-50 border-b border-slate-100 flex items-center gap-4">
+                        <div className="w-12 table-header-premium text-center">Rank</div>
+                        <div className="w-40 table-header-premium text-left px-0">Student</div>
+                        <div className="w-16 table-header-premium text-center px-0">Status</div>
+                        <div className="flex-1 table-header-premium text-left px-0">Questions Progress</div>
+                        <div className="w-20 table-header-premium text-center px-0">Score</div>
                     </div>
 
                     {/* Student Rows */}

@@ -541,13 +541,34 @@ export default function AttemptQuiz() {
                     <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs leading-relaxed">
                         All answers submitted! The leaderboard will appear when the host terminates the session.
                     </p>
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md space-y-6 shadow-2xl">
+                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md flex flex-col items-center gap-6 shadow-2xl">
                         <div className="flex flex-col items-center gap-2">
-                            <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px]">Session Status</span>
-                            <div className="text-5xl font-black italic text-[var(--text-accent)] tracking-tighter">
-                                {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                            <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Session Status</span>
+                            
+                            <div className="relative w-32 h-32">
+                                <motion.div 
+                                    animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                    className="absolute inset-0 bg-[var(--bg-accent)] rounded-full blur-2xl"
+                                />
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
+                                    <motion.circle
+                                        cx="64" cy="64" r="60" stroke="var(--bg-accent)" strokeWidth="6" fill="transparent"
+                                        strokeDasharray="377"
+                                        initial={{ strokeDashoffset: 377 }}
+                                        animate={{ strokeDashoffset: 377 * (1 - timeLeft / (quiz.duration * 60 || 1800)) }}
+                                        transition={{ duration: 1, ease: "linear" }}
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-4xl font-black italic text-[var(--text-accent)] tracking-tighter">
+                                        {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                    </span>
+                                </div>
                             </div>
-                            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest mt-2">Remaining Duration</p>
+                            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest mt-4">Remaining Duration</p>
                         </div>
                     </div>
                 </motion.div>
@@ -577,11 +598,31 @@ export default function AttemptQuiz() {
                         <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs leading-relaxed">
                             Your data has been transmitted. The gateway will open when the synchronization sequence concludes.
                         </p>
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md space-y-6 shadow-2xl">
+                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md flex flex-col items-center gap-6 shadow-2xl">
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px]">Leaderboard appears in</span>
-                                <div className="text-5xl font-black italic text-[var(--text-accent)] tracking-tighter">
-                                    {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Leaderboard appears in</span>
+                                <div className="relative w-32 h-32">
+                                    <motion.div 
+                                        animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="absolute inset-0 bg-[var(--bg-accent)] rounded-full blur-2xl"
+                                    />
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
+                                        <motion.circle
+                                            cx="64" cy="64" r="60" stroke="var(--bg-accent)" strokeWidth="6" fill="transparent"
+                                            strokeDasharray="377"
+                                            initial={{ strokeDashoffset: 377 }}
+                                            animate={{ strokeDashoffset: 377 * (1 - timeLeft / (quiz.duration * 60 || 1800)) }}
+                                            transition={{ duration: 1, ease: "linear" }}
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-4xl font-black italic text-[var(--text-accent)] tracking-tighter">
+                                            {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-center justify-center gap-4 text-[var(--text-secondary)] opacity-50">
@@ -675,31 +716,59 @@ export default function AttemptQuiz() {
                 <div className="flex items-center gap-4">
                     {!isReviewMode && !result && (quiz.timerPerQuestion > 0 || quiz.duration > 0) && (
                         <div className="flex flex-col items-center">
-                            <div className="relative w-16 h-16">
+                            <div className="relative w-20 h-20">
+                                {/* Ambient Glow for low time */}
+                                <AnimatePresence>
+                                    {timeLeft <= 5 && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: [0, 0.4, 0], scale: [0.8, 1.4, 0.8] }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 1, repeat: Infinity }}
+                                            className="absolute inset-0 bg-red-500 rounded-full blur-xl"
+                                        />
+                                    )}
+                                </AnimatePresence>
+
+                                {/* Background Ring */}
                                 <svg className="w-full h-full transform -rotate-90">
                                     <circle
-                                        cx="32"
-                                        cy="32"
-                                        r="28"
+                                        cx="40"
+                                        cy="40"
+                                        r="36"
                                         stroke="currentColor"
                                         strokeWidth="4"
                                         fill="transparent"
-                                        className="text-gray-100"
+                                        className="text-gray-200/50"
                                     />
-                                    <circle
-                                        cx="32"
-                                        cy="32"
-                                        r="28"
-                                        stroke="currentColor"
+                                    {/* Progress Ring */}
+                                    <motion.circle
+                                        cx="40"
+                                        cy="40"
+                                        r="36"
+                                        stroke={timeLeft <= 5 ? '#ef4444' : 'var(--bg-accent)'}
                                         strokeWidth="4"
                                         fill="transparent"
-                                        strokeDasharray={175.9}
-                                        strokeDashoffset={175.9 * (1 - timeLeft / (quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30)))}
-                                        className={`transition-all duration-1000 ${timeLeft <= 5 ? 'text-red-500' : 'text-[#ff6b00]'}`}
+                                        strokeDasharray="226.2"
+                                        initial={{ strokeDashoffset: 226.2 }}
+                                        animate={{ strokeDashoffset: 226.2 * (1 - timeLeft / (quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30))) }}
+                                        transition={{ duration: 1, ease: "linear" }}
+                                        strokeLinecap="round"
+                                        className="drop-shadow-[0_0_8px_rgba(255,107,0,0.3)]"
                                     />
                                 </svg>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className={`text-xl font-black ${timeLeft <= 5 ? 'text-red-600 animate-pulse' : 'text-gray-900'}`}>{timeLeft}</span>
+
+                                {/* Countdown Text */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <motion.span 
+                                        key={timeLeft}
+                                        initial={{ scale: 1.1, opacity: 0.8 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        className={`text-2xl font-black italic tracking-tighter leading-none ${timeLeft <= 5 ? 'text-red-600' : 'text-gray-900'}`}
+                                    >
+                                        {timeLeft}
+                                    </motion.span>
+                                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 opacity-40 ${timeLeft <= 5 ? 'text-red-500' : 'text-gray-500'}`}>Sec</span>
                                 </div>
                             </div>
                         </div>

@@ -12,9 +12,10 @@
   --text-on-accent: #ffffff;
   --border-color: rgba(255, 255, 255, 0.08);
   --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-blur: blur(20px);
+  --glass-blur: blur(8px);
   --glass-border: 1px solid rgba(255, 255, 255, 0.1);
   --glass-inner-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --text-balance: balance; /* Modern text wrapping */
   --error-bg: #ef4444;
   --success-bg: #22c55e;
   --bg-accent-glow: rgba(215, 172, 40, 0.3);
@@ -25,18 +26,18 @@
   --neural-neutral: var(--text-secondary);
   
   /* --- CINEMATIC MOTION TOKENS --- */
-  --motion-fast: 200ms;
-  --motion-medium: 400ms;
-  --motion-slow: 800ms;
-  --motion-cinematic: 2000ms;
+  --motion-fast: 150ms;
+  --motion-medium: 250ms;
+  --motion-slow: 500ms;
+  --motion-cinematic: 1200ms;
 
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-  --hover-scale: 1.02;
-  --glow-intensity: 0.8;
-  --blur-strength: 24px;
+  --hover-scale: 1.01;
+  --glow-intensity: 0.6;
+  --blur-strength: 8px;
   --parallax-strength: 1;
 
   --app-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -59,7 +60,41 @@
 html {
   scroll-behavior: smooth;
   overflow-y: scroll; /* Always show scrollbar — prevents layout shift */
+  overflow-x: hidden; /* Safety first for mobile */
 }
+
+/* Standardized Layout Breathing System — WCAG 2.1 & Production-Level Spacing */
+.layout-container {
+  width: 100%;
+  max-width: 1600px; /* Expanded for Ultra-Wide */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 5vw, 4rem); /* Increased side breathing for high-res */
+  padding-right: clamp(1rem, 5vw, 4rem);
+}
+
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vh, 2rem); /* Dynamic breathing room based on height/width */
+}
+
+.responsive-grid {
+  display: grid;
+  gap: clamp(1.5rem, 2vw, 3rem); /* Increased gap for premium feel */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.grid-ultra {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 768px) { .grid-ultra { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1280px) { .grid-ultra { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1536px) { .grid-ultra { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1920px) { .grid-ultra { grid-template-columns: repeat(5, 1fr); } }
 
 /* Prevent white flash on initial page load and route changes */
 #root {
@@ -85,10 +120,12 @@ html {
   animation: shimmer 1.5s linear infinite;
 }
 
-/* Prevent transition elements from inheriting global color transitions
-   (the wildcard * transition causes micro-stutters during page change) */
-.framer-motion-page * {
-  transition-property: background-color, border-color, color, opacity;
+.premium-transition {
+  transition: background-color var(--motion-fast) ease, 
+              border-color var(--motion-fast) ease, 
+              color var(--motion-fast) ease, 
+              opacity var(--motion-fast) ease,
+              transform var(--motion-fast) var(--ease-premium);
 }
 
 /* --- GLASSMORPHISM 2.0 UTILITIES --- */
@@ -137,7 +174,7 @@ html {
 }
 
 /* Touch target minimum (44×44px) — WCAG 2.5.5 */
-button, a, [role="button"] {
+:where(button, a, [role="button"]) {
   min-height: 44px;
   min-width: 44px;
   display: inline-flex;
@@ -174,17 +211,47 @@ a.inline-link {
   outline: none;
 }
 
-/* Screen reader only — visually hidden but accessible to AT */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+/* --- PREMIUM INTERACTION & ANTI-JITTER --- */
+
+.text-hero-fluid {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1.1;
+  text-wrap: balance;
+  word-break: break-word;
+}
+
+.text-balance {
+  text-wrap: balance;
+  word-break: break-word;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 30px var(--bg-accent-glow), 0 0 10px rgba(255, 255, 255, 0.1);
+  filter: brightness(1.1);
+}
+
+.input-no-jitter {
+  border: 1.5px solid transparent; /* Reserve space */
+  outline: none;
+  background-clip: padding-box;
+  transition: all 0.3s var(--ease-premium);
+}
+
+.input-no-jitter:focus {
+  border-color: var(--bg-accent);
+  box-shadow: 0 0 20px var(--bg-accent-glow);
+}
+
+/* Production-Grade Table Headers */
+.table-header-premium {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* --- PREMIUM INTERACTION CLASSES --- */
@@ -232,15 +299,17 @@ a.inline-link {
 
 [data-theme='imperial'] {
   --bg-primary: #0F0529; /* Midnight Amethyst */
+  --bg-secondary: #1A0B40; /* Deep Royal Purple */
   --bg-accent: #FFB700; /* Sovereign Gold */
   --bg-accent-hover: #E6A600; 
-  --text-primary: #F3E5F5; /* Lavender Silk */
-  --text-secondary: #B371E0; 
+  --text-primary: #FFFFFF; 
+  --text-secondary: #D8B4FE; 
   --text-accent: #FFB700;
   --text-on-accent: #0F0529;
-  --border-color: rgba(255, 215, 0, 0.15);
-  --glass-bg: rgba(31, 11, 94, 0.7);
-  --error-bg: #900C3F; /* Deep Claret */
+  --border-color: rgba(255, 183, 0, 0.2);
+  --glass-bg: rgba(31, 11, 94, 0.6);
+  --glass-border: 1px solid rgba(255, 183, 0, 0.2);
+  --error-bg: #900C3F; 
   --success-bg: #22c55e;
   --bg-accent-glow: rgba(255, 183, 0, 0.3);
 
@@ -310,12 +379,6 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--app-font);
-  transition: background-color 0.3s ease, color 0.3s ease, font-family 0.3s ease;
-}
-
-/* Global transitions for themeable elements */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }/* GLOBAL CURSOR SYSTEM */
 html, body { cursor: default; }
 a, button, [role="button"], .clickable, .btn-press, .btn-hover-scale { cursor: pointer; }
@@ -381,9 +444,85 @@ button:disabled, input:disabled, [disabled], .not-allowed { cursor: not-allowed 
 }
 
 /* ─── GLOBAL TRANSITION PERFORMANCE ─────────────────────────────────────────
-   The wildcard transition on every element adds up — limit what transitions. */
-* {
-  transition-property: background-color, border-color, color, opacity;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
+   Avoid wildcard transitions (*) as they kill painting performance. 
+   Apply .premium-transition only where needed. */
+
+/* --- THEME-BASED PREMIUM SPINNER --- */
+@keyframes premium-ring-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.premium-spinner-ring {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border: 4px solid var(--bg-accent);
+  border-radius: 50%;
+  animation: premium-ring-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: var(--bg-accent) transparent transparent transparent;
+  filter: drop-shadow(0 0 12px var(--bg-accent-glow));
+}
+
+.premium-spinner-ring:nth-child(1) { animation-delay: -0.45s; }
+.premium-spinner-ring:nth-child(2) { animation-delay: -0.3s; }
+.premium-spinner-ring:nth-child(3) { animation-delay: -0.15s; }
+
+/* --- LEADERBOARD PREMIUM ANIMATIONS --- */
+@keyframes rank-shine {
+  0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
+  20% { opacity: 0.5; }
+  50% { opacity: 0.5; }
+  80% { opacity: 0.5; }
+  100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
+}
+
+.rank-shine-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: rank-shine 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes status-glow-pulse {
+  0% { box-shadow: 0 0 5px var(--glow-color); }
+  50% { box-shadow: 0 0 20px var(--glow-color); }
+  100% { box-shadow: 0 0 5px var(--glow-color); }
+}
+
+.status-indicator-glow {
+  animation: status-glow-pulse 2s infinite ease-in-out;
+}
+
+/* --- PREMIUM SCROLLBAR --- */
+.premium-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-accent);
+  box-shadow: 0 0 10px var(--bg-accent-glow);
 }

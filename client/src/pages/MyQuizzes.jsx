@@ -19,6 +19,7 @@ import {
     HelpCircle,
     Play
 } from 'lucide-react';
+import EmptyState from '../components/EmptyState';
 
 export default function MyQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
@@ -87,8 +88,8 @@ export default function MyQuizzes() {
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-5xl font-black text-white tracking-tight italic uppercase">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
-                        <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-sm italic">Manage your knowledge assets</p>
+                        <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
+                        <p className="text-slate-500 font-bold mt-4 uppercase tracking-widest text-xs sm:text-sm italic text-balance">Manage your knowledge assets</p>
                     </div>
 
                     <div className="relative w-full md:w-80 group">
@@ -104,9 +105,15 @@ export default function MyQuizzes() {
                 </div>
 
                 {loading ? (
-                    <div className="bg-white/5 rounded-[3rem] border border-white/10 p-24 text-center ring-1 ring-white/5">
-                        <Activity className="animate-spin text-[var(--bg-accent)] mx-auto mb-8" size={64} />
-                        <p className="font-black text-slate-500 uppercase tracking-[0.3em] italic text-sm">Syncing with KMIT database...</p>
+                    <div className="bg-white/5 rounded-[3rem] border border-white/10 p-12 sm:p-24 flex flex-col items-center justify-center gap-8 ring-1 ring-white/5">
+                        <div className="relative w-16 h-16">
+                            <div className="premium-spinner-ring"></div>
+                            <div className="premium-spinner-ring"></div>
+                            <div className="premium-spinner-ring"></div>
+                        </div>
+                        <p className="font-black text-white italic uppercase tracking-[0.3em] text-sm animate-pulse mt-4 text-center">
+                            Syncing with KMIT database...
+                        </p>
                     </div>
                 ) : filteredQuizzes.length > 0 ? (
                     <div className="grid grid-cols-1 gap-8">
@@ -213,7 +220,7 @@ export default function MyQuizzes() {
                                         {quiz.results.slice(0, 3).map((res, idx) => (
                                             <div key={idx} className="flex items-center justify-between text-xs bg-black/20 rounded-xl p-3 border border-white/5">
                                                 <div className="flex items-center gap-3">
-                                                    <span className={`font-black italic ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-slate-300' : 'text-amber-600'}`}>#{idx + 1}</span>
+                                                    <span className={`font-black italic ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-slate-300' : 'text-amber-600'}`}>#1</span>
                                                     <span className="font-bold text-white uppercase truncate w-24">{res.studentName}</span>
                                                 </div>
                                                 <span className="font-black text-[var(--text-accent)] italic">{res.score}</span>
@@ -229,22 +236,18 @@ export default function MyQuizzes() {
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white/5 rounded-[3rem] border border-white/10 p-32 text-center ring-1 ring-white/5 relative overflow-hidden">
-                        <div className="bg-white/5 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-10 text-slate-800 border border-white/10 shadow-inner">
-                            <AlertCircle size={64} />
-                        </div>
-                        <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter">Library Empty</h3>
-                        <p className="max-w-md mx-auto text-slate-500 font-bold text-lg mt-6 leading-relaxed">
-                            {searchTerm ? `No results found for "${searchTerm}"` : "Your knowledge base is waiting for its first entry. Let's create something extraordinary."}
-                        </p>
-                        {!searchTerm && (
-                            <Link to="/" className="inline-block mt-12 bg-[var(--bg-accent)] text-white px-12 py-6 rounded-3xl font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/20">
+                    <EmptyState 
+                        icon={FileText}
+                        title="Library Empty"
+                        message={searchTerm ? `No results match "${searchTerm}".` : "Your knowledge base is waiting for its first entry. Let's create something extraordinary."}
+                        action={!searchTerm && (
+                            <Link to="/teacher-dashboard" className="bg-[var(--bg-accent)] text-white px-12 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/20 btn-glow">
                                 Build First Quiz
                             </Link>
                         )}
-                    </div>
+                    />
                 )}
             </div>
-        </DashboardLayout >
+        </DashboardLayout>
     );
 }
