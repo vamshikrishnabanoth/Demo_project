@@ -7,27 +7,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0a0a0b" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+
   <!-- SEO -->
-  <title>KMIT Kahoot — Interactive Quiz & Assessment Platform</title>
-  <meta name="description" content="KMIT Kahoot is an AI-powered interactive quiz and assessment platform for KMIT students and faculty. Create quizzes, join live sessions, and track performance." />
+  <title>KMIT Kahoot — Tactical Assessment & Arena</title>
+  <meta name="description" content="KMIT Kahoot is an AI-powered interactive quiz and assessment platform for KMIT students and faculty." />
   <meta name="robots" content="noindex, nofollow" />
 
-  <!-- Open Graph (WhatsApp, LinkedIn previews) -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="KMIT Kahoot" />
-  <meta property="og:description" content="AI-powered interactive quiz platform for KMIT" />
-  <meta property="og:image" content="/logo.png" />
+  <!-- Preload Critical Logo -->
+  <link rel="preload" as="image" href="/logo.png">
 
   <!-- Prevent flash of unstyled content -->
   <style>
-    html { background-color: #0a0a0b; }
+    html { background-color: #0a0a0b; color-scheme: dark; }
+    #root { min-height: 100vh; display: flex; flex-direction: column; }
   </style>
 </head>
 
 <body>
-  <!-- Skip to main content — for screen readers and keyboard users -->
-  <a href="#main-content" class="skip-to-content">Skip to main content</a>
-
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

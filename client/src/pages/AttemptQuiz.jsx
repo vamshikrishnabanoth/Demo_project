@@ -692,25 +692,25 @@ export default function AttemptQuiz() {
         : null;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
             {/* Offline Banner */}
             {!isOnline && (
-                <div className="fixed top-0 left-0 right-0 z-[100] bg-orange-500 text-white px-6 py-3 flex items-center justify-center gap-3 font-bold text-sm shadow-lg">
+                <div className="fixed top-0 left-0 right-0 z-[var(--z-tooltip)] bg-orange-500 text-white px-6 py-3 flex items-center justify-center gap-3 font-bold text-sm shadow-lg">
                     <WifiOff size={18} />
                     You are offline — progress saved locally. Submissions paused until reconnected.
                 </div>
             )}
-            <header className={`bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky z-50 ${!isOnline ? 'top-10' : 'top-0'}`}>
+            <header className={`bg-[var(--bg-secondary)] border-b border-white/5 px-6 py-4 flex items-center justify-between sticky z-[var(--z-header)] ${!isOnline ? 'top-10' : 'top-0'}`}>
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/student-dashboard')}
-                        className="p-2 hover:bg-gray-100 rounded-lg text-gray-400"
+                        className="p-2 hover:bg-white/5 rounded-lg text-white/40"
                     >
                         <ChevronLeft size={24} />
                     </button>
                     <div>
-                        <h2 className="font-bold text-gray-900">{quiz.title}</h2>
-                        <p className="text-xs text-gray-500">{currentQuestion + 1} of {quiz.questions.length} Questions {isReviewMode && '• Review Mode'}</p>
+                        <h2 className="font-bold text-white uppercase tracking-tight italic">{quiz.title}</h2>
+                        <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">{currentQuestion + 1} of {quiz.questions.length} Questions {isReviewMode && '• Review Mode'}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -729,6 +729,7 @@ export default function AttemptQuiz() {
                                         />
                                     )}
                                 </AnimatePresence>
+
 
                                 {/* Background Ring */}
                                 <svg className="w-full h-full transform -rotate-90">
@@ -758,29 +759,29 @@ export default function AttemptQuiz() {
                                     />
                                 </svg>
 
-                                {/* Countdown Text */}
+                                    {/* Countdown Text */}
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                                     <motion.span 
                                         key={timeLeft}
                                         initial={{ scale: 1.1, opacity: 0.8 }}
                                         animate={{ scale: 1, opacity: 1 }}
-                                        className={`text-2xl font-black italic tracking-tighter leading-none ${timeLeft <= 5 ? 'text-red-600' : 'text-gray-900'}`}
+                                        className={`text-2xl font-black italic tracking-tighter leading-none ${timeLeft <= 5 ? 'text-red-500' : 'text-white'}`}
                                     >
                                         {timeLeft}
                                     </motion.span>
-                                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 opacity-40 ${timeLeft <= 5 ? 'text-red-500' : 'text-gray-500'}`}>Sec</span>
+                                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 opacity-40 ${timeLeft <= 5 ? 'text-red-500' : 'text-white/60'}`}>Sec</span>
                                 </div>
                             </div>
                         </div>
                     )}
                     {isReviewMode && (
-                        <div className="bg-indigo-600 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
-                            Score: {result.score} / {result.totalQuestions * 10}
+                        <div className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
+                            Yield: {result.score} / {result.totalQuestions * 10}
                         </div>
                     )}
-                    <div className="w-48 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="w-48 h-2 bg-white/5 rounded-full overflow-hidden">
                         <div
-                            className={`h-full transition-all duration-300 ${isReviewMode ? 'bg-indigo-600' : 'bg-indigo-600'}`}
+                            className={`h-full transition-all duration-300 bg-[var(--bg-accent)]`}
                             style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                         />
                     </div>
@@ -788,8 +789,8 @@ export default function AttemptQuiz() {
                     <div className="hidden md:flex items-center gap-1">
                         {quiz.questions.map((_, idx) => (
                             <div
-                                key={idx}
-                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'scale-125 ring-2 ring-indigo-500 ring-offset-2' : ''} ${answers[idx] ? 'bg-green-500' : 'bg-gray-200'}`}
+                                key={`prog-${idx}`}
+                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'scale-125 ring-2 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)]' : ''} ${answers[idx] ? 'bg-green-500' : 'bg-white/10'}`}
                             />
                         ))}
                     </div>
@@ -798,16 +799,16 @@ export default function AttemptQuiz() {
 
             {/* Strict Mode Waiting Overlay */}
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
-                <div className="fixed inset-0 z-[60] bg-[#0f172a]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
+                <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
                     <div className="relative mb-12">
-                        <div className="absolute inset-0 animate-ping bg-[#ff6b00] opacity-20 rounded-full"></div>
+                        <div className="absolute inset-0 animate-ping bg-[var(--bg-accent)] opacity-20 rounded-full"></div>
                         <div className="relative bg-white/5 p-12 rounded-[3rem] border border-white/10">
-                            <Clock className="text-[#ff6b00] animate-pulse" size={64} />
+                            <Clock className="text-[var(--bg-accent)] animate-pulse" size={64} />
                         </div>
                     </div>
-                    <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-4 text-[#ff6b00]">Strict Mode</h2>
+                    <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-4 text-[var(--bg-accent)]">Strict Mode</h2>
                     <h3 className="text-3xl font-black italic uppercase tracking-tighter mb-8">Synchronizing Answers...</h3>
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-lg max-w-md animate-pulse">
+                    <p className="text-white/40 font-bold uppercase tracking-widest text-lg max-w-md animate-pulse">
                         Waiting for teacher to move to the next question…
                     </p>
                     <div className="mt-12 flex items-center gap-4 text-white/40">
@@ -817,20 +818,20 @@ export default function AttemptQuiz() {
                 </div>
             )}
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 pb-24">
+            <main className="flex-1 flex flex-col items-center justify-center p-6 pb-24 relative">
                 <div className="max-w-2xl w-full">
                     {isReviewMode && (
                         <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 border ${questionResult?.isCorrect
-                            ? 'bg-green-50 border-green-100 text-green-700'
-                            : 'bg-red-50 border-red-100 text-red-700'
+                            ? 'bg-green-500/10 border-green-500/20 text-green-400'
+                            : 'bg-red-500/10 border-red-500/20 text-red-400'
                             }`}>
                             {questionResult?.isCorrect ? <CheckCircle size={20} /> : <XCircle size={20} />}
                             <div className="flex-1">
-                                <p className="text-sm font-bold">
-                                    {questionResult?.isCorrect ? 'Correct Answer!' : 'Incorrect Answer'}
+                                <p className="text-sm font-black uppercase italic tracking-tight">
+                                    {questionResult?.isCorrect ? 'Tactical Success' : 'Neural Mismatch'}
                                 </p>
-                                <p className="text-xs opacity-80">
-                                    Marks Awarded: {questionResult?.isCorrect ? question.points : 0} / {question.points}
+                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">
+                                    Yield: {questionResult?.isCorrect ? question.points : 0} / {question.points} Pts
                                 </p>
                             </div>
                             <Award size={24} className="opacity-20" />
@@ -839,37 +840,39 @@ export default function AttemptQuiz() {
 
                     {/* WAITING STATE OVERLAY */}
                     {isWaiting && !isReviewMode && (
-                        <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl">
-                            <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
-                            <h2 className="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
-                            <p className="text-gray-500 font-medium mt-2">Waiting for teacher to end the session...</p>
+                        <div className="absolute inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/80 backdrop-blur-md flex flex-col items-center justify-center rounded-3xl border border-white/5">
+                            <Loader2 className="animate-spin text-[var(--bg-accent)] mb-4" size={48} />
+                            <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">Arena Cleared</h2>
+                            <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mt-2">Awaiting host termination sequence...</p>
                         </div>
                     )}
 
                     {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
                     {showFeedback && !quiz?.isLive && (
-                        <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-500/90' : 'bg-red-500/90'} backdrop-blur-sm text-white`}>
+                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-600/95' : 'bg-red-600/95'} backdrop-blur-md text-white shadow-2xl`}>
                             {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
-                            <h2 className="text-4xl font-black uppercase italic tracking-tighter">
-                                {isCorrectFeedback ? 'Correct!' : 'Incorrect'}
+                            <h2 className="text-6xl font-black italic uppercase tracking-tighter">
+                                {isCorrectFeedback ? 'Success' : 'Failed'}
                             </h2>
                             {!isCorrectFeedback && (
-                                <p className="mt-4 font-bold text-center px-8">
-                                    The correct answer was:<br />
-                                    <span className="text-2xl underline decoration-white/50">{quiz.questions[currentQuestion].correctAnswer}</span>
+                                <p className="mt-4 font-black uppercase tracking-[0.2em] text-[10px] text-center px-8 opacity-80">
+                                    CORRECT SEQUENCE:<br />
+                                    <span className="text-2xl underline decoration-white/30 tracking-tight">{quiz.questions[currentQuestion].correctAnswer}</span>
                                 </p>
                             )}
-                            <div className="mt-8 flex items-center gap-2 text-white/60 font-black uppercase tracking-widest text-xs">
+                            <div className="mt-8 flex items-center gap-2 text-white/40 font-black uppercase tracking-widest text-[10px]">
                                 <Loader2 className="animate-spin" size={12} /> Next Question...
                             </div>
                         </div>
                     )}
 
-                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12 mb-8">
-                        <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-6">
-                            Question {currentQuestion + 1}
+                    <div className="bg-[var(--bg-secondary)] rounded-[3rem] shadow-2xl border border-white/5 p-8 md:p-12 mb-8 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--bg-accent)]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                        
+                        <span className="inline-block bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-8 border border-[var(--bg-accent)]/20">
+                            Sequence {currentQuestion + 1}
                         </span>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 leading-tight">
+                        <h1 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-12 leading-[0.9]">
                             {question.questionText}
                         </h1>
 
@@ -880,21 +883,21 @@ export default function AttemptQuiz() {
 
                                 // Kahoot Colors & Shapes
                                 const kahootStyles = [
-                                    { color: 'bg-[#eb1727]', hover: 'hover:bg-[#c91422]', icon: Triangle },
-                                    { color: 'bg-[#1368ce]', hover: 'hover:bg-[#1056ab]', icon: Diamond },
-                                    { color: 'bg-[#d5a021]', hover: 'hover:bg-[#b0851b]', icon: Circle },
-                                    { color: 'bg-[#26890c]', hover: 'hover:bg-[#1e6d09]', icon: Square }
+                                    { color: 'bg-[#eb1727]', glow: 'shadow-[0_0_20px_rgba(235,23,39,0.2)]', icon: Triangle },
+                                    { color: 'bg-[#1368ce]', glow: 'shadow-[0_0_20px_rgba(19,104,206,0.2)]', icon: Diamond },
+                                    { color: 'bg-[#d5a021]', glow: 'shadow-[0_0_20px_rgba(213,160,33,0.2)]', icon: Circle },
+                                    { color: 'bg-[#26890c]', glow: 'shadow-[0_0_20px_rgba(38,137,12,0.2)]', icon: Square }
                                 ];
                                 const style = kahootStyles[idx % 4];
                                 const ShapeIcon = style.icon;
 
-                                let containerClass = `${style.color} ${style.hover} text-white shadow-lg`;
+                                let containerClass = `${style.color} ${style.glow} text-white`;
                                 if (isReviewMode) {
-                                    if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-200';
-                                    else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-200';
-                                    else containerClass = 'bg-gray-200 text-gray-400 opacity-40 grayscale';
+                                    if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-500/30';
+                                    else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-500/30';
+                                    else containerClass = 'bg-white/5 text-white/20 opacity-40 grayscale';
                                 } else if (isSelected) {
-                                    containerClass = `${style.color} ring-8 ring-white/30 scale-[0.98]`;
+                                    containerClass = `${style.color} ring-8 ring-white/20 scale-[0.98]`;
                                 }
 
                                 // In live mode: lock only after submit, allow free re-selection before
@@ -902,23 +905,24 @@ export default function AttemptQuiz() {
 
                                 // Dim non-selected options once ANY option selected (visual feedback)
                                 if (answers[currentQuestion] && !isSelected && !isReviewMode) {
-                                    containerClass += isSubmittedLive ? ' opacity-30 grayscale' : ' opacity-50 grayscale-[0.5]';
+                                    containerClass += isSubmittedLive ? ' opacity-20 grayscale' : ' opacity-40 grayscale-[0.5]';
                                 }
 
                                 return (
                                     <button
-                                        key={idx}
+                                        key={`opt-${idx}-${option}`}
                                         disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
                                         onClick={() => handleOptionSelect(option)}
-                                        className={`relative h-24 md:h-32 text-left px-8 rounded-xl transition-all flex items-center gap-6 group ${containerClass} disabled:cursor-not-allowed overflow-hidden`}
+                                        style={{ willChange: 'transform' }}
+                                        className={`relative h-24 md:h-32 text-left px-8 rounded-2xl transition-all duration-300 flex items-center gap-6 group ${containerClass} disabled:cursor-not-allowed overflow-hidden active:scale-95`}
                                     >
-                                        <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+                                        <div className="bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
                                             <ShapeIcon size={28} fill="white" strokeWidth={0} />
                                         </div>
-                                        <span className="text-xl md:text-2xl font-black italic uppercase tracking-tight">{option}</span>
+                                        <span className="text-xl md:text-2xl font-black italic uppercase tracking-tighter leading-none">{option}</span>
 
                                         {isSelected && !isReviewMode && (
-                                            <div className="absolute top-2 right-2 bg-white text-gray-900 rounded-full p-1">
+                                            <div className="absolute top-4 right-4 bg-white text-black rounded-full p-1 shadow-lg">
                                                 <CheckCircle size={16} />
                                             </div>
                                         )}
@@ -928,9 +932,12 @@ export default function AttemptQuiz() {
                         </div>
 
                         {isReviewMode && !questionResult?.isCorrect && (
-                            <div className="mt-6 p-4 bg-green-50 rounded-xl flex items-center gap-3 text-green-800 border border-green-100">
-                                <CheckCircle size={18} />
-                                <p className="text-xs font-bold">The correct answer was: <span className="underline">{questionResult?.correctOption}</span></p>
+                            <div className="mt-8 p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-4 text-green-400">
+                                <CheckCircle size={20} />
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">TACTICAL SOLUTION</p>
+                                    <p className="text-lg font-black italic uppercase tracking-tight leading-none">{questionResult?.correctOption}</p>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -941,52 +948,52 @@ export default function AttemptQuiz() {
 
                         {/* Live mode: after submitting show Next Question button */}
                         {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
-                            <div className="px-8 py-4 bg-gray-100/50 rounded-2xl text-gray-400 font-black italic uppercase tracking-widest text-xs">
-                                Waiting for Teacher...
+                            <div className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white/30 font-black italic uppercase tracking-widest text-[10px]">
+                                Awaiting Tactical Commands...
                             </div>
                         ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
                                     onClick={() => setIsReviewMode(false)}
-                                    className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
+                                    className="flex items-center gap-3 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-xl shadow-[var(--bg-accent)]/20 active:scale-95"
                                 >
-                                    <Home size={20} /> Finish Review
+                                    <Home size={20} /> Terminate Review
                                 </button>
                             ) : (
                                 <button
                                     onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
                                     disabled={submitting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-2 bg-[#ff6b00] text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg shadow-[#ff6b00]/20 active:scale-95 disabled:opacity-50"
+                                    className="flex items-center gap-3 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-xl shadow-[var(--bg-accent)]/20 active:scale-95 disabled:opacity-50"
                                 >
                                     {submitting ? <Loader2 className="animate-spin" size={20} /> : (!isOnline && quiz?.isLive) ? <WifiOff size={20} /> : <Send size={20} />}
-                                    {submitting ? 'Submitting...' : (!isOnline && quiz?.isLive) ? 'Offline...' : (quiz?.isLive ? 'Submit Answer' : 'Finish Quiz')}
+                                    {submitting ? 'Transmitting...' : (!isOnline && quiz?.isLive) ? 'Link Severed' : (quiz?.isLive ? 'Submit Sequence' : 'Finalize Mission')}
                                 </button>
                             )
                         ) : (
                             isReviewMode ? (
                                 // Review mode: allow manual prev/next
-                                <div className="flex gap-3">
+                                <div className="flex gap-4">
                                     <button
                                         onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
                                         disabled={currentQuestion === 0}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-all"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] text-white/40 hover:text-white disabled:opacity-10 transition-all"
                                     >
-                                        <ChevronLeft size={20} /> Prev
+                                        <ChevronLeft size={20} /> Previous
                                     </button>
                                     <button
                                         onClick={() => setCurrentQuestion(prev => prev + 1)}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 transition-all"
+                                        className="flex items-center gap-2 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-white hover:bg-white/10 transition-all"
                                     >
-                                        Next <ChevronRight size={20} />
+                                        Advance <ChevronRight size={20} />
                                     </button>
                                 </div>
                             ) : (
                                 <button
                                     onClick={handleSingleQuestionSubmit}
                                     disabled={isWaiting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-2 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-lg active:scale-95 disabled:opacity-50 bg-[#ff6b00] text-white shadow-[#ff6b00]/20"
+                                    className="flex items-center gap-3 px-10 py-5 rounded-2xl font-black italic uppercase tracking-tighter hover:scale-105 transition shadow-2xl active:scale-95 disabled:opacity-30 bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[var(--bg-accent)]/20"
                                 >
-                                    {!isOnline && quiz?.isLive ? <><WifiOff size={20} /> Offline...</> : <>Submit Answer <Send size={20} /></>}
+                                    {!isOnline && quiz?.isLive ? <><WifiOff size={24} /> Link Severed</> : <>Initiate Submission <Send size={20} /></>}
                                 </button>
                             )
                         )}

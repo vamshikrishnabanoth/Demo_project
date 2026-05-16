@@ -168,6 +168,9 @@ export default function LiveRoomTeacher() {
         socket.on('disconnect', () => setIsOnline(false));
 
         return () => {
+            if (quiz?.id) {
+                socket.emit('leave_room', { quizId: quiz.id });
+            }
             socket.off('participants_update');
             socket.off('student_progress_update');
             socket.off('progress_history');
@@ -175,6 +178,11 @@ export default function LiveRoomTeacher() {
             socket.off('sync_timer');
             socket.off('restoreState');
             socket.off('quiz_ended');
+            socket.off('quiz_started');
+            socket.off('change_question');
+            socket.off('student_focus_update');
+            socket.off('connect');
+            socket.off('disconnect');
         };
     }, [joinCode, user, navigate]);
 

@@ -91,12 +91,12 @@ export const PremiumInput = ({
               <button
                 type="button"
                 onClick={onEndIconClick}
-                className={`transition-all active:scale-90 ${value ? 'text-[var(--text-accent)] opacity-100 hover:brightness-125' : 'text-white/40 hover:text-white'}`}
+                className={`transition-all active:scale-90 ${value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/60 hover:text-white'}`}
               >
-                <EndIcon size={18} />
+                <EndIcon size={18} className="drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
               </button>
             ) : (
-              <div className={value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/40'}>
+              <div className={value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/60'}>
                 <EndIcon size={18} />
               </div>
             )}

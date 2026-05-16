@@ -1265,7 +1265,10 @@ exports.submitQuiz = async (req, res) => {
         let totalTimeTaken = 0;
         const formattedAnswers = quiz.questions.map((q, idx) => {
             const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
+            const timeTaken = parseInt(answers[idx]?.timeTaken || 0);
             const correctOption = (q.correctAnswer || '').toString().trim();
+
+            totalTimeTaken += timeTaken;
 
             let isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
 
@@ -1288,13 +1291,15 @@ exports.submitQuiz = async (req, res) => {
                 selectedOption,
                 correctOption,
                 isCorrect,
-                timeTaken: 0
+                timeTaken: timeTaken
             };
         });
 
         // Assessments allow unlimited re-attempts → always create a new record.
         // Live quizzes keep the old upsert behaviour.
         if (quiz.isAssessment) {
+            const now = new Date();
+            const startedAt = new Date(now.getTime() - (totalTimeTaken * 1000));
             const result = await prisma.result.create({
                 data: {
                     quizId: quizId,
@@ -1304,9 +1309,9 @@ exports.submitQuiz = async (req, res) => {
                     totalQuestions: quiz.questions.length,
                     answers: formattedAnswers,
                     status: 'completed',
-                    startedAt: new Date(),
-                    completedAt: new Date(),
-                    lastAnsweredAt: new Date()
+                    startedAt: startedAt,
+                    completedAt: now,
+                    lastAnsweredAt: now
                 }
             });
             return res.json(result);
@@ -1712,17 +1717,40 @@ exports.getStudentHistory = async (req, res) => {
                 where: { quizId: quiz.id, studentId: req.user.id }
             });
 
+            const teacher = await prisma.user.findUnique({
+                where: { id: quiz.createdById },
+                select: { username: true }
+            });
+
+            // Calculate Rank
+            let rank = null;
+            if (result) {
+                const allResults = await prisma.result.findMany({
+                    where: { quizId: quiz.id },
+                    orderBy: [
+                        { score: 'desc' },
+                        { completedAt: 'asc' }
+                    ]
+                });
+                const studentIndex = allResults.findIndex(r => r.studentId === req.user.id);
+                rank = studentIndex !== -1 ? studentIndex + 1 : null;
+            }
+
             return {
                 id: quiz.id,
                 title: quiz.title,
                 topic: quiz.topic,
+                subject: quiz.topic || 'General',
+                conductedBy: teacher ? teacher.username : 'Unknown',
                 description: quiz.description,
-                date: quiz.createdAt,
+                date: result ? result.completedAt : quiz.createdAt,
+                startedAt: result ? result.startedAt : null,
                 completedAt: result ? result.completedAt : null,
                 score: result ? result.score : 0,
                 totalQuestions: quiz.questions.length,
                 status: result ? 'Completed' : 'Missed',
-                isAttempted: !!result
+                isAttempted: !!result,
+                rank: rank
             };
         }));
 

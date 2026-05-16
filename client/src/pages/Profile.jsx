@@ -15,8 +15,8 @@ export default function Profile() {
     const navigate = useNavigate();
 
     const themes = [
-        { id: 'celestial', name: 'Celestial Gold', color: '#D7AC28' },
-        { id: 'imperial', name: 'Imperial Arena', color: '#B371E0' },
+        { id: 'celestial', name: 'Obsidian Aureate', color: '#D7AC28' },
+        { id: 'imperial', name: 'Amethyst Aurora', color: '#B371E0' },
         { id: 'drakor', name: 'Drakor', color: '#C0192A' },
     ];
 
@@ -374,13 +374,13 @@ export default function Profile() {
                                         <button
                                             key={f.id}
                                             onClick={() => setFont(f.id)}
-                                            className={`p-5 rounded-2xl border-2 transition-all text-left relative flex items-center justify-between group
-                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-xl shadow-[var(--text-accent)]/10' : 'border-[var(--border-color)] hover:bg-[var(--glass-bg)] hover:border-[var(--text-secondary)]/30'}`}
+                                            className={`p-6 rounded-[1.5rem] border-2 transition-all text-left relative flex flex-col group h-32
+                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-xl shadow-[var(--text-accent)]/10' : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.04] hover:border-white/10'}`}
                                         >
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-black text-[var(--text-primary)] uppercase tracking-tight italic">{f.name}</p>
+                                            <div className="min-w-0 flex flex-col h-full justify-between">
+                                                <p className="text-[10px] font-black text-[var(--text-primary)] uppercase tracking-widest italic">{f.name}</p>
                                                 <p 
-                                                    className="text-lg text-[var(--text-secondary)] mt-1 font-medium"
+                                                    className="text-2xl text-[var(--text-secondary)] font-medium"
                                                     style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
                                                 >
                                                     Aa123
@@ -388,12 +388,12 @@ export default function Profile() {
                                             </div>
                                             
                                             {font === f.id ? (
-                                                <div className="w-8 h-8 bg-[var(--bg-accent)] text-white rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
-                                                    <Check size={16} strokeWidth={4} />
+                                                <div className="absolute top-3 right-3 w-7 h-7 bg-[var(--bg-accent)] text-white rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
+                                                    <Check size={14} strokeWidth={4} />
                                                 </div>
                                             ) : (
-                                                <div className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Type size={16} className="text-[var(--text-secondary)]" />
+                                                <div className="absolute top-3 right-3 w-7 h-7 bg-white/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Type size={14} className="text-[var(--text-secondary)]" />
                                                 </div>
                                             )}
                                         </button>

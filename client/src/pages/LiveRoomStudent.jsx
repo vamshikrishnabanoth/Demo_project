@@ -76,7 +76,11 @@ export default function LiveRoomStudent() {
         });
 
         return () => {
+            if (quiz?.id) {
+                socket.emit('leave_room', { quizId: quiz.id });
+            }
             socket.off('quiz_started');
+            socket.off('connect');
         };
     }, [joinCode, user, navigate, quiz]);
 

@@ -61,7 +61,13 @@ export default function RoleSelection() {
                         className="text-center space-y-4"
                     >
                         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-6 p-2">
-                            <img src="/logo.png" alt="KMIT Logo" className="w-full h-full object-contain" />
+                            <img 
+                                src="/logo.png" 
+                                alt="KMIT Logo" 
+                                className="w-full h-full object-contain" 
+                                loading="eager"
+                                decoding="async"
+                            />
                         </div>
                         <h1 className="text-3xl sm:text-5xl font-black text-white italic uppercase tracking-tighter">
                             SELECT <span className="text-[var(--text-accent)]">CLEARANCE</span>

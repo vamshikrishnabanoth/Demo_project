@@ -7,6 +7,7 @@ import {
     LogOut,
     User,
     BookOpen,
+    History,
     Menu,
     X,
 } from 'lucide-react';
@@ -42,6 +43,7 @@ export default function DashboardLayout({ children, role }) {
     const studentLinks = [
         { name: 'Home',        path: '/student-dashboard', icon: LayoutDashboard },
         { name: 'Assessments', path: '/assessments',       icon: BookOpen },
+        { name: 'History',     path: '/history',           icon: History },
     ];
     const adminLinks = [
         { name: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
@@ -63,7 +65,7 @@ export default function DashboardLayout({ children, role }) {
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
             <header
-                className="glass-panel sticky top-0 z-50 border-b-0 shadow-none"
+                className="glass-panel sticky top-0 z-[var(--z-header)] border-b-0 shadow-none"
                 style={{ backdropFilter: 'blur(var(--blur-strength))' }}
                 role="banner"
             >
@@ -81,7 +83,13 @@ export default function DashboardLayout({ children, role }) {
                                     whileHover={{ scale: 1.05, rotate: 5 }}
                                     className="bg-white p-1 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.1)] overflow-hidden"
                                 >
-                                    <img src="/logo.png" alt="KMIT Logo" className="h-10 w-auto object-contain" />
+                                    <img 
+                                        src="/logo.png" 
+                                        alt="KMIT Logo" 
+                                        className="h-10 w-auto object-contain"
+                                        loading="eager"
+                                        decoding="async"
+                                    />
                                 </motion.div>
                                 <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tighter italic">
                                     KMIT <span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">KAHOOT</span>
@@ -159,7 +167,7 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setMobileOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] cursor-pointer"
+                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[var(--z-overlay)] cursor-pointer"
                         />
 
                         {/* Sidebar Drawer */}
@@ -169,7 +177,7 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-[280px] bg-[var(--bg-secondary)] border-l border-white/10 z-[70] shadow-2xl flex flex-col p-6 overflow-y-auto"
+                            className="fixed top-0 right-0 h-full w-[280px] bg-[var(--bg-secondary)] border-l border-white/10 z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-y-auto"
                             role="navigation"
                         >
                             <div className="flex items-center justify-between mb-8 flex-shrink-0">
@@ -209,20 +217,13 @@ export default function DashboardLayout({ children, role }) {
                                     );
                                 })}
 
-                                {/* Immediate Logout Action for Mobile */}
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center gap-4 px-6 py-5 rounded-[1.5rem] text-sm font-black uppercase tracking-[0.15em] text-red-400 hover:bg-red-400/10 transition-all duration-300 border border-red-400/10 mt-8"
-                                >
-                                    <LogOut size={20} />
-                                    Log Out
-                                </button>
+
                             </nav>
 
                             {/* Drawer Footer — Profile & Logout Integrated */}
                             <div className="mt-auto pt-6 border-t border-white/5 space-y-4 flex-shrink-0">
                                 <div className="px-2">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-3">Active Session</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-3">Active Session</p>
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/20 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/30">
                                             <User size={20} />
@@ -249,7 +250,7 @@ export default function DashboardLayout({ children, role }) {
 
             {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
             <main
-                className="flex-1 w-full max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-10 relative z-10"
+                className="flex-1 w-full max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-10 relative z-[var(--z-base)]"
                 id="main-content"
                 tabIndex={-1}
             >
@@ -259,13 +260,23 @@ export default function DashboardLayout({ children, role }) {
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     style={{ willChange: 'opacity, transform' }}
                 >
-                    {children}
+                    <React.Suspense fallback={
+                        <div className="flex items-center justify-center py-20">
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-12 h-12 border-4 border-[var(--bg-accent)]/20 border-t-[var(--bg-accent)] rounded-full"
+                            />
+                        </div>
+                    }>
+                        {children}
+                    </React.Suspense>
                 </motion.div>
             </main>
 
             {/* ── FOOTER ────────────────────────────────────────────────────── */}
             <footer
-                className="py-8 text-center text-xs font-bold uppercase tracking-widest opacity-20 relative z-10"
+                className="py-8 text-center text-xs font-bold uppercase tracking-widest opacity-40 relative z-10"
                 style={{ color: 'var(--text-secondary)' }}
                 role="contentinfo"
             >

@@ -57,7 +57,13 @@ export default function Login() {
                     className="flex flex-col items-center"
                 >
                     <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl mb-6 border border-white/20 p-3">
-                        <img src="/logo.png" alt="KMIT Logo" className="w-full h-full object-contain" />
+                        <img 
+                            src="/logo.png" 
+                            alt="KMIT Logo" 
+                            className="w-full h-full object-contain" 
+                            loading="eager"
+                            decoding="async"
+                        />
                     </div>
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_15px_var(--bg-accent-glow)]">
                         KMIT <span className="text-[var(--text-accent)]">KAHOOT</span>

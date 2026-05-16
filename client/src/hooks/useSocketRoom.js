@@ -36,12 +36,15 @@ export function useSocketRoom(roomId, user, handlers = {}) {
         });
 
         return () => {
-            // Clean up all registered handlers
+            // Leave the room on the server
+            socket.emit('leave_room', { quizId: roomId });
+
+            // Clean up all registered handlers locally
             Object.entries(registered).forEach(([event, handler]) => {
                 socket.off(event, handler);
             });
         };
-    }, [roomId, user?.id]);
+    }, [roomId, user?.username, user?.role]); // Re-sync if identity or room changes
 }
 
 export default useSocketRoom;
