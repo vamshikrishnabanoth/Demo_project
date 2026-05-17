@@ -27,10 +27,13 @@ export default function CreateQuizText() {
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
-        if (location.state?.generatedQuestions) {
-            setQuestions(location.state.generatedQuestions);
+        // Support both key names: 'questions' (from AI generator) and 'generatedQuestions' (legacy)
+        const incoming = location.state?.questions || location.state?.generatedQuestions;
+        if (incoming) {
+            setQuestions(incoming);
             setIsGeneratedSource(true);
             if (location.state.title) setTitle(location.state.title);
+            if (location.state.duration) setDuration(location.state.duration);
             toast.success('AI Intel Injected Successfully');
         }
     }, [location.state]);

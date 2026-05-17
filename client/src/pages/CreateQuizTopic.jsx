@@ -130,7 +130,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Book, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles } from 'lucide-react';
+import { Book, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles, Loader2 } from 'lucide-react';
 import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
 
 export default function CreateQuizTopic() {
