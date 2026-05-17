@@ -269,7 +269,7 @@ export default function CreateQuizPDF() {
                                             min="1"
                                             max="20"
                                             value={questionCount}
-                                            onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                                            onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
                                             className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full"
                                         />
                                     </div>
@@ -285,10 +285,10 @@ export default function CreateQuizPDF() {
                                             onChange={(e) => setDifficulty(e.target.value)}
                                             className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
                                         >
-                                            <option value="Easy" className="text-black">Easy</option>
-                                            <option value="Medium" className="text-black">Medium</option>
-                                            <option value="Thinkable" className="text-black">Thinkable</option>
-                                            <option value="Hard" className="text-black">Hard</option>
+                                            <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
+                                            <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
+                                            <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
+                                            <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
                                         </select>
                                     </div>
                                 </div>

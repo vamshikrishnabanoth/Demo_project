@@ -17,12 +17,13 @@ const PIE_COLORS = ['#10b981', '#ef4444'];
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a] border border-white/10 p-4 rounded-xl shadow-2xl">
-                <p className="font-bold text-white mb-2">{label}</p>
+            <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                <p className="font-bold text-white text-sm tracking-wide">{label}</p>
+                <div className="border-t border-white/10 my-2.5"></div>
                 {payload.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                        <span className="text-slate-300 capitalize">{entry.name}:</span>
+                    <div key={index} className="flex items-center gap-2.5 text-sm">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
+                        <span className="text-slate-300 font-medium">{entry.name}:</span>
                         <span className="font-black text-white">{entry.value}</span>
                     </div>
                 ))}
@@ -291,7 +292,7 @@ export default function QuizAnalytics() {
                                         <XAxis dataKey="range" stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <YAxis stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                                        <Bar dataKey="count" name="Students" radius={[8, 8, 0, 0]} maxBarSize={50}>
+                                        <Bar dataKey="count" name="Count of Students" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                             {analytics.scoreDistribution.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                             ))}
@@ -524,35 +525,85 @@ export default function QuizAnalytics() {
                     </div>
                 </div>
 
-                {/* Full Leaderboard */}
+                {/* Tactical Memory Map Leaderboard */}
                 {analytics.leaderboard && analytics.leaderboard.length > 0 && (
                     <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
-                        <div className="flex items-center gap-3 mb-8">
-                            <Users className="text-[var(--text-accent)]" size={24} />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Complete Leaderboard</h3>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                            <div className="flex items-center gap-3">
+                                <Users className="text-[var(--text-accent)]" size={24} />
+                                <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Tactical Memory Map</h3>
+                            </div>
+                            
+                            {/* Legend */}
+                            <div className="flex flex-wrap items-center gap-4 bg-white/[0.02] border border-white/5 rounded-2xl px-4 py-2 text-xs">
+                                <span className="font-bold text-white/40 uppercase tracking-widest text-[9px]">Legend:</span>
+                                <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                                    <span className="w-5 h-5 rounded bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-[10px]">✓</span>
+                                    Correct
+                                </div>
+                                <div className="flex items-center gap-1.5 text-rose-400 font-bold">
+                                    <span className="w-5 h-5 rounded bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-[10px]">✗</span>
+                                    Incorrect
+                                </div>
+                                <div className="flex items-center gap-1.5 text-white/40 font-bold">
+                                    <span className="w-5 h-5 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px]">-</span>
+                                    Skipped
+                                </div>
+                            </div>
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+
+                        <div className="overflow-x-auto premium-scrollbar pb-3">
+                            <table className="w-full text-left border-collapse min-w-[800px]">
                                 <thead>
                                     <tr className="border-b border-[var(--border-color)]">
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest">Rank</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest">Student</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-center">Score</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-center">Accuracy</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-right">Time Taken</th>
+                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[80px] text-center">Rank</th>
+                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[200px]">Student</th>
+                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest">Question Markings</th>
+                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-center w-[120px]">Current Score</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {analytics.leaderboard.map((student, idx) => (
                                         <tr key={idx} className="border-b border-white/5 premium-table-row group">
-                                            <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic">#{student.rank}</td>
-                                            <td className="p-4 text-sm font-bold text-white uppercase">{student.username}</td>
+                                            <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic text-center">#{student.rank}</td>
+                                            <td className="p-4 text-left">
+                                                <p className="font-black text-white uppercase text-sm">{student.username}</p>
+                                                <p className="text-[10px] text-[var(--text-secondary)] opacity-50 font-mono mt-0.5">{student.id}</p>
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                    {analytics.questionPerformance.map((q, qIdx) => {
+                                                        const studentAns = (student.answers || []).find(a => a.questionText === q.questionText);
+                                                        const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
+                                                        const isCorrect = studentAns?.isCorrect === true;
+
+                                                        let dotClass = 'bg-white/5 border-white/10 text-white/30';
+                                                        let iconText = '-';
+
+                                                        if (isAnswered) {
+                                                            if (isCorrect) {
+                                                                dotClass = 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400';
+                                                                iconText = '✓';
+                                                            } else {
+                                                                dotClass = 'bg-rose-500/20 border-rose-500/40 text-rose-400';
+                                                                iconText = '✗';
+                                                            }
+                                                        }
+
+                                                        return (
+                                                            <div
+                                                                key={qIdx}
+                                                                title={`Q${qIdx + 1}: ${isAnswered ? (isCorrect ? 'Correct' : 'Incorrect') : 'Skipped/Not Attempted'}`}
+                                                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black border transition-all ${dotClass}`}
+                                                            >
+                                                                {iconText}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </td>
                                             <td className="p-4 text-center">
                                                 <span className="text-lg font-black italic text-[var(--text-accent)]">{student.score}</span>
-                                            </td>
-                                            <td className="p-4 text-center text-[var(--text-secondary)] font-bold">{student.accuracy}%</td>
-                                            <td className="p-4 text-right text-[var(--text-secondary)] opacity-70 text-xs font-bold tracking-widest">
-                                                {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
                                             </td>
                                         </tr>
                                     ))}

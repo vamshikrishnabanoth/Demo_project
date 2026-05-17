@@ -49,8 +49,8 @@ const joinLimiter = rateLimit({
 const quizValidation = [
     check('title', 'Title must be at least 3 characters').optional().isLength({ min: 3 }).trim().escape(),
     check('questionCount', 'Question count must be between 1 and 50').optional().isInt({ min: 1, max: 50 }),
-    check('difficulty', 'Invalid difficulty').optional().isIn(['Easy', 'Medium', 'Hard']),
-    check('timerPerQuestion', 'Timer must be between 5 and 300 seconds').optional().isInt({ min: 5, max: 300 }),
+    check('difficulty', 'Invalid difficulty').optional().isIn(['Easy', 'Medium', 'Thinkable', 'Hard']),
+    check('timerPerQuestion', 'Timer must be between 0 and 300 seconds').optional().isInt({ min: 0, max: 300 }),
 ];
 
 const validate = (req, res, next) => {
@@ -112,6 +112,14 @@ router.get('/result/:quizId', auth, quizController.getLatestResult);
 
 // ── Wildcard param routes – must come LAST so specific paths above are matched first ──
 
+// @route   PATCH api/quiz/:id/schedule
+// @desc    Securely edit a quiz schedule if permitted
+router.patch('/:id/schedule', auth, quizController.updateSchedule);
+
+// @route   GET api/quiz/:id/schedule-status
+// @desc    Get the current scheduling lock status
+router.get('/:id/schedule-status', auth, quizController.getScheduleStatus);
+
 // @route   GET api/quiz/:id
 // @desc    Get quiz by ID
 router.get('/:id', auth, quizController.getQuizById);
@@ -127,5 +135,9 @@ router.delete('/:id', auth, quizController.deleteQuiz);
 // @route   PUT api/quiz/:id
 // @desc    Update a quiz
 router.put('/:id', auth, quizController.updateQuiz);
+
+// @route   POST api/quiz/assign/:id
+// @desc    Assign a quiz to student groups and manually targeted student list
+router.post('/assign/:id', auth, quizController.assignQuiz);
 
 module.exports = router;

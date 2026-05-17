@@ -32,14 +32,14 @@ const CinematicBackground = () => {
         <div
           className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] blur-[80px]"
           style={{
-            background: 'radial-gradient(circle at 20% 30%, var(--bg-accent) 0%, transparent 50%), radial-gradient(circle at 80% 70%, #4F46E5 0%, transparent 50%)',
+            background: 'radial-gradient(circle at 20% 30%, var(--aurora-glow-1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--aurora-glow-2) 0%, transparent 50%)',
             animation: 'aurora 30s infinite alternate',
           }}
         />
         <div
           className="absolute top-0 left-0 w-full h-full"
           style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(26,122,122,0.1) 0%, transparent 70%)',
+            background: 'radial-gradient(circle at 50% 50%, var(--aurora-glow-2) 0%, transparent 70%)',
             animation: 'pulse 15s infinite alternate',
           }}
         />

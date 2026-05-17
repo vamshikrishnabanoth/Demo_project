@@ -6,16 +6,37 @@ import socket from '../utils/socket';
 import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
-import { Zap, Clock, ShieldCheck, Activity, Users, ArrowRight } from 'lucide-react';
+import { Zap, Clock, ShieldCheck, Activity, Users, ArrowRight, Trophy, Crown, Flame, Sparkles } from 'lucide-react';
 
 export default function LiveRoomStudent() {
     const { joinCode } = useParams();
-    const { user } = useContext(AuthContext);
+    const { user, theme } = useContext(AuthContext);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    // Theme-based custom icons
+    const getThemeIcon = () => {
+        switch (theme) {
+            case 'imperial':
+                return Crown;
+            case 'drakor':
+                return Flame;
+            case 'celestial':
+            default:
+                return Trophy;
+        }
+    };
+
+    const ThemeIcon = getThemeIcon();
+
+    // Fetch Quiz on Mount / joinCode change
     useEffect(() => {
+        if (!joinCode || joinCode === 'undefined') {
+            navigate('/student-dashboard');
+            return;
+        }
+
         const fetchQuiz = async () => {
             try {
                 const res = await api.post('/quiz/join', { code: joinCode });
@@ -44,7 +65,6 @@ export default function LiveRoomStudent() {
 
             } catch (err) {
                 console.error(err);
-                alert('Error joining room');
                 navigate('/student-dashboard');
             } finally {
                 setTimeout(() => setLoading(false), 800); // Small delay for smooth transition
@@ -52,15 +72,18 @@ export default function LiveRoomStudent() {
         };
 
         fetchQuiz();
+    }, [joinCode, user, navigate]);
 
-        socket.on('quiz_started', () => {
-            if (quiz) {
-                navigate(`/quiz/attempt/${quiz.id}`);
-            }
-        });
+    // Socket connection listeners bound when quiz is initialized
+    useEffect(() => {
+        if (!quiz) return;
 
-        socket.on('connect', () => {
-            if (quiz && user) {
+        const handleQuizStarted = () => {
+            navigate(`/quiz/attempt/${quiz.id}`);
+        };
+
+        const handleConnect = () => {
+            if (user) {
                 const sessionStr = localStorage.getItem(`live_quiz_session_student_${quiz.id}`);
                 if (sessionStr) {
                     try {
@@ -73,16 +96,17 @@ export default function LiveRoomStudent() {
                     socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'student', _id: user.id } });
                 }
             }
-        });
+        };
+
+        socket.on('quiz_started', handleQuizStarted);
+        socket.on('connect', handleConnect);
 
         return () => {
-            if (quiz?.id) {
-                socket.emit('leave_room', { quizId: quiz.id });
-            }
-            socket.off('quiz_started');
-            socket.off('connect');
+            socket.emit('leave_room', { quizId: quiz.id });
+            socket.off('quiz_started', handleQuizStarted);
+            socket.off('connect', handleConnect);
         };
-    }, [joinCode, user, navigate, quiz]);
+    }, [quiz, user, navigate]);
 
     useEffect(() => {
         if (!quiz || !user) return;
@@ -124,14 +148,22 @@ export default function LiveRoomStudent() {
                             animate={{ y: 0, opacity: 1 }}
                             className="relative z-10 space-y-8"
                         >
-                            <div className="bg-white p-3 rounded-2xl inline-block shadow-2xl mb-4">
-                                <Zap className="text-[var(--bg-accent)]" size={48} fill="currentColor" />
+                            <div 
+                                className="p-4.5 rounded-[1.8rem] border-2 inline-block shadow-2xl mb-4 backdrop-blur-md transition-all duration-500 hover:scale-105 active:scale-95"
+                                style={{
+                                    borderColor: 'var(--border-color)',
+                                    boxShadow: '0 0 35px var(--bg-accent-glow)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                    color: 'var(--text-accent)'
+                                }}
+                            >
+                                <ThemeIcon size={48} className="animate-pulse" />
                             </div>
                             
                             <div className="space-y-4">
                                 <motion.div 
                                     animate={{ 
-                                        backgroundColor: ["rgba(215, 172, 40, 0.1)", "rgba(215, 172, 40, 0.3)", "rgba(215, 172, 40, 0.1)"]
+                                        backgroundColor: ["var(--table-row-hover)", "var(--bg-accent-glow)", "var(--table-row-hover)"]
                                     }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                     className="inline-block px-6 py-2 rounded-full text-xs font-black uppercase tracking-[0.3em] border border-[var(--bg-accent)]/30 text-[var(--text-accent)]"
@@ -151,15 +183,93 @@ export default function LiveRoomStudent() {
                     {/* Content Body */}
                     <div className="p-16 space-y-16">
                         <div className="flex flex-col items-center gap-8">
-                            <div className="relative">
-                                <motion.div 
-                                    animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
-                                    transition={{ duration: 3, repeat: Infinity }}
-                                    className="absolute inset-0 bg-[var(--bg-accent)] rounded-full"
+                            <div className="relative w-64 h-64 flex items-center justify-center">
+                                {/* Ambient backdrop glow */}
+                                <motion.div
+                                    animate={{ scale: [1, 1.4, 1], opacity: [0.15, 0.4, 0.15] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                                    className="absolute inset-0 bg-[var(--bg-accent)]/10 rounded-full blur-3xl pointer-events-none"
                                 />
-                                <div className="relative bg-[var(--bg-accent)] p-10 rounded-full shadow-2xl shadow-[var(--bg-accent)]/30">
-                                    <Clock className="text-white" size={64} />
-                                </div>
+
+                                {/* 1. Outer Morphing Geometric Portal Ring */}
+                                <motion.div
+                                    animate={{ 
+                                        rotate: 360,
+                                        borderRadius: ["40% 60% 70% 30% / 40% 50% 60% 50%", "70% 30% 50% 50% / 50% 30% 70% 50%", "40% 60% 70% 30% / 40% 50% 60% 50%"]
+                                    }}
+                                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-0 border border-[var(--bg-accent)]/20 bg-[var(--bg-accent)]/[0.02]"
+                                    style={{
+                                        boxShadow: '0 0 40px var(--bg-accent-glow) inset'
+                                    }}
+                                />
+
+                                {/* 2. Intermediary Orbiting Hexagonal Frame */}
+                                <motion.div
+                                    animate={{ rotate: -360 }}
+                                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-6 rounded-[2rem] border border-dashed border-[var(--text-accent)]/30"
+                                />
+
+                                {/* 3. Inner Scanning Ring */}
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-10 rounded-full border border-white/5 border-t-[var(--bg-accent)]"
+                                />
+
+                                {/* 4. High-frequency Conic Radar Wavefront */}
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-12 rounded-full origin-center"
+                                    style={{
+                                        background: 'conic-gradient(from 0deg, var(--bg-accent) 0deg, transparent 180deg)',
+                                        opacity: 0.15
+                                    }}
+                                />
+
+                                {/* 5. Interactive Holographic Pulsing Glass Core */}
+                                <motion.div
+                                    animate={{ 
+                                        y: [0, -8, 0],
+                                        boxShadow: [
+                                            '0 0 25px var(--bg-accent-glow), inset 0 0 15px rgba(255,255,255,0.1)',
+                                            '0 0 50px var(--bg-accent-glow), inset 0 0 25px rgba(255,255,255,0.2)',
+                                            '0 0 25px var(--bg-accent-glow), inset 0 0 15px rgba(255,255,255,0.1)'
+                                        ]
+                                    }}
+                                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                                    className="w-24 h-24 rounded-full bg-gradient-to-tr from-[var(--bg-accent)] to-[var(--text-accent)]/80 flex items-center justify-center relative border border-white/10 z-10 hover:scale-105 active:scale-95 transition-all duration-300 group cursor-pointer"
+                                >
+                                    {/* Rotating Hourglass / Timer Hands */}
+                                    <motion.div
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                                    >
+                                        <Clock className="text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]" size={36} />
+                                    </motion.div>
+                                    
+                                    {/* Glass reflection shine overlay */}
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none" />
+                                </motion.div>
+
+                                {/* 6. Constellation Quantum Satellite Nodes */}
+                                {[...Array(4)].map((_, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        className="absolute w-2.5 h-2.5 rounded-full bg-[var(--text-accent)]"
+                                        style={{ 
+                                            boxShadow: '0 0 12px var(--bg-accent-glow)'
+                                        }}
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 4 + idx * 2, repeat: Infinity, ease: 'linear' }}
+                                        transformTemplate={({ rotate }) =>
+                                            `rotate(${rotate}) translateX(${100 + idx * 8}px) rotate(-${rotate})`
+                                        }
+                                    />
+                                ))}
                             </div>
 
                             <div className="space-y-3 text-center">

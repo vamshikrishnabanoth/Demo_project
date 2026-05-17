@@ -49,7 +49,7 @@ export default function CreateQuizVoice() {
                                     min="1"
                                     max="20"
                                     value={questionCount}
-                                    onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                                    onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
                                     className="bg-transparent border-none text-3xl font-black text-[var(--text-primary)] italic outline-none w-full"
                                 />
                             </div>

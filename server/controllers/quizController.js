@@ -958,7 +958,7 @@ const generateJoinCode = () => {
 
 exports.createQuiz = async (req, res) => {
     try {
-        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration } = req.body;
+        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType } = req.body;
         let finalQuestions = [];
 
         // --- AI MODERATION GUARD ---
@@ -1013,6 +1013,16 @@ exports.createQuiz = async (req, res) => {
             codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
         }
 
+        // Parse JSON/Arrays safely
+        let parsedGroups = null;
+        if (assignedGroups) {
+            parsedGroups = typeof assignedGroups === 'string' ? JSON.parse(assignedGroups) : assignedGroups;
+        }
+        let parsedStudents = [];
+        if (assignedStudents) {
+            parsedStudents = typeof assignedStudents === 'string' ? JSON.parse(assignedStudents) : assignedStudents;
+        }
+
         const newQuiz = await prisma.quiz.create({
             data: {
                 title: title || `${topic || content || 'Untitled'} Quiz`,
@@ -1022,12 +1032,18 @@ exports.createQuiz = async (req, res) => {
                 isActive: isActive === undefined ? true : (isActive === 'true' || isActive === true),
                 joinCode,
                 difficulty: difficulty || 'Medium',
-                timerPerQuestion: timerPerQuestion || 30,
-                duration: duration || 0,
+                timerPerQuestion: timerPerQuestion ? parseInt(timerPerQuestion) : 30,
+                duration: duration ? parseInt(duration) : 0,
+                timerType: timerType || 'timePerQuestion',
+                accessType: accessType || 'private',
+                startTime: startTime ? new Date(startTime) : null,
+                endTime: endTime ? new Date(endTime) : null,
                 topic: topic || content || '',
                 isLive: isLive === 'true' || isLive === true,
                 isAssessment: isAssessment === 'true' || isAssessment === true,
-                status: isLive === 'true' || isLive === true ? 'waiting' : 'finished'
+                status: isLive === 'true' || isLive === true ? 'waiting' : 'finished',
+                assignedGroups: parsedGroups,
+                assignedStudents: parsedStudents
             }
         });
 
@@ -1059,6 +1075,15 @@ exports.joinByCode = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found or not active' });
         }
         console.log(`✅ Found quiz: ${quiz.title} (${quiz.id})`);
+
+        // Start/End Time Validation
+        const now = new Date();
+        if (quiz.startTime && new Date(quiz.startTime) > now) {
+            return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
+        }
+        if (quiz.endTime && new Date(quiz.endTime) < now) {
+            return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+        }
 
         // Check for existing result to handle resume/blocking
         const existingResult = await prisma.result.findFirst({
@@ -1134,13 +1159,23 @@ exports.deleteQuiz = async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
+        // Delete all related results first to avoid foreign key violations
+        await prisma.result.deleteMany({
+            where: { quizId: req.params.id }
+        });
+
+        // Delete all related broadcasts first to avoid foreign key violations
+        await prisma.broadcast.deleteMany({
+            where: { quizId: req.params.id }
+        });
+
         await prisma.quiz.delete({
             where: { id: req.params.id }
         });
 
         res.json({ msg: 'Quiz removed' });
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
@@ -1233,6 +1268,13 @@ exports.getQuizById = async (req, res) => {
         const isAdmin = req.user.role === 'admin';
         
         if (!isCreator && !isAdmin) {
+            const now = new Date();
+            if (quiz.startTime && new Date(quiz.startTime) > now) {
+                return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
+            }
+            if (quiz.endTime && new Date(quiz.endTime) < now) {
+                return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+            }
             normalizedQuestions = normalizedQuestions.map(q => {
                 const { correctAnswer, explanation, ...safeQuestion } = q;
                 return safeQuestion;
@@ -1259,6 +1301,15 @@ exports.submitQuiz = async (req, res) => {
         });
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
+        }
+
+        // Validate scheduled start and end times
+        const now = new Date();
+        if (quiz.startTime && new Date(quiz.startTime) > now) {
+            return res.status(403).json({ msg: `This quiz has not started yet. It is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
+        }
+        if (quiz.endTime && new Date(quiz.endTime) < now) {
+            return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting submissions.' });
         }
 
         let score = 0;
@@ -1588,7 +1639,7 @@ exports.submitAttempt = async (req, res) => {
 
 exports.updateQuiz = async (req, res) => {
     try {
-        const { title, description, questions, difficulty, timerPerQuestion, duration, isLive, isActive, isAssessment } = req.body;
+        const { title, description, questions, difficulty, timerPerQuestion, duration, isLive, isActive, isAssessment, startTime, endTime, timerType, accessType } = req.body;
 
         let quiz = await prisma.quiz.findUnique({
             where: { id: req.params.id }
@@ -1612,6 +1663,10 @@ exports.updateQuiz = async (req, res) => {
         if (timerPerQuestion !== undefined) updateData.timerPerQuestion = parseInt(timerPerQuestion);
         if (duration !== undefined) updateData.duration = parseInt(duration);
         if (isAssessment !== undefined) updateData.isAssessment = isAssessment === 'true' || isAssessment === true;
+        if (timerType) updateData.timerType = timerType;
+        if (accessType) updateData.accessType = accessType;
+        if (startTime !== undefined) updateData.startTime = startTime ? new Date(startTime) : null;
+        if (endTime !== undefined) updateData.endTime = endTime ? new Date(endTime) : null;
 
         if (isActive !== undefined) {
             const requestedActive = isActive === 'true' || isActive === true;
@@ -1825,12 +1880,130 @@ exports.generateQuizFromVoice = async (req, res) => {
             transcript: transcript,
             duration: 10
         });
-
     } catch (err) {
         console.error('❌ Voice Generation Error:', err.message);
         if (req.file) {
             try { fs.unlinkSync(path.resolve(req.file.path)); } catch(e) {}
         }
         res.status(500).json({ msg: 'Voice Generation Error: ' + err.message });
+    }
+};
+
+exports.assignQuiz = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { assignedGroups, assignedStudents } = req.body;
+
+        const quiz = await prisma.quiz.findUnique({
+            where: { id }
+        });
+
+        if (!quiz) {
+            return res.status(404).json({ msg: 'Quiz not found' });
+        }
+
+        const updatedQuiz = await prisma.quiz.update({
+            where: { id },
+            data: {
+                assignedGroups: assignedGroups || null,
+                assignedStudents: assignedStudents || []
+            }
+        });
+
+        res.json({
+            msg: 'Quiz assigned successfully!',
+            quiz: updatedQuiz
+        });
+    } catch (err) {
+        console.error('Error assigning quiz:', err);
+        res.status(500).json({ msg: 'Server error assigning quiz: ' + err.message });
+    }
+};
+
+exports.getScheduleStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const quiz = await prisma.quiz.findUnique({ where: { id } });
+        if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
+        
+        // Ensure only creator or admin can view status
+        if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Unauthorized' });
+        }
+
+        const broadcastsCount = await prisma.broadcast.count({ where: { quizId: id } });
+        const attemptsCount = await prisma.result.count({ where: { quizId: id } });
+
+        const isLocked = broadcastsCount > 0 || attemptsCount > 0 || quiz.isLive;
+
+        // Sync with DB if needed
+        if (quiz.broadcastStatus !== (broadcastsCount > 0) || quiz.attemptCount !== attemptsCount || quiz.scheduleLocked !== isLocked) {
+            await prisma.quiz.update({
+                where: { id },
+                data: {
+                    broadcastStatus: broadcastsCount > 0,
+                    attemptCount: attemptsCount,
+                    scheduleLocked: isLocked
+                }
+            });
+        }
+
+        res.json({
+            isLocked,
+            broadcastsCount,
+            attemptsCount,
+            isLive: quiz.isLive,
+            status: quiz.status,
+            startTime: quiz.startTime,
+            endTime: quiz.endTime
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+exports.updateSchedule = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { startTime, endTime } = req.body;
+        
+        const quiz = await prisma.quiz.findUnique({ where: { id } });
+        if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
+        
+        if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Unauthorized' });
+        }
+
+        // Validate time
+        if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+            return res.status(400).json({ msg: 'End time must be after start time' });
+        }
+
+        const broadcastsCount = await prisma.broadcast.count({ where: { quizId: id } });
+        const attemptsCount = await prisma.result.count({ where: { quizId: id } });
+        const isLocked = broadcastsCount > 0 || attemptsCount > 0 || quiz.isLive;
+
+        if (isLocked) {
+            // Optional: allow end-time extension ONLY if it's strictly > current endTime? 
+            // The prompt says "OR optionally: allow only: end-time extension but NOT: start-time modification". 
+            // Let's implement full lock for safety to strictly follow "If ANY student interaction exists: Disable schedule editing"
+            return res.status(403).json({ msg: 'Schedule can no longer be edited because students have already joined or interacted with this quiz.' });
+        }
+
+        const updated = await prisma.quiz.update({
+            where: { id },
+            data: {
+                startTime: startTime ? new Date(startTime) : null,
+                endTime: endTime ? new Date(endTime) : null,
+                lastScheduleEditAt: new Date(),
+                lastEditedBy: req.user.id
+            }
+        });
+
+        res.json({ msg: 'Schedule updated successfully', quiz: updated });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Server Error' });
     }
 };

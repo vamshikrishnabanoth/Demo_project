@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -16,17 +17,21 @@ model User {
   email            String   @unique
   password         String
   role             String   @default("none") // 'teacher', 'student', 'admin', 'none'
+  name             String?
   tokenVersion     Int      @default(0)
   isSuspended      Boolean  @default(false)
   suspensionReason String?
   isOnline         Boolean  @default(false)
   studentBranch    String?
   section          String?
+  year             String?
+  semester         String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
   lastLogin        DateTime?
   quizzes          Quiz[]
   results          Result[]
+  broadcastsSent   Broadcast[]
 }
 
 model Quiz {
@@ -41,14 +46,27 @@ model Quiz {
   difficulty       String   @default("Medium")
   timerPerQuestion Int      @default(30)
   duration         Int      @default(0)
+  timerType        String   @default("timePerQuestion") // 'timePerQuestion' or 'totalTime'
+  accessType       String   @default("private")         // 'private' or 'public'
+  startTime        DateTime?
+  endTime          DateTime?
+  broadcastStatus     Boolean   @default(false)
+  joinedStudentsCount Int       @default(0)
+  attemptCount        Int       @default(0)
+  scheduleLocked      Boolean   @default(false)
+  lastScheduleEditAt  DateTime?
+  lastEditedBy        String?
   topic            String?
   isLive           Boolean  @default(false)
   isAssessment     Boolean  @default(false)
   status           String   @default("waiting") // 'waiting', 'started', 'finished'
+  assignedGroups   Json?    // Stores targeting parameters e.g. [{ branch: 'CSE', section: 'A' }]
+  assignedStudents String[] @default([]) // Selected User IDs
   createdAt        DateTime @default(now())
   finalLeaderboard Json?    // Stores the leaderboard array
   finalInsights    Json?    // Stores the insights object
   results          Result[]
+  broadcasts       Broadcast[]
 }
 
 model Result {
@@ -65,4 +83,23 @@ model Result {
   startedAt      DateTime  @default(now())
   completedAt    DateTime?
   lastAnsweredAt DateTime  @default(now())
+}
+
+model Broadcast {
+  id               String   @id @default(uuid())
+  sender           User     @relation(fields: [senderId], references: [id])
+  senderId         String
+  quiz             Quiz     @relation(fields: [quizId], references: [id])
+  quizId           String
+  title            String
+  message          String
+  pin              String?
+  assignedGroups   Json?
+  assignedStudents String[] @default([])
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime?
+  readBy           String[] @default([])
+  isPinned         Boolean  @default(false)
+  scheduledFor     DateTime?
+  deliveryStatus   String   @default("delivered") // 'delivered', 'scheduled', 'expired'
 }

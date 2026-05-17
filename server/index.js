@@ -87,6 +87,8 @@ app.use('/api/quiz', require('./routes/quiz'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/search', require('./routes/search'));
+app.use('/api/students', require('./routes/students'));
+app.use('/api/broadcast', require('./routes/broadcast'));
 
 // Socket.io Setup - Secure CORS
 const io = new Server(server, {
@@ -95,6 +97,11 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
+
+// Expose io and userSockets to routes
+app.set('io', io);
+const userSockets = new Map(); // Keep this globally declared and track sockets below
+app.set('userSockets', userSockets);
 
 // Store participants for each room
 const roomParticipants = new Map(); // { quizId: [{ username, role, socketId }] }
@@ -122,8 +129,7 @@ setInterval(() => {
     }
 }, 5000);
 
-// Global map to track user ID to socket IDs (one user can have multiple sockets)
-const userSockets = new Map(); // userId -> Set(socketIds)
+// Global map to track user ID to socket IDs is already declared above and bound to express app
 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
@@ -832,6 +838,69 @@ setInterval(async () => {
         console.warn('[DB Keep-Alive] Ping failed:', err.message);
     }
 }, DB_PING_INTERVAL);
+
+// ─── AUTOMATED QUIZ SCHEDULER ─────────────────────────────────────────────────
+// Automatically starts and ends quizzes based on their schedule
+setInterval(async () => {
+    try {
+        const now = new Date();
+
+        // 1. Find quizzes that should START
+        const quizzesToStart = await prisma.quiz.findMany({
+            where: {
+                startTime: { lte: now },
+                status: 'waiting',
+                isActive: true
+            }
+        });
+
+        for (const quiz of quizzesToStart) {
+            await prisma.quiz.update({
+                where: { id: quiz.id },
+                data: { status: 'started' }
+            });
+            console.log(`[Scheduler] Auto-started quiz ${quiz.id}`);
+
+            if (quiz.isLive) {
+                let durationMs = 0;
+                if (quiz.duration > 0) {
+                    durationMs = quiz.duration * 60 * 1000;
+                } else if (quiz.questions && Array.isArray(quiz.questions)) {
+                    durationMs = (quiz.questions.length * (quiz.timerPerQuestion || 30)) * 1000;
+                }
+                const endTime = Date.now() + durationMs;
+                const state = roomState.get(quiz.id) || {};
+                roomState.set(quiz.id, { ...state, status: 'started', currentQuestion: 0, endTime });
+                
+                io.to(quiz.id).emit('quiz_started');
+                io.to(quiz.id).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+            }
+        }
+
+        // 2. Find quizzes that should END
+        const quizzesToEnd = await prisma.quiz.findMany({
+            where: {
+                endTime: { lte: now },
+                isActive: true
+            }
+        });
+
+        for (const quiz of quizzesToEnd) {
+            await prisma.quiz.update({
+                where: { id: quiz.id },
+                data: { status: 'finished', isActive: false }
+            });
+            console.log(`[Scheduler] Auto-finished quiz ${quiz.id}`);
+
+            if (quiz.isLive) {
+                roomState.delete(quiz.id);
+                io.to(quiz.id).emit('quiz_ended');
+            }
+        }
+    } catch (err) {
+        console.error('[Scheduler Error]', err.message);
+    }
+}, 10000); // Check every 10 seconds
 
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

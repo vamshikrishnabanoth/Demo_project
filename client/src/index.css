@@ -14,7 +14,12 @@
   --glass-bg: rgba(13, 13, 15, 0.75); /* Deep Matte Charcoal */
   --glass-blur: blur(25px);
   --glass-border: rgba(215, 172, 40, 0.25);
+  --glass-border-hover: rgba(215, 172, 40, 0.6);
   --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  
+  /* Background aurora glow tokens */
+  --aurora-glow-1: rgba(215, 172, 40, 0.15);
+  --aurora-glow-2: rgba(255, 255, 255, 0.02);
   
   /* Neural Depth Tokens */
   --neural-prime: var(--text-accent);
@@ -145,12 +150,12 @@ html {
 
 .glass-panel:hover {
   transform: translateY(-8px) scale(1.01);
-  border-color: rgba(215, 172, 40, 0.6);
+  border-color: var(--glass-border-hover);
   box-shadow: 
     var(--glass-inner-shadow),
     0 30px 60px -10px rgba(0, 0, 0, 0.7),
     0 60px 120px -20px rgba(0, 0, 0, 0.95),
-    0 0 20px rgba(215, 172, 40, 0.1);
+    0 0 20px var(--bg-accent-glow);
 }
 
 .premium-glass {
@@ -203,10 +208,13 @@ html {
   --border-color: rgba(255, 183, 0, 0.25);
   --glass-bg: rgba(31, 11, 94, 0.7);
   --glass-border: 1px solid rgba(255, 183, 0, 0.35);
+  --glass-border-hover: rgba(255, 183, 0, 0.6);
   --error-bg: #900C3F; 
   --success-bg: #22c55e;
   --bg-accent-glow: rgba(255, 183, 0, 0.45);
   --table-row-hover: rgba(255, 183, 0, 0.12);
+  --aurora-glow-1: rgba(179, 113, 224, 0.20);
+  --aurora-glow-2: rgba(255, 183, 0, 0.10);
   --neural-prime: var(--text-accent);
   --neural-sub: #c084fc;
   --neural-neutral: #a78bfa;
@@ -222,10 +230,14 @@ html {
   --text-accent: #2DD4BF; 
   --border-color: rgba(232, 228, 208, 0.25);
   --glass-bg: rgba(27, 42, 94, 0.75);
+  --glass-border: rgba(255, 31, 58, 0.25);
+  --glass-border-hover: rgba(255, 31, 58, 0.6);
   --error-bg: #4c1d1d; 
   --success-bg: #14b8a6; 
   --bg-accent-glow: rgba(255, 31, 58, 0.4);
   --table-row-hover: rgba(45, 212, 191, 0.12);
+  --aurora-glow-1: rgba(255, 31, 58, 0.15);
+  --aurora-glow-2: rgba(45, 212, 191, 0.08);
   --text-on-accent: #ffffff;
   --neural-prime: var(--bg-accent);
   --neural-sub: var(--success-bg);
@@ -240,7 +252,7 @@ html {
 
 .btn-hover-scale:hover {
   transform: scale(1.04);
-  box-shadow: 0 10px 25px -5px rgba(215, 172, 40, 0.3);
+  box-shadow: 0 10px 25px -5px var(--bg-accent-glow);
 }
 
 .premium-table-row {
@@ -305,8 +317,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #161618 inset !important; /* Matches --bg-secondary */
-  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-secondary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 

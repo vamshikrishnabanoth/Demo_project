@@ -1,0 +1,119 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Clipboard, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { parseAiken } from '../../utils/parsers';
+import { PremiumButton, GlassCard } from '../ui/Primitives';
+import toast from 'react-hot-toast';
+
+export default function AikenPastePanel({ onQuestionsLoaded }) {
+    const [pastedText, setPastedText] = useState('');
+    const [parsedCount, setParsedCount] = useState(0);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [decodedQuestions, setDecodedQuestions] = useState([]);
+
+    const handleAnalyze = () => {
+        if (!pastedText.trim()) {
+            setErrorMsg('Paste buffer is empty. Please enter your Aiken format questions first.');
+            setParsedCount(0);
+            setDecodedQuestions([]);
+            return;
+        }
+
+        const { questions, errors } = parseAiken(pastedText);
+
+        if (errors && errors.length > 0) {
+            setErrorMsg(errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more errors.` : ''));
+            setParsedCount(0);
+            setDecodedQuestions([]);
+            toast.error('Decoding anomalies detected');
+            return;
+        }
+
+        if (questions.length === 0) {
+            setErrorMsg('No valid Aiken questions resolved. Verify spelling of "ANSWER: " line.');
+            setParsedCount(0);
+            setDecodedQuestions([]);
+            toast.error('Zero questions resolved');
+            return;
+        }
+
+        setDecodedQuestions(questions);
+        setParsedCount(questions.length);
+        setErrorMsg('');
+        toast.success(`Successfully decoded ${questions.length} questions`);
+    };
+
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Format Protocol Guide */}
+            <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-3xl p-8 backdrop-blur-xl">
+                <div className="flex items-center gap-3 mb-4">
+                    <FileText size={20} className="text-indigo-400" />
+                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">AIKEN Syntax Rules</span>
+                </div>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-4">
+                    Pasted text must strictly comply with the Aiken standard: Question text on a single line, option labels starting with capital letters followed by a period and space, and a terminal ANSWER line.
+                </p>
+                <pre className="text-indigo-100/40 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-black/20 p-4 rounded-xl border border-white/5">
+{`What is the capital of India?
+A. Mumbai
+B. New Delhi
+C. Chennai
+D. Kolkata
+ANSWER: B`}
+                </pre>
+            </div>
+
+            {/* Input Form Matrix */}
+            <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 bg-white/[0.01]">
+                <div className="flex items-center justify-between mb-4">
+                    <label className="block text-[11px] font-black text-white/40 uppercase tracking-widest">Aiken Paste Terminal</label>
+                    <span className="text-[9px] text-white/20 font-black uppercase tracking-widest">UTF-8 Format</span>
+                </div>
+                <textarea
+                    rows={12}
+                    value={pastedText}
+                    onChange={(e) => setPastedText(e.target.value)}
+                    placeholder="Paste your raw Aiken text data here..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all resize-none shadow-inner animate-glow"
+                />
+
+                <div className="flex justify-end mt-6">
+                    <PremiumButton variant="ghost" icon={Clipboard} onClick={handleAnalyze}>
+                        Analyze Paste Stream
+                    </PremiumButton>
+                </div>
+            </div>
+
+            {errorMsg && (
+                <div className="bg-red-500/5 border border-red-500/20 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
+                    <AlertTriangle className="text-red-500 shrink-0 mt-1" size={20} />
+                    <pre className="text-red-300 text-xs font-mono leading-relaxed whitespace-pre-wrap">{errorMsg}</pre>
+                </div>
+            )}
+
+            <AnimatePresence>
+                {parsedCount > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="glass-panel p-8 rounded-[2.5rem] border border-green-500/20 bg-green-500/5">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle className="text-green-500" size={20} />
+                                    <span className="text-sm font-black text-white uppercase italic">{parsedCount} Questions Decoded & Verified</span>
+                                </div>
+                                <PremiumButton variant="primary" onClick={() => onQuestionsLoaded(decodedQuestions)}>
+                                    Inject Questions
+                                </PremiumButton>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}

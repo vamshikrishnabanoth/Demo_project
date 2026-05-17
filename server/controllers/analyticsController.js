@@ -150,11 +150,13 @@ exports.getQuizAnalytics = async (req, res) => {
             .sort((a, b) => b.score - a.score || a.totalTimeTaken - b.totalTimeTaken)
             .map((r, idx) => ({
                 id: r.studentId,
+                email: r.student?.email || 'N/A',
                 rank: idx + 1,
                 username: r.student?.username || 'Unknown',
                 score: r.score,
                 timeTaken: r.totalTimeTaken,
-                accuracy: Math.round((r.score / maxScore) * 100)
+                accuracy: Math.round((r.score / maxScore) * 100),
+                answers: r.answers
             }));
 
         const topStudents = leaderboard.slice(0, 5);

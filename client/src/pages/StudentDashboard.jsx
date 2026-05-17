@@ -12,6 +12,7 @@ import CinematicBackground from '../components/CinematicBackground';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { showConfirm, showSuccess, showError } from '../utils/alerts';
 import toast from 'react-hot-toast';
+import socket from '../utils/socket';
 
 const FloatingSymbol = ({ Icon, top, left, delay, size = 32 }) => (
     <motion.div
@@ -47,6 +48,12 @@ export default function StudentDashboard() {
     
     const maxChars = 6;
 
+    useEffect(() => {
+        if (user?.id) {
+            socket.emit('identify', user.id);
+        }
+    }, [user]);
+
     const handleJoin = async () => {
         if (joinCode.length !== maxChars) return;
         setIsSubmitting(true);
@@ -78,6 +85,47 @@ export default function StudentDashboard() {
                 transition: { duration: 0.4 }
             });
             setJoinCode('');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDirectJoin = async (pin) => {
+        setJoinCode(pin);
+        toast.success('Direct Sync link established! Synchronizing with the Arena...', {
+            style: {
+                background: '#161618',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '1rem',
+                fontFamily: 'Inter'
+            }
+        });
+        
+        setIsSubmitting(true);
+        try {
+            await api.post('/quiz/join', { code: pin });
+            toast.success('Connection established!', {
+                style: {
+                    background: '#161618',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '1rem',
+                    fontFamily: 'Inter'
+                }
+            });
+            setTimeout(() => navigate(`/live-room-student/${pin}`), 1000);
+        } catch (err) {
+            setError(true);
+            toast.error(err.response?.data?.msg || 'Neural link failed', {
+                style: {
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    color: '#ef4444',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '1rem',
+                    fontFamily: 'Inter'
+                }
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -224,6 +272,7 @@ export default function StudentDashboard() {
                             )}
                         </button>
                     </div>
+
                 </motion.div>
             </div>
         </DashboardLayout>

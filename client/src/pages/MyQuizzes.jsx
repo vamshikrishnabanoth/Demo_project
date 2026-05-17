@@ -17,14 +17,23 @@ import {
     Search,
     Calendar,
     HelpCircle,
-    Play
+    Play,
+    Users,
+    Megaphone,
+    CalendarRange
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
+import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
+import BroadcastModal from '../components/quiz/BroadcastModal';
+import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
 
 export default function MyQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedQuizForAssign, setSelectedQuizForAssign] = useState(null);
+    const [selectedQuizForBroadcast, setSelectedQuizForBroadcast] = useState(null);
+    const [editingScheduleId, setEditingScheduleId] = useState(null);
 
     const fetchQuizzes = async () => {
         try {
@@ -191,6 +200,30 @@ export default function MyQuizzes() {
                                                 </>
                                             )}
                                                 
+                                            <button
+                                                onClick={() => setSelectedQuizForAssign(quiz)}
+                                                className="flex-1 sm:flex-none bg-amber-400/10 text-amber-400 border border-amber-400/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-amber-400 hover:text-slate-950 active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                title="Target & Assign Quiz"
+                                            >
+                                                <Users size={18} /> Assign
+                                            </button>
+
+                                            <button
+                                                onClick={() => setEditingScheduleId(quiz.id)}
+                                                className="flex-1 sm:flex-none bg-blue-500/10 text-blue-400 border border-blue-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-blue-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                title="Edit Schedule"
+                                            >
+                                                <CalendarRange size={18} /> Schedule
+                                            </button>
+
+                                            <button
+                                                onClick={() => setSelectedQuizForBroadcast(quiz)}
+                                                className="flex-1 sm:flex-none bg-purple-500/10 text-purple-400 border border-purple-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-purple-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                title="Broadcast Quiz Secure Access Details"
+                                            >
+                                                <Megaphone size={18} /> Broadcast
+                                            </button>
+
                                             <Link
                                                 to={`/analytics/quiz/${quiz.id}`}
                                                 className="flex-1 sm:flex-none bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-indigo-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
@@ -232,6 +265,26 @@ export default function MyQuizzes() {
                     />
                 )}
             </div>
+
+            <StudentAssignDrawer 
+                quiz={selectedQuizForAssign}
+                isOpen={!!selectedQuizForAssign}
+                onClose={() => setSelectedQuizForAssign(null)}
+                onAssignSuccess={fetchQuizzes}
+            />
+
+            <BroadcastModal
+                isOpen={!!selectedQuizForBroadcast}
+                onClose={() => setSelectedQuizForBroadcast(null)}
+                quiz={selectedQuizForBroadcast}
+            />
+            
+            <ScheduleEditModal
+                isOpen={!!editingScheduleId}
+                onClose={() => setEditingScheduleId(null)}
+                quizId={editingScheduleId}
+                onSuccess={fetchQuizzes}
+            />
         </DashboardLayout>
     );
 }

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
 import { ListSkeleton, ShimmerSkeleton } from '../components/ui/ShimmerSkeleton';
+import { royalAlert, showError } from '../utils/alerts';
 
 // CountUp — requestAnimationFrame instead of setInterval
 const CountUp = ({ end, duration = 1 }) => {
@@ -69,6 +70,48 @@ export default function Assessments() {
         q.title.toLowerCase().includes(search.toLowerCase()) ||
         q.topic?.toLowerCase().includes(search.toLowerCase())
     );
+
+    const handleAttemptClick = async (quiz) => {
+        if (quiz.accessType === 'public') {
+            navigate(`/quiz/attempt/${quiz.id}`);
+        } else {
+            // Private: prompt for PIN
+            const { value: pin } = await royalAlert.fire({
+                title: 'Enter 6-Digit PIN',
+                text: `"${quiz.title}" is a private assessment. Enter the code to gain access:`,
+                input: 'text',
+                inputPlaceholder: 'ENTER PIN...',
+                showCancelButton: true,
+                confirmButtonText: 'SYNC ARENA',
+                cancelButtonText: 'ABORT',
+                inputAttributes: {
+                    maxlength: '6',
+                    autocapitalize: 'off',
+                    autocorrect: 'off',
+                    style: 'text-align: center; font-weight: 900; letter-spacing: 0.2em; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; color: #fff; width: 80%; margin: 1.5rem auto;'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You must enter a neural link PIN!';
+                    }
+                    if (value.length !== 6) {
+                        return 'The PIN must be exactly 6 characters!';
+                    }
+                }
+            });
+
+            if (pin) {
+                try {
+                    // Try to join with the PIN to validate it
+                    await api.post('/quiz/join', { code: pin });
+                    toast.success('Neural Link Synchronized!');
+                    navigate(`/quiz/attempt/${quiz.id}`);
+                } catch (err) {
+                    showError('Link Rejected', err.response?.data?.msg || 'Incorrect access PIN.');
+                }
+            }
+        }
+    };
 
     const stats = [
         { label: 'Available', value: safeQuizzes.length, icon: Play, color: 'text-[var(--text-accent)]' },
@@ -185,7 +228,7 @@ export default function Assessments() {
                                         </div>
 
                                         <button
-                                            onClick={() => navigate(`/quiz/attempt/${quiz._id}`)}
+                                            onClick={() => handleAttemptClick(quiz)}
                                             className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
                                         >
                                             Initiate Sequence

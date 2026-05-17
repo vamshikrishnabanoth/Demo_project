@@ -18,12 +18,13 @@ const PIE_COLORS = ['#10b981', '#f43f5e', '#64748b'];
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a] border border-white/10 p-4 rounded-xl shadow-2xl">
-                <p className="font-bold text-white mb-2">{label}</p>
+            <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                <p className="font-bold text-white text-sm tracking-wide">{label}</p>
+                <div className="border-t border-white/10 my-2.5"></div>
                 {payload.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                        <span className="text-slate-300 capitalize">{entry.name}:</span>
+                    <div key={index} className="flex items-center gap-2.5 text-sm">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
+                        <span className="text-slate-300 font-medium">{entry.name}:</span>
                         <span className="font-black text-white">{entry.value}</span>
                     </div>
                 ))}

@@ -32,6 +32,25 @@ export default function AttemptQuiz() {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [missionComplete, setMissionComplete] = useState(false);
     const [waitingForState, setWaitingForState] = useState(false);
+    
+    // Time Taken tracking system
+    const [questionTimes, setQuestionTimes] = useState({});
+    const questionStartRef = useRef(Date.now());
+    const prevQuestionRef = useRef(0);
+
+    useEffect(() => {
+        if (loading || isReviewMode || result || !quiz) return;
+        const prevQuestion = prevQuestionRef.current;
+        const elapsed = Math.max(1, Math.round((Date.now() - questionStartRef.current) / 1000));
+        
+        setQuestionTimes(prev => ({
+            ...prev,
+            [prevQuestion]: (prev[prevQuestion] || 0) + elapsed
+        }));
+
+        prevQuestionRef.current = currentQuestion;
+        questionStartRef.current = Date.now();
+    }, [currentQuestion, loading, isReviewMode, result, quiz]);
 
     // Block browser back button for students during active quiz
     useEffect(() => {
@@ -241,11 +260,15 @@ export default function AttemptQuiz() {
         if (quiz?.isLive) {
             handleAutoSubmitAnswer();
         } else {
-            if (currentQuestion < quiz.questions.length - 1) {
-                setCurrentQuestion(prev => prev + 1);
-                setTimeLeft(quiz.timerPerQuestion || 30);
+            if (quiz.timerType === 'totalTime') {
+                // Hitting 0 globally is handled in the interval effect
             } else {
-                submitQuiz();
+                if (currentQuestion < quiz.questions.length - 1) {
+                    setCurrentQuestion(prev => prev + 1);
+                    setTimeLeft(quiz.timerPerQuestion || 30);
+                } else {
+                    submitQuiz();
+                }
             }
         }
     };
@@ -257,7 +280,7 @@ export default function AttemptQuiz() {
         if (currentQuestion < quiz.questions.length - 1) {
             setCurrentQuestion(prev => prev + 1);
             // Reset timer for next question if per-question timer exists
-            if (!quiz.duration) {
+            if (quiz.timerType !== 'totalTime') {
                 setTimeLeft(quiz.timerPerQuestion || 30);
             }
         } else {
@@ -289,14 +312,24 @@ export default function AttemptQuiz() {
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
             // Initialize global timer ONLY ONCE
-            if (quiz.duration > 0) {
+            if (quiz.timerType === 'totalTime') {
                 if (!hasInitializedTimer.current) {
-                    setTimeLeft(quiz.duration * 60);
+                    let totalSeconds = (quiz.duration || 10) * 60;
+                    if (quiz.endTime) {
+                        const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
+                        totalSeconds = Math.min(totalSeconds, maxRemaining);
+                    }
+                    setTimeLeft(totalSeconds);
                     hasInitializedTimer.current = true;
                 }
             } else {
                 // Per question timer: reset on every question change
-                setTimeLeft(quiz.timerPerQuestion || 30);
+                let pqTime = quiz.timerPerQuestion || 30;
+                if (quiz.endTime) {
+                    const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
+                    pqTime = Math.min(pqTime, maxRemaining);
+                }
+                setTimeLeft(pqTime);
             }
         }
     }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
@@ -316,7 +349,7 @@ export default function AttemptQuiz() {
         const timerId = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
-                    if (quiz.duration > 0) {
+                    if (quiz.timerType === 'totalTime') {
                         // Global timer expired -> Submit Quiz
                         clearInterval(timerId);
                         submitQuiz();
@@ -377,7 +410,9 @@ export default function AttemptQuiz() {
                 } // end else (non-live or not started)
             } catch (err) {
                 console.error('Error fetching quiz', err);
-                alert('Quiz not found');
+                const error = /** @type {any} */ (err);
+                const errorMsg = error?.response?.data?.msg || error?.response?.data?.message || 'Quiz not found';
+                alert(errorMsg);
                 navigate('/student-dashboard');
             } finally {
                 setLoading(false);
@@ -492,9 +527,16 @@ export default function AttemptQuiz() {
         if (submitting || isReviewMode) return;
         setSubmitting(true);
         try {
+            const finalElapsed = Math.max(1, Math.round((Date.now() - questionStartRef.current) / 1000));
+            const finalQuestionTimes = {
+                ...questionTimes,
+                [currentQuestion]: (questionTimes[currentQuestion] || 0) + finalElapsed
+            };
+
             const formattedAnswers = quiz.questions.map((q, idx) => ({
                 questionText: q.questionText,
-                selectedOption: answers[idx] || ''
+                selectedOption: answers[idx] || '',
+                timeTaken: finalQuestionTimes[idx] || 0
             }));
 
             const res = await api.post('/quiz/submit', {
@@ -752,7 +794,7 @@ export default function AttemptQuiz() {
                                         fill="transparent"
                                         strokeDasharray="226.2"
                                         initial={{ strokeDashoffset: 226.2 }}
-                                        animate={{ strokeDashoffset: 226.2 * (1 - timeLeft / (quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30))) }}
+                                        animate={{ strokeDashoffset: 226.2 * (1 - timeLeft / (quiz.timerType === 'totalTime' ? ((quiz.duration || 10) * 60) : (quiz.timerPerQuestion || 30))) }}
                                         transition={{ duration: 1, ease: "linear" }}
                                         strokeLinecap="round"
                                         className="drop-shadow-[0_0_8px_rgba(255,107,0,0.3)]"

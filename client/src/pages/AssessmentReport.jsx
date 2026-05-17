@@ -64,14 +64,21 @@ const AssessmentReport = () => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[var(--bg-secondary)] border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
-                    <p className="text-[10px] font-black text-[#22d3ee] uppercase tracking-widest mb-1">{label || 'Metric'}</p>
-                    <p className="text-xl font-black text-white italic">
-                        {payload[0].value}
-                        <span className="text-[10px] ml-1 opacity-50 not-italic">
-                            {payload[0].name === 'time' ? 'Seconds' : 'Units'}
-                        </span>
-                    </p>
+                <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                    <p className="font-bold text-white text-sm tracking-wide">{label || 'Metric'}</p>
+                    <div className="border-t border-white/10 my-2.5"></div>
+                    {payload.map((entry, index) => (
+                        <div key={index} className="flex items-center gap-2.5 text-sm">
+                            <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color || '#22d3ee' }} />
+                            <span className="text-slate-300 font-medium">{entry.name === 'time' ? 'Time Spent' : entry.name || 'Value'}:</span>
+                            <span className="font-black text-white ml-1">
+                                {entry.value}
+                                <span className="text-[10px] ml-1 opacity-50 not-italic font-bold uppercase">
+                                    {entry.name === 'time' ? 'Seconds' : 'Units'}
+                                </span>
+                            </span>
+                        </div>
+                    ))}
                 </div>
             );
         }

@@ -251,8 +251,26 @@ export default function AssessmentAttempt() {
     }
 
     const currentQ = quiz.questions[currentIdx];
-    const progress = ((currentIdx) / quiz.questions.length) * 100;
     const isLast = currentIdx === quiz.questions.length - 1;
+
+    // Timer calculation logic
+    let maxRemaining = Infinity;
+    if (quiz.endTime) {
+        maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
+    }
+    
+    let timerDuration = 30;
+    let timerKey = currentIdx;
+    
+    if (quiz.timerType === 'totalTime') {
+        const totalDuration = (quiz.duration || 10) * 60;
+        timerDuration = Math.min(totalDuration, maxRemaining);
+        timerKey = 'global-timer';
+    } else {
+        const pqTime = quiz.timerPerQuestion || 30;
+        timerDuration = Math.min(pqTime, maxRemaining);
+        timerKey = currentIdx;
+    }
 
     return (
         <DashboardLayout role="student">
@@ -290,7 +308,7 @@ export default function AssessmentAttempt() {
                         </div>
                     </div>
 
-                    <TimerBar duration={30} onTimeUp={handleNext} active={!isShowingFeedback} key={currentIdx} />
+                    <TimerBar duration={timerDuration} onTimeUp={handleNext} active={!isShowingFeedback} key={timerKey} />
                 </div>
 
                 {/* Question Area */}
