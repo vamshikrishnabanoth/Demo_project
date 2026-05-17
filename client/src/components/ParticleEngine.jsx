@@ -175,15 +175,19 @@ const ParticleEngine = () => {
         };
 
         const render = () => {
+            // Optimization: Skip rendering if document is hidden (tab inactive)
+            if (document.hidden) {
+                animationFrameId = requestAnimationFrame(render);
+                return;
+            }
+
             ctx.clearRect(0, 0, width, height);
             ctx.globalCompositeOperation = 'lighter';
 
             streaks.forEach(s  => { s.update(); s.draw(); });
             particles.forEach(p => { p.update(); p.draw(); });
 
-            // Reset globalAlpha so it doesn't bleed into other canvas draws
             ctx.globalAlpha = 1;
-
             animationFrameId = requestAnimationFrame(render);
         };
 
@@ -191,12 +195,27 @@ const ParticleEngine = () => {
         window.addEventListener('resize',    resizeHandler);
         if (!isMobile) window.addEventListener('mousemove', onMouseMove);
 
+        // --- NEW: Smart Interruption (Intersection Observer) ---
+        // Pauses the engine if the dashboard layout scrolls away
+        const observerOptions = { threshold: 0.1 };
+        const visibilityObserver = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                if (!animationFrameId) render();
+            } else {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }, observerOptions);
+
+        visibilityObserver.observe(canvas);
+
         resize();
         render();
 
         return () => {
             window.removeEventListener('resize',    resizeHandler);
             window.removeEventListener('mousemove', onMouseMove);
+            visibilityObserver.disconnect();
             cancelAnimationFrame(animationFrameId);
             observer.disconnect();
         };

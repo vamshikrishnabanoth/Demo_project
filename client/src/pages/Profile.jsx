@@ -15,8 +15,8 @@ export default function Profile() {
     const navigate = useNavigate();
 
     const themes = [
-        { id: 'celestial', name: 'Celestial Gold', color: '#D7AC28' },
-        { id: 'imperial', name: 'Imperial Arena', color: '#B371E0' },
+        { id: 'celestial', name: 'Obsidian Aureate', color: '#D7AC28' },
+        { id: 'imperial', name: 'Amethyst Aurora', color: '#B371E0' },
         { id: 'drakor', name: 'Drakor', color: '#C0192A' },
     ];
 
@@ -369,24 +369,31 @@ export default function Profile() {
                                         <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">Font Style</p>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {fonts.map((f) => (
                                         <button
                                             key={f.id}
                                             onClick={() => setFont(f.id)}
-                                            className={`p-3 rounded-xl border-2 transition-all text-center relative
-                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-lg shadow-[var(--text-accent)]/10' : 'border-[var(--border-color)] hover:bg-[var(--glass-bg)] hover:border-[var(--text-secondary)]/30'}`}
+                                            className={`p-6 rounded-[1.5rem] border-2 transition-all text-left relative flex flex-col group h-32
+                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-xl shadow-[var(--text-accent)]/10' : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.04] hover:border-white/10'}`}
                                         >
-                                            <p className={`text-xs font-bold text-[var(--text-primary)] truncate`}>{f.name}</p>
-                                            <p 
-                                                className="text-[11px] text-[var(--text-secondary)] mt-2 italic"
-                                                style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
-                                            >
-                                                Aa Bb Cc 123
-                                            </p>
-                                            {font === f.id && (
-                                                <div className="absolute -top-2 -right-2 bg-[var(--bg-accent)] text-white p-0.5 rounded-full shadow-lg">
-                                                    <Check size={8} />
+                                            <div className="min-w-0 flex flex-col h-full justify-between">
+                                                <p className="text-[10px] font-black text-[var(--text-primary)] uppercase tracking-widest italic">{f.name}</p>
+                                                <p 
+                                                    className="text-2xl text-[var(--text-secondary)] font-medium"
+                                                    style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
+                                                >
+                                                    Aa123
+                                                </p>
+                                            </div>
+                                            
+                                            {font === f.id ? (
+                                                <div className="absolute top-3 right-3 w-7 h-7 bg-[var(--bg-accent)] text-white rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
+                                                    <Check size={14} strokeWidth={4} />
+                                                </div>
+                                            ) : (
+                                                <div className="absolute top-3 right-3 w-7 h-7 bg-white/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Type size={14} className="text-[var(--text-secondary)]" />
                                                 </div>
                                             )}
                                         </button>

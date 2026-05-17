@@ -35,6 +35,8 @@ const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
 const LiveRoomTeacher   = lazy(() => import('./pages/LiveRoomTeacher'));
 const LiveRoomStudent   = lazy(() => import('./pages/LiveRoomStudent'));
 const Leaderboard       = lazy(() => import('./pages/Leaderboard'));
+const AssessmentsHistory = lazy(() => import('./pages/AssessmentsHistory'));
+const AssessmentReport  = lazy(() => import('./pages/AssessmentReport'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -80,6 +82,8 @@ function AnimatedRoutes() {
                     <Route path="/assessments"         element={<PageTransition><ProtectedRoute roles={['student']}><Assessments /></ProtectedRoute></PageTransition>} />
                     <Route path="/quiz/attempt/:id"    element={<FadeTransition><ProtectedRoute roles={['student']}><AssessmentAttempt /></ProtectedRoute></FadeTransition>} />
                     <Route path="/quiz/review/:id"     element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReview /></ProtectedRoute></SlideUpTransition>} />
+                    <Route path="/history"            element={<PageTransition><ProtectedRoute roles={['student']}><AssessmentsHistory /></ProtectedRoute></PageTransition>} />
+                    <Route path="/report/:id"         element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReport /></ProtectedRoute></SlideUpTransition>} />
                     <Route path="/live-room-student/:joinCode" element={<FadeTransition><ProtectedRoute roles={['student']}><LiveRoomStudent /></ProtectedRoute></FadeTransition>} />
 
                     {/* Admin pages */}

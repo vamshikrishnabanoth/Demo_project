@@ -1,59 +1,83 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { 
+    Trophy, Play, Users, Star, ArrowRight, Target, Sparkles, 
+    Zap, Rocket, Globe, Brain, Cpu, MessageSquare, Clock, BarChart3, ChevronRight, Search, LayoutGrid
+} from 'lucide-react';
+import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Zap, Loader2, Sparkles, Trophy, ShieldCheck, Cpu, Globe, Rocket } from 'lucide-react';
+import CinematicBackground from '../components/CinematicBackground';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { showConfirm, showSuccess, showError } from '../utils/alerts';
 import toast from 'react-hot-toast';
-import { showSuccess, showError } from '../utils/alerts';
+
+const FloatingSymbol = ({ Icon, top, left, delay, size = 32 }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ 
+            opacity: [0.1, 0.3, 0.1],
+            y: [0, -20, 0],
+            rotate: [0, 10, -10, 0]
+        }}
+        transition={{ 
+            duration: 8 + Math.random() * 4, 
+            repeat: Infinity, 
+            delay,
+            ease: "easeInOut"
+        }}
+        className="absolute pointer-events-none text-white/5"
+        style={{ top, left }}
+    >
+        <Icon size={size} />
+    </motion.div>
+);
 
 export default function StudentDashboard() {
+    const { user } = useContext(AuthContext);
     const [joinCode, setJoinCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [error, setError] = useState(false);
-    const inputRef = useRef(null);
-    const controls = useAnimation();
     const navigate = useNavigate();
-
+    const controls = useAnimation();
+    const inputRef = useRef(null);
+    const isSmallScreen = useMediaQuery('(max-width: 767px)');
+    
     const maxChars = 6;
 
-    const handleJoin = async (codeToSubmit = joinCode) => {
-        if (!codeToSubmit || codeToSubmit.length !== maxChars) return;
-
+    const handleJoin = async () => {
+        if (joinCode.length !== maxChars) return;
         setIsSubmitting(true);
-        setError(false);
-        const loadingToast = toast.loading('Authenticating Arena PIN...');
-
         try {
-            const res = await api.post('/quiz/join', { code: Number(codeToSubmit) });
-            toast.dismiss(loadingToast);
-            
-            await showSuccess('Access Granted!', 'Entering the Arena...');
-            
-            await controls.start({
-                scale: [1, 1.05, 1],
-                transition: { duration: 0.3 }
+            const res = await api.post('/quiz/join', { code: joinCode });
+            toast.success('Connection established!', {
+                style: {
+                    background: '#161618',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '1rem',
+                    fontFamily: 'Inter'
+                }
             });
-            
-            if (res.data.isLive) {
-                navigate(`/live-room-student/${codeToSubmit}`);
-            } else {
-                navigate(`/quiz/attempt/${res.data.quizId}`);
-            }
+            setTimeout(() => navigate(`/live-room-student/${joinCode}`), 1000);
         } catch (err) {
-            toast.dismiss(loadingToast);
-            console.error(err);
             setError(true);
-            const errorMsg = err.response?.data?.msg || 'Invalid Arena PIN';
-            showError('Access Denied', errorMsg);
-            
+            toast.error(err.response?.data?.msg || 'Neural link failed', {
+                style: {
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    color: '#ef4444',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '1rem',
+                    fontFamily: 'Inter'
+                }
+            });
             controls.start({
                 x: [-10, 10, -10, 10, 0],
                 transition: { duration: 0.4 }
             });
             setJoinCode('');
-            inputRef.current?.focus();
         } finally {
             setIsSubmitting(false);
         }
@@ -61,45 +85,18 @@ export default function StudentDashboard() {
 
     return (
         <DashboardLayout role="student">
-            <div className="relative min-h-[75vh] flex flex-col items-center justify-center font-inter py-10">
+            <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
                 
-                {/* Floating Atmospheric Tech Elements - Theme-Synchronized Neural Depth */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                    <motion.div 
-                        whileInView={{ 
-                            y: [0, -20, 0],
-                            rotate: [0, 10, 0],
-                            opacity: [0.08, 0.18, 0.08]
-                        }}
-                        viewport={{ once: false, amount: 0.1 }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-[10%] left-[15%] text-[var(--neural-prime)]"
-                    >
-                        <Cpu size={120} strokeWidth={0.5} />
-                    </motion.div>
-                    <motion.div 
-                        whileInView={{ 
-                            y: [0, 30, 0],
-                            rotate: [0, -15, 0],
-                            opacity: [0.06, 0.16, 0.06]
-                        }}
-                        viewport={{ once: false, amount: 0.1 }}
-                        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                        className="absolute bottom-[20%] right-[10%] text-[var(--neural-sub)]"
-                    >
-                        <Globe size={160} strokeWidth={0.5} />
-                    </motion.div>
-                    <motion.div 
-                        whileInView={{ 
-                            x: [0, 20, 0],
-                            opacity: [0.1, 0.2, 0.1]
-                        }}
-                        viewport={{ once: false, amount: 0.1 }}
-                        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                        className="absolute top-[40%] right-[20%] text-[var(--neural-neutral)]"
-                    >
-                        <Rocket size={80} strokeWidth={1} />
-                    </motion.div>
+                {/* ─── AMBIENT DECORATIONS ─────────────────────────────────── */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <FloatingSymbol Icon={Cpu} top="15%" left="10%" delay={0} size={isSmallScreen ? 24 : 40} />
+                    <FloatingSymbol Icon={Globe} top="25%" left="85%" delay={2} size={isSmallScreen ? 20 : 32} />
+                    {!isSmallScreen && (
+                        <>
+                            <FloatingSymbol Icon={Rocket} top="70%" left="15%" delay={4} />
+                            <FloatingSymbol Icon={Brain} top="65%" left="80%" delay={1} />
+                        </>
+                    )}
                 </div>
 
                 <motion.div 
@@ -118,10 +115,10 @@ export default function StudentDashboard() {
                             <div className="absolute inset-0 bg-[var(--bg-accent)] rounded-[2rem] blur-xl opacity-0 group-hover:opacity-40 transition-opacity" />
                             <Trophy size={48} className="relative z-10" />
                         </motion.div>
-                        <h1 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white italic uppercase tracking-tighter leading-tight text-balance">
                             ENTER THE <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">QUIZ CODE</span>
                         </h1>
-                        <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] max-w-sm mx-auto opacity-40">
+                        <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] max-w-sm mx-auto opacity-50 text-balance">
                             Type your 6-digit quiz code to join
                         </p>
                     </div>
@@ -174,7 +171,7 @@ export default function StudentDashboard() {
                                                     initial={{ opacity: 0, scale: 2, y: 10 }}
                                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                                     transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                                                    className="text-3xl md:text-5xl font-black text-white italic tracking-tighter z-10"
+                                                    className="text-2xl md:text-4xl font-black text-white italic tracking-tighter z-10"
                                                 >
                                                     {joinCode[i]}
                                                 </motion.span>
@@ -193,8 +190,10 @@ export default function StudentDashboard() {
                                         <AnimatePresence>
                                             {isFilled && (
                                                 <motion.div 
+                                                    key="fill-glow"
                                                     initial={{ opacity: 0, scale: 0 }}
                                                     animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0 }}
                                                     className="absolute inset-0 bg-gradient-to-t from-[var(--bg-accent)]/10 to-transparent pointer-events-none"
                                                 />
                                             )}
@@ -210,36 +209,20 @@ export default function StudentDashboard() {
                         <button
                             onClick={() => handleJoin()}
                             disabled={joinCode.length !== maxChars || isSubmitting}
-                            className={`w-full h-20 rounded-[2rem] font-black text-xl italic uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all duration-500 btn-cinematic
+                            className={`w-full h-20 rounded-[2rem] font-black text-xl italic uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all duration-500 btn-cinematic btn-glow
                                 ${joinCode.length === maxChars && !isSubmitting
                                     ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_20px_40px_var(--bg-accent-glow)]' 
                                     : 'bg-white/[0.03] text-white/10 border border-white/5 cursor-not-allowed'}`}
                         >
                             {isSubmitting ? (
-                                <Loader2 size={28} className="animate-spin" />
+                                <Zap className="animate-spin" size={24} />
                             ) : (
                                 <>
-                                    JOIN QUIZ
-                                    <Zap size={24} fill="currentColor" className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
+                                    <Sparkles size={24} className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
+                                    SYNC TO ARENA
                                 </>
                             )}
                         </button>
-
-                        {/* Intelligence Feed */}
-                        <div className="glass-panel rounded-[2rem] p-8 border border-white/5 text-left relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-[var(--bg-accent)]/10 transition-colors" />
-                            <div className="relative z-10 flex items-start gap-4">
-                                <div className="p-3 bg-[var(--bg-accent)]/10 rounded-xl text-[var(--text-accent)] shadow-inner">
-                                    <ShieldCheck size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-accent)] mb-2">Monitored Session</p>
-                                    <p className="text-white/30 font-black text-[11px] uppercase tracking-wider leading-relaxed">
-                                        All activity is logged. Tab switching during a quiz is tracked.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </motion.div>
             </div>

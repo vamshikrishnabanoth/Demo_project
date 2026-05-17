@@ -127,19 +127,34 @@ export default function AssessmentAttempt() {
         });
     };
 
+    const questionStartTime = useRef(Date.now());
+
+    useEffect(() => {
+        questionStartTime.current = Date.now();
+    }, [currentIdx]);
+
     const handleNext = async () => {
         if (!quiz || isShowingFeedback) return;
         const currentQ = quiz.questions[currentIdx];
         const correctOption = currentQ.correctAnswer || '';
         const selectedOption = selected || '';
         const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
+        
+        // Calculate time spent on this question
+        const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
 
         setFeedbackResult({ isCorrect });
         setIsShowingFeedback(true);
 
         // Feedback Delay
         setTimeout(async () => {
-            const newAnswer = { selectedOption, correctOption, isCorrect, questionText: currentQ.questionText };
+            const newAnswer = { 
+                selectedOption, 
+                correctOption, 
+                isCorrect, 
+                questionText: currentQ.questionText,
+                timeTaken: timeTaken // TRACKED TIME
+            };
             const updatedAnswers = [...answers, newAnswer];
             setAnswers(updatedAnswers);
             setIsShowingFeedback(false);
@@ -158,7 +173,10 @@ export default function AssessmentAttempt() {
 
                     const payload = {
                         quizId: id,
-                        answers: updatedAnswers.map(a => ({ selectedOption: a.selectedOption }))
+                        answers: updatedAnswers.map(a => ({ 
+                            selectedOption: a.selectedOption,
+                            timeTaken: a.timeTaken // SEND TIMING DATA
+                        }))
                     };
                     await api.post('/quiz/submit', payload);
                 } catch (err) {

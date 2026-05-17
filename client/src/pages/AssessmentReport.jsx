@@ -1,0 +1,445 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+    PieChart, Pie, Cell, LineChart, Line, AreaChart, Area 
+} from 'recharts';
+import { 
+    Trophy, Clock, Target, AlertCircle, ArrowLeft, 
+    Download, Share2, CheckCircle2, XCircle, Brain, 
+    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import api from '../utils/api';
+import PremiumLoading from '../components/PremiumLoading';
+import DashboardLayout from '../components/DashboardLayout';
+import PremiumError from '../components/PremiumError';
+
+const AssessmentReport = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [selectedReview, setSelectedReview] = useState(null);
+    const [showDetailed, setShowDetailed] = useState(false);
+
+    const fetchReport = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get(`/quiz/result/${id}`);
+            setData(res.data);
+        } catch (err) {
+            console.error('Failed to fetch report:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReport();
+    }, [id]);
+
+    if (loading) return <PremiumLoading />;
+    if (!data) return (
+        <DashboardLayout role="student">
+            <PremiumError 
+                title="Tactical Link Severed" 
+                message="The mission analysis for this session is unavailable or has been archived. Verify the operational ID and re-establish link."
+                onRetry={fetchReport}
+            />
+        </DashboardLayout>
+    );
+
+    const { score, totalQuestions, answers, quizTitle, totalTimeTaken, createdAt } = data;
+    const accuracy = Math.round((score / (totalQuestions * 10)) * 100);
+    const avgTime = Math.round(totalTimeTaken / totalQuestions);
+
+    // Data for Accuracy Pie Chart
+    const pieData = [
+        { name: 'Correct', value: answers.filter(a => a.isCorrect).length },
+        { name: 'Incorrect', value: answers.filter(a => !a.isCorrect).length }
+    ];
+    const COLORS = ['#10b981', '#f43f5e'];
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-[var(--bg-secondary)] border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                    <p className="text-[10px] font-black text-[#22d3ee] uppercase tracking-widest mb-1">{label || 'Metric'}</p>
+                    <p className="text-xl font-black text-white italic">
+                        {payload[0].value}
+                        <span className="text-[10px] ml-1 opacity-50 not-italic">
+                            {payload[0].name === 'time' ? 'Seconds' : 'Units'}
+                        </span>
+                    </p>
+                </div>
+            );
+        }
+        return null;
+    };
+
+    // Data for Time Spent per Question
+    const timeData = answers.map((a, i) => ({
+        name: `Q${i + 1}`,
+        time: a.timeTaken || 0,
+        status: a.isCorrect ? 'Correct' : 'Incorrect'
+    }));
+
+    return (
+        <DashboardLayout role="student">
+            <div className="max-w-7xl mx-auto py-8">
+                {/* Header System */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6 px-4">
+                    <div className="space-y-4">
+                        <div className="flex flex-wrap items-center gap-4">
+                            <button 
+                                onClick={() => navigate('/history')}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all group btn-press"
+                            >
+                                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Back to History</span>
+                            </button>
+                            <button 
+                                onClick={() => navigate('/student-dashboard')}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all group btn-press"
+                            >
+                                <Activity size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Arena Home</span>
+                            </button>
+                        </div>
+                        
+                        <h1 className="text-3xl md:text-6xl font-black text-white italic uppercase tracking-tighter flex items-center gap-4">
+                            <Zap className="text-[var(--text-accent)] drop-shadow-[0_0_15px_var(--bg-accent-glow)]" size={48} aria-hidden="true" />
+                            Strategic <span className="text-[var(--text-accent)]">Analytics</span>
+                        </h1>
+                        <p className="text-white/60 font-bold uppercase tracking-[0.4em] text-[10px] italic">
+                            Operational Brief: <span className="text-white">{quizTitle}</span> • {createdAt ? new Date(createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Temporal Log'}
+                        </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 w-full lg:w-auto">
+                        <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all btn-press">
+                            <Download size={18} className="text-[var(--text-accent)]" aria-hidden="true" /> Generate Dossier
+                        </button>
+                        <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[var(--bg-accent-hover)] transition-all shadow-xl shadow-[var(--bg-accent-glow)] btn-press btn-hover-scale">
+                            <Share2 size={18} aria-hidden="true" /> Broadcast Achievement
+                        </button>
+                    </div>
+                </div>
+
+                {/* Key Metrics Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 px-4">
+                    {[
+                        { label: 'Total Score', value: `${score}/${totalQuestions * 10}`, icon: Trophy, color: 'text-yellow-400', glow: 'shadow-yellow-400/10' },
+                        { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-emerald-400', glow: 'shadow-emerald-400/10' },
+                        { label: 'Time Spent', value: `${totalTimeTaken}s`, icon: Clock, color: 'text-blue-400', glow: 'shadow-blue-400/10' },
+                        { label: 'Avg Speed', value: `${avgTime}s/q`, icon: TrendingUp, color: 'text-purple-400', glow: 'shadow-purple-400/10' }
+                    ].map((stat, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: i * 0.1 }}
+                            whileHover={{ y: -5, scale: 1.02 }}
+                            className={`glass-panel p-8 rounded-[2.5rem] border border-white/10 hover:border-white/20 transition-all group ${stat.glow} shadow-2xl`}
+                        >
+                            <div className="flex justify-between items-start mb-6">
+                                <div className={`w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform duration-500`}>
+                                    <stat.icon size={28} aria-hidden="true" />
+                                </div>
+                                <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-accent)] italic border-b border-[var(--bg-accent)]/30 pb-1">Tracker_{i+1}</div>
+                            </div>
+                            <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
+                            <h3 className="text-4xl font-black text-white italic tracking-tighter">
+                                {stat.value}
+                            </h3>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Charts Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Accuracy Graph */}
+                    <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="glass-panel !rounded-[2.5rem] p-8 h-[400px] flex flex-col"
+                    >
+                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <Target className="text-emerald-400" size={20} />
+                            Accuracy Distribution
+                        </h3>
+                        <div className="flex-1">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={pieData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={80}
+                                        outerRadius={120}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                        stroke="none"
+                                    >
+                                        {pieData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip content={<CustomTooltip />} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                        <div className="flex justify-center gap-8 mt-4">
+                            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                                <div className="w-3 h-3 rounded-full bg-emerald-400" /> Correct
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                                <div className="w-3 h-3 rounded-full bg-rose-500" /> Incorrect
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Time Spent per Question */}
+                    <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="glass-panel !rounded-[2.5rem] p-8 h-[400px] flex flex-col"
+                    >
+                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <Clock className="text-blue-400" size={20} />
+                            Time Spent per Question (Seconds)
+                        </h3>
+                        <div className="flex-1">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={timeData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={10} fontWeight="900" tickLine={false} axisLine={false} />
+                                    <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} fontWeight="900" tickLine={false} axisLine={false} />
+                                    <Tooltip 
+                                        cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                        content={<CustomTooltip />}
+                                    />
+                                    <Bar dataKey="time" radius={[8, 8, 0, 0]}>
+                                        {timeData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill="#22d3ee" fillOpacity={0.8} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Question Wise Analysis Table */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass-panel overflow-hidden"
+                >
+                    <div className="p-6 border-b border-[var(--glass-border)] flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <HelpCircle className="text-[var(--text-accent)]" size={20} />
+                            Question Wise Analysis
+                        </h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-white/[0.03] border-b border-white/10">
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Rank</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Question Directive</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Your Input</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Correct Target</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-center">Status</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Latency</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-right">Neural Review</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-[var(--glass-border)]">
+                                {answers.map((ans, idx) => (
+                                    <tr key={idx} className="hover:bg-white/[0.03] transition-all border-b border-white/[0.02] group">
+                                    <td className="px-8 py-8 text-[var(--text-secondary)] font-mono text-xs opacity-50">{idx + 1}</td>
+                                    <td className="px-8 py-8">
+                                        <p className="text-white font-black italic uppercase tracking-tight text-sm line-clamp-2 max-w-md group-hover:text-[var(--text-accent)] transition-colors">
+                                            {ans.questionText}
+                                        </p>
+                                    </td>
+                                    <td className="px-8 py-8">
+                                        <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block ${ans.isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                                            {ans.selectedOption || 'No Input'}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-8">
+                                        <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-emerald-400 font-black text-[10px] uppercase tracking-widest inline-block">
+                                            {ans.correctOption}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-8">
+                                        <div className="flex justify-center">
+                                            {ans.isCorrect ? (
+                                                <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-tighter bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+                                                    <CheckCircle2 size={12} /> Correct
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-tighter bg-rose-400/10 px-3 py-1 rounded-full border border-rose-400/20">
+                                                    <XCircle size={12} /> Wrong
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-8 text-white font-mono text-xs font-black italic">
+                                        {ans.timeTaken}s
+                                    </td>
+                                    <td className="px-8 py-8 text-right">
+                                        <div className="flex justify-end">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={() => setSelectedReview(ans)}
+                                                    className="p-3 rounded-2xl transition-all border bg-[var(--bg-accent)] text-[var(--text-on-accent)] border-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]"
+                                                    title="View Full Neural Analysis"
+                                                >
+                                                    <Brain size={20} />
+                                                </motion.button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </motion.div>
+        </div>
+        
+        {/* Neural Analysis Modal Overlay */}
+            <AnimatePresence>
+                {selectedReview && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedReview(null)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-2xl bg-[var(--bg-secondary)] rounded-[3rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
+                        >
+                            <div className="absolute top-6 right-6 z-[110]">
+                                <button 
+                                    onClick={() => {
+                                        setSelectedReview(null);
+                                        setShowDetailed(false);
+                                    }}
+                                    className="p-3 rounded-2xl bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all backdrop-blur-md border border-white/5"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-14">
+                                <div className="flex items-center gap-4 mb-10">
+                                    <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]">
+                                        <Brain size={28} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tight">Neural <span className="text-[var(--text-accent)]">Analysis</span></h2>
+                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Deep Pedagogical Insights</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-10">
+                                    <div>
+                                        <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
+                                        <p className="text-xl font-bold text-white leading-relaxed">{selectedReview.questionText}</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Your Input</p>
+                                            <p className={`text-sm font-black italic uppercase ${selectedReview.isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                {selectedReview.selectedOption || 'No Input Detected'}
+                                            </p>
+                                        </div>
+                                        <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Correct Target</p>
+                                            <p className="text-sm font-black italic uppercase text-emerald-400">
+                                                {selectedReview.correctOption}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative">
+                                        <div className="absolute -top-4 -left-4 w-12 h-12 bg-[var(--bg-accent)]/10 blur-2xl rounded-full" />
+                                        <div className="relative p-8 rounded-[2rem] bg-[var(--bg-accent)]/5 border border-[var(--bg-accent)]/20 italic">
+                                            <Sparkles size={20} className="text-[var(--text-accent)] mb-4" />
+                                            
+                                            {!showDetailed ? (
+                                                <div className="text-lg text-white/90 font-medium leading-relaxed whitespace-pre-wrap">
+                                                    {selectedReview.aiReview || (selectedReview.isCorrect 
+                                                        ? "Exceptional work. You've demonstrated a core competency in this specific knowledge domain. This level of precision indicates high concept retention."
+                                                        : "A minor conceptual misalignment occurred here. Analysis suggests reviewing the relationship between the options to strengthen your grasp.")}
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-6 text-white/90">
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-2 not-italic">Core Concept Analysis</p>
+                                                        <p className="text-base font-medium leading-relaxed">
+                                                            {selectedReview.isCorrect 
+                                                                ? "You have successfully identified the primary logical bridge for this question. Your response aligns with standard industry best practices and theoretical foundations."
+                                                                : "The logic used here prioritized a secondary factor over the primary functional requirement. In production scenarios, this would lead to a partial or suboptimal solution."}
+                                                        </p>
+                                                    </div>
+                                                    <div className="pt-4 border-t border-white/5">
+                                                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2 not-italic">Tactical Insight</p>
+                                                        <p className="text-sm font-medium opacity-80 leading-relaxed">
+                                                            To master this topic, focus on the dependency relationships between the variables. The "Correct Target" represents the most efficient path with the least computational overhead.
+                                                        </p>
+                                                    </div>
+                                                    <div className="pt-4 border-t border-white/5">
+                                                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 not-italic">Recommended Action</p>
+                                                        <p className="text-sm font-medium opacity-80 leading-relaxed italic">
+                                                            Review the documentation related to this specific module and practice 2-3 similar permutations to solidify the pattern recognition.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-12 flex flex-col sm:flex-row justify-end gap-4">
+                                    <button 
+                                        onClick={() => setShowDetailed(!showDetailed)}
+                                        className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all btn-press ${
+                                            showDetailed 
+                                            ? 'bg-white/10 text-white border border-white/20' 
+                                            : 'bg-[var(--bg-accent)]/20 text-[var(--text-accent)] border border-[var(--bg-accent)]/30 hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)]'
+                                        }`}
+                                    >
+                                        {showDetailed ? 'Standard Response' : 'Detailed Analysis'}
+                                    </button>
+                                    <button 
+                                        onClick={() => {
+                                            setSelectedReview(null);
+                                            setShowDetailed(false);
+                                        }}
+                                        className="px-8 py-4 rounded-2xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest btn-cinematic shadow-lg shadow-rose-500/20"
+                                    >
+                                        Close Analysis
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </DashboardLayout>
+    );
+};
+
+export default AssessmentReport;
