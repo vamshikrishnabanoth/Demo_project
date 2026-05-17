@@ -15,6 +15,7 @@ import { showSuccess, showConfirm } from '../utils/alerts';
 import CinematicBackground from './CinematicBackground';
 import { StatusBadge, UserProfileCard } from './UserIdentity';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import GlobalSearch from './GlobalSearch';
 
 export default function DashboardLayout({ children, role }) {
     const { logout, user } = useContext(AuthContext);
@@ -65,7 +66,7 @@ export default function DashboardLayout({ children, role }) {
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
             <header
-                className="glass-panel sticky top-0 z-[var(--z-header)] border-b-0 shadow-none"
+                className="glass-panel sticky top-0 z-[100] border-b-0 shadow-none"
                 style={{ backdropFilter: 'blur(var(--blur-strength))' }}
                 role="banner"
             >
@@ -124,6 +125,7 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3">
+                            {location.pathname !== '/teacher-dashboard' && <GlobalSearch />}
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
                             
@@ -155,6 +157,24 @@ export default function DashboardLayout({ children, role }) {
                     </div>
                 </div>
             </header>
+
+            {/* ── DEDICATED TOP SEARCH SECTION (ISOLATED) ──────────────────── */}
+            {location.pathname === '/teacher-dashboard' && (
+                <div 
+                    className="w-full relative z-[90] bg-[var(--bg-primary)]/85 backdrop-blur-[18px]"
+                    style={{
+                        paddingTop: '24px',
+                        paddingBottom: '24px',
+                        marginBottom: '32px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
+                    }}
+                >
+                    <div className="w-full max-w-[900px] mx-auto px-6">
+                        <GlobalSearch variant="dashboard" />
+                    </div>
+                </div>
+            )}
 
             {/* ── PREMIUM SIDE DRAWER (MOBILE/TABLET) ───────────────────────── */}
             <AnimatePresence>

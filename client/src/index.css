@@ -50,6 +50,7 @@
   --error-bg: #ef4444;
   --success-bg: #22c55e;
   --bg-accent-glow: rgba(215, 172, 40, 0.4);
+  --table-row-hover: rgba(215, 172, 40, 0.12);
 
   /* ─── CENTRALIZED Z-INDEX SCALE ────────────────────────────────────────── */
   --z-negative: -1;
@@ -205,6 +206,7 @@ html {
   --error-bg: #900C3F; 
   --success-bg: #22c55e;
   --bg-accent-glow: rgba(255, 183, 0, 0.45);
+  --table-row-hover: rgba(255, 183, 0, 0.12);
   --neural-prime: var(--text-accent);
   --neural-sub: #c084fc;
   --neural-neutral: #a78bfa;
@@ -223,6 +225,7 @@ html {
   --error-bg: #4c1d1d; 
   --success-bg: #14b8a6; 
   --bg-accent-glow: rgba(255, 31, 58, 0.4);
+  --table-row-hover: rgba(45, 212, 191, 0.12);
   --text-on-accent: #ffffff;
   --neural-prime: var(--bg-accent);
   --neural-sub: var(--success-bg);
@@ -238,6 +241,13 @@ html {
 .btn-hover-scale:hover {
   transform: scale(1.04);
   box-shadow: 0 10px 25px -5px rgba(215, 172, 40, 0.3);
+}
+
+.premium-table-row {
+  transition: background-color var(--motion-fast) var(--ease-premium);
+}
+.premium-table-row:hover {
+  background-color: var(--table-row-hover) !important;
 }
 
 body {
@@ -270,6 +280,10 @@ input, textarea { cursor: text; }
   pointer-events: none;
 }
 
+.premium-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
 .premium-scrollbar::-webkit-scrollbar { width: 6px; }
 .premium-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
 .premium-scrollbar::-webkit-scrollbar-thumb {

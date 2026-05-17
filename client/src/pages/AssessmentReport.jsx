@@ -7,7 +7,7 @@ import {
 import { 
     Trophy, Clock, Target, AlertCircle, ArrowLeft, 
     Download, Share2, CheckCircle2, XCircle, Brain, 
-    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X
+    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X, Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
@@ -101,10 +101,10 @@ const AssessmentReport = () => {
                             </button>
                             <button 
                                 onClick={() => navigate('/student-dashboard')}
-                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all group btn-press"
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/30 text-[var(--text-accent)] hover:text-white transition-all group btn-press"
                             >
-                                <Activity size={16} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Arena Home</span>
+                                <Home size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Go to Home</span>
                             </button>
                         </div>
                         

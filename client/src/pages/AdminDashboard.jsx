@@ -6,7 +6,7 @@ import socket from '../utils/socket';
 import {
     Users, Shield, Ban, Activity, LayoutDashboard,
     Plus, Trash2, Edit3, Search, RefreshCw, UserCheck, 
-    GraduationCap, ShieldCheck, Loader2, AlertTriangle
+    GraduationCap, ShieldCheck, Loader2, AlertTriangle, Home
 } from 'lucide-react';
 import { showSuccess, showConfirm } from '../utils/alerts';
 import DashboardLayout from '../components/DashboardLayout';
@@ -33,6 +33,7 @@ const RoleBadge = ({ role }) => {
 
 export default function AdminDashboard() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { user: currentUser } = useContext(AuthContext);
     const isUsersTab = location.pathname === '/admin/users';
 
@@ -156,6 +157,7 @@ export default function AdminDashboard() {
                         </div>
                         
                         <div className="flex items-center gap-3">
+                            <PremiumButton variant="secondary" icon={Home} onClick={() => navigate('/admin-dashboard')} className="!px-6">Go to Home</PremiumButton>
                             <PremiumButton variant="secondary" icon={RefreshCw} onClick={fetchUsers} className="!px-6">Sync</PremiumButton>
                             <PremiumButton variant="primary" icon={Plus} onClick={() => setModal({ isNew: true })}>Provision</PremiumButton>
                         </div>

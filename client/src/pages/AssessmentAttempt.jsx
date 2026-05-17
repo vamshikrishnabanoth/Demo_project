@@ -4,7 +4,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import {
     ChevronRight, CheckCircle, XCircle, Trophy, RotateCcw,
-    BookOpen, Loader2, AlertCircle, ArrowLeft, Timer
+    BookOpen, Loader2, AlertCircle, ArrowLeft, Timer, Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showConfirm, showSuccess, showError } from '../utils/alerts';
@@ -259,15 +259,26 @@ export default function AssessmentAttempt() {
             <div className="max-w-2xl mx-auto py-12 px-6">
                 {/* Header */}
                 <div className="mb-10">
-                    <button
-                        onClick={async () => {
-                            const res = await showConfirm('Abort Quiz?', 'Progress will be lost. Are you sure?');
-                            if (res.isConfirmed) navigate('/assessments');
-                        }}
-                        className="flex items-center gap-2 text-white/30 hover:text-white font-black text-[10px] uppercase tracking-[0.2em] mb-8 transition-colors btn-press"
-                    >
-                        <ArrowLeft size={14} /> Abandon Challenge
-                    </button>
+                    <div className="flex items-center justify-between mb-8">
+                        <button
+                            onClick={async () => {
+                                const res = await showConfirm('Abort Quiz?', 'Progress will be lost. Are you sure?');
+                                if (res.isConfirmed) navigate('/assessments');
+                            }}
+                            className="flex items-center gap-2 text-white/30 hover:text-white font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
+                        >
+                            <ArrowLeft size={14} /> Abandon Challenge
+                        </button>
+                        <button
+                            onClick={async () => {
+                                const res = await showConfirm('Exit Quiz?', 'Progress will be lost. Return to dashboard?');
+                                if (res.isConfirmed) navigate('/student-dashboard');
+                            }}
+                            className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
+                        >
+                            <Home size={14} /> Go to Home
+                        </button>
+                    </div>
 
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">

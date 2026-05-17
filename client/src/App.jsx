@@ -37,6 +37,8 @@ const LiveRoomStudent   = lazy(() => import('./pages/LiveRoomStudent'));
 const Leaderboard       = lazy(() => import('./pages/Leaderboard'));
 const AssessmentsHistory = lazy(() => import('./pages/AssessmentsHistory'));
 const AssessmentReport  = lazy(() => import('./pages/AssessmentReport'));
+const QuizAnalytics     = lazy(() => import('./pages/QuizAnalytics'));
+const QuestionAnalysis  = lazy(() => import('./pages/QuestionAnalysis'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -76,6 +78,8 @@ function AnimatedRoutes() {
                     <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
                     <Route path="/my-quizzes"        element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
                     <Route path="/live-room-teacher/:joinCode" element={<FadeTransition><ProtectedRoute roles={['teacher']}><LiveRoomTeacher /></ProtectedRoute></FadeTransition>} />
+                    <Route path="/analytics/quiz/:id" element={<PageTransition><ProtectedRoute roles={['teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></PageTransition>} />
+                    <Route path="/analytics/question/:quizId/:questionIndex" element={<SlideUpTransition><ProtectedRoute roles={['teacher', 'admin']}><QuestionAnalysis /></ProtectedRoute></SlideUpTransition>} />
 
                     {/* Student pages */}
                     <Route path="/student-dashboard"  element={<PageTransition><ProtectedRoute roles={['student']}><StudentDashboard /></ProtectedRoute></PageTransition>} />
@@ -111,14 +115,47 @@ function App() {
             <Toaster
                 position="top-right"
                 toastOptions={{
-                    duration: 3000,
+                    duration: 4000,
                     style: {
-                        background: '#1e293b',
-                        color: '#fff',
-                        borderRadius: '1rem',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        fontSize: '14px',
+                        background: 'rgba(15, 23, 42, 0.95)',
+                        backdropFilter: 'blur(12px)',
+                        color: '#ffffff',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        padding: '18px 28px',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 255, 255, 0.02)',
+                        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        letterSpacing: '-0.01em',
+                        maxWidth: '480px',
+                        minWidth: '350px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
                     },
+                    success: {
+                        style: {
+                            border: '1px solid rgba(16, 185, 129, 0.35)',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.2)',
+                            background: 'linear-gradient(to right, rgba(16, 185, 129, 0.05), rgba(15, 23, 42, 0.95))',
+                        },
+                        iconTheme: {
+                            primary: '#10b981',
+                            secondary: '#090d16',
+                        }
+                    },
+                    error: {
+                        style: {
+                            border: '1px solid rgba(244, 63, 94, 0.35)',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.2)',
+                            background: 'linear-gradient(to right, rgba(244, 63, 94, 0.05), rgba(15, 23, 42, 0.95))',
+                        },
+                        iconTheme: {
+                            primary: '#f43f5e',
+                            secondary: '#090d16',
+                        }
+                    }
                 }}
             />
             <Router>

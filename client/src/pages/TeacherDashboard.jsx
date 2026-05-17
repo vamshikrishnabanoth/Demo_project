@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import GlobalSearch from '../components/GlobalSearch';
 import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
 import { 
@@ -65,18 +66,21 @@ export default function TeacherDashboard() {
 
     return (
         <DashboardLayout role="teacher">
-            <div className="max-w-[100rem] mx-auto px-6 py-10 space-y-16 sm:space-y-24">
+            <div className="max-w-[100rem] mx-auto px-6 py-4 space-y-12 sm:space-y-16 relative">
                 
-                {/* Hero Branding */}
+
+
+                {/* Hero Branding with Balanced Spacing & Reduced Contrast Noise */}
                 <motion.div 
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center space-y-4"
+                    transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-center space-y-3 relative z-20"
                 >
-                    <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_30px_var(--bg-accent-glow)]">
+                    <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_15px_var(--bg-accent-glow)]">
                         EDUCATOR <span className="text-[var(--text-accent)]">DASHBOARD</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.6em] text-[10px] opacity-70 text-balance">Advanced Academic Assessment Platform</p>
+                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.5em] text-[10px] opacity-60 text-balance">Advanced Academic Assessment Platform</p>
                 </motion.div>
 
                 {/* Real-time Telemetry Section */}

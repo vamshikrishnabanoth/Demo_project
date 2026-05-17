@@ -118,7 +118,7 @@ export default function MyQuizzes() {
                 ) : filteredQuizzes.length > 0 ? (
                     <div className="grid grid-cols-1 gap-8">
                         {filteredQuizzes.map((quiz) => (
-                            <div key={quiz.id} className="bg-white/5 rounded-[3rem] border border-white/10 p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:bg-white/10 transition-all group relative overflow-hidden ring-1 ring-white/5">
+                            <div key={quiz.id} className="bg-[var(--bg-secondary)] rounded-[3rem] border border-[var(--border-color)] p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:border-[var(--bg-accent)]/50 transition-all group relative overflow-hidden shadow-2xl">
                                 <div className="flex flex-col sm:flex-row items-start gap-8 z-10">
                                     <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-2xl ${quiz.isActive ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-accent)]/10 text-[var(--text-accent)]/40 border border-[var(--bg-accent)]/20'}`}>
                                         <FileText size={40} />
@@ -145,7 +145,7 @@ export default function MyQuizzes() {
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-4 z-10 w-full lg:w-auto">
-                                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/5 p-4 rounded-[2.5rem] border border-white/5 w-full lg:w-auto">
+                                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--bg-primary)]/50 p-4 rounded-[2.5rem] border border-[var(--border-color)] w-full lg:w-auto">
                                         {/* Performance Stats */}
                                         <div className="flex items-center gap-6 px-6 py-2 border-r border-white/10 hidden sm:flex">
                                             <div className="text-center">
@@ -180,27 +180,28 @@ export default function MyQuizzes() {
                                                 </>
                                             ) : (
                                                 <>
-                                                    {quiz.status !== 'finished' ? (
+                                                    {quiz.status !== 'finished' && (
                                                         <Link
                                                             to={`/live-room-teacher/${quiz.joinCode}`}
                                                             className="flex-1 sm:flex-none bg-[var(--bg-accent)] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[var(--bg-accent)]/20 text-sm"
                                                         >
                                                             <ExternalLink size={18} /> Room
                                                         </Link>
-                                                    ) : (
-                                                        <Link
-                                                            to={`/leaderboard/${quiz.id}`}
-                                                            className="flex-1 sm:flex-none bg-green-500/10 text-green-500 border border-green-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-green-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
-                                                        >
-                                                            <Trophy size={18} /> Results
-                                                        </Link>
                                                     )}
                                                 </>
                                             )}
+                                                
+                                            <Link
+                                                to={`/analytics/quiz/${quiz.id}`}
+                                                className="flex-1 sm:flex-none bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-indigo-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                title="View Analytics Dashboard"
+                                            >
+                                                <Activity size={18} /> Analytics
+                                            </Link>
 
                                             <button
                                                 onClick={() => handleDelete(quiz.id, quiz.title)}
-                                                className="p-3 text-slate-700 hover:text-red-500 transition-all group/del shrink-0"
+                                                className="p-3 text-red-500 hover:text-red-400 transition-all group/del shrink-0"
                                                 aria-label={`Delete quiz: ${quiz.title}`}
                                                 title="Delete Quiz"
                                             >
@@ -210,24 +211,7 @@ export default function MyQuizzes() {
                                     </div>
                                 </div>
 
-                                {/* Mini Leaderboard - Displayed within the card */}
-                                {quiz.results && quiz.results.length > 0 && (
-                                    <div className="w-full lg:w-72 bg-white/5 rounded-3xl p-6 border border-white/5 space-y-3">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Top Students</span>
-                                            <Trophy size={12} className="text-[var(--text-accent)]" />
-                                        </div>
-                                        {quiz.results.slice(0, 3).map((res, idx) => (
-                                            <div key={idx} className="flex items-center justify-between text-xs bg-black/20 rounded-xl p-3 border border-white/5">
-                                                <div className="flex items-center gap-3">
-                                                    <span className={`font-black italic ${idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-slate-300' : 'text-amber-600'}`}>#1</span>
-                                                    <span className="font-bold text-white uppercase truncate w-24">{res.studentName}</span>
-                                                </div>
-                                                <span className="font-black text-[var(--text-accent)] italic">{res.score}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                {/* Mini Leaderboard Removed as per request */}
 
                                 <div className="absolute -right-20 -bottom-20 opacity-[0.02] text-white group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
                                     <Activity size={300} />
