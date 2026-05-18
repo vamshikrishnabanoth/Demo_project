@@ -74,8 +74,18 @@ exports.globalSearch = async (req, res) => {
             return res.json({ quizzes: [], users: [] });
         }
 
-        // Fetch Quizzes
-        const allQuizzes = await prisma.quiz.findMany({
+        const queryTerm = query.trim().toLowerCase();
+
+        // 1. Fetch filtered Quizzes matching criteria at database tier first (high-performance index scan)
+        const matchingQuizzes = await prisma.quiz.findMany({
+            where: {
+                OR: [
+                    { title: { contains: queryTerm, mode: 'insensitive' } },
+                    { topic: { contains: queryTerm, mode: 'insensitive' } },
+                    { description: { contains: queryTerm, mode: 'insensitive' } },
+                    { createdBy: { username: { contains: queryTerm, mode: 'insensitive' } } }
+                ]
+            },
             select: {
                 id: true,
                 title: true,
@@ -93,13 +103,22 @@ exports.globalSearch = async (req, res) => {
                 },
                 createdAt: true,
                 questions: true
-            }
+            },
+            take: limit * 5 // Pull a secure matching subset instead of the entire database
         });
 
-        // Fetch Users (Strictly Admin-only operational database access)
-        let allUsers = [];
+        // 2. Fetch filtered Users (Strictly Admin-only operational database access with DB filter)
+        let matchingUsers = [];
         if (req.user && req.user.role === 'admin') {
-            allUsers = await prisma.user.findMany({
+            matchingUsers = await prisma.user.findMany({
+                where: {
+                    OR: [
+                        { username: { contains: queryTerm, mode: 'insensitive' } },
+                        { email: { contains: queryTerm, mode: 'insensitive' } },
+                        { studentBranch: { contains: queryTerm, mode: 'insensitive' } },
+                        { section: { contains: queryTerm, mode: 'insensitive' } }
+                    ]
+                },
                 select: {
                     id: true,
                     username: true,
@@ -107,7 +126,8 @@ exports.globalSearch = async (req, res) => {
                     role: true,
                     studentBranch: true,
                     section: true
-                }
+                },
+                take: limit * 5
             });
         }
 
@@ -134,8 +154,8 @@ exports.globalSearch = async (req, res) => {
         const scoredQuizzes = [];
         const scoredUsers = [];
 
-        // 1. Score Quizzes
-        allQuizzes.forEach(quiz => {
+        // 3. Score Quizzes fuzzy matching on pre-filtered records
+        matchingQuizzes.forEach(quiz => {
             // Security: Students should not see inactive/draft quizzes at all
             if (isStudent && !quiz.isActive) return;
 
@@ -216,8 +236,8 @@ exports.globalSearch = async (req, res) => {
             }
         });
 
-        // 2. Score Users
-        allUsers.forEach(user => {
+        // 4. Score Users fuzzy matching on pre-filtered records
+        matchingUsers.forEach(user => {
             let maxScore = 0;
             let matchingField = 'username';
 

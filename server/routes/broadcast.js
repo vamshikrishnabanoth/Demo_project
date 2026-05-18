@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const prisma = require('../lib/prisma');
 
-// Helper to check if a student is authorized for a quiz/broadcast
+// Helper to check if a student is authorized for a quiz/broadcast (Case-insensitive & section-optional)
 function isStudentTargeted(student, assignedGroups, assignedStudents) {
     if (!student) return false;
     
@@ -16,10 +16,13 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
     // Check group targeting (branch & section)
     const hasAssignedGroups = assignedGroups && Array.isArray(assignedGroups) && assignedGroups.length > 0;
     if (hasAssignedGroups) {
-        const match = assignedGroups.some(g => 
-            g.branch === student.studentBranch && 
-            g.section === student.section
-        );
+        const match = assignedGroups.some(g => {
+            const branchMatch = g.branch && student.studentBranch && 
+                               g.branch.toLowerCase().trim() === student.studentBranch.toLowerCase().trim();
+            const secMatch = !g.section || g.section.trim() === '' || 
+                             (student.section && g.section.toLowerCase().trim() === student.section.toLowerCase().trim());
+            return branchMatch && secMatch;
+        });
         if (match) return true;
     }
     

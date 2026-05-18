@@ -7,6 +7,7 @@ import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import ResultsLoader from '../components/loaders/ResultsLoader';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 export default function AttemptQuiz() {
     const { id } = useParams();
@@ -164,7 +165,7 @@ export default function AttemptQuiz() {
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
-                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess.id } });
+                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
                     } catch (e) {
                         socket.emit('join_room', {
                             quizId: id,
@@ -212,7 +213,7 @@ export default function AttemptQuiz() {
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
-                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
+                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
                     } catch (e) {
                          socket.emit('join_room', {
                             quizId: id,
@@ -308,6 +309,52 @@ export default function AttemptQuiz() {
         }
     }, [currentQuestion, quiz, isReviewMode, result, id]);
 
+    // Anti-Cheat & Exam Integrity Controls
+    useEffect(() => {
+        if (loading || isReviewMode || result || !quiz) return;
+        
+        // 1. Block Copy-Paste & Cut & Context Menu
+        const blockEvent = (e) => {
+            e.preventDefault();
+            toast.error("Security Warning: Copying/pasting/cutting is disabled during examinations!", { id: "cheat-block-toast" });
+        };
+        const blockContextMenu = (e) => {
+            e.preventDefault();
+            toast.error("Security Warning: Context menus are disabled during examinations!", { id: "cheat-block-toast" });
+        };
+        
+        document.addEventListener('copy', blockEvent);
+        document.addEventListener('paste', blockEvent);
+        document.addEventListener('cut', blockEvent);
+        document.addEventListener('contextmenu', blockContextMenu);
+        
+        // 2. Track Window Focus / Tab Switch Changes
+        const handleVisibilityChange = () => {
+            if (document.hidden && authUser) {
+                // Emit alert to server so the teacher dashboard shows real-time cheat telemetry
+                socket.emit('student_cheated_alert', { 
+                    quizId: id, 
+                    studentId: authUser.id, 
+                    action: 'tab_switch',
+                    timestamp: new Date()
+                });
+                toast.error("CRITICAL SECURITY WARNING: Tab switching is monitored and reported to your teacher!", { 
+                    duration: 5000,
+                    id: "cheat-visibility-toast"
+                });
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        
+        return () => {
+            document.removeEventListener('copy', blockEvent);
+            document.removeEventListener('paste', blockEvent);
+            document.removeEventListener('cut', blockEvent);
+            document.removeEventListener('contextmenu', blockContextMenu);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [quiz, loading, isReviewMode, result, authUser, id]);
+
     // Timer Initialization (Split from focus logic)
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
@@ -315,6 +362,11 @@ export default function AttemptQuiz() {
             if (quiz.timerType === 'totalTime') {
                 if (!hasInitializedTimer.current) {
                     let totalSeconds = (quiz.duration || 10) * 60;
+                    if (quiz.previousResult && quiz.previousResult.startedAt) {
+                        const startedAtTime = new Date(quiz.previousResult.startedAt).getTime();
+                        const elapsedSeconds = Math.floor((Date.now() - startedAtTime) / 1000);
+                        totalSeconds = Math.max(0, totalSeconds - elapsedSeconds);
+                    }
                     if (quiz.endTime) {
                         const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                         totalSeconds = Math.min(totalSeconds, maxRemaining);

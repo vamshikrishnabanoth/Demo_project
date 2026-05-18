@@ -51,6 +51,7 @@ model Quiz {
   startTime        DateTime?
   endTime          DateTime?
   broadcastStatus     Boolean   @default(false)
+  autoBroadcast       Boolean   @default(true)
   joinedStudentsCount Int       @default(0)
   attemptCount        Int       @default(0)
   scheduleLocked      Boolean   @default(false)
@@ -83,6 +84,8 @@ model Result {
   startedAt      DateTime  @default(now())
   completedAt    DateTime?
   lastAnsweredAt DateTime  @default(now())
+
+  @@unique([quizId, studentId])
 }
 
 model Broadcast {

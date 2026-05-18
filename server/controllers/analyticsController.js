@@ -278,6 +278,12 @@ exports.getQuestionAnalysis = async (req, res) => {
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 exports.getQuestionAIReview = async (req, res) => {
+    let correctCount = 0;
+    let wrongCount = 0;
+    let skippedCount = 0;
+    let optionSelection = {};
+    let question = { questionText: 'Unknown', correctAnswer: '', options: [] };
+
     try {
         const { quizId, questionIndex } = req.params;
         const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
@@ -295,18 +301,13 @@ exports.getQuestionAIReview = async (req, res) => {
             return res.status(404).json({ msg: 'Question not found' });
         }
 
-        const question = normalizedQuestions[qIndex];
+        question = normalizedQuestions[qIndex];
         
         const results = await prisma.result.findMany({
             where: { quizId: quizId, status: 'completed' },
             include: { student: { select: { username: true } } }
         });
 
-        let correctCount = 0;
-        let wrongCount = 0;
-        let skippedCount = 0;
-        
-        const optionSelection = {};
         question.options.forEach(opt => optionSelection[opt.toLowerCase()] = 0);
 
         results.forEach(r => {

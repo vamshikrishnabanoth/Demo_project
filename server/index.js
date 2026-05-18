@@ -103,6 +103,22 @@ app.set('io', io);
 const userSockets = new Map(); // Keep this globally declared and track sockets below
 app.set('userSockets', userSockets);
 
+// JWT Socket Authentication Middleware
+const jwt = require('jsonwebtoken');
+io.use((socket, next) => {
+    const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+    if (!token) {
+        return next(new Error('Authentication failed: Missing token'));
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        socket.user = decoded.user;
+        next();
+    } catch (err) {
+        return next(new Error('Authentication failed: Invalid token'));
+    }
+});
+
 // Store participants for each room
 const roomParticipants = new Map(); // { quizId: [{ username, role, socketId }] }
 // Store current state for each room
@@ -131,32 +147,49 @@ setInterval(() => {
 
 // Global map to track user ID to socket IDs is already declared above and bound to express app
 
-io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+io.on('connection', async (socket) => {
+    console.log('User connected securely:', socket.id);
 
-    // Global Identity: When user connects, they identify themselves
-    socket.on('identify', async (userId) => {
-        if (!userId) return;
-        
-        console.log(`User identified: ${userId} for socket ${socket.id}`);
-        
-        // Add to global tracking
+    // Auto-identify securely from verified JWT payload
+    if (socket.user && socket.user.id) {
+        const userId = socket.user.id;
+        socket.userId = userId;
         if (!userSockets.has(userId)) {
             userSockets.set(userId, new Set());
         }
         userSockets.get(userId).add(socket.id);
-        
-        // Store on socket for cleanup
-        socket.userId = userId;
-
+        console.log(`User identified securely: ${userId} (${socket.user.username}) for socket ${socket.id}`);
         try {
-            // Update DB if this is their first connection
             await prisma.user.update({
                 where: { id: userId },
                 data: { isOnline: true }
             });
-            
-            // Broadcast status change
+            io.emit('user_status_change', { userId, isOnline: true });
+        } catch (err) {
+            console.error('Error updating online status on connect:', err);
+        }
+    }
+
+    // Global Identity check fallback (fully validated)
+    socket.on('identify', async (userId) => {
+        if (!userId) return;
+        if (!socket.user || socket.user.id !== userId) {
+            console.warn(`[Security Alert] Spoofed identify event blocked for user ${userId} on socket ${socket.id}`);
+            return socket.emit('error_alert', { msg: 'Unauthorized identity spoofing blocked.' });
+        }
+        
+        console.log(`User identified securely (fallback): ${userId} for socket ${socket.id}`);
+        if (!userSockets.has(userId)) {
+            userSockets.set(userId, new Set());
+        }
+        userSockets.get(userId).add(socket.id);
+        socket.userId = userId;
+
+        try {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { isOnline: true }
+            });
             io.emit('user_status_change', { userId, isOnline: true });
         } catch (err) {
             console.error('Error updating online status:', err);
@@ -165,6 +198,9 @@ io.on('connection', (socket) => {
 
     socket.on('logout', async (userId) => {
         if (!userId) return;
+        if (!socket.user || socket.user.id !== userId) {
+            return socket.emit('error_alert', { msg: 'Unauthorized logout action.' });
+        }
         try {
             await prisma.user.update({
                 where: { id: userId },
@@ -172,7 +208,7 @@ io.on('connection', (socket) => {
             });
             userSockets.delete(userId);
             io.emit('user_status_change', { userId, isOnline: false });
-            console.log(`User ${userId} logged out and marked offline`);
+            console.log(`User ${userId} logged out securely and marked offline`);
         } catch (err) {
             console.error('Error on logout status update:', err);
         }
@@ -180,26 +216,39 @@ io.on('connection', (socket) => {
 
 
     socket.on('join_room', ({ quizId, user }) => {
+        // SECURITY CHECK: Verify user identity matches socket.user payload
+        if (!socket.user || socket.user.username !== user.username) {
+            console.warn(`[Security Alert] join_room spoofing blocked for socket ${socket.id} (username: ${user.username})`);
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
+
         socket.join(quizId);
 
         // Track this socket's association for disconnect cleanup
-        socketToUser.set(socket.id, { quizId, username: user.username });
+        socketToUser.set(socket.id, { quizId, username: socket.user.username });
 
         if (!roomParticipants.has(quizId)) {
             roomParticipants.set(quizId, []);
         }
 
         const participants = roomParticipants.get(quizId);
-        const existingIdx = participants.findIndex(p => p.username === user.username);
+        const existingIdx = participants.findIndex(p => p.username === socket.user.username);
 
-        const userData = { ...user, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
+        // Reconstruct secure user properties from JWT context
+        const secureUser = {
+            _id: socket.user.id,
+            username: socket.user.username,
+            role: socket.user.role
+        };
+
+        const userData = { ...secureUser, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
-        } else if (user.username) {
+        } else {
             participants.push(userData);
         }
 
-        console.log(`User ${user.username} (${user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
+        console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
         io.to(quizId).emit('participants_update', participants);
 
         // SYNC STATE
@@ -215,7 +264,7 @@ io.on('connection', (socket) => {
             }
             // Send persisted progress to teacher
             if (state.progress) {
-                console.log(`Sending progress history to ${user.username} (${user.role})`);
+                console.log(`Sending progress history to secure ${socket.user.username}`);
                 socket.emit('progress_history', state.progress);
             }
             // Sync leaderboard for all participants (Teacher and Students) on join/reconnect
@@ -231,44 +280,54 @@ io.on('connection', (socket) => {
 
     socket.on('heartbeat', ({ quizId, userId }) => {
         if (!quizId) return;
+        // SECURITY CHECK: Verify identity matches socket.user payload
+        if (!socket.user || socket.user.id !== userId) {
+            return;
+        }
         const participants = roomParticipants.get(quizId);
         if (participants) {
-            const p = participants.find(part => part._id === userId || part.username === userId);
+            const p = participants.find(part => part._id === userId);
             if (p) {
                 p.lastSeen = Date.now();
                 if (!p.isOnline) {
                     p.isOnline = true;
-                    // If they were previously offline, broadcast they are back online immediately
                     io.to(quizId).emit('participants_update', participants);
                 }
             }
         }
     });
+
     socket.on('reconnectUser', ({ quizId, user }) => {
+        // SECURITY CHECK: Verify identity matches socket.user payload
+        if (!socket.user || socket.user.username !== user.username) {
+            console.warn(`[Security Alert] reconnectUser spoofing blocked for socket ${socket.id} (username: ${user.username})`);
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
+
         socket.join(quizId);
-        socketToUser.set(socket.id, { quizId, username: user.username });
+        socketToUser.set(socket.id, { quizId, username: socket.user.username });
 
         if (!roomParticipants.has(quizId)) {
             roomParticipants.set(quizId, []);
         }
 
         const participants = roomParticipants.get(quizId);
-        const existingIdx = participants.findIndex(p => p.username === user.username);
+        const existingIdx = participants.findIndex(p => p.username === socket.user.username);
 
-        // ROBUSTNESS: If client forgot the _id, try to restore it from existing participant entry
-        const effectiveUser = { ...user };
-        if (!effectiveUser._id && existingIdx !== -1 && participants[existingIdx]._id) {
-            effectiveUser._id = participants[existingIdx]._id;
-        }
+        const secureUser = {
+            _id: socket.user.id,
+            username: socket.user.username,
+            role: socket.user.role
+        };
 
-        const userData = { ...effectiveUser, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
+        const userData = { ...secureUser, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
-        } else if (user.username) {
+        } else {
             participants.push(userData);
         }
 
-        console.log(`User ${user.username} (${user.role}) reconnected to room ${quizId}. ID: ${user.id}`);
+        console.log(`Secure User ${socket.user.username} (${socket.user.role}) reconnected to room ${quizId}. ID: ${socket.user.id}`);
         io.to(quizId).emit('participants_update', participants);
 
         const sendRestoreState = async () => {
@@ -309,7 +368,6 @@ io.on('connection', (socket) => {
                              if (studentIdStr) {
                                   progress[studentIdStr] = {};
                                   r.answers.forEach(ans => {
-                                      // Find which question index this was
                                       const qIdx = quizInfo.questions.findIndex(q => q.questionText === ans.questionText);
                                       if (qIdx !== -1) {
                                           progress[studentIdStr][qIdx] = {
@@ -342,21 +400,28 @@ io.on('connection', (socket) => {
                  participants: participants,
                  progress: state.progress || {}
              };
-             // CRITICAL FIX: Ensure the student sees the question Change immediately
              if (state.currentQuestion !== undefined) {
                  socket.emit('change_question', { questionIndex: state.currentQuestion });
              }
              socket.emit('restoreState', restoreStatePayload);
-             console.log(`Sent restoreState to ${user.username}`);
+             console.log(`Sent secure restoreState to ${socket.user.username}`);
         };
         
         sendRestoreState();
     });
 
     socket.on('start_quiz', async (quizId) => {
+        // SECURITY CHECK: Verify teacher role
+        if (!socket.user || socket.user.role !== 'teacher') {
+            console.warn(`[Security Alert] Non-teacher socket ${socket.id} attempted to start quiz ${quizId}`);
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
         try {
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-            if (!quiz) return;
+            if (!quiz || quiz.createdById !== socket.user.id) {
+                console.warn(`[Security Alert] Socket ${socket.id} attempted to start unauthorized quiz ${quizId}`);
+                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
 
             // Calculate duration in ms
             let durationMs = 0;
@@ -373,7 +438,7 @@ io.on('connection', (socket) => {
 
             await prisma.quiz.update({
                 where: { id: quizId },
-                data: { status: 'started' }
+                data: { status: 'started', endTime: new Date(endTime) } // Fixed: Persist endTime in DB so scheduler can load it after server restart
             });
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
@@ -403,8 +468,19 @@ io.on('connection', (socket) => {
     });
 
     socket.on('end_quiz', async (quizId) => {
-        roomState.delete(quizId);
+        // SECURITY CHECK: Verify teacher role
+        if (!socket.user || socket.user.role !== 'teacher') {
+            console.warn(`[Security Alert] Non-teacher socket ${socket.id} attempted to end quiz ${quizId}`);
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
         try {
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+            if (!quiz || quiz.createdById !== socket.user.id) {
+                console.warn(`[Security Alert] Socket ${socket.id} attempted to end unauthorized quiz ${quizId}`);
+                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
+
+            roomState.delete(quizId);
             // 1. Finalize all in-progress student results FIRST
             await prisma.result.updateMany({
                 where: { quizId: quizId, status: 'in-progress' },
@@ -457,7 +533,7 @@ io.on('connection', (socket) => {
                 }
             });
 
-            console.log(`Quiz ${quizId} ended. Finalized ${allResults.length} results. Top student: ${topStudent}`);
+            console.log(`Quiz ${quizId} ended securely. Finalized ${allResults.length} results. Top student: ${topStudent}`);
 
             // 4. Emit quiz_ended AFTER data is saved — students will navigate with correct data
             io.to(quizId).emit('quiz_ended');
@@ -470,26 +546,31 @@ io.on('connection', (socket) => {
 
     // Add question to live quiz
     socket.on('add_question', async ({ quizId, question }) => {
-        console.log(`Adding question to quiz: ${quizId}`);
+        // SECURITY CHECK: Verify teacher role
+        if (!socket.user || socket.user.role !== 'teacher') {
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
         try {
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-
-            if (quiz) {
-                const updatedQuestions = [...quiz.questions, question];
-                await prisma.quiz.update({
-                    where: { id: quizId },
-                    data: { questions: updatedQuestions }
-                });
-
-                // Broadcast new question to all students in the room
-                io.to(quizId).emit('new_question_added', {
-                    question,
-                    questionIndex: updatedQuestions.length - 1,
-                    totalQuestions: updatedQuestions.length
-                });
-
-                console.log(`Question added successfully to quiz ${quizId}`);
+            if (!quiz || quiz.createdById !== socket.user.id) {
+                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
+
+            console.log(`Adding question to quiz: ${quizId}`);
+            const updatedQuestions = [...quiz.questions, question];
+            await prisma.quiz.update({
+                where: { id: quizId },
+                data: { questions: updatedQuestions }
+            });
+
+            // Broadcast new question to all students in the room
+            io.to(quizId).emit('new_question_added', {
+                question,
+                questionIndex: updatedQuestions.length - 1,
+                totalQuestions: updatedQuestions.length
+            });
+
+            console.log(`Question added successfully to quiz ${quizId}`);
         } catch (err) {
             console.error('Error adding question:', err);
         }
@@ -497,9 +578,15 @@ io.on('connection', (socket) => {
 
     // Handle teacher changing question (Navigation)
     socket.on('change_question', async ({ quizId, questionIndex }) => {
+        // SECURITY CHECK: Verify teacher role
+        if (!socket.user || socket.user.role !== 'teacher') {
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
         try {
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-            if (!quiz) return;
+            if (!quiz || quiz.createdById !== socket.user.id) {
+                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
 
             // Reset Master Time for the new question if it's per-question
             let endTime = null;
@@ -521,9 +608,12 @@ io.on('connection', (socket) => {
 
     // Tracking which question a student is currently viewing
     socket.on('student_question_focus', ({ quizId, studentId, username, questionIndex }) => {
+        // SECURITY CHECK: Verify student identity matches socket.user payload
+        if (!socket.user || socket.user.id !== studentId) {
+            return;
+        }
         console.log(`Student ${username} focused on question ${questionIndex} in quiz ${quizId}`);
 
-        // Broadcast to teacher only (or everyone in room if room UI needs it)
         io.to(quizId).emit('student_focus_update', {
             studentId,
             username,
@@ -531,24 +621,60 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Increase time for the current question
-    socket.on('increase_time', ({ quizId, additionalSeconds }) => {
-        const state = roomState.get(quizId);
-        if (state && state.endTime) {
-            state.endTime += (additionalSeconds * 1000);
-            roomState.set(quizId, { ...state, endTime: state.endTime });
+    // Tracking student cheating attempts (tab switching, focus loss)
+    socket.on('student_cheated_alert', ({ quizId, studentId, action, timestamp }) => {
+        // SECURITY CHECK: Verify student identity matches socket.user payload
+        if (!socket.user || socket.user.id !== studentId) {
+            return;
+        }
+        console.log(`[Exam Security Alert] Student ${socket.user.username || studentId} triggered cheat alert: ${action} in quiz ${quizId}`);
 
-            const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
-            io.to(quizId).emit('timer_update', { additionalSeconds });
-            io.to(quizId).emit('sync_timer', { timeLeft });
+        // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
+        io.to(quizId).emit('student_cheat_warning', {
+            studentId,
+            username: socket.user.username || 'Student',
+            action,
+            timestamp: timestamp || new Date()
+        });
+    });
+
+    // Increase time for the current question
+    socket.on('increase_time', async ({ quizId, additionalSeconds }) => {
+        // SECURITY CHECK: Verify teacher role
+        if (!socket.user || socket.user.role !== 'teacher') {
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
+        try {
+            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+            if (!quiz || quiz.createdById !== socket.user.id) {
+                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
+
+            const state = roomState.get(quizId);
+            if (state && state.endTime) {
+                state.endTime += (additionalSeconds * 1000);
+                roomState.set(quizId, { ...state, endTime: state.endTime });
+
+                const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                io.to(quizId).emit('timer_update', { additionalSeconds });
+                io.to(quizId).emit('sync_timer', { timeLeft });
+            }
+        } catch (err) {
+            console.error('Error increasing time:', err);
         }
     });
 
     // Handle individual question submission during live quiz
     socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
+        // SECURITY CHECK: Enforce matching authenticated user identity to prevent faked/spoofed answers
+        if (!socket.user || socket.user.id !== studentId) {
+            console.warn(`[Security Alert] submit_question_answer spoofing blocked for socket ${socket.id} (studentId: ${studentId})`);
+            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        }
+
         // Ensure questionIndex is an integer
         questionIndex = parseInt(questionIndex);
-        console.log(`Student ${studentId} submitted answer for question ${questionIndex}`);
+        console.log(`Secure Student ${studentId} submitted answer for question ${questionIndex}`);
 
         const state = roomState.get(quizId) || {};
         const currentProgress = state.progress || {};
@@ -558,14 +684,10 @@ io.on('connection', (socket) => {
         // --- STRICT MODE BLOCKER: Check for duplicate submissions ---
         if (currentProgress[studentId][questionIndex] && currentProgress[studentId][questionIndex].answered) {
             console.log(`[STRICT MODE] Prevented duplicate answer for student ${studentId} on question ${questionIndex}`);
-            // Let the client know it was ignored but don't crash or save anything
             return;
         }
         
-        // We will update the progress dictionary *again* down below once we know if it was correct or not.
-        // For now, mark it superficially as 'answered: true' so UI updates immediately (optimistic).
         currentProgress[studentId][questionIndex] = { answered: true, isCorrect: false };
-
         roomState.set(quizId, { ...state, progress: currentProgress });
 
         try {
@@ -576,23 +698,32 @@ io.on('connection', (socket) => {
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
             const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
 
-            let result = await prisma.result.findFirst({
-                where: { quizId: quizId, studentId: studentId },
+            // CRITICAL FIX: Use Postgres atomic unique query (quizId_studentId compound constraint) to eliminate race conditions
+            let result = await prisma.result.findUnique({
+                where: { quizId_studentId: { quizId, studentId } },
                 include: { student: { select: { username: true } } }
             });
 
             if (!result) {
-                result = await prisma.result.create({
-                    data: {
-                        quizId: quizId,
-                        studentId: studentId,
-                        score: 0,
-                        totalTimeTaken: 0,
-                        totalQuestions: quiz.questions.length,
-                        answers: []
-                    },
-                    include: { student: { select: { username: true } } }
-                });
+                try {
+                    result = await prisma.result.create({
+                        data: {
+                            quizId: quizId,
+                            studentId: studentId,
+                            score: 0,
+                            totalTimeTaken: 0,
+                            totalQuestions: quiz.questions.length,
+                            answers: []
+                        },
+                        include: { student: { select: { username: true } } }
+                    });
+                } catch (dbErr) {
+                    // Fallback to fetch concurrently created record to resolve checks race condition
+                    result = await prisma.result.findUnique({
+                        where: { quizId_studentId: { quizId, studentId } },
+                        include: { student: { select: { username: true } } }
+                    });
+                }
             }
 
             // Ensure numeric values to avoid NaN
@@ -721,6 +852,10 @@ io.on('connection', (socket) => {
 
     // Handle student submission of new question (added by student)
     socket.on('submit_new_question', async ({ quizId, studentId, questionIndex, answer }) => {
+        // SECURITY CHECK: Verify student identity matches socket.user payload
+        if (!socket.user || socket.user.id !== studentId) {
+            return;
+        }
         console.log(`Student ${studentId} submitted answer for question ${questionIndex} in quiz ${quizId}`);
         try {
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
@@ -777,13 +912,33 @@ io.on('connection', (socket) => {
         }
     });
 
+    // MEMORY LEAK REMEDIATION: Clean exit handler on leave_room
+    socket.on('leave_room', ({ quizId }) => {
+        if (!quizId) return;
+        socket.leave(quizId);
+        
+        const participants = roomParticipants.get(quizId);
+        if (participants) {
+            // Find student by socketId
+            const filtered = participants.filter(p => p.socketId !== socket.id);
+            if (filtered.length === 0) {
+                roomParticipants.delete(quizId);
+            } else {
+                roomParticipants.set(quizId, filtered);
+                io.to(quizId).emit('participants_update', filtered);
+            }
+            console.log(`Socket ${socket.id} securely left room ${quizId}. Remaining participants: ${filtered.length}`);
+        }
+        socketToUser.delete(socket.id);
+    });
+
     socket.on('disconnect', async () => {
         const userId = socket.userId;
         if (userId && userSockets.has(userId)) {
             const sockets = userSockets.get(userId);
             sockets.delete(socket.id);
             
-            // If no more sockets for this user, mark as offline
+            // If no more sockets for this user, mark as offline globally
             if (sockets.size === 0) {
                 userSockets.delete(userId);
                 try {
@@ -806,7 +961,6 @@ io.on('connection', (socket) => {
             if (participants) {
                 const existingIdx = participants.findIndex(p => p.username === username);
                 if (existingIdx !== -1) {
-                    // Update the user to offline instead of removing them
                     participants[existingIdx].isOnline = false;
                     participants[existingIdx].socketId = null;
                 }
@@ -814,6 +968,18 @@ io.on('connection', (socket) => {
             }
             socketToUser.delete(socket.id);
         }
+
+        // Deep Sweeper: Purge any zombie participant socket associations inside rooms to prevent leaks
+        roomParticipants.forEach((list, qId) => {
+            const idx = list.findIndex(p => p.socketId === socket.id);
+            if (idx !== -1) {
+                list[idx].isOnline = false;
+                list[idx].socketId = null;
+                io.to(qId).emit('participants_update', list);
+                console.log(`[Zombie Sweeper] Purged socket connection ${socket.id} from room ${qId}`);
+            }
+        });
+
         console.log('User disconnected:', socket.id);
     });
 });

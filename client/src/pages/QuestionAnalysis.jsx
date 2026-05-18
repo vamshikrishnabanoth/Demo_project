@@ -131,6 +131,27 @@ export default function QuestionAnalysis() {
         name.toLowerCase().includes(searchSkipped.toLowerCase())
     );
 
+    const chartData = (analytics.optionSelection || []).map((entry) => {
+        let label = entry.option;
+        if (question && question.options) {
+            const idx = question.options.findIndex(opt => opt.toLowerCase().trim() === entry.option.toLowerCase().trim());
+            if (idx !== -1) {
+                label = String.fromCharCode(65 + idx);
+            } else {
+                const match = entry.option.match(/^option\s+([a-z])$/i);
+                if (match) {
+                    label = match[1].toUpperCase();
+                } else {
+                    label = entry.option.charAt(0).toUpperCase();
+                }
+            }
+        }
+        return {
+            ...entry,
+            displayLabel: label
+        };
+    });
+
     return (
         <DashboardLayout role="teacher">
             <div className="space-y-12 pb-20 relative">
@@ -321,13 +342,13 @@ export default function QuestionAnalysis() {
                         <h3 className="text-lg font-black text-white uppercase italic tracking-tighter mb-6">Option Distribution</h3>
                         <div className="h-[200px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={analytics.optionSelection} layout="vertical" margin={{ top: 0, right: 0, left: 20, bottom: 0 }}>
+                                <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: 20, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={true} vertical={false} />
                                     <XAxis type="number" hide />
-                                    <YAxis dataKey="option" type="category" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} tickLine={false} axisLine={false} width={80} tickFormatter={(tick) => tick.length > 10 ? tick.substring(0, 10) + '...' : tick} />
+                                    <YAxis dataKey="displayLabel" type="category" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 900 }} tickLine={false} axisLine={false} width={30} />
                                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
                                     <Bar dataKey="count" radius={[0, 8, 8, 0]} barSize={20}>
-                                        {analytics.optionSelection.map((entry, index) => (
+                                        {chartData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={optionColors[index % optionColors.length]} />
                                         ))}
                                     </Bar>

@@ -952,13 +952,113 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
 
 // No longer need extractCloudText because the Python service handles it now
 
+const autoBroadcastLiveQuiz = async (quiz, req) => {
+    try {
+        // Only auto-broadcast if it is an active live quiz and is not scheduled in the future and autoBroadcast is allowed
+        if (!quiz.isLive || !quiz.isActive || quiz.autoBroadcast === false) return;
+
+        const now = new Date();
+        if (quiz.startTime && new Date(quiz.startTime) > now) {
+            return;
+        }
+
+        // Avoid duplicate broadcasts for the same quiz
+        const existingBroadcast = await prisma.broadcast.findFirst({
+            where: { quizId: quiz.id }
+        });
+        if (existingBroadcast) return;
+
+        // Fetch teacher details
+        const teacher = await prisma.user.findUnique({
+            where: { id: quiz.createdById },
+            select: { name: true, username: true }
+        });
+
+        const title = `🚨 Live Arena Invitation: ${quiz.title}`;
+        const message = `Professor ${teacher.name || teacher.username} has launched a live quiz lobby! Click below to enter the Arena and start competing instantly.`;
+
+        // Save Broadcast to PostgreSQL
+        const broadcast = await prisma.broadcast.create({
+            data: {
+                senderId: quiz.createdById,
+                quizId: quiz.id,
+                title,
+                message,
+                pin: quiz.joinCode,
+                assignedGroups: quiz.assignedGroups || [],
+                assignedStudents: quiz.assignedStudents || [],
+                expiresAt: quiz.endTime ? new Date(quiz.endTime) : new Date(now.getTime() + 2 * 60 * 60 * 1000), // Default 2 hours expiry
+                isPinned: true,
+                deliveryStatus: 'delivered'
+            },
+            include: {
+                sender: { select: { name: true, username: true } },
+                quiz: { select: { title: true } }
+            }
+        });
+
+        console.log(`📡 [AUTO-BROADCAST] Generated broadcast for Live Quiz: ${quiz.title}`);
+
+        // Trigger Socket.io real-time notifications to online targeted students
+        const io = req.app.get('io');
+        const userSockets = req.app.get('userSockets');
+
+        if (io && userSockets) {
+            const activeStudents = await prisma.user.findMany({
+                where: { role: 'student' }
+            });
+
+            const isStudentTargeted = (student, assignedGroups, assignedStudents) => {
+                if ((!assignedGroups || assignedGroups.length === 0) && 
+                    (!assignedStudents || assignedStudents.length === 0)) {
+                    return true;
+                }
+                if (assignedStudents && assignedStudents.includes(student.id)) {
+                    return true;
+                }
+                if (assignedGroups && assignedGroups.length > 0 && student.studentBranch) {
+                    return assignedGroups.some(g => {
+                        const branchMatch = g.branch.toLowerCase() === student.studentBranch.toLowerCase();
+                        const secMatch = !g.section || g.section.toLowerCase() === (student.section || '').toLowerCase();
+                        return branchMatch && secMatch;
+                    });
+                }
+                return false;
+            };
+
+            activeStudents.forEach(student => {
+                if (isStudentTargeted(student, quiz.assignedGroups, quiz.assignedStudents)) {
+                    const socketSet = userSockets.get(student.id);
+                    if (socketSet && socketSet.size > 0) {
+                        socketSet.forEach(socketId => {
+                            io.to(socketId).emit('new_broadcast', {
+                                id: broadcast.id,
+                                title: broadcast.title,
+                                message: broadcast.message,
+                                senderName: broadcast.sender.name || broadcast.sender.username,
+                                quizTitle: broadcast.quiz.title,
+                                pin: broadcast.pin,
+                                createdAt: broadcast.createdAt,
+                                expiresAt: broadcast.expiresAt,
+                                isPinned: broadcast.isPinned
+                            });
+                        });
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error('❌ Error executing auto-broadcast:', err);
+    }
+};
+
 const generateJoinCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 exports.createQuiz = async (req, res) => {
     try {
-        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType } = req.body;
+        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType, autoBroadcast } = req.body;
         let finalQuestions = [];
 
         // --- AI MODERATION GUARD ---
@@ -1023,6 +1123,11 @@ exports.createQuiz = async (req, res) => {
             parsedStudents = typeof assignedStudents === 'string' ? JSON.parse(assignedStudents) : assignedStudents;
         }
 
+        let parsedAutoBroadcast = true;
+        if (autoBroadcast !== undefined) {
+            parsedAutoBroadcast = autoBroadcast === 'true' || autoBroadcast === true;
+        }
+
         const newQuiz = await prisma.quiz.create({
             data: {
                 title: title || `${topic || content || 'Untitled'} Quiz`,
@@ -1043,9 +1148,13 @@ exports.createQuiz = async (req, res) => {
                 isAssessment: isAssessment === 'true' || isAssessment === true,
                 status: isLive === 'true' || isLive === true ? 'waiting' : 'finished',
                 assignedGroups: parsedGroups,
-                assignedStudents: parsedStudents
+                assignedStudents: parsedStudents,
+                autoBroadcast: parsedAutoBroadcast
             }
         });
+
+        // Trigger background automated broadcast if the live quiz is active
+        await autoBroadcastLiveQuiz(newQuiz, req);
 
         res.status(201).json(newQuiz);
 
@@ -1660,6 +1769,11 @@ exports.publishQuiz = async (req, res) => {
             data: { isActive: !quiz.isActive }
         });
 
+        // Trigger background automated broadcast if the live quiz is being activated
+        if (updated.isActive) {
+            await autoBroadcastLiveQuiz(updated, req);
+        }
+
         res.json(updated);
     } catch (err) {
         console.error(err.message);
@@ -2020,6 +2134,9 @@ exports.assignQuiz = async (req, res) => {
                 assignedStudents: assignedStudents || []
             }
         });
+
+        // Trigger background automated broadcast if the live quiz is active
+        await autoBroadcastLiveQuiz(updatedQuiz, req);
 
         res.json({
             msg: 'Quiz assigned successfully!',

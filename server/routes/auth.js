@@ -263,4 +263,86 @@ router.put('/change-password', auth, async (req, res) => {
     }
 });
 
+// @route   POST api/auth/forgot-password
+// @desc    Initiate password reset (Generate reset token)
+// @access  Public
+router.post('/forgot-password', authLimiter, [
+    check('email', 'Please provide a valid email or username').not().isEmpty()
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { email } = req.body;
+    try {
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: { equals: email, mode: 'insensitive' } },
+                    { username: { equals: email, mode: 'insensitive' } }
+                ]
+            }
+        });
+        if (!user) {
+            // Under security guidelines, to prevent account enumeration, return success even if user not found
+            return res.json({ msg: 'If that account exists, a password reset link has been generated.' });
+        }
+
+        // Generate brief 10-minute reset token containing user ID
+        const payload = { resetUserId: user.id };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10m' });
+
+        res.json({
+            msg: 'Password reset link generated successfully.',
+            resetToken: token // Exposed so client can proceed with reset flow cleanly
+        });
+    } catch (err) {
+        console.error('Forgot password error:', err);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// @route   POST api/auth/reset-password
+// @desc    Complete password reset with token
+// @access  Public
+router.post('/reset-password', authLimiter, [
+    check('token', 'Token is required').not().isEmpty(),
+    check('newPassword', 'Password must be 8+ chars, including 1 uppercase and 1 special char')
+        .isLength({ min: 8 })
+        .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])/)
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { token, newPassword } = req.body;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded.resetUserId) {
+            return res.status(400).json({ msg: 'Invalid or expired password reset token.' });
+        }
+
+        const user = await prisma.user.findUnique({ where: { id: decoded.resetUserId } });
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                password: hashedPassword,
+                tokenVersion: { increment: 1 } // Invalidate all existing tokens/sessions immediately
+            }
+        });
+
+        res.json({ msg: 'Password has been reset successfully.' });
+    } catch (err) {
+        console.error('Reset password error:', err);
+        res.status(400).json({ msg: 'Invalid or expired password reset token.' });
+    }
+});
+
 module.exports = router;

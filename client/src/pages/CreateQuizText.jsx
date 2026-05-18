@@ -28,6 +28,7 @@ export default function CreateQuizText() {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [startNow, setStartNow] = useState(false);
+    const [autoBroadcast, setAutoBroadcast] = useState(true);
     const [questions, setQuestions] = useState([{ questionText: '', options: ['', ''], correctAnswer: '', points: 10 }]);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('manual');
@@ -146,7 +147,8 @@ export default function CreateQuizText() {
                 isAssessment,
                 isLive: !isAssessment,
                 assignedGroups,
-                assignedStudents
+                assignedStudents,
+                autoBroadcast
             });
             toast.success('Mission Published Successfully');
             if (!isAssessment) {
@@ -312,6 +314,27 @@ export default function CreateQuizText() {
                                                 <option value="private" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Private (PIN Required)</option>
                                                 <option value="public" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Public (No PIN)</option>
                                             </select>
+
+                                            {!isAssessment && accessType === 'private' && (
+                                                <div className="mt-5 pt-4 border-t border-white/5 animate-in slide-in-from-top-2 duration-200">
+                                                    <label className="flex items-center justify-between cursor-pointer group">
+                                                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Auto-Broadcast PIN</span>
+                                                        <div className="relative w-8 h-4">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                className="sr-only peer" 
+                                                                checked={autoBroadcast} 
+                                                                onChange={(e) => setAutoBroadcast(e.target.checked)} 
+                                                            />
+                                                            <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
+                                                            <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                                        </div>
+                                                    </label>
+                                                    <span className="text-[8px] text-white/20 font-bold uppercase tracking-wider block mt-1">
+                                                        {autoBroadcast ? 'Pushes code to active students' : 'Project/share PIN manually instead'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </GlassCard>
 
