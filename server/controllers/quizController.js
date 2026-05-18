@@ -1187,15 +1187,47 @@ exports.getLiveQuizzes = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
+        const now = new Date();
+
         const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
             const result = await prisma.result.findFirst({
                 where: { quizId: quiz.id, studentId: req.user.id }
             });
+
+            // Determine timing status for assessments
+            let isLocked = false;
+            let isExpired = false;
+
+            if (quiz.isAssessment) {
+                if (quiz.startTime && new Date(quiz.startTime) > now) {
+                    isLocked = true;
+                }
+                if (quiz.endTime && new Date(quiz.endTime) < now) {
+                    isExpired = true;
+                }
+            }
+
+            // Cleanly calculate total questions
+            let totalQ = 0;
+            if (Array.isArray(quiz.questions)) {
+                totalQ = quiz.questions.length;
+            } else if (quiz.questions && typeof quiz.questions === 'object') {
+                try {
+                    const parsed = typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : quiz.questions;
+                    totalQ = Array.isArray(parsed) ? parsed.length : (parsed.questions ? parsed.questions.length : 0);
+                } catch (_) {}
+            }
+
+            // Strip raw questions column for security against sniffing
+            const { questions, ...quizData } = quiz;
+
             return {
-                ...quiz,
+                ...quizData,
                 isAttempted: !!result,
                 score: result ? result.score : 0,
-                totalQuestions: quiz.questions.length
+                totalQuestions: totalQ,
+                isLocked,
+                isExpired
             };
         }));
 
@@ -1269,11 +1301,13 @@ exports.getQuizById = async (req, res) => {
         
         if (!isCreator && !isAdmin) {
             const now = new Date();
-            if (quiz.startTime && new Date(quiz.startTime) > now) {
-                return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
-            }
-            if (quiz.endTime && new Date(quiz.endTime) < now) {
-                return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+            if (quiz.isAssessment) {
+                if (quiz.startTime && new Date(quiz.startTime) > now) {
+                    return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
+                }
+                if (quiz.endTime && new Date(quiz.endTime) < now) {
+                    return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+                }
             }
             normalizedQuestions = normalizedQuestions.map(q => {
                 const { correctAnswer, explanation, ...safeQuestion } = q;
@@ -1823,15 +1857,47 @@ exports.getLiveQuizzes = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
+        const now = new Date();
+
         const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
             const result = await prisma.result.findFirst({
                 where: { quizId: quiz.id, studentId: req.user.id }
             });
+
+            // Determine timing status for assessments
+            let isLocked = false;
+            let isExpired = false;
+
+            if (quiz.isAssessment) {
+                if (quiz.startTime && new Date(quiz.startTime) > now) {
+                    isLocked = true;
+                }
+                if (quiz.endTime && new Date(quiz.endTime) < now) {
+                    isExpired = true;
+                }
+            }
+
+            // Cleanly calculate total questions
+            let totalQ = 0;
+            if (Array.isArray(quiz.questions)) {
+                totalQ = quiz.questions.length;
+            } else if (quiz.questions && typeof quiz.questions === 'object') {
+                try {
+                    const parsed = typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : quiz.questions;
+                    totalQ = Array.isArray(parsed) ? parsed.length : (parsed.questions ? parsed.questions.length : 0);
+                } catch (_) {}
+            }
+
+            // Strip raw questions column for security against sniffing
+            const { questions, ...quizData } = quiz;
+
             return {
-                ...quiz,
+                ...quizData,
                 isAttempted: !!result,
                 score: result ? result.score : 0,
-                totalQuestions: quiz.questions.length
+                totalQuestions: totalQ,
+                isLocked,
+                isExpired
             };
         }));
 

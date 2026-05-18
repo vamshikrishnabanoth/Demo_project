@@ -43,7 +43,7 @@ export default function LiveRoomStudent() {
                 const quizRes = await api.get(`/quiz/${res.data.quizId}`);
                 setQuiz(quizRes.data);
 
-                if (quizRes.data.status === 'started') {
+                if (!quizRes.data.isLive || quizRes.data.status === 'started') {
                     navigate(`/quiz/attempt/${quizRes.data.id}`);
                     return;
                 }

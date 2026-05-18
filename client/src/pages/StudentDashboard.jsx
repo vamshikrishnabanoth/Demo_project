@@ -68,7 +68,11 @@ export default function StudentDashboard() {
                     fontFamily: 'Inter'
                 }
             });
-            setTimeout(() => navigate(`/live-room-student/${joinCode}`), 1000);
+            if (res.data.isLive) {
+                setTimeout(() => navigate(`/live-room-student/${joinCode}`), 1000);
+            } else {
+                setTimeout(() => navigate(`/quiz/attempt/${res.data.quizId}`), 1000);
+            }
         } catch (err) {
             setError(true);
             toast.error(err.response?.data?.msg || 'Neural link failed', {
@@ -104,7 +108,7 @@ export default function StudentDashboard() {
         
         setIsSubmitting(true);
         try {
-            await api.post('/quiz/join', { code: pin });
+            const res = await api.post('/quiz/join', { code: pin });
             toast.success('Connection established!', {
                 style: {
                     background: '#161618',
@@ -114,7 +118,11 @@ export default function StudentDashboard() {
                     fontFamily: 'Inter'
                 }
             });
-            setTimeout(() => navigate(`/live-room-student/${pin}`), 1000);
+            if (res.data.isLive) {
+                setTimeout(() => navigate(`/live-room-student/${pin}`), 1000);
+            } else {
+                setTimeout(() => navigate(`/quiz/attempt/${res.data.quizId}`), 1000);
+            }
         } catch (err) {
             setError(true);
             toast.error(err.response?.data?.msg || 'Neural link failed', {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
+import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
@@ -113,10 +113,15 @@ export default function Assessments() {
         }
     };
 
+    const completedQuizzes = safeQuizzes.filter(q => q.isAttempted);
+    const avgScore = completedQuizzes.length > 0 
+        ? Math.round(completedQuizzes.reduce((sum, q) => sum + q.score, 0) / completedQuizzes.length) 
+        : 0;
+
     const stats = [
-        { label: 'Available', value: safeQuizzes.length, icon: Play, color: 'text-[var(--text-accent)]' },
-        { label: 'Completed', value: 0, icon: CheckCircle, color: 'text-green-400' },
-        { label: 'Avg. Score', value: 0, icon: Trophy, color: 'text-blue-400', suffix: '%' }
+        { label: 'Available', value: safeQuizzes.filter(q => !q.isLocked && !q.isExpired && !q.isAttempted).length, icon: Play, color: 'text-[var(--text-accent)]' },
+        { label: 'Completed', value: completedQuizzes.length, icon: CheckCircle, color: 'text-green-400' },
+        { label: 'Avg. Score', value: avgScore, icon: Trophy, color: 'text-blue-400', suffix: '%' }
     ];
 
     if (loading && safeQuizzes.length === 0) return (
@@ -196,47 +201,141 @@ export default function Assessments() {
                         </motion.div>
                     ))}
                 </div>
-
                 {/* Quizzes List */}
                 <div className="space-y-6 sm:space-y-8" role="list" aria-label="Available quizzes" aria-live="polite">
                     <AnimatePresence mode="popLayout">
                         {filteredQuizzes.length > 0 ? (
-                            filteredQuizzes.map((quiz, i) => (
-                                <motion.div
-                                    key={quiz.id || quiz._id}
-                                    role="listitem"
-                                    layout
-                                    initial={{ y: 30, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ scale: 0.95, opacity: 0 }}
-                                    transition={{ delay: i * 0.08 }}
-                                    className="group glass-panel rounded-[2rem] p-6 sm:p-8 transition-all duration-300"
-                                >
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 bg-[var(--bg-accent)]/10 rounded-2xl flex items-center justify-center text-[var(--text-accent)] group-hover:scale-110 transition-transform">
-                                                <BookOpen size={24} aria-hidden="true" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors mb-1">{quiz.title}</h3>
-                                                <div className="flex items-center gap-4 text-white/30 text-[10px] font-bold uppercase tracking-widest">
-                                                    <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.questions?.length * 1} Min</span>
-                                                    <span className="flex items-center gap-1.5"><Filter size={12} aria-hidden="true" /> {quiz.difficulty || 'Normal'}</span>
-                                                    <span className="flex items-center gap-1.5"><Trophy size={12} aria-hidden="true" /> {quiz.questions?.length * 10} Pts</span>
+                            filteredQuizzes.map((quiz, i) => {
+                                const startStr = quiz.startTime 
+                                    ? new Date(quiz.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                                    : null;
+                                const endStr = quiz.endTime
+                                    ? new Date(quiz.endTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                                    : null;
+
+                                return (
+                                    <motion.div
+                                        key={quiz.id || quiz._id}
+                                        role="listitem"
+                                        layout
+                                        initial={{ y: 30, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ scale: 0.95, opacity: 0 }}
+                                        transition={{ delay: i * 0.08 }}
+                                        className={`group glass-panel rounded-[2rem] p-6 sm:p-8 transition-all duration-300 ${
+                                            quiz.isLocked 
+                                                ? 'border-indigo-500/20 bg-indigo-950/5' 
+                                                : quiz.isExpired 
+                                                ? 'opacity-60 border-red-500/10 bg-red-950/5'
+                                                : quiz.isAttempted
+                                                ? 'border-emerald-500/20 bg-emerald-950/5'
+                                                : ''
+                                        }`}
+                                    >
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                            <div className="flex items-center gap-5">
+                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${
+                                                    quiz.isLocked
+                                                        ? 'bg-indigo-500/10 text-indigo-400'
+                                                        : quiz.isExpired
+                                                        ? 'bg-red-500/10 text-red-400'
+                                                        : quiz.isAttempted
+                                                        ? 'bg-emerald-500/10 text-emerald-400'
+                                                        : 'bg-[var(--bg-accent)]/10 text-[var(--text-accent)]'
+                                                }`}>
+                                                    {quiz.isLocked ? (
+                                                        <Lock size={24} aria-hidden="true" />
+                                                    ) : quiz.isExpired ? (
+                                                        <AlertCircle size={24} aria-hidden="true" />
+                                                    ) : quiz.isAttempted ? (
+                                                        <CheckCircle size={24} aria-hidden="true" />
+                                                    ) : (
+                                                        <BookOpen size={24} aria-hidden="true" />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div className="flex flex-wrap items-center gap-3 mb-1">
+                                                        <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors">{quiz.title}</h3>
+                                                        {quiz.isLocked && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 animate-pulse">
+                                                                SCHEDULED
+                                                            </span>
+                                                        )}
+                                                        {quiz.isExpired && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+                                                                EXPIRED
+                                                            </span>
+                                                        )}
+                                                        {quiz.isAttempted && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                                                                COMPLETED
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    {/* Timing and metadata indicators */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <div className="flex items-center gap-4 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                                                            <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.totalQuestions || 0} Min</span>
+                                                            <span className="flex items-center gap-1.5"><Filter size={12} aria-hidden="true" /> {quiz.difficulty || 'Normal'}</span>
+                                                            <span className="flex items-center gap-1.5"><Trophy size={12} aria-hidden="true" /> {(quiz.totalQuestions || 0) * 10} Pts</span>
+                                                        </div>
+                                                        {quiz.isLocked && startStr && (
+                                                            <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                                <Calendar size={12} /> Starts: {startStr}
+                                                            </span>
+                                                        )}
+                                                        {quiz.isExpired && endStr && (
+                                                            <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                                <Calendar size={12} /> Ended: {endStr}
+                                                            </span>
+                                                        )}
+                                                        {quiz.isAttempted && (
+                                                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                                <Trophy size={12} /> Score Obtained: {quiz.score}%
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <button
-                                            onClick={() => handleAttemptClick(quiz)}
-                                            className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
-                                        >
-                                            Initiate Sequence
-                                            <Play size={14} fill="currentColor" aria-hidden="true" />
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            ))
+                                            {quiz.isLocked ? (
+                                                <button
+                                                    disabled
+                                                    className="bg-white/5 border border-white/10 text-white/20 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
+                                                >
+                                                    Locked
+                                                    <Lock size={14} aria-hidden="true" />
+                                                </button>
+                                            ) : quiz.isExpired ? (
+                                                <button
+                                                    disabled
+                                                    className="bg-white/5 border border-white/5 text-white/10 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
+                                                >
+                                                    Expired
+                                                    <AlertCircle size={14} aria-hidden="true" />
+                                                </button>
+                                            ) : quiz.isAttempted ? (
+                                                <button
+                                                    onClick={() => navigate(`/report/${quiz.id}`)}
+                                                    className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-emerald-500/5"
+                                                >
+                                                    View Report
+                                                    <ChevronRight size={14} aria-hidden="true" />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleAttemptClick(quiz)}
+                                                    className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
+                                                >
+                                                    Initiate Sequence
+                                                    <Play size={14} fill="currentColor" aria-hidden="true" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                );
+                            })
                         ) : (
                             /* Empty State Illustration */
                             <motion.div 

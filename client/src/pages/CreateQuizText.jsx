@@ -39,16 +39,10 @@ export default function CreateQuizText() {
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
-<<<<<<< Updated upstream
         // Support both key names: 'questions' (from AI generator) and 'generatedQuestions' (legacy)
         const incoming = location.state?.questions || location.state?.generatedQuestions;
         if (incoming) {
             setQuestions(incoming);
-=======
-        const stateQuestions = location.state?.generatedQuestions || location.state?.questions;
-        if (stateQuestions) {
-            setQuestions(stateQuestions);
->>>>>>> Stashed changes
             setIsGeneratedSource(true);
             if (location.state.title) setTitle(location.state.title);
             if (location.state.duration) setDuration(location.state.duration);
