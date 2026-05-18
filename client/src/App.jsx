@@ -28,7 +28,7 @@ const StudentDashboard  = lazy(() => import('./pages/StudentDashboard'));
 const Assessments       = lazy(() => import('./pages/Assessments'));
 const MyQuizzes         = lazy(() => import('./pages/MyQuizzes'));
 const AttemptQuiz       = lazy(() => import('./pages/AttemptQuiz'));
-const AssessmentAttempt = lazy(() => import('./pages/AssessmentAttempt'));
+const QuizAttemptSelector = lazy(() => import('./pages/QuizAttemptSelector'));
 const AssessmentReview  = lazy(() => import('./pages/AssessmentReview'));
 const Profile           = lazy(() => import('./pages/Profile'));
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
@@ -84,7 +84,7 @@ function AnimatedRoutes() {
                     {/* Student pages */}
                     <Route path="/student-dashboard"  element={<PageTransition><ProtectedRoute roles={['student']}><StudentDashboard /></ProtectedRoute></PageTransition>} />
                     <Route path="/assessments"         element={<PageTransition><ProtectedRoute roles={['student']}><Assessments /></ProtectedRoute></PageTransition>} />
-                    <Route path="/quiz/attempt/:id"    element={<FadeTransition><ProtectedRoute roles={['student']}><AssessmentAttempt /></ProtectedRoute></FadeTransition>} />
+                    <Route path="/quiz/attempt/:id"    element={<FadeTransition><ProtectedRoute roles={['student']}><QuizAttemptSelector /></ProtectedRoute></FadeTransition>} />
                     <Route path="/quiz/review/:id"     element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReview /></ProtectedRoute></SlideUpTransition>} />
                     <Route path="/history"            element={<PageTransition><ProtectedRoute roles={['student']}><AssessmentsHistory /></ProtectedRoute></PageTransition>} />
                     <Route path="/report/:id"         element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReport /></ProtectedRoute></SlideUpTransition>} />

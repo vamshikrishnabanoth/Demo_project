@@ -5,6 +5,8 @@ import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
+import { showConfirm } from '../utils/alerts';
+import toast from 'react-hot-toast';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
@@ -23,6 +25,7 @@ export default function LiveRoomTeacher() {
     const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 10;
     const hasInitializedTimer = useRef(false);
+    const isTransitioning = useRef(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -214,9 +217,45 @@ export default function LiveRoomTeacher() {
     };
 
     const handleNextQuestion = () => {
+        if (isTransitioning.current) return;
         if (quiz && currentQuestion < quiz.questions.length - 1) {
+            isTransitioning.current = true;
             const nextIdx = currentQuestion + 1;
             socket.emit('change_question', { quizId: quiz.id, questionIndex: nextIdx });
+            setTimeout(() => {
+                isTransitioning.current = false;
+            }, 1000);
+        }
+    };
+
+    const handlePrevSkippedQuestion = () => {
+        if (isTransitioning.current) return;
+        if (quiz && currentQuestion > 0) {
+            // Find closest past question index where zero students submitted an answer
+            let targetIdx = -1;
+            for (let qIdx = currentQuestion - 1; qIdx >= 0; qIdx--) {
+                let answerCount = 0;
+                Object.keys(studentProgress).forEach(sId => {
+                    if (studentProgress[sId]?.[qIdx]?.answered) {
+                        answerCount++;
+                    }
+                });
+                if (answerCount === 0) {
+                    targetIdx = qIdx;
+                    break;
+                }
+            }
+
+            if (targetIdx !== -1) {
+                isTransitioning.current = true;
+                socket.emit('change_question', { quizId: quiz.id, questionIndex: targetIdx });
+                toast.success(`Rolling back to skipped Question ${targetIdx + 1}`);
+                setTimeout(() => {
+                    isTransitioning.current = false;
+                }, 1000);
+            } else {
+                toast.error("No skipped questions found in past timeline.");
+            }
         }
     };
 
@@ -351,7 +390,16 @@ export default function LiveRoomTeacher() {
                             View Leaderboard
                         </button>
                         <button
-                            onClick={() => navigate('/teacher-dashboard')}
+                            onClick={async () => {
+                                const result = await showConfirm(
+                                    'Return to Dashboard?',
+                                    'Would you like to exit the live arena and return to your workspace?',
+                                    'Yes, Exit'
+                                );
+                                if (result.isConfirmed) {
+                                    navigate('/teacher-dashboard');
+                                }
+                            }}
                             className="bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black italic uppercase tracking-tighter text-xl hover:bg-gray-200 transition"
                         >
                             Dashboard
@@ -473,6 +521,14 @@ export default function LiveRoomTeacher() {
                     <div className="flex flex-col md:flex-row items-center gap-4">
                         {/* Question Navigation */}
                         <div className="flex items-center gap-3 bg-slate-800/50 rounded-xl px-5 py-3">
+                            <button
+                                onClick={handlePrevSkippedQuestion}
+                                disabled={currentQuestion === 0}
+                                className="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg font-bold uppercase tracking-tight text-xs transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                                title="Revisit skipped questions only"
+                            >
+                                <ChevronLeft size={14} /> Back
+                            </button>
                             <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Q{currentQuestion + 1}/{quiz?.questions?.length || 0}</p>
                             <button
                                 onClick={handleNextQuestion}

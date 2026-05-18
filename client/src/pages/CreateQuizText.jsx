@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -134,7 +134,7 @@ export default function CreateQuizText() {
         }
 
         try {
-            await api.post('/quiz/create', { 
+            const res = await api.post('/quiz/create', { 
                 title, 
                 questions, 
                 duration: timerType === 'totalTime' ? (parseInt(duration) || 30) : 0,
@@ -149,7 +149,13 @@ export default function CreateQuizText() {
                 assignedStudents
             });
             toast.success('Mission Published Successfully');
-            navigate('/teacher-dashboard');
+            if (!isAssessment) {
+                // Synchronous quiz -> Redirect to live teacher lobby room
+                navigate(`/live-room-teacher/${res.data.joinCode}`);
+            } else {
+                // Asynchronous quiz -> Standard dashboard
+                navigate('/teacher-dashboard');
+            }
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Network Link Failure');
         } finally {
@@ -241,18 +247,42 @@ export default function CreateQuizText() {
                                         />
                                     </GlassCard>
 
-                                    <GlassCard className="flex flex-col justify-center">
-                                        <label className="flex items-center gap-4 cursor-pointer group">
-                                            <div className="relative w-16 h-8">
-                                                <input type="checkbox" className="sr-only peer" checked={isAssessment} onChange={(e) => setIsAssessment(e.target.checked)} />
-                                                <div className="w-16 h-8 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all peer-checked:translate-x-8"></div>
+                                    <GlassCard className="flex flex-col justify-center gap-3">
+                                        <div>
+                                            <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em] mb-2">Arena Mode</span>
+                                            <div className="flex flex-col gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsAssessment(false)}
+                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all text-left ${
+                                                        !isAssessment
+                                                            ? 'bg-[var(--bg-accent)]/20 border-[var(--bg-accent)] text-white shadow-md'
+                                                            : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white hover:border-white/10'
+                                                    }`}
+                                                >
+                                                    <Zap size={14} className={!isAssessment ? 'text-[var(--text-accent)] animate-pulse' : 'text-white/30'} />
+                                                    <div>
+                                                        <span className="block font-black text-xs uppercase tracking-tight italic">Synchronous</span>
+                                                        <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">Real-time Live Arena</span>
+                                                    </div>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsAssessment(true)}
+                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all text-left ${
+                                                        isAssessment
+                                                            ? 'bg-[var(--bg-accent)]/20 border-[var(--bg-accent)] text-white shadow-md'
+                                                            : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white hover:border-white/10'
+                                                    }`}
+                                                >
+                                                    <BookOpen size={14} className={isAssessment ? 'text-[var(--text-accent)]' : 'text-white/30'} />
+                                                    <div>
+                                                        <span className="block font-black text-xs uppercase tracking-tight italic">Asynchronous</span>
+                                                        <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">Self-paced Task</span>
+                                                    </div>
+                                                </button>
                                             </div>
-                                            <div>
-                                                <span className="block font-black text-lg text-white uppercase tracking-tighter italic">Assessment Mode</span>
-                                                <span className="text-[9px] text-white/30 font-black uppercase tracking-[0.2em]">Live Link • Async Mode</span>
-                                            </div>
-                                        </label>
+                                        </div>
                                     </GlassCard>
 
                                     <GlassCard className="flex flex-col justify-center">

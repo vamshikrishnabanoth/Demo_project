@@ -1337,6 +1337,46 @@ exports.submitQuiz = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
+        // SECURITY & HARDENING: If it is a live (synchronous) quiz, their answers must ONLY be submitted
+        // via WebSockets. We completely ignore client-supplied answers in the HTTP body to prevent spoofing/tampering,
+        // and only transition their existing socket-persisted DB record to completed!
+        if (quiz.isLive) {
+            const existingResult = await prisma.result.findFirst({
+                where: { quizId: quizId, studentId: req.user.id }
+            });
+            if (existingResult) {
+                if (existingResult.status === 'completed') {
+                    return res.json(existingResult);
+                }
+                const updated = await prisma.result.update({
+                    where: { id: existingResult.id },
+                    data: {
+                        status: 'completed',
+                        completedAt: new Date(),
+                        lastAnsweredAt: new Date()
+                    }
+                });
+                return res.json(updated);
+            } else {
+                // If they joined but never answered any question, create a zero score completed result
+                const result = await prisma.result.create({
+                    data: {
+                        quizId: quizId,
+                        studentId: req.user.id,
+                        score: 0,
+                        totalTimeTaken: 0,
+                        totalQuestions: quiz.questions.length,
+                        answers: [],
+                        status: 'completed',
+                        startedAt: new Date(),
+                        completedAt: new Date(),
+                        lastAnsweredAt: new Date()
+                    }
+                });
+                return res.json(result);
+            }
+        }
+
         // Validate scheduled start and end times
         const now = new Date();
         if (quiz.startTime && new Date(quiz.startTime) > now) {

@@ -98,9 +98,9 @@ export default function AttemptQuiz() {
 
         socket.on('quiz_ended', async () => {
             // Results are already saved via socket events during the quiz.
-            // Navigate to leaderboard after a small delay to allow server finalization.
+            // Navigate to report page after a small delay to allow server finalization.
             setTimeout(() => {
-                navigate(`/leaderboard/${id}`);
+                navigate(`/report/${id}`);
             }, 1500);
         });
 
@@ -284,8 +284,8 @@ export default function AttemptQuiz() {
                 setTimeLeft(quiz.timerPerQuestion || 30);
             }
         } else {
-            // Last question - navigate to final leaderboard
-            navigate(`/leaderboard/${id}`);
+            // Last question - navigate to final report
+            navigate(`/report/${id}`);
         }
     };
 

@@ -273,9 +273,15 @@ const AssessmentReport = () => {
                                         </p>
                                     </td>
                                     <td className="px-8 py-8">
-                                        <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block ${ans.isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-                                            {ans.selectedOption || 'No Input'}
-                                        </div>
+                                        {(!ans.selectedOption || ans.selectedOption.trim() === '') ? (
+                                            <div className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                                Skipped
+                                            </div>
+                                        ) : (
+                                            <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block ${ans.isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                                                {ans.selectedOption}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-8 py-8">
                                         <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-emerald-400 font-black text-[10px] uppercase tracking-widest inline-block">
@@ -287,6 +293,10 @@ const AssessmentReport = () => {
                                             {ans.isCorrect ? (
                                                 <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-tighter bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
                                                     <CheckCircle2 size={12} /> Correct
+                                                </div>
+                                            ) : (!ans.selectedOption || ans.selectedOption.trim() === '') ? (
+                                                <div className="flex items-center gap-2 text-yellow-400 text-[10px] font-black uppercase tracking-tighter bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20">
+                                                    <AlertCircle size={12} /> Skipped
                                                 </div>
                                             ) : (
                                                 <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-tighter bg-rose-400/10 px-3 py-1 rounded-full border border-rose-400/20">
