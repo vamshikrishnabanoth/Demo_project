@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     X,
     Search,
@@ -11,7 +12,6 @@ import {
     SlidersHorizontal,
     GraduationCap,
     CheckSquare,
-    Square,
     Loader2,
     Trash2
 } from 'lucide-react';
@@ -29,6 +29,9 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
 
+    // Accordion expand/collapse branch state
+    const [expandedBranch, setExpandedBranch] = useState(null);
+
     // Real-Time DB Search
     const [searchQuery, setSearchQuery] = useState('');
     const [students, setStudents] = useState([]);
@@ -38,9 +41,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
     const [hasMore, setHasMore] = useState(false);
 
     // Assignment Targeting State
-    // assignedGroups: array of target groups e.g. [{ branch: 'CSE', section: 'A' }]
     const [assignedGroups, setAssignedGroups] = useState([]);
-    // assignedStudents: array of selected individual student User records
     const [assignedStudents, setAssignedStudents] = useState([]);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -57,7 +58,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
 
-    // Load Initial DB-Driven Filter Options (Only when drawer opens)
+    // Load Initial DB-Driven Filter Options
     useEffect(() => {
         if (!isOpen) return;
 
@@ -79,14 +80,11 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
 
         loadFilterOptions();
 
-        // If quiz already has assignment metadata, load it
         if (quiz) {
             setAssignedGroups(quiz.assignedGroups || []);
-            // For assigned students, we'll fetch details if they exist
             if (quiz.assignedStudents && quiz.assignedStudents.length > 0) {
-                // Fetch the detailed list of selected students
                 api.get(`/students/search`, {
-                    params: { limit: 100 } // Fetch a solid preview
+                    params: { limit: 100 }
                 }).then(res => {
                     const matched = res.data.students.filter(s => quiz.assignedStudents.includes(s.id));
                     setAssignedStudents(matched);
@@ -95,7 +93,6 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                 setAssignedStudents([]);
             }
         } else {
-            // Load staging details
             setAssignedGroups(initialGroups || []);
             if (initialStudents && initialStudents.length > 0) {
                 api.get(`/students/search`, {
@@ -173,7 +170,6 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         }
     };
 
-    // Load next page on scroll
     const handleScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
         if (scrollHeight - scrollTop <= clientHeight + 50 && hasMore && !loadingStudents) {
@@ -186,7 +182,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         setSelectedBranches(prev =>
             prev.includes(branch) ? prev.filter(b => b !== branch) : [...prev, branch]
         );
-        setSelectedSections([]); // Reset sections when branches change to avoid mismatched filters
+        setSelectedSections([]);
     };
 
     // Toggle Section Selection
@@ -198,14 +194,12 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
 
     // Add Entire Section / Group
     const assignGroup = (branch, section) => {
-        // Prevent duplicate groups
         const exists = assignedGroups.some(g => g.branch === branch && g.section === section);
         if (exists) {
             toast.error(`Group ${branch}-${section} is already targeted.`);
             return;
         }
 
-        // Fetch section count from DB dynamically
         api.get('/students/search', {
             params: { branch, section, limit: 1 }
         }).then(res => {
@@ -218,12 +212,10 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         });
     };
 
-    // Remove Group Target
     const removeGroup = (branch, section) => {
         setAssignedGroups(prev => prev.filter(g => !(g.branch === branch && g.section === section)));
     };
 
-    // Toggle Individual Student Selection
     const toggleStudentSelection = (student) => {
         const isTargeted = assignedStudents.some(s => s.id === student.id);
         if (isTargeted) {
@@ -233,12 +225,10 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         }
     };
 
-    // Bulk Select All Filtered Students (Manually Add all loaded to list)
     const selectAllFiltered = async () => {
         if (totalStudentsCount === 0) return;
         setLoadingStudents(true);
         try {
-            // Fetch all matching records from search query up to a reasonable cap (e.g. 500)
             const params = {
                 q: searchQuery,
                 limit: 500
@@ -251,7 +241,6 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
             const res = await api.get('/students/search', { params });
             const allMatched = res.data.students;
 
-            // Merge safely with existing targeted list
             setAssignedStudents(prev => {
                 const existingIds = new Set(prev.map(s => s.id));
                 const toAdd = allMatched.filter(s => !existingIds.has(s.id));
@@ -267,14 +256,12 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         }
     };
 
-    // Clear All Selections
     const clearAll = () => {
         setAssignedGroups([]);
         setAssignedStudents([]);
         toast.success('Cleared all targeted targets.');
     };
 
-    // Save Assignment
     const handleSaveAssignment = async () => {
         setIsSaving(true);
         try {
@@ -302,20 +289,31 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         }
     };
 
-    // Calculate dynamic live total targeted count (deduplicating manually selected students who are already part of assigned groups)
     const calculateLiveTargetCount = () => {
         let groupCount = assignedGroups.reduce((acc, g) => acc + (g.count || 0), 0);
-        
-        // Find individual students who DO NOT fall inside the targeted assignedGroups
         const individualFiltered = assignedStudents.filter(s => {
             const isInGroup = assignedGroups.some(g => g.branch === s.studentBranch && g.section === s.section);
             return !isInGroup;
         });
-
         return groupCount + individualFiltered.length;
     };
 
     if (!isOpen) return null;
+
+    // Helper to get active targeting shortcut names
+    const getShortcutTargets = () => {
+        const shortcuts = [];
+        selectedBranches.forEach(b => {
+            if (selectedSections.length > 0) {
+                selectedSections.forEach(sec => {
+                    shortcuts.push({ label: `Target Entire ${b}-${sec}`, branch: b, section: sec });
+                });
+            } else {
+                shortcuts.push({ label: `Target Entire ${b}`, branch: b, section: '' });
+            }
+        });
+        return shortcuts;
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex justify-end">
@@ -329,259 +327,267 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
             <div className="relative w-full max-w-3xl h-full bg-[#0b0f19] border-l border-white/10 shadow-2xl flex flex-col z-10 overflow-hidden">
                 
                 {/* Header */}
-                <div className="p-8 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02] shrink-0">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-amber-400/10 border border-amber-400/20 rounded-2xl text-amber-400">
-                            <Users size={24} />
+                            <Users size={22} />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Student Targeting</h2>
-                            <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">Assign: <span className="text-amber-400 italic">{quiz?.title}</span></p>
+                            <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">Student Targeting</h2>
+                            <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">Assign: <span className="text-amber-400 italic">{quiz?.title || 'Active Quiz'}</span></p>
                         </div>
                     </div>
                     <button 
                         onClick={onClose} 
-                        className="p-3 hover:bg-white/5 rounded-2xl text-slate-400 hover:text-white transition-all active:scale-95"
+                        className="p-2.5 hover:bg-white/5 rounded-2xl text-slate-400 hover:text-white transition-all active:scale-95"
                         aria-label="Close targeting drawer"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
-                {/* Main Content Area */}
-                <div className="flex-1 overflow-y-auto p-8 space-y-8" onScroll={handleScroll}>
+                {/* Main Content Area (Layout split to secure infinite scroll list viewport space) */}
+                <div className="flex-1 flex flex-col overflow-hidden p-6 space-y-6">
                     
-                    {/* Database-Driven Dynamic Select Filters */}
-                    <div className="space-y-4">
-                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
-                            <SlidersHorizontal size={14} className="text-amber-400" /> DB-Driven Filters
-                        </h3>
+                    {/* Top Section: Filters and Targeting Preview (Scrolls internally up to 45% height) */}
+                    <div className="space-y-6 overflow-y-auto max-h-[45vh] pr-2 custom-scrollbar shrink-0">
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Dynamic Collapsible Hierarchical Filters */}
+                        <div className="space-y-4">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
+                                <SlidersHorizontal size={12} className="text-amber-400" /> Dynamic Branch-wise Structuring
+                            </h3>
                             
-                            {/* Branch Selection Chips */}
-                            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 space-y-3">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Branch (Multi)</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {branches.map(b => (
-                                        <button
-                                            key={b}
-                                            onClick={() => toggleBranchFilter(b)}
-                                            className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic transition-all ${selectedBranches.includes(b) ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20' : 'bg-white/5 border border-white/5 text-slate-400 hover:bg-white/10 hover:text-white'}`}
-                                        >
-                                            {b}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            <div className="space-y-3">
+                                {branches.map(b => {
+                                    const isSelected = selectedBranches.includes(b);
+                                    const isExpanded = expandedBranch === b;
 
-                            {/* Section Selection Chips */}
-                            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 space-y-3">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Section (Multi)</p>
-                                <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-2 custom-scrollbar">
-                                    {sections.length > 0 ? (
-                                        sections.map(s => (
-                                            <button
-                                                key={s}
-                                                onClick={() => toggleSectionFilter(s)}
-                                                className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${selectedSections.includes(s) ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' : 'bg-white/5 border border-white/5 text-slate-400 hover:bg-white/10 hover:text-white'}`}
-                                            >
-                                                SEC {s}
-                                            </button>
-                                        ))
-                                    ) : (
-                                        <p className="text-xs font-bold text-slate-600 italic">Select a branch first...</p>
+                                    return (
+                                        <div key={b} className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 transition-all hover:border-white/10">
+                                            <div className="flex items-center justify-between">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleBranchFilter(b)}
+                                                    className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider italic transition-all ${isSelected ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                                                >
+                                                    <GraduationCap size={14} />
+                                                    {b} Branch
+                                                </button>
+                                                
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setExpandedBranch(isExpanded ? null : b)}
+                                                    className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] hover:text-white transition-colors"
+                                                >
+                                                    {isExpanded ? 'Collapse' : 'Structure Sem/Sec ↓'}
+                                                </button>
+                                            </div>
+
+                                            {/* Structured Semester & Section selection below branch name */}
+                                            {isExpanded && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    className="pl-4 border-l border-white/10 space-y-4 mt-4 overflow-hidden"
+                                                >
+                                                    {/* Semesters under this branch */}
+                                                    <div className="space-y-2">
+                                                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Semester</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {semesters.map(s => {
+                                                                const isSemSelected = selectedSemester === s;
+                                                                return (
+                                                                    <button
+                                                                        key={s}
+                                                                        type="button"
+                                                                        onClick={() => setSelectedSemester(isSemSelected ? '' : s)}
+                                                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${isSemSelected ? 'bg-indigo-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                                                                    >
+                                                                        Semester {s}
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Sections under this branch */}
+                                                    <div className="space-y-2">
+                                                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Section</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {sections.length > 0 ? (
+                                                                sections.map(sec => {
+                                                                    const isSecSelected = selectedSections.includes(sec);
+                                                                    return (
+                                                                        <button
+                                                                            key={sec}
+                                                                            type="button"
+                                                                            onClick={() => toggleSectionFilter(sec)}
+                                                                            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${isSecSelected ? 'bg-purple-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                                                                        >
+                                                                            Section {sec}
+                                                                        </button>
+                                                                    );
+                                                                })
+                                                            ) : (
+                                                                <p className="text-[10px] font-bold text-slate-600 italic">Please select a branch above to display sections...</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Target Selected Overview Card */}
+                        <div className="bg-white/[0.01] border border-white/10 rounded-2xl p-5 space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <UserCheck size={16} className="text-amber-400" />
+                                    <h4 className="text-xs font-black text-white uppercase tracking-wider italic">Targeting Overview</h4>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="bg-amber-400/10 border border-amber-400/20 text-amber-400 px-3.5 py-1 rounded-full text-[10px] font-black italic">
+                                        {calculateLiveTargetCount()} Targeted Students
+                                    </span>
+                                    {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
+                                        <button 
+                                            onClick={clearAll} 
+                                            className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1 transition-colors"
+                                        >
+                                            <Trash2 size={12} /> Clear
+                                        </button>
                                     )}
                                 </div>
                             </div>
 
-                        </div>
+                            {/* Group selection chips */}
+                            <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1 custom-scrollbar">
+                                {assignedGroups.map(g => (
+                                    <div key={`grp-${g.branch}-${g.section}`} className="flex items-center gap-2 bg-gradient-to-r from-amber-400/10 to-amber-500/5 border border-amber-400/20 rounded-lg px-3 py-1.5 text-[10px] font-black text-white italic">
+                                        <Users size={10} className="text-amber-400 shrink-0" />
+                                        <span>{g.branch}-{g.section} ({g.count || 0} students)</span>
+                                        <button 
+                                            onClick={() => removeGroup(g.branch, g.section)}
+                                            className="text-slate-400 hover:text-red-400 transition-colors ml-1"
+                                        >
+                                            <X size={10} />
+                                        </button>
+                                    </div>
+                                ))}
 
-                        {/* Year & Semester Filter Dropdowns */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            
-                            {/* Year Dropdown */}
-                            <div className="relative">
-                                <select
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-black italic focus:outline-none focus:border-amber-400/50 appearance-none uppercase text-sm tracking-wide"
-                                >
-                                    <option value="" className="bg-[#0b0f19] text-slate-400">All Academic Years</option>
-                                    {years.map(y => (
-                                        <option key={y} value={y} className="bg-[#0b0f19] text-white">{y}</option>
-                                    ))}
-                                </select>
-                                <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 rotate-90 pointer-events-none" size={16} />
-                            </div>
+                                {assignedStudents.map(s => (
+                                    <div key={`stud-${s.id}`} className="flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-lg px-3 py-1.5 text-[10px] font-black text-white italic">
+                                        <div className="w-3.5 h-3.5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[7px] font-bold uppercase shrink-0">
+                                            {s.name ? s.name[0] : s.username[0]}
+                                        </div>
+                                        <span>{s.username}</span>
+                                        <span className="opacity-40 font-medium text-[8px]">({s.studentBranch}-{s.section})</span>
+                                        <button 
+                                            onClick={() => toggleStudentSelection(s)}
+                                            className="text-slate-400 hover:text-red-400 transition-colors ml-1"
+                                        >
+                                            <X size={10} />
+                                        </button>
+                                    </div>
+                                ))}
 
-                            {/* Semester Dropdown */}
-                            <div className="relative">
-                                <select
-                                    value={selectedSemester}
-                                    onChange={(e) => setSelectedSemester(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-black italic focus:outline-none focus:border-purple-500/50 appearance-none uppercase text-sm tracking-wide"
-                                >
-                                    <option value="" className="bg-[#0b0f19] text-slate-400">All Semesters</option>
-                                    {semesters.map(s => (
-                                        <option key={s} value={s} className="bg-[#0b0f19] text-white">{s}</option>
-                                    ))}
-                                </select>
-                                <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 rotate-90 pointer-events-none" size={16} />
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {/* Target Selected Preview Block */}
-                    <div className="bg-white/[0.01] border border-white/10 rounded-[2rem] p-6 space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <UserCheck size={18} className="text-amber-400" />
-                                <h4 className="text-sm font-black text-white uppercase tracking-wider italic">Targeting Overview</h4>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <span className="bg-amber-400/10 border border-amber-400/20 text-amber-400 px-4 py-1.5 rounded-full text-xs font-black italic">
-                                    {calculateLiveTargetCount()} DB Students Selected
-                                </span>
-                                {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
-                                    <button 
-                                        onClick={clearAll} 
-                                        className="text-xs font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1.5 transition-colors"
-                                    >
-                                        <Trash2 size={12} /> Clear All
-                                    </button>
+                                {assignedGroups.length === 0 && assignedStudents.length === 0 && (
+                                    <p className="text-slate-600 text-[10px] font-bold italic py-1">No targets configured. Use the filters or scroll below to pick.</p>
                                 )}
                             </div>
                         </div>
 
-                        {/* Selection preview chips container */}
-                        <div className="flex flex-wrap gap-2.5 max-h-36 overflow-y-auto custom-scrollbar p-1">
-                            {assignedGroups.map(g => (
-                                <div key={`grp-${g.branch}-${g.section}`} className="flex items-center gap-2 bg-gradient-to-r from-amber-400/10 to-amber-500/5 border border-amber-400/20 rounded-xl px-4 py-2 text-xs font-black text-white italic">
-                                    <Users size={12} className="text-amber-400" />
-                                    <span>{g.branch}-{g.section} ({g.count || 0} students)</span>
-                                    <button 
-                                        onClick={() => removeGroup(g.branch, g.section)}
-                                        className="text-slate-400 hover:text-red-400 transition-colors ml-1 p-0.5"
-                                    >
-                                        <X size={12} />
-                                    </button>
-                                </div>
-                            ))}
-
-                            {assignedStudents.map(s => (
-                                <div key={`stud-${s.id}`} className="flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-xl px-4 py-2 text-xs font-black text-white italic">
-                                    <div className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[8px] font-bold uppercase shrink-0">
-                                        {s.name ? s.name[0] : s.username[0]}
-                                    </div>
-                                    <span>{s.username}</span>
-                                    <span className="opacity-40 font-medium text-[10px]">({s.studentBranch}-{s.section})</span>
-                                    <button 
-                                        onClick={() => toggleStudentSelection(s)}
-                                        className="text-slate-400 hover:text-red-400 transition-colors ml-1 p-0.5"
-                                    >
-                                        <X size={12} />
-                                    </button>
-                                </div>
-                            ))}
-
-                            {assignedGroups.length === 0 && assignedStudents.length === 0 && (
-                                <p className="text-slate-600 text-xs font-bold italic py-2">No targets targeted yet. Use the filters or list below to select targets.</p>
-                            )}
-                        </div>
                     </div>
 
-                    {/* Student List & Search Block */}
-                    <div className="space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
-                                <GraduationCap size={16} className="text-purple-400" /> Individual Student Targeting
+                    {/* Bottom Section: Expandable Search and Infinite Scroll Viewport (Takes up 100% of remaining height) */}
+                    <div className="flex-1 flex flex-col overflow-hidden space-y-4">
+                        
+                        <div className="flex items-center justify-between shrink-0">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
+                                <GraduationCap size={14} className="text-purple-400" /> Student Verification & Targeting
                             </h3>
                             {totalStudentsCount > 0 && (
                                 <button 
                                     onClick={selectAllFiltered}
-                                    className="bg-white/5 border border-white/10 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 self-start sm:self-auto"
+                                    className="bg-white/5 border border-white/10 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-xl transition-all active:scale-95 flex items-center gap-1"
                                 >
-                                    <CheckSquare size={12} /> Select All Filtered ({totalStudentsCount})
+                                    <CheckSquare size={10} /> Select All Filtered ({totalStudentsCount})
                                 </button>
                             )}
                         </div>
 
                         {/* Sticky Search bar */}
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-400 transition-colors" size={18} />
+                        <div className="relative group shrink-0">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-400 transition-colors" size={16} />
                             <input
                                 type="text"
-                                placeholder="SEARCH BY NAME, ROLL NUMBER, OR EMAIL..."
+                                placeholder="SEARCH BY STUDENT NAME OR ROLL NUMBER..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:border-amber-400/30 transition-all text-sm uppercase tracking-tighter"
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-5 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:border-amber-400/30 transition-all text-xs uppercase tracking-wider"
                             />
                         </div>
 
-                        {/* Group Selection Shortcuts based on loaded filters */}
-                        {selectedBranches.length > 0 && (
-                            <div className="flex flex-wrap gap-2 py-2">
-                                {selectedBranches.map(b => (
-                                    <div key={`shortcut-${b}`} className="flex flex-wrap gap-2">
-                                        {sections.map(sec => (
-                                            <button
-                                                key={`shortcut-${b}-${sec}`}
-                                                onClick={() => assignGroup(b, sec)}
-                                                className="bg-amber-400/5 hover:bg-amber-400/10 border border-amber-400/20 text-amber-400 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all italic flex items-center gap-1.5"
-                                            >
-                                                Target Entire {b}-{sec}
-                                            </button>
-                                        ))}
-                                    </div>
+                        {/* Contextual "Target Entire CSE-A" dynamic shortcut tags */}
+                        {getShortcutTargets().length > 0 && (
+                            <div className="flex flex-wrap gap-2 shrink-0 py-1">
+                                {getShortcutTargets().map((sc, sci) => (
+                                    <button
+                                        key={sci}
+                                        onClick={() => sc.section && assignGroup(sc.branch, sc.section)}
+                                        className="bg-amber-400/5 hover:bg-amber-400/10 border border-amber-400/20 text-amber-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all italic flex items-center gap-1.5"
+                                    >
+                                        Target Entire '{sc.branch}-{sc.section || 'All'}'
+                                    </button>
                                 ))}
                             </div>
                         )}
 
-                        {/* Dynamic Infinite Scroll list */}
+                        {/* Custom viewport for Infinite Scroll Student List */}
                         <div 
                             ref={listContainerRef}
-                            className="bg-white/[0.01] border border-white/5 rounded-[2rem] max-h-96 overflow-y-auto custom-scrollbar p-2"
+                            onScroll={handleScroll}
+                            className="flex-1 bg-white/[0.01] border border-white/5 rounded-2xl overflow-y-auto custom-scrollbar p-2"
                         >
                             {students.map((student) => {
                                 const isManuallySelected = assignedStudents.some(s => s.id === student.id);
                                 const isGroupSelected = assignedGroups.some(g => g.branch === student.studentBranch && g.section === student.section);
-                                const isSelected = isManuallySelected || isGroupSelected;
 
                                 return (
                                     <div 
                                         key={student.id}
                                         onClick={() => !isGroupSelected && toggleStudentSelection(student)}
-                                        className={`flex items-center justify-between p-4 rounded-2xl transition-all mb-2 cursor-pointer ${isGroupSelected ? 'bg-amber-400/5 border border-amber-400/10 opacity-70 cursor-not-allowed' : isManuallySelected ? 'bg-purple-500/10 border border-purple-500/20' : 'hover:bg-white/[0.03] border border-transparent'}`}
+                                        className={`flex items-center justify-between p-3.5 rounded-xl transition-all mb-2 cursor-pointer ${isGroupSelected ? 'bg-amber-400/5 border border-amber-400/10 opacity-70 cursor-not-allowed' : isManuallySelected ? 'bg-purple-500/10 border border-purple-500/20' : 'hover:bg-white/[0.03] border border-transparent'}`}
                                     >
-                                        <div className="flex items-center gap-4">
-                                            {/* Circular Avatar */}
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs shrink-0 shadow-lg ${isGroupSelected ? 'bg-amber-400/20 text-amber-300' : isManuallySelected ? 'bg-purple-600 text-white' : 'bg-white/5 text-slate-400'}`}>
+                                        <div className="flex items-center gap-3.5">
+                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs shrink-0 shadow-lg ${isGroupSelected ? 'bg-amber-400/20 text-amber-300' : isManuallySelected ? 'bg-purple-600 text-white' : 'bg-white/5 text-slate-400'}`}>
                                                 {student.name ? student.name[0] : student.username[0]}
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-white text-sm tracking-wide uppercase italic">
+                                                <h4 className="font-black text-white text-xs tracking-wide uppercase italic">
                                                     {student.name || 'Enrolled Student'}
                                                 </h4>
-                                                <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
                                                     {student.username} • <span className="text-slate-400 italic">{student.studentBranch}-{student.section}</span>
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* Status Checkbox */}
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
                                             {isGroupSelected ? (
-                                                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider italic bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-400/20">
-                                                    Section Targeted
+                                                <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider italic bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                                                    Targeted
                                                 </span>
                                             ) : isManuallySelected ? (
-                                                <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
-                                                    <Check size={14} strokeWidth={3} />
+                                                <div className="w-5 h-5 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
+                                                    <Check size={12} strokeWidth={3} />
                                                 </div>
                                             ) : (
-                                                <div className="w-6 h-6 rounded-lg border-2 border-slate-700 group-hover:border-slate-500 shrink-0"></div>
+                                                <div className="w-5 h-5 rounded-lg border-2 border-slate-700 shrink-0"></div>
                                             )}
                                         </div>
                                     </div>
@@ -590,16 +596,16 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
 
                             {loadingStudents && (
                                 <div className="flex items-center justify-center py-6 gap-3">
-                                    <Loader2 className="animate-spin text-amber-400" size={16} />
-                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest italic animate-pulse">Syncing student database...</span>
+                                    <Loader2 className="animate-spin text-amber-400" size={14} />
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic animate-pulse">Syncing student database...</span>
                                 </div>
                             )}
 
                             {students.length === 0 && !loadingStudents && (
                                 <div className="text-center py-12 space-y-2">
-                                    <Users size={32} className="text-slate-700 mx-auto" />
-                                    <h4 className="font-black text-slate-500 uppercase tracking-wider italic text-sm">No DB Students Found</h4>
-                                    <p className="text-xs text-slate-600 font-bold">Verify that the filters match existing records in the database.</p>
+                                    <Users size={28} className="text-slate-700 mx-auto" />
+                                    <h4 className="font-black text-slate-500 uppercase tracking-wider italic text-[10px]">No DB Students Found</h4>
+                                    <p className="text-[10px] text-slate-600 font-bold">Try adjusting your filters above.</p>
                                 </div>
                             )}
                         </div>
@@ -607,22 +613,22 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
 
                 </div>
 
-                {/* Footer Save Actions */}
-                <div className="p-8 border-t border-white/10 bg-white/[0.02] flex items-center justify-between gap-4">
+                {/* Footer Save Actions (Always pinned at bottom) */}
+                <div className="p-6 border-t border-white/10 bg-white/[0.02] flex items-center justify-between gap-4 shrink-0">
                     <button 
                         onClick={onClose}
-                        className="bg-white/5 border border-white/10 hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter text-sm transition-all active:scale-95"
+                        className="bg-white/5 border border-white/10 hover:bg-white/10 text-white px-6 py-3.5 rounded-2xl font-black italic uppercase tracking-tighter text-xs transition-all active:scale-95"
                     >
                         Cancel
                     </button>
                     <button 
                         onClick={handleSaveAssignment}
                         disabled={isSaving}
-                        className="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 px-8 py-4 rounded-2xl font-black italic uppercase tracking-tighter text-sm transition-all active:scale-95 shadow-xl shadow-amber-400/10 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+                        className="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 px-6 py-3.5 rounded-2xl font-black italic uppercase tracking-tighter text-xs transition-all active:scale-95 shadow-xl shadow-amber-400/10 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
                     >
                         {isSaving ? (
                             <>
-                                <Loader2 className="animate-spin" size={16} />
+                                <Loader2 className="animate-spin" size={14} />
                                 Saving Assignment...
                             </>
                         ) : (

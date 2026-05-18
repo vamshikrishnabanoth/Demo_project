@@ -1076,13 +1076,18 @@ exports.joinByCode = async (req, res) => {
         }
         console.log(`✅ Found quiz: ${quiz.title} (${quiz.id})`);
 
-        // Start/End Time Validation
+        // Start/End Time Validation (Exempt the teacher/creator and admin)
         const now = new Date();
-        if (quiz.startTime && new Date(quiz.startTime) > now) {
-            return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
-        }
-        if (quiz.endTime && new Date(quiz.endTime) < now) {
-            return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+        const isCreator = quiz.createdById === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+
+        if (!isCreator && !isAdmin) {
+            if (quiz.startTime && new Date(quiz.startTime) > now) {
+                return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
+            }
+            if (quiz.endTime && new Date(quiz.endTime) < now) {
+                return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
+            }
         }
 
         // Check for existing result to handle resume/blocking
