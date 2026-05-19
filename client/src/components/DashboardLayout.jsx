@@ -175,25 +175,8 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3">
-                            {location.pathname !== '/teacher-dashboard' && <GlobalSearch />}
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
-                            
-                            {role === 'student' && (
-                                <button
-                                    onClick={() => setMessagesOpen(true)}
-                                    className="p-3 bg-white/5 text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:bg-[var(--table-row-hover)] rounded-2xl premium-transition border border-transparent hover:border-[var(--border-color)] relative active:scale-95"
-                                    aria-label="Messages"
-                                    title="View Announcements"
-                                >
-                                    <MessageSquare size={20} />
-                                    {unreadCount > 0 && (
-                                        <span className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black rounded-full flex items-center justify-center text-[10px] shadow-[0_0_15px_var(--bg-accent-glow)] border-2 border-[var(--bg-primary)] animate-pulse">
-                                            {unreadCount}
-                                        </span>
-                                    )}
-                                </button>
-                            )}
 
                             {!isSmallScreen && (
                                 <div className="flex items-center gap-3">
