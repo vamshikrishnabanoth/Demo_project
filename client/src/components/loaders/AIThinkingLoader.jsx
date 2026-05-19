@@ -46,7 +46,9 @@ export default function AIThinkingLoader({ message = 'AI Generating Questions...
           {CONNECTIONS.map(([a, b], i) => (
             <motion.circle
               key={`p-${i}`}
-              r="1.5"
+              cx={NODES[a].x}
+              cy={NODES[a].y}
+              r={1.5}
               fill="var(--bg-accent)"
               animate={{
                 cx: [NODES[a].x, NODES[b].x, NODES[a].x],
