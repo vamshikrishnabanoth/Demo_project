@@ -170,10 +170,9 @@ export default function CreateQuizTopic() {
         }
     };
 
-    if (loading) return <AIThinkingLoader message="AI Generating Questions..." />;
-
     return (
         <DashboardLayout role="teacher">
+            {loading && <AIThinkingLoader message="AI Generating Questions..." />}
             <div className="max-w-4xl mx-auto pb-20 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
