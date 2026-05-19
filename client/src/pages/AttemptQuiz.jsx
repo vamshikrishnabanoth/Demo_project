@@ -258,7 +258,8 @@ export default function AttemptQuiz() {
     };
 
     const handleTimeUp = () => {
-        if (quiz?.isLive) {
+        const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
+        if (isActiveLive) {
             handleAutoSubmitAnswer();
         } else {
             if (quiz.timerType === 'totalTime') {
@@ -546,7 +547,11 @@ export default function AttemptQuiz() {
     const handleSingleQuestionSubmit = () => {
         if (!answers[currentQuestion]) return alert('Please select an option first!');
 
-        if (quiz?.isLive) {
+        // isLive && status !== 'finished' → active live session: teacher controls navigation.
+        // isLive && status === 'finished'  → async practice of a finished live quiz: student controls.
+        const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
+
+        if (isActiveLive) {
             if (!isOnline) {
                 return alert('You are offline! Wait for your connection to restore before submitting.');
             }
@@ -564,6 +569,7 @@ export default function AttemptQuiz() {
                 setMissionComplete(true);
             }
         } else {
+            // Async / self-paced: move immediately to next question or submit
             if (currentQuestion < quiz.questions.length - 1) {
                 setCurrentQuestion(prev => prev + 1);
                 setTimeLeft(quiz.timerPerQuestion || 30);
