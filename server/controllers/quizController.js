@@ -1635,26 +1635,50 @@ exports.submitQuiz = async (req, res) => {
             };
         });
 
-        // Assessments AND finished live quizzes (async practice) allow unlimited re-attempts
-        // → always create a new result record so improvement is tracked across sessions.
+        // Assessments AND finished live quizzes (async practice) allow unlimited re-attempts.
+        // The DB has a unique constraint on (quizId, studentId), so we upsert:
+        // update the existing record with the latest attempt's data, or create if none exists.
         const isAsyncPractice = quiz.isAssessment || (quiz.isLive && quiz.status === 'finished');
         if (isAsyncPractice) {
             const now = new Date();
             const startedAt = new Date(now.getTime() - (totalTimeTaken * 1000));
-            const result = await prisma.result.create({
-                data: {
-                    quizId: quizId,
-                    studentId: req.user.id,
-                    score,
-                    totalTimeTaken,
-                    totalQuestions: quiz.questions.length,
-                    answers: formattedAnswers,
-                    status: 'completed',
-                    startedAt: startedAt,
-                    completedAt: now,
-                    lastAnsweredAt: now
-                }
+
+            const existingForUpsert = await prisma.result.findFirst({
+                where: { quizId: quizId, studentId: req.user.id }
             });
+
+            let result;
+            if (existingForUpsert) {
+                // Update existing record with new attempt's results
+                result = await prisma.result.update({
+                    where: { id: existingForUpsert.id },
+                    data: {
+                        score,
+                        totalTimeTaken,
+                        totalQuestions: quiz.questions.length,
+                        answers: formattedAnswers,
+                        status: 'completed',
+                        startedAt: startedAt,
+                        completedAt: now,
+                        lastAnsweredAt: now
+                    }
+                });
+            } else {
+                result = await prisma.result.create({
+                    data: {
+                        quizId: quizId,
+                        studentId: req.user.id,
+                        score,
+                        totalTimeTaken,
+                        totalQuestions: quiz.questions.length,
+                        answers: formattedAnswers,
+                        status: 'completed',
+                        startedAt: startedAt,
+                        completedAt: now,
+                        lastAnsweredAt: now
+                    }
+                });
+            }
             return res.json(result);
         }
 
