@@ -188,12 +188,29 @@ async def generate_questions(req: GeneratorRequest):
     generated_so_far = ""
     print(f"🚀 Starting sequential generation for {req.count} questions...")
 
+    def is_duplicate(new_text, existing_questions):
+        new_norm = re.sub(r'\s+', ' ', new_text.strip().lower())
+        for q in existing_questions:
+            old_norm = re.sub(r'\s+', ' ', q["questionText"].strip().lower())
+            if new_norm == old_norm:
+                return True
+            # Keyword overlap check to catch slightly rephrased questions
+            words_new = set(new_norm.split())
+            words_old = set(old_norm.split())
+            if words_new and words_old:
+                overlap = len(words_new.intersection(words_old)) / max(len(words_new), len(words_old))
+                if overlap > 0.8:
+                    return True
+        return False
+
     for i in range(req.count):
         question_success = False
         for attempt in range(3):
             try:
-                # Inject history to prevent repetition
-                history_clause = f"\nAvoid repeating these questions: {generated_so_far}" if generated_so_far else ""
+                # Strong prompt instruction and negation to enforce conceptual diversity
+                history_clause = ""
+                if generated_so_far:
+                    history_clause = f"\nCRITICAL: You MUST focus on a completely new sub-topic or distinct educational concept. Do NOT repeat or cover the same concepts as these questions: {generated_so_far}."
                 
                 short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
                 prompt = f"Topic: {short_topic}\nDifficulty: {req.difficulty}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. {history_clause}\nReturn a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
@@ -202,14 +219,18 @@ async def generate_questions(req: GeneratorRequest):
                 payload = {
                     "model": MODEL_NAME,
                     "prompt": prompt,
-                    "stream": False
+                    "stream": False,
+                    "options": {
+                        "temperature": 0.8,
+                        "repeat_penalty": 1.35,
+                        "num_ctx": 4096
+                    }
                 }
                 if use_json_format:
                     payload["format"] = "json"
                 
                 response = requests.post(OLLAMA_URL, json=payload, timeout=90)
                 
-                # If Ollama returns a bad status (e.g. 400 Bad Request due to format constraint)
                 if response.status_code != 200:
                     if use_json_format:
                         print(f"⚠️ Ollama returned {response.status_code} with format='json'. Retrying without format parameter...")
@@ -228,6 +249,10 @@ async def generate_questions(req: GeneratorRequest):
                 q_ans = data.get("correctAnswer") or data.get("answer")
                 
                 if q_text and q_opts:
+                    # Check for duplicate before adding
+                    if is_duplicate(str(q_text), questions):
+                        raise Exception(f"Duplicate question detected: {q_text}")
+                        
                     questions.append({
                         "questionText": str(q_text),
                         "options": [str(o) for o in q_opts[:4]],
