@@ -440,8 +440,12 @@ export default function AttemptQuiz() {
                     if (res.data.previousResult) {
                         const prevResult = res.data.previousResult;
 
-                        // BLOCK RE-ENTRY: If completed, forced review mode
-                        if (prevResult.status === 'completed') {
+                        // ALLOW RE-ATTEMPT: If it's a finished live quiz opened for async practice,
+                        // skip review mode — a fresh self-paced attempt is intended.
+                        const isFinishedLive = res.data.isLive && res.data.status === 'finished';
+
+                        // BLOCK RE-ENTRY: If completed (and not a practice re-attempt), force review mode
+                        if (prevResult.status === 'completed' && !isFinishedLive) {
                             setIsReviewMode(true);
                             setResult(prevResult);
                             setAnswersFromHistory(prevResult.answers);
