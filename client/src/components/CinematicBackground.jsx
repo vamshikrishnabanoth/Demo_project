@@ -30,7 +30,7 @@ const CinematicBackground = () => {
       {/* ─── LAYER 1: AURORA WAVES ─────────────────────────────────────────── */}
       <div className="absolute inset-0 opacity-40 mix-blend-screen overflow-hidden">
         <div
-          className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] blur-[80px]"
+          className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] opacity-80"
           style={{
             background: 'radial-gradient(circle at 20% 30%, var(--aurora-glow-1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--aurora-glow-2) 0%, transparent 50%)',
             animation: 'aurora 30s infinite alternate',

@@ -26,8 +26,8 @@ const ParticleEngine = () => {
 
         const layers = [
             { count: Math.floor(PARTICLE_COUNT * 0.25), speed: 0.15, size: [1, 2],  blur: 0, opacity: [0.1, 0.4], parallax: isMobile ? 0 : 0.02 },
-            { count: Math.floor(PARTICLE_COUNT * 0.45), speed: 0.10, size: [2, 4],  blur: 2, opacity: [0.2, 0.6], parallax: isMobile ? 0 : 0.05 },
-            { count: Math.floor(PARTICLE_COUNT * 0.30), speed: 0.05, size: [5, 10], blur: 8, opacity: [0.1, 0.3], parallax: isMobile ? 0 : 0.10 },
+            { count: Math.floor(PARTICLE_COUNT * 0.45), speed: 0.10, size: [2, 4],  blur: 0, opacity: [0.2, 0.6], parallax: isMobile ? 0 : 0.05 },
+            { count: Math.floor(PARTICLE_COUNT * 0.30), speed: 0.05, size: [5, 10], blur: 0, opacity: [0.1, 0.3], parallax: isMobile ? 0 : 0.10 },
         ];
 
         let particles = [];
@@ -109,12 +109,7 @@ const ParticleEngine = () => {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 
-                if (this.layer.blur > 0) {
-                    ctx.shadowBlur  = this.layer.blur;
-                    ctx.shadowColor = accentColor; // Use cached color
-                } else {
-                    ctx.shadowBlur = 0;
-                }
+                // Removed ctx.shadowBlur for performance reasons as it causes severe latency
 
                 ctx.fillStyle  = accentColor;
                 ctx.globalAlpha = Math.max(0, this.opacity + this.shimmer);
