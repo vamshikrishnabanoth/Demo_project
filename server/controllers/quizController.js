@@ -892,6 +892,76 @@ const generateMockQuestions = (count = 5, errorMsg = "AI generation is temporari
     return questions;
 };
 
+// Simplified mock fallback as requested: beautiful, pre-formatted, easy-to-edit template
+const generateFallbackMockQuestions = (count = 5) => {
+    const questions = [];
+    for (let i = 1; i <= count; i++) {
+        questions.push({
+            questionText: `AI quiz generation is temporarily offline. Would you like to edit Question #${i} to customize its text?`,
+            options: ["Yes, let's edit this question!", "No, keep it simple.", "Maybe later.", "Show me configuration instructions."],
+            correctAnswer: "Yes, let's edit this question!",
+            points: 10,
+            type: 'multiple-choice'
+        });
+    }
+    return questions;
+};
+
+// Cloud-based Groq fallback or pre-formatted mock fallback
+const generateFallbackQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
+    console.log(`🔄 Local AI failed. Initiating Groq Cloud Fallback...`);
+    
+    if (process.env.GROQ_API_KEY && groq) {
+        try {
+            console.log(`🤖 Calling Groq (llama-3.1-8b-instant) for resilient generation...`);
+            
+            const prompt = `
+                You are an expert quiz generator.
+                Generate a set of multiple-choice questions based on the following input:
+                
+                Topic/Content: ${content.substring(0, 4000)}
+                Difficulty: ${difficulty}
+                Count: ${count}
+                
+                Return a JSON object with a single key "questions", which contains an array of question objects.
+                Each question object MUST have exactly these keys:
+                - questionText (string)
+                - options (array of exactly 4 strings)
+                - correctAnswer (string, must exactly match one of the options)
+                
+                Do not return any conversational text, explanations, or markdown formatting wrapper except the JSON block.
+            `;
+            
+            const chatCompletion = await groq.chat.completions.create({
+                messages: [{ role: 'user', content: prompt }],
+                model: 'llama-3.1-8b-instant',
+                response_format: { type: 'json_object' },
+                temperature: 0.5,
+                max_tokens: 2000
+            });
+            
+            const rawResponse = chatCompletion.choices[0].message.content;
+            const parsed = JSON.parse(rawResponse);
+            
+            if (parsed && parsed.questions && parsed.questions.length > 0) {
+                console.log(`✅ Groq Fallback successful! Generated ${parsed.questions.length} questions.`);
+                return parsed.questions.map(q => ({
+                    questionText: q.questionText,
+                    options: q.options.slice(0, 4),
+                    correctAnswer: q.correctAnswer,
+                    points: 10,
+                    type: 'multiple-choice'
+                }));
+            }
+        } catch (groqErr) {
+            console.error(`⚠️ Groq Fallback failed:`, groqErr.message);
+        }
+    }
+    
+    console.log(`⚠️ All AI services failed. Returning pre-formatted editable fallback questions.`);
+    return generateFallbackMockQuestions(count);
+};
+
 // Text Extraction Helper
 const extractText = async (filePath) => {
     try {
@@ -919,11 +989,41 @@ const extractText = async (filePath) => {
 };
 
 
+const checkAiServiceOnline = async (url) => {
+    try {
+        console.log(`🔍 Probing local AI Service at ${url}...`);
+        await axios.get(url, { 
+            headers: { 'Bypass-Tunnel-Reminder': 'true' },
+            timeout: 1500 
+        });
+        return true;
+    } catch (err) {
+        if (err.response) {
+            console.log(`ℹ️ AI Service replied with HTTP status ${err.response.status}`);
+            // 502/503/504 errors mean the Ngrok/Localhost tunnel is up but the local service itself is stopped
+            if ([502, 503, 504].includes(err.response.status)) {
+                console.log(`⚠️ AI Service tunnel is active but the local Python service is completely stopped.`);
+                return false;
+            }
+            return true;
+        }
+        console.log(`❌ AI Service probe failed: ${err.message}`);
+        return false;
+    }
+};
+
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
+    const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+    
+    // Probe the AI Service first to ensure we fallback instantly if it is down/offline
+    const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
+    if (!isOnline) {
+        console.log(`⚠️ AI Service is offline/down. Bypassing directly to Groq Fallback!`);
+        return generateFallbackQuestions(type, content, count, difficulty);
+    }
+
     try {
-        // Use environment variable for the AI service URL, fallback to localhost
-        const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
         console.log(`🚀 Sending to AI Service at ${AI_SERVICE_URL}: ${type} | Count: ${count}`);
         
         const response = await axios.post(`${AI_SERVICE_URL}/generate`, {
@@ -943,10 +1043,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             return response.data.questions;
         }
         
-        return generateMockQuestions(count, "AI Service returned empty data.");
+        return generateFallbackQuestions(type, content, count, difficulty);
     } catch (err) {
         console.error('❌ AI Service Error:', err.message);
-        return generateMockQuestions(count, "The Local AI Service is not running. Please start ai_service.py.");
+        return generateFallbackQuestions(type, content, count, difficulty);
     }
 };
 

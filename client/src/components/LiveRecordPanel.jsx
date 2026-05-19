@@ -101,7 +101,8 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
             formData.append('difficulty', difficulty);
 
             const res = await api.post('/quiz/generate-voice', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 300000
             });
 
             if (res.data.questions && res.data.questions.length > 0) {

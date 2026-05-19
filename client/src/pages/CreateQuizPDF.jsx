@@ -185,7 +185,8 @@ export default function CreateQuizPDF() {
             formData.append('difficulty', difficulty);
 
             const res = await api.post('/quiz/generate', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 300000
             });
 
             navigate('/create-quiz/text', {

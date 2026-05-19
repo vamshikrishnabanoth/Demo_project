@@ -151,7 +151,7 @@ export default function CreateQuizTopic() {
                 difficulty
             };
 
-            const res = await api.post('/quiz/generate', payload);
+            const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
 
             // Redirect to the editor with generated questions
             navigate('/create-quiz/text', {

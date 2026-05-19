@@ -80,7 +80,7 @@ export default function QuestionAnalysis() {
     const handleGetAIReview = async () => {
         setLoadingAi(true);
         try {
-            const res = await api.get(`/analytics/question-review/${quizId}/${questionIndex}`);
+            const res = await api.get(`/analytics/question-review/${quizId}/${questionIndex}`, { timeout: 300000 });
             setAiReview(res.data.review);
             toast.success('AI Review Generated!', { icon: '🤖' });
         } catch (err) {

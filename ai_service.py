@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import ast
 
 # Extractors
 import easyocr
@@ -94,6 +95,69 @@ class GeneratorRequest(BaseModel):
     count: int = 5
     difficulty: str = "Medium"
 
+def robust_json_loads(text):
+    text = text.strip()
+    
+    # Strategy 1: Direct JSON load
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+        
+    # Strategy 2: Extract Markdown block
+    match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', text)
+    if match:
+        extracted = match.group(1).strip()
+        try:
+            return json.loads(extracted)
+        except json.JSONDecodeError:
+            text = extracted # Use extracted for subsequent strategies
+
+    # Strategy 3: Greedy brace/bracket extraction
+    match_brace = re.search(r'({[\s\S]*})|(\[[\s\S]*\])', text)
+    if match_brace:
+        extracted = match_brace.group(0).strip()
+        try:
+            return json.loads(extracted)
+        except json.JSONDecodeError:
+            text = extracted # Use extracted for subsequent strategies
+
+    # Strategy 4: Clean trailing commas
+    try:
+        cleaned = re.sub(r',\s*([\]}])', r'\1', text)
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # Strategy 5: Python ast.literal_eval
+    try:
+        eval_text = text
+        eval_text = re.sub(r'(?<![\'\"])\bnull\b(?![\'\"])', 'None', eval_text)
+        eval_text = re.sub(r'(?<![\'\"])\btrue\b(?![\'\"])', 'True', eval_text)
+        eval_text = re.sub(r'(?<![\'\"])\bfalse\b(?![\'\"])', 'False', eval_text)
+        
+        parsed = ast.literal_eval(eval_text)
+        if isinstance(parsed, (dict, list)):
+            return parsed
+    except Exception:
+        pass
+
+    # Strategy 6: Heavy cleaning
+    try:
+        cleaned = text
+        cleaned = re.sub(r"^'", '"', cleaned)
+        cleaned = re.sub(r"'$", '"', cleaned)
+        cleaned = re.sub(r"([{\[,:\s])'", r'\1"', cleaned)
+        cleaned = re.sub(r"'([}\],:\s])", r'"\1', cleaned)
+        cleaned = re.sub(r'([{,]\s*)([a-zA-Z0-9_]+)\s*:', r'\1"\2":', cleaned)
+        cleaned = re.sub(r',\s*([\]}])', r'\1', cleaned)
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    raise json.JSONDecodeError("Failed to extract JSON from Ollama response.", text, 0)
+
+
 @app.post("/generate")
 async def generate_questions(req: GeneratorRequest):
     source_text = req.content
@@ -120,55 +184,71 @@ async def generate_questions(req: GeneratorRequest):
     query = "Important core concepts" if req.type != 'topic' else req.content[:100]
     context = get_relevant_context(source_text, query, top_k=5)
 
-    query = "Important core concepts" if req.type != 'topic' else req.content[:100]
-    context = get_relevant_context(source_text, query, top_k=5)
-
     questions = []
     generated_so_far = ""
     print(f"🚀 Starting sequential generation for {req.count} questions...")
 
     for i in range(req.count):
-        try:
-            # Inject history to prevent repetition
-            history_clause = f"\nAvoid repeating these questions: {generated_so_far}" if generated_so_far else ""
-            
-            short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
-            prompt = f"Topic: {short_topic}\nDifficulty: {req.difficulty}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. {history_clause}\nReturn a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
-            
-            response = requests.post(
-                OLLAMA_URL,
-                json={
+        question_success = False
+        for attempt in range(3):
+            try:
+                # Inject history to prevent repetition
+                history_clause = f"\nAvoid repeating these questions: {generated_so_far}" if generated_so_far else ""
+                
+                short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
+                prompt = f"Topic: {short_topic}\nDifficulty: {req.difficulty}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. {history_clause}\nReturn a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
+                
+                use_json_format = (attempt == 0)
+                payload = {
                     "model": MODEL_NAME,
                     "prompt": prompt,
-                    "stream": False,
-                    "format": "json"
-                },
-                timeout=300
-            )
-            raw_text = response.json().get("response", "")
-            data = json.loads(raw_text)
-            
-            # Normalize
-            q_text = data.get("questionText") or data.get("question")
-            q_opts = data.get("options") or data.get("choices")
-            q_ans = data.get("correctAnswer") or data.get("answer")
-            
-            if q_text and q_opts:
-                questions.append({
-                    "questionText": str(q_text),
-                    "options": [str(o) for o in q_opts[:4]],
-                    "correctAnswer": str(q_ans),
-                    "points": 10,
-                    "type": "multiple-choice"
-                })
-                print(f"✅ Generated question {len(questions)}/{req.count}")
+                    "stream": False
+                }
+                if use_json_format:
+                    payload["format"] = "json"
                 
-                # Add to history for diversity
-                generated_so_far += f" [{q_text}] "
-            
-        except Exception as e:
-            print(f"⚠️ Error on question {i+1}: {e}")
-            continue
+                response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+                
+                # If Ollama returns a bad status (e.g. 400 Bad Request due to format constraint)
+                if response.status_code != 200:
+                    if use_json_format:
+                        print(f"⚠️ Ollama returned {response.status_code} with format='json'. Retrying without format parameter...")
+                        payload.pop("format", None)
+                        response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+                    
+                    if response.status_code != 200:
+                        raise Exception(f"Ollama server returned HTTP {response.status_code}: {response.text}")
+                
+                raw_text = response.json().get("response", "")
+                data = robust_json_loads(raw_text)
+                
+                # Normalize keys
+                q_text = data.get("questionText") or data.get("question")
+                q_opts = data.get("options") or data.get("choices")
+                q_ans = data.get("correctAnswer") or data.get("answer")
+                
+                if q_text and q_opts:
+                    questions.append({
+                        "questionText": str(q_text),
+                        "options": [str(o) for o in q_opts[:4]],
+                        "correctAnswer": str(q_ans),
+                        "points": 10,
+                        "type": "multiple-choice"
+                    })
+                    print(f"✅ Generated question {len(questions)}/{req.count}")
+                    
+                    # Add to history for diversity
+                    generated_so_far += f" [{q_text}] "
+                    question_success = True
+                    break
+                else:
+                    raise Exception("Extracted JSON does not contain questionText or options keys.")
+                
+            except Exception as e:
+                print(f"⚠️ Attempt {attempt+1} failed for question {i+1}: {e}")
+                
+        if not question_success:
+            print(f"❌ Failed to generate question {i+1} after 3 attempts.")
 
     if not questions:
         raise HTTPException(status_code=500, detail="AI failed to generate any questions.")
