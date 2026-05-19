@@ -352,7 +352,7 @@ export default function Assessments() {
                                                 </button>
                                             ) : (
                                                 <button
-                                                    onClick={() => handleAttemptClick(quiz)}
+                                                    onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
                                                     className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
                                                 >
                                                     Start
