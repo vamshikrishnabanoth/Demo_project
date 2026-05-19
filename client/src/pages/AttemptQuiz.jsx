@@ -606,19 +606,25 @@ export default function AttemptQuiz() {
                 answers: formattedAnswers
             });
 
-            setResult(res.data);
+            const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
+            if (isActiveLive) {
+                // Live quiz: show waiting screen until teacher ends the session
+                setResult(res.data);
+            } else {
+                // Async / assessment: go straight to full result report
+                localStorage.removeItem(`quiz_answers_${id}`);
+                navigate(`/report/${id}`);
+            }
         } catch (err) {
             console.error('Error submitting quiz', err);
-            // Handle "already attempted" gracefully
             const error = /** @type {any} */ (err);
             if (error?.response?.status === 400 && error?.response?.data?.msg === 'Quiz already attempted') {
-                window.location.reload(); // Refresh to catch the result in useEffect
+                window.location.reload();
             } else {
                 alert('Submission failed. Please check your connection.');
             }
         } finally {
             setSubmitting(false);
-            // Clear local storage on finish
             localStorage.removeItem(`quiz_answers_${id}`);
         }
     };
