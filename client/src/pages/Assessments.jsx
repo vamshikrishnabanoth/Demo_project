@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle, Lock } from 'lucide-react';
+import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle, Lock, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
@@ -266,7 +266,12 @@ export default function Assessments() {
                                                                 EXPIRED
                                                             </span>
                                                         )}
-                                                        {quiz.isAttempted && (
+                                                        {quiz.wasLiveCompleted && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                                                                LIVE COMPLETED
+                                                            </span>
+                                                        )}
+                                                        {quiz.isAttempted && !quiz.wasLiveCompleted && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                                                                 COMPLETED
                                                             </span>
@@ -315,6 +320,28 @@ export default function Assessments() {
                                                     Expired
                                                     <AlertCircle size={14} aria-hidden="true" />
                                                 </button>
+                                            ) : quiz.wasLiveCompleted ? (
+                                                /* Dual action buttons for completed live quizzes */
+                                                <div className="flex items-center gap-3">
+                                                    {quiz.resultId && (
+                                                        <button
+                                                            onClick={() => navigate(`/report/${quiz.resultId}`)}
+                                                            className="bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-blue-500/5"
+                                                            title="View your result from the live session"
+                                                        >
+                                                            <BarChart2 size={14} aria-hidden="true" />
+                                                            Result
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
+                                                        className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
+                                                        title="Practice this quiz at your own pace"
+                                                    >
+                                                        <Play size={14} fill="currentColor" aria-hidden="true" />
+                                                        Start
+                                                    </button>
+                                                </div>
                                             ) : quiz.isAttempted ? (
                                                 <button
                                                     onClick={() => navigate(`/report/${quiz.id}`)}
@@ -328,7 +355,7 @@ export default function Assessments() {
                                                     onClick={() => handleAttemptClick(quiz)}
                                                     className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
                                                 >
-                                                    Initiate Sequence
+                                                    Start
                                                     <Play size={14} fill="currentColor" aria-hidden="true" />
                                                 </button>
                                             )}
