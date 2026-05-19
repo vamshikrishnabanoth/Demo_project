@@ -441,12 +441,14 @@ export default function AttemptQuiz() {
                     if (res.data.previousResult) {
                         const prevResult = res.data.previousResult;
 
-                        // ALLOW RE-ATTEMPT: If it's a finished live quiz opened for async practice,
-                        // skip review mode — a fresh self-paced attempt is intended.
+                        // Allow re-attempts for:
+                        //  - finished live quizzes (async practice)
+                        //  - isAssessment quizzes (unlimited practice until full marks)
                         const isFinishedLive = res.data.isLive && res.data.status === 'finished';
+                        const allowRetake = isFinishedLive || res.data.isAssessment;
 
-                        // BLOCK RE-ENTRY: If completed (and not a practice re-attempt), force review mode
-                        if (prevResult.status === 'completed' && !isFinishedLive) {
+                        // BLOCK RE-ENTRY only for regular one-shot quizzes that are already done
+                        if (prevResult.status === 'completed' && !allowRetake) {
                             setIsReviewMode(true);
                             setResult(prevResult);
                             setAnswersFromHistory(prevResult.answers);
@@ -618,10 +620,15 @@ export default function AttemptQuiz() {
         } catch (err) {
             console.error('Error submitting quiz', err);
             const error = /** @type {any} */ (err);
-            if (error?.response?.status === 400 && error?.response?.data?.msg === 'Quiz already attempted') {
+            const status = error?.response?.status;
+            const msg = error?.response?.data?.msg || '';
+            if (status === 400 && msg === 'Quiz already attempted') {
                 window.location.reload();
+            } else if (status === 403 && msg.includes('already submitted')) {
+                // Quiz doesn't allow re-attempts; navigate to latest result
+                navigate(`/report/${id}`);
             } else {
-                alert('Submission failed. Please check your connection.');
+                alert(msg || 'Submission failed. Please check your connection.');
             }
         } finally {
             setSubmitting(false);
