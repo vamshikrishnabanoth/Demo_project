@@ -1011,12 +1011,14 @@ setInterval(async () => {
     try {
         const now = new Date();
 
-        // 1. Find quizzes that should START
+        // 1. Find quizzes that should START (only non-live/assessment quizzes are auto-started by scheduler)
+        // Live quizzes must be started manually by the teacher from the lobby.
         const quizzesToStart = await prisma.quiz.findMany({
             where: {
                 startTime: { lte: now },
                 status: 'waiting',
-                isActive: true
+                isActive: true,
+                isLive: false  // Only auto-start assessments, not live quizzes
             }
         });
 
@@ -1072,4 +1074,3 @@ server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 });
-
