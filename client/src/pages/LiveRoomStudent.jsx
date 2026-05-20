@@ -150,6 +150,7 @@ export default function LiveRoomStudent() {
         }
 
         return () => {
+            socket.emit('leave_room', { quizId: quiz.id });
             socket.off('quiz_started', handleQuizStarted);
             socket.off('connect', handleConnect);
             socket.off('restoreState');

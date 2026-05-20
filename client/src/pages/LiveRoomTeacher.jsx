@@ -62,15 +62,16 @@ export default function LiveRoomTeacher() {
         fetchQuiz();
 
         socket.on('participants_update', (participantsList = []) => {
-    console.log('Participants Update:', participantsList);
+            console.log('Participants Update:', participantsList);
 
-    const students = participantsList.filter(
-        p =>
-            p.role?.toLowerCase() !== 'teacher'
-    );
+            const students = participantsList.filter(
+                p =>
+                    p.role?.toLowerCase() !== 'teacher' &&
+                    p.isOnline !== false
+            );
 
-    setParticipants([...students]);
-});
+            setParticipants([...students]);
+        });
 
         socket.on('progress_history', (history) => {
             setStudentProgress(history);
@@ -140,13 +141,15 @@ export default function LiveRoomTeacher() {
             if (state.leaderboard && state.leaderboard.length > 0) {
                 setLeaderboard(state.leaderboard);
             }
-           if (state.participants) {
-    const students = state.participants.filter(
-        p => p.role?.toLowerCase() !== 'teacher'
-    );
+            if (state.participants) {
+                const students = state.participants.filter(
+                    p =>
+                        p.role?.toLowerCase() !== 'teacher' &&
+                        p.isOnline !== false
+                );
 
-    setParticipants([...students]);
-}
+                setParticipants([...students]);
+            }
             if (state.progress) {
                 setStudentProgress(state.progress);
             }

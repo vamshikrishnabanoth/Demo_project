@@ -93,9 +93,13 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         if (user && socket) {
             socket.emit('logout', user.id);
+            socket.disconnect();
         }
         localStorage.removeItem('token');
         setUser(null);
+        setTimeout(() => {
+            if (socket) socket.connect();
+        }, 100);
     }, [user]);
 
     const setTheme = useCallback((t) => setThemeState(t), []);
