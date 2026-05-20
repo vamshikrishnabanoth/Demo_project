@@ -111,12 +111,12 @@ export default function DashboardLayout({ children, role }) {
         role === 'admin'   ? '/admin-dashboard'   : '/student-dashboard';
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative overflow-x-hidden">
+        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative">
             <CinematicBackground />
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
             <header
-                className="glass-panel sticky top-0 z-[100] border-b-0 shadow-none"
+                className="glass-panel dashboard-header border-b-0 shadow-none"
                 style={{ backdropFilter: 'blur(var(--blur-strength))' }}
                 role="banner"
             >

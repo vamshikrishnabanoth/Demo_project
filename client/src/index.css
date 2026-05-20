@@ -332,3 +332,15 @@ input:-webkit-autofill:active {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Sticky Header for Dashboard Layout */
+header.dashboard-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+}
+
+header.dashboard-header:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
