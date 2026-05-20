@@ -109,13 +109,19 @@ export default function CreateQuizText() {
         let finalEndTime = endTime;
 
         if (startNow) {
-            finalStartTime = new Date().toISOString();
+            // For LIVE quizzes: do NOT set startTime — teacher controls start from the lobby.
+            // For ASSESSMENT quizzes: set startTime to now so they open immediately.
+            if (!isAssessment) {
+                finalStartTime = null;
+            } else {
+                finalStartTime = new Date().toISOString();
+            }
             if (!finalEndTime) {
                 if (timerType === 'totalTime' && duration) {
                     finalEndTime = new Date(Date.now() + (parseInt(duration) || 30) * 60000).toISOString();
                 } else if (timerType === 'timePerQuestion' && timerPerQuestion) {
                     // Auto-calculate end time: (number of questions * timerPerQuestion) in milliseconds
-                    // Add a 5 minute buffer so students have time to join the "Start Now" quiz
+                    // Add a 5 minute buffer so students have time to join the quiz
                     const totalTimeMs = (questions.length * (parseInt(timerPerQuestion) || 30)) * 1000;
                     finalEndTime = new Date(Date.now() + totalTimeMs + (5 * 60000)).toISOString();
                 } else {
@@ -407,7 +413,7 @@ export default function CreateQuizText() {
                                             )}
                                             
                                             <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
-                                                {startNow ? 'Bypasses scheduled waiting state' : 'Optional: Leave blank for instant access'}
+                                                    {startNow ? (isAssessment ? 'Opens immediately for students' : 'Quiz opens lobby now — start manually when ready') : 'Optional: Leave blank for instant access'}
                                             </span>
                                         </div>
                                     </GlassCard>
