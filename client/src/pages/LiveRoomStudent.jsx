@@ -101,8 +101,13 @@ export default function LiveRoomStudent() {
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
 
+        // If socket is already connected when this effect runs, re-join immediately.
+        // The 'connect' event won't fire again for an existing live connection.
+        if (socket.connected) {
+            handleConnect();
+        }
+
         return () => {
-            socket.emit('leave_room', { quizId: quiz.id });
             socket.off('quiz_started', handleQuizStarted);
             socket.off('connect', handleConnect);
         };
