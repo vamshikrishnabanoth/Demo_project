@@ -362,9 +362,9 @@ export default function LiveRoomTeacher() {
         <DashboardLayout role="teacher">
             <div className="flex flex-col items-center justify-center min-h-[70vh]">
                 <div className="relative">
-                    <div className="w-20 h-20 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <div className="w-20 h-20 border-4 border-[var(--bg-accent)]/20 border-t-[var(--bg-accent)] rounded-full animate-spin"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <Users className="text-indigo-600" size={24} />
+                        <Users className="text-[var(--text-accent)]" size={24} />
                     </div>
                 </div>
                 <p className="mt-6 font-black text-gray-400 uppercase tracking-widest animate-pulse">Initializing Room...</p>
@@ -377,8 +377,8 @@ export default function LiveRoomTeacher() {
         return (
             <DashboardLayout role="teacher">
                 <div className="max-w-2xl mx-auto py-24 text-center space-y-8">
-                    <div className="w-24 h-24 bg-indigo-100 rounded-[2rem] flex items-center justify-center mx-auto">
-                        <Trophy className="text-indigo-600" size={48} />
+                    <div className="w-24 h-24 bg-[var(--bg-accent)]/10 rounded-[2rem] flex items-center justify-center mx-auto">
+                        <Trophy className="text-[var(--text-accent)]" size={48} />
                     </div>
                     <h1 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-gray-900 text-balance">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
                     <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
@@ -416,15 +416,15 @@ export default function LiveRoomTeacher() {
         return (
             <DashboardLayout role="teacher">
                 <div className="max-w-6xl mx-auto space-y-12 py-10">
-                    <div className="bg-indigo-900 rounded-[3rem] p-16 text-center text-white shadow-2xl relative overflow-hidden">
+                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-16 text-center text-white shadow-2xl relative overflow-hidden">
                         <div className="relative z-10 space-y-8">
-                            <div className="inline-block px-6 py-2 bg-white/10 rounded-full border border-white/20">
-                                <span className="text-indigo-200 font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
+                            <div className="inline-block px-6 py-2 bg-[var(--bg-accent)]/10 rounded-full border border-[var(--bg-accent)]/30">
+                                <span className="text-[var(--text-accent)] font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
                             </div>
                             <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter text-balance">Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
                             <div className="flex flex-col items-center gap-4">
-                                <p className="text-indigo-300 font-bold uppercase tracking-widest text-lg">Join Code</p>
-                                <div onClick={copyCode} className="bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
+                                <p className="text-white/50 font-bold uppercase tracking-widest text-lg">Join Code</p>
+                                <div onClick={copyCode} className="bg-white/5 border-2 border-[var(--bg-accent)]/20 hover:bg-[var(--bg-accent)]/10 hover:border-[var(--bg-accent)]/50 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
                                     <p className="text-5xl sm:text-7xl font-black tracking-[0.2em] sm:tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-4 sm:decoration-8 underline-offset-[16px] break-all">{joinCode}</p>
                                 </div>
                             </div>
@@ -432,7 +432,7 @@ export default function LiveRoomTeacher() {
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-col sm:flex-row items-center gap-6 sm:gap-8 bg-[var(--bg-accent)] text-white px-10 sm:px-20 py-5 sm:py-8 rounded-[2.5rem] sm:rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-2xl sm:text-4xl italic uppercase tracking-tighter active:scale-95 border-b-[6px] sm:border-b-[10px] border-[#cc5500] disabled:opacity-50 disabled:cursor-not-allowed btn-glow"
+                                    className="group flex flex-col sm:flex-row items-center gap-6 sm:gap-8 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 sm:px-20 py-5 sm:py-8 rounded-[2.5rem] sm:rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-2xl sm:text-4xl italic uppercase tracking-tighter active:scale-95 border-b-[6px] sm:border-b-[10px] border-[var(--bg-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed btn-glow"
                                 >
                                     <Play size={32} className="sm:w-[48px] sm:h-[48px] group-hover:translate-x-2 transition-transform" fill="currentColor" />
                                     START GAME
@@ -441,7 +441,7 @@ export default function LiveRoomTeacher() {
                             </div>
                         </div>
                         {/* Background Decorations */}
-                        <div className="absolute -top-20 -left-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-[100px]"></div>
+                        <div className="absolute -top-20 -left-20 w-80 h-80 bg-[var(--bg-accent)]/10 rounded-full blur-[100px]"></div>
                         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[var(--bg-accent)]/10 rounded-full blur-[100px]"></div>
                     </div>
 
@@ -449,24 +449,24 @@ export default function LiveRoomTeacher() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-2 space-y-6">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <Users className="text-blue-600" size={24} />
+                                <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+                                    <Users className="text-[var(--text-accent)]" size={24} />
                                     Participants ({participants.length})
                                 </h2>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                 {participants.map((p, idx) => (
-                                    <div key={idx} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3 animate-in fade-in zoom-in duration-300">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold uppercase">
+                                    <div key={idx} className="bg-[var(--bg-secondary)] p-4 rounded-2xl border border-[var(--border-color)] flex items-center gap-3 animate-in fade-in zoom-in duration-300">
+                                        <div className="w-10 h-10 bg-[var(--bg-accent)] rounded-full flex items-center justify-center text-[var(--text-on-accent)] font-bold uppercase">
                                             {p.username ? p.username[0] : '?'}
                                         </div>
-                                        <span className="font-bold text-gray-800 truncate">{p.username || 'Unknown'}</span>
+                                        <span className="font-bold text-[var(--text-primary)] truncate">{p.username || 'Unknown'}</span>
                                     </div>
                                 ))}
                                 {participants.length === 0 && (
-                                    <div className="col-span-full py-12 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                                        <p className="text-gray-400 font-medium italic">No students joined yet...</p>
+                                    <div className="col-span-full py-12 text-center bg-[var(--bg-secondary)] rounded-2xl border-2 border-dashed border-[var(--border-color)]">
+                                        <p className="text-white/30 font-medium italic">No students joined yet...</p>
                                     </div>
                                 )}
                             </div>
@@ -495,14 +495,14 @@ export default function LiveRoomTeacher() {
                                 {quiz?.title || 'Active Session'}
                             </h1>
                         </div>
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16"></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 rounded-full -mr-16 -mt-16"></div>
                     </div>
 
                     {/* Join Code Hub */}
-                    <div onClick={copyCode} className="bg-indigo-900 rounded-[3rem] p-8 text-white shadow-2xl flex flex-col items-center justify-center min-w-[280px] cursor-pointer group hover:bg-indigo-950 transition-all active:scale-95 border-b-[8px] border-indigo-950">
-                        <p className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] mb-2">ACCESS CODE</p>
+                    <div onClick={copyCode} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-8 text-white shadow-2xl flex flex-col items-center justify-center min-w-[280px] cursor-pointer group hover:border-[var(--bg-accent)]/50 transition-all active:scale-95 border-b-[8px]">
+                        <p className="text-[var(--text-accent)]/60 text-[10px] font-black uppercase tracking-[0.4em] mb-2">ACCESS CODE</p>
                         <p className="text-6xl font-black tracking-[0.1em] italic text-[var(--text-accent)] group-hover:scale-110 transition-transform">{joinCode}</p>
-                        <p className="mt-4 flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-widest opacity-60">
+                        <p className="mt-4 flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-widest opacity-60">
                             <Copy size={12} /> CLICK TO SYNC
                         </p>
                     </div>
@@ -533,7 +533,7 @@ export default function LiveRoomTeacher() {
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold uppercase tracking-tight text-sm hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                                className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-4 py-2 rounded-lg font-bold uppercase tracking-tight text-sm hover:bg-[var(--bg-accent-hover)] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                             >
                                 Next <ChevronRight size={16} />
                             </button>
@@ -695,7 +695,7 @@ export default function LiveRoomTeacher() {
                                                     <div
                                                         key={idx}
                                                         title={isAnswered ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`) : `Q${idx + 1}: Not Attempted`}
-                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm ${dotClass} ${idx === currentQuestion ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110' : ''}`}
+                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm ${dotClass} ${idx === currentQuestion ? 'ring-2 ring-[var(--bg-accent)] ring-offset-1 scale-110' : ''}`}
                                                     >
                                                         {Icon ? Icon : idx + 1}
                                                     </div>
