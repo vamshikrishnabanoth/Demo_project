@@ -249,7 +249,7 @@ export default function CreateQuizText() {
                             <form onSubmit={handleSubmit} className="space-y-16">
                                 
                                 {/* Meta Config */}
-                                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     <GlassCard className="lg:col-span-2">
                                         <PremiumInput
                                             label="Campaign Title"
@@ -279,19 +279,6 @@ export default function CreateQuizText() {
                                                 <div className="w-12 h-6 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
                                                 <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6"></div>
                                             </div>
-                                        </div>
-                                    </GlassCard>
-
-                                    <GlassCard className="flex flex-col justify-center">
-                                        <div className="flex flex-col gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsAssignDrawerOpen(true)}
-                                                className="w-full bg-amber-400/10 text-amber-400 border border-amber-400/20 hover:bg-amber-400 hover:text-slate-950 px-6 py-3.5 rounded-2xl font-black italic uppercase tracking-tighter transition-all active:scale-95 flex items-center justify-center gap-2 text-xs"
-                                            >
-                                                <Users size={14} /> Target Students ({assignedGroups.length} Grp, {assignedStudents.length} Ind)
-                                            </button>
-                                            <span className="text-[9px] text-white/30 font-black uppercase tracking-[0.2em] text-center">Set eligibility rules during forge</span>
                                         </div>
                                     </GlassCard>
                                 </div>
@@ -427,17 +414,6 @@ export default function CreateQuizText() {
                     )}
                 </AnimatePresence>
             </div>
-
-            <StudentAssignDrawer
-                isOpen={isAssignDrawerOpen}
-                onClose={() => setIsAssignDrawerOpen(false)}
-                initialGroups={assignedGroups}
-                initialStudents={assignedStudents}
-                onSave={({ assignedGroups: groups, assignedStudents: students }) => {
-                    setAssignedGroups(groups);
-                    setAssignedStudents(students);
-                }}
-            />
         </DashboardLayout>
     );
 }
