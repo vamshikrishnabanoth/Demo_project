@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
@@ -8,12 +8,38 @@ import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import { Zap, Clock, ShieldCheck, Activity, Users, ArrowRight, Trophy, Crown, Flame, Sparkles } from 'lucide-react';
 
+const playPopSound = () => {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+        
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {
+        // Safe catch for autoplay blocks
+    }
+};
+
 export default function LiveRoomStudent() {
     const { joinCode } = useParams();
     const { user, theme } = useContext(AuthContext);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    const [participants, setParticipants] = useState([]);
+    const [displayCount, setDisplayCount] = useState(0);
 
     // Theme-based custom icons
     const getThemeIcon = () => {
@@ -98,17 +124,24 @@ export default function LiveRoomStudent() {
             }
         };
 
+        const handleParticipantsUpdate = (participantsList = []) => {
+            console.log('Student participants_update:', participantsList);
+            setParticipants(participantsList);
+        };
+
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
+        socket.on('participants_update', handleParticipantsUpdate);
         socket.on('restoreState', (state) => {
-    console.log('Student restoreState:', state);
-
-    if (!quiz) return;
-
-    if (state.quizStatus === 'started') {
-        navigate(`/quiz/attempt/${quiz.id}`);
-    }
-});
+            console.log('Student restoreState:', state);
+            if (state && state.participants) {
+                setParticipants(state.participants);
+            }
+            if (!quiz) return;
+            if (state.quizStatus === 'started') {
+                navigate(`/quiz/attempt/${quiz.id}`);
+            }
+        });
 
         // If socket is already connected when this effect runs, re-join immediately.
         // The 'connect' event won't fire again for an existing live connection.
@@ -118,8 +151,9 @@ export default function LiveRoomStudent() {
 
         return () => {
             socket.off('quiz_started', handleQuizStarted);
-socket.off('connect', handleConnect);
-socket.off('restoreState');
+            socket.off('connect', handleConnect);
+            socket.off('restoreState');
+            socket.off('participants_update', handleParticipantsUpdate);
         };
     }, [quiz, user, navigate]);
 
@@ -141,6 +175,51 @@ socket.off('restoreState');
 
     return () => clearInterval(heartbeatId);
 }, [quiz, user]);
+
+    // Filter online students
+    const onlineStudents = useMemo(() => {
+        return participants.filter(p => p.role === 'student' && p.isOnline);
+    }, [participants]);
+
+    const actualCount = onlineStudents.length;
+
+    // Smooth count increment & pop sound effect
+    useEffect(() => {
+        if (actualCount > displayCount) {
+            const diff = actualCount - displayCount;
+            const delay = diff > 3 ? 50 : 300;
+            const timer = setTimeout(() => {
+                setDisplayCount(prev => {
+                    const next = prev + 1;
+                    if (prev > 0 && diff <= 3) {
+                        playPopSound();
+                    }
+                    return next;
+                });
+            }, delay);
+            return () => clearTimeout(timer);
+        } else if (actualCount < displayCount) {
+            setDisplayCount(actualCount);
+        }
+    }, [actualCount, displayCount]);
+
+    // Calculate ready and joining counts based on displayCount
+    const { readyCount, joiningCount } = useMemo(() => {
+        const now = Date.now();
+        // Filter students who joined in the last 12 seconds
+        const actualJoining = onlineStudents.filter(p => {
+            const joinedTime = p.joinedAt ? new Date(p.joinedAt).getTime() : now;
+            return now - joinedTime < 12000;
+        }).length;
+
+        const actualReady = Math.max(0, actualCount - actualJoining);
+
+        // Distribute displayCount proportionally
+        const ready = Math.min(displayCount, actualReady);
+        const joining = displayCount - ready;
+
+        return { readyCount: ready, joiningCount: joining };
+    }, [onlineStudents, actualCount, displayCount]);
 
     if (loading) return <WaitingRoomLoader message="Joining Quiz..." />;
 
@@ -298,10 +377,30 @@ socket.off('restoreState');
                                 ))}
                             </div>
 
-                            <div className="space-y-3 text-center">
+                            <div className="space-y-6 text-center flex flex-col items-center">
                                 <h3 className="text-4xl font-black text-[var(--text-primary)] uppercase italic tracking-tight">Waiting for Host...</h3>
+                                
+                                {/* Live Joining Count */}
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={displayCount}
+                                        initial={{ scale: 0.9, opacity: 0, y: 10 }}
+                                        animate={{ scale: [0.9, 1.05, 1], opacity: 1, y: 0 }}
+                                        exit={{ scale: 0.9, opacity: 0, y: -10 }}
+                                        transition={{ type: 'spring', stiffness: 450, damping: 15 }}
+                                        className="inline-flex items-center gap-3 bg-[var(--table-row-hover)] px-8 py-4 rounded-3xl border border-[var(--bg-accent)]/20 text-[var(--text-accent)] shadow-[0_0_30px_var(--bg-accent-glow)] backdrop-blur-md"
+                                    >
+                                        <Users size={20} className="animate-pulse text-[var(--text-accent)]" />
+                                        <span className="font-black uppercase tracking-wider text-sm">
+                                            {joiningCount > 0 
+                                                ? `${readyCount} students ready… ${joiningCount} more joining!` 
+                                                : `${readyCount} ${readyCount === 1 ? 'student' : 'students'} ready!`}
+                                        </span>
+                                    </motion.div>
+                                </AnimatePresence>
+
                                 <p className="text-[var(--text-secondary)] font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-                                    <Activity size={16} className="text-green-500" />
+                                    <Activity size={16} className="text-green-500 animate-pulse" />
                                     Waiting for your teacher to start
                                 </p>
                             </div>
@@ -331,7 +430,7 @@ socket.off('restoreState');
                                 </div>
                                 <div>
                                     <p className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Status</p>
-                                    <p className="text-xl font-black text-[var(--text-primary)] uppercase italic">Arena Active</p>
+                                    <p className="text-xl font-black text-[var(--text-primary)] uppercase italic">{displayCount} Joined</p>
                                 </div>
                             </motion.div>
                         </div>
