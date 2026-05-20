@@ -249,6 +249,9 @@ io.on('connection', async (socket) => {
         }
 
         console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
+        // Always send the full current participant list directly to the socket that just joined,
+        // so the teacher always sees the latest list even if they join after students.
+        socket.emit('participants_update', participants);
         io.to(quizId).emit('participants_update', participants);
 
         // SYNC STATE
