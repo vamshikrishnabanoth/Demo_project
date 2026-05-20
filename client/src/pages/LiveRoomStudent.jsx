@@ -100,6 +100,15 @@ export default function LiveRoomStudent() {
 
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
+        socket.on('restoreState', (state) => {
+    console.log('Student restoreState:', state);
+
+    if (!quiz) return;
+
+    if (state.quizStatus === 'started') {
+        navigate(`/quiz/attempt/${quiz.id}`);
+    }
+});
 
         // If socket is already connected when this effect runs, re-join immediately.
         // The 'connect' event won't fire again for an existing live connection.
@@ -109,17 +118,29 @@ export default function LiveRoomStudent() {
 
         return () => {
             socket.off('quiz_started', handleQuizStarted);
-            socket.off('connect', handleConnect);
+socket.off('connect', handleConnect);
+socket.off('restoreState');
         };
     }, [quiz, user, navigate]);
 
-    useEffect(() => {
-        if (!quiz || !user) return;
-        const heartbeatId = setInterval(() => {
-            socket.emit('heartbeat', { quizId: quiz.id, userId: user.id });
-        }, 5000);
-        return () => clearInterval(heartbeatId);
-    }, [quiz, user]);
+   useEffect(() => {
+    if (!quiz || !user) return;
+
+    const sendHeartbeat = () => {
+        if (socket.connected) {
+            socket.emit('heartbeat', {
+                quizId: quiz.id,
+                userId: user.id
+            });
+        }
+    };
+
+    sendHeartbeat();
+
+    const heartbeatId = setInterval(sendHeartbeat, 3000);
+
+    return () => clearInterval(heartbeatId);
+}, [quiz, user]);
 
     if (loading) return <WaitingRoomLoader message="Joining Quiz..." />;
 
