@@ -61,10 +61,16 @@ export default function LiveRoomTeacher() {
 
         fetchQuiz();
 
-        socket.on('participants_update', (participantsList) => {
-            const students = participantsList.filter(p => p.role !== 'teacher');
-            setParticipants(students);
-        });
+        socket.on('participants_update', (participantsList = []) => {
+    console.log('Participants Update:', participantsList);
+
+    const students = participantsList.filter(
+        p =>
+            p.role?.toLowerCase() !== 'teacher'
+    );
+
+    setParticipants([...students]);
+});
 
         socket.on('progress_history', (history) => {
             setStudentProgress(history);
@@ -134,10 +140,13 @@ export default function LiveRoomTeacher() {
             if (state.leaderboard && state.leaderboard.length > 0) {
                 setLeaderboard(state.leaderboard);
             }
-            if (state.participants && state.participants.length > 0) {
-                const students = state.participants.filter(p => p.role !== 'teacher');
-                setParticipants(students);
-            }
+           if (state.participants) {
+    const students = state.participants.filter(
+        p => p.role?.toLowerCase() !== 'teacher'
+    );
+
+    setParticipants([...students]);
+}
             if (state.progress) {
                 setStudentProgress(state.progress);
             }
@@ -235,12 +244,23 @@ if (socket.connected) {
 
     // Teacher Heartbeat Logic
     useEffect(() => {
-        if (!quiz || !user) return;
-        const heartbeatId = setInterval(() => {
-            socket.emit('heartbeat', { quizId: quiz.id, userId: user.id || user.username });
-        }, 5000);
-        return () => clearInterval(heartbeatId);
-    }, [quiz, user]);
+    if (!quiz || !user) return;
+
+    const sendHeartbeat = () => {
+        if (socket.connected) {
+            socket.emit('heartbeat', {
+                quizId: quiz.id,
+                userId: user.id || user.username
+            });
+        }
+    };
+
+    sendHeartbeat();
+
+    const heartbeatId = setInterval(sendHeartbeat, 3000);
+
+    return () => clearInterval(heartbeatId);
+}, [quiz, user]);
     const handleStartQuiz = () => {
         if (quiz) {
             socket.emit('start_quiz', quiz.id);
