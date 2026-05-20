@@ -998,23 +998,23 @@ export default function AttemptQuiz() {
                                 const isSelected = answers[currentQuestion] === option;
                                 const isCorrect = questionResult?.correctOption === option;
 
-                                // Kahoot Colors & Shapes
+                                // Theme-appropriate option styles
                                 const kahootStyles = [
-                                    { color: 'bg-[#eb1727]', glow: 'shadow-[0_0_20px_rgba(235,23,39,0.2)]', icon: Triangle },
-                                    { color: 'bg-[#1368ce]', glow: 'shadow-[0_0_20px_rgba(19,104,206,0.2)]', icon: Diamond },
-                                    { color: 'bg-[#d5a021]', glow: 'shadow-[0_0_20px_rgba(213,160,33,0.2)]', icon: Circle },
-                                    { color: 'bg-[#26890c]', glow: 'shadow-[0_0_20px_rgba(38,137,12,0.2)]', icon: Square }
+                                    { color: 'bg-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]', icon: Triangle },
+                                    { color: 'bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_0_20px_rgba(255,255,255,0.04)]', icon: Diamond },
+                                    { color: 'bg-[#1a1a1c] border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.02)]', icon: Circle },
+                                    { color: 'bg-[#0f0f11] border border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.02)]', icon: Square }
                                 ];
                                 const style = kahootStyles[idx % 4];
                                 const ShapeIcon = style.icon;
 
-                                let containerClass = `${style.color} ${style.glow} text-white`;
+                                let containerClass = `${style.color} text-white`;
                                 if (isReviewMode) {
                                     if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-500/30';
                                     else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-500/30';
                                     else containerClass = 'bg-white/5 text-white/20 opacity-40 grayscale';
                                 } else if (isSelected) {
-                                    containerClass = `${style.color} ring-8 ring-white/20 scale-[0.98]`;
+                                    containerClass = `${style.color} ring-4 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)] scale-[0.98]`;
                                 }
 
                                 // In live mode: lock only after submit, allow free re-selection before
@@ -1031,12 +1031,12 @@ export default function AttemptQuiz() {
                                         disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
                                         onClick={() => handleOptionSelect(option)}
                                         style={{ willChange: 'transform' }}
-                                        className={`relative h-24 md:h-32 text-left px-8 rounded-2xl transition-all duration-300 flex items-center gap-6 group ${containerClass} disabled:cursor-not-allowed overflow-hidden active:scale-95`}
+                                        className={`relative min-h-[6rem] md:min-h-[7rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed active:scale-95`}
                                     >
-                                        <div className="bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
-                                            <ShapeIcon size={28} fill="white" strokeWidth={0} />
+                                        <div className="flex-shrink-0 bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
+                                            <ShapeIcon size={24} fill="white" strokeWidth={0} />
                                         </div>
-                                        <span className="text-xl md:text-2xl font-black italic uppercase tracking-tighter leading-none">{option}</span>
+                                        <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0">{option}</span>
 
                                         {isSelected && !isReviewMode && (
                                             <div className="absolute top-4 right-4 bg-white text-black rounded-full p-1 shadow-lg">
