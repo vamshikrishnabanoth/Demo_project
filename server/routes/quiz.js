@@ -47,7 +47,7 @@ const joinLimiter = rateLimit({
 });
 
 const quizValidation = [
-    check('title', 'Title must be at least 3 characters').optional().isLength({ min: 3 }).trim().escape(),
+    check('title', 'Title must be at least 1 character').optional().isLength({ min: 1 }).trim().escape(),
     check('questionCount', 'Question count must be between 1 and 50').optional().isInt({ min: 1, max: 50 }),
     check('difficulty', 'Invalid difficulty').optional().isIn(['Easy', 'Medium', 'Thinkable', 'Hard']),
     check('timerPerQuestion', 'Timer must be between 0 and 300 seconds').optional().isInt({ min: 0, max: 300 }),
