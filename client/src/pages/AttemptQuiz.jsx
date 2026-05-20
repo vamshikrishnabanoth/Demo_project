@@ -1011,21 +1011,21 @@ export default function AttemptQuiz() {
 
                                 // Theme-appropriate option styles
                                 const kahootStyles = [
-                                    { color: 'bg-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]', icon: Triangle },
-                                    { color: 'bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_0_20px_rgba(255,255,255,0.04)]', icon: Diamond },
-                                    { color: 'bg-[#1a1a1c] border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.02)]', icon: Circle },
-                                    { color: 'bg-[#0f0f11] border border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.02)]', icon: Square }
+                                    { icon: Triangle },
+                                    { icon: Diamond },
+                                    { icon: Circle },
+                                    { icon: Square }
                                 ];
                                 const style = kahootStyles[idx % 4];
                                 const ShapeIcon = style.icon;
 
-                                let containerClass = `${style.color} text-white`;
+                                let containerClass = 'bg-[var(--bg-secondary)] border border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.02)] text-white hover:border-[var(--bg-accent)]/30';
                                 if (isReviewMode) {
                                     if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-500/30';
                                     else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-500/30';
                                     else containerClass = 'bg-white/5 text-white/20 opacity-40 grayscale';
                                 } else if (isSelected) {
-                                    containerClass = `${style.color} ring-4 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)] scale-[0.98]`;
+                                    containerClass = 'bg-[var(--bg-accent)] text-white shadow-[0_0_20px_var(--bg-accent-glow)] ring-4 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)] scale-[0.98]';
                                 }
 
                                 // In live mode: lock only after submit, allow free re-selection before

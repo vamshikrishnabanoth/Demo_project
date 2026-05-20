@@ -1131,6 +1131,15 @@ setInterval(async () => {
     }
 }, 10000); // Check every 10 seconds
 
+// Reset all users' online status to false on server startup to avoid lockouts from prior crashes
+prisma.user.updateMany({
+    data: { isOnline: false }
+}).then(() => {
+    console.log('[Startup] Successfully reset all user online statuses.');
+}).catch(err => {
+    console.error('[Startup Error] Failed to reset user online statuses:', err.message);
+});
+
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
