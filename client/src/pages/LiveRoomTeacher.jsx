@@ -26,7 +26,11 @@ export default function LiveRoomTeacher() {
     const studentsPerPage = 10;
     const hasInitializedTimer = useRef(false);
     const isTransitioning = useRef(false);
+    const quizRef = useRef(null); // Always holds latest quiz value for use in socket callbacks
     const navigate = useNavigate();
+
+    // Keep quizRef in sync with quiz state so socket callbacks always have latest value
+    useEffect(() => { quizRef.current = quiz; }, [quiz]);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -34,6 +38,7 @@ export default function LiveRoomTeacher() {
                 const res = await api.post('/quiz/join', { code: joinCode });
                 const quizRes = await api.get(`/quiz/${res.data.quizId}`);
                 setQuiz(quizRes.data);
+                quizRef.current = quizRes.data; // Sync ref immediately for socket callbacks
                 
                 // Persist Teacher Session
                 const sessionData = {
@@ -43,6 +48,7 @@ export default function LiveRoomTeacher() {
                 };
                 localStorage.setItem(`live_quiz_session_teacher_${joinCode}`, JSON.stringify(sessionData));
 
+                // Emit join_room — works whether socket is already connected or just connecting
                 socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'teacher' } });
             } catch (err) {
                 console.error(err);
@@ -153,17 +159,19 @@ export default function LiveRoomTeacher() {
 
         socket.on('connect', () => {
             setIsOnline(true);
-            if (quiz && user) {
+            // Use quizRef so we always have the latest quiz even if fetchQuiz completed after mount
+            const currentQuiz = quizRef.current;
+            if (currentQuiz && user) {
                 const sessionStr = localStorage.getItem(`live_quiz_session_teacher_${joinCode}`);
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
                     } catch (e) {
-                         socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
+                         socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
                     }
                 } else {
-                    socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
+                    socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
                 }
             }
         });
@@ -291,17 +299,19 @@ export default function LiveRoomTeacher() {
         const handleOffline = () => setIsOnline(false);
         const handleOnline = () => {
             setIsOnline(true);
-            if (quiz) {
+            // Use quizRef so the handler always reads the latest quiz, not a stale closure
+            const currentQuiz = quizRef.current;
+            if (currentQuiz) {
                 const sessionStr = localStorage.getItem(`live_quiz_session_teacher_${joinCode}`);
                 if (sessionStr) {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
                     } catch (e) {
-                         socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
+                         socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
                     }
                 } else {
-                    socket.emit('join_room', { quizId: quiz.id, user: { username: user.username, role: 'teacher' } });
+                    socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
                 }
             }
         };
