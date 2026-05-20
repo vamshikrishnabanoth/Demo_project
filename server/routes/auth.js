@@ -129,6 +129,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
+                username: user.username,
                 role: user.role,
                 tokenVersion: user.tokenVersion
             }
@@ -204,6 +205,7 @@ router.post('/set-role', auth, async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
+                username: user.username,
                 role: user.role,
                 tokenVersion: user.tokenVersion
             }

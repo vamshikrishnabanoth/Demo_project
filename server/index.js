@@ -31,7 +31,11 @@ const app = express();
 app.set('trust proxy', 1);
 
 // --- SECURITY LOGGING ---
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'access.log'), { flags: 'a' });
+const logsDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+}
+const accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(morgan('dev')); // Keep dev logging for console
 
@@ -105,7 +109,7 @@ app.set('userSockets', userSockets);
 
 // JWT Socket Authentication Middleware
 const jwt = require('jsonwebtoken');
-io.use((socket, next) => {
+io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
     if (!token) {
         return next(new Error('Authentication failed: Missing token'));
@@ -113,6 +117,22 @@ io.use((socket, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.user = decoded.user;
+        
+        // Fetch username from DB if not present in the token (legacy/existing tokens)
+        if (socket.user && socket.user.id && !socket.user.username) {
+            try {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: socket.user.id },
+                    select: { username: true }
+                });
+                if (dbUser) {
+                    socket.user.username = dbUser.username;
+                }
+            } catch (dbErr) {
+                console.error('Error fetching username for socket auth:', dbErr);
+            }
+        }
+        
         next();
     } catch (err) {
         return next(new Error('Authentication failed: Invalid token'));
