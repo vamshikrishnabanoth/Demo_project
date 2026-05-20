@@ -241,7 +241,16 @@ io.on('connection', async (socket) => {
             role: socket.user.role
         };
 
-        const userData = { ...secureUser, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
+        const userData = {
+    ...secureUser,
+    socketId: socket.id,
+    isOnline: true,
+    lastSeen: Date.now(),
+    joinedAt:
+        existingIdx !== -1
+            ? participants[existingIdx]?.joinedAt || Date.now()
+            : Date.now()
+};
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
         } else {
@@ -251,8 +260,14 @@ io.on('connection', async (socket) => {
         console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
         // Always send the full current participant list directly to the socket that just joined,
         // so the teacher always sees the latest list even if they join after students.
-        socket.emit('participants_update', participants);
-        io.to(quizId).emit('participants_update', participants);
+        const cleanedParticipants = [...participants];
+
+socket.emit('participants_update', cleanedParticipants);
+
+io.to(quizId).emit(
+    'participants_update',
+    cleanedParticipants
+);
 
         // SYNC STATE
         const state = roomState.get(quizId);
@@ -289,7 +304,10 @@ io.on('connection', async (socket) => {
         }
         const participants = roomParticipants.get(quizId);
         if (participants) {
-            const p = participants.find(part => part._id === userId);
+            const p = participants.find(
+    part =>
+        String(part._id) === String(userId)
+);
             if (p) {
                 p.lastSeen = Date.now();
                 if (!p.isOnline) {
@@ -323,7 +341,16 @@ io.on('connection', async (socket) => {
             role: socket.user.role
         };
 
-        const userData = { ...secureUser, socketId: socket.id, isOnline: true, lastSeen: Date.now() };
+        const userData = {
+    ...secureUser,
+    socketId: socket.id,
+    isOnline: true,
+    lastSeen: Date.now(),
+    joinedAt:
+        existingIdx !== -1
+            ? participants[existingIdx]?.joinedAt || Date.now()
+            : Date.now()
+};
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
         } else {
@@ -331,7 +358,10 @@ io.on('connection', async (socket) => {
         }
 
         console.log(`Secure User ${socket.user.username} (${socket.user.role}) reconnected to room ${quizId}. ID: ${socket.user.id}`);
-        io.to(quizId).emit('participants_update', participants);
+        io.to(quizId).emit(
+    'participants_update',
+    [...participants]
+);
 
         const sendRestoreState = async () => {
             let state = roomState.get(quizId) || {};
@@ -936,55 +966,63 @@ io.on('connection', async (socket) => {
     });
 
     socket.on('disconnect', async () => {
-        const userId = socket.userId;
-        if (userId && userSockets.has(userId)) {
-            const sockets = userSockets.get(userId);
-            sockets.delete(socket.id);
-            
-            // If no more sockets for this user, mark as offline globally
-            if (sockets.size === 0) {
-                userSockets.delete(userId);
-                try {
-                    await prisma.user.update({
-                        where: { id: userId },
-                        data: { isOnline: false }
-                    });
-                    io.emit('user_status_change', { userId, isOnline: false });
-                    console.log(`User ${userId} marked global offline`);
-                } catch (err) {
-                    console.error('Error marking user offline:', err);
-                }
-            }
-        }
+    console.log('Socket disconnected:', socket.id);
 
-        const info = socketToUser.get(socket.id);
-        if (info) {
-            const { quizId, username } = info;
-            const participants = roomParticipants.get(quizId);
-            if (participants) {
-                const existingIdx = participants.findIndex(p => p.username === username);
-                if (existingIdx !== -1) {
-                    participants[existingIdx].isOnline = false;
-                    participants[existingIdx].socketId = null;
-                }
-                io.to(quizId).emit('participants_update', participants);
-            }
-            socketToUser.delete(socket.id);
-        }
+    const userInfo = socketToUser.get(socket.id);
 
-        // Deep Sweeper: Purge any zombie participant socket associations inside rooms to prevent leaks
-        roomParticipants.forEach((list, qId) => {
-            const idx = list.findIndex(p => p.socketId === socket.id);
+    if (userInfo) {
+        const { quizId, username } = userInfo;
+
+        const participants = roomParticipants.get(quizId);
+
+        if (participants) {
+            const idx = participants.findIndex(
+                p => p.username === username
+            );
+
             if (idx !== -1) {
-                list[idx].isOnline = false;
-                list[idx].socketId = null;
-                io.to(qId).emit('participants_update', list);
-                console.log(`[Zombie Sweeper] Purged socket connection ${socket.id} from room ${qId}`);
-            }
-        });
+                participants[idx].isOnline = false;
+                participants[idx].lastSeen = Date.now();
+participants[idx].socketId = null;
 
-        console.log('User disconnected:', socket.id);
-    });
+                console.log(
+                    `${username} marked offline temporarily`
+                );
+
+                io.to(quizId).emit(
+                    'participants_update',
+                    [...participants]
+                );
+            }
+        }
+
+        socketToUser.delete(socket.id);
+    }
+
+    if (socket.userId && userSockets.has(socket.userId)) {
+        const sockets = userSockets.get(socket.userId);
+
+        sockets.delete(socket.id);
+
+        if (sockets.size === 0) {
+            userSockets.delete(socket.userId);
+
+            try {
+                await prisma.user.update({
+                    where: { id: socket.userId },
+                    data: { isOnline: false }
+                });
+
+                io.emit('user_status_change', {
+                    userId: socket.userId,
+                    isOnline: false
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+});
 });
 
 const PORT = process.env.PORT || 5000;
