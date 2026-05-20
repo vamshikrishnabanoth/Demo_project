@@ -63,6 +63,11 @@ export const AuthProvider = ({ children }) => {
         // Fall back to /me if user data not included in login response
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
+        // Reconnect socket so it picks up the new auth token via the dynamic auth callback
+        if (socket.connected) {
+            socket.disconnect();
+        }
+        socket.connect();
         return userData;
     }, []);
 
@@ -71,6 +76,11 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', res.data.token);
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
+        // Reconnect socket so it picks up the new auth token
+        if (socket.connected) {
+            socket.disconnect();
+        }
+        socket.connect();
         return userData;
     }, []);
 
