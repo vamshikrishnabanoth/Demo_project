@@ -916,21 +916,21 @@ io.on('connection', async (socket) => {
     });
 
     // MEMORY LEAK REMEDIATION: Clean exit handler on leave_room
+    // NOTE: We mark offline instead of deleting so reconnecting users keep their spot
     socket.on('leave_room', ({ quizId }) => {
         if (!quizId) return;
         socket.leave(quizId);
         
         const participants = roomParticipants.get(quizId);
         if (participants) {
-            // Find student by socketId
-            const filtered = participants.filter(p => p.socketId !== socket.id);
-            if (filtered.length === 0) {
-                roomParticipants.delete(quizId);
-            } else {
-                roomParticipants.set(quizId, filtered);
-                io.to(quizId).emit('participants_update', filtered);
+            const idx = participants.findIndex(p => p.socketId === socket.id);
+            if (idx !== -1) {
+                // Only mark offline — do NOT remove. Reconnects restore them.
+                participants[idx].isOnline = false;
+                participants[idx].socketId = null;
+                io.to(quizId).emit('participants_update', participants);
             }
-            console.log(`Socket ${socket.id} securely left room ${quizId}. Remaining participants: ${filtered.length}`);
+            console.log(`Socket ${socket.id} securely left room ${quizId}. Participant marked offline (not removed).`);
         }
         socketToUser.delete(socket.id);
     });
