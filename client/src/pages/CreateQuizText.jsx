@@ -51,6 +51,14 @@ export default function CreateQuizText() {
         }
     }, [location.state]);
 
+    useEffect(() => {
+        if (isAssessment) {
+            setTimerType('timePerQuestion');
+        } else {
+            setTimerType('totalTime');
+        }
+    }, [isAssessment]);
+
     // ─── QUESTION ACTIONS ───────────────────────────────────────────────────
     const addQuestion = () => {
         setQuestions([...questions, { questionText: '', options: ['', ''], correctAnswer: '', points: 10 }]);
@@ -105,39 +113,36 @@ export default function CreateQuizText() {
         const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
         if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete`);
 
-        let finalStartTime = startTime;
-        let finalEndTime = endTime;
+        let finalStartTime = null;
+        let finalEndTime = null;
 
-        if (startNow) {
-            // For LIVE quizzes: do NOT set startTime — teacher controls start from the lobby.
-            // For ASSESSMENT quizzes: set startTime to now so they open immediately.
-            if (!isAssessment) {
-                finalStartTime = null;
-            } else {
+        if (isAssessment) {
+            finalStartTime = startTime;
+            finalEndTime = endTime;
+
+            if (startNow) {
                 finalStartTime = new Date().toISOString();
-            }
-            if (!finalEndTime) {
-                if (timerType === 'totalTime' && duration) {
-                    finalEndTime = new Date(Date.now() + (parseInt(duration) || 30) * 60000).toISOString();
-                } else if (timerType === 'timePerQuestion' && timerPerQuestion) {
-                    // Auto-calculate end time: (number of questions * timerPerQuestion) in milliseconds
-                    // Add a 5 minute buffer so students have time to join the quiz
-                    const totalTimeMs = (questions.length * (parseInt(timerPerQuestion) || 30)) * 1000;
-                    finalEndTime = new Date(Date.now() + totalTimeMs + (5 * 60000)).toISOString();
-                } else {
-                    setLoading(false);
-                    return toast.error('Expiration End is required when Start Now is enabled');
+                if (!finalEndTime) {
+                    if (timerType === 'timePerQuestion' && timerPerQuestion) {
+                        // Auto-calculate end time: (number of questions * timerPerQuestion) in milliseconds
+                        // Add a 5 minute buffer so students have time to join the quiz
+                        const totalTimeMs = (questions.length * (parseInt(timerPerQuestion) || 30)) * 1000;
+                        finalEndTime = new Date(Date.now() + totalTimeMs + (5 * 60000)).toISOString();
+                    } else {
+                        setLoading(false);
+                        return toast.error('Expiration End is required when Start Now is enabled');
+                    }
                 }
+            } else if (!startTime) {
+                finalStartTime = null;
             }
-        } else if (!startTime) {
-            finalStartTime = null;
-        }
 
-        if (finalStartTime && finalEndTime) {
-             if (new Date(finalEndTime) <= new Date(finalStartTime)) {
-                  setLoading(false);
-                  return toast.error("End time must be after start time");
-             }
+            if (finalStartTime && finalEndTime) {
+                 if (new Date(finalEndTime) <= new Date(finalStartTime)) {
+                      setLoading(false);
+                      return toast.error("End time must be after start time");
+                 }
+            }
         }
 
         try {
@@ -255,40 +260,24 @@ export default function CreateQuizText() {
                                         />
                                     </GlassCard>
 
-                                    <GlassCard className="flex flex-col justify-center gap-3">
-                                        <div>
-                                            <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em] mb-2">Arena Mode</span>
-                                            <div className="flex flex-col gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsAssessment(false)}
-                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all text-left ${
-                                                        !isAssessment
-                                                            ? 'bg-[var(--bg-accent)]/20 border-[var(--bg-accent)] text-white shadow-md'
-                                                            : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white hover:border-white/10'
-                                                    }`}
-                                                >
-                                                    <Zap size={14} className={!isAssessment ? 'text-[var(--text-accent)] animate-pulse' : 'text-white/30'} />
-                                                    <div>
-                                                        <span className="block font-black text-xs uppercase tracking-tight italic">Synchronous</span>
-                                                        <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">Real-time Live Arena</span>
-                                                    </div>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsAssessment(true)}
-                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all text-left ${
-                                                        isAssessment
-                                                            ? 'bg-[var(--bg-accent)]/20 border-[var(--bg-accent)] text-white shadow-md'
-                                                            : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white hover:border-white/10'
-                                                    }`}
-                                                >
-                                                    <BookOpen size={14} className={isAssessment ? 'text-[var(--text-accent)]' : 'text-white/30'} />
-                                                    <div>
-                                                        <span className="block font-black text-xs uppercase tracking-tight italic">Asynchronous</span>
-                                                        <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">Self-paced Task</span>
-                                                    </div>
-                                                </button>
+                                                                    <GlassCard className="flex flex-col justify-center gap-3">
+                                        <div className="flex items-center justify-between cursor-pointer group select-none" onClick={() => setIsAssessment(!isAssessment)}>
+                                            <div className="space-y-1">
+                                                <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em]">Arena Mode</span>
+                                                <span className="block font-black text-xs text-white uppercase tracking-tight italic">Assignment Mode</span>
+                                                <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">
+                                                    {isAssessment ? 'Self-paced homework task' : 'Manual real-time live room'}
+                                                </span>
+                                            </div>
+                                            <div className="relative w-12 h-6 flex-shrink-0">
+                                                <input 
+                                                    type="checkbox" 
+                                                    className="sr-only peer" 
+                                                    checked={isAssessment} 
+                                                    onChange={(e) => setIsAssessment(e.target.checked)} 
+                                                />
+                                                <div className="w-12 h-6 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
+                                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6"></div>
                                             </div>
                                         </div>
                                     </GlassCard>
@@ -308,56 +297,17 @@ export default function CreateQuizText() {
                                 </div>
 
                                 {/* Premium Campaign Control Settings */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                                    <GlassCard className="flex flex-col justify-center gap-4">
-                                        <div>
-                                            <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Access Admission</label>
-                                            <select
-                                                value={accessType}
-                                                onChange={(e) => setAccessType(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black italic outline-none appearance-none cursor-pointer focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-sm uppercase tracking-tighter"
-                                            >
-                                                <option value="private" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Private (PIN Required)</option>
-                                                <option value="public" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Public (No PIN)</option>
-                                            </select>
-
-                                            {!isAssessment && accessType === 'private' && (
-                                                <div className="mt-5 pt-4 border-t border-white/5 animate-in slide-in-from-top-2 duration-200">
-                                                    <label className="flex items-center justify-between cursor-pointer group">
-                                                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Auto-Broadcast PIN</span>
-                                                        <div className="relative w-8 h-4">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                className="sr-only peer" 
-                                                                checked={autoBroadcast} 
-                                                                onChange={(e) => setAutoBroadcast(e.target.checked)} 
-                                                            />
-                                                            <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                            <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
-                                                        </div>
-                                                    </label>
-                                                    <span className="text-[8px] text-white/20 font-bold uppercase tracking-wider block mt-1">
-                                                        {autoBroadcast ? 'Pushes code to active students' : 'Project/share PIN manually instead'}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </GlassCard>
-
+                                {/* Premium Campaign Control Settings */}
+                                <div className={`grid grid-cols-1 gap-8 ${isAssessment ? 'md:grid-cols-3' : 'max-w-md mx-auto w-full'}`}>
                                     <GlassCard className="flex flex-col justify-center gap-4">
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Timer Mode</label>
-                                                <select
-                                                    value={timerType}
-                                                    onChange={(e) => setTimerType(e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black italic outline-none appearance-none cursor-pointer focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-sm uppercase tracking-tighter"
-                                                >
-                                                    <option value="timePerQuestion" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Time Per Question</option>
-                                                    <option value="totalTime" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Total Quiz Time</option>
-                                                </select>
+                                                <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black italic text-sm uppercase tracking-tighter">
+                                                    {isAssessment ? 'Time Per Question' : 'Total Quiz Time'}
+                                                </div>
                                             </div>
-                                            {timerType === 'timePerQuestion' ? (
+                                            {isAssessment ? (
                                                 <div className="animate-in slide-in-from-top-2 duration-200">
                                                     <label className="block text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Seconds Per Screen</label>
                                                     <input
@@ -385,51 +335,55 @@ export default function CreateQuizText() {
                                         </div>
                                     </GlassCard>
 
-                                    <GlassCard className="flex flex-col justify-center gap-4">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-3">
-                                                <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest">Scheduled Start</label>
-                                                <label className="flex items-center gap-2 cursor-pointer group">
-                                                    <div className="relative w-8 h-4">
-                                                        <input type="checkbox" className="sr-only peer" checked={startNow} onChange={(e) => setStartNow(e.target.checked)} />
-                                                        <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                        <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                    {isAssessment && (
+                                        <>
+                                            <GlassCard className="flex flex-col justify-center gap-4">
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest">Scheduled Start</label>
+                                                        <label className="flex items-center gap-2 cursor-pointer group">
+                                                            <div className="relative w-8 h-4">
+                                                                <input type="checkbox" className="sr-only peer" checked={startNow} onChange={(e) => setStartNow(e.target.checked)} />
+                                                                <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
+                                                                <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                                            </div>
+                                                            <span className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
+                                                        </label>
                                                     </div>
-                                                    <span className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
-                                                </label>
-                                            </div>
-                                            
-                                            {!startNow ? (
-                                                <input
-                                                    type="datetime-local"
-                                                    value={startTime}
-                                                    onChange={(e) => setStartTime(e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
-                                                />
-                                            ) : (
-                                                <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 flex items-center justify-center opacity-70">
-                                                    <span className="text-xs font-black text-[var(--text-accent)] italic uppercase tracking-wider">Active Immediately</span>
+                                                    
+                                                    {!startNow ? (
+                                                        <input
+                                                            type="datetime-local"
+                                                            value={startTime}
+                                                            onChange={(e) => setStartTime(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 flex items-center justify-center opacity-70">
+                                                            <span className="text-xs font-black text-[var(--text-accent)] italic uppercase tracking-wider">Active Immediately</span>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
+                                                        {startNow ? 'Opens immediately for students' : 'Optional: Leave blank for instant access'}
+                                                    </span>
                                                 </div>
-                                            )}
-                                            
-                                            <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
-                                                    {startNow ? (isAssessment ? 'Opens immediately for students' : 'Quiz opens lobby now — start manually when ready') : 'Optional: Leave blank for instant access'}
-                                            </span>
-                                        </div>
-                                    </GlassCard>
+                                            </GlassCard>
 
-                                    <GlassCard className="flex flex-col justify-center gap-4">
-                                        <div>
-                                            <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Expiration End</label>
-                                            <input
-                                                type="datetime-local"
-                                                value={endTime}
-                                                onChange={(e) => setEndTime(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
-                                            />
-                                            <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
-                                        </div>
-                                    </GlassCard>
+                                            <GlassCard className="flex flex-col justify-center gap-4">
+                                                <div>
+                                                    <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Expiration End</label>
+                                                    <input
+                                                        type="datetime-local"
+                                                        value={endTime}
+                                                        onChange={(e) => setEndTime(e.target.value)}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                    />
+                                                    <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
+                                                </div>
+                                            </GlassCard>
+                                        </>
+                                    )}
                                 </div>
 
                                 {/* Questions Matrix */}
