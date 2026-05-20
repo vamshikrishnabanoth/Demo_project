@@ -157,24 +157,60 @@ export default function LiveRoomTeacher() {
             setIsTimerRunning(false);
         });
 
-        socket.on('connect', () => {
-            setIsOnline(true);
-            // Use quizRef so we always have the latest quiz even if fetchQuiz completed after mount
-            const currentQuiz = quizRef.current;
-            if (currentQuiz && user) {
-                const sessionStr = localStorage.getItem(`live_quiz_session_teacher_${joinCode}`);
-                if (sessionStr) {
-                    try {
-                        const sess = JSON.parse(sessionStr);
-                        socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role } });
-                    } catch (e) {
-                         socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
+        const handleTeacherReconnect = () => {
+    setIsOnline(true);
+
+    const currentQuiz = quizRef.current;
+
+    if (currentQuiz && user) {
+        const sessionStr = localStorage.getItem(`live_quiz_session_teacher_${joinCode}`);
+
+        if (sessionStr) {
+            try {
+                const sess = JSON.parse(sessionStr);
+
+                socket.emit('reconnectUser', {
+                    quizId: sess.quizId,
+                    user: {
+                        username: sess.username,
+                        role: sess.role
                     }
-                } else {
-                    socket.emit('join_room', { quizId: currentQuiz.id, user: { username: user.username, role: 'teacher' } });
-                }
+                });
+
+            } catch (e) {
+
+                socket.emit('join_room', {
+                    quizId: currentQuiz.id,
+                    user: {
+                        username: user.username,
+                        role: 'teacher'
+                    }
+                });
+
             }
-        });
+        } else {
+
+            socket.emit('join_room', {
+                quizId: currentQuiz.id,
+                user: {
+                    username: user.username,
+                    role: 'teacher'
+                }
+            });
+
+        }
+    }
+};
+
+socket.on('connect', handleTeacherReconnect);
+
+/* IMPORTANT FIX
+   If socket is already connected,
+   connect event will NOT fire again.
+*/
+if (socket.connected) {
+    handleTeacherReconnect();
+}
 
         socket.on('disconnect', () => setIsOnline(false));
 
