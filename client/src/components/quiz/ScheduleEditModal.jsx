@@ -113,29 +113,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                             <div className="flex justify-center py-12">
                                 <div className="w-8 h-8 border-4 border-[var(--bg-accent)] border-t-transparent rounded-full animate-spin"></div>
                             </div>
-                        ) : statusData?.isLocked ? (
-                            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center space-y-4">
-                                <Lock className="mx-auto text-red-500" size={32} />
-                                <div>
-                                    <h3 className="text-red-400 font-black italic uppercase text-lg">Schedule Locked</h3>
-                                    <p className="text-red-300/80 text-sm mt-2">
-                                        Schedule can no longer be edited because students have already joined or interacted with this quiz.
-                                    </p>
-                                </div>
-                                <div className="flex justify-center gap-4 pt-4 border-t border-red-500/10 text-xs font-bold text-red-400/80">
-                                    <span>{statusData.broadcastsCount} Broadcasts</span>
-                                    <span>•</span>
-                                    <span>{statusData.attemptsCount} Attempts</span>
-                                </div>
-                            </div>
                         ) : (
                             <>
-                                {/* Status Indicator */}
-                                <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-xl">
-                                    <CheckCircle className="text-green-500" size={18} />
-                                    <span className="text-xs font-black text-green-400 uppercase tracking-widest">Schedule is Editable</span>
-                                </div>
-
                                 <div className="space-y-4">
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Start Time</label>
@@ -182,7 +161,7 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                         >
                             Cancel
                         </button>
-                        {!loading && !statusData?.isLocked && (
+                        {!loading && (
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
