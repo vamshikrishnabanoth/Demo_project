@@ -33,6 +33,12 @@ export default function AttemptQuiz() {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [missionComplete, setMissionComplete] = useState(false);
     const [waitingForState, setWaitingForState] = useState(false);
+    const quizRef = useRef(null);     // Always-current quiz for socket callbacks
+    const authUserRef = useRef(null); // Always-current authUser for socket callbacks
+    
+    // Keep refs in sync
+    useEffect(() => { quizRef.current = quiz; }, [quiz]);
+    useEffect(() => { authUserRef.current = authUser; }, [authUser]);
     
     // Time Taken tracking system
     const [questionTimes, setQuestionTimes] = useState({});
@@ -160,7 +166,10 @@ export default function AttemptQuiz() {
 
         socket.on('connect', () => {
             setIsOnline(true);
-            if (quiz?.isLive && authUser) {
+            // Use refs so we always read current values even if fetchQuiz resolved after mount
+            const currentQuiz = quizRef.current;
+            const currentUser = authUserRef.current;
+            if (currentQuiz?.isLive && currentUser) {
                 const sessionStr = localStorage.getItem(`live_quiz_session_student_${id}`);
                 if (sessionStr) {
                     try {
@@ -170,9 +179,9 @@ export default function AttemptQuiz() {
                         socket.emit('join_room', {
                             quizId: id,
                             user: {
-                                username: authUser.username,
+                                username: currentUser.username,
                                 role: 'student',
-                                _id: authUser.id
+                                _id: currentUser.id
                             }
                         });
                     }
@@ -180,9 +189,9 @@ export default function AttemptQuiz() {
                     socket.emit('join_room', {
                         quizId: id,
                         user: {
-                            username: authUser.username,
+                            username: currentUser.username,
                             role: 'student',
-                            _id: authUser.id
+                            _id: currentUser.id
                         }
                     });
                 }
@@ -206,7 +215,9 @@ export default function AttemptQuiz() {
         const handleOffline = () => setIsOnline(false);
         const handleOnline = () => {
             setIsOnline(true);
-            if (quiz?.isLive && authUser) {
+            const currentQuiz = quizRef.current;
+            const currentUser = authUserRef.current;
+            if (currentQuiz?.isLive && currentUser) {
                 // Restore state handled by server restoreState event
                 // Re-join room so teacher participant count updates
                 const sessionStr = localStorage.getItem(`live_quiz_session_student_${id}`);
@@ -218,9 +229,9 @@ export default function AttemptQuiz() {
                          socket.emit('join_room', {
                             quizId: id,
                             user: {
-                                username: authUser.username,
+                                username: currentUser.username,
                                 role: 'student',
-                                _id: authUser.id
+                                _id: currentUser.id
                             }
                         });
                     }
@@ -228,9 +239,9 @@ export default function AttemptQuiz() {
                     socket.emit('join_room', {
                         quizId: id,
                         user: {
-                            username: authUser.username,
+                            username: currentUser.username,
                             role: 'student',
-                            _id: authUser.id
+                            _id: currentUser.id
                         }
                     });
                 }
