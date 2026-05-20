@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import ResultsLoader from '../components/loaders/ResultsLoader';
@@ -45,10 +45,16 @@ export default function AttemptQuiz() {
     const [waitingForState, setWaitingForState] = useState(false);
     const quizRef = useRef(null);     // Always-current quiz for socket callbacks
     const authUserRef = useRef(null); // Always-current authUser for socket callbacks
+    const currentQuestionRef = useRef(0);
     
+    const [totalStudents, setTotalStudents] = useState(0);
+    const [answeredStudentsSet, setAnsweredStudentsSet] = useState(new Set());
+    const answeredCount = answeredStudentsSet.size;
+
     // Keep refs in sync
     useEffect(() => { quizRef.current = quiz; }, [quiz]);
     useEffect(() => { authUserRef.current = authUser; }, [authUser]);
+    useEffect(() => { currentQuestionRef.current = currentQuestion; }, [currentQuestion]);
     
     // Time Taken tracking system
     const [questionTimes, setQuestionTimes] = useState({});
@@ -131,7 +137,9 @@ export default function AttemptQuiz() {
             const nextIdx = parseInt(questionIndex);
             setCurrentQuestion(nextIdx);
 
-            // CRITICAL FIX: This event is sent on both join_room (initial sync) AND teacher navigation.
+            // Reset answered students count for the new question
+            setAnsweredStudentsSet(new Set());
+
             // Clearing waitingForState here ensures first-time joiners are not stuck on the sync screen.
             setWaitingForState(false);
 
@@ -146,6 +154,22 @@ export default function AttemptQuiz() {
         socket.on('restoreState', (state) => {
             console.log('Restoring State on Reconnect (Student):', state);
             setCurrentQuestion(state.currentQuestionIndex);
+
+            // Update total student count
+            const studentParticipants = (state.participants || []).filter(
+                p => p.role?.toLowerCase() !== 'teacher' && p.isOnline !== false
+            );
+            setTotalStudents(studentParticipants.length);
+
+            // Rebuild set of students who already answered this question
+            const answeredSet = new Set();
+            const studentIds = new Set(studentParticipants.map(p => (p._id || p.id).toString()));
+            Object.keys(state.progress || {}).forEach(key => {
+                if (studentIds.has(key) && state.progress[key][state.currentQuestionIndex]?.answered) {
+                    answeredSet.add(key);
+                }
+            });
+            setAnsweredStudentsSet(answeredSet);
             
             // Check if student has already answered this question
             if (authUser && state.progress && state.progress[authUser.id]) {
@@ -214,6 +238,23 @@ export default function AttemptQuiz() {
             setSpeedFeedback({ isFast, message });
         });
 
+        socket.on('participants_update', (participantsList) => {
+            const studentParticipants = (participantsList || []).filter(
+                p => p.role?.toLowerCase() !== 'teacher' && p.isOnline !== false
+            );
+            setTotalStudents(studentParticipants.length);
+        });
+
+        socket.on('student_progress_update', ({ studentId, questionIndex, answered }) => {
+            if (parseInt(questionIndex) === currentQuestionRef.current && answered) {
+                setAnsweredStudentsSet(prev => {
+                    const next = new Set(prev);
+                    next.add(studentId.toString());
+                    return next;
+                });
+            }
+        });
+
         return () => {
             socket.off('quiz_ended');
             socket.off('timer_update');
@@ -223,6 +264,8 @@ export default function AttemptQuiz() {
             socket.off('connect');
             socket.off('disconnect');
             socket.off('answer_feedback');
+            socket.off('participants_update');
+            socket.off('student_progress_update');
         };
     }, [quiz, authUser, id, navigate]);
 
@@ -1013,9 +1056,27 @@ export default function AttemptQuiz() {
                     <div className="bg-[var(--bg-secondary)] rounded-[3rem] shadow-2xl border border-white/5 p-8 md:p-12 mb-8 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--bg-accent)]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
                         
-                        <span className="inline-block bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-8 border border-[var(--bg-accent)]/20">
-                            Sequence {currentQuestion + 1}
-                        </span>
+                        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+                            <span className="inline-block bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-[var(--bg-accent)]/20">
+                                Sequence {currentQuestion + 1}
+                            </span>
+                            {quiz?.isLive && (
+                                <div className="flex flex-col items-end gap-1.5 min-w-[200px]">
+                                    <div className="flex justify-between w-full text-[10px] font-black uppercase tracking-widest text-white/40">
+                                        <span>Progress:</span>
+                                        <span>{answeredCount} of {totalStudents} Answered</span>
+                                    </div>
+                                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                        <motion.div 
+                                            className="h-full bg-gradient-to-r from-[var(--bg-accent)] to-cyan-400"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${totalStudents > 0 ? (answeredCount / totalStudents) * 100 : 0}%` }}
+                                            transition={{ duration: 0.3 }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <h1 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-12 leading-[0.9]">
                             {question.questionText}
                         </h1>
@@ -1049,16 +1110,23 @@ export default function AttemptQuiz() {
 
                                 // Dim non-selected options once ANY option selected (visual feedback)
                                 if (answers[currentQuestion] && !isSelected && !isReviewMode) {
-                                    containerClass += isSubmittedLive ? ' opacity-20 grayscale' : ' opacity-40 grayscale-[0.5]';
+                                    containerClass += isSubmittedLive ? ' grayscale' : ' grayscale-[0.5]';
                                 }
 
                                 return (
-                                    <button
+                                    <motion.button
                                         key={`opt-${idx}-${option}`}
                                         disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
                                         onClick={() => handleOptionSelect(option)}
                                         style={{ willChange: 'transform' }}
-                                        className={`relative min-h-[6rem] md:min-h-[7rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed active:scale-95`}
+                                        animate={{
+                                            scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
+                                            opacity: answers[currentQuestion] && !isSelected && !isReviewMode
+                                                ? (isSubmittedLive ? 0.2 : 0.4)
+                                                : 1
+                                        }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                        className={`relative min-h-[6rem] md:min-h-[7rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed`}
                                     >
                                         <div className="flex-shrink-0 bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
                                             <ShapeIcon size={24} fill="white" strokeWidth={0} />
@@ -1066,11 +1134,27 @@ export default function AttemptQuiz() {
                                         <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0">{option}</span>
 
                                         {isSelected && !isReviewMode && (
-                                            <div className="absolute top-4 right-4 bg-white text-black rounded-full p-1 shadow-lg">
-                                                <CheckCircle size={16} />
+                                            <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white text-black rounded-full px-2 py-1 shadow-lg">
+                                                {isSubmittedLive ? (
+                                                    <motion.div
+                                                        initial={{ rotate: -90, scale: 0 }}
+                                                        animate={{ rotate: 0, scale: 1 }}
+                                                        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                                                        className="flex items-center justify-center text-red-600"
+                                                    >
+                                                        <Lock size={12} className="fill-red-600/10" />
+                                                    </motion.div>
+                                                ) : null}
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
+                                                >
+                                                    <CheckCircle size={14} className="text-green-600" />
+                                                </motion.div>
                                             </div>
                                         )}
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
                         </div>
