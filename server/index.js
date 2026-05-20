@@ -838,14 +838,55 @@ io.to(quizId).emit(
                 // Update in-memory state with the actual isCorrect value for reconnection sync
                 const updatedProgress = state.progress || {};
                 if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
-                updatedProgress[studentId][questionIndex] = { answered: true, isCorrect };
+                updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken };
                 // ALSO store by username so teacher UI can find it regardless of key type
                 const studentUsername = result.student ? result.student.username : null;
                 if (studentUsername) {
                     if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
-                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect };
+                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken };
                 }
                 roomState.set(quizId, { ...state, progress: updatedProgress });
+
+                // Calculate speed-based answer feedback
+                const participants = roomParticipants.get(quizId) || [];
+                const otherTimes = [];
+                participants.forEach(p => {
+                    const idKey = p._id || p.id;
+                    if (idKey && idKey.toString() !== studentId.toString()) {
+                        const prog = updatedProgress[idKey.toString()];
+                        if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
+                            otherTimes.push(prog[questionIndex].timeTaken);
+                        }
+                    }
+                });
+
+                const fastMessages = [
+                    "⚡ Fast Answer! Lightning speed!",
+                    "⚡ Quick Response Bonus! Unstoppable!",
+                    "⚡ Hyper-Sonic! You're on fire!",
+                    "⚡ Mind-Bending Velocity! Incredible reflexes!",
+                    "⚡ Sonic Boom! You answered in the blink of an eye!"
+                ];
+                const slowMessages = [
+                    "🐢 Smooth and steady, but let's pick up the pace next time!",
+                    "⏰ Took your time! Try to lock it in quicker on the next one!",
+                    "💡 Great focus, but speed is key! Speed up!",
+                    "🏃‍♂️ Slow and calculated! Push your limits and answer faster!",
+                    "⏳ Pondered a bit long! Trust your instincts and click quicker!"
+                ];
+
+                const isFast = otherTimes.length > 0
+                    ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
+                    : (qTimeTaken <= timerMax * 0.3);
+
+                const messageList = isFast ? fastMessages : slowMessages;
+                const feedbackMessage = messageList[Math.floor(Math.random() * messageList.length)];
+
+                socket.emit('answer_feedback', {
+                    isFast,
+                    message: feedbackMessage,
+                    timeTaken: qTimeTaken
+                });
 
                 await prisma.result.update({
                     where: { id: result.id },

@@ -29,6 +29,16 @@ export default function AttemptQuiz() {
     const [showFeedback, setShowFeedback] = useState(false);
     const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
     const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
+    const [speedFeedback, setSpeedFeedback] = useState(null); // { isFast, message }
+
+    useEffect(() => {
+        if (!speedFeedback) return;
+        const timer = setTimeout(() => {
+            setSpeedFeedback(null);
+        }, 4000);
+        return () => clearTimeout(timer);
+    }, [speedFeedback]);
+
     const hasInitializedTimer = useRef(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [missionComplete, setMissionComplete] = useState(false);
@@ -199,6 +209,11 @@ export default function AttemptQuiz() {
         });
         socket.on('disconnect', () => setIsOnline(false));
 
+        socket.on('answer_feedback', ({ isFast, message }) => {
+            console.log('Answer Speed Feedback:', isFast, message);
+            setSpeedFeedback({ isFast, message });
+        });
+
         return () => {
             socket.off('quiz_ended');
             socket.off('timer_update');
@@ -207,6 +222,7 @@ export default function AttemptQuiz() {
             socket.off('restoreState');
             socket.off('connect');
             socket.off('disconnect');
+            socket.off('answer_feedback');
         };
     }, [quiz, authUser, id, navigate]);
 
@@ -1237,6 +1253,50 @@ export default function AttemptQuiz() {
                     </div>
                 )
             }
+            <AnimatePresence>
+                {speedFeedback && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: -50 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                        className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center p-4"
+                    >
+                        <div 
+                            className={`w-full max-w-sm pointer-events-auto p-6 rounded-3xl border shadow-2xl backdrop-blur-xl text-center relative overflow-hidden transition-all duration-300 ${
+                                speedFeedback.isFast 
+                                    ? 'bg-cyan-950/90 border-cyan-500/30 shadow-cyan-500/20 text-cyan-300' 
+                                    : 'bg-amber-950/90 border-amber-500/30 shadow-amber-500/20 text-amber-300'
+                            }`}
+                        >
+                            {/* Glow highlights */}
+                            <div className={`absolute -top-12 -left-12 w-24 h-24 rounded-full blur-2xl opacity-40 ${
+                                speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
+                            }`} />
+                            <div className={`absolute -bottom-12 -right-12 w-24 h-24 rounded-full blur-2xl opacity-40 ${
+                                speedFeedback.isFast ? 'bg-blue-400' : 'bg-orange-400'
+                            }`} />
+
+                            <motion.div 
+                                initial={{ rotate: -10, scale: 0.9 }}
+                                animate={{ rotate: 0, scale: 1 }}
+                                transition={{ type: 'spring', delay: 0.1 }}
+                                className="relative z-10 flex flex-col items-center gap-4"
+                            >
+                                <span className={`text-5xl select-none filter drop-shadow`}>
+                                    {speedFeedback.isFast ? "⚡" : "🐢"}
+                                </span>
+                                <h3 className={`text-2xl font-black italic uppercase tracking-tighter filter drop-shadow`}>
+                                    {speedFeedback.isFast ? "FAST RESPONSE" : "STAY FOCUS"}
+                                </h3>
+                                <p className="text-white/80 font-bold text-sm leading-relaxed px-2">
+                                    {speedFeedback.message}
+                                </p>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div >
     );
 }
