@@ -842,6 +842,7 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const officeParser = require('officeparser');
 const Groq = require('groq-sdk');
+const { runAgentPipeline } = require('../services/agentPipeline');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -2062,10 +2063,39 @@ exports.generateQuizQuestions = async (req, res) => {
             finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty);
         }
 
+        // ─── AGENTIC QUALITY PIPELINE ────────────────────────────────────
+        // Runs Whole-Quiz Critic → Per-Question Critic → Parallel Refiner
+        // Timeout is capped by AGENT_TIMEOUT_MS (default 60 s).
+        // The pipeline NEVER throws — it always returns the best available version.
+        let agentReport = null;
+        try {
+            const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 60000;
+            // Pass the groq client only if the API key is present (enables refinement)
+            const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+
+            const pipelineResult = await runAgentPipeline({
+                draftQuestions: finalQuestions,
+                groqClient:     agentGroq,
+                difficulty:     difficulty || 'Medium',
+                topic:          topic || '',
+                timeoutMs:      agentTimeoutMs,
+            });
+
+            finalQuestions = pipelineResult.questions;
+            agentReport    = pipelineResult.agentReport;
+
+            console.log(`✅ [AgentPipeline] verdict=${agentReport.verdict} | avgScore=${agentReport.avgScore} | retries=${agentReport.totalRetries} | timeoutMs=${agentTimeoutMs}`);
+        } catch (pipelineErr) {
+            // Pipeline errors must never block quiz creation
+            console.warn('⚠️ [AgentPipeline] Non-fatal error — returning raw questions:', pipelineErr.message);
+            agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [] };
+        }
+
         res.json({
             questions: finalQuestions,
-            title: extractedTitle,
-            duration: 10
+            title:    extractedTitle,
+            duration: 10,
+            agentReport,
         });
 
     } catch (err) {
