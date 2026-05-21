@@ -2,27 +2,29 @@ import ws from 'k6/ws';
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = 'http://localhost:5000';
-const WS_URL = 'ws://localhost:5000/socket.io/?EIO=4&transport=websocket';
-const QUIZ_ID = '817de27f-7146-4f77-a737-72db6f7e7ae4';
-const QUIZ_CODE = '999999';
+// ── Config: override via k6 env vars ──────────────────────────────────────────
+const BASE_URL  = __ENV.BASE_URL  || 'http://localhost:5000';
+const WS_URL    = `${BASE_URL.replace('http', 'ws')}/socket.io/?EIO=4&transport=websocket`;
+const QUIZ_ID   = __ENV.QUIZ_ID   || '817de27f-7146-4f77-a737-72db6f7e7ae4';
+const QUIZ_CODE = __ENV.QUIZ_CODE || '999999';
+const MAX_STUDENTS = 2000;
 
 export const options = {
   stages: [
-    { duration: '30s', target: 500 },  // Ramp up to 500 WebSocket connections
+    { duration: '30s', target: 500  }, // Ramp up to 500 WebSocket connections
     { duration: '30s', target: 1000 }, // Ramp up to 1000 connections
-    { duration: '1m', target: 1000 },  // Stay at 1000 connections
-    { duration: '15s', target: 0 },    // Ramp down connections
+    { duration: '60s', target: 1000 }, // Sustain 1000 connections (answer questions)
+    { duration: '15s', target: 0    }, // Ramp down
   ],
   thresholds: {
-    'http_req_failed': ['rate<0.01'],
+    http_req_failed: ['rate<0.01'],     // < 1% HTTP failure
   },
 };
 
 export default function () {
-  // Unique login credentials per VU
-  const studentIndex = __VU;
-  const email = `test_student_${studentIndex}@kmit.in`;
+  // Unique login credentials per VU, wrapping at MAX_STUDENTS
+  const studentIndex = ((__VU - 1) % MAX_STUDENTS) + 1;
+  const email    = `test_student_${studentIndex}@kmit.in`;
   const password = 'KMIT@1234';
 
   // 1. GET JWT TOKEN OVER HTTP
@@ -160,15 +162,22 @@ export default function () {
     socket.on('close', function () {
       if (heartbeatTimer) {
         clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
       }
     });
 
     socket.on('error', function (e) {
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
       console.error(`❌ Socket error for ${username}: ${e.error()}`);
     });
 
-    // Hold the connection open for the duration of the VU task lifecycle
-    sleep(110);
+    // Hold connection open for 60 s – fits within the 60s sustain stage window.
+    // (Original 110 s exceeded the 75 s total stage duration, causing VUs to
+    //  overshoot and prevent clean ramp-down.)
+    sleep(60);
     socket.close();
   });
 
