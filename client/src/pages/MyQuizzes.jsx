@@ -272,13 +272,15 @@ export default function MyQuizzes() {
                                                     </>
                                                 )}
                                                     
-                                                <button
-                                                    onClick={() => setEditingScheduleId(quiz.id)}
-                                                    className="flex-1 sm:flex-none bg-blue-500/10 text-blue-400 border border-blue-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-blue-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
-                                                    title="Edit Schedule"
-                                                >
-                                                    <CalendarRange size={18} /> Schedule
-                                                </button>
+                                                {quiz.isAssessment && (
+                                                    <button
+                                                        onClick={() => setEditingScheduleId(quiz.id)}
+                                                        className="flex-1 sm:flex-none bg-blue-500/10 text-blue-400 border border-blue-500/20 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-blue-500 hover:text-white active:scale-95 flex items-center justify-center gap-2 text-sm"
+                                                        title="Edit Schedule"
+                                                    >
+                                                        <CalendarRange size={18} /> Schedule
+                                                    </button>
+                                                )}
 
                                                 <Link
                                                     to={`/analytics/quiz/${quiz.id}`}
