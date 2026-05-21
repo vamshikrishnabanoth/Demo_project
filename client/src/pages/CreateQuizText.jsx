@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, RotateCw } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
