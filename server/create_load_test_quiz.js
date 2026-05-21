@@ -8,6 +8,7 @@ async function createLoadTestQuiz() {
 
   if (!teacher) {
     console.error('❌ teacher1@kmit.in not found! Please seed system accounts first.');
+    await prisma.$disconnect();
     return;
   }
 
