@@ -29,6 +29,16 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
 
+    const parseLocalDatetime = (localStr) => {
+        if (!localStr) return null;
+        // Robust parsing of YYYY-MM-DDTHH:mm to local date
+        const [datePart, timePart] = localStr.split('T');
+        if (!datePart || !timePart) return new Date(localStr);
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hours, minutes] = timePart.split(':').map(Number);
+        return new Date(year, month - 1, day, hours, minutes);
+    };
+
     const fetchStatus = async () => {
         setLoading(true);
         setError('');
@@ -50,7 +60,9 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
         setError('');
         
         if (startTime && endTime) {
-            if (new Date(endTime) <= new Date(startTime)) {
+            const startObj = parseLocalDatetime(startTime);
+            const endObj = parseLocalDatetime(endTime);
+            if (endObj <= startObj) {
                 setError('End time must be after start time');
                 return;
             }
@@ -59,8 +71,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
         setSaving(true);
         try {
             await api.patch(`/quiz/${quizId}/schedule`, {
-                startTime: startTime ? new Date(startTime).toISOString() : null,
-                endTime: endTime ? new Date(endTime).toISOString() : null
+                startTime: startTime ? parseLocalDatetime(startTime).toISOString() : null,
+                endTime: endTime ? parseLocalDatetime(endTime).toISOString() : null
             });
             toast.success('Schedule updated successfully');
             if (onSuccess) onSuccess();
