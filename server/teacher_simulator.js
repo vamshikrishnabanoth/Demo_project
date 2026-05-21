@@ -1,15 +1,22 @@
-const axios = require('axios');
+const axios   = require('axios');
 const { io } = require('socket.io-client');
 
-const BASE_URL = 'http://localhost:5000';
-const QUIZ_ID = '817de27f-7146-4f77-a737-72db6f7e7ae4';
+// ── Config: override via environment variables ──────────────────────────────
+// Usage: QUIZ_ID=<uuid> node server/teacher_simulator.js
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
+const QUIZ_ID  = process.env.QUIZ_ID  || '817de27f-7146-4f77-a737-72db6f7e7ae4';
+
+if (!QUIZ_ID) {
+  console.error('❌ QUIZ_ID is required. Set it via: QUIZ_ID=<uuid> node teacher_simulator.js');
+  process.exit(1);
+}
 
 async function run() {
-  console.log('🤖 Teacher Simulator: Logging in...');
+  console.log('🤖 Teacher Simulator: Logging in as teacher1@kmit.in...');
   try {
     const loginRes = await axios.post(`${BASE_URL}/api/auth/login`, {
-      email: 'teacher1@kmit.in',
-      password: 'teacher1@kk'
+      email:    'teacher1@kmit.in',
+      password: 'KMIT@1234',          // Default seeded password
     });
     const token = loginRes.data.token;
     console.log('🤖 Teacher Simulator: Login successful.');
