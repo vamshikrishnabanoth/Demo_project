@@ -157,7 +157,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity } from 'lucide-react';
+import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2 } from 'lucide-react';
 import FileUploadLoader from '../components/loaders/FileUploadLoader';
 import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
 
