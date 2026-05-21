@@ -1096,9 +1096,8 @@ app.get('/health', (req, res) => {
 });
 
 // ─── DATABASE KEEP-ALIVE PING ─────────────────────────────────────────────────
-// MongoDB Atlas M0 (free tier) pauses after 60 minutes of inactivity.
-// This causes a 5-10 second cold start delay on the first login after idle.
-// Pinging every 9 minutes keeps the connection warm.
+// Serverless PostgreSQL providers (Neon, Supabase) pause after prolonged inactivity.
+// Pinging every 9 minutes keeps the connection warm and avoids cold-start latency.
 const DB_PING_INTERVAL = 9 * 60 * 1000; // 9 minutes
 setInterval(async () => {
     try {
