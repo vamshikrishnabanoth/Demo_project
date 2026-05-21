@@ -8,8 +8,8 @@ if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    // Fail fast — don't let users stare at a frozen screen
-    timeout: 15000,
+    // Increased to 30s to gracefully accommodate server/database cold starts on first load
+    timeout: 30000,
 });
 
 // ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────
