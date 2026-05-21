@@ -158,8 +158,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2 } from 'lucide-react';
-import FileUploadLoader from '../components/loaders/FileUploadLoader';
-import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
+import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 
 export default function CreateQuizPDF() {
     const [file, setFile] = useState(null);
@@ -191,10 +190,11 @@ export default function CreateQuizPDF() {
 
             navigate('/create-quiz/text', {
                 state: {
-                    questions: res.data.questions,
-                    title: res.data.title || file.name.replace('.pdf', ''),
-                    duration: res.data.duration || 10,
-                    source: 'generated'
+                    questions:   res.data.questions,
+                    title:       res.data.title || file.name.replace('.pdf', ''),
+                    duration:    res.data.duration || 10,
+                    source:      'generated',
+                    agentReport: res.data.agentReport || null,
                 }
             });
         } catch (err) {
@@ -207,7 +207,7 @@ export default function CreateQuizPDF() {
 
     return (
         <DashboardLayout role="teacher">
-            {loading && <AIThinkingLoader message="Analyzing Document..." />}
+            {loading && <AgentPipelineLoader />}
             <div className="max-w-4xl mx-auto pb-20 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
