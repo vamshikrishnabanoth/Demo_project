@@ -1,7 +1,21 @@
-$logFile = Join-Path $PSScriptRoot 'resource_usage_log.csv'
+# monitor_resources.ps1
+# Captures Node.js, Python, and system resource metrics every 5 seconds.
+# Press Ctrl+C to stop monitoring. Log is written to resource_usage_log.csv.
+
+# Resolve log file path even when $PSScriptRoot is empty (e.g. dot-sourced)
+$scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+if (-not $scriptDir) { $scriptDir = $PWD.Path }
+$logFile = Join-Path $scriptDir 'resource_usage_log.csv'
+
 'Timestamp,Node_CPU_Pct,Node_Memory_MB,Python_CPU_Pct,Python_Memory_MB,System_CPU_Pct,Available_Memory_GB' | Out-File -FilePath $logFile -Encoding utf8
 
-Write-Host ('📊 Resource Monitor started. Logging to ' + $logFile + ' every 5 seconds...')
+Write-Host ('=' * 70)
+Write-Host '  📊 Resource Monitor for Quiz Platform Load Testing'
+Write-Host ('=' * 70)
+Write-Host "  Logging to: $logFile"
+Write-Host '  Interval:   5 seconds'
+Write-Host '  Stop:       Ctrl+C'
+Write-Host ('=' * 70)
 
 while ($true) {
     $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
@@ -43,3 +57,6 @@ while ($true) {
     
     Start-Sleep -Seconds 5
 }
+
+Write-Host ""
+Write-Host ('  ✅ Monitoring stopped. Full log: ' + $logFile)
