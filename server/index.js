@@ -55,9 +55,11 @@ app.use(helmet({
 }));
 
 // 3. Rate Limiting (Brute Force / DOS protection)
+// 500 req / 15 min per IP: enough for a full class session (login + quiz join + answers = ~4 req/action)
+// while still blocking automated brute-force attacks (which hit thousands of req/min)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 500, // limit each IP to 500 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes'
 });
 app.use('/api/', limiter); // Apply to all API routes

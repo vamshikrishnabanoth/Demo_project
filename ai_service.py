@@ -2,7 +2,12 @@ import json
 import re
 import random
 import os
+import sys
 import base64
+
+# Force UTF-8 output on Windows to avoid cp1252 UnicodeEncodeError with emoji/unicode chars
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 import tempfile
 import numpy as np
 import faiss
@@ -186,7 +191,7 @@ async def generate_questions(req: GeneratorRequest):
 
     questions = []
     generated_so_far = ""
-    print(f"🚀 Starting sequential generation for {req.count} questions...")
+    print(f"[START] Starting sequential generation for {req.count} questions...")
 
     def is_duplicate(new_text, existing_questions):
         new_norm = re.sub(r'\s+', ' ', new_text.strip().lower())
@@ -233,7 +238,7 @@ async def generate_questions(req: GeneratorRequest):
                 
                 if response.status_code != 200:
                     if use_json_format:
-                        print(f"⚠️ Ollama returned {response.status_code} with format='json'. Retrying without format parameter...")
+                        print(f"[WARN] Ollama returned {response.status_code} with format='json'. Retrying without format parameter...")
                         payload.pop("format", None)
                         response = requests.post(OLLAMA_URL, json=payload, timeout=90)
                     
@@ -260,7 +265,7 @@ async def generate_questions(req: GeneratorRequest):
                         "points": 10,
                         "type": "multiple-choice"
                     })
-                    print(f"✅ Generated question {len(questions)}/{req.count}")
+                    print(f"[OK] Generated question {len(questions)}/{req.count}")
                     
                     # Add to history for diversity
                     generated_so_far += f" [{q_text}] "
@@ -270,10 +275,10 @@ async def generate_questions(req: GeneratorRequest):
                     raise Exception("Extracted JSON does not contain questionText or options keys.")
                 
             except Exception as e:
-                print(f"⚠️ Attempt {attempt+1} failed for question {i+1}: {e}")
+                print(f"[WARN] Attempt {attempt+1} failed for question {i+1}: {e}")
                 
         if not question_success:
-            print(f"❌ Failed to generate question {i+1} after 3 attempts.")
+            print(f"[FAIL] Failed to generate question {i+1} after 3 attempts.")
 
     if not questions:
         raise HTTPException(status_code=500, detail="AI failed to generate any questions.")

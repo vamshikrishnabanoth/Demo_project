@@ -41,6 +41,7 @@
     "pptx-parser": "^1.1.7-beta.9",
     "prisma": "^6.19.3",
     "socket.io": "^4.7.2",
+    "socket.io-client": "^4.8.3",
     "tesseract.js": "^7.0.0",
     "xss-clean": "^0.1.4"
   },

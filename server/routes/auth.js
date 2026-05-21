@@ -6,7 +6,7 @@ const { check, validationResult } = require('express-validator');
 // Rate limiter for authentication (Brute force protection)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 15, // limit each IP to 15 login attempts per window
+    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 15, // limit each IP to 15 login attempts per window
     message: 'Too many login attempts from this IP, please try again after 15 minutes'
 });
 const bcrypt = require('bcryptjs');
@@ -127,7 +127,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         }
 
         // --- RULE 5: Prevent Duplicate Logins for Students ---
-        if (user.role === 'student' && user.isOnline) {
+        if (user.role === 'student' && user.isOnline && process.env.DISABLE_LIMITS !== 'true') {
             return res.status(403).json({
                 msg: 'This account is already logged in on another device or tab.'
             });

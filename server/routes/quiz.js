@@ -42,7 +42,7 @@ const upload = multer({
 // Rate limiter for joining quizzes (prevents brute force on codes)
 const joinLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 20,
+    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 20,
     message: 'Too many attempts to join quizzes. Please try again later.'
 });
 

@@ -23,3 +23,10 @@ client/dist/
 server/*.log
 *.txt
 *.log
+
+# Load Test Large Output Files (Too large for GitHub)
+load_tests/stress_results.json
+load_tests/endurance_results.json
+load_tests/stress_output.txt
+load_tests/endurance_output.txt
+load_tests/resource_usage_log.csv
