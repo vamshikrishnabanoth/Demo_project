@@ -116,6 +116,18 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                         ) : (
                             <>
                                 <div className="space-y-4">
+                                    {statusData?.isLocked && (
+                                        <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-start gap-3 mb-4">
+                                            <Lock size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Schedule Locked</p>
+                                                <p className="text-[10px] font-bold text-slate-400 mt-1 leading-relaxed">
+                                                    Timing cannot be modified because students have already joined or interacted with this quiz.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Start Time</label>
                                         <div className="relative">
@@ -123,7 +135,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                                                 type="datetime-local"
                                                 value={startTime}
                                                 onChange={(e) => setStartTime(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)] transition-colors"
+                                                disabled={statusData?.isLocked}
+                                                className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)] transition-colors ${statusData?.isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             />
                                             <Clock className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                                         </div>
@@ -136,7 +149,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                                                 type="datetime-local"
                                                 value={endTime}
                                                 onChange={(e) => setEndTime(e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)] transition-colors"
+                                                disabled={statusData?.isLocked}
+                                                className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)] transition-colors ${statusData?.isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             />
                                             <Clock className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                                         </div>
@@ -164,8 +178,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                         {!loading && (
                             <button
                                 onClick={handleSave}
-                                disabled={saving}
-                                className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-8 py-2.5 rounded-xl font-black italic uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all flex items-center gap-2"
+                                disabled={saving || statusData?.isLocked}
+                                className={`bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-8 py-2.5 rounded-xl font-black italic uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 ${(saving || statusData?.isLocked) ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 {saving ? (
                                     <>
