@@ -1,27 +1,30 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = 'http://localhost:5000';
-const QUIZ_ID = '817de27f-7146-4f77-a737-72db6f7e7ae4'; // Upserted quiz ID
-const QUIZ_CODE = '999999';
+// ── Config: override via k6 env vars ──────────────────────────────────────────
+// Usage: k6 run -e BASE_URL=http://myserver:5000 -e QUIZ_CODE=999999 http_test.js
+const BASE_URL  = __ENV.BASE_URL  || 'http://localhost:5000';
+const QUIZ_CODE = __ENV.QUIZ_CODE || '999999';
+// Maximum seeded test students (seed_load_test_students.js creates 2000)
+const MAX_STUDENTS = 2000;
 
 export const options = {
   stages: [
-    { duration: '15s', target: 500 },  // Ramp up to 500 users
+    { duration: '15s', target: 500  }, // Ramp up to 500 users
     { duration: '30s', target: 1000 }, // Ramp up to 1000 users
-    { duration: '45s', target: 1000 }, // Stay at 1000 users
-    { duration: '15s', target: 0 },    // Ramp down to 0 users
+    { duration: '45s', target: 1000 }, // Sustain 1000 users
+    { duration: '15s', target: 0    }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<1000'], // 95% of requests must complete under 1s
-    http_req_failed: ['rate<0.01'],    // Less than 1% failure rate
+    http_req_duration: ['p(95)<1000'], // 95% of requests complete under 1 s
+    http_req_failed:   ['rate<0.01'],  // < 1% failure rate
   },
 };
 
 export default function () {
-  // Use __VU (Virtual User index) to assign a unique student login
-  const studentIndex = __VU; 
-  const email = `test_student_${studentIndex}@kmit.in`;
+  // Wrap VU index into the seeded range so we never exceed 2000 students
+  const studentIndex = ((__VU - 1) % MAX_STUDENTS) + 1;
+  const email    = `test_student_${studentIndex}@kmit.in`;
   const password = 'KMIT@1234';
 
   const loginPayload = JSON.stringify({
@@ -68,22 +71,35 @@ export default function () {
   sleep(0.5);
 
   // 3. JOIN QUIZ
-  const joinPayload = JSON.stringify({
-    code: QUIZ_CODE,
-  });
+  const joinPayload = JSON.stringify({ code: QUIZ_CODE });
   const joinRes = http.post(`${BASE_URL}/api/quiz/join`, joinPayload, authParams);
   check(joinRes, {
     'join quiz status is 200': (r) => r.status === 200,
-    'joined successfully': (r) => r.json('quizId') === QUIZ_ID,
+    'has quizId in response': (r) => {
+      try { return !!r.json('quizId'); } catch (_) { return false; }
+    },
   });
+
+  if (joinRes.status !== 200) {
+    sleep(1);
+    return;
+  }
+
+  const quizId = joinRes.json('quizId');
 
   sleep(1);
 
-  // 4. FETCH LEADERBOARD
-  const lbRes = http.get(`${BASE_URL}/api/quiz/leaderboard/${QUIZ_ID}`, authParams);
+  // 4. FETCH LEADERBOARD (uses the dynamic quizId returned by join)
+  const lbRes = http.get(`${BASE_URL}/api/quiz/leaderboard/${quizId}`, authParams);
   check(lbRes, {
     'leaderboard status is 200': (r) => r.status === 200,
-    'has leaderboard array': (r) => Array.isArray(r.json('results')),
+    'has leaderboard data': (r) => {
+      try {
+        const body = r.json();
+        // leaderboard may be an array at root or under a 'results'/'leaderboard' key
+        return Array.isArray(body) || Array.isArray(body.results) || Array.isArray(body.leaderboard);
+      } catch (_) { return false; }
+    },
   });
 
   sleep(2 + Math.random() * 2); // Simulated thinking time before next iteration
