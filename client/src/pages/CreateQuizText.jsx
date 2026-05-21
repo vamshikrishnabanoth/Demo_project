@@ -178,54 +178,56 @@ export default function CreateQuizText() {
 
     return (
         <DashboardLayout role="teacher">
-            <div className="max-w-[100rem] mx-auto px-6 py-10">
+            <div className="max-w-[100rem] mx-auto px-6 py-8">
                 
                 {/* Header System */}
-                <div className="flex items-center justify-between mb-12">
-                    <div className="space-y-4">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="space-y-3">
                         <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => navigate(-1)}>
                             Back
                         </PremiumButton>
                         <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)]">
-                            QUIZ <span className="text-[var(--text-accent)]">FORGE</span>
+                            QUIZ <span className="text-[var(--text-accent)]">ARENA</span>
                         </h1>
                     </div>
                 </div>
 
-                {/* Tab Interface */}
-                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 mb-12 w-fit">
-                    <button
-                        onClick={() => setActiveTab('manual')}
-                        className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                            ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
-                    >
-                        <Type size={16} /> Manual Matrix
-                    </button>
-                    {!isGeneratedSource && (
-                        <>
-                            <button
-                                onClick={() => setActiveTab('aiken')}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                    ${activeTab === 'aiken' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
-                            >
-                                <Upload size={16} /> AIKEN Uplink
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('aikenPaste')}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                    ${activeTab === 'aikenPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
-                            >
-                                <Clipboard size={16} /> AIKEN Paste
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('jsonPaste')}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                    ${activeTab === 'jsonPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
-                            >
-                                <Code size={16} /> JSON Paste
-                            </button>
-                        </>
-                    )}
+                {/* Tab Interface - Centered */}
+                <div className="flex justify-center mb-10">
+                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 w-fit">
+                        <button
+                            onClick={() => setActiveTab('manual')}
+                            className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
+                                ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                        >
+                            <Type size={16} /> Manual Matrix
+                        </button>
+                        {!isGeneratedSource && (
+                            <>
+                                <button
+                                    onClick={() => setActiveTab('aiken')}
+                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
+                                        ${activeTab === 'aiken' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    <Upload size={16} /> AIKEN Uplink
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('aikenPaste')}
+                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
+                                        ${activeTab === 'aikenPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    <Clipboard size={16} /> AIKEN Paste
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('jsonPaste')}
+                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
+                                        ${activeTab === 'jsonPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    <Code size={16} /> JSON Paste
+                                </button>
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 <AnimatePresence mode="wait">
@@ -246,11 +248,12 @@ export default function CreateQuizText() {
                     )}
                     {activeTab === 'manual' && (
                         <motion.div key="manual" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                            <form onSubmit={handleSubmit} className="space-y-16">
+                            <form onSubmit={handleSubmit} className="space-y-8">
                                 
-                                {/* Meta Config */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    <GlassCard className="lg:col-span-2">
+                                {/* Unified Config Row — 3 Equal Columns */}
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    {/* Column 1: Campaign Title */}
+                                    <GlassCard className="flex flex-col justify-center">
                                         <PremiumInput
                                             label="Campaign Title"
                                             placeholder="Enter quiz title..."
@@ -260,13 +263,14 @@ export default function CreateQuizText() {
                                         />
                                     </GlassCard>
 
-                                                                    <GlassCard className="flex flex-col justify-center gap-3">
+                                    {/* Column 2: Assignment Mode Toggle */}
+                                    <GlassCard className="flex flex-col justify-center gap-3">
                                         <div className="flex items-center justify-between cursor-pointer group select-none" onClick={() => setIsAssessment(!isAssessment)}>
                                             <div className="space-y-1">
-                                                <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em]">Arena Mode</span>
+                                                <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em]">Assignment Mode</span>
                                                 <span className="block font-black text-xs text-white uppercase tracking-tight italic">Assignment Mode</span>
                                                 <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">
-                                                    {isAssessment ? 'Self-paced homework task' : 'Manual real-time live room'}
+                                                    {isAssessment ? 'Self-paced homework task' : 'Manual Time, Team Link Rooms'}
                                                 </span>
                                             </div>
                                             <div className="relative w-12 h-6 flex-shrink-0">
@@ -281,11 +285,8 @@ export default function CreateQuizText() {
                                             </div>
                                         </div>
                                     </GlassCard>
-                                </div>
 
-                                {/* Premium Campaign Control Settings */}
-                                {/* Premium Campaign Control Settings */}
-                                <div className={`grid grid-cols-1 gap-8 ${isAssessment ? 'md:grid-cols-3' : 'max-w-md mx-auto w-full'}`}>
+                                    {/* Column 3: Timer Mode */}
                                     <GlassCard className="flex flex-col justify-center gap-4">
                                         <div className="space-y-4">
                                             <div>
@@ -321,60 +322,61 @@ export default function CreateQuizText() {
                                             )}
                                         </div>
                                     </GlassCard>
-
-                                    {isAssessment && (
-                                        <>
-                                            <GlassCard className="flex flex-col justify-center gap-4">
-                                                <div>
-                                                    <div className="flex items-center justify-between mb-3">
-                                                        <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest">Scheduled Start</label>
-                                                        <label className="flex items-center gap-2 cursor-pointer group">
-                                                            <div className="relative w-8 h-4">
-                                                                <input type="checkbox" className="sr-only peer" checked={startNow} onChange={(e) => setStartNow(e.target.checked)} />
-                                                                <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                                <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
-                                                            </div>
-                                                            <span className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
-                                                        </label>
-                                                    </div>
-                                                    
-                                                    {!startNow ? (
-                                                        <input
-                                                            type="datetime-local"
-                                                            value={startTime}
-                                                            onChange={(e) => setStartTime(e.target.value)}
-                                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 flex items-center justify-center opacity-70">
-                                                            <span className="text-xs font-black text-[var(--text-accent)] italic uppercase tracking-wider">Active Immediately</span>
-                                                        </div>
-                                                    )}
-                                                    
-                                                    <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
-                                                        {startNow ? 'Opens immediately for students' : 'Optional: Leave blank for instant access'}
-                                                    </span>
-                                                </div>
-                                            </GlassCard>
-
-                                            <GlassCard className="flex flex-col justify-center gap-4">
-                                                <div>
-                                                    <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Expiration End</label>
-                                                    <input
-                                                        type="datetime-local"
-                                                        value={endTime}
-                                                        onChange={(e) => setEndTime(e.target.value)}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
-                                                    />
-                                                    <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
-                                                </div>
-                                            </GlassCard>
-                                        </>
-                                    )}
                                 </div>
 
+                                {/* Assessment-Only: Schedule & Expiration Row */}
+                                {isAssessment && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <GlassCard className="flex flex-col justify-center gap-4">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest">Scheduled Start</label>
+                                                    <label className="flex items-center gap-2 cursor-pointer group">
+                                                        <div className="relative w-8 h-4">
+                                                            <input type="checkbox" className="sr-only peer" checked={startNow} onChange={(e) => setStartNow(e.target.checked)} />
+                                                            <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
+                                                            <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                {!startNow ? (
+                                                    <input
+                                                        type="datetime-local"
+                                                        value={startTime}
+                                                        onChange={(e) => setStartTime(e.target.value)}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 flex items-center justify-center opacity-70">
+                                                        <span className="text-xs font-black text-[var(--text-accent)] italic uppercase tracking-wider">Active Immediately</span>
+                                                    </div>
+                                                )}
+                                                
+                                                <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
+                                                    {startNow ? 'Opens immediately for students' : 'Optional: Leave blank for instant access'}
+                                                </span>
+                                            </div>
+                                        </GlassCard>
+
+                                        <GlassCard className="flex flex-col justify-center gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Expiration End</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    value={endTime}
+                                                    onChange={(e) => setEndTime(e.target.value)}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                />
+                                                <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
+                                            </div>
+                                        </GlassCard>
+                                    </div>
+                                )}
+
                                 {/* Questions Matrix */}
-                                <div className="space-y-12">
+                                <div className="space-y-10">
                                     {questions.map((q, idx) => (
                                         <QuizQuestionEditor
                                             key={idx}
@@ -391,19 +393,19 @@ export default function CreateQuizText() {
                                     <button
                                         type="button"
                                         onClick={addQuestion}
-                                        className="w-full flex items-center justify-center gap-4 p-12 rounded-[3rem] border-4 border-dashed border-white/5 text-white/20 hover:border-[var(--bg-accent)]/50 hover:text-[var(--text-accent)] transition-all group bg-white/[0.01]"
+                                        className="w-full flex items-center justify-center gap-4 p-10 rounded-[3rem] border-4 border-dashed border-white/5 text-white/20 hover:border-[var(--bg-accent)]/50 hover:text-[var(--text-accent)] transition-all group bg-white/[0.01]"
                                     >
-                                        <Plus size={32} className="group-hover:scale-125 transition-transform" />
-                                        <span className="font-black text-2xl uppercase tracking-widest italic">Add New Data Point</span>
+                                        <Plus size={28} className="group-hover:scale-125 transition-transform" />
+                                        <span className="font-black text-xl uppercase tracking-widest italic">Add New Data Point</span>
                                     </button>
                                 </div>
 
                                 {/* Final Execution */}
-                                <div className="flex justify-center pt-16 border-t border-white/5">
+                                <div className="flex justify-center pt-12 border-t border-white/5">
                                     <PremiumButton
                                         type="submit"
                                         disabled={loading}
-                                        className="px-24 py-10 text-3xl italic"
+                                        className="px-20 py-8 text-2xl italic"
                                         icon={loading ? Loader2 : CheckCircle}
                                     >
                                         {loading ? 'PUBLISHING...' : 'FINALIZE MISSION'}
