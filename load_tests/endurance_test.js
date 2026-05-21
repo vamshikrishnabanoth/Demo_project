@@ -2,21 +2,24 @@ import ws from 'k6/ws';
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = 'http://localhost:5000';
-const WS_URL = 'ws://localhost:5000/socket.io/?EIO=4&transport=websocket';
-const QUIZ_ID = '817de27f-7146-4f77-a737-72db6f7e7ae4';
+// ── Config: override via k6 env vars ──────────────────────────────────────────
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:5000';
+const WS_URL   = `${BASE_URL.replace('http', 'ws')}/socket.io/?EIO=4&transport=websocket`;
+const QUIZ_ID  = __ENV.QUIZ_ID  || '817de27f-7146-4f77-a737-72db6f7e7ae4';
+const MAX_STUDENTS = 2000;
 
 export const options = {
-  vus: 250,        // Sustained 250 users
+  vus: 250,        // Sustained 250 virtual users
   duration: '10m', // Run for exactly 10 minutes
   thresholds: {
-    'http_req_failed': ['rate<0.01'],
+    http_req_failed: ['rate<0.01'],           // < 1% HTTP failure
+    http_req_duration: ['p(95)<2000'],        // 95th percentile < 2 s
   },
 };
 
 export default function () {
-  const studentIndex = __VU;
-  const email = `test_student_${studentIndex}@kmit.in`;
+  const studentIndex = ((__VU - 1) % MAX_STUDENTS) + 1;
+  const email    = `test_student_${studentIndex}@kmit.in`;
   const password = 'KMIT@1234';
 
   // 1. LOGIN OVER HTTP
@@ -109,11 +112,22 @@ export default function () {
     });
 
     socket.on('close', function () {
-      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
     });
 
     socket.on('error', function (e) {
-      // Log errors silently during endurance to keep console clean
+      // Clear timer on error to prevent interval leak during long endurance runs
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
+      // Log only 5% of errors to avoid flooding console during 10-minute run
+      if (Math.random() < 0.05) {
+        console.warn(`[Endurance] WS error for VU ${__VU}: ${e.error ? e.error() : 'unknown'}`);
+      }
     });
 
     sleep(90); // Keep socket open for 1.5 minutes per iteration
