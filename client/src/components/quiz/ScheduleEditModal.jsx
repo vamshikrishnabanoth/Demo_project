@@ -18,6 +18,17 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
         }
     }, [isOpen, quizId]);
 
+    const formatToLocalDatetime = (date) => {
+        if (!date) return '';
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
     const fetchStatus = async () => {
         setLoading(true);
         setError('');
@@ -25,19 +36,9 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
             const res = await api.get(`/quiz/${quizId}/schedule-status`);
             setStatusData(res.data);
             
-            // Format dates for datetime-local input (YYYY-MM-DDThh:mm)
-            if (res.data.startTime) {
-                const start = new Date(res.data.startTime);
-                setStartTime(start.toISOString().slice(0, 16));
-            } else {
-                setStartTime('');
-            }
-            if (res.data.endTime) {
-                const end = new Date(res.data.endTime);
-                setEndTime(end.toISOString().slice(0, 16));
-            } else {
-                setEndTime('');
-            }
+            // Format dates for local display in datetime-local input
+            setStartTime(formatToLocalDatetime(res.data.startTime));
+            setEndTime(formatToLocalDatetime(res.data.endTime));
         } catch (err) {
             setError(err.response?.data?.msg || 'Failed to load schedule status');
         } finally {
@@ -58,8 +59,8 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
         setSaving(true);
         try {
             await api.patch(`/quiz/${quizId}/schedule`, {
-                startTime: startTime || null,
-                endTime: endTime || null
+                startTime: startTime ? new Date(startTime).toISOString() : null,
+                endTime: endTime ? new Date(endTime).toISOString() : null
             });
             toast.success('Schedule updated successfully');
             if (onSuccess) onSuccess();
