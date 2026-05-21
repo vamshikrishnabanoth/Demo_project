@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, RotateCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -13,6 +13,7 @@ import AikenUploadPanel from '../components/quiz/AikenUploadPanel';
 import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
+import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
 
 export default function CreateQuizText() {
     const navigate = useNavigate();
@@ -34,9 +35,11 @@ export default function CreateQuizText() {
     const [activeTab, setActiveTab] = useState('manual');
     const [aikenLoaded, setAikenLoaded] = useState(false);
     const [isGeneratedSource, setIsGeneratedSource] = useState(false);
+    const [agentReport, setAgentReport] = useState(null);
     const [assignedGroups, setAssignedGroups] = useState([]);
     const [assignedStudents, setAssignedStudents] = useState([]);
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
+    const [regeneratingIdx, setRegeneratingIdx] = useState(null);
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -45,8 +48,9 @@ export default function CreateQuizText() {
         if (incoming) {
             setQuestions(incoming);
             setIsGeneratedSource(true);
-            if (location.state.title) setTitle(location.state.title);
-            if (location.state.duration) setDuration(location.state.duration);
+            if (location.state.title)       setTitle(location.state.title);
+            if (location.state.duration)    setDuration(location.state.duration);
+            if (location.state.agentReport) setAgentReport(location.state.agentReport);
             toast.success('AI Intel Injected Successfully');
         }
     }, [location.state]);
@@ -103,6 +107,44 @@ export default function CreateQuizText() {
         setActiveTab('manual');
         toast.success(`${newQuestions.length} AIKEN questions loaded`);
     };
+
+    // ─── INDIVIDUAL QUESTION REGENERATION ───────────────────────────────────
+    const handleRegenerateQuestion = useCallback(async (idx) => {
+        setRegeneratingIdx(idx);
+        try {
+            // Use the stored title/topic as context for regeneration
+            const payload = {
+                topic:         location.state?.title || title || 'General Knowledge',
+                type:          'topic',
+                questionCount: 1,
+                difficulty:    'Medium',
+            };
+            const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
+            const [newQ] = res.data.questions || [];
+            if (newQ) {
+                const updated = [...questions];
+                updated[idx] = newQ;
+                setQuestions(updated);
+                // Patch the agentReport perQuestion entry to mark as regenerated
+                if (agentReport?.perQuestion?.[idx]) {
+                    const updatedReport = {
+                        ...agentReport,
+                        perQuestion: agentReport.perQuestion.map((pq, i) =>
+                            i === idx ? { ...pq, verdict: 'good', issues: ['Manually regenerated'], retries: 0 } : pq
+                        ),
+                    };
+                    setAgentReport(updatedReport);
+                }
+                toast.success(`Question ${idx + 1} regenerated`);
+            } else {
+                toast.error('Could not regenerate — try editing manually');
+            }
+        } catch (err) {
+            toast.error('Regeneration failed — try editing manually');
+        } finally {
+            setRegeneratingIdx(null);
+        }
+    }, [questions, agentReport, title, location.state]);
 
     // ─── SUBMISSION ─────────────────────────────────────────────────────────
     const handleSubmit = async (e) => {
@@ -375,19 +417,37 @@ export default function CreateQuizText() {
                                     </div>
                                 )}
 
+                                {/* ── Agent Quality Badge (AI-generated quizzes only) ── */}
+                                {isGeneratedSource && agentReport && (
+                                    <AgentQualityBadge
+                                        agentReport={agentReport}
+                                        onRegenerateQuestion={handleRegenerateQuestion}
+                                    />
+                                )}
+
                                 {/* Questions Matrix */}
                                 <div className="space-y-10">
                                     {questions.map((q, idx) => (
-                                        <QuizQuestionEditor
-                                            key={idx}
-                                            index={idx}
-                                            question={q}
-                                            onUpdate={updateQuestion}
-                                            onDelete={deleteQuestion}
-                                            onAddOption={addOption}
-                                            onDeleteOption={deleteOption}
-                                            onUpdateOption={updateOption}
-                                        />
+                                        <div key={idx} className="relative">
+                                            {/* Regenerating overlay */}
+                                            {regeneratingIdx === idx && (
+                                                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-[var(--bg-primary)]/80 backdrop-blur-sm border border-[var(--bg-accent)]/30">
+                                                    <div className="flex items-center gap-3 text-[var(--bg-accent)]">
+                                                        <Loader2 size={20} className="animate-spin" />
+                                                        <span className="font-black text-sm uppercase tracking-widest">Regenerating Q{idx + 1}…</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <QuizQuestionEditor
+                                                index={idx}
+                                                question={q}
+                                                onUpdate={updateQuestion}
+                                                onDelete={deleteQuestion}
+                                                onAddOption={addOption}
+                                                onDeleteOption={deleteOption}
+                                                onUpdateOption={updateOption}
+                                            />
+                                        </div>
                                     ))}
 
                                     <button
