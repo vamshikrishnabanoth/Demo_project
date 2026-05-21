@@ -2,23 +2,29 @@ import ws from 'k6/ws';
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = 'http://localhost:5000';
-const WS_URL = 'ws://localhost:5000/socket.io/?EIO=4&transport=websocket';
-const QUIZ_ID = '817de27f-7146-4f77-a737-72db6f7e7ae4';
+// ── Config: override via k6 env vars ──────────────────────────────────────────
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:5000';
+const WS_URL   = `${BASE_URL.replace('http', 'ws')}/socket.io/?EIO=4&transport=websocket`;
+const QUIZ_ID  = __ENV.QUIZ_ID  || '817de27f-7146-4f77-a737-72db6f7e7ae4';
+const MAX_STUDENTS = 2000;
 
 export const options = {
   stages: [
-    { duration: '30s', target: 1000 }, // Phase 1: Ramp up rapidly to 1000 users (Normal operation)
-    { duration: '30s', target: 1500 }, // Phase 2: Push to 1500 users (Stress stage)
-    { duration: '30s', target: 2000 }, // Phase 3: Push to 2000 users (Extreme stage)
-    { duration: '30s', target: 2000 }, // Hold 2000 users to observe failures
-    { duration: '15s', target: 0 },    // Cool down
+    { duration: '30s', target: 1000 }, // Phase 1: Ramp to 1000 (normal load)
+    { duration: '30s', target: 1500 }, // Phase 2: Push to 1500 (stress)
+    { duration: '30s', target: 2000 }, // Phase 3: Push to 2000 (extreme)
+    { duration: '30s', target: 2000 }, // Phase 4: Hold at 2000 (observe failures)
+    { duration: '15s', target: 0    }, // Cool down
   ],
+  thresholds: {
+    http_req_failed:                   ['rate<0.05'], // < 5% HTTP failure under extreme stress
+    'websocket_handshake_status_101': ['rate>0.80'], // > 80% WS connections established
+  },
 };
 
 export default function () {
-  const studentIndex = __VU;
-  const email = `test_student_${studentIndex}@kmit.in`;
+  const studentIndex = ((__VU - 1) % MAX_STUDENTS) + 1;
+  const email    = `test_student_${studentIndex}@kmit.in`;
   const password = 'KMIT@1234';
 
   // 1. LOGIN OVER HTTP
@@ -94,14 +100,22 @@ export default function () {
     });
 
     socket.on('close', function () {
-      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
     });
 
     socket.on('error', function (e) {
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
       console.error(`❌ STRESS: Socket error for ${username}: ${e.error()}`);
     });
 
-    sleep(45); // Keep socket open to maintain concurrency load
+    // Hold the connection open; 40s fits within each stage window
+    sleep(40);
     socket.close();
   });
 
