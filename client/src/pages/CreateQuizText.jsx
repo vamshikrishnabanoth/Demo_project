@@ -193,16 +193,16 @@ export default function CreateQuizText() {
                 </div>
 
                 {/* Tab Interface - Centered */}
-                <div className="flex justify-center mb-10">
-                    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 w-fit">
-                        <button
-                            onClick={() => setActiveTab('manual')}
-                            className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
-                        >
-                            <Type size={16} /> Manual Matrix
-                        </button>
-                        {!isGeneratedSource && (
+                {!isGeneratedSource && (
+                    <div className="flex justify-center mb-10">
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 w-fit">
+                            <button
+                                onClick={() => setActiveTab('manual')}
+                                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
+                                    ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                            >
+                                <Type size={16} /> Manual Matrix
+                            </button>
                             <>
                                 <button
                                     onClick={() => setActiveTab('aiken')}
@@ -226,9 +226,9 @@ export default function CreateQuizText() {
                                     <Code size={16} /> JSON Paste
                                 </button>
                             </>
-                        )}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <AnimatePresence mode="wait">
                     {activeTab === 'aiken' && (
