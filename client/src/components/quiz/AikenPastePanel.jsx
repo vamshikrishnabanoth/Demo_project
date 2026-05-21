@@ -22,18 +22,24 @@ export default function AikenPastePanel({ onQuestionsLoaded }) {
         const { questions, errors } = parseAiken(pastedText);
 
         if (errors && errors.length > 0) {
-            setErrorMsg(errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more errors.` : ''));
+            setErrorMsg('Invalid AIKEN format detected. Please check the uploaded file format.\n\n' + errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more errors.` : ''));
             setParsedCount(0);
             setDecodedQuestions([]);
-            toast.error('Decoding anomalies detected');
+            toast.error('Invalid AIKEN format detected. Please check the uploaded file format.', {
+                duration: 6000,
+                id: 'aiken-paste-error'
+            });
             return;
         }
 
         if (questions.length === 0) {
-            setErrorMsg('No valid Aiken questions resolved. Verify spelling of "ANSWER: " line.');
+            setErrorMsg('Invalid AIKEN format detected. Please check the uploaded file format.');
             setParsedCount(0);
             setDecodedQuestions([]);
-            toast.error('Zero questions resolved');
+            toast.error('Invalid AIKEN format detected. Please check the uploaded file format.', {
+                duration: 6000,
+                id: 'aiken-paste-empty-error'
+            });
             return;
         }
 

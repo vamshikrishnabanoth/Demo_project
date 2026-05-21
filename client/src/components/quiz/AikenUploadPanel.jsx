@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, FileText, X, CheckCircle, Zap } from 'lucide-react';
+import { Upload, FileText, X, CheckCircle, Zap, AlertTriangle } from 'lucide-react';
 import { parseAiken } from '../../utils/parsers';
 import { PremiumButton } from '../ui/Primitives';
+import toast from 'react-hot-toast';
 
 export default function AikenUploadPanel({ onQuestionsLoaded }) {
     const [dragOver, setDragOver] = useState(false);
@@ -16,16 +17,34 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
     const handleFile = (file) => {
         if (!file) return;
         if (!file.name.match(/\.(txt|aiken)$/i)) {
-            setFileError('Please upload a .txt or .aiken file.');
+            const errMsg = 'Please upload a .txt or .aiken file.';
+            setFileError(errMsg);
+            toast.error(errMsg);
+            setFileName('');
+            setParsed(null);
+            setPreviewOpen(false);
             return;
         }
         setFileName(file.name);
         setFileError('');
+        setParsed(null);
+        setPreviewOpen(false);
         const reader = new FileReader();
         reader.onload = (e) => {
             const text = e.target.result;
             setRawText(text);
             const result = parseAiken(text);
+            
+            if (!result.isValid) {
+                const errorMsgStr = 'Invalid AIKEN format detected. Please check the uploaded file format.';
+                setFileError(errorMsgStr);
+                toast.error(errorMsgStr, {
+                    duration: 6000,
+                    id: 'aiken-upload-error'
+                });
+                return;
+            }
+            
             setParsed(result);
             setPreviewOpen(true);
         };
@@ -66,7 +85,15 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
                 <p className="text-white/30 text-[10px] font-black uppercase tracking-widest">Supports .txt & .aiken (Max 5MB)</p>
             </div>
 
-            {fileError && <p className="text-red-500 text-xs font-black uppercase tracking-widest text-center animate-pulse">{fileError}</p>}
+            {fileError && (
+                <div className="bg-red-500/5 border border-red-500/20 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
+                    <AlertTriangle className="text-red-500 shrink-0 mt-1" size={20} />
+                    <div className="text-left">
+                        <p className="text-red-400 text-sm font-black uppercase tracking-wider mb-1">AIKEN Format Error</p>
+                        <p className="text-red-300/80 text-xs font-medium leading-relaxed">{fileError}</p>
+                    </div>
+                </div>
+            )}
 
             <AnimatePresence>
                 {previewOpen && parsed && (
@@ -80,7 +107,7 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle className="text-green-500" size={20} />
-                                    <span className="text-sm font-black text-white uppercase italic">{parsed.questions.length} Questions Decoded</span>
+                                    <span className="text-sm font-black text-white uppercase italic">{parsed.questions.length} Questions Decoded & Verified</span>
                                 </div>
                                 <PremiumButton variant="primary" onClick={() => onQuestionsLoaded(parsed.questions)}>
                                     Inject Questions
