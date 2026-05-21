@@ -131,7 +131,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { Book, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles, Loader2 } from 'lucide-react';
-import AIThinkingLoader from '../components/loaders/AIThinkingLoader';
+import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
@@ -153,13 +153,13 @@ export default function CreateQuizTopic() {
 
             const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
 
-            // Redirect to the editor with generated questions
             navigate('/create-quiz/text', {
                 state: {
-                    questions: res.data.questions,
-                    title: res.data.title,
-                    duration: res.data.duration || 10,
-                    source: 'generated'
+                    questions:   res.data.questions,
+                    title:       res.data.title,
+                    duration:    res.data.duration || 10,
+                    source:      'generated',
+                    agentReport: res.data.agentReport || null,
                 }
             });
         } catch (err) {
@@ -172,7 +172,7 @@ export default function CreateQuizTopic() {
 
     return (
         <DashboardLayout role="teacher">
-            {loading && <AIThinkingLoader message="AI Generating Questions..." />}
+            {loading && <AgentPipelineLoader />}
             <div className="max-w-4xl mx-auto pb-20 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
