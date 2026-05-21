@@ -29,4 +29,13 @@ load_tests/stress_results.json
 load_tests/endurance_results.json
 load_tests/stress_output.txt
 load_tests/endurance_output.txt
+load_tests/http_output.txt
+load_tests/ws_output.txt
+load_tests/ai_output.txt
 load_tests/resource_usage_log.csv
+
+# Load Test Generated Screenshots (Regenerated each run — not for VCS)
+load_tests/screenshots/
+
+# k6 result exports
+load_tests/results/
