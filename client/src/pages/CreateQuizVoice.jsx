@@ -8,14 +8,15 @@ export default function CreateQuizVoice() {
     const navigate = useNavigate();
     const [questionCount, setQuestionCount] = useState(5);
 
-    const handleQuestionsLoaded = (questions, title) => {
-        // Redirect to the editor with generated questions
+    const handleQuestionsLoaded = (questions, title, agentReport) => {
+        // Redirect to the editor with generated questions + full agent report
         navigate('/create-quiz/text', {
             state: {
                 questions,
                 title,
-                duration: 10,
-                source: 'generated'
+                duration:    10,
+                source:      'generated',
+                agentReport: agentReport || null,
             }
         });
     };
