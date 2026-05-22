@@ -1,17 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Pause, Play, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
+import { Mic, Square, Pause, Play, Sparkles, AlertCircle } from 'lucide-react';
 import api from '../utils/api';
+import AgentPipelineLoader from './loaders/AgentPipelineLoader';
+import useGenerationPoller from '../hooks/useGenerationPoller';
 
 export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, difficulty = 'Medium' }) {
     const [isRecording, setIsRecording] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
-    const [processing, setProcessing] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
-    
+
     const mediaRecorderRef = useRef(null);
-    const audioChunksRef = useRef([]);
-    const timerRef = useRef(null);
+    const audioChunksRef   = useRef([]);
+    const timerRef         = useRef(null);
+
+    const { polling, stage, stageLabel, elapsed, error: pollError, startPolling } = useGenerationPoller();
+
+    // Merge all error sources
+    const displayError = error || pollError;
+    const isProcessing = uploading || polling;
 
     // Timer logic
     useEffect(() => {
@@ -36,18 +44,15 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
             setError(null);
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const mediaRecorder = new MediaRecorder(stream);
-            
+
             mediaRecorderRef.current = mediaRecorder;
-            audioChunksRef.current = [];
+            audioChunksRef.current   = [];
 
             mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunksRef.current.push(event.data);
-                }
+                if (event.data.size > 0) audioChunksRef.current.push(event.data);
             };
-
             mediaRecorder.onstop = handleStop;
-            
+
             mediaRecorder.start();
             setIsRecording(true);
             setIsPaused(false);
@@ -86,37 +91,60 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
             setError('Recording too short. Please speak for at least a few seconds.');
             return;
         }
-        
         processAudio(audioBlob);
     };
 
     const processAudio = async (blob) => {
-        setProcessing(true);
+        setUploading(true);
         setError(null);
-        
+
         try {
             const formData = new FormData();
             formData.append('file', blob, 'live_lesson.webm');
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
 
+            // Only wait for taskId — generation happens async
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 300000
+                timeout: 30000,
             });
 
-            if (res.data.questions && res.data.questions.length > 0) {
-                onQuestionsLoaded(res.data.questions, res.data.title || 'Live Lesson Quiz');
-            } else {
-                throw new Error('No questions generated');
-            }
+            const { taskId } = res.data;
+            if (!taskId) throw new Error('No taskId returned from server');
+
+            setUploading(false);
+
+            startPolling(taskId, {
+                onComplete: (result) => {
+                    if (result.questions && result.questions.length > 0) {
+                        onQuestionsLoaded(result.questions, result.title || 'Live Lesson Quiz', result.agentReport);
+                    } else {
+                        setError('No questions were generated. Please try again with a longer recording.');
+                    }
+                },
+                onError: (msg) => {
+                    setError(msg || 'Failed to process audio. Ensure you are speaking clearly.');
+                },
+            });
         } catch (err) {
             console.error('Processing error:', err);
-            setError(err.response?.data?.msg || 'Failed to process audio. Ensure you are speaking clearly.');
-        } finally {
-            setProcessing(false);
+            setUploading(false);
+            setError(err.response?.data?.msg || 'Failed to process audio. Please try again.');
         }
     };
+
+    // Show full-screen loader during pipeline
+    if (isProcessing) {
+        return (
+            <AgentPipelineLoader
+                stage={stage}
+                stageLabel={stageLabel}
+                elapsed={elapsed}
+                isVoice={true}
+            />
+        );
+    }
 
     return (
         <div className="bg-white/5 rounded-[2.5rem] border border-white/10 p-12 text-center space-y-8 overflow-hidden relative group transition-all hover:border-[#ff6b00]/30 shadow-2xl">
@@ -134,10 +162,10 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
                 {isRecording && !isPaused && (
                     <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-20 pointer-events-none">
                         {[...Array(20)].map((_, i) => (
-                            <div 
+                            <div
                                 key={i}
                                 className="w-1 bg-[#ff6b00] rounded-full animate-pulse"
-                                style={{ 
+                                style={{
                                     height: `${Math.random() * 100 + 20}%`,
                                     animationDelay: `${i * 0.1}s`,
                                     animationDuration: '0.8s'
@@ -146,7 +174,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
                         ))}
                     </div>
                 )}
-                
+
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 relative z-10
                     ${isRecording ? (isPaused ? 'bg-yellow-500 shadow-[0_0_50px_rgba(234,179,8,0.3)]' : 'bg-red-500 animate-pulse shadow-[0_0_50px_rgba(239,68,68,0.5)]') : 'bg-white/5 border-2 border-white/10 text-slate-500'}
                 `}>
@@ -166,7 +194,6 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
                 {!isRecording ? (
                     <button
                         onClick={startRecording}
-                        disabled={processing}
                         className="flex items-center gap-3 px-10 py-5 bg-[#ff6b00] text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-[#ff6b00]/20 hover:scale-105 active:scale-95 transition-all"
                     >
                         <Mic size={20} />
@@ -202,22 +229,10 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
                 )}
             </div>
 
-            {processing && (
-                <div className="flex flex-col items-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-4">
-                    <Loader2 className="animate-spin text-[#ff6b00]" size={40} />
-                    <div className="space-y-1">
-                        <p className="text-[#ff6b00] font-black text-sm uppercase tracking-widest flex items-center gap-2 justify-center">
-                            <Sparkles size={16} /> AI is filtering & generating...
-                        </p>
-                        <p className="text-slate-500 text-xs font-bold uppercase">This takes about 10-15 seconds</p>
-                    </div>
-                </div>
-            )}
-
-            {error && (
-                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-500 animate-in shake-in">
+            {displayError && (
+                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-500 animate-in fade-in">
                     <AlertCircle size={20} />
-                    <p className="text-xs font-black uppercase tracking-wider">{error}</p>
+                    <p className="text-xs font-black uppercase tracking-wider">{displayError}</p>
                 </div>
             )}
         </div>
