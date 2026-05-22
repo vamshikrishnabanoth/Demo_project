@@ -2,49 +2,73 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Book, CheckCircle, Hash, Gauge, Clock, Radio, Sparkles, Loader2 } from 'lucide-react';
+import { Book, Hash, Gauge, Sparkles, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
+import useGenerationPoller from '../hooks/useGenerationPoller';
+import toast from 'react-hot-toast';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
-    const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+
+    const { polling, stage, stageLabel, elapsed, error, startPolling } = useGenerationPoller();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        if (!topic.trim()) return;
+
+        setSubmitting(true);
         try {
-            const payload = {
+            const res = await api.post('/quiz/generate', {
                 topic,
                 type: 'topic',
                 questionCount,
-                difficulty
-            };
+                difficulty,
+            }, { timeout: 30000 }); // short — only waits for taskId
 
-            const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
+            const { taskId } = res.data;
+            if (!taskId) throw new Error('No taskId returned from server');
 
-            navigate('/create-quiz/text', {
-                state: {
-                    questions:   res.data.questions,
-                    title:       res.data.title,
-                    duration:    res.data.duration || 10,
-                    source:      'generated',
-                    agentReport: res.data.agentReport || null,
-                }
+            startPolling(taskId, {
+                onComplete: (result) => {
+                    navigate('/create-quiz/text', {
+                        state: {
+                            questions:       result.questions,
+                            title:           result.title,
+                            duration:        result.duration || 10,
+                            source:          'generated',
+                            agentReport:     result.agentReport || null,
+                            finalValidation: result.finalValidation || null,
+                        },
+                    });
+                },
+                onError: (msg) => {
+                    toast.error(msg || 'Generation failed. Please try again.');
+                    setSubmitting(false);
+                },
             });
         } catch (err) {
             console.error(err);
-            alert('Failed to generate quiz');
-        } finally {
-            setLoading(false);
+            toast.error('Failed to start generation. Please try again.');
+            setSubmitting(false);
         }
     };
 
+    const isLoading = submitting || polling;
+
     return (
         <DashboardLayout role="teacher">
-            {loading && <AgentPipelineLoader />}
+            {isLoading && (
+                <AgentPipelineLoader
+                    stage={stage}
+                    stageLabel={stageLabel}
+                    elapsed={elapsed}
+                    isVoice={false}
+                />
+            )}
             <div className="max-w-4xl mx-auto pb-20 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
@@ -53,9 +77,16 @@ export default function CreateQuizTopic() {
                         <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
                             AI <span className="text-[var(--bg-accent)]">Topic Creator</span>
                         </h1>
-                        <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Generate 5 questions from any subject</p>
+                        <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Generate questions from any subject using the full agent pipeline</p>
                     </div>
                 </div>
+
+                {/* Error display */}
+                {error && (
+                    <div className="mb-6 px-5 py-4 rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 font-bold text-sm uppercase tracking-wider">
+                        ⚠ {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-12">
                     <div className="bg-white/5 rounded-[3rem] border border-[var(--border-color)] p-12 ring-1 ring-white/5 relative overflow-hidden group glass-panel">
@@ -69,6 +100,7 @@ export default function CreateQuizTopic() {
                                     className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-3xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none input-cinematic"
                                     placeholder="e.g. Artificial Intelligence, History of India"
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
 
@@ -86,6 +118,7 @@ export default function CreateQuizTopic() {
                                             value={questionCount}
                                             onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
                                             className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full"
+                                            disabled={isLoading}
                                         />
                                     </div>
                                 </div>
@@ -99,6 +132,7 @@ export default function CreateQuizTopic() {
                                             value={difficulty}
                                             onChange={(e) => setDifficulty(e.target.value)}
                                             className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
+                                            disabled={isLoading}
                                         >
                                             <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
                                             <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
@@ -115,11 +149,11 @@ export default function CreateQuizTopic() {
                     <div className="flex justify-center pt-8">
                         <button
                             type="submit"
-                            disabled={loading || !topic}
+                            disabled={isLoading || !topic}
                             className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
                         >
-                            {loading ? <Loader2 className="animate-spin" size={32} /> : <Sparkles size={32} />}
-                            {loading ? 'ANALYZING...' : 'GENERATE QUIZ'}
+                            {isLoading ? <Loader2 className="animate-spin" size={32} /> : <Sparkles size={32} />}
+                            {isLoading ? 'GENERATING...' : 'GENERATE QUIZ'}
                         </button>
                     </div>
                 </form>
