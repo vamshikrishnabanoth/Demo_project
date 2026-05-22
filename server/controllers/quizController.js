@@ -7,7 +7,8 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const officeParser = require('officeparser');
 const Groq = require('groq-sdk');
-const { runAgentPipeline } = require('../services/agentPipeline');
+const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
+const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1194,79 +1195,98 @@ exports.updateQuiz = async (req, res) => {
 };
 
 exports.generateQuizQuestions = async (req, res) => {
-    try {
-        let { type, questionCount, difficulty, topic } = req.body;
-        let finalQuestions = [];
-        let extractedTitle = topic || 'AI Generated Quiz';
-        let sourceType = type || 'topic';
+    // Create a task immediately and return taskId — client polls /generate/status/:taskId
+    const taskId = createTask();
+    res.json({ taskId });
 
-        // --- AI MODERATION GUARD ---
-        if (req.file) {
-            const ext = path.extname(req.file.originalname).toLowerCase();
-            const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
-            const moderation = await moderateContent(req.user.id, topic || '', isImage ? 'image' : 'text', path.resolve(req.file.path));
-            if (!moderation.isSafe) {
-                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
-            }
-        } else if (topic) {
-            const moderation = await moderateContent(req.user.id, topic, 'text');
-            if (!moderation.isSafe) {
-                return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
-            }
-        }
-
-        if (req.file) {
-            const absolutePath = path.resolve(req.file.path);
-            const extractedText = await extractText(absolutePath);
-            if (extractedText) {
-                finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
-            } else {
-                finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty);
-            }
-            extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, "");
-        } else if (topic) {
-            finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty);
-        }
-
-        // ─── AGENTIC QUALITY PIPELINE ────────────────────────────────────
-        // Runs Whole-Quiz Critic → Per-Question Critic → Parallel Refiner
-        // Timeout is capped by AGENT_TIMEOUT_MS (default 60 s).
-        // The pipeline NEVER throws — it always returns the best available version.
-        let agentReport = null;
+    // Run entire pipeline in background (non-blocking)
+    setImmediate(async () => {
         try {
-            const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 60000;
-            // Pass the groq client only if the API key is present (enables refinement)
-            const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+            let { type, questionCount, difficulty, topic } = req.body;
+            let extractedTitle = topic || 'AI Generated Quiz';
+            let sourceType = type || 'topic';
 
-            const pipelineResult = await runAgentPipeline({
-                draftQuestions: finalQuestions,
-                groqClient:     agentGroq,
-                difficulty:     difficulty || 'Medium',
-                topic:          topic || '',
-                timeoutMs:      agentTimeoutMs,
+            // --- AI MODERATION GUARD ---
+            if (req.file) {
+                const ext = path.extname(req.file.originalname).toLowerCase();
+                const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
+                const moderation = await moderateContent(req.user.id, topic || '', isImage ? 'image' : 'text', path.resolve(req.file.path));
+                if (!moderation.isSafe) {
+                    failTask(taskId, 'Content moderation failed: ' + moderation.reason);
+                    return;
+                }
+            } else if (topic) {
+                const moderation = await moderateContent(req.user.id, topic, 'text');
+                if (!moderation.isSafe) {
+                    failTask(taskId, 'Content moderation failed: ' + moderation.reason);
+                    return;
+                }
+            }
+
+            // ── Stage 0: Generate Questions ──────────────────────────────────
+            console.log(`\n[Generator Started] type=${sourceType} topic="${topic || ''}" count=${questionCount}`);
+            updateTaskStage(taskId, 0, 'Generating Questions');
+
+            let finalQuestions = [];
+            if (req.file) {
+                const absolutePath = path.resolve(req.file.path);
+                const extractedText = await extractText(absolutePath);
+                if (extractedText) {
+                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
+                } else {
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty);
+                }
+                extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
+                // Cleanup uploaded file
+                try { fs.unlinkSync(absolutePath); } catch (_) {}
+            } else if (topic) {
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty);
+            }
+
+            console.log(`[Questions Generated] count=${finalQuestions.length}`);
+
+            // ── Stages 1-3: Agentic Quality Pipeline ─────────────────────────
+            let agentReport = null;
+            try {
+                const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 90000;
+                const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+
+                const pipelineResult = await runAgentPipeline({
+                    draftQuestions: finalQuestions,
+                    groqClient:     agentGroq,
+                    difficulty:     difficulty || 'Medium',
+                    topic:          topic || '',
+                    timeoutMs:      agentTimeoutMs,
+                    onProgress: (stage, label) => updateTaskStage(taskId, stage, label),
+                });
+
+                finalQuestions = pipelineResult.questions;
+                agentReport    = pipelineResult.agentReport;
+
+                console.log(`✅ [AgentPipeline] verdict=${agentReport.verdict} | scoreBefore=${agentReport.scoreBefore} | scoreAfter=${agentReport.scoreAfter} | changed=${agentReport.questionsChanged}`);
+            } catch (pipelineErr) {
+                console.warn('⚠️ [AgentPipeline] Non-fatal error — returning raw questions:', pipelineErr.message);
+                agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [], questionDiffs: [] };
+            }
+
+            // ── Stage 3: Final Validation ─────────────────────────────────────
+            console.log(`\n[Final Validation] Running final quiz validator...`);
+            updateTaskStage(taskId, 3, 'Preparing Final Quiz');
+            const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
+
+            completeTask(taskId, {
+                questions:       finalQuestions,
+                title:           extractedTitle,
+                duration:        10,
+                agentReport,
+                finalValidation: validation,
             });
 
-            finalQuestions = pipelineResult.questions;
-            agentReport    = pipelineResult.agentReport;
-
-            console.log(`✅ [AgentPipeline] verdict=${agentReport.verdict} | avgScore=${agentReport.avgScore} | retries=${agentReport.totalRetries} | timeoutMs=${agentTimeoutMs}`);
-        } catch (pipelineErr) {
-            // Pipeline errors must never block quiz creation
-            console.warn('⚠️ [AgentPipeline] Non-fatal error — returning raw questions:', pipelineErr.message);
-            agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [] };
+        } catch (err) {
+            console.error('❌ [GenerateQuizQuestions Background Error]:', err.message);
+            failTask(taskId, err.message);
         }
-
-        res.json({
-            questions: finalQuestions,
-            title:    extractedTitle,
-            duration: 10,
-            agentReport,
-        });
-
-    } catch (err) {
-        console.error('❌ Generation Controller Error:', err.message);
-        res.status(500).json({ msg: 'Generation Error: ' + err.message });
-    }
+    });
 };
 
 exports.getStudentHistory = async (req, res) => {
@@ -1404,50 +1424,95 @@ exports.getLiveQuizzes = async (req, res) => {
 };
 
 exports.generateQuizFromVoice = async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ msg: 'No audio file uploaded' });
-        }
-
-        const { questionCount, difficulty } = req.body;
-        const absolutePath = path.resolve(req.file.path);
-        
-        // 1. Transcribe
-        const transcript = await transcribeAudio(absolutePath);
-        
-        if (!transcript || transcript.trim().length < 20) {
-            try { fs.unlinkSync(absolutePath); } catch(e) {}
-            return res.status(400).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
-        }
-
-        // --- AI MODERATION GUARD ---
-        const moderation = await moderateContent(req.user.id, transcript, 'text');
-        if (!moderation.isSafe) {
-            try { fs.unlinkSync(absolutePath); } catch(e) {}
-            return res.status(403).json({ msg: 'Account suspended due to content violation.', reason: moderation.reason });
-        }
-
-        console.log(`✅ Transcript length: ${transcript.length} chars`);
-
-        // 2. Filter & Generate
-        const finalQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium');
-
-        // 3. Cleanup
-        try { fs.unlinkSync(absolutePath); } catch(e) {}
-
-        res.json({
-            questions: finalQuestions,
-            title: `Voice Quiz: ${new Date().toLocaleTimeString()}`,
-            transcript: transcript,
-            duration: 10
-        });
-    } catch (err) {
-        console.error('❌ Voice Generation Error:', err.message);
-        if (req.file) {
-            try { fs.unlinkSync(path.resolve(req.file.path)); } catch(e) {}
-        }
-        res.status(500).json({ msg: 'Voice Generation Error: ' + err.message });
+    if (!req.file) {
+        return res.status(400).json({ msg: 'No audio file uploaded' });
     }
+
+    // Create a task immediately and return taskId — client polls /generate/status/:taskId
+    const taskId = createTask();
+    res.json({ taskId, isVoice: true });
+
+    // Run entire voice pipeline in background
+    setImmediate(async () => {
+        const absolutePath = path.resolve(req.file.path);
+        try {
+            const { questionCount, difficulty } = req.body;
+
+            // ── Stage 0: Uploading / Transcribing ──────────────────────────
+            console.log(`\n[Voice Generator Started] Transcribing audio...`);
+            updateTaskStage(taskId, 0, 'Transcribing Audio');
+
+            const transcript = await transcribeAudio(absolutePath);
+
+            if (!transcript || transcript.trim().length < 20) {
+                try { fs.unlinkSync(absolutePath); } catch (_) {}
+                failTask(taskId, 'Could not capture clear speech. Please try speaking closer to the mic.');
+                return;
+            }
+
+            // --- AI MODERATION GUARD ---
+            const moderation = await moderateContent(req.user.id, transcript, 'text');
+            if (!moderation.isSafe) {
+                try { fs.unlinkSync(absolutePath); } catch (_) {}
+                failTask(taskId, 'Content moderation failed: ' + moderation.reason);
+                return;
+            }
+
+            console.log(`✅ Transcript length: ${transcript.length} chars`);
+            updateTaskStage(taskId, 0, 'Generating Questions');
+
+            // ── Stage 0: Generate Questions from transcript ─────────────
+            console.log(`[Generator Started] Generating from voice transcript...`);
+            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium');
+            console.log(`[Questions Generated] count=${draftQuestions.length}`);
+
+            // Cleanup audio file
+            try { fs.unlinkSync(absolutePath); } catch (_) {}
+
+            // ── Stages 1-3: Full Agentic Pipeline ─────────────────────────
+            let finalQuestions = draftQuestions;
+            let agentReport = null;
+            try {
+                const agentTimeoutMs = parseInt(process.env.VOICE_GENERATION_TIMEOUT_MS) || 600000;
+                const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+
+                const pipelineResult = await runAgentPipeline({
+                    draftQuestions,
+                    groqClient:     agentGroq,
+                    difficulty:     difficulty || 'Medium',
+                    topic:          'Voice Lecture',
+                    timeoutMs:      agentTimeoutMs,
+                    onProgress: (stage, label) => updateTaskStage(taskId, stage, label),
+                });
+
+                finalQuestions = pipelineResult.questions;
+                agentReport    = pipelineResult.agentReport;
+                console.log(`✅ [Voice AgentPipeline] verdict=${agentReport.verdict}`);
+            } catch (pipelineErr) {
+                console.warn('⚠️ [Voice AgentPipeline] Non-fatal error:', pipelineErr.message);
+                agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [], questionDiffs: [] };
+            }
+
+            // Final Validation
+            updateTaskStage(taskId, 3, 'Preparing Final Quiz');
+            const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
+
+            completeTask(taskId, {
+                questions:       finalQuestions,
+                title:           `Voice Quiz: ${new Date().toLocaleTimeString()}`,
+                transcript,
+                duration:        10,
+                agentReport,
+                finalValidation: validation,
+                isVoice:         true,
+            });
+
+        } catch (err) {
+            console.error('❌ Voice Generation Error:', err.message);
+            try { fs.unlinkSync(absolutePath); } catch (_) {}
+            failTask(taskId, err.message);
+        }
+    });
 };
 
 exports.assignQuiz = async (req, res) => {
