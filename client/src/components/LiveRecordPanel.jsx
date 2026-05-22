@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Pause, Play, Sparkles, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Mic, Square, Pause, Play, AlertCircle } from 'lucide-react';
 import api from '../utils/api';
 import AgentPipelineLoader from './loaders/AgentPipelineLoader';
-import useGenerationPoller from '../hooks/useGenerationPoller';
 
 export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, difficulty = 'Medium' }) {
     const [isRecording, setIsRecording] = useState(false);
@@ -15,11 +14,59 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
     const audioChunksRef   = useRef([]);
     const timerRef         = useRef(null);
 
-    const { polling, stage, stageLabel, elapsed, error: pollError, startPolling } = useGenerationPoller();
+    // ── Inline polling state ──────────────────────────────────────────────────
+    const [polling, setPolling]       = useState(false);
+    const [stage, setStage]           = useState(0);
+    const [stageLabel, setStageLabel] = useState('Transcribing Audio');
+    const [elapsed, setElapsed]       = useState(0);
+    const pollIntervalRef = useRef(null);
+    const startTimeRef    = useRef(null);
+    const elapsedRef      = useRef(null);
 
-    // Merge all error sources
-    const displayError = error || pollError;
+    const stopPolling = useCallback(() => {
+        clearInterval(pollIntervalRef.current);
+        clearInterval(elapsedRef.current);
+        setPolling(false);
+    }, []);
+
+    const startPolling = useCallback((taskId, { onComplete, onError } = {}) => {
+        setPolling(true);
+        setStage(0);
+        setStageLabel('Transcribing Audio');
+        setElapsed(0);
+        startTimeRef.current = Date.now();
+
+        elapsedRef.current = setInterval(() => {
+            setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
+        }, 1000);
+
+        const doPoll = async () => {
+            try {
+                const res = await api.get(`/quiz/generate/status/${taskId}`);
+                const { status, stage: s, stageLabel: sl, result, error: e } = res.data;
+                if (s !== undefined) setStage(s);
+                if (sl) setStageLabel(sl);
+
+                if (status === 'COMPLETED' && result) {
+                    stopPolling();
+                    if (onComplete) onComplete(result);
+                } else if (status === 'FAILED' || status === 'EXPIRED' || status === 'NOT_FOUND') {
+                    stopPolling();
+                    const msg = e || 'Generation failed. Please try again.';
+                    if (onError) onError(msg);
+                }
+            } catch (err) {
+                console.warn('[VoicePoller] poll error:', err.message);
+            }
+        };
+
+        doPoll();
+        pollIntervalRef.current = setInterval(doPoll, 1500);
+    }, [stopPolling]);
+    // ─────────────────────────────────────────────────────────────────────────
+
     const isProcessing = uploading || polling;
+    const displayError = error;
 
     // Timer logic
     useEffect(() => {
@@ -104,7 +151,6 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
 
-            // Only wait for taskId — generation happens async
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 timeout: 30000,
