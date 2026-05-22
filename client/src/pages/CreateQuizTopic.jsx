@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { Book, Hash, Gauge, Sparkles, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
-import useGenerationPoller from '../hooks/useGenerationPoller';
 import toast from 'react-hot-toast';
 
 export default function CreateQuizTopic() {
@@ -14,7 +13,61 @@ export default function CreateQuizTopic() {
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
-    const { polling, stage, stageLabel, elapsed, error, startPolling } = useGenerationPoller();
+    // ── Inline polling state ──────────────────────────────────────────────────
+    const [polling, setPolling]       = useState(false);
+    const [stage, setStage]           = useState(0);
+    const [stageLabel, setStageLabel] = useState('Generating Questions');
+    const [elapsed, setElapsed]       = useState(0);
+    const [pollError, setPollError]   = useState(null);
+    const pollIntervalRef = useRef(null);
+    const startTimeRef    = useRef(null);
+    const elapsedRef      = useRef(null);
+
+    const stopPolling = useCallback(() => {
+        clearInterval(pollIntervalRef.current);
+        clearInterval(elapsedRef.current);
+        setPolling(false);
+    }, []);
+
+    const startPolling = useCallback((taskId, { onComplete, onError } = {}) => {
+        setPolling(true);
+        setStage(0);
+        setStageLabel('Generating Questions');
+        setElapsed(0);
+        setPollError(null);
+        startTimeRef.current = Date.now();
+
+        // Elapsed ticker
+        elapsedRef.current = setInterval(() => {
+            setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
+        }, 1000);
+
+        const doPoll = async () => {
+            try {
+                const res = await api.get(`/quiz/generate/status/${taskId}`);
+                const { status, stage: s, stageLabel: sl, result, error: e } = res.data;
+                if (s !== undefined) setStage(s);
+                if (sl) setStageLabel(sl);
+
+                if (status === 'COMPLETED' && result) {
+                    stopPolling();
+                    if (onComplete) onComplete(result);
+                } else if (status === 'FAILED' || status === 'EXPIRED' || status === 'NOT_FOUND') {
+                    stopPolling();
+                    const msg = e || 'Generation failed. Please try again.';
+                    setPollError(msg);
+                    if (onError) onError(msg);
+                }
+            } catch (err) {
+                console.warn('[Poller] poll error:', err.message);
+            }
+        };
+
+        doPoll();
+        pollIntervalRef.current = setInterval(doPoll, 1500);
+    }, [stopPolling]);
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,10 +80,11 @@ export default function CreateQuizTopic() {
                 type: 'topic',
                 questionCount,
                 difficulty,
-            }, { timeout: 30000 }); // short — only waits for taskId
+            }, { timeout: 30000 });
 
             const { taskId } = res.data;
             if (!taskId) throw new Error('No taskId returned from server');
+            setSubmitting(false);
 
             startPolling(taskId, {
                 onComplete: (result) => {
@@ -47,7 +101,6 @@ export default function CreateQuizTopic() {
                 },
                 onError: (msg) => {
                     toast.error(msg || 'Generation failed. Please try again.');
-                    setSubmitting(false);
                 },
             });
         } catch (err) {
@@ -81,10 +134,9 @@ export default function CreateQuizTopic() {
                     </div>
                 </div>
 
-                {/* Error display */}
-                {error && (
+                {pollError && (
                     <div className="mb-6 px-5 py-4 rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 font-bold text-sm uppercase tracking-wider">
-                        ⚠ {error}
+                        ⚠ {pollError}
                     </div>
                 )}
 
@@ -97,7 +149,7 @@ export default function CreateQuizTopic() {
                                     type="text"
                                     value={topic}
                                     onChange={(e) => setTopic(e.target.value)}
-                                    className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-3xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none input-cinematic"
+                                    className="w-full p-8 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-3xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
                                     placeholder="e.g. Artificial Intelligence, History of India"
                                     required
                                     disabled={isLoading}
