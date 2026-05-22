@@ -187,3 +187,4 @@ export default function AgentQualityBadge({ agentReport, onRegenerateQuestion })
         </div>
     );
 }
+// hi
