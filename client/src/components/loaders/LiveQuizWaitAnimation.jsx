@@ -223,11 +223,11 @@ function ReconnectingVisual({ lowPerformanceMode }) {
     return (
         <div className="relative h-72 w-72 flex items-center justify-center" aria-hidden="true">
             {/* Wi-Fi Icon base */}
-            <div className="relative z-10 h-28 w-28 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+            <div className="relative z-10 h-28 w-28 rounded-full bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/30 flex items-center justify-center">
                 <motionDiv.div
                     animate={{ scale: [0.95, 1.05, 0.95] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="text-orange-500"
+                    className="text-[var(--bg-accent)]"
                 >
                     <RadioTower size={48} />
                 </motionDiv.div>
@@ -239,7 +239,7 @@ function ReconnectingVisual({ lowPerformanceMode }) {
                     key={idx}
                     animate={{ scale: [0.8, 1.6], opacity: [0.4, 0] }}
                     transition={{ duration: 2, repeat: Infinity, delay: idx * 0.6, ease: "easeOut" }}
-                    className="absolute h-36 w-36 rounded-full border border-orange-500/20"
+                    className="absolute h-36 w-36 rounded-full border border-[var(--bg-accent)]/20"
                 />
             ))}
         </div>
@@ -254,7 +254,7 @@ function BouncingDotsWave() {
                     key={idx}
                     animate={{ y: [0, -6, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: idx * 0.15 }}
-                    className="w-2.5 h-2.5 rounded-full bg-orange-500"
+                    className="w-2.5 h-2.5 rounded-full bg-[var(--bg-accent)]"
                 />
             ))}
         </div>
@@ -267,7 +267,7 @@ function RepeatingFillBar() {
             <motionDiv.div
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-orange-500"
+                className="absolute inset-0 bg-[var(--bg-accent)]"
             />
         </div>
     );
@@ -280,9 +280,6 @@ export default function LiveQuizWaitAnimation({
     detail,
     readyCount = 0,
     joiningCount = 0,
-    answeredCount = 0,
-    totalStudents = 0,
-    timeLeft,
     offlineDuration = 0,
     reconnectState = "disconnected"
 }) {
@@ -347,7 +344,7 @@ export default function LiveQuizWaitAnimation({
                     ? `Still reconnecting... Attempt ${Math.floor((offlineDuration - 10) / 2.4) + 1}` 
                     : 'Your answers are safe — don\'t refresh'),
             visual: reconnectState === 'recovered' ? (
-                <div className="h-72 w-72 flex flex-col items-center justify-center bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400" aria-hidden="true">
+                <div className="h-72 w-72 flex flex-col items-center justify-center bg-[var(--success-bg)]/10 border border-[var(--success-bg)]/30 rounded-full text-[var(--success-bg)]" aria-hidden="true">
                     <CheckCircle2 className="animate-bounce" size={72} />
                 </div>
             ) : (
