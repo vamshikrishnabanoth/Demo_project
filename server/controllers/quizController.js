@@ -396,13 +396,29 @@ exports.createQuiz = async (req, res) => {
             parsedAutoBroadcast = autoBroadcast === 'true' || autoBroadcast === true;
         }
 
+        const isLiveFinal = isLive === 'true' || isLive === true;
+        const isActiveFinal = isActive === undefined ? true : (isActive === 'true' || isActive === true);
+        
+        // --- IMMUTABILITY HASHING ---
+        let finalIsLocked = false;
+        let finalQuizHash = null;
+        let finalPublishedAt = null;
+        let finalVersion = 1;
+
+        if (isActiveFinal && (isLiveFinal || !startTime)) {
+            finalIsLocked = true;
+            finalPublishedAt = new Date();
+            finalQuizHash = hashQuiz(finalQuestions, finalPublishedAt, req.user.id, finalVersion);
+            console.log(`[QuizCreated] Hashed frozen payload: hash=${finalQuizHash.slice(0, 16)}...`);
+        }
+
         const newQuiz = await prisma.quiz.create({
             data: {
                 title: title || `${topic || content || 'Untitled'} Quiz`,
                 description: `Level: ${difficulty || 'Medium'}`,
                 questions: finalQuestions,
                 createdById: req.user.id,
-                isActive: isActive === undefined ? true : (isActive === 'true' || isActive === true),
+                isActive: isActiveFinal,
                 joinCode,
                 difficulty: difficulty || 'Medium',
                 timerPerQuestion: timerPerQuestion ? parseInt(timerPerQuestion) : 30,
@@ -412,12 +428,17 @@ exports.createQuiz = async (req, res) => {
                 startTime: startTime ? new Date(startTime) : null,
                 endTime: endTime ? new Date(endTime) : null,
                 topic: topic || content || '',
-                isLive: isLive === 'true' || isLive === true,
+                isLive: isLiveFinal,
                 isAssessment: isAssessment === 'true' || isAssessment === true,
-                status: isLive === 'true' || isLive === true ? 'waiting' : 'finished',
+                status: isLiveFinal ? 'waiting' : 'finished',
                 assignedGroups: parsedGroups,
                 assignedStudents: parsedStudents,
-                autoBroadcast: parsedAutoBroadcast
+                autoBroadcast: parsedAutoBroadcast,
+                isLocked: finalIsLocked,
+                quizHash: finalQuizHash,
+                publishedAt: finalPublishedAt,
+                publishedBy: finalIsLocked ? req.user.id : null,
+                version: finalVersion
             }
         });
 
