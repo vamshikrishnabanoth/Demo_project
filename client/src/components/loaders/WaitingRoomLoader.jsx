@@ -77,7 +77,6 @@ export default function WaitingRoomLoader({ message = 'Joining Arena...' }) {
 
         {/* Orbiting Quantum Data Nodes */}
         {dots.map((_, i) => {
-          const angle = (i / dots.length) * 360;
           return (
             <motion.div
               key={i}
