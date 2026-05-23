@@ -9,6 +9,7 @@ const officeParser = require('officeparser');
 const Groq = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
+const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizIntegrity');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -535,9 +536,22 @@ exports.deleteQuiz = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        // Check user
-        if (quiz.createdById !== req.user.id) {
+        // Creator or admin only
+        const isAdmin = req.user.role === 'admin';
+        if (quiz.createdById !== req.user.id && !isAdmin) {
             return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        // ── Integrity lock: non-admin teachers cannot delete published quizzes
+        //    that already have student results (evidence of live data)
+        if (quiz.isLocked && !isAdmin) {
+            const resultCount = await prisma.result.count({ where: { quizId: req.params.id } });
+            if (resultCount > 0) {
+                return res.status(403).json({
+                    msg: 'This published quiz has student results and cannot be deleted. Contact an admin.',
+                    locked: true
+                });
+            }
         }
 
         // Delete all related results first to avoid foreign key violations
@@ -666,6 +680,23 @@ exports.getQuizById = async (req, res) => {
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
+        }
+
+        // ── INTEGRITY CHECK: Verify frozen payload has not been tampered ──────
+        if (quiz.isLocked && quiz.quizHash) {
+            const integrity = verifyQuizIntegrity(quiz);
+            if (!integrity.valid) {
+                console.error(
+                    `[QuizIntegrityViolation] Quiz ${quiz.id} hash mismatch!`,
+                    `Stored: ${integrity.stored?.slice(0, 16)}...`,
+                    `Computed: ${integrity.computed?.slice(0, 16)}...`,
+                    `Reason: ${integrity.reason}`
+                );
+                return res.status(500).json({
+                    msg: 'Quiz integrity check failed. This quiz may have been tampered with.',
+                    code: 'INTEGRITY_VIOLATION'
+                });
+            }
         }
 
         // Attach previous result if it exists (for resume functionality)
@@ -1057,9 +1088,51 @@ exports.publishQuiz = async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
+        // ── Toggling: activating → LOCK + HASH; deactivating → keep lock (never unlock) ──
+        const activating = !quiz.isActive;
+        let updateData = { isActive: activating };
+
+        if (activating && !quiz.isLocked) {
+            // First publish: freeze the questions and generate integrity hash
+            const questions = Array.isArray(quiz.questions) ? quiz.questions : [];
+            if (questions.length === 0) {
+                return res.status(400).json({ msg: 'Cannot publish a quiz with no questions.' });
+            }
+
+            const publishedAt = new Date().toISOString();
+            const version     = (quiz.version || 0) + 1;
+
+            try {
+                const quizHash = hashQuiz(questions, publishedAt, quiz.createdById, version);
+                updateData = {
+                    ...updateData,
+                    isLocked:    true,
+                    quizHash,
+                    publishedAt: new Date(publishedAt),
+                    publishedBy: req.user.id,
+                    version,
+                };
+                console.log(`[QuizPublished] id=${quiz.id} hash=${quizHash.slice(0, 16)}... version=${version} by=${req.user.id}`);
+            } catch (hashErr) {
+                console.error('[QuizPublish] Hash generation failed:', hashErr.message);
+                return res.status(500).json({ msg: 'Failed to generate quiz integrity hash: ' + hashErr.message });
+            }
+        } else if (activating && quiz.isLocked) {
+            // Re-activating an already-locked quiz — verify integrity before allowing
+            const integrity = verifyQuizIntegrity(quiz);
+            if (!integrity.valid) {
+                console.error(`[QuizIntegrityViolation] Re-activation blocked for quiz ${quiz.id}: ${integrity.reason}`);
+                return res.status(403).json({
+                    msg: 'Quiz integrity check failed — questions may have been tampered with. Contact admin.',
+                    code: 'INTEGRITY_VIOLATION'
+                });
+            }
+            console.log(`[QuizReactivated] id=${quiz.id} integrity=OK`);
+        }
+
         const updated = await prisma.quiz.update({
             where: { id: req.params.id },
-            data: { isActive: !quiz.isActive }
+            data: updateData
         });
 
         // Trigger background automated broadcast if the live quiz is being activated
@@ -1137,6 +1210,32 @@ exports.updateQuiz = async (req, res) => {
 
         if (quiz.createdById !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        // ── IMMUTABILITY GUARD: Locked (published) quizzes cannot be edited ──────
+        if (quiz.isLocked) {
+            // Admin override allowed only for metadata — never for questions
+            const isAdmin = req.user.role === 'admin';
+            if (questions !== undefined) {
+                return res.status(403).json({
+                    msg: 'Quiz is locked after publishing. Questions cannot be modified. Duplicate this quiz to make changes.',
+                    locked: true,
+                    code: 'QUIZ_LOCKED'
+                });
+            }
+            if (!isAdmin) {
+                // Non-admin teachers can only update non-content fields on locked quizzes
+                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType'];
+                const requestedFields = Object.keys(req.body);
+                const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive'].includes(f));
+                if (forbidden.length > 0) {
+                    return res.status(403).json({
+                        msg: `Quiz is locked. Cannot modify: ${forbidden.join(', ')}. Duplicate this quiz to make structural changes.`,
+                        locked: true,
+                        code: 'QUIZ_LOCKED'
+                    });
+                }
+            }
         }
 
         const updateData = {};
