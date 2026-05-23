@@ -9,7 +9,6 @@ import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
-import { uiTerminology } from '../utils/uiTerminology';
 
 
 export default function AttemptQuiz() {
@@ -24,13 +23,13 @@ export default function AttemptQuiz() {
     const [result, setResult] = useState(null);
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
-    const [isWaiting, setIsWaiting] = useState(false); // New waiting state
+    const [isWaiting, _setIsWaiting] = useState(false); // New waiting state
     const [newQuestionNotification, setNewQuestionNotification] = useState(null);
     const [showNewQuestionModal, setShowNewQuestionModal] = useState(false);
     const [showIntermediateLeaderboard, setShowIntermediateLeaderboard] = useState(false);
     const [currentLeaderboard, setCurrentLeaderboard] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
-    const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
+    const [isCorrectFeedback, _setIsCorrectFeedback] = useState(false);
     const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
     const [speedFeedback, setSpeedFeedback] = useState(null); // { isFast, message }
     const [showSubmitSequence, setShowSubmitSequence] = useState(false);
@@ -253,7 +252,7 @@ export default function AttemptQuiz() {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
-                    } catch (e) {
+                    } catch {
                         socket.emit('join_room', {
                             quizId: id,
                             user: {
@@ -328,7 +327,7 @@ export default function AttemptQuiz() {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
-                    } catch (e) {
+                    } catch {
                          socket.emit('join_room', {
                             quizId: id,
                             user: {
@@ -638,7 +637,7 @@ export default function AttemptQuiz() {
 
     const setAnswersFromHistory = (historyAnswers) => {
         const newAnswers = {};
-        historyAnswers.forEach((ans, _) => {
+        historyAnswers.forEach((ans) => {
             // Find index by question text in case of shuffling (advanced), but here strictly by index for now or assume order
             // Better to map by questionText if possible, but index is safe for now if static
             // Actually, `answers` state is by index.
@@ -696,7 +695,7 @@ export default function AttemptQuiz() {
     };
 
     // Student advances to next question themselves (live mode)
-    const handleNextQuestion = () => {
+    const _handleNextQuestion = () => {
         // Disabled in strict mode - teacher controls navigation
         console.log("Manual navigation disabled in live mode.");
     };
@@ -1087,7 +1086,7 @@ export default function AttemptQuiz() {
 
                     {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
                     {showFeedback && !quiz?.isLive && (
-                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-600/95' : 'bg-red-600/95'} backdrop-blur-md text-white shadow-2xl`}>
+                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-[var(--success-bg)]/95' : 'bg-[var(--error-bg)]/95'} backdrop-blur-md text-white shadow-2xl`}>
                             {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
                             <h2 className="text-6xl font-black italic uppercase tracking-tighter">
                                 {isCorrectFeedback ? 'Success' : 'Failed'}
