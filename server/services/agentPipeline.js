@@ -71,13 +71,16 @@ function snapshotQuestion(q) {
     };
 }
 
-/** Return true if two snapshots differ meaningfully */
+/** Return true if two snapshots differ in CONTENT (not metadata/score) */
 function questionChanged(before, after) {
+    // Normalize for comparison: trim whitespace, lower-case for options order
+    const norm = s => (s || '').trim();
+    const normOpts = opts => (opts || []).map(o => norm(o)).sort().join('|');
     return (
-        before.question     !== after.question ||
-        before.answer       !== after.answer ||
-        before.explanation  !== after.explanation ||
-        JSON.stringify(before.options) !== JSON.stringify(after.options)
+        norm(before.question)    !== norm(after.question)    ||
+        norm(before.answer)      !== norm(after.answer)      ||
+        norm(before.explanation) !== norm(after.explanation) ||
+        normOpts(before.options) !== normOpts(after.options)
     );
 }
 
@@ -360,6 +363,14 @@ async function refineQuestion(q, criticResult, groqClient, difficulty, isMinor) 
 
 // ─── REPORT BUILDER ──────────────────────────────────────────────────────────
 
+/**
+ * refinerStatus values:
+ *   'early_exit'  — avg score was already >= EARLY_EXIT_AVG, no refinement needed
+ *   'refined'     — Groq ran and at least one question content changed
+ *   'no_change'   — Groq ran but no question content actually differed
+ *   'unavailable' — Groq API key not present
+ *   'timeout'     — pipeline timed out before refinement could complete
+ */
 function buildReport(
     initialCriticResults,
     finalCriticResults,
@@ -372,9 +383,10 @@ function buildReport(
     groqUnavailable,
     generated,
     scoreBefore,
-    scoreAfter
+    scoreAfter,
+    refinerStatus   // NEW: explicit status string
 ) {
-    const scores    = finalCriticResults.map(r => r.score);
+    const scores     = finalCriticResults.map(r => r.score);
     const avgQuality = Math.round(avg(scores));
 
     let verdict;
@@ -384,7 +396,11 @@ function buildReport(
 
     const fallback = groqUnavailable || timedOut;
 
+    // REAL change detection: only count questions where content actually differed
     const questionsChanged = questionDiffs.filter(d => d.modified).length;
+
+    // refinerExecuted = true when refiner was invoked (including early-exit = already excellent)
+    const refinerExecuted = refinerStatus !== 'unavailable';
 
     return {
         verdict,
@@ -398,8 +414,10 @@ function buildReport(
         quizIssues,
         // Summary for teacher banner
         generated,
-        criticExecuted:   true,
-        refinerExecuted:  !groqUnavailable && totalRetries > 0,
+        generatorExecuted: true,
+        criticExecuted:    true,
+        refinerExecuted,
+        refinerStatus,
         questionsChanged,
         scoreBefore:      Math.round(scoreBefore),
         scoreAfter:       Math.round(scoreAfter),
@@ -410,13 +428,12 @@ function buildReport(
         perQuestion: finalCriticResults.map((r, i) => {
             const initial = initialCriticResults[i];
             const diff    = questionDiffs[i];
-            // Build structured issue rows: Issue → Action → Result
             const structuredIssues = (initial.issues || []).map(issue => {
                 const wasFixed = !r.issues.includes(issue);
                 return {
                     issue,
                     actionTaken: wasFixed
-                        ? (diff.modified ? 'Generated improved version automatically' : 'Validated — no change needed')
+                        ? (diff.modified ? 'Generated improved version automatically' : 'Validated — no content change required')
                         : (groqUnavailable ? 'Refinement unavailable (no Groq key)' : 'Could not refine automatically'),
                     fixed: wasFixed,
                 };
@@ -424,12 +441,13 @@ function buildReport(
             return {
                 index:            i,
                 verdict:          r.score >= 92 ? 'excellent' : r.score >= 75 ? 'good' : 'review',
-                issues:           r.issues,              // REMAINING issues after refinement
-                structuredIssues,                        // Full Issue→Action→Result chain
+                issues:           r.issues,
+                structuredIssues,
                 retries:          r.retries || 0,
                 locked:           initial.score >= LOCK_THRESHOLD,
                 scoreBefore:      Math.round(initial.score),
                 scoreAfter:       Math.round(r.score),
+                contentChanged:   diff ? diff.modified : false,
             };
         }),
     };
@@ -496,7 +514,7 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
         // ── Phase 3: Early exit ─────────────────────────────────────────────
         const currentAvg = () => avg(criticResults.map(r => r.score));
         if (currentAvg() >= EARLY_EXIT_AVG) {
-            console.log(`[Pipeline] Early exit — avg score ${Math.round(currentAvg())} >= ${EARLY_EXIT_AVG}`);
+            console.log(`[Pipeline] Early exit — avg score ${Math.round(currentAvg())} >= ${EARLY_EXIT_AVG}. Questions already excellent.`);
             const finalSnapshots = questions.map(snapshotQuestion);
             const diffs = questions.map((_, i) => ({
                 questionId: i + 1,
@@ -510,7 +528,8 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
                 agentReport: buildReport(
                     initialCriticResults, criticResults, diffs, quizIssues,
                     0, Date.now() - pipelineStart, Date.now() - criticStart,
-                    false, !hasGroq, generated, scoreBefore, currentAvg()
+                    false, !hasGroq, generated, scoreBefore, currentAvg(),
+                    'early_exit'  // refinerStatus: questions already met quality bar
                 ),
             };
         }
@@ -567,18 +586,28 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
         }
 
         const scoreAfter = currentAvg();
-        console.log(`\n[Applied To Final Output]`);
-        console.log(`[Pipeline Complete] Score: ${Math.round(scoreBefore)} → ${Math.round(scoreAfter)} | Retries: ${totalRetries}`);
 
-        // Build diffs
+        // Build diffs — only flag modified if content ACTUALLY changed
         const finalSnapshots = questions.map(snapshotQuestion);
         const diffs = questions.map((_, i) => ({
-            questionId:    i + 1,
-            before:        initialSnapshots[i],
-            after:         finalSnapshots[i],
+            questionId:     i + 1,
+            before:         initialSnapshots[i],
+            after:          finalSnapshots[i],
             criticFeedback: (initialCriticResults[i].feedback || []),
-            modified:      questionChanged(initialSnapshots[i], finalSnapshots[i]),
+            modified:       questionChanged(initialSnapshots[i], finalSnapshots[i]),
         }));
+
+        const realChanges = diffs.filter(d => d.modified).length;
+
+        // Determine honest refinerStatus
+        let refinerStatus;
+        if (!hasGroq)         refinerStatus = 'unavailable';
+        else if (timedOut)    refinerStatus = 'timeout';
+        else if (realChanges > 0) refinerStatus = 'refined';
+        else                  refinerStatus = 'no_change';
+
+        console.log(`\n[Applied To Final Output] contentChanged=${realChanges}`);
+        console.log(`[Pipeline Complete] Score: ${Math.round(scoreBefore)} → ${Math.round(scoreAfter)} | Retries: ${totalRetries} | refinerStatus: ${refinerStatus}`);
 
         const criticMs = Date.now() - criticStart;
         return {
@@ -586,7 +615,8 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
             agentReport: buildReport(
                 initialCriticResults, criticResults, diffs, quizIssues,
                 totalRetries, Date.now() - pipelineStart, criticMs,
-                timedOut, !hasGroq, generated, scoreBefore, scoreAfter
+                timedOut, !hasGroq, generated, scoreBefore, scoreAfter,
+                refinerStatus
             ),
         };
 
