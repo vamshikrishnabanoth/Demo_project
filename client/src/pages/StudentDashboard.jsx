@@ -13,6 +13,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import { showConfirm, showSuccess, showError } from '../utils/alerts';
 import toast from 'react-hot-toast';
 import socket from '../utils/socket';
+import { uiTerminology } from '../utils/uiTerminology';
 
 const FloatingSymbol = ({ Icon, top, left, delay, size = 32 }) => (
     <motion.div
@@ -275,7 +276,7 @@ export default function StudentDashboard() {
                             ) : (
                                 <>
                                     <Sparkles size={24} className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
-                                    SYNC TO ARENA
+                                    {uiTerminology.deployToArena.toUpperCase()}
                                 </>
                             )}
                         </button>
