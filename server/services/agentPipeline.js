@@ -24,8 +24,8 @@ const PASS_THRESHOLD  = 90;   // per-question pass score
 const EARLY_EXIT_AVG  = 92;   // exit loop early if avg >= this
 const LOCK_THRESHOLD  = 95;   // score >= this → do not refine
 const MINOR_THRESHOLD = 85;   // score >= this → minor refinement only
-const MAX_RETRIES     = 3;    // refinement rounds per question
-const MAX_CONCURRENCY = 3;    // parallel Groq calls
+const MAX_RETRIES     = 2;    // refinement rounds per question
+const MAX_CONCURRENCY = 10;   // parallel Groq calls
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
