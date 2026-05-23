@@ -8,6 +8,9 @@ import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import SubmissionSequence from '../components/quiz/SubmissionSequence';
+import { uiTerminology } from '../utils/uiTerminology';
+
 
 export default function AttemptQuiz() {
     const { id } = useParams();
@@ -30,6 +33,11 @@ export default function AttemptQuiz() {
     const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
     const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
     const [speedFeedback, setSpeedFeedback] = useState(null); // { isFast, message }
+    const [showSubmitSequence, setShowSubmitSequence] = useState(false);
+    const [showReconnectScreen, setShowReconnectScreen] = useState(false);
+    const [reconnectState, setReconnectState] = useState("disconnected");
+    const [offlineDuration, setOfflineDuration] = useState(0);
+    const prevOnlineRef = useRef(navigator.onLine);
 
     useEffect(() => {
         if (!speedFeedback) return;
@@ -41,6 +49,42 @@ export default function AttemptQuiz() {
 
     const hasInitializedTimer = useRef(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    useEffect(() => {
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    useEffect(() => {
+        let timer;
+        if (!isOnline) {
+            setReconnectState("disconnected");
+            setShowReconnectScreen(true);
+            const startTime = Date.now();
+            timer = setInterval(() => {
+                setOfflineDuration(Math.floor((Date.now() - startTime) / 1000));
+            }, 1000);
+        } else {
+            if (prevOnlineRef.current === false) {
+                setReconnectState("recovered");
+                setTimeout(() => {
+                    setShowReconnectScreen(false);
+                    setOfflineDuration(0);
+                }, 1500);
+            } else {
+                setShowReconnectScreen(false);
+            }
+        }
+        prevOnlineRef.current = isOnline;
+        return () => clearInterval(timer);
+    }, [isOnline]);
+
     const [missionComplete, setMissionComplete] = useState(false);
     const [waitingForState, setWaitingForState] = useState(false);
     const quizRef = useRef(null);     // Always-current quiz for socket callbacks
@@ -683,9 +727,8 @@ export default function AttemptQuiz() {
                 // Live quiz: show waiting screen until teacher ends the session
                 setResult(res.data);
             } else {
-                // Async / assessment: go straight to full result report
-                localStorage.removeItem(`quiz_answers_${id}`);
-                navigate(`/report/${id}`);
+                // Async / assessment: Trigger gorgeous submission sequence first!
+                setShowSubmitSequence(true);
             }
         } catch (err) {
             console.error('Error submitting quiz', err);
@@ -1389,6 +1432,29 @@ export default function AttemptQuiz() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Resilient Fullscreen Reconnect Overlay */}
+            {showReconnectScreen && (
+                <div className="fixed inset-0 z-[5000] bg-[var(--bg-primary,#0a0a0b)]/95 backdrop-blur-xl flex items-center justify-center p-6">
+                    <LiveQuizWaitAnimation 
+                        variant="reconnecting"
+                        offlineDuration={offlineDuration}
+                        reconnectState={reconnectState}
+                    />
+                </div>
+            )}
+
+            {/* Gorgeous GPU-Accelerated Submission Sequence Overlay */}
+            {showSubmitSequence && (
+                <SubmissionSequence 
+                    selectedOption={answers[currentQuestion] || 'N/A'}
+                    questionText={quiz.questions[currentQuestion]?.questionText || 'Quiz Complete'}
+                    onComplete={() => {
+                        localStorage.removeItem(`quiz_answers_${id}`);
+                        navigate(`/report/${id}`);
+                    }}
+                />
+            )}
         </div >
     );
 }
