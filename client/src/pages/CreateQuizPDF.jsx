@@ -160,6 +160,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizPDF() {
     const [file, setFile] = useState(null);
@@ -288,7 +289,7 @@ export default function CreateQuizPDF() {
                 <div className="mb-12 flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
-                            AI <span className="text-[var(--bg-accent)]">Document Parser</span>
+                            <span className="text-[var(--bg-accent)]">{uiTerminology.creationMethods.files.toUpperCase()}</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Analyze Slides, Word docs, or Photos to generate questions</p>
                     </div>
