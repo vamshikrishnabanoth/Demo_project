@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Clock3, FileQuestion, GraduationCap, Play, RadioTower, ShieldCheck, Users, Zap, CheckCircle2 } from 'lucide-react';
 
-
-
+const motionDiv = motion;
 const chessPieces = ['♔', '♕', '♘', '♖', '♗', '♙', '♔', '♕'];
 const avatarColors = [
     'var(--text-accent, #FFB700)',
