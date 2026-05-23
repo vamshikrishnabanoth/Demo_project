@@ -9,7 +9,6 @@
  *   waitingRoom   → Joining Quiz / Lobby
  *   results       → Calculating / Processing results
  *   aiThinking    → AI generating questions
- *   flashcard     → Flashcard generation
  *   matchmaking   → 1v1 / Survival matchmaking
  *   dashboard     → Dashboard skeleton (inline, not fullscreen)
  *   fileUpload    → File upload / PDF parsing
@@ -19,9 +18,9 @@
 export { default as WaitingRoomLoader }   from './WaitingRoomLoader';
 export { default as ResultsLoader }       from './ResultsLoader';
 export { default as AIThinkingLoader }    from './AIThinkingLoader';
-export { default as FlashcardLoader }     from './FlashcardLoader';
 export { default as MatchmakingLoader }   from './MatchmakingLoader';
 export { default as DashboardSkeletonLoader } from './DashboardSkeletonLoader';
 export { default as FileUploadLoader }    from './FileUploadLoader';
 
 export { default as ContextualLoader }    from './ContextualLoader';
+
