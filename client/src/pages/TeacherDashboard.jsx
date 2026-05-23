@@ -1,10 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import GlobalSearch from '../components/GlobalSearch';
-import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
 import { 
     FileText, Type, Book, Cpu, BarChart3, Users,
@@ -17,7 +15,7 @@ import { uiTerminology } from '../utils/uiTerminology';
 const CountUp = ({ end, duration = 1.5 }) => {
     const [count, setCount] = useState(0);
     useEffect(() => {
-        if (end === 0) { setCount(0); return; }
+        if (end === 0) return;
         let startTime = null;
         const animate = (timestamp) => {
             if (!startTime) startTime = timestamp;
