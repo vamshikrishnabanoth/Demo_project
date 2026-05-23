@@ -15,6 +15,7 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizText() {
     const navigate = useNavigate();
@@ -213,7 +214,7 @@ export default function CreateQuizText() {
                 autoBroadcast,
             });
             toast.dismiss();
-            toast.success('Mission Published Successfully');
+            toast.success('Mission Published & Data Encrypted (SHA-256)');
             if (!isAssessment) {
                 navigate(`/live-room-teacher/${res.data.joinCode}`);
             } else {
@@ -237,7 +238,7 @@ export default function CreateQuizText() {
                             Back
                         </PremiumButton>
                         <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)]">
-                            QUIZ <span className="text-[var(--text-accent)]">ARENA</span>
+                            <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
                 </div>
