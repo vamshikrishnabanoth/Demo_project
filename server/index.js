@@ -24,6 +24,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
+const { verifyQuizIntegrity } = require('./lib/quizIntegrity');
 
 const app = express();
 
@@ -472,10 +473,28 @@ io.to(quizId).emit(
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
         try {
+            // SECURITY: Always load from DB — never trust frontend cached questions
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz || quiz.createdById !== socket.user.id) {
                 console.warn(`[Security Alert] Socket ${socket.id} attempted to start unauthorized quiz ${quizId}`);
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
+
+            // INTEGRITY CHECK: Verify locked quiz has not been tampered before going live
+            if (quiz.isLocked && quiz.quizHash) {
+                const integrity = verifyQuizIntegrity(quiz);
+                if (!integrity.valid) {
+                    console.error(
+                        `[QuizIntegrityViolation] start_quiz blocked for quiz ${quizId}:`,
+                        `stored=${integrity.stored?.slice(0, 16)}...`,
+                        `computed=${integrity.computed?.slice(0, 16)}...`
+                    );
+                    return socket.emit('error_alert', {
+                        msg: 'Quiz integrity check failed — questions may have been tampered with. Cannot start quiz.',
+                        code: 'INTEGRITY_VIOLATION'
+                    });
+                }
+                console.log(`[QuizStart] Integrity verified for quiz ${quizId} (hash OK)`);
             }
 
             // Calculate duration in ms
@@ -609,6 +628,15 @@ io.to(quizId).emit(
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz || quiz.createdById !== socket.user.id) {
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
+            }
+
+            // IMMUTABILITY GUARD: Cannot add questions to a locked (published) quiz
+            if (quiz.isLocked) {
+                console.warn(`[ImmutabilityBlock] add_question blocked for locked quiz ${quizId} by ${socket.user.id}`);
+                return socket.emit('error_alert', {
+                    msg: 'Quiz is locked after publishing. Questions cannot be added or modified.',
+                    code: 'QUIZ_LOCKED'
+                });
             }
 
             console.log(`Adding question to quiz: ${quizId}`);
