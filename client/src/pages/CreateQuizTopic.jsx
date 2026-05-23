@@ -5,6 +5,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import { Book, Hash, Gauge, Sparkles, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
@@ -128,7 +129,7 @@ export default function CreateQuizTopic() {
                 <div className="mb-12 flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
-                            AI <span className="text-[var(--bg-accent)]">Topic Creator</span>
+                            <span className="text-[var(--bg-accent)]">{uiTerminology.creationMethods.topic.toUpperCase()}</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Generate questions from any subject using the full agent pipeline</p>
                     </div>
