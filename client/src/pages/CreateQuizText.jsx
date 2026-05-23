@@ -533,6 +533,11 @@ export default function CreateQuizText() {
                                         <span>{item}</span>
                                     </div>
                                 ))}
+                                {/* Immutability notice */}
+                                <div className="flex items-start gap-3 text-sm text-amber-300/80 font-bold pt-1 border-t border-white/5">
+                                    <AlertTriangle size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
+                                    <span>Questions become <strong>read-only</strong> after publish. To modify, duplicate this quiz.</span>
+                                </div>
                             </div>
 
                             {finalValidation && !finalValidation.passed && (
