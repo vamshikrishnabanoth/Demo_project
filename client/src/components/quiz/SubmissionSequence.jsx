@@ -2,6 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 
+// Pre-calculated static random offsets to ensure 100% pure rendering and avoid any Math.random checks
+const STATIC_PARTICLES = Array.from({ length: 24 }).map((_, i) => {
+    const angle = (i * 360) / 24;
+    const rad = (angle * Math.PI) / 180;
+    // Generate deterministic pseudo-random distance, size, and delay
+    const pseudoRand1 = Math.sin(i * 12.9898) * 43758.5453;
+    const randDistance = pseudoRand1 - Math.floor(pseudoRand1);
+    
+    const pseudoRand2 = Math.sin(i * 78.233) * 43758.5453;
+    const randSize = pseudoRand2 - Math.floor(pseudoRand2);
+
+    const pseudoRand3 = Math.sin(i * 45.164) * 43758.5453;
+    const randDelay = pseudoRand3 - Math.floor(pseudoRand3);
+
+    const distance = 80 + randDistance * 60;
+    return {
+        x: Math.cos(rad) * distance,
+        y: Math.sin(rad) * distance,
+        size: 6 + randSize * 8,
+        delay: randDelay * 0.1
+    };
+});
+
 export default function SubmissionSequence({ 
     selectedOption = "A", 
     questionText = "Question complete.",
@@ -71,8 +94,10 @@ export default function SubmissionSequence({
             requestAnimationFrame(animateRing);
         } catch (err) {
             console.error("Submission animation failed, skipping:", err);
-            setCrashed(true);
-            onComplete(); // Skip immediately on crash
+            setTimeout(() => {
+                setCrashed(true);
+                onComplete();
+            }, 0);
         }
     }, [shouldReduceMotion, crashed, onComplete]);
 
@@ -92,22 +117,11 @@ export default function SubmissionSequence({
         'var(--bg-accent, #D7AC28)',
         'var(--success-bg, #22c55e)',
         'var(--text-accent, #D7AC28)',
-        '#60a5fa', // Neural sub
-        '#a78bfa'  // Celestial sub
+        'var(--neural-sub, #60a5fa)',
+        'var(--neural-neutral, #a78bfa)'
     ];
 
-    const particles = Array.from({ length: 24 }).map((_, i) => {
-        const angle = (i * 360) / 24;
-        const rad = (angle * Math.PI) / 180;
-        const distance = 80 + Math.random() * 60;
-        return {
-            x: Math.cos(rad) * distance,
-            y: Math.sin(rad) * distance,
-            color: particleColors[i % particleColors.length],
-            size: 6 + Math.random() * 8,
-            delay: Math.random() * 0.1
-        };
-    });
+
 
     return (
         <div 
@@ -201,21 +215,19 @@ export default function SubmissionSequence({
                     {/* Particle Confetti Burst */}
                     {showConfetti && (
                         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                            {particles.map((p, idx) => (
+                            {STATIC_PARTICLES.map((p, idx) => (
                                 <motion.div
                                     key={idx}
                                     className="absolute left-1/2 top-1/2 rounded-full"
                                     style={{
                                         width: p.size,
                                         height: p.size,
-                                        backgroundColor: p.color,
-                                        marginLeft: -p.size / 2,
-                                        marginTop: -p.size / 2
+                                        backgroundColor: particleColors[idx % particleColors.length]
                                     }}
-                                    initial={{ x: 0, y: 0, opacity: 1 }}
+                                    initial={{ x: -p.size / 2, y: -p.size / 2, opacity: 1 }}
                                     animate={{ 
-                                        x: p.x, 
-                                        y: p.y, 
+                                        x: p.x - p.size / 2, 
+                                        y: p.y - p.size / 2, 
                                         opacity: 0,
                                         scale: 0.2
                                     }}
