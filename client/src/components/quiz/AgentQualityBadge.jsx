@@ -135,20 +135,57 @@ function IssueRow({ issueData }) {
     );
 }
 
+// ─── Refiner status config ────────────────────────────────────────────────────
+const REFINER_STATUS_CONFIG = {
+    refined: {
+        icon: '✏️', label: (n) => `Refiner ✅ — ${n} question${n !== 1 ? 's' : ''} improved`,
+        color: 'text-emerald-400',
+    },
+    early_exit: {
+        icon: '✏️', label: () => 'Refiner ✅ — Skipped · Questions already excellent',
+        color: 'text-emerald-400',
+    },
+    no_change: {
+        icon: '✏️', label: () => 'Refiner ℹ — No valid content improvements found',
+        color: 'text-sky-400',
+    },
+    unavailable: {
+        icon: '✏️', label: () => 'Refiner ⚠ — Groq API key not configured',
+        color: 'text-amber-400',
+    },
+    timeout: {
+        icon: '✏️', label: () => 'Refiner ⚠ — Timed out · Best version returned',
+        color: 'text-amber-400',
+    },
+};
+
 // ─── Agent Execution Summary Banner ──────────────────────────────────────────
 function AgentExecutionSummary({ report }) {
     if (!report) return null;
     const {
-        criticExecuted, refinerExecuted, questionsChanged,
+        criticExecuted, refinerStatus, questionsChanged,
         scoreBefore, scoreAfter, qualityBefore, qualityAfter,
-        generated, fallback,
+        generated,
     } = report;
 
+    const rCfg = REFINER_STATUS_CONFIG[refinerStatus] || REFINER_STATUS_CONFIG.no_change;
+    const refinerLabel = rCfg.label(questionsChanged ?? 0);
+
+    // Build the pipeline steps with contextual Refiner state
     const steps = [
-        { label: 'Generator', done: true,           icon: '⚡' },
-        { label: 'Critic',    done: criticExecuted,  icon: '🔍' },
-        { label: 'Refiner',   done: refinerExecuted, icon: '✏️' },
+        { label: 'Generator ✅', color: 'text-emerald-400', icon: '⚡' },
+        { label: `Critic ${criticExecuted ? '✅' : '—'}`, color: criticExecuted ? 'text-emerald-400' : 'text-white/30', icon: '🔍' },
+        { label: refinerLabel, color: rCfg.color, icon: rCfg.icon },
     ];
+
+    // Explain Improved = 0 honestly
+    const noChangeReason = questionsChanged === 0
+        ? refinerStatus === 'early_exit'  ? '✅ No content changes needed — questions already met the quality bar.'
+        : refinerStatus === 'no_change'   ? 'ℹ Refiner ran but found no content to improve. Review issues manually if any remain.'
+        : refinerStatus === 'unavailable' ? '⚠ Refinement disabled — add a GROQ_API_KEY to enable automatic improvements.'
+        : refinerStatus === 'timeout'     ? '⚠ Refinement timed out — increase AGENT_TIMEOUT_MS or reduce question count.'
+        : null
+        : null;
 
     return (
         <div className="rounded-2xl border border-sky-500/20 bg-sky-500/5 p-5 space-y-4">
@@ -158,10 +195,9 @@ function AgentExecutionSummary({ report }) {
             <div className="flex items-center gap-3 flex-wrap">
                 {steps.map((step, i) => (
                     <React.Fragment key={i}>
-                        <div className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest ${step.done ? 'text-emerald-400' : 'text-white/30'}`}>
+                        <div className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest ${step.color}`}>
                             <span>{step.icon}</span>
                             <span>{step.label}</span>
-                            <span>{step.done ? '✅' : '—'}</span>
                         </div>
                         {i < steps.length - 1 && (
                             <ArrowRight size={12} className="text-white/20" />
@@ -170,7 +206,7 @@ function AgentExecutionSummary({ report }) {
                 ))}
             </div>
 
-            {/* Stats */}
+            {/* Stats grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
                     <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Generated</p>
@@ -178,7 +214,9 @@ function AgentExecutionSummary({ report }) {
                 </div>
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
                     <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Improved</p>
-                    <p className="text-lg font-black text-emerald-400">{questionsChanged ?? '—'}</p>
+                    <p className={`text-lg font-black ${questionsChanged > 0 ? 'text-emerald-400' : 'text-white/40'}`}>
+                        {questionsChanged ?? '—'}
+                    </p>
                 </div>
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
                     <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Quality Before</p>
@@ -190,14 +228,20 @@ function AgentExecutionSummary({ report }) {
                 </div>
             </div>
 
-            {fallback && (
-                <p className="text-[10px] font-bold text-amber-400/60 uppercase tracking-wider flex items-center gap-1.5">
-                    <Info size={10} /> Refinement unavailable — base questions validated only
-                </p>
+            {/* Honest "why" banner when nothing changed */}
+            {noChangeReason && (
+                <div className={`flex items-start gap-2 text-[11px] font-bold rounded-xl px-3 py-2
+                    ${refinerStatus === 'early_exit' ? 'bg-emerald-500/10 text-emerald-300/80' :
+                      refinerStatus === 'unavailable' || refinerStatus === 'timeout' ? 'bg-amber-500/10 text-amber-300/80' :
+                      'bg-sky-500/10 text-sky-300/80'}`}>
+                    <Info size={12} className="flex-shrink-0 mt-0.5" />
+                    <span>{noChangeReason}</span>
+                </div>
             )}
         </div>
     );
 }
+
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AgentQualityBadge({ agentReport, onRegenerateQuestion }) {
