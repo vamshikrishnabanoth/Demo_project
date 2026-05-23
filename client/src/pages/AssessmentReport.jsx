@@ -24,7 +24,7 @@ const AssessmentReport = () => {
     const [selectedReview, setSelectedReview] = useState(null);
     const [showDetailed, setShowDetailed] = useState(false);
 
-    const fetchReport = async () => {
+    const fetchReport = React.useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/quiz/result/${id}`);
@@ -34,11 +34,11 @@ const AssessmentReport = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchReport();
-    }, [id]);
+    }, [fetchReport]);
 
     if (loading) return <PremiumLoading />;
     if (!data) return (
