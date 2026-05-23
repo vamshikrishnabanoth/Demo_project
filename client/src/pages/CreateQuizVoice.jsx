@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import LiveRecordPanel from '../components/LiveRecordPanel';
 import { Mic, Hash } from 'lucide-react';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizVoice() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function CreateQuizVoice() {
                 <div className="mb-12 flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
-                            LIVE <span className="text-[var(--bg-accent)]">VOICE CREATOR</span>
+                            <span className="text-[var(--bg-accent)]">{uiTerminology.creationMethods.audio.toUpperCase()}</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Record your lecture to generate questions instantly</p>
                     </div>
