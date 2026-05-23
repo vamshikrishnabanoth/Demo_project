@@ -212,6 +212,7 @@ export default function CreateQuizText() {
                 assignedStudents,
                 autoBroadcast,
             });
+            toast.dismiss();
             toast.success('Mission Published Successfully');
             if (!isAssessment) {
                 navigate(`/live-room-teacher/${res.data.joinCode}`);
@@ -527,6 +528,7 @@ export default function CreateQuizText() {
                                     'Publish optimized questions to your students',
                                     'Generate a unique quiz code for joining',
                                     'Agent-verified quality applied',
+                                    'Data protected with SHA-256 integrity hashing',
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-center gap-3 text-sm text-white/70 font-bold">
                                         <CheckCircle size={16} className="text-emerald-400 flex-shrink-0" />
