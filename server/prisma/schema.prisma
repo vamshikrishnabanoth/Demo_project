@@ -66,6 +66,12 @@ model Quiz {
   createdAt        DateTime @default(now())
   finalLeaderboard Json?    // Stores the leaderboard array
   finalInsights    Json?    // Stores the insights object
+  // ── Integrity & Immutability ──────────────────────────────────────────────
+  isLocked         Boolean  @default(false)  // true after teacher publishes — questions frozen
+  quizHash         String?                   // SHA-256 of canonical frozen payload
+  publishedAt      DateTime?                 // when teacher finalized and published
+  publishedBy      String?                   // userId of teacher who published
+  version          Int      @default(1)      // payload version counter (increments on each publish)
   results          Result[]
   broadcasts       Broadcast[]
 }
