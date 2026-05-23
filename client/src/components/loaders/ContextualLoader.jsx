@@ -1,9 +1,8 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import WaitingRoomLoader    from './WaitingRoomLoader';
+import WaitingRoomLoader from './WaitingRoomLoader';
 import ResultsLoader        from './ResultsLoader';
 import AIThinkingLoader     from './AIThinkingLoader';
-import FlashcardLoader      from './FlashcardLoader';
 import MatchmakingLoader    from './MatchmakingLoader';
 import FileUploadLoader     from './FileUploadLoader';
 // Fallback — classic premium loader (not fullscreen skeleton)
@@ -13,10 +12,10 @@ const VARIANT_MAP = {
   waitingRoom:  WaitingRoomLoader,
   results:      ResultsLoader,
   aiThinking:   AIThinkingLoader,
-  flashcard:    FlashcardLoader,
   matchmaking:  MatchmakingLoader,
   fileUpload:   FileUploadLoader,
 };
+
 
 /**
  * ContextualLoader — drop-in replacement for PremiumLoading.
