@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import SkeletonStat from '../components/loaders/SkeletonStat';
 import { PremiumButton, GlassCard } from '../components/ui/Primitives';
+import { uiTerminology } from '../utils/uiTerminology';
 
 const CountUp = ({ end, duration = 1.5 }) => {
     const [count, setCount] = useState(0);
@@ -52,10 +53,10 @@ export default function TeacherDashboard() {
     }, [quizArray]);
 
     const creationOptions = [
-        { title: 'Text Import', description: 'Create questions from text', icon: Type, path: '/create-quiz/text' },
-        { title: 'Document Analysis', description: 'Extract questions from PDFs', icon: FileText, path: '/create-quiz/pdf' },
-        { title: 'AI Generator', description: 'AI Builds from topic concepts', icon: Book, path: '/create-quiz/topic' },
-        { title: 'Voice Dictation', description: 'Convert speech to questions', icon: Mic, path: '/create-quiz/voice' }
+        { title: uiTerminology.creationMethods.text, description: 'Create questions from text', icon: Type, path: '/create-quiz/text' },
+        { title: uiTerminology.creationMethods.files, description: 'Extract questions from PDFs', icon: FileText, path: '/create-quiz/pdf' },
+        { title: uiTerminology.creationMethods.topic, description: 'AI Builds from topic concepts', icon: Book, path: '/create-quiz/topic' },
+        { title: uiTerminology.creationMethods.audio, description: 'Convert speech to questions', icon: Mic, path: '/create-quiz/voice' }
     ];
 
     const statCards = [
