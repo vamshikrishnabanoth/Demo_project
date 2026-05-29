@@ -21,6 +21,7 @@ import CinematicBackground from './CinematicBackground';
 import { StatusBadge, UserProfileCard } from './UserIdentity';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import GlobalSearch from './GlobalSearch';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function DashboardLayout({ children, role }) {
     const { logout, user } = useContext(AuthContext);
@@ -487,7 +488,7 @@ export default function DashboardLayout({ children, role }) {
                                                                 }}
                                                                 className="w-full py-2.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-xl font-black italic uppercase text-[10px] tracking-widest transition-all active:scale-95 shadow-md flex items-center justify-center gap-1.5 hover:opacity-90"
                                                             >
-                                                                SYNC TO ARENA (PIN: {b.pin})
+                                                                {uiTerminology.deployToArena.toUpperCase()} (PIN: {b.pin})
                                                             </button>
                                                         </div>
                                                     )}

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const quizController = require('../controllers/quizController');
+const { getTask } = require('../services/taskManager');
 const multer = require('multer');
 const path = require('path');
 
@@ -11,6 +12,9 @@ const { check, validationResult } = require('express-validator');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        // Ensure uploads directory exists
+        const fs = require('fs');
+        if (!fs.existsSync('uploads/')) fs.mkdirSync('uploads/', { recursive: true });
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
@@ -20,10 +24,11 @@ const storage = multer.diskStorage({
 });
 
 // File upload security: Strict types and size limits
+// Voice files can be large; allow up to 50 MB for audio
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
+        fileSize: 50 * 1024 * 1024 // 50MB limit (voice recordings can be large)
     },
     fileFilter: (req, file, cb) => {
         const allowedTypes = [
@@ -78,8 +83,36 @@ router.post('/join', auth, joinLimiter, quizController.joinByCode);
 router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
-// @desc    Generate quiz questions without saving (for review)
+// @desc    Generate quiz questions (async — returns taskId immediately)
 router.post('/generate', auth, upload.single('file'), quizValidation, validate, quizController.generateQuizQuestions);
+
+// @route   GET api/quiz/generate/status/:taskId
+// @desc    Poll status of an async generation task
+router.get('/generate/status/:taskId', auth, (req, res) => {
+    const task = getTask(req.params.taskId);
+    if (!task) {
+        return res.status(404).json({ status: 'NOT_FOUND', msg: 'Task not found or expired' });
+    }
+    if (task.status === 'EXPIRED') {
+        return res.status(410).json({ status: 'EXPIRED', msg: 'Generation result expired. Please generate again.' });
+    }
+    // Return full result payload when completed
+    if (task.status === 'COMPLETED') {
+        return res.json({
+            status: task.status,
+            stage: task.stage,
+            stageLabel: task.stageLabel,
+            result: task.result,
+        });
+    }
+    // RUNNING or FAILED
+    res.json({
+        status: task.status,
+        stage: task.stage,
+        stageLabel: task.stageLabel,
+        error: task.error || null,
+    });
+});
 
 // @route   GET api/quiz/my-quizzes
 // @desc    Get all quizzes created by current user

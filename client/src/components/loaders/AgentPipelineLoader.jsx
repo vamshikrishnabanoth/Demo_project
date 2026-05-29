@@ -1,16 +1,42 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// ── Standard generation stages (topic / PDF / text) ──────────────────────────
 const STAGES = [
-    { label: 'Generating Questions',   sub: 'AI crafting questions from your source…',    icon: '✦' },
-    { label: 'Agent Reviewing',        sub: 'Critic Agent checking quality across the quiz…', icon: '◈' },
-    { label: 'Optimising Quality',     sub: 'Refiner improving low-scoring questions…',   icon: '◎' },
-    { label: 'Preparing Final Quiz',   sub: 'Assembling your polished quiz…',             icon: '✓' },
+    { label: 'Generating Questions',  sub: 'AI crafting questions from your source…',          icon: '✦' },
+    { label: 'Agent Reviewing',       sub: 'Critic Agent checking quality across the quiz…',   icon: '◈' },
+    { label: 'Optimising Quality',    sub: 'Refiner improving low-scoring questions…',         icon: '◎' },
+    { label: 'Preparing Final Quiz',  sub: 'Assembling your polished quiz…',                   icon: '✓' },
 ];
 
-// Advance a stage every N ms while loading is true
-const STAGE_INTERVAL_MS = 4500;
+// ── Extended voice stages ─────────────────────────────────────────────────────
+const VOICE_STAGES = [
+    { label: 'Uploading Audio',       sub: 'Sending your recording to the server…',           icon: '📤' },
+    { label: 'Transcribing',          sub: 'AI converting your speech to text…',              icon: '🎙️' },
+    { label: 'Extracting Topics',     sub: 'Identifying key concepts from lecture…',          icon: '🔍' },
+    { label: 'Generating Questions',  sub: 'Creating questions from your lecture content…',   icon: '✦' },
+    { label: 'Agent Reviewing',       sub: 'Critic Agent checking quality across the quiz…',  icon: '◈' },
+    { label: 'Optimising Quality',    sub: 'Refiner improving low-scoring questions…',        icon: '◎' },
+    { label: 'Finalizing',            sub: 'Assembling your polished quiz…',                  icon: '✓' },
+    { label: 'Ready',                 sub: 'Your quiz is ready for review!',                  icon: '🚀' },
+];
+
+// Voice stage label → index mapping for backend stageLabel strings
+const VOICE_STAGE_MAP = {
+    'Transcribing Audio':    1,
+    'Generating Questions':  3,
+    'Reviewing Questions':   4,
+    'Improving Questions':   5,
+    'Preparing Final Quiz':  6,
+};
+
+// Standard stage label → index mapping
+const STAGE_MAP = {
+    'Generating Questions': 0,
+    'Reviewing Questions':  1,
+    'Improving Questions':  2,
+    'Preparing Final Quiz': 3,
+};
 
 const NODES = [
     { x: 50, y: 50 },
@@ -23,17 +49,28 @@ const CONNECTIONS = [
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
 ];
 
-export default function AgentPipelineLoader() {
-    const [stage, setStage] = useState(0);
+/**
+ * AgentPipelineLoader
+ *
+ * Props:
+ *   stage       {number}  Current stage index (controlled by parent via polling)
+ *   stageLabel  {string}  Optional label string from server to auto-map to index
+ *   isVoice     {boolean} Use the extended voice stage list
+ *   elapsed     {number}  Elapsed seconds (optional, for "still working" hint)
+ */
+export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0 }) {
+    const stageList = isVoice ? VOICE_STAGES : STAGES;
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setStage(s => Math.min(s + 1, STAGES.length - 1));
-        }, STAGE_INTERVAL_MS);
-        return () => clearInterval(timer);
-    }, []);
+    // Map server label string → stage index if provided
+    let resolvedStage = stage;
+    if (stageLabel) {
+        const map = isVoice ? VOICE_STAGE_MAP : STAGE_MAP;
+        if (map[stageLabel] !== undefined) resolvedStage = map[stageLabel];
+    }
+    resolvedStage = Math.min(resolvedStage, stageList.length - 1);
 
-    const pct = Math.round(((stage + 1) / STAGES.length) * 100);
+    const pct = Math.round(((resolvedStage + 1) / stageList.length) * 100);
+    const showWarning = elapsed > 120; // > 2 minutes
 
     return (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden">
@@ -97,7 +134,7 @@ export default function AgentPipelineLoader() {
             {/* Stage label */}
             <AnimatePresence mode="wait">
                 <motion.div
-                    key={stage}
+                    key={resolvedStage}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -105,36 +142,27 @@ export default function AgentPipelineLoader() {
                     className="mt-6 text-center space-y-2 px-6"
                 >
                     <div className="flex items-center justify-center gap-3">
-                        <span
-                            className="text-2xl font-black"
-                            style={{ color: 'var(--bg-accent)' }}
-                        >
-                            {STAGES[stage].icon}
+                        <span className="text-2xl font-black" style={{ color: 'var(--bg-accent)' }}>
+                            {stageList[resolvedStage].icon}
                         </span>
-                        <h2
-                            className="text-xl font-black uppercase italic tracking-widest"
-                            style={{ color: 'var(--text-primary)' }}
-                        >
-                            {STAGES[stage].label}
+                        <h2 className="text-xl font-black uppercase italic tracking-widest" style={{ color: 'var(--text-primary)' }}>
+                            {stageList[resolvedStage].label}
                         </h2>
                     </div>
-                    <p
-                        className="text-xs font-bold uppercase tracking-[0.3em]"
-                        style={{ color: 'var(--text-secondary)' }}
-                    >
-                        {STAGES[stage].sub}
+                    <p className="text-xs font-bold uppercase tracking-[0.3em]" style={{ color: 'var(--text-secondary)' }}>
+                        {stageList[resolvedStage].sub}
                     </p>
                 </motion.div>
             </AnimatePresence>
 
             {/* Stage dots */}
             <div className="flex items-center gap-3 mt-8">
-                {STAGES.map((s, i) => (
+                {stageList.map((s, i) => (
                     <motion.div
                         key={i}
                         animate={{
-                            width:   i <= stage ? 24 : 8,
-                            opacity: i <= stage ? 1  : 0.3,
+                            width:   i <= resolvedStage ? 24 : 8,
+                            opacity: i <= resolvedStage ? 1  : 0.3,
                         }}
                         transition={{ duration: 0.4 }}
                         className="h-2 rounded-full"
@@ -153,13 +181,21 @@ export default function AgentPipelineLoader() {
                 />
             </div>
 
-            <p
-                className="mt-3 text-[10px] font-black uppercase tracking-[0.4em]"
-                style={{ color: 'var(--text-secondary)', opacity: 0.5 }}
-            >
-                Agent Pipeline · Stage {stage + 1} of {STAGES.length}
+            <p className="mt-3 text-[10px] font-black uppercase tracking-[0.4em]"
+               style={{ color: 'var(--text-secondary)', opacity: 0.5 }}>
+                Agent Pipeline · Stage {resolvedStage + 1} of {stageList.length}
             </p>
+
+            {/* "Still working" warning after 2 min */}
+            {showWarning && (
+                <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-5 px-5 py-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-bold uppercase tracking-wider text-center max-w-xs"
+                >
+                    ⚠ Still working — do not close this page
+                </motion.div>
+            )}
         </div>
     );
 }
-//hi

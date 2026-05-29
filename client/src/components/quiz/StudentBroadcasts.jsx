@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
 import socket from '../../utils/socket';
 import toast from 'react-hot-toast';
+import { uiTerminology } from '../../utils/uiTerminology';
 import {
     Megaphone,
     Clock,
@@ -260,7 +261,7 @@ export default function StudentBroadcasts({ onDirectJoin }) {
                                         className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 py-3.5 rounded-2xl font-black italic uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 flex items-center justify-center gap-2 shadow-xl shadow-amber-400/5 group/btn"
                                     >
                                         <Sparkles size={12} className="animate-pulse" />
-                                        SYNC TO ARENA
+                                        {uiTerminology.deployToArena.toUpperCase()}
                                     </button>
                                 )}
 

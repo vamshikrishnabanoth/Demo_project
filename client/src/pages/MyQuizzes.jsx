@@ -20,7 +20,9 @@ import {
     Play,
     Users,
     Megaphone,
-    CalendarRange
+    CalendarRange,
+    Lock,
+    Copy
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -206,7 +208,15 @@ export default function MyQuizzes() {
                                         </div>
                                         <div className="space-y-4">
                                             <div className="space-y-1">
-                                                <h3 className="text-4xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors">{quiz.title}</h3>
+                                                <div className="flex items-center gap-3 flex-wrap">
+                                                    <h3 className="text-4xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors">{quiz.title}</h3>
+                                                    {/* Lock badge for published (immutable) quizzes */}
+                                                    {quiz.isLocked && (
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest">
+                                                            <Lock size={10} /> Published · Read-only
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <p className="text-slate-500 font-bold uppercase tracking-widest text-xs italic">{quiz.topic || 'General Knowledge'}</p>
                                             </div>
 
@@ -294,7 +304,7 @@ export default function MyQuizzes() {
                                                     onClick={() => handleDelete(quiz.id, quiz.title)}
                                                     className="p-3 text-red-500 hover:text-red-400 transition-all group/del shrink-0"
                                                     aria-label={`Delete quiz: ${quiz.title}`}
-                                                    title="Delete Quiz"
+                                                    title={quiz.isLocked ? 'Delete (published quiz — admin may be required)' : 'Delete Quiz'}
                                                 >
                                                     <Trash2 size={20} className="group-hover/del:scale-110 transition-transform" />
                                                 </button>

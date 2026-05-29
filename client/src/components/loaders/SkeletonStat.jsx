@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// SkeletonStat — uses CSS shimmer, no framer-motion needed
 
 const SkeletonStat = () => {
     return (

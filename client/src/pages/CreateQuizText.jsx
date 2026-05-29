@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -15,6 +15,7 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizText() {
     const navigate = useNavigate();
@@ -41,6 +42,8 @@ export default function CreateQuizText() {
     const [assignedStudents, setAssignedStudents] = useState([]);
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
     const [regeneratingIdx, setRegeneratingIdx] = useState(null);
+    const [finalValidation, setFinalValidation] = useState(null);
+    const [showFinalizeModal, setShowFinalizeModal] = useState(false);
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -49,9 +52,10 @@ export default function CreateQuizText() {
         if (incoming) {
             setQuestions(incoming);
             setIsGeneratedSource(true);
-            if (location.state.title)       setTitle(location.state.title);
-            if (location.state.duration)    setDuration(location.state.duration);
-            if (location.state.agentReport) setAgentReport(location.state.agentReport);
+            if (location.state.title)           setTitle(location.state.title);
+            if (location.state.duration)        setDuration(location.state.duration);
+            if (location.state.agentReport)     setAgentReport(location.state.agentReport);
+            if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
             toast.success('AI Intel Injected Successfully');
         }
     }, [location.state]);
@@ -147,28 +151,33 @@ export default function CreateQuizText() {
         }
     }, [questions, agentReport, title, location.state]);
 
-    // ─── SUBMISSION ─────────────────────────────────────────────────────────
-    const handleSubmit = async (e) => {
+    // ─── FINALIZE (guarded by confirmation modal) ────────────────────────────
+    const handleFinalizeClick = (e) => {
         e.preventDefault();
-        
-        // Validation Layer
+        // Validation Layer first
         if (!title.trim()) return toast.error('Enter a command title');
         const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
         if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete`);
+        // Open confirmation modal
+        setShowFinalizeModal(true);
+    };
+
+    // ─── ACTUAL SUBMISSION (called from modal confirm) ────────────────────────
+    const handleSubmit = async () => {
+        setShowFinalizeModal(false);
+        setLoading(true);
 
         let finalStartTime = null;
-        let finalEndTime = null;
+        let finalEndTime   = null;
 
         if (isAssessment) {
             finalStartTime = startTime;
-            finalEndTime = endTime;
+            finalEndTime   = endTime;
 
             if (startNow) {
                 finalStartTime = new Date().toISOString();
                 if (!finalEndTime) {
                     if (timerType === 'timePerQuestion' && timerPerQuestion) {
-                        // Auto-calculate end time: (number of questions * timerPerQuestion) in milliseconds
-                        // Add a 5 minute buffer so students have time to join the quiz
                         const totalTimeMs = (questions.length * (parseInt(timerPerQuestion) || 30)) * 1000;
                         finalEndTime = new Date(Date.now() + totalTimeMs + (5 * 60000)).toISOString();
                     } else {
@@ -181,35 +190,34 @@ export default function CreateQuizText() {
             }
 
             if (finalStartTime && finalEndTime) {
-                 if (new Date(finalEndTime) <= new Date(finalStartTime)) {
-                      setLoading(false);
-                      return toast.error("End time must be after start time");
-                 }
+                if (new Date(finalEndTime) <= new Date(finalStartTime)) {
+                    setLoading(false);
+                    return toast.error('End time must be after start time');
+                }
             }
         }
 
         try {
-            const res = await api.post('/quiz/create', { 
-                title, 
-                questions, 
+            const res = await api.post('/quiz/create', {
+                title,
+                questions,
                 duration: timerType === 'totalTime' ? (parseInt(duration) || 30) : 0,
                 timerPerQuestion: timerType === 'timePerQuestion' ? (parseInt(timerPerQuestion) || 30) : 0,
                 timerType,
                 accessType,
-                startTime: finalStartTime,
-                endTime: finalEndTime || null,
+                startTime:  finalStartTime,
+                endTime:    finalEndTime || null,
                 isAssessment,
-                isLive: !isAssessment,
+                isLive:     !isAssessment,
                 assignedGroups,
                 assignedStudents,
-                autoBroadcast
+                autoBroadcast,
             });
-            toast.success('Mission Published Successfully');
+            toast.dismiss();
+            toast.success('Mission Published & Data Encrypted (SHA-256)');
             if (!isAssessment) {
-                // Synchronous quiz -> Redirect to live teacher lobby room
                 navigate(`/live-room-teacher/${res.data.joinCode}`);
             } else {
-                // Asynchronous quiz -> Standard dashboard
                 navigate('/teacher-dashboard');
             }
         } catch (err) {
@@ -230,7 +238,7 @@ export default function CreateQuizText() {
                             Back
                         </PremiumButton>
                         <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)]">
-                            QUIZ <span className="text-[var(--text-accent)]">ARENA</span>
+                            <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
                 </div>
@@ -418,6 +426,25 @@ export default function CreateQuizText() {
                                     </div>
                                 )}
 
+                                {/* ── Final Validation Warning (from backend validator) ── */}
+                                {isGeneratedSource && finalValidation && !finalValidation.passed && (
+                                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
+                                        <div className="flex items-center gap-2">
+                                            <AlertTriangle size={16} className="text-amber-400" />
+                                            <p className="text-sm font-black text-amber-400 uppercase tracking-wider">Review Required Before Publish</p>
+                                        </div>
+                                        <p className="text-xs text-white/50 font-bold uppercase tracking-wider">The final validator found issues. You may still publish — these are recommendations.</p>
+                                        <ul className="space-y-1">
+                                            {finalValidation.issues.map((issue, i) => (
+                                                <li key={i} className="text-xs text-amber-300/70 font-bold flex items-start gap-2">
+                                                    <span className="flex-shrink-0 mt-0.5">⚠</span>
+                                                    <span>{issue}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
                                 {/* ── Agent Quality Badge (AI-generated quizzes only) ── */}
                                 {isGeneratedSource && agentReport && (
                                     <AgentQualityBadge
@@ -464,7 +491,8 @@ export default function CreateQuizText() {
                                 {/* Final Execution */}
                                 <div className="flex justify-center pt-12 border-t border-white/5">
                                     <PremiumButton
-                                        type="submit"
+                                        type="button"
+                                        onClick={handleFinalizeClick}
                                         disabled={loading}
                                         className="px-20 py-8 text-2xl italic"
                                         icon={loading ? Loader2 : CheckCircle}
@@ -477,6 +505,76 @@ export default function CreateQuizText() {
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* ── Finalize Confirmation Modal ───────────────────────────────── */}
+            <AnimatePresence>
+                {showFinalizeModal && (
+                    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ duration: 0.25 }}
+                            className="bg-[var(--bg-secondary,#0f1929)] border border-white/10 rounded-3xl max-w-md w-full p-8 space-y-6 shadow-2xl"
+                        >
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-black text-xl text-white uppercase tracking-wider italic">Finalize Quiz?</h3>
+                                <button onClick={() => setShowFinalizeModal(false)} className="text-white/40 hover:text-white transition-colors">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {[
+                                    'Publish optimized questions to your students',
+                                    'Generate a unique quiz code for joining',
+                                    'Agent-verified quality applied',
+                                    'Data protected with SHA-256 integrity hashing',
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-sm text-white/70 font-bold">
+                                        <CheckCircle size={16} className="text-emerald-400 flex-shrink-0" />
+                                        <span>{item}</span>
+                                    </div>
+                                ))}
+                                {/* Immutability notice */}
+                                <div className="flex items-start gap-3 text-sm text-amber-300/80 font-bold pt-1 border-t border-white/5">
+                                    <AlertTriangle size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
+                                    <span>Questions become <strong>read-only</strong> after publish. To modify, duplicate this quiz.</span>
+                                </div>
+                            </div>
+
+                            {finalValidation && !finalValidation.passed && (
+                                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <AlertTriangle size={14} className="text-amber-400" />
+                                        <p className="text-xs font-black text-amber-400 uppercase tracking-wider">
+                                            {finalValidation.issues.length} validation issue{finalValidation.issues.length !== 1 ? 's' : ''} detected
+                                        </p>
+                                    </div>
+                                    <p className="text-xs text-white/40 font-bold">You can still publish — these are quality recommendations, not blockers.</p>
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    onClick={() => setShowFinalizeModal(false)}
+                                    className="flex-1 py-4 rounded-2xl border border-white/10 text-white/50 font-black text-sm uppercase tracking-widest hover:bg-white/5 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={loading}
+                                    className="flex-1 py-4 rounded-2xl bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black text-sm uppercase tracking-widest hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                >
+                                    {loading ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                                    {loading ? 'Publishing...' : 'Continue'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </DashboardLayout>
     );
 }

@@ -39,6 +39,7 @@ const AssessmentsHistory = lazy(() => import('./pages/AssessmentsHistory'));
 const AssessmentReport  = lazy(() => import('./pages/AssessmentReport'));
 const QuizAnalytics     = lazy(() => import('./pages/QuizAnalytics'));
 const QuestionAnalysis  = lazy(() => import('./pages/QuestionAnalysis'));
+const AnimationPreview  = lazy(() => import('./pages/AnimationPreview'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -66,6 +67,7 @@ function AnimatedRoutes() {
 
             <AnimatePresence mode="sync">
                 <Routes location={location} key={location.pathname}>
+                    <Route path="/animation-preview" element={<AnimationPreview />} />
                     {/* Auth pages — fullscreen, fade only */}
                     <Route path="/login"       element={<FadeTransition><Login /></FadeTransition>} />
                     <Route path="/select-role" element={<FadeTransition><ProtectedRoute allowNone><RoleSelection /></ProtectedRoute></FadeTransition>} />

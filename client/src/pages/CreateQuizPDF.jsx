@@ -153,19 +153,75 @@
 //     );
 // }
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
+import toast from 'react-hot-toast';
+import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizPDF() {
     const [file, setFile] = useState(null);
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
-    const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+
+    // ── Inline polling state ────────────────────────────────────────────────
+    const [polling, setPolling]       = useState(false);
+    const [stage, setStage]           = useState(0);
+    const [stageLabel, setStageLabel] = useState('Generating Questions');
+    const [elapsed, setElapsed]       = useState(0);
+    const [pollError, setPollError]   = useState(null);
+    const pollIntervalRef = useRef(null);
+    const startTimeRef    = useRef(null);
+    const elapsedRef      = useRef(null);
+
+    const stopPolling = useCallback(() => {
+        clearInterval(pollIntervalRef.current);
+        clearInterval(elapsedRef.current);
+        setPolling(false);
+    }, []);
+
+    const startPolling = useCallback((taskId, { onComplete, onError } = {}) => {
+        setPolling(true);
+        setStage(0);
+        setStageLabel('Generating Questions');
+        setElapsed(0);
+        setPollError(null);
+        startTimeRef.current = Date.now();
+
+        elapsedRef.current = setInterval(() => {
+            setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
+        }, 1000);
+
+        const doPoll = async () => {
+            try {
+                const res = await api.get(`/quiz/generate/status/${taskId}`);
+                const { status, stage: s, stageLabel: sl, result, error: e } = res.data;
+                if (s !== undefined) setStage(s);
+                if (sl) setStageLabel(sl);
+
+                if (status === 'COMPLETED' && result) {
+                    stopPolling();
+                    if (onComplete) onComplete(result);
+                } else if (status === 'FAILED' || status === 'EXPIRED' || status === 'NOT_FOUND') {
+                    stopPolling();
+                    const msg = e || 'Generation failed. Please try again.';
+                    setPollError(msg);
+                    if (onError) onError(msg);
+                }
+            } catch (err) {
+                console.warn('[Poller] poll error:', err.message);
+            }
+        };
+
+        doPoll();
+        pollIntervalRef.current = setInterval(doPoll, 1500);
+    }, [stopPolling]);
+    // ───────────────────────────────────────────────────────────────────────
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -175,7 +231,7 @@ export default function CreateQuizPDF() {
         e.preventDefault();
         if (!file) return;
 
-        setLoading(true);
+        setSubmitting(true);
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -185,36 +241,55 @@ export default function CreateQuizPDF() {
 
             const res = await api.post('/quiz/generate', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 300000
+                timeout: 30000, // only wait for taskId
             });
 
-            navigate('/create-quiz/text', {
-                state: {
-                    questions:   res.data.questions,
-                    title:       res.data.title || file.name.replace('.pdf', ''),
-                    duration:    res.data.duration || 10,
-                    source:      'generated',
-                    agentReport: res.data.agentReport || null,
-                }
+            const { taskId } = res.data;
+            if (!taskId) throw new Error('No taskId returned from server');
+
+            startPolling(taskId, {
+                onComplete: (result) => {
+                    navigate('/create-quiz/text', {
+                        state: {
+                            questions:       result.questions,
+                            title:           result.title || file.name.replace(/\.[^/.]+$/, ''),
+                            duration:        result.duration || 10,
+                            source:          'generated',
+                            agentReport:     result.agentReport || null,
+                            finalValidation: result.finalValidation || null,
+                        },
+                    });
+                },
+                onError: (msg) => {
+                    toast.error(msg || 'Generation failed. Please try again.');
+                    setSubmitting(false);
+                },
             });
         } catch (err) {
             console.error(err);
-            alert('Failed to generate quiz');
-        } finally {
-            setLoading(false);
+            toast.error('Failed to start generation. Please try again.');
+            setSubmitting(false);
         }
     };
 
+    const isLoading = submitting || polling;
+
     return (
         <DashboardLayout role="teacher">
-            {loading && <AgentPipelineLoader />}
+            {isLoading && (
+                <AgentPipelineLoader
+                    stage={stage}
+                    stageLabel={stageLabel}
+                    elapsed={elapsed}
+                />
+            )}
             <div className="max-w-4xl mx-auto pb-20 relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
                 <div className="mb-12 flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
-                            AI <span className="text-[var(--bg-accent)]">Document Parser</span>
+                            <span className="text-[var(--bg-accent)]">{uiTerminology.creationMethods.files.toUpperCase()}</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">Analyze Slides, Word docs, or Photos to generate questions</p>
                     </div>
@@ -300,11 +375,11 @@ export default function CreateQuizPDF() {
                     <div className="flex justify-center pt-8">
                         <button
                             type="submit"
-                            disabled={loading || !file}
+                            disabled={isLoading || !file}
                             className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
                         >
-                            {loading ? <Loader2 className="animate-spin" size={32} /> : <CheckCircle size={32} />}
-                            {loading ? 'PARSING MATERIAL...' : 'ANALYZE DOCUMENT'}
+                            {isLoading ? <Loader2 className="animate-spin" size={32} /> : <CheckCircle size={32} />}
+                            {isLoading ? 'PARSING MATERIAL...' : 'ANALYZE DOCUMENT'}
                         </button>
                     </div>
                 </form>

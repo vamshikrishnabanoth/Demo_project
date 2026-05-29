@@ -5,9 +5,11 @@ import socket from '../utils/socket';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
-import ResultsLoader from '../components/loaders/ResultsLoader';
+import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import SubmissionSequence from '../components/quiz/SubmissionSequence';
+
 
 export default function AttemptQuiz() {
     const { id } = useParams();
@@ -21,15 +23,20 @@ export default function AttemptQuiz() {
     const [result, setResult] = useState(null);
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
-    const [isWaiting, setIsWaiting] = useState(false); // New waiting state
+    const [isWaiting, _setIsWaiting] = useState(false); // New waiting state
     const [newQuestionNotification, setNewQuestionNotification] = useState(null);
     const [showNewQuestionModal, setShowNewQuestionModal] = useState(false);
     const [showIntermediateLeaderboard, setShowIntermediateLeaderboard] = useState(false);
     const [currentLeaderboard, setCurrentLeaderboard] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
-    const [isCorrectFeedback, setIsCorrectFeedback] = useState(false);
+    const [isCorrectFeedback, _setIsCorrectFeedback] = useState(false);
     const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); // tracks submitted questions in live mode
     const [speedFeedback, setSpeedFeedback] = useState(null); // { isFast, message }
+    const [showSubmitSequence, setShowSubmitSequence] = useState(false);
+    const [showReconnectScreen, setShowReconnectScreen] = useState(false);
+    const [reconnectState, setReconnectState] = useState("disconnected");
+    const [offlineDuration, setOfflineDuration] = useState(0);
+    const prevOnlineRef = useRef(navigator.onLine);
 
     useEffect(() => {
         if (!speedFeedback) return;
@@ -41,6 +48,42 @@ export default function AttemptQuiz() {
 
     const hasInitializedTimer = useRef(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    useEffect(() => {
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    useEffect(() => {
+        let timer;
+        if (!isOnline) {
+            setReconnectState("disconnected");
+            setShowReconnectScreen(true);
+            const startTime = Date.now();
+            timer = setInterval(() => {
+                setOfflineDuration(Math.floor((Date.now() - startTime) / 1000));
+            }, 1000);
+        } else {
+            if (prevOnlineRef.current === false) {
+                setReconnectState("recovered");
+                setTimeout(() => {
+                    setShowReconnectScreen(false);
+                    setOfflineDuration(0);
+                }, 1500);
+            } else {
+                setShowReconnectScreen(false);
+            }
+        }
+        prevOnlineRef.current = isOnline;
+        return () => clearInterval(timer);
+    }, [isOnline]);
+
     const [missionComplete, setMissionComplete] = useState(false);
     const [waitingForState, setWaitingForState] = useState(false);
     const quizRef = useRef(null);     // Always-current quiz for socket callbacks
@@ -209,7 +252,7 @@ export default function AttemptQuiz() {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
-                    } catch (e) {
+                    } catch {
                         socket.emit('join_room', {
                             quizId: id,
                             user: {
@@ -284,7 +327,7 @@ export default function AttemptQuiz() {
                     try {
                         const sess = JSON.parse(sessionStr);
                         socket.emit('reconnectUser', { quizId: sess.quizId, user: { username: sess.username, role: sess.role, _id: sess._id } });
-                    } catch (e) {
+                    } catch {
                          socket.emit('join_room', {
                             quizId: id,
                             user: {
@@ -594,7 +637,7 @@ export default function AttemptQuiz() {
 
     const setAnswersFromHistory = (historyAnswers) => {
         const newAnswers = {};
-        historyAnswers.forEach((ans, _) => {
+        historyAnswers.forEach((ans) => {
             // Find index by question text in case of shuffling (advanced), but here strictly by index for now or assume order
             // Better to map by questionText if possible, but index is safe for now if static
             // Actually, `answers` state is by index.
@@ -652,7 +695,7 @@ export default function AttemptQuiz() {
     };
 
     // Student advances to next question themselves (live mode)
-    const handleNextQuestion = () => {
+    const _handleNextQuestion = () => {
         // Disabled in strict mode - teacher controls navigation
         console.log("Manual navigation disabled in live mode.");
     };
@@ -683,9 +726,8 @@ export default function AttemptQuiz() {
                 // Live quiz: show waiting screen until teacher ends the session
                 setResult(res.data);
             } else {
-                // Async / assessment: go straight to full result report
-                localStorage.removeItem(`quiz_answers_${id}`);
-                navigate(`/report/${id}`);
+                // Async / assessment: Trigger gorgeous submission sequence first!
+                setShowSubmitSequence(true);
             }
         } catch (err) {
             console.error('Error submitting quiz', err);
@@ -708,7 +750,19 @@ export default function AttemptQuiz() {
 
     if (loading) return <WaitingRoomLoader message="Initializing Arena..." />;
 
-    if (waitingForState) return <ResultsLoader message="Synchronizing Session..." />;
+    if (waitingForState) {
+        return (
+            <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-6 text-[var(--text-primary)] relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--bg-accent-glow),transparent_45%)] opacity-30" />
+                <LiveQuizWaitAnimation
+                    variant="quiz-starting"
+                    timeLeft={timeLeft}
+                    subtitle="Energy ring countdown active."
+                    detail="Synchronizing session..."
+                />
+            </div>
+        );
+    }
 
     // Mission Complete: student finished all live quiz questions — wait for quiz_ended
     if (missionComplete && quiz?.isLive) {
@@ -987,21 +1041,14 @@ export default function AttemptQuiz() {
             {/* Strict Mode Waiting Overlay */}
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
                 <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
-                    <div className="relative mb-12">
-                        <div className="absolute inset-0 animate-ping bg-[var(--bg-accent)] opacity-20 rounded-full"></div>
-                        <div className="relative bg-white/5 p-12 rounded-[3rem] border border-white/10">
-                            <Clock className="text-[var(--bg-accent)] animate-pulse" size={64} />
-                        </div>
-                    </div>
-                    <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-4 text-[var(--bg-accent)]">Strict Mode</h2>
-                    <h3 className="text-3xl font-black italic uppercase tracking-tighter mb-8">Synchronizing Answers...</h3>
-                    <p className="text-white/40 font-bold uppercase tracking-widest text-lg max-w-md animate-pulse">
-                        Waiting for teacher to move to the next question…
-                    </p>
-                    <div className="mt-12 flex items-center gap-4 text-white/40">
-                        <Loader2 className="animate-spin" size={24} />
-                        <span className="font-black italic uppercase tracking-widest text-[10px]">REAL-TIME SYNC ACTIVE</span>
-                    </div>
+                    <LiveQuizWaitAnimation
+                        variant={totalStudents > 0 && answeredCount < totalStudents ? 'waiting-submissions' : 'synchronizing-answers'}
+                        answeredCount={answeredCount}
+                        totalStudents={totalStudents}
+                        detail={totalStudents > 0 && answeredCount < totalStudents
+                            ? `${answeredCount} of ${totalStudents} answered`
+                            : 'Real-time sync active'}
+                    />
                 </div>
             )}
 
@@ -1028,15 +1075,18 @@ export default function AttemptQuiz() {
                     {/* WAITING STATE OVERLAY */}
                     {isWaiting && !isReviewMode && (
                         <div className="absolute inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/80 backdrop-blur-md flex flex-col items-center justify-center rounded-3xl border border-white/5">
-                            <Loader2 className="animate-spin text-[var(--bg-accent)] mb-4" size={48} />
-                            <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">Arena Cleared</h2>
-                            <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mt-2">Awaiting host termination sequence...</p>
+                            <LiveQuizWaitAnimation
+                                variant="loading-next-question"
+                                title="Arena Cleared"
+                                subtitle="Sliding question card transition."
+                                detail="Awaiting host command..."
+                            />
                         </div>
                     )}
 
                     {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
                     {showFeedback && !quiz?.isLive && (
-                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-green-600/95' : 'bg-red-600/95'} backdrop-blur-md text-white shadow-2xl`}>
+                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-[var(--success-bg)]/95' : 'bg-[var(--error-bg)]/95'} backdrop-blur-md text-white shadow-2xl`}>
                             {isCorrectFeedback ? <CheckCircle size={80} className="mb-4" /> : <XCircle size={80} className="mb-4" />}
                             <h2 className="text-6xl font-black italic uppercase tracking-tighter">
                                 {isCorrectFeedback ? 'Success' : 'Failed'}
@@ -1381,6 +1431,29 @@ export default function AttemptQuiz() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Resilient Fullscreen Reconnect Overlay */}
+            {showReconnectScreen && (
+                <div className="fixed inset-0 z-[5000] bg-[var(--bg-primary,#0a0a0b)]/95 backdrop-blur-xl flex items-center justify-center p-6">
+                    <LiveQuizWaitAnimation 
+                        variant="reconnecting"
+                        offlineDuration={offlineDuration}
+                        reconnectState={reconnectState}
+                    />
+                </div>
+            )}
+
+            {/* Gorgeous GPU-Accelerated Submission Sequence Overlay */}
+            {showSubmitSequence && (
+                <SubmissionSequence 
+                    selectedOption={answers[currentQuestion] || 'N/A'}
+                    questionText={quiz.questions[currentQuestion]?.questionText || 'Quiz Complete'}
+                    onComplete={() => {
+                        localStorage.removeItem(`quiz_answers_${id}`);
+                        navigate(`/report/${id}`);
+                    }}
+                />
+            )}
         </div >
     );
 }

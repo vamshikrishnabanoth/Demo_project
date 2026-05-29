@@ -4,12 +4,17 @@
  * Agentic Quiz Quality Assurance Pipeline.
  *
  * Order of operations:
- *   1. Whole-quiz critic   (repeated concepts, difficulty distribution, answer-position bias)
- *   2. Per-question critic  (10 weighted criteria, score 0-100)
- *   3. Early-exit if avg score >= EARLY_EXIT_AVG (92)
- *   4. Parallel refinement  (max concurrency = 3, max 3 rounds via Groq)
- *   5. Re-critique after each round; exit if quality target met or timeout reached
- *   6. Return final questions + agentReport (no scores shown to teachers — only verdicts)
+ *   1. [Generator]   Caller has already produced draft questions
+ *   2. [Critic]      Whole-quiz critic → per-question critic (score 0-100)
+ *   3. [Early-exit]  If avg score >= EARLY_EXIT_AVG (92), skip refinement
+ *   4. [Refiner]     Parallel refinement per score band:
+ *                      ≥95 → LOCKED (no change)
+ *                      85-94 → Minor refinement (soft prompt)
+ *                      <85  → Full refinement (strict prompt)
+ *   5. [Critic re-run] Re-score only refined questions
+ *   6. [Report]      Structured per-question diff + summary returned
+ *
+ * The pipeline NEVER throws — it always returns the best available version.
  */
 
 'use strict';
@@ -17,8 +22,10 @@
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const PASS_THRESHOLD  = 90;   // per-question pass score
 const EARLY_EXIT_AVG  = 92;   // exit loop early if avg >= this
-const MAX_RETRIES     = 3;    // refinement rounds per question
-const MAX_CONCURRENCY = 3;    // parallel Groq calls
+const LOCK_THRESHOLD  = 95;   // score >= this → do not refine
+const MINOR_THRESHOLD = 85;   // score >= this → minor refinement only
+const MAX_RETRIES     = 2;    // refinement rounds per question
+const MAX_CONCURRENCY = 10;   // parallel Groq calls
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -54,6 +61,29 @@ async function withConcurrency(tasks, limit) {
     return results;
 }
 
+/** Snapshot a question's key fields for diff comparison */
+function snapshotQuestion(q) {
+    return {
+        question: q.questionText || '',
+        options:  (q.options || []).slice(),
+        answer:   q.correctAnswer || '',
+        explanation: q.explanation || '',
+    };
+}
+
+/** Return true if two snapshots differ in CONTENT (not metadata/score) */
+function questionChanged(before, after) {
+    // Normalize for comparison: trim whitespace, lower-case for options order
+    const norm = s => (s || '').trim();
+    const normOpts = opts => (opts || []).map(o => norm(o)).sort().join('|');
+    return (
+        norm(before.question)    !== norm(after.question)    ||
+        norm(before.answer)      !== norm(after.answer)      ||
+        norm(before.explanation) !== norm(after.explanation) ||
+        normOpts(before.options) !== normOpts(after.options)
+    );
+}
+
 // ─── WHOLE-QUIZ CRITIC ────────────────────────────────────────────────────────
 
 /**
@@ -62,7 +92,7 @@ async function withConcurrency(tasks, limit) {
  */
 function wholeQuizCritic(questions, requestedDifficulty) {
     const quizIssues = [];
-    const quizContext = {}; // per-question context flags
+    const quizContext = {};
 
     const flag = (idx, msg) => {
         quizContext[idx] = quizContext[idx] || [];
@@ -77,7 +107,7 @@ function wholeQuizCritic(questions, requestedDifficulty) {
                 questions[j].questionText || ''
             );
             if (overlap >= 0.6) {
-                const msg = `Concept overlap with Question ${j + 1}`;
+                const msg  = `Concept overlap with Question ${j + 1}`;
                 const msg2 = `Concept overlap with Question ${i + 1}`;
                 flag(i, msg);
                 flag(j, msg2);
@@ -109,8 +139,7 @@ function wholeQuizCritic(questions, requestedDifficulty) {
 
     // 3. Difficulty distribution
     const hardKw = ['analyze', 'evaluate', 'compare', 'why does', 'explain how', 'what would happen'];
-    const easyKw = ['what is', 'define', 'which one', 'name the'];
-    const level = (requestedDifficulty || 'Medium').toLowerCase();
+    const level  = (requestedDifficulty || 'Medium').toLowerCase();
     if (level === 'hard') {
         const hardCount = questions.filter(q =>
             hardKw.some(kw => (q.questionText || '').toLowerCase().includes(kw))
@@ -131,6 +160,45 @@ function wholeQuizCritic(questions, requestedDifficulty) {
     return { quizIssues, quizContext };
 }
 
+// ─── FINAL QUIZ VALIDATOR ─────────────────────────────────────────────────────
+
+/**
+ * Run a final validation sweep before publishing.
+ * Returns { passed: boolean, issues: string[] }
+ */
+function finalQuizValidator(questions, requestedDifficulty) {
+    const issues = [];
+
+    // 1. No empty fields
+    questions.forEach((q, i) => {
+        if (!q.questionText || !q.questionText.trim()) issues.push(`Q${i + 1}: Empty question text`);
+        if (!q.correctAnswer || !q.correctAnswer.trim()) issues.push(`Q${i + 1}: Missing correct answer`);
+        const validOptions = (q.options || []).filter(o => o && o.trim().length > 0);
+        if (validOptions.length < 2) issues.push(`Q${i + 1}: Fewer than 2 valid options`);
+        if (!q.explanation || q.explanation.trim().length < 10) issues.push(`Q${i + 1}: Missing or too-short explanation`);
+    });
+
+    // 2. No duplicate concepts
+    const { quizIssues } = wholeQuizCritic(questions, requestedDifficulty);
+    quizIssues.forEach(qi => issues.push(qi));
+
+    // 3. Answer distribution — no single option should hold >60% of answers
+    const posCounts = [0, 0, 0, 0];
+    questions.forEach(q => {
+        const ai = (q.options || []).indexOf(q.correctAnswer);
+        if (ai >= 0 && ai < 4) posCounts[ai]++;
+    });
+    if (questions.length >= 3) {
+        posCounts.forEach((count, pos) => {
+            if (count / questions.length > 0.6) {
+                issues.push(`Answer distribution: ${Math.round(count / questions.length * 100)}% of answers at option ${['A','B','C','D'][pos]}`);
+            }
+        });
+    }
+
+    return { passed: issues.length === 0, issues };
+}
+
 // ─── PER-QUESTION CRITIC ─────────────────────────────────────────────────────
 
 /**
@@ -139,7 +207,7 @@ function wholeQuizCritic(questions, requestedDifficulty) {
  */
 function criticQuestion(q, index, allQuestions, quizContext, requestedDifficulty) {
     let score = 0;
-    const issues = [];
+    const issues   = [];
     const feedback = [];
 
     const text    = (q.questionText  || '').trim();
@@ -230,16 +298,22 @@ function criticQuestion(q, index, allQuestions, quizContext, requestedDifficulty
 
 const _promptCache = new Map();
 
-async function refineQuestion(q, criticResult, groqClient, difficulty) {
+async function refineQuestion(q, criticResult, groqClient, difficulty, isMinor) {
     if (!groqClient) return { question: q, refined: false };
 
-    const cacheKey = `${(q.questionText || '').slice(0, 80)}::${[...criticResult.issues].sort().join('|')}`;
+    const cacheKey = `${(q.questionText || '').slice(0, 80)}::${[...criticResult.issues].sort().join('|')}::${isMinor}`;
     if (_promptCache.has(cacheKey)) {
         return { question: _promptCache.get(cacheKey), refined: true, cached: true };
     }
 
+    const modeInstruction = isMinor
+        ? 'Make ONLY minor corrections (fix explanation, fix punctuation, fix answer match). Do NOT rewrite the question.'
+        : 'Fully improve this question based on every issue listed. You may rewrite the question text if needed.';
+
     const prompt = [
         'You are an expert quiz editor. Improve this multiple-choice question based on the specific issues listed.',
+        '',
+        modeInstruction,
         '',
         'ORIGINAL QUESTION:',
         JSON.stringify(q, null, 2),
@@ -253,7 +327,7 @@ async function refineQuestion(q, criticResult, groqClient, difficulty) {
         `REQUIRED DIFFICULTY: ${difficulty || 'Medium'}`,
         '',
         'Return ONLY a valid JSON object with EXACTLY these keys:',
-        '{ "questionText", "options" (array of 4 strings), "correctAnswer" (exact match of one option), "explanation", "points", "type" }',
+        '{ "questionText", "options" (array of 4 strings), "correctAnswer" (exact match of one option), "explanation" (at least 20 chars), "points", "type" }',
         'Do NOT wrap in markdown. Do NOT add extra keys. Do NOT change the subject/topic.',
     ].join('\n');
 
@@ -262,11 +336,11 @@ async function refineQuestion(q, criticResult, groqClient, difficulty) {
             messages: [{ role: 'user', content: prompt }],
             model: 'llama-3.1-8b-instant',
             response_format: { type: 'json_object' },
-            temperature: 0.3,
+            temperature: isMinor ? 0.15 : 0.3,
             max_tokens: 600,
         });
 
-        const raw = completion.choices[0].message.content.trim();
+        const raw     = completion.choices[0].message.content.trim();
         const refined = JSON.parse(raw);
 
         if (refined.questionText && Array.isArray(refined.options) && refined.correctAnswer) {
@@ -289,11 +363,32 @@ async function refineQuestion(q, criticResult, groqClient, difficulty) {
 
 // ─── REPORT BUILDER ──────────────────────────────────────────────────────────
 
-function buildReport(criticResults, quizIssues, totalRetries, totalMs, criticMs, timedOut, groqUnavailable) {
-    const scores = criticResults.map(r => r.score);
+/**
+ * refinerStatus values:
+ *   'early_exit'  — avg score was already >= EARLY_EXIT_AVG, no refinement needed
+ *   'refined'     — Groq ran and at least one question content changed
+ *   'no_change'   — Groq ran but no question content actually differed
+ *   'unavailable' — Groq API key not present
+ *   'timeout'     — pipeline timed out before refinement could complete
+ */
+function buildReport(
+    initialCriticResults,
+    finalCriticResults,
+    questionDiffs,
+    quizIssues,
+    totalRetries,
+    totalMs,
+    criticMs,
+    timedOut,
+    groqUnavailable,
+    generated,
+    scoreBefore,
+    scoreAfter,
+    refinerStatus   // NEW: explicit status string
+) {
+    const scores     = finalCriticResults.map(r => r.score);
     const avgQuality = Math.round(avg(scores));
 
-    // Verdict: teacher-friendly language only (no raw numbers)
     let verdict;
     if (avgQuality >= 92) verdict = 'excellent';
     else if (avgQuality >= 80) verdict = 'good';
@@ -301,9 +396,15 @@ function buildReport(criticResults, quizIssues, totalRetries, totalMs, criticMs,
 
     const fallback = groqUnavailable || timedOut;
 
+    // REAL change detection: only count questions where content actually differed
+    const questionsChanged = questionDiffs.filter(d => d.modified).length;
+
+    // refinerExecuted = true when refiner was invoked (including early-exit = already excellent)
+    const refinerExecuted = refinerStatus !== 'unavailable';
+
     return {
-        verdict,          // 'excellent' | 'good' | 'review'
-        avgScore: avgQuality,
+        verdict,
+        avgScore:         avgQuality,
         totalRetries,
         fallback,
         timedOut,
@@ -311,12 +412,44 @@ function buildReport(criticResults, quizIssues, totalRetries, totalMs, criticMs,
         totalMs,
         criticMs,
         quizIssues,
-        perQuestion: criticResults.map((r, i) => ({
-            index:    i,
-            verdict:  r.score >= 92 ? 'excellent' : r.score >= 75 ? 'good' : 'review',
-            issues:   r.issues,
-            retries:  r.retries || 0,
-        })),
+        // Summary for teacher banner
+        generated,
+        generatorExecuted: true,
+        criticExecuted:    true,
+        refinerExecuted,
+        refinerStatus,
+        questionsChanged,
+        scoreBefore:      Math.round(scoreBefore),
+        scoreAfter:       Math.round(scoreAfter),
+        qualityBefore:    scoreBefore >= 92 ? 'EXCELLENT' : scoreBefore >= 80 ? 'GOOD' : 'NEEDS REVIEW',
+        qualityAfter:     scoreAfter  >= 92 ? 'EXCELLENT' : scoreAfter  >= 80 ? 'GOOD' : 'NEEDS REVIEW',
+        // Diffs for "View Changes" modal
+        questionDiffs,
+        perQuestion: finalCriticResults.map((r, i) => {
+            const initial = initialCriticResults[i];
+            const diff    = questionDiffs[i];
+            const structuredIssues = (initial.issues || []).map(issue => {
+                const wasFixed = !r.issues.includes(issue);
+                return {
+                    issue,
+                    actionTaken: wasFixed
+                        ? (diff.modified ? 'Generated improved version automatically' : 'Validated — no content change required')
+                        : (groqUnavailable ? 'Refinement unavailable (no Groq key)' : 'Could not refine automatically'),
+                    fixed: wasFixed,
+                };
+            });
+            return {
+                index:            i,
+                verdict:          r.score >= 92 ? 'excellent' : r.score >= 75 ? 'good' : 'review',
+                issues:           r.issues,
+                structuredIssues,
+                retries:          r.retries || 0,
+                locked:           initial.score >= LOCK_THRESHOLD,
+                scoreBefore:      Math.round(initial.score),
+                scoreAfter:       Math.round(r.score),
+                contentChanged:   diff ? diff.modified : false,
+            };
+        }),
     };
 }
 
@@ -328,27 +461,38 @@ function buildReport(criticResults, quizIssues, totalRetries, totalMs, criticMs,
  * @param {string} difficulty        Easy | Medium | Thinkable | Hard
  * @param {string} topic             Original topic/content (for context)
  * @param {number} timeoutMs         Max ms for critic+refine phase (default 60 000)
+ * @param {Function} [onProgress]    Callback(stage: 0-3, label: string)
  * @returns {{ questions: object[], agentReport: object }}
  */
-async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic, timeoutMs = 60000 }) {
+async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic, timeoutMs = 60000, onProgress }) {
+    const notify = (stage, label) => {
+        if (onProgress) onProgress(stage, label);
+    };
+
     if (!draftQuestions || draftQuestions.length === 0) {
         return {
             questions: draftQuestions || [],
-            agentReport: { verdict: 'review', avgScore: 0, retries: 0, fallback: true, error: 'No draft questions received', perQuestion: [] },
+            agentReport: { verdict: 'review', avgScore: 0, retries: 0, fallback: true, error: 'No draft questions received', perQuestion: [], questionDiffs: [] },
         };
     }
 
     const pipelineStart = Date.now();
-    const isTimedOut = () => (Date.now() - pipelineStart) >= timeoutMs;
-    const hasGroq = !!groqClient;
+    const isTimedOut    = () => (Date.now() - pipelineStart) >= timeoutMs;
+    const hasGroq       = !!groqClient;
+    const generated     = draftQuestions.length;
 
-    let questions = draftQuestions.map(q => ({ ...q }));
+    let questions     = draftQuestions.map(q => ({ ...q }));
     let criticResults;
-    let totalRetries = 0;
-    let timedOut = false;
+    let totalRetries  = 0;
+    let timedOut      = false;
+
+    // Snapshots for diff
+    const initialSnapshots = questions.map(snapshotQuestion);
 
     try {
         // ── Phase 1: Whole-quiz review ──────────────────────────────────────
+        console.log(`\n[Critic Started] Reviewing ${generated} questions...`);
+        notify(1, 'Reviewing Questions');
         const { quizIssues, quizContext } = wholeQuizCritic(questions, difficulty);
         const criticStart = Date.now();
 
@@ -357,32 +501,68 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
             criticQuestion(q, i, questions, quizContext, difficulty)
         );
 
+        const scoreBefore = avg(criticResults.map(r => r.score));
+
+        criticResults.forEach((r, i) => {
+            const band = r.score >= LOCK_THRESHOLD ? 'LOCKED' : r.score >= MINOR_THRESHOLD ? 'MINOR' : 'FULL';
+            console.log(`[Critic]  Q${i + 1} → Score ${Math.round(r.score)} | Band: ${band} | Issues: ${r.issues.length}`);
+        });
+
+        // Snapshot initial results for reporting
+        const initialCriticResults = criticResults.map(r => ({ ...r, issues: [...r.issues] }));
+
         // ── Phase 3: Early exit ─────────────────────────────────────────────
         const currentAvg = () => avg(criticResults.map(r => r.score));
         if (currentAvg() >= EARLY_EXIT_AVG) {
+            console.log(`[Pipeline] Early exit — avg score ${Math.round(currentAvg())} >= ${EARLY_EXIT_AVG}. Questions already excellent.`);
+            const finalSnapshots = questions.map(snapshotQuestion);
+            const diffs = questions.map((_, i) => ({
+                questionId: i + 1,
+                before:     initialSnapshots[i],
+                after:      finalSnapshots[i],
+                criticFeedback: initialCriticResults[i].feedback || [],
+                modified:   false,
+            }));
             return {
                 questions,
-                agentReport: buildReport(criticResults, quizIssues, 0, Date.now() - pipelineStart, Date.now() - criticStart, false, !hasGroq),
+                agentReport: buildReport(
+                    initialCriticResults, criticResults, diffs, quizIssues,
+                    0, Date.now() - pipelineStart, Date.now() - criticStart,
+                    false, !hasGroq, generated, scoreBefore, currentAvg(),
+                    'early_exit'  // refinerStatus: questions already met quality bar
+                ),
             };
         }
 
         // ── Phase 4: Parallel refinement rounds ─────────────────────────────
+        console.log(`\n[Refiner Started] Avg score ${Math.round(scoreBefore)} — beginning refinement...`);
+        notify(2, 'Improving Questions');
+
         for (let round = 0; round < MAX_RETRIES; round++) {
             if (isTimedOut()) { timedOut = true; break; }
             if (!hasGroq) break;
 
             const failingIdx = criticResults
-                .map((r, i) => (r.approved ? null : i))
+                .map((r, i) => {
+                    if (r.approved) return null;         // already passing
+                    if (r.score >= LOCK_THRESHOLD) return null; // LOCKED
+                    return i;
+                })
                 .filter(i => i !== null);
+
             if (failingIdx.length === 0) break;
+
+            console.log(`[Refiner] Round ${round + 1} — refining ${failingIdx.length} questions`);
 
             const tasks = failingIdx.map(idx => async () => {
                 if (isTimedOut()) return;
-                const result = await refineQuestion(questions[idx], criticResults[idx], groqClient, difficulty);
+                const isMinor = criticResults[idx].score >= MINOR_THRESHOLD;
+                const result  = await refineQuestion(questions[idx], criticResults[idx], groqClient, difficulty, isMinor);
                 if (result.refined) {
                     questions[idx] = result.question;
                     criticResults[idx].retries = (criticResults[idx].retries || 0) + 1;
                     totalRetries++;
+                    console.log(`[Refiner] Q${idx + 1} improved (${isMinor ? 'minor' : 'full'} mode)`);
                 }
             });
 
@@ -396,15 +576,48 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
                     ...criticQuestion(questions[idx], idx, questions, ctx2, difficulty),
                     retries: criticResults[idx].retries || 0,
                 };
+                console.log(`[Critic Re-run] Q${idx + 1} → Score ${Math.round(criticResults[idx].score)}`);
             });
 
-            if (currentAvg() >= EARLY_EXIT_AVG) break;
+            if (currentAvg() >= EARLY_EXIT_AVG) {
+                console.log(`[Pipeline] Quality target reached — avg ${Math.round(currentAvg())}`);
+                break;
+            }
         }
+
+        const scoreAfter = currentAvg();
+
+        // Build diffs — only flag modified if content ACTUALLY changed
+        const finalSnapshots = questions.map(snapshotQuestion);
+        const diffs = questions.map((_, i) => ({
+            questionId:     i + 1,
+            before:         initialSnapshots[i],
+            after:          finalSnapshots[i],
+            criticFeedback: (initialCriticResults[i].feedback || []),
+            modified:       questionChanged(initialSnapshots[i], finalSnapshots[i]),
+        }));
+
+        const realChanges = diffs.filter(d => d.modified).length;
+
+        // Determine honest refinerStatus
+        let refinerStatus;
+        if (!hasGroq)         refinerStatus = 'unavailable';
+        else if (timedOut)    refinerStatus = 'timeout';
+        else if (realChanges > 0) refinerStatus = 'refined';
+        else                  refinerStatus = 'no_change';
+
+        console.log(`\n[Applied To Final Output] contentChanged=${realChanges}`);
+        console.log(`[Pipeline Complete] Score: ${Math.round(scoreBefore)} → ${Math.round(scoreAfter)} | Retries: ${totalRetries} | refinerStatus: ${refinerStatus}`);
 
         const criticMs = Date.now() - criticStart;
         return {
             questions,
-            agentReport: buildReport(criticResults, quizIssues, totalRetries, Date.now() - pipelineStart, criticMs, timedOut, !hasGroq),
+            agentReport: buildReport(
+                initialCriticResults, criticResults, diffs, quizIssues,
+                totalRetries, Date.now() - pipelineStart, criticMs,
+                timedOut, !hasGroq, generated, scoreBefore, scoreAfter,
+                refinerStatus
+            ),
         };
 
     } catch (err) {
@@ -413,11 +626,10 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
             questions: draftQuestions,
             agentReport: {
                 verdict: 'review', avgScore: 0, totalRetries, fallback: true,
-                error: err.message, timedOut: false, quizIssues: [], perQuestion: [],
+                error: err.message, timedOut: false, quizIssues: [], perQuestion: [], questionDiffs: [],
             },
         };
     }
 }
 
-module.exports = { runAgentPipeline };
-//hi
+module.exports = { runAgentPipeline, finalQuizValidator };

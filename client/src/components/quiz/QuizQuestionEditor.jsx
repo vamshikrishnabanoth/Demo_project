@@ -72,7 +72,7 @@ export default function QuizQuestionEditor({
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
                                 className="flex-1 bg-transparent border-none focus:ring-0 font-bold text-white placeholder:text-white/20 py-3 text-lg"
-                                placeholder={`Dossier Option ${oIndex + 1}`}
+                                placeholder={`Option ${oIndex + 1}`}
                             />
                             <div className="flex items-center gap-2">
                                 <input

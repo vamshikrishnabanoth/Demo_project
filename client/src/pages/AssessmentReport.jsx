@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import { 
     Trophy, Clock, Target, AlertCircle, ArrowLeft, 
-    Download, Share2, CheckCircle2, XCircle, Brain, 
+    CheckCircle2, XCircle, Brain, 
     Zap, TrendingUp, HelpCircle, Activity, Sparkles, X, Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +14,7 @@ import api from '../utils/api';
 import PremiumLoading from '../components/PremiumLoading';
 import DashboardLayout from '../components/DashboardLayout';
 import PremiumError from '../components/PremiumError';
+import { uiTerminology } from '../utils/uiTerminology';
 
 const AssessmentReport = () => {
     const { id } = useParams();
@@ -23,7 +24,7 @@ const AssessmentReport = () => {
     const [selectedReview, setSelectedReview] = useState(null);
     const [showDetailed, setShowDetailed] = useState(false);
 
-    const fetchReport = async () => {
+    const fetchReport = React.useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/quiz/result/${id}`);
@@ -33,11 +34,11 @@ const AssessmentReport = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchReport();
-    }, [id]);
+    }, [fetchReport]);
 
     if (loading) return <PremiumLoading />;
     if (!data) return (
@@ -123,16 +124,8 @@ const AssessmentReport = () => {
                             Operational Brief: <span className="text-white">{quizTitle}</span> • {createdAt ? new Date(createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Temporal Log'}
                         </p>
                     </div>
-                    
-                    <div className="flex items-center gap-3 w-full lg:w-auto">
-                        <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all btn-press">
-                            <Download size={18} className="text-[var(--text-accent)]" aria-hidden="true" /> Generate Dossier
-                        </button>
-                        <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[var(--bg-accent-hover)] transition-all shadow-xl shadow-[var(--bg-accent-glow)] btn-press btn-hover-scale">
-                            <Share2 size={18} aria-hidden="true" /> Broadcast Achievement
-                        </button>
-                    </div>
                 </div>
+
 
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 px-4">
@@ -260,7 +253,7 @@ const AssessmentReport = () => {
                                     <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Correct Target</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-center">Status</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Latency</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-right">Neural Review</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-right">{uiTerminology.arenaReview}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--glass-border)]">
@@ -315,145 +308,185 @@ const AssessmentReport = () => {
                                                     whileTap={{ scale: 0.9 }}
                                                     onClick={() => setSelectedReview(ans)}
                                                     className="p-3 rounded-2xl transition-all border bg-[var(--bg-accent)] text-[var(--text-on-accent)] border-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]"
-                                                    title="View Full Neural Analysis"
+                                                    title={`View Full ${uiTerminology.arenaInsights}`}
                                                 >
                                                     <Brain size={20} />
                                                 </motion.button>
                                         </div>
                                     </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </motion.div>
-        </div>
-        
-        {/* Neural Analysis Modal Overlay */}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </motion.div>
+            </div>
+            
+            {/* Arena Insights Modal Overlay */}
             <AnimatePresence>
-                {selectedReview && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedReview(null)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                        />
-                        <motion.div 
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-2xl bg-[var(--bg-secondary)] rounded-[3rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
-                        >
-                            <div className="absolute top-6 right-6 z-[110]">
-                                <button 
-                                    onClick={() => {
-                                        setSelectedReview(null);
-                                        setShowDetailed(false);
-                                    }}
-                                    className="p-3 rounded-2xl bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all backdrop-blur-md border border-white/5"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
+                {selectedReview && (() => {
+                    const questionObj = data.questions?.find(q => q.questionText === selectedReview.questionText);
+                    const explanation = questionObj?.explanation || "";
+                    const hasExplanation = explanation.trim().length > 0;
+                    
+                    const details = {
+                        explanation: hasExplanation ? explanation : "No explanation available.",
+                        confidence: hasExplanation ? "High" : "Low",
+                        questionText: selectedReview.questionText,
+                        correctOption: selectedReview.correctOption,
+                        selectedOption: selectedReview.selectedOption,
+                        isCorrect: selectedReview.isCorrect,
+                        whyCorrect: hasExplanation ? explanation : "No explanation available.",
+                        whyOthersIncorrect: !hasExplanation ? "" : (() => {
+                            const otherOpts = questionObj?.options ? questionObj.options.filter(o => o !== selectedReview.correctOption) : [];
+                            return otherOpts.length > 0 
+                                ? `The alternate choices (${otherOpts.join(', ')}) do not align with the primary structural and logical requirements verified in the question directive.`
+                                : "Alternate options present suboptimal, incorrect, or logically inconsistent states that deviate from correct execution pathways.";
+                        })(),
+                        takeaway: !hasExplanation ? "" : `Focus on the foundational patterns of this topic. Remember: ${selectedReview.correctOption} satisfies all logical constraints defined in the question directive.`
+                    };
 
-                            <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-14">
-                                <div className="flex items-center gap-4 mb-10">
-                                    <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]">
-                                        <Brain size={28} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tight">Neural <span className="text-[var(--text-accent)]">Analysis</span></h2>
-                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Deep Pedagogical Insights</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-10">
-                                    <div>
-                                        <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
-                                        <p className="text-xl font-bold text-white leading-relaxed">{selectedReview.questionText}</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Your Input</p>
-                                            <p className={`text-sm font-black italic uppercase ${selectedReview.isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                                {selectedReview.selectedOption || 'No Input Detected'}
-                                            </p>
-                                        </div>
-                                        <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Correct Target</p>
-                                            <p className="text-sm font-black italic uppercase text-emerald-400">
-                                                {selectedReview.correctOption}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="relative">
-                                        <div className="absolute -top-4 -left-4 w-12 h-12 bg-[var(--bg-accent)]/10 blur-2xl rounded-full" />
-                                        <div className="relative p-8 rounded-[2rem] bg-[var(--bg-accent)]/5 border border-[var(--bg-accent)]/20 italic">
-                                            <Sparkles size={20} className="text-[var(--text-accent)] mb-4" />
-                                            
-                                            {!showDetailed ? (
-                                                <div className="text-lg text-white/90 font-medium leading-relaxed whitespace-pre-wrap">
-                                                    {selectedReview.aiReview || (selectedReview.isCorrect 
-                                                        ? "Exceptional work. You've demonstrated a core competency in this specific knowledge domain. This level of precision indicates high concept retention."
-                                                        : "A minor conceptual misalignment occurred here. Analysis suggests reviewing the relationship between the options to strengthen your grasp.")}
-                                                </div>
-                                            ) : (
-                                                <div className="space-y-6 text-white/90">
-                                                    <div>
-                                                        <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-2 not-italic">Core Concept Analysis</p>
-                                                        <p className="text-base font-medium leading-relaxed">
-                                                            {selectedReview.isCorrect 
-                                                                ? "You have successfully identified the primary logical bridge for this question. Your response aligns with standard industry best practices and theoretical foundations."
-                                                                : "The logic used here prioritized a secondary factor over the primary functional requirement. In production scenarios, this would lead to a partial or suboptimal solution."}
-                                                        </p>
-                                                    </div>
-                                                    <div className="pt-4 border-t border-white/5">
-                                                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2 not-italic">Tactical Insight</p>
-                                                        <p className="text-sm font-medium opacity-80 leading-relaxed">
-                                                            To master this topic, focus on the dependency relationships between the variables. The "Correct Target" represents the most efficient path with the least computational overhead.
-                                                        </p>
-                                                    </div>
-                                                    <div className="pt-4 border-t border-white/5">
-                                                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 not-italic">Recommended Action</p>
-                                                        <p className="text-sm font-medium opacity-80 leading-relaxed italic">
-                                                            Review the documentation related to this specific module and practice 2-3 similar permutations to solidify the pattern recognition.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="mt-12 flex flex-col sm:flex-row justify-end gap-4">
-                                    <button 
-                                        onClick={() => setShowDetailed(!showDetailed)}
-                                        className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all btn-press ${
-                                            showDetailed 
-                                            ? 'bg-white/10 text-white border border-white/20' 
-                                            : 'bg-[var(--bg-accent)]/20 text-[var(--text-accent)] border border-[var(--bg-accent)]/30 hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)]'
-                                        }`}
-                                    >
-                                        {showDetailed ? 'Standard Response' : 'Detailed Analysis'}
-                                    </button>
+                    return (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+                            <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => {
+                                    setSelectedReview(null);
+                                    setShowDetailed(false);
+                                }}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                            />
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="relative w-full max-w-2xl bg-[var(--bg-secondary)] rounded-[3rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
+                            >
+                                <div className="absolute top-6 right-6 z-[110]">
                                     <button 
                                         onClick={() => {
                                             setSelectedReview(null);
                                             setShowDetailed(false);
                                         }}
-                                        className="px-8 py-4 rounded-2xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest btn-cinematic shadow-lg shadow-rose-500/20"
+                                        className="p-3 rounded-2xl bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all backdrop-blur-md border border-white/5"
+                                        aria-label="Close review"
                                     >
-                                        Close Analysis
+                                        <X size={20} />
                                     </button>
                                 </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
+
+                                <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-14">
+                                    <div className="flex items-center gap-4 mb-10">
+                                        <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]">
+                                            <Brain size={28} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tight">Arena <span className="text-[var(--text-accent)]">Insights</span></h2>
+                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Deep Pedagogical Analysis</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-10">
+                                        <div>
+                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
+                                            <p className="text-xl font-bold text-white leading-relaxed">{details.questionText}</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Your Input</p>
+                                                <p className={`text-sm font-black italic uppercase ${details.isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                    {details.selectedOption || 'No Input Detected'}
+                                                </p>
+                                            </div>
+                                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Correct Target</p>
+                                                <p className="text-sm font-black italic uppercase text-emerald-400">
+                                                    {details.correctOption}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="relative">
+                                            <div className="absolute -top-4 -left-4 w-12 h-12 bg-[var(--bg-accent)]/10 blur-2xl rounded-full" />
+                                            <div className="relative p-8 rounded-[2rem] bg-[var(--bg-accent)]/5 border border-[var(--bg-accent)]/20">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <Sparkles size={20} className="text-[var(--text-accent)]" />
+                                                    <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                                                        details.confidence === 'High' 
+                                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                                                        : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                                                    }`}>
+                                                        Confidence: {details.confidence}
+                                                    </div>
+                                                </div>
+                                                
+                                                {!showDetailed ? (
+                                                    <div className="text-lg text-white/90 font-medium leading-relaxed whitespace-pre-wrap italic">
+                                                        {details.explanation}
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-6 text-white/90">
+                                                        <div>
+                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Question Directive</p>
+                                                            <p className="text-base font-bold leading-relaxed">{details.questionText}</p>
+                                                        </div>
+                                                        <div className="pt-4 border-t border-white/5">
+                                                            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1.5">Correct Target</p>
+                                                            <p className="text-sm font-medium leading-relaxed">{details.correctOption}</p>
+                                                        </div>
+                                                        <div className="pt-4 border-t border-white/5">
+                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Why Correct</p>
+                                                            <p className="text-sm font-medium opacity-80 leading-relaxed italic">{details.whyCorrect}</p>
+                                                        </div>
+                                                        {details.whyOthersIncorrect && (
+                                                            <div className="pt-4 border-t border-white/5">
+                                                                <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1.5">Why Other Options are Incorrect</p>
+                                                                <p className="text-sm font-medium opacity-80 leading-relaxed">{details.whyOthersIncorrect}</p>
+                                                            </div>
+                                                        )}
+                                                        {details.takeaway && (
+                                                            <div className="pt-4 border-t border-white/5">
+                                                                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1.5">Learning Takeaway</p>
+                                                                <p className="text-sm font-medium opacity-80 leading-relaxed italic">{details.takeaway}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-12 flex flex-col sm:flex-row justify-end gap-4">
+                                        {details.confidence !== 'Low' && (
+                                            <button 
+                                                onClick={() => setShowDetailed(!showDetailed)}
+                                                className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all btn-press ${
+                                                    showDetailed 
+                                                    ? 'bg-white/10 text-white border border-white/20' 
+                                                    : 'bg-[var(--bg-accent)]/20 text-[var(--text-accent)] border border-[var(--bg-accent)]/30 hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)]'
+                                                }`}
+                                            >
+                                                {showDetailed ? 'Standard Response' : 'Detailed Analysis'}
+                                            </button>
+                                        )}
+                                        <button 
+                                            onClick={() => {
+                                                setSelectedReview(null);
+                                                setShowDetailed(false);
+                                            }}
+                                            className="px-8 py-4 rounded-2xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest btn-cinematic shadow-lg shadow-rose-500/20"
+                                        >
+                                            Close Analysis
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    );
+                })()}
             </AnimatePresence>
         </DashboardLayout>
     );
