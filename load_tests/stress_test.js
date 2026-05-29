@@ -34,7 +34,7 @@ export default function () {
     timeout: '15s',
   });
 
-  if (loginRes.status !== 200) {
+  if (loginRes.status !== 200 || !loginRes.body) {
     console.error(`❌ STRESS: HTTP Login failed at ${__VU} VUs for ${email}: ${loginRes.status}`);
     sleep(1);
     return;
@@ -48,7 +48,7 @@ export default function () {
     timeout: '15s',
   });
 
-  if (meRes.status !== 200) {
+  if (meRes.status !== 200 || !meRes.body) {
     console.error(`❌ STRESS: HTTP Fetch profile failed for ${email}`);
     sleep(1);
     return;

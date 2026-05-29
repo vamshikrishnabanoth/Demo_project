@@ -62,7 +62,10 @@ export default function AgentPipelineLoader() {
                     {CONNECTIONS.map(([a, b], i) => (
                         <motion.circle
                             key={`p-${i}`}
+                            cx={NODES[a].x}
+                            cy={NODES[a].y}
                             r={1.5} fill="var(--bg-accent)"
+                            initial={{ cx: NODES[a].x, cy: NODES[a].y }}
                             animate={{
                                 cx: [NODES[a].x, NODES[b].x, NODES[a].x],
                                 cy: [NODES[a].y, NODES[b].y, NODES[a].y],
@@ -74,8 +77,9 @@ export default function AgentPipelineLoader() {
                     {NODES.map((node, i) => (
                         <g key={i}>
                             <motion.circle
-                                cx={node.x} cy={node.y} r={i === 0 ? 5 : 3}
+                                cx={node.x} cy={node.y}
                                 fill="none" stroke="var(--bg-accent)" strokeWidth="0.6"
+                                initial={{ r: i === 0 ? 5 : 3 }}
                                 animate={{ r: [i === 0 ? 5 : 3, i === 0 ? 6.5 : 4, i === 0 ? 5 : 3], opacity: [0.4, 1, 0.4] }}
                                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.25 }}
                             />

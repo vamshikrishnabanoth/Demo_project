@@ -163,6 +163,63 @@ def robust_json_loads(text):
     raise json.JSONDecodeError("Failed to extract JSON from Ollama response.", text, 0)
 
 
+# -----------------------------
+# 4. CRITIC EVALUATOR
+# -----------------------------
+def critic_evaluate(q_text, q_opts, q_ans, topic, difficulty):
+    """
+    Sends a generated question to the critic LLM for quality evaluation.
+    Returns (score: int 1-10, feedback: str).
+    Falls back to score=7 if the critic itself fails, so generation isn't blocked.
+    """
+    options_str = "\n".join([f"  {chr(65+i)}) {opt}" for i, opt in enumerate(q_opts)])
+    critic_prompt = (
+        f"You are a strict quiz quality critic. Evaluate the quiz question below.\n\n"
+        f"Topic: {topic}\n"
+        f"Difficulty: {difficulty}\n\n"
+        f"Question: {q_text}\n"
+        f"Options:\n{options_str}\n"
+        f"Correct Answer: {q_ans}\n\n"
+        f"Rate this question from 1 to 10 based on:\n"
+        f"1. Clarity       — Is the question unambiguous and well-worded?\n"
+        f"2. Correctness   — Is the correct answer factually accurate?\n"
+        f"3. Distractors   — Are the wrong options plausible but clearly incorrect?\n"
+        f"4. Relevance     — Is it on-topic and appropriate for the difficulty level?\n\n"
+        f"Return ONLY a JSON object with two keys:\n"
+        f"  score    (integer, 1-10)\n"
+        f"  feedback (one sentence explaining the rating)\n"
+    )
+
+    payload = {
+        "model": MODEL_NAME,
+        "prompt": critic_prompt,
+        "stream": False,
+        "format": "json",
+        "options": {
+            "temperature": 0.2,   # Low temp → consistent, deterministic critic
+            "num_ctx": 1024
+        }
+    }
+
+    try:
+        response = requests.post(OLLAMA_URL, json=payload, timeout=60)
+        if response.status_code != 200:
+            print(f"  [CRITIC]    Ollama returned HTTP {response.status_code} — defaulting score to 7.")
+            return 7, "Critic unavailable, defaulting to pass."
+
+        raw_text = response.json().get("response", "")
+        data = robust_json_loads(raw_text)
+
+        score = int(data.get("score", 7))
+        score = max(1, min(10, score))   # Clamp to [1, 10]
+        feedback = str(data.get("feedback", "No feedback provided."))
+        return score, feedback
+
+    except Exception as e:
+        print(f"  [CRITIC]    Evaluation failed ({e}) — defaulting score to 7.")
+        return 7, "Critic evaluation error, defaulting to pass."
+
+
 @app.post("/generate")
 async def generate_questions(req: GeneratorRequest):
     source_text = req.content
@@ -191,7 +248,14 @@ async def generate_questions(req: GeneratorRequest):
 
     questions = []
     generated_so_far = ""
-    print(f"[START] Starting sequential generation for {req.count} questions...")
+    CRITIC_THRESHOLD = 6  # Minimum score (out of 10) for a question to be accepted
+    print(f"")
+    print(f"={'='*55}")
+    print(f"  [PIPELINE] Starting Generator-Critic Pipeline")
+    print(f"  Target: {req.count} questions | Difficulty: {req.difficulty}")
+    print(f"  Critic threshold: {CRITIC_THRESHOLD}/10")
+    print(f"={'='*55}")
+    print(f"")
 
     def is_duplicate(new_text, existing_questions):
         new_norm = re.sub(r'\s+', ' ', new_text.strip().lower())
@@ -210,75 +274,104 @@ async def generate_questions(req: GeneratorRequest):
 
     for i in range(req.count):
         question_success = False
+        print(f"")
+        print(f"  --- Question {i+1}/{req.count} ---")
+
         for attempt in range(3):
             try:
-                # Strong prompt instruction and negation to enforce conceptual diversity
+                # ── GENERATOR PHASE ──────────────────────────────────────
                 history_clause = ""
                 if generated_so_far:
                     history_clause = f"\nCRITICAL: You MUST focus on a completely new sub-topic or distinct educational concept. Do NOT repeat or cover the same concepts as these questions: {generated_so_far}."
-                
+
                 short_topic = req.content[:100].replace('\n', ' ') + "..." if len(req.content) > 100 else req.content
                 prompt = f"Topic: {short_topic}\nDifficulty: {req.difficulty}\nContext: {context[:1500]}\nTask: Create question #{i+1} of {req.count}. {history_clause}\nReturn a SINGLE JSON object with keys: questionText, options (list of 4), correctAnswer."
-                
+
+                print(f"  [GENERATOR] Attempt {attempt+1}/3 — calling model '{MODEL_NAME}'...")
+
                 use_json_format = (attempt == 0)
                 payload = {
                     "model": MODEL_NAME,
                     "prompt": prompt,
                     "stream": False,
                     "options": {
-                        "temperature": 0.8,
-                        "repeat_penalty": 1.35,
-                        "num_ctx": 4096
+                        "temperature": 0.7,
+                        "repeat_penalty": 1.15,
+                        "num_ctx": 2048
                     }
                 }
                 if use_json_format:
                     payload["format"] = "json"
-                
-                response = requests.post(OLLAMA_URL, json=payload, timeout=90)
-                
+
+                response = requests.post(OLLAMA_URL, json=payload, timeout=120)
+
                 if response.status_code != 200:
                     if use_json_format:
-                        print(f"[WARN] Ollama returned {response.status_code} with format='json'. Retrying without format parameter...")
+                        print(f"  [GENERATOR] Ollama returned {response.status_code} with format='json'. Retrying without format...")
                         payload.pop("format", None)
                         response = requests.post(OLLAMA_URL, json=payload, timeout=90)
-                    
                     if response.status_code != 200:
                         raise Exception(f"Ollama server returned HTTP {response.status_code}: {response.text}")
-                
+
                 raw_text = response.json().get("response", "")
                 data = robust_json_loads(raw_text)
-                
+
                 # Normalize keys
                 q_text = data.get("questionText") or data.get("question")
                 q_opts = data.get("options") or data.get("choices")
-                q_ans = data.get("correctAnswer") or data.get("answer")
-                
-                if q_text and q_opts:
-                    # Check for duplicate before adding
-                    if is_duplicate(str(q_text), questions):
-                        raise Exception(f"Duplicate question detected: {q_text}")
-                        
-                    questions.append({
-                        "questionText": str(q_text),
-                        "options": [str(o) for o in q_opts[:4]],
-                        "correctAnswer": str(q_ans),
-                        "points": 10,
-                        "type": "multiple-choice"
-                    })
-                    print(f"[OK] Generated question {len(questions)}/{req.count}")
-                    
-                    # Add to history for diversity
-                    generated_so_far += f" [{q_text}] "
-                    question_success = True
-                    break
-                else:
-                    raise Exception("Extracted JSON does not contain questionText or options keys.")
-                
+                q_ans  = data.get("correctAnswer") or data.get("answer")
+
+                if not (q_text and q_opts):
+                    raise Exception("Extracted JSON missing 'questionText' or 'options' keys.")
+
+                print(f"  [GENERATOR] Question draft ready: \"{str(q_text)[:80]}{'...' if len(str(q_text)) > 80 else ''}\"")
+
+                # Duplicate check
+                if is_duplicate(str(q_text), questions):
+                    raise Exception(f"Duplicate question detected, will retry with different concept.")
+
+                # ── CRITIC PHASE ──────────────────────────────────────────
+                print(f"  [CRITIC]    Evaluating question quality...")
+                critic_score, critic_feedback = critic_evaluate(
+                    q_text=str(q_text),
+                    q_opts=[str(o) for o in q_opts[:4]],
+                    q_ans=str(q_ans),
+                    topic=short_topic,
+                    difficulty=req.difficulty
+                )
+
+                score_bar = "█" * critic_score + "░" * (10 - critic_score)
+                print(f"  [CRITIC]    Score: {critic_score}/10  [{score_bar}]")
+                print(f"  [CRITIC]    Feedback: {critic_feedback}")
+
+                if critic_score < CRITIC_THRESHOLD:
+                    print(f"  [REJECT]    Score {critic_score}/10 below threshold {CRITIC_THRESHOLD}/10 — regenerating...")
+                    raise Exception(f"Critic rejected question with score {critic_score}/10: {critic_feedback}")
+
+                # ── ACCEPT ───────────────────────────────────────────────
+                questions.append({
+                    "questionText": str(q_text),
+                    "options": [str(o) for o in q_opts[:4]],
+                    "correctAnswer": str(q_ans),
+                    "points": 10,
+                    "type": "multiple-choice"
+                })
+                generated_so_far += f" [{q_text}] "
+                print(f"  [ACCEPT]    Question {len(questions)}/{req.count} accepted (score {critic_score}/10) ✓")
+                question_success = True
+                break
+
             except Exception as e:
-                print(f"[WARN] Attempt {attempt+1} failed for question {i+1}: {e}")
-                
+                print(f"  [WARN]      Attempt {attempt+1}/3 failed: {e}")
+
         if not question_success:
-            print(f"[FAIL] Failed to generate question {i+1} after 3 attempts.")
+            print(f"  [FAIL]      Could not generate a passing question {i+1} after 3 attempts — skipping.")
+
+    print(f"")
+    print(f"={'='*55}")
+    print(f"  [PIPELINE] Done! Accepted {len(questions)}/{req.count} questions.")
+    print(f"={'='*55}")
+    print(f"")
 
     if not questions:
         raise HTTPException(status_code=500, detail="AI failed to generate any questions.")

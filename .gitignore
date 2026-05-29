@@ -25,8 +25,7 @@ server/*.log
 *.log
 
 # Load Test Large Output Files (Too large for GitHub)
-load_tests/stress_results.json
-load_tests/endurance_results.json
+load_tests/*_results.json
 load_tests/stress_output.txt
 load_tests/endurance_output.txt
 load_tests/http_output.txt

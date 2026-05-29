@@ -28,9 +28,10 @@ export function useSocketRoom(roomId, user, handlers = {}) {
         });
 
         // Register all event handlers
+        // Guard: caller may pass null explicitly (bypasses default={}), so always fall back to {}
         const registered = {};
-        Object.entries(handlersRef.current).forEach(([event, handler]) => {
-            const wrappedHandler = (...args) => handlersRef.current[event]?.(...args);
+        Object.entries(handlersRef.current ?? {}).forEach(([event, handler]) => {
+            const wrappedHandler = (...args) => handlersRef.current?.[event]?.(...args);
             registered[event] = wrappedHandler;
             socket.on(event, wrappedHandler);
         });
