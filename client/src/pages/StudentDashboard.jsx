@@ -232,8 +232,9 @@ export default function StudentDashboard() {
             startPolling(taskId, {
                 onComplete: (result) => {
                     setSubmitting(false);
-                    // Navigate to the Cyber Quest page, passing generated questions and material name
-                    navigate('/cyber-quest', {
+                    // Navigate to the correct game page, passing generated questions and material name
+                    const targetPath = selectedGame === 'sprint-arena' ? '/sprint-arena' : '/cyber-quest';
+                    navigate(targetPath, {
                         state: {
                             questions: result.questions,
                             title: result.title || file.name.replace(/\.[^/.]+$/, '')
@@ -510,19 +511,24 @@ export default function StudentDashboard() {
                                                     </div>
                                                 </div>
 
-                                                {/* Sprint Arena Card (Locked) */}
-                                                <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] opacity-40 select-none flex gap-4 items-center relative overflow-hidden group">
+                                                {/* Sprint Arena Card (Unlocked!) */}
+                                                <div 
+                                                    onClick={() => setSelectedGame('sprint-arena')}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
+                                                        selectedGame === 'sprint-arena'
+                                                            ? 'border-pink-500 bg-pink-500/5 shadow-[0_0_20px_rgba(219,39,119,0.15)] opacity-100'
+                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
+                                                    }`}
+                                                >
                                                     <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
                                                         <Clock size={24} />
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
                                                             <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Sprint Arena</h3>
-                                                            <span className="bg-pink-900/30 text-pink-400 font-black text-[8px] uppercase tracking-widest px-2 py-0.5 rounded flex items-center gap-1 border border-pink-500/20">
-                                                                <Lock size={8} /> LOCKED
-                                                            </span>
+                                                            <span className="text-pink-400 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-slate-500 text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
                                                             Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
                                                         </p>
                                                     </div>
