@@ -208,7 +208,7 @@ export default function AttemptQuiz() {
             const answeredSet = new Set();
             const studentIds = new Set(studentParticipants.map(p => (p._id || p.id).toString()));
             Object.keys(state.progress || {}).forEach(key => {
-                if (studentIds.has(key) && state.progress[key][state.currentQuestionIndex]?.answered) {
+                if (studentIds.has(key) && state.progress?.[key]?.[state.currentQuestionIndex]?.answered) {
                     answeredSet.add(key);
                 }
             });
@@ -219,13 +219,13 @@ export default function AttemptQuiz() {
                  const studentProgress = state.progress[authUser.id];
                  
                  // Restore answered tracking for logic
-                 const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress[qIdx].answered);
+                 const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
                  setAnsweredQuestions(new Set(answeredList));
 
                  // Restore superficial answers mapping for UI dots visually
                  const recoveredAnswers = {};
                  Object.keys(studentProgress).forEach(qIdx => {
-                      if (studentProgress[qIdx].answered) {
+                      if (studentProgress?.[qIdx]?.answered) {
                            recoveredAnswers[qIdx] = true;
                       }
                  });
@@ -241,7 +241,7 @@ export default function AttemptQuiz() {
             }
         });
 
-        socket.on('connect', () => {
+        const handleConnect = () => {
             setIsOnline(true);
             // Use refs so we always read current values even if fetchQuiz resolved after mount
             const currentQuiz = quizRef.current;
@@ -273,7 +273,12 @@ export default function AttemptQuiz() {
                     });
                 }
             }
-        });
+        };
+
+        socket.on('connect', handleConnect);
+        if (socket.connected) {
+            handleConnect();
+        }
         socket.on('disconnect', () => setIsOnline(false));
 
         socket.on('answer_feedback', ({ isFast, message }) => {
@@ -304,7 +309,7 @@ export default function AttemptQuiz() {
             socket.off('sync_timer');
             socket.off('change_question');
             socket.off('restoreState');
-            socket.off('connect');
+            socket.off('connect', handleConnect);
             socket.off('disconnect');
             socket.off('answer_feedback');
             socket.off('participants_update');
@@ -616,7 +621,7 @@ export default function AttemptQuiz() {
         };
     }, [id, navigate]);
 
-    // SEPARATE EFFECT: Emit join_room once authUser is available.
+    // SEPARATE EFFECT: Emit join_room/reconnectUser once authUser is available.
     // This is needed because authUser may load async from context AFTER fetchQuiz runs.
     useEffect(() => {
         if (!authUser || !quiz) return;
@@ -626,13 +631,21 @@ export default function AttemptQuiz() {
             role: 'student',
             _id: authUser.id
         };
+        const hasSession = localStorage.getItem(`live_quiz_session_student_${id}`);
         if (quiz.isLive) {
             localStorage.setItem(`live_quiz_session_student_${id}`, JSON.stringify(sessionData));
         }
-        socket.emit('join_room', {
-            quizId: id,
-            user: { username: authUser.username, role: 'student', _id: authUser.id }
-        });
+        if (quiz.isLive && hasSession) {
+            socket.emit('reconnectUser', {
+                quizId: id,
+                user: { username: authUser.username, role: 'student', _id: authUser.id }
+            });
+        } else {
+            socket.emit('join_room', {
+                quizId: id,
+                user: { username: authUser.username, role: 'student', _id: authUser.id }
+            });
+        }
     }, [authUser, quiz, id]);
 
     const setAnswersFromHistory = (historyAnswers) => {
@@ -748,7 +761,7 @@ export default function AttemptQuiz() {
         }
     };
 
-    if (loading) return <WaitingRoomLoader message="Initializing Arena..." />;
+    if (loading || !quiz) return <WaitingRoomLoader message="Initializing Arena..." />;
 
     if (waitingForState) {
         return (
@@ -924,13 +937,17 @@ export default function AttemptQuiz() {
             </div>
         );
     }
-    const question = quiz.questions[currentQuestion];
-    const isLastQuestion = currentQuestion === quiz.questions.length - 1;
+    const question = quiz?.questions?.[currentQuestion];
+    const isLastQuestion = currentQuestion === (quiz?.questions?.length || 1) - 1;
 
     // Get result data for current question if in review mode
-    const questionResult = isReviewMode && result
+    const questionResult = isReviewMode && result && question
         ? result.answers.find(a => a.questionText === question.questionText)
         : null;
+
+    if (!question) {
+        return <WaitingRoomLoader message="Loading Question..." />;
+    }
 
     return (
         <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">

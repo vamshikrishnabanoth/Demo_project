@@ -9,7 +9,7 @@ const officeParser = require('officeparser');
 const Groq = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
-const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizIntegrity');
+const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { YoutubeTranscript } = require('youtube-transcript');
 
 // Initialize Groq for Whisper (Transcription)

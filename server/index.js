@@ -24,7 +24,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
-const { verifyQuizIntegrity } = require('./lib/quizIntegrity');
+const { verifyQuizIntegrity } = require('./lib/quizintegrity');
 
 const app = express();
 
