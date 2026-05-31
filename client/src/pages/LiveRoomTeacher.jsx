@@ -641,6 +641,41 @@ if (socket.connected) {
                     </div>
                 </div>
 
+                {/* Active Question Preview */}
+                {quiz?.questions?.[currentQuestion] && (
+                    <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-8 shadow-2xl shadow-slate-100/80 relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-6">
+                            <span className="px-4 py-1.5 bg-[#0f172a] text-white rounded-full text-xs font-black uppercase tracking-wider italic">
+                                Active Question Preview
+                            </span>
+                            <span className="text-slate-300 font-bold tracking-widest uppercase text-xs">
+                                Visible to Teacher Only · Answers Hidden
+                            </span>
+                        </div>
+
+                        <h3 className="text-2xl font-black text-[#0f172a] mb-6 leading-tight">
+                            {quiz.questions[currentQuestion].questionText}
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {quiz.questions[currentQuestion].options?.map((option, idx) => {
+                                const label = String.fromCharCode(65 + idx);
+                                return (
+                                    <div 
+                                        key={idx}
+                                        className="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 transition hover:bg-slate-100/50"
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-[#0f172a]/10 flex items-center justify-center text-[#0f172a] font-black text-sm">
+                                            {label}
+                                        </div>
+                                        <span className="font-bold text-slate-700 text-sm">{option}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
                 {/* Student Progress — Full Width Table with Dots */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
                     {/* Header */}
