@@ -17,7 +17,7 @@ module.exports = async function (req, res, next) {
         // SECURITY: Deep Session Validation & Suspension Check
         const user = await prisma.user.findUnique({ 
             where: { id: decoded.user.id },
-            select: { tokenVersion: true, isSuspended: true, suspensionReason: true }
+            select: { tokenVersion: true, isSuspended: true, suspensionReason: true, suspendedUntil: true }
         });
 
         if (!user || user.tokenVersion !== decoded.user.tokenVersion) {
@@ -25,10 +25,18 @@ module.exports = async function (req, res, next) {
         }
 
         if (user.isSuspended) {
-            return res.status(403).json({ 
-                msg: 'Your account has been suspended.', 
-                reason: user.suspensionReason || 'Violation of community guidelines.' 
-            });
+            if (user.suspendedUntil && new Date() > user.suspendedUntil) {
+                // Auto-lift suspension
+                await prisma.user.update({
+                    where: { id: decoded.user.id },
+                    data: { isSuspended: false, suspendedUntil: null, suspensionReason: null }
+                });
+            } else {
+                return res.status(403).json({ 
+                    msg: 'Your account has been suspended.', 
+                    reason: user.suspensionReason || 'Violation of community guidelines.' 
+                });
+            }
         }
 
         req.user = decoded.user;

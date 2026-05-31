@@ -21,6 +21,8 @@ model User {
   tokenVersion     Int      @default(0)
   isSuspended      Boolean  @default(false)
   suspensionReason String?
+  suspendedUntil   DateTime?
+  violationCount   Int      @default(0)
   isOnline         Boolean  @default(false)
   studentBranch    String?
   section          String?

@@ -1393,31 +1393,73 @@ exports.generateQuizQuestions = async (req, res) => {
                  sourceType = 'topic';
             }
 
-            // --- AI MODERATION GUARD ---
+            let extractedText = null;
+            let absolutePath = null;
+            
             if (req.file) {
+                absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
-                const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
-                const moderation = await moderateContent(req.user.id, topic || '', isImage ? 'image' : 'text', path.resolve(req.file.path));
-                if (!moderation.isSafe) {
-                    failTask(taskId, 'Content moderation failed: ' + moderation.reason);
-                    return;
-                }
-            } else if (topic) {
-                const moderation = await moderateContent(req.user.id, topic, 'text');
-                if (!moderation.isSafe) {
-                    failTask(taskId, 'Content moderation failed: ' + moderation.reason);
-                    return;
+                if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+                     extractedText = await extractText(absolutePath);
                 }
             }
 
+            let isTextEmpty = false;
+            
+            if (req.file) {
+                const ext = path.extname(req.file.originalname).toLowerCase();
+                const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
+                const contentToModerate = isImage ? '' : (extractedText || topic || '');
+                
+                if (!isImage && contentToModerate.trim() === '') {
+                    isTextEmpty = true;
+                } else {
+                    const moderation = await moderateContent(req.user.id, contentToModerate, isImage ? 'image' : 'text', absolutePath);
+                    if (!moderation.isSafe) {
+                        try { fs.unlinkSync(absolutePath); } catch (_) {}
+                        
+                        if (moderation.type === 'low_confidence') {
+                            failTask(taskId, 'We could not extract enough learning material: ' + moderation.reason);
+                        } else if (moderation.suspended) {
+                            failTask(taskId, `ACCOUNT RESTRICTED: ${moderation.reason}`);
+                        } else {
+                            failTask(taskId, `WARNING (Strike ${moderation.strikeCount}): Content moderation failed. ${moderation.reason}`);
+                        }
+                        return;
+                    }
+                }
+            } else if (topic) {
+                if (topic.trim() === '') {
+                    isTextEmpty = true;
+                } else {
+                    const moderation = await moderateContent(req.user.id, topic, 'text');
+                    if (!moderation.isSafe) {
+                        if (moderation.type === 'low_confidence') {
+                            failTask(taskId, 'We could not extract enough learning material: ' + moderation.reason);
+                        } else if (moderation.suspended) {
+                            failTask(taskId, `ACCOUNT RESTRICTED: ${moderation.reason}`);
+                        } else {
+                            failTask(taskId, `WARNING (Strike ${moderation.strikeCount}): Content moderation failed. ${moderation.reason}`);
+                        }
+                        return;
+                    }
+                }
+            }
+
+            if (isTextEmpty) {
+                if (req.file && absolutePath) {
+                    try { fs.unlinkSync(absolutePath); } catch (_) {}
+                }
+                failTask(taskId, 'We could not extract enough learning material. Please provide a document with more text or a valid video URL.');
+                return;
+            }
+
             // ── Stage 0: Generate Questions ──────────────────────────────────
-            console.log(`\n[Generator Started] type=${sourceType} topic="${topic || ''}" count=${questionCount}`);
+            console.log(`\n[Generator Started] type=${sourceType} topic="${topic ? topic.substring(0, 30) : ''}..." count=${questionCount}`);
             updateTaskStage(taskId, 0, 'Generating Questions');
 
             let finalQuestions = [];
             if (req.file) {
-                const absolutePath = path.resolve(req.file.path);
-                const extractedText = await extractText(absolutePath);
                 if (extractedText) {
                     finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
                 } else {
