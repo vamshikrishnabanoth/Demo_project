@@ -1,7 +1,10 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL =
-    import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+// Hardcoded production URL - change this if your backend URL changes
+const PRODUCTION_SOCKET_URL = 'https://quiz-backend-qgro.onrender.com';
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL ||
+    (import.meta.env.PROD ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 
 const socket = io(SOCKET_URL, {
     auth: (cb) => {
@@ -10,11 +13,7 @@ const socket = io(SOCKET_URL, {
         });
     },
 
-    // Use polling first, then upgrade to websocket.
-    // This is critical for Render.com deployments — Render's free tier
-    // requires the HTTP handshake (polling) before upgrading to WebSocket.
-    // Starting with 'websocket' directly causes the "WebSocket closed before
-    // connection established" error visible in the console.
+    // polling first, then upgrade to websocket — required for Render.com deployments
     transports: ['polling', 'websocket'],
 
     reconnection: true,
@@ -24,9 +23,7 @@ const socket = io(SOCKET_URL, {
 
     timeout: 20000,
 
-    // Don't auto-connect on page load — connect only after login token exists.
-    // This prevents the failed socket connection attempt on the login page
-    // when there's no auth token yet.
+    // Don't auto-connect on login page before token exists
     autoConnect: false,
 
     forceNew: false
