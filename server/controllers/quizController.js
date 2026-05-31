@@ -182,39 +182,39 @@ const checkAiServiceOnline = async (url) => {
 };
 
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
+// Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-    
-    // Probe the AI Service first to ensure we fallback instantly if it is down/offline
+
+    // Probe the AI Service first — instant fallback if completely offline
     const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
     if (!isOnline) {
-        console.log(`⚠️ AI Service is offline/down. Bypassing directly to Groq Fallback!`);
+        console.log(`⚠️ Fine-Tuned AI is offline. Falling back to Groq Cloud.`);
         return generateFallbackQuestions(type, content, count, difficulty);
     }
 
     try {
-        console.log(`🚀 Sending to AI Service at ${AI_SERVICE_URL}: ${type} | Count: ${count}`);
-        
+        console.log(`🚀 Sending to Fine-Tuned AI at ${AI_SERVICE_URL}: ${type} | Count: ${count}`);
+
         const response = await axios.post(`${AI_SERVICE_URL}/generate`, {
-            type: type,
-            content: content, 
+            type,
+            content,
             count: parseInt(count),
-            difficulty: difficulty
+            difficulty
         }, {
-            headers: {
-                'Bypass-Tunnel-Reminder': 'true' // Bypasses the localtunnel landing page
-            },
-            timeout: 300000 // Increased timeout to 5 minutes for slow local AI generation
+            headers: { 'Bypass-Tunnel-Reminder': 'true' },
+            timeout: 300000 // 5 min — fine-tuned model needs time for generator-critic pipeline
         });
 
-        if (response.data && response.data.questions) {
-            console.log(`✅ Received ${response.data.questions.length} questions from Local AI`);
+        if (response.data && response.data.questions && response.data.questions.length > 0) {
+            console.log(`✅ Fine-Tuned AI delivered ${response.data.questions.length} questions.`);
             return response.data.questions;
         }
-        
+
+        console.log(`⚠️ Fine-Tuned AI returned empty — falling back to Groq.`);
         return generateFallbackQuestions(type, content, count, difficulty);
     } catch (err) {
-        console.error('❌ AI Service Error:', err.message);
+        console.error(`❌ Fine-Tuned AI error: ${err.message} — falling back to Groq.`);
         return generateFallbackQuestions(type, content, count, difficulty);
     }
 };
