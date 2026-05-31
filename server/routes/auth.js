@@ -154,7 +154,83 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             { expiresIn: '1h' },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token, role: user.role });
+                res.json({ 
+                    token, 
+                    user: { 
+                        id: user.id, 
+                        username: user.username, 
+                        email: user.email, 
+                        role: user.role,
+                        studentBranch: user.studentBranch,
+                        section: user.section
+                    } 
+                });
+            }
+        );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// @route   POST api/auth/register-public
+// @desc    Self-registration for new users (from login page)
+// @access  Public
+router.post('/register-public', authLimiter, registerValidation, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ msg: errors.array().map(e => e.msg).join('. ') });
+    }
+
+    const { username, email, password } = req.body;
+
+    try {
+        let existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [{ email }, { username }]
+            }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ msg: 'User already exists with that email or username.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hashedPassword,
+                role: 'none'
+            }
+        });
+
+        const payload = {
+            user: {
+                id: user.id,
+                username: user.username,
+                role: user.role,
+                tokenVersion: user.tokenVersion
+            }
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({ 
+                    token, 
+                    user: { 
+                        id: user.id, 
+                        username: user.username, 
+                        email: user.email, 
+                        role: user.role 
+                    } 
+                });
             }
         );
     } catch (err) {

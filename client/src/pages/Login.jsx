@@ -39,7 +39,16 @@ export default function Login() {
             setTimeout(() => navigate('/'), 800);
         } catch (err) {
             setSubmitStatus('error');
-            setErrorMsg(err.response?.data?.msg || err.message || 'Access Denied');
+            const data = err.response?.data;
+            let message = 'Access Denied';
+            if (data?.msg) {
+                message = data.msg;
+            } else if (data?.errors?.length) {
+                message = data.errors.map(e => e.msg).join('. ');
+            } else if (err.message) {
+                message = err.message;
+            }
+            setErrorMsg(message);
             setIsSubmitting(false);
         }
     };
