@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { motion } from 'framer-motion';
+import WaitingRoomLoader from './loaders/WaitingRoomLoader';
 
 // Maps a role to its home route
 const ROLE_HOME = {
@@ -13,18 +13,9 @@ const ROLE_HOME = {
 const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
     const { user, loading } = useContext(AuthContext);
 
-    // While auth is being restored from localStorage, show a minimal spinner
-    // (not "Loading..." text — that's jarring and looks broken)
+    // While auth is being restored from localStorage, show the premium WaitingRoomLoader
     if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-                <motion.div
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-                    className="w-6 h-6 rounded-full bg-[var(--bg-accent)]"
-                />
-            </div>
-        );
+        return <WaitingRoomLoader message="Securing session..." />;
     }
 
     // Not logged in → go to login
