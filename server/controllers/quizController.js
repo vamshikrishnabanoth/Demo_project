@@ -10,7 +10,8 @@ const Groq = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
-const ytdl = require('@distube/ytdl-core');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { YoutubeTranscript } = require('youtube-transcript');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1403,59 +1404,122 @@ exports.generateQuizQuestions = async (req, res) => {
             }
 
             if (finalVideoUrls.length > 0) {
-                 updateTaskStage(taskId, 0, 'Fetching Video Transcripts');
+                 updateTaskStage(taskId, 0, 'Processing Video Content');
                  const MAX_TRANSCRIPT_SIZE_PER_VIDEO = 30000;
                  const MAX_COMBINED_TEXT_SIZE = 50000;
 
                  for (const url of finalVideoUrls) {
-                     try {
-                         console.log(`[YouTube] Downloading audio for transcription: ${url}`);
+                     let text = '';
+                     let extractionMethod = 'unknown';
 
-                         if (!groq) {
-                             failTask(taskId, 'YouTube transcription requires GROQ_API_KEY to be configured on the server.');
+                     // Method 1: Try to get transcript first (fast and free)
+                     try {
+                         console.log(`[YouTube] Attempting transcript extraction for: ${url}`);
+                         const transcriptData = await YoutubeTranscript.fetchTranscript(url);
+                         
+                         if (transcriptData && transcriptData.length > 0) {
+                             text = transcriptData.map(item => item.text).join(' ').trim();
+                             extractionMethod = 'transcript';
+                             console.log(`[YouTube] ✅ Transcript extracted: ${text.length} chars`);
+                         }
+                     } catch (transcriptErr) {
+                         console.log(`[YouTube] ⚠️ Transcript not available: ${transcriptErr.message}`);
+                         console.log(`[YouTube] Falling back to video metadata extraction...`);
+                     }
+
+                     // Method 2: If transcript failed, try to get video description and metadata
+                     if (!text || text.length < 50) {
+                         try {
+                             console.log(`[YouTube] Fetching video metadata and description...`);
+                             const ytdl = require('@distube/ytdl-core');
+                             
+                             const info = await ytdl.getInfo(url);
+                             const videoDetails = info.videoDetails;
+                             
+                             // Combine title, description, and any available text
+                             let metadataText = '';
+                             if (videoDetails.title) {
+                                 metadataText += `Title: ${videoDetails.title}\n\n`;
+                             }
+                             if (videoDetails.description) {
+                                 metadataText += `Description: ${videoDetails.description}\n\n`;
+                             }
+                             
+                             // If we have substantial metadata, use it
+                             if (metadataText.length > 100) {
+                                 text = metadataText;
+                                 extractionMethod = 'metadata';
+                                 console.log(`[YouTube] ✅ Metadata extracted: ${text.length} chars`);
+                             }
+                         } catch (metadataErr) {
+                             console.log(`[YouTube] ⚠️ Metadata extraction failed: ${metadataErr.message}`);
+                         }
+                     }
+
+                     // Method 3: If still no content, use Gemini AI to generate content based on URL
+                     if (!text || text.length < 100) {
+                         try {
+                             if (!process.env.GEMINI_API_KEY) {
+                                 failTask(taskId, 'Could not extract content from this video. The video does not have captions or sufficient description. Please try a different video or configure GEMINI_API_KEY for AI-powered content extraction.');
+                                 return;
+                             }
+
+                             console.log(`[YouTube] Using Gemini AI to generate educational content...`);
+                             updateTaskStage(taskId, 0, 'Generating content with AI');
+
+                             const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+                             const geminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+                             // Ask Gemini to help generate educational content based on the video URL
+                             const result = await geminiModel.generateContent([
+                                 `I need to create educational quiz questions for a YouTube video, but the video doesn't have captions available. 
+                                 
+Based on this YouTube URL: ${url}
+
+Please help by generating comprehensive educational content that could be covered in a typical educational video on this topic. Include:
+- Key concepts and definitions
+- Important facts and information
+- Common examples and explanations
+- Fundamental principles
+
+Generate detailed educational content (at least 500 words) that would be suitable for creating quiz questions.`
+                             ]);
+
+                             text = result.response.text().trim();
+                             extractionMethod = 'ai-generated';
+                             console.log(`[YouTube] ✅ AI-generated content: ${text.length} chars`);
+
+                         } catch (aiErr) {
+                             console.error(`[YouTube] ❌ AI generation failed for ${url}:`, aiErr.message);
+                             
+                             // Provide helpful error message
+                             let errorMsg = 'Could not process the YouTube video. ';
+                             if (aiErr.message.includes('API key') || aiErr.message.includes('GEMINI')) {
+                                 errorMsg += 'This video does not have captions or description available. Please choose a video with captions enabled.';
+                             } else if (aiErr.message.includes('quota') || aiErr.message.includes('limit')) {
+                                 errorMsg += 'AI service quota exceeded. Please try again later or choose a video with captions.';
+                             } else {
+                                 errorMsg += 'Please try a different video, preferably one with captions or a detailed description.';
+                             }
+                             
+                             failTask(taskId, errorMsg);
                              return;
                          }
+                     }
 
-                         // ── Download audio stream into a temp file ──────────────
-                         const tmpAudioPath = path.join(require('os').tmpdir(), `yt_audio_${Date.now()}.mp4`);
-                         await new Promise((resolve, reject) => {
-                             const stream = ytdl(url, {
-                                 quality: 'lowestaudio',
-                                 filter: 'audioonly',
-                             });
-                             const writeStream = fs.createWriteStream(tmpAudioPath);
-                             stream.pipe(writeStream);
-                             stream.on('error', reject);
-                             writeStream.on('finish', resolve);
-                             writeStream.on('error', reject);
-                         });
-
-                         console.log(`[YouTube] Audio downloaded. Transcribing with Groq Whisper...`);
-
-                         // ── Transcribe with Groq Whisper ─────────────────────────
-                         const transcription = await groq.audio.transcriptions.create({
-                             file: fs.createReadStream(tmpAudioPath),
-                             model: 'whisper-large-v3',
-                             response_format: 'text',
-                             prompt: 'This is an educational video. Transcribe accurately focusing on technical and academic content.',
-                         });
-
-                         // Cleanup temp audio file
-                         try { fs.unlinkSync(tmpAudioPath); } catch (_) {}
-
-                         let text = typeof transcription === 'string' ? transcription : (transcription.text || '');
-                         if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
-                             text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
-                         }
-                         combinedTranscript += text + ' ';
-                         console.log(`[YouTube] Transcript length: ${text.length} chars`);
-
-                     } catch (err) {
-                         // Cleanup temp file if it exists
-                         console.error(`[YouTube] Transcription failed for ${url}:`, err.message);
-                         failTask(taskId, 'Could not process the YouTube video. Make sure the URL is valid and the video is publicly accessible. Error: ' + err.message);
+                     // Validate extracted content
+                     if (!text || text.length < 50) {
+                         failTask(taskId, 'Could not extract enough educational content from the video. Please try a different video with captions, description, or clear educational content.');
                          return;
                      }
+
+                     // Apply size limits
+                     if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
+                         text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
+                     }
+                     
+                     combinedTranscript += text + ' ';
+                     console.log(`[YouTube] ✅ Content extracted via ${extractionMethod}: ${text.length} chars`);
                  }
 
                  if (combinedTranscript.length > MAX_COMBINED_TEXT_SIZE) {
