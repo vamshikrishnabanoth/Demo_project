@@ -1,11 +1,11 @@
 export const uiTerminology = {
-    deployToArena: "Deploy to Arena",
+    deployToArena: "Start Session",
     arenaReview: "Arena Review",
     arenaInsights: "Arena Insights",
     creationMethods: {
-        text: "Prompt Forge",
-        files: "Knowledge Vault",
-        topic: "Arena Spark",
-        audio: "Voice Forge"
+        text: "Text Input",
+        files: "PDF Upload",
+        topic: "Topic Input",
+        audio: "Voice Input"
     }
 };
