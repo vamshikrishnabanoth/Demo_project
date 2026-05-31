@@ -6,6 +6,7 @@ import {
     X, CheckCircle, HelpCircle, Volume2, VolumeX, Home
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import api from '../utils/api';
 
 const LADDER = [
     { level: 10, points: 5000, label: 'Level 10' },
@@ -121,6 +122,10 @@ export default function CyberQuest() {
 
     // ── GAME STATE ───────────────────────────────────────────────────────────
     const [gameStatus, setGameStatus] = useState('start'); // 'start' | 'playing' | 'victory' | 'gameover'
+    const [sessionId, setSessionId] = useState(() => {
+        return crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+    });
+    const hasSubmitted = useRef(false);
     const [currentLevel, setCurrentLevel] = useState(1);  // 1 to 10
     const [score, setScore] = useState(0);
 
@@ -139,6 +144,21 @@ export default function CyberQuest() {
     const [muted, setMuted] = useState(false);
 
     const activeQuestion = questions[currentLevel - 1] || questions[0];
+
+    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    useEffect(() => {
+        if ((gameStatus === 'victory' || gameStatus === 'gameover') && !hasSubmitted.current) {
+            hasSubmitted.current = true;
+            const answeredCorrectly = gameStatus === 'victory' ? 10 : Math.max(0, currentLevel - 1);
+            api.post('/students/game-score', {
+                gameType: 'cyber_quest',
+                correctAnswers: answeredCorrectly,
+                totalQuestions: 10,
+                duration: 0, // CyberQuest is untimed
+                sessionId: sessionId
+            }).catch(err => console.error('Failed to save score:', err));
+        }
+    }, [gameStatus, currentLevel, sessionId]);
 
     // ── Synthesized Sound Effects ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -343,6 +363,9 @@ export default function CyberQuest() {
         setEliminatedOptions([]);
         setSelectedOption(null);
         setFeedbackState(null);
+        const uuid = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+        setSessionId(uuid);
+        hasSubmitted.current = false;
         setGameStatus('playing');
         playSound('levelUp');
     };

@@ -6,6 +6,7 @@ import {
     Volume2, VolumeX, CheckCircle2, XCircle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import api from '../utils/api';
 
 const FALLBACK_QUESTIONS = [
     {
@@ -113,6 +114,10 @@ export default function SprintArena() {
 
     // ── GAME STATE ───────────────────────────────────────────────────────────
     const [gameStatus, setGameStatus] = useState('start'); // 'start' | 'playing' | 'gameover'
+    const [sessionId, setSessionId] = useState(() => {
+        return crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+    });
+    const hasSubmitted = useRef(false);
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [timer, setTimer] = useState(45); // Starts at 45 seconds
     const [score, setScore] = useState(0);
@@ -136,6 +141,21 @@ export default function SprintArena() {
 
     useEffect(() => { timerRef.current = timer; }, [timer]);
     useEffect(() => { statusRef.current = gameStatus; }, [gameStatus]);
+
+    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    useEffect(() => {
+        if (gameStatus === 'gameover' && !hasSubmitted.current) {
+            hasSubmitted.current = true;
+            api.post('/students/game-score', {
+                gameType: 'sprint_arena',
+                correctAnswers: correctAnswers,
+                totalQuestions: correctAnswers + wrongAnswers,
+                duration: Math.round(60 - timer), // time elapsed in seconds
+                wrongAnswers: wrongAnswers,
+                sessionId: sessionId
+            }).catch(err => console.error('Failed to save score:', err));
+        }
+    }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId]);
 
     // ── Synthesized Audio Synthesis ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -296,6 +316,9 @@ export default function SprintArena() {
         setFloatingTexts([]);
         setSelectedOption(null);
         setFeedbackType(null);
+        const uuid = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+        setSessionId(uuid);
+        hasSubmitted.current = false;
         setGameStatus('playing');
         playSound('correct');
     };

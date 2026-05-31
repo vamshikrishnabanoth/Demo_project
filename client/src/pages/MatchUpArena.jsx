@@ -6,6 +6,7 @@ import {
     Volume2, VolumeX, Layers, CheckCircle2, AlertTriangle, Clock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import api from '../utils/api';
 
 const FALLBACK_QUESTIONS = [
     { questionText: "Which TCP/IP protocol is used to securely transfer files over a network tunnel?", correctAnswer: "SFTP" },
@@ -38,6 +39,10 @@ export default function MatchUpArena() {
 
     // ── GAME STATES ──────────────────────────────────────────────────────────
     const [gameStatus, setGameStatus] = useState('start'); // 'start' | 'playing' | 'victory'
+    const [sessionId, setSessionId] = useState(() => {
+        return crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+    });
+    const hasSubmitted = useRef(false);
     const [difficulty, setDifficulty] = useState('medium'); // 'easy' | 'medium' | 'hard'
 
     const [cards, setCards] = useState([]);
@@ -57,6 +62,37 @@ export default function MatchUpArena() {
 
     const timerRef = useRef(timer);
     useEffect(() => { timerRef.current = timer; }, [timer]);
+
+    // Metric Math
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const baseScore = matches * 100;
+    const accuracyVal = moves > 0 ? Math.round((correctMatches / moves) * 100) : 0;
+    const accuracyBonus = Math.max(0, accuracyVal * 10);
+    const speedBonus = Math.max(0, (240 - timer) * 4);
+    const finalScore = baseScore + accuracyBonus + speedBonus;
+
+    const completionPercentage = cards.length > 0 ? Math.round((matchedCards.length / cards.length) * 100) : 0;
+    const totalPairs = cards.length / 2;
+
+    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    useEffect(() => {
+        if (gameStatus === 'victory' && !hasSubmitted.current) {
+            hasSubmitted.current = true;
+            api.post('/students/game-score', {
+                gameType: 'match_up',
+                correctAnswers: correctMatches,  // number of matched pairs
+                totalQuestions: totalPairs,
+                duration: 240 - timer,           // time elapsed in seconds
+                moves: moves,                    // total card flips made
+                sessionId: sessionId
+            }).catch(err => console.error('Failed to save score:', err));
+        }
+    }, [gameStatus, correctMatches, totalPairs, timer, moves, sessionId]);
 
     // ── Synthesized Sound Oscillators ─────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -198,6 +234,13 @@ export default function MatchUpArena() {
         playSound('victory');
     };
 
+    const handleReset = () => {
+        const uuid = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+        setSessionId(uuid);
+        hasSubmitted.current = false;
+        handleStartGame();
+    };
+
     // ── Card Clicking Flow ───────────────────────────────────────────────────
     const handleCardClick = (index) => {
         // Block clicking if selected indices exceed 2, card is matched, or clicked card is already open
@@ -278,23 +321,6 @@ export default function MatchUpArena() {
             confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
         }, 220);
     };
-
-    // ── Metric Math ──────────────────────────────────────────────────────────
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    // Scoring math
-    const baseScore = matches * 100;
-    const accuracyVal = moves > 0 ? Math.round((correctMatches / moves) * 100) : 0;
-    const accuracyBonus = Math.max(0, accuracyVal * 10);
-    const speedBonus = Math.max(0, (240 - timer) * 4);
-    const finalScore = baseScore + accuracyBonus + speedBonus;
-
-    const completionPercentage = cards.length > 0 ? Math.round((matchedCards.length / cards.length) * 100) : 0;
-    const totalPairs = cards.length / 2;
 
     return (
         <div className="min-h-screen bg-[var(--bg-primary)] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6">

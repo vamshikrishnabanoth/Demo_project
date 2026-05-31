@@ -29,6 +29,18 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
   lastLogin        DateTime?
+  
+  // Gamification Fields
+  xp                  Int       @default(0)
+  streak              Int       @default(0)
+  highestStreak       Int       @default(0)
+  streakSavesUsed     Int       @default(0)
+  lastStreakSaveWeek  DateTime? 
+  lastStreakDate      DateTime? // The date the streak was last incremented
+  dailyMissions       Json?     // Stores generated missions for the day and progress
+  lastMissionsDate    DateTime? // Used to reset missions daily
+  unlockedPerks       Json?     // Array of redeemed perks
+
   quizzes          Quiz[]
   results          Result[]
   broadcastsSent   Broadcast[]

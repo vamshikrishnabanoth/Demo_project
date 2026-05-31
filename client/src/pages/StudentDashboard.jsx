@@ -40,7 +40,7 @@ const FloatingSymbol = ({ Icon, top, left, delay, size = 32 }) => (
 
 export default function StudentDashboard() {
     const { user } = useContext(AuthContext);
-    const [activeTab, setActiveTab] = useState('link'); // 'link' | 'arena'
+    const [activeTab, setActiveTab] = useState('link'); // 'link' | 'arena' | 'gamification'
     const [joinCode, setJoinCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -67,11 +67,82 @@ export default function StudentDashboard() {
     const startTimeRef    = useRef(null);
     const elapsedRef      = useRef(null);
 
+    // Gamification States
+    const [xp, setXp] = useState(0);
+    const [streak, setStreak] = useState(0);
+    const [highestStreak, setHighestStreak] = useState(0);
+    const [dailyMissions, setDailyMissions] = useState([]);
+    const [unlockedPerks, setUnlockedPerks] = useState([]);
+    const [redeeming, setRedeeming] = useState(false);
+    const [showTicket, setShowTicket] = useState(null); // holds perk object to show ticket
+
+    // Read-only: just hydrate UI state, no DB mutations
+    const fetchGamification = async () => {
+        try {
+            const res = await api.get('/students/gamification');
+            setXp(res.data.xp || 0);
+            setStreak(res.data.streak || 0);
+            setHighestStreak(res.data.highestStreak || 0);
+            setDailyMissions(res.data.dailyMissions || []);
+            setUnlockedPerks(res.data.unlockedPerks || []);
+        } catch (err) {
+            console.error("Failed to load gamification stats", err);
+        }
+    };
+
+    // Called once per day when tab mounts — handles streak saves, resets, mission generation
+    const initGamification = async () => {
+        try {
+            const res = await api.post('/students/gamification/init');
+            setXp(res.data.xp || 0);
+            setStreak(res.data.streak || 0);
+            setHighestStreak(res.data.highestStreak || 0);
+            setDailyMissions(res.data.dailyMissions || []);
+            setUnlockedPerks(res.data.unlockedPerks || []);
+            // Show toast if streak was auto-saved or broken
+            if (res.data.actionsTaken?.length > 0) {
+                res.data.actionsTaken.forEach(action => {
+                    if (action.includes('saved')) {
+                        toast.success(`🛡️ ${action}`, { duration: 5000 });
+                    } else if (action.includes('reset')) {
+                        toast.error(`💔 ${action}`, { duration: 5000 });
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Failed to initialize gamification", err);
+            fetchGamification(); // fallback to read-only
+        }
+    };
+
     useEffect(() => {
         if (user?.id) {
             socket.emit('identify', user.id);
+            fetchGamification();
         }
     }, [user]);
+
+    // Run init when user switches to the gamification tab
+    useEffect(() => {
+        if (activeTab === 'gamification' && user?.id) {
+            initGamification();
+        }
+    }, [activeTab]);
+
+    const handleRedeemPerk = async (perkId, perkName, cost) => {
+        if (xp < cost) return toast.error('Not enough XP!');
+        setRedeeming(true);
+        try {
+            const res = await api.post('/students/redeem-perk', { perkId, perkName, cost });
+            setXp(res.data.remainingXp);
+            setUnlockedPerks(prev => [...prev, res.data.perk]);
+            toast.success(`Redeemed: ${perkName}`);
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Redemption failed');
+        } finally {
+            setRedeeming(false);
+        }
+    };
 
     const handleJoin = async () => {
         if (joinCode.length !== maxChars) return;
@@ -303,8 +374,75 @@ export default function StudentDashboard() {
                         </p>
                     </div>
 
+                    {/* Gamification Quick Stats Banner */}
+                    <div className="flex justify-center items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-2xl mx-auto shadow-lg backdrop-blur-md flex-wrap">
+                        <div className="flex items-center gap-2">
+                            <Star className="text-yellow-400" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
+                                <p className="text-lg font-black text-white italic leading-none">{xp} <span className="text-xs text-yellow-400">XP</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="flex items-center gap-2">
+                            <Rocket className="text-orange-500" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
+                                <p className="text-lg font-black text-white italic leading-none">{streak} <span className="text-xs text-orange-500">DAYS</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="flex items-center gap-2">
+                            <Trophy className="text-amber-300" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
+                                <p className="text-lg font-black text-white italic leading-none">{highestStreak} <span className="text-xs text-amber-300">DAYS</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* XP Progress toward Next Reward */}
+                    {(() => {
+                        const XP_REWARDS = [
+                            { name: 'Attendance Pass', cost: 1500 },
+                            { name: 'Late Pass', cost: 3000 },
+                        ];
+                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
+                        if (!nextReward) return (
+                            <div className="max-w-2xl mx-auto px-2">
+                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
+                                    🏆 All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
+                                </p>
+                            </div>
+                        );
+                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
+                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
+                        const xpLeft = nextReward.cost - xp;
+                        return (
+                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
+                                        Next: <span className="text-yellow-400">{nextReward.name}</span>
+                                    </p>
+                                    <p className="text-[9px] font-black text-white">
+                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
+                                        <span className="text-yellow-400 ml-2">— {xpLeft.toLocaleString()} XP to go</span>
+                                    </p>
+                                </div>
+                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-gradient-to-r from-yellow-500 to-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })()}
+
                     {/* Tab Controls */}
-                    <div className="flex justify-center gap-4 max-w-md mx-auto">
+                    <div className="flex justify-center gap-4 max-w-2xl mx-auto">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
@@ -324,6 +462,16 @@ export default function StudentDashboard() {
                             }`}
                         >
                             Game Arena
+                        </button>
+                        <button
+                            onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 ${
+                                activeTab === 'gamification'
+                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
+                            }`}
+                        >
+                            <Trophy size={16} /> Missions & Perks
                         </button>
                     </div>
 
@@ -433,7 +581,7 @@ export default function StudentDashboard() {
                                     )}
                                 </button>
                             </motion.div>
-                        ) : (
+                        ) : activeTab === 'arena' ? (
                             <motion.div
                                 key="tab-arena"
                                 initial={{ opacity: 0, y: 15 }}
@@ -590,6 +738,194 @@ export default function StudentDashboard() {
                                     </button>
                                 </div>
                             </motion.div>
+                        ) : activeTab === 'gamification' ? (
+                            <motion.div
+                                key="tab-gamification"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.4 }}
+                                className="space-y-10 max-w-5xl mx-auto text-left"
+                            >
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    {/* Daily Missions */}
+                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Target className="text-pink-500" size={28} />
+                                            <h2 className="text-2xl font-black text-white italic uppercase">Daily Missions</h2>
+                                        </div>
+                                        
+                                        {dailyMissions.map((m, idx) => (
+                                            <div key={m.id} className={`p-4 rounded-2xl border flex flex-col gap-2 relative overflow-hidden ${m.current >= m.target ? 'border-green-500/50 bg-green-500/10' : 'border-white/10 bg-white/5'}`}>
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                                                            {m.title}
+                                                            {m.required && <span className="bg-pink-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Main (Streak +1)</span>}
+                                                            {!m.required && <span className="bg-blue-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
+                                                        </h3>
+                                                    </div>
+                                                    <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-400' : 'text-slate-400'}`}>
+                                                        {m.current} / {m.target}
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                                    <div 
+                                                        className={`h-full ${m.current >= m.target ? 'bg-green-500' : 'bg-[var(--bg-accent)]'} transition-all duration-500`}
+                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Rewards Store */}
+                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Trophy className="text-yellow-400" size={28} />
+                                            <h2 className="text-2xl font-black text-white italic uppercase">Rewards Store</h2>
+                                        </div>
+
+                                        {/* Perk Store */}
+                                        {(() => {
+                                            const getRedemptionsThisMonth = (perkId) => {
+                                                const now = new Date();
+                                                const currentYear = now.getFullYear();
+                                                const currentMonth = now.getMonth();
+                                                return unlockedPerks.filter(p => {
+                                                    if (p.id !== perkId) return false;
+                                                    const d = new Date(p.redeemedAt);
+                                                    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+                                                }).length;
+                                            };
+
+                                            return [
+                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
+                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+                                                { id: 'perk_golden', name: '⚡ Golden Perk — Free Streak Save', cost: 0, icon: Star, color: 'text-yellow-400', border: 'border-yellow-500', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
+                                            ].map(perk => {
+                                                const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
+                                                const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
+                                                const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
+                                                const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
+                                                return (
+                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-white/5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/30 opacity-70' : 'border-white/10'}`}>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-3 rounded-xl bg-white/5 border ${perk.border} ${perk.color}`}>
+                                                            <perk.icon size={24} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="font-bold text-white text-sm">{perk.name}</h3>
+                                                            <p className="text-slate-400 text-[10px] mt-0.5">{perk.desc}</p>
+                                                            {perk.monthlyLimit && (
+                                                                <p className="text-pink-400 text-[9px] font-black uppercase tracking-wider mt-1">
+                                                                    ⚠️ Only {perk.monthlyLimit} redeemable this month • {redemptionsThisMonth}/{perk.monthlyLimit} used
+                                                                </p>
+                                                            )}
+                                                            {isStreakLocked
+                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">🔒 Requires {perk.streakOnly}-Day Streak</p>
+                                                                : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} XP</p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => !isStreakLocked && !limitReached && handleRedeemPerk(perk.id, perk.name, perk.cost)}
+                                                        disabled={!canAfford || redeeming}
+                                                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+                                                            canAfford
+                                                                ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent)]/80' 
+                                                                : 'bg-white/10 text-slate-400 cursor-not-allowed'
+                                                        }`}
+                                                    >
+                                                        {isStreakLocked ? 'Locked' : limitReached ? 'Max Limit' : 'Redeem'}
+                                                    </button>
+                                                </div>
+                                                );
+                                            });
+                                        })()}
+
+                                        {/* Inventory */}
+                                        {unlockedPerks.length > 0 && (
+                                            <div className="mt-4 pt-4 border-t border-white/10">
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-3">Your Inventory</h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {unlockedPerks.map((p, idx) => (
+                                                        <button 
+                                                            key={idx} 
+                                                            onClick={() => setShowTicket(p)}
+                                                            className="text-[10px] bg-white/10 hover:bg-[var(--bg-accent)] text-white px-3 py-1.5 rounded flex items-center gap-2 transition-colors uppercase font-bold"
+                                                        >
+                                                            <Trophy size={12} /> {p.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ) : null}
+                    </AnimatePresence>
+
+                    {/* Ticket Modal */}
+                    <AnimatePresence>
+                        {showTicket && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                                <motion.div 
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    className="bg-zinc-900 border border-white/20 p-8 rounded-3xl max-w-md w-full relative"
+                                    id="perk-ticket-node"
+                                >
+                                    <button 
+                                        onClick={() => setShowTicket(null)}
+                                        className="absolute top-4 right-4 text-white/50 hover:text-white"
+                                    >
+                                        &times;
+                                    </button>
+                                    
+                                    <div className="border-4 border-dashed border-[var(--bg-accent)] rounded-xl p-6 text-center space-y-4 relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-16 h-16 bg-[var(--bg-accent)]/20 blur-2xl rounded-full"></div>
+                                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-purple-500/10 blur-3xl rounded-full"></div>
+                                        
+                                        <div className="w-16 h-16 mx-auto bg-[var(--bg-accent)] text-black rounded-full flex items-center justify-center shadow-[0_0_30px_var(--bg-accent-glow)]">
+                                            <Star size={32} fill="currentColor" />
+                                        </div>
+                                        
+                                        <div>
+                                            <h2 className="text-2xl font-black text-white italic uppercase">OFFICIAL PASS</h2>
+                                            <h3 className="text-lg text-[var(--text-accent)] font-bold mt-1">{showTicket.name}</h3>
+                                        </div>
+
+                                        {/* Status badge */}
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/40">
+                                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                                            <span className="text-green-400 text-[10px] font-black uppercase tracking-widest">{showTicket.status || 'UNUSED'}</span>
+                                        </div>
+                                        
+                                        <div className="pt-4 border-t border-white/10 text-left space-y-2.5">
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Issued To: <span className="text-white">{user?.name || user?.username}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Roll No: <span className="text-white">{user?.username}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Issue Date: <span className="text-white">{new Date(showTicket.redeemedAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Expires On: <span className="text-red-400 font-black">{showTicket.expiryDate ? new Date(showTicket.expiryDate).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : 'N/A'}</span></p>
+                                            <div className="bg-white/5 rounded-lg px-3 py-2 mt-1">
+                                                <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1">Verification Code</p>
+                                                <p className="text-[var(--text-accent)] font-black text-sm tracking-widest">{showTicket.uniqueId || showTicket.id?.toUpperCase()}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="pt-4">
+                                            <button 
+                                                onClick={() => window.print()}
+                                                className="w-full py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                                            >
+                                                🖨 Print / Save as PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
                         )}
                     </AnimatePresence>
 
