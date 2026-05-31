@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Hardcoded production URL - change this if your backend URL changes
+const PRODUCTION_API_URL = 'https://quiz-backend-qgro.onrender.com/api';
 
-if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
-    console.warn('⚠️ Frontend is in PRODUCTION but VITE_API_URL is missing! Falling back to localhost.');
-}
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+    (import.meta.env.PROD ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
 const api = axios.create({
     baseURL: API_BASE_URL,
