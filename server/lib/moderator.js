@@ -14,6 +14,7 @@ const moderateContent = async (userId, content, type = 'text', filePath = null) 
         let prompt = "";
         let result = null;
 
+        if (type === 'text') {
             let contentSample = content;
             if (content.length > 5000) {
                 contentSample = content.substring(0, 2500) + "\n...[CONTENT OMITTED]...\n" + content.substring(content.length - 2500);
