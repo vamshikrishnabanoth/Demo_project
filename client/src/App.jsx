@@ -42,6 +42,7 @@ const QuestionAnalysis  = lazy(() => import('./pages/QuestionAnalysis'));
 const AnimationPreview  = lazy(() => import('./pages/AnimationPreview'));
 const CyberQuest        = lazy(() => import('./pages/CyberQuest'));
 const SprintArena       = lazy(() => import('./pages/SprintArena'));
+const MatchUpArena      = lazy(() => import('./pages/MatchUpArena'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -95,6 +96,7 @@ function AnimatedRoutes() {
                     <Route path="/live-room-student/:joinCode" element={<FadeTransition><ProtectedRoute roles={['student']}><LiveRoomStudent /></ProtectedRoute></FadeTransition>} />
                     <Route path="/cyber-quest"        element={<FadeTransition><ProtectedRoute roles={['student']}><CyberQuest /></ProtectedRoute></FadeTransition>} />
                     <Route path="/sprint-arena"       element={<FadeTransition><ProtectedRoute roles={['student']}><SprintArena /></ProtectedRoute></FadeTransition>} />
+                    <Route path="/match-up-arena"     element={<FadeTransition><ProtectedRoute roles={['student']}><MatchUpArena /></ProtectedRoute></FadeTransition>} />
 
                     {/* Admin pages */}
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
