@@ -135,12 +135,18 @@ export default function Leaderboard() {
                     </div>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         onClick={() => navigate('/student-dashboard')}
-                        className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-12 sm:px-16 py-4 sm:py-6 rounded-[2rem] sm:rounded-[2.5rem] font-black italic uppercase tracking-[0.2em] text-lg sm:text-xl btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30 btn-glow"
+                        className="px-10 py-5 rounded-[2rem] bg-white/5 border border-white/10 text-white font-black italic uppercase tracking-[0.2em] text-base hover:bg-white/10 transition-all btn-press"
                     >
                         Back to Dashboard
+                    </button>
+                    <button
+                        onClick={() => navigate(`/report/${quizId}`, { state: { showAnalytics: true } })}
+                        className="px-10 py-5 rounded-[2rem] bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black italic uppercase tracking-[0.2em] text-base btn-cinematic shadow-2xl shadow-[var(--bg-accent)]/30 btn-glow"
+                    >
+                        View Analytics
                     </button>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
     PieChart, Pie, Cell, LineChart, Line, AreaChart, Area 
@@ -19,11 +19,14 @@ import { uiTerminology } from '../utils/uiTerminology';
 const AssessmentReport = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedReview, setSelectedReview] = useState(null);
     const [showDetailed, setShowDetailed] = useState(false);
-    const [showAnalytics, setShowAnalytics] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(() => {
+        return location.state?.showAnalytics ?? false;
+    });
 
     const fetchReport = React.useCallback(async () => {
         setLoading(true);
@@ -155,18 +158,24 @@ const AssessmentReport = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 max-w-sm mx-auto">
+                            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                                 <motion.button
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
                                     onClick={() => setShowAnalytics(true)}
-                                    className="flex-1 flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-2xl bg-gradient-to-r from-[var(--bg-accent)] to-amber-500 text-[var(--text-on-accent)] font-black text-xs uppercase tracking-widest hover:shadow-2xl hover:shadow-[var(--bg-accent)]/20 transition-all border-b-4 border-amber-700 btn-press"
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-gradient-to-r from-[var(--bg-accent)] to-amber-500 text-[var(--text-on-accent)] font-black text-xs uppercase tracking-widest hover:shadow-2xl hover:shadow-[var(--bg-accent)]/20 transition-all border-b-4 border-amber-700 btn-press"
                                 >
-                                    View Analytics <TrendingUp size={16} />
+                                    Analytics <TrendingUp size={14} />
                                 </motion.button>
                                 <button
+                                    onClick={() => navigate(`/leaderboard/${id}`)}
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-black text-xs uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all active:scale-95 btn-press"
+                                >
+                                    Leaderboard <Trophy size={14} fill="currentColor" />
+                                </button>
+                                <button
                                     onClick={() => navigate('/student-dashboard')}
-                                    className="flex-1 px-8 py-4.5 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95 btn-press"
+                                    className="flex-1 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95 btn-press"
                                 >
                                     Dashboard
                                 </button>

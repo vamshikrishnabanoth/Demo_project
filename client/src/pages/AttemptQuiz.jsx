@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
@@ -906,6 +906,12 @@ export default function AttemptQuiz() {
                     </div>
 
                     <div className="space-y-3">
+                        <button
+                            onClick={() => navigate(`/report/${id}`, { state: { showAnalytics: true } })}
+                            className="w-full bg-[var(--bg-accent)] text-[var(--text-on-accent)] py-4 rounded-xl font-black italic uppercase tracking-wider hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
+                        >
+                            <TrendingUp size={20} /> View Detailed Analytics
+                        </button>
                         <button
                             onClick={() => navigate(`/leaderboard/${id}`)}
                             className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"

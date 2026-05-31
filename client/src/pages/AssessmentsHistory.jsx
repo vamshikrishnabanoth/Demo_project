@@ -259,12 +259,20 @@ const AssessmentsHistory = () => {
 
                                             <div className="flex items-center gap-3 w-full sm:w-auto">
                                                 {item.isAttempted ? (
-                                                    <button 
-                                                        onClick={() => navigate(`/report/${item.id}`)}
-                                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all btn-press"
-                                                    >
-                                                        <Activity size={16} className="text-[var(--text-accent)]" aria-hidden="true" /> View Report
-                                                    </button>
+                                                    <>
+                                                        <button 
+                                                            onClick={() => navigate(`/report/${item.id}`)}
+                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all btn-press"
+                                                        >
+                                                            <Activity size={16} className="text-[var(--text-accent)]" aria-hidden="true" /> View Report
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => navigate(`/report/${item.id}`, { state: { showAnalytics: true } })}
+                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all btn-press shadow-lg shadow-[var(--bg-accent-glow)]"
+                                                        >
+                                                            <Activity size={16} aria-hidden="true" /> View Analytics
+                                                        </button>
+                                                    </>
                                                 ) : (
                                                     <button className="w-full sm:w-auto px-8 py-3 rounded-xl bg-white/5 text-white/20 font-black text-[10px] uppercase tracking-widest border border-white/5 cursor-not-allowed">
                                                         Locked

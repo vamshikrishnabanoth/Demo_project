@@ -324,14 +324,24 @@ export default function Assessments() {
                                                 <div className="flex items-center gap-3">
                                                     {/* RESULT — only when student has at least one attempt */}
                                                     {quiz.isAttempted && (
-                                                        <button
-                                                            onClick={() => navigate(`/report/${quiz.id}`)}
-                                                            className="bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-blue-500/5"
-                                                            title="View your latest result"
-                                                        >
-                                                            <BarChart2 size={14} aria-hidden="true" />
-                                                            Result
-                                                        </button>
+                                                        <>
+                                                            <button
+                                                                onClick={() => navigate(`/report/${quiz.id}`)}
+                                                                className="bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 px-4 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-blue-500/5"
+                                                                title="View your latest result"
+                                                            >
+                                                                <BarChart2 size={14} aria-hidden="true" />
+                                                                Result
+                                                            </button>
+                                                            <button
+                                                                onClick={() => navigate(`/report/${quiz.id}`, { state: { showAnalytics: true } })}
+                                                                className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 px-4 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-cyan-500/5"
+                                                                title="View detailed analytics directly"
+                                                            >
+                                                                <BarChart2 size={14} aria-hidden="true" />
+                                                                Analytics
+                                                            </button>
+                                                        </>
                                                     )}
                                                     {/* START — always available for unlimited practice */}
                                                     <button
