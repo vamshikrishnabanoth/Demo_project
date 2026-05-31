@@ -21,19 +21,15 @@ import { useNavigate } from 'react-router-dom';
 import useApiQuery from '../hooks/useApiQuery';
 import { ListSkeleton } from '../components/ui/ShimmerSkeleton';
 import DashboardLayout from '../components/DashboardLayout';
-
 const AssessmentsHistory = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-
     // Centralized Data Orchestration with SWR Caching
     const { data: historyData, loading, error, refetch } = useApiQuery('/quiz/history/student', {
         errorMessage: 'Archives could not be retrieved'
     });
-
     const history = historyData || [];
-
     const formatTime = (date) => {
         if (!date) return '00:00:00 XX';
         return new Date(date).toLocaleTimeString('en-US', { 
@@ -43,12 +39,10 @@ const AssessmentsHistory = () => {
             hour12: true 
         }).toUpperCase();
     };
-
     const formatDate = (date) => {
         if (!date) return 'N/A';
         return new Date(date).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
     };
-
     const filteredHistory = history.filter(item => {
         const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                              (item.topic && item.topic.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -57,7 +51,6 @@ const AssessmentsHistory = () => {
                              (filterStatus === 'missed' && !item.isAttempted);
         return matchesSearch && matchesFilter;
     });
-
     if (loading && history.length === 0) return (
         <DashboardLayout role="student">
             <div className="max-w-6xl mx-auto py-8">
@@ -66,7 +59,6 @@ const AssessmentsHistory = () => {
             </div>
         </DashboardLayout>
     );
-
     return (
         <DashboardLayout role="student">
             <div className="max-w-6xl mx-auto py-8">
@@ -102,7 +94,6 @@ const AssessmentsHistory = () => {
                                 A comprehensive repository of your tactical evolution and performance yields. Every session analyzed for your academic progression.
                             </p>
                         </div>
-
                         {/* Animated Kinetic Icon with Magnetic Shimmer */}
                         <motion.div 
                             initial={{ scale: 0.8, opacity: 0 }}
@@ -128,7 +119,6 @@ const AssessmentsHistory = () => {
                                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
                                     className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45"
                                 />
-
                                 <motion.div 
                                     animate={{ 
                                         scale: [1, 1.1, 1],
@@ -150,7 +140,6 @@ const AssessmentsHistory = () => {
                         </motion.div>
                     </div>
                 </motion.div>
-
                 {/* Tactical Controls Row */}
                 <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6 px-4">
                     <div className="flex items-center gap-4 w-full md:w-auto">
@@ -180,7 +169,6 @@ const AssessmentsHistory = () => {
                         </div>
                     </div>
                 </div>
-
                 {/* Imperial Row List */}
                 <div className="space-y-6">
                     <AnimatePresence mode='popLayout'>
@@ -218,7 +206,6 @@ const AssessmentsHistory = () => {
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div className="grid grid-cols-3 gap-6 lg:text-right">
                                                 {[
                                                     { label: 'Conducted Date', val: formatDate(item.date) },
@@ -232,7 +219,6 @@ const AssessmentsHistory = () => {
                                                 ))}
                                             </div>
                                         </div>
-
                                         {/* Score & Action System */}
                                         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-white/5 pt-6">
                                             <div className="flex flex-wrap items-center gap-3">
@@ -256,7 +242,6 @@ const AssessmentsHistory = () => {
                                                     </div>
                                                 )}
                                             </div>
-
                                             <div className="flex items-center gap-3 w-full sm:w-auto">
                                                 {item.isAttempted ? (
                                                     <>
@@ -286,7 +271,6 @@ const AssessmentsHistory = () => {
                         })}
                     </AnimatePresence>
                 </div>
-
                 {/* Empty State System */}
                 {filteredHistory.length === 0 && (
                     <motion.div 
@@ -297,7 +281,7 @@ const AssessmentsHistory = () => {
                         <Trophy size={100} className="mx-auto text-white/5 mb-8" />
                         <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">The Archives are Empty</h3>
                         <p className="text-[var(--text-secondary)] opacity-70 font-black uppercase tracking-[0.3em] text-[10px]">
-                            No assessment records found in the neural link.
+                            No assessment records found.
                         </p>
                     </motion.div>
                 )}
@@ -305,5 +289,4 @@ const AssessmentsHistory = () => {
         </DashboardLayout>
     );
 };
-
 export default AssessmentsHistory;
