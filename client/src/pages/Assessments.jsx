@@ -92,7 +92,7 @@ export default function Assessments() {
                 },
                 inputValidator: (value) => {
                     if (!value) {
-                        return 'You must enter a neural link PIN!';
+                        return 'You must enter a Join Quiz PIN!';
                     }
                     if (value.length !== 6) {
                         return 'The PIN must be exactly 6 characters!';
@@ -104,7 +104,7 @@ export default function Assessments() {
                 try {
                     // Try to join with the PIN to validate it
                     await api.post('/quiz/join', { code: pin });
-                    toast.success('Neural Link Synchronized!');
+                     toast.success('Join Quiz Synchronized!');
                     navigate(`/quiz/attempt/${quiz.id}`);
                 } catch (err) {
                     showError('Link Rejected', err.response?.data?.msg || 'Incorrect access PIN.');
