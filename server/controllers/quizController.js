@@ -977,10 +977,47 @@ exports.getLatestResult = async (req, res) => {
             });
         }
 
+        // Calculate rank using the same logic as getLeaderboard (score DESC, time ASC)
+        const allResults = await prisma.result.findMany({
+            where: { quizId: req.params.quizId }
+        });
+
+        const processedResults = allResults.map(r => {
+            const startedAt = r.startedAt ? new Date(r.startedAt).getTime() : 0;
+            const completedAt = r.completedAt ? new Date(r.completedAt).getTime() : Date.now();
+            const totalTime = completedAt - startedAt;
+            return {
+                studentId: r.studentId,
+                score: r.score || 0,
+                totalTime
+            };
+        }).sort((a, b) => {
+            if ((b.score || 0) !== (a.score || 0)) {
+                return (b.score || 0) - (a.score || 0);
+            }
+            return (a.totalTime || 0) - (b.totalTime || 0);
+        });
+
+        let studentRank = 1;
+        for (let i = 0; i < processedResults.length; i++) {
+            const r = processedResults[i];
+            if (i > 0) {
+                const prev = processedResults[i - 1];
+                if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
+                    studentRank = i + 1;
+                }
+            }
+            if (r.studentId === req.user.id) {
+                break;
+            }
+        }
+
         res.json({
             ...result,
             quizTitle: quiz ? quiz.title : '',
-            questions
+            questions,
+            rank: studentRank,
+            totalParticipants: processedResults.length
         });
     } catch (err) {
         console.error(err.message);
