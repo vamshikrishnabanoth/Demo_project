@@ -50,7 +50,7 @@ class ErrorBoundary extends React.Component {
                                 System <span className="text-red-500">Interrupted</span>
                             </h1>
                             <p className="text-white/40 font-bold uppercase tracking-[0.3em] text-[10px]">
-                                Neural link stability compromised. Emergency protocols active.
+                                Join Quiz stability compromised. Emergency protocols active.
                             </p>
                         </div>
 
