@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from 'lucide-react';
@@ -11,12 +11,38 @@ export default function Login() {
     const { login, register } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isColdStart, setIsColdStart] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
+    const coldStartTimer = useRef(null);
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const { username, email, password } = formData;
+
+    // Cleanup cold-start timer on unmount
+    useEffect(() => {
+        return () => { if (coldStartTimer.current) clearTimeout(coldStartTimer.current); };
+    }, []);
+
+    // ── Wake up Render server the moment the login page loads ─────────────────
+    // This silently pings the backend so it starts booting before the user
+    // even finishes typing their credentials (free-tier cold-start mitigation)
+    useEffect(() => {
+        const wakeUp = async () => {
+            try {
+                const BACKEND = import.meta.env.VITE_API_URL || 'https://quiz-backend-qgro.onrender.com/api';
+                await fetch(`${BACKEND}/auth/me`, {
+                    method: 'GET',
+                    headers: { 'x-auth-token': 'ping' },
+                    signal: AbortSignal.timeout(90000),
+                });
+            } catch {
+                // Silently ignore — this is just a warm-up ping
+            }
+        };
+        wakeUp();
+    }, []);
 
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,8 +52,12 @@ export default function Login() {
     const onSubmit = async e => {
         e.preventDefault();
         setIsSubmitting(true);
+        setIsColdStart(false);
         setSubmitStatus(null);
         setErrorMsg('');
+
+        // After 5s of waiting, show "server waking up" message
+        coldStartTimer.current = setTimeout(() => setIsColdStart(true), 5000);
 
         try {
             if (isLogin) {
@@ -35,13 +65,20 @@ export default function Login() {
             } else {
                 await register(username, email, password);
             }
+            clearTimeout(coldStartTimer.current);
             setSubmitStatus('success');
             setTimeout(() => navigate('/'), 800);
         } catch (err) {
+            clearTimeout(coldStartTimer.current);
+            setIsColdStart(false);
             setSubmitStatus('error');
             const data = err.response?.data;
             let message = 'Access Denied';
-            if (data?.msg) {
+
+            // Timeout / network error — Render cold start likely failed
+            if (err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK' || !err.response) {
+                message = 'Server is starting up. Please wait a moment and try again.';
+            } else if (data?.msg) {
                 message = data.msg;
             } else if (data?.errors?.length) {
                 message = data.errors.map(e => e.msg).join('. ');
@@ -148,8 +185,20 @@ export default function Login() {
                                     className="w-full py-5"
                                     icon={isSubmitting ? Loader2 : (submitStatus === 'success' ? CheckCircle2 : LogIn)}
                                 >
-                                    {isSubmitting ? 'VERIFYING...' : (isLogin ? 'SIGN IN' : 'INITIALIZE')}
+                                    {isSubmitting 
+                                        ? (isColdStart ? 'WAKING UP SERVER...' : 'VERIFYING...') 
+                                        : (isLogin ? 'SIGN IN' : 'INITIALIZE')}
                                 </PremiumButton>
+
+                                {isColdStart && isSubmitting && (
+                                    <motion.p
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-[9px] font-black uppercase tracking-widest text-amber-400/80 text-center"
+                                    >
+                                        Free-tier server is booting up — this can take up to 60 seconds
+                                    </motion.p>
+                                )}
                             </form>
 
                             <div className="pt-6 border-t border-white/5 text-center">

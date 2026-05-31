@@ -8,8 +8,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ||
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    // Increased to 30s to gracefully accommodate server/database cold starts on first load
-    timeout: 30000,
+    // Render free-tier cold starts can take 50-60s. 120s gives plenty of headroom.
+    timeout: 120000,
 });
 
 // ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────
@@ -27,9 +27,29 @@ api.interceptors.request.use(
 
 // ─── RESPONSE INTERCEPTOR ─────────────────────────────────────────────────────
 // Centralized 401 handling — auto-logout if token expires
+// Also auto-retries on timeout/network errors (Render cold-start recovery)
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
+        const config = error.config;
+
+        // Auto-retry on timeout or network errors (cold-start handling)
+        const isRetryable = error.code === 'ECONNABORTED' || 
+                            error.code === 'ERR_NETWORK' || 
+                            !error.response;
+
+        if (isRetryable && config && !config._retryCount) {
+            config._retryCount = 0;
+        }
+
+        if (isRetryable && config && config._retryCount < 2) {
+            config._retryCount += 1;
+            console.log(`[API] Retry attempt ${config._retryCount} for ${config.url} (server may be waking up)...`);
+            // Wait 3 seconds before retrying to give Render time to spin up
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            return api(config);
+        }
+
         if (error.response?.status === 401) {
             // Token expired or invalid — clean up and redirect
             localStorage.removeItem('token');
