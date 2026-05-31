@@ -10,7 +10,7 @@ const Groq = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
-const { YoutubeTranscript } = require('youtube-transcript');
+const ytdl = require('@distube/ytdl-core');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1406,25 +1406,62 @@ exports.generateQuizQuestions = async (req, res) => {
                  updateTaskStage(taskId, 0, 'Fetching Video Transcripts');
                  const MAX_TRANSCRIPT_SIZE_PER_VIDEO = 30000;
                  const MAX_COMBINED_TEXT_SIZE = 50000;
-                 
+
                  for (const url of finalVideoUrls) {
                      try {
-                         const transcriptArray = await YoutubeTranscript.fetchTranscript(url);
-                         let text = transcriptArray.map(t => t.text).join(' ');
+                         console.log(`[YouTube] Downloading audio for transcription: ${url}`);
+
+                         if (!groq) {
+                             failTask(taskId, 'YouTube transcription requires GROQ_API_KEY to be configured on the server.');
+                             return;
+                         }
+
+                         // ── Download audio stream into a temp file ──────────────
+                         const tmpAudioPath = path.join(require('os').tmpdir(), `yt_audio_${Date.now()}.mp4`);
+                         await new Promise((resolve, reject) => {
+                             const stream = ytdl(url, {
+                                 quality: 'lowestaudio',
+                                 filter: 'audioonly',
+                             });
+                             const writeStream = fs.createWriteStream(tmpAudioPath);
+                             stream.pipe(writeStream);
+                             stream.on('error', reject);
+                             writeStream.on('finish', resolve);
+                             writeStream.on('error', reject);
+                         });
+
+                         console.log(`[YouTube] Audio downloaded. Transcribing with Groq Whisper...`);
+
+                         // ── Transcribe with Groq Whisper ─────────────────────────
+                         const transcription = await groq.audio.transcriptions.create({
+                             file: fs.createReadStream(tmpAudioPath),
+                             model: 'whisper-large-v3',
+                             response_format: 'text',
+                             prompt: 'This is an educational video. Transcribe accurately focusing on technical and academic content.',
+                         });
+
+                         // Cleanup temp audio file
+                         try { fs.unlinkSync(tmpAudioPath); } catch (_) {}
+
+                         let text = typeof transcription === 'string' ? transcription : (transcription.text || '');
                          if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
                              text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
                          }
                          combinedTranscript += text + ' ';
+                         console.log(`[YouTube] Transcript length: ${text.length} chars`);
+
                      } catch (err) {
-                         failTask(taskId, 'Could not fetch transcript. Make sure the YouTube video has English captions/subtitles enabled. Error: ' + err.message);
+                         // Cleanup temp file if it exists
+                         console.error(`[YouTube] Transcription failed for ${url}:`, err.message);
+                         failTask(taskId, 'Could not process the YouTube video. Make sure the URL is valid and the video is publicly accessible. Error: ' + err.message);
                          return;
                      }
                  }
-                 
+
                  if (combinedTranscript.length > MAX_COMBINED_TEXT_SIZE) {
                      combinedTranscript = combinedTranscript.substring(0, MAX_COMBINED_TEXT_SIZE);
                  }
-                 
+
                  topic = combinedTranscript;
                  extractedTitle = 'YouTube Video Quiz';
                  sourceType = 'topic';
