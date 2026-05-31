@@ -2,14 +2,13 @@ import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Book, Hash, Gauge, Sparkles, Loader2, Plus, X } from 'lucide-react';
+import { Book, Hash, Gauge, Sparkles, Loader2 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
 import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizTopic() {
     const [topic, setTopic] = useState('');
-    const [videoUrls, setVideoUrls] = useState(['']);
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
     const [submitting, setSubmitting] = useState(false);
@@ -77,12 +76,8 @@ export default function CreateQuizTopic() {
 
         setSubmitting(true);
         try {
-            // Clean video URLs
-            const filteredUrls = videoUrls.filter(u => u.trim() !== '');
-
             const res = await api.post('/quiz/generate', {
                 topic,
-                videoUrls: filteredUrls,
                 type: 'topic',
                 questionCount,
                 difficulty,
@@ -118,25 +113,6 @@ export default function CreateQuizTopic() {
 
     const isLoading = submitting || polling;
 
-    const handleAddVideoUrl = () => {
-        if (videoUrls.length < 2) {
-            setVideoUrls([...videoUrls, '']);
-        }
-    };
-
-    const handleUpdateVideoUrl = (index, value) => {
-        const newUrls = [...videoUrls];
-        newUrls[index] = value;
-        setVideoUrls(newUrls);
-    };
-
-    const handleRemoveVideoUrl = (index) => {
-        const newUrls = [...videoUrls];
-        newUrls.splice(index, 1);
-        if (newUrls.length === 0) newUrls.push('');
-        setVideoUrls(newUrls);
-    };
-
     return (
         <DashboardLayout role="teacher">
             {isLoading && (
@@ -169,7 +145,7 @@ export default function CreateQuizTopic() {
                     <div className="bg-white/5 rounded-[3rem] border border-[var(--border-color)] p-12 ring-1 ring-white/5 relative overflow-hidden group glass-panel">
                         <div className="relative z-10 space-y-10">
                             <div>
-                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">Enter Topic (Optional if providing YouTube links)</label>
+                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">Enter Topic</label>
                                 <input
                                     type="text"
                                     value={topic}
@@ -178,42 +154,6 @@ export default function CreateQuizTopic() {
                                     placeholder="e.g. Artificial Intelligence, History of India"
                                     disabled={isLoading}
                                 />
-                            </div>
-
-                            <div className="pt-4 border-t border-white/10">
-                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">Or Enter YouTube Video Links (Max 2)</label>
-                                {videoUrls.map((url, i) => (
-                                    <div key={i} className="flex gap-4 mb-4">
-                                        <input
-                                            type="text"
-                                            value={url}
-                                            onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
-                                            className="flex-1 p-6 bg-white/5 border-2 border-transparent rounded-[2rem] focus:bg-white/10 focus:border-red-500 transition-all font-black text-xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
-                                            placeholder="https://youtube.com/watch?v=..."
-                                            disabled={isLoading}
-                                        />
-                                        {videoUrls.length > 1 && (
-                                            <button 
-                                                type="button" 
-                                                onClick={() => handleRemoveVideoUrl(i)}
-                                                className="bg-white/5 hover:bg-red-500/20 text-red-400 p-6 rounded-[2rem] transition-all"
-                                                disabled={isLoading}
-                                            >
-                                                <X size={24} />
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                                {videoUrls.length < 2 && (
-                                    <button
-                                        type="button"
-                                        onClick={handleAddVideoUrl}
-                                        className="text-sm font-bold text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-2 mt-2"
-                                        disabled={isLoading}
-                                    >
-                                        <Plus size={16} /> Add another video
-                                    </button>
-                                )}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -261,7 +201,7 @@ export default function CreateQuizTopic() {
                     <div className="flex justify-center pt-8">
                         <button
                             type="submit"
-                            disabled={isLoading || (!topic && videoUrls.every(u => !u.trim()))}
+                            disabled={isLoading || !topic.trim()}
                             className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
                         >
                             {isLoading ? <Loader2 className="animate-spin" size={32} /> : <Sparkles size={32} />}

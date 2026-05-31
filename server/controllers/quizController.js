@@ -1416,7 +1416,7 @@ exports.generateQuizQuestions = async (req, res) => {
                          }
                          combinedTranscript += text + ' ';
                      } catch (err) {
-                         failTask(taskId, 'Failed to fetch transcript for a video. Make sure the video has captions: ' + err.message);
+                         failTask(taskId, 'Could not fetch transcript. Make sure the YouTube video has English captions/subtitles enabled. Error: ' + err.message);
                          return;
                      }
                  }
@@ -1442,19 +1442,20 @@ exports.generateQuizQuestions = async (req, res) => {
             }
 
             let isTextEmpty = false;
-            
+
+            // ── YouTube-only path: topic was populated from transcript above ───────
+            // No file → no req.file block needed; topic holds the transcript already
             if (req.file) {
                 const ext = path.extname(req.file.originalname).toLowerCase();
                 const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
                 const contentToModerate = isImage ? '' : (extractedText || topic || '');
-                
+
                 if (!isImage && contentToModerate.trim() === '') {
                     isTextEmpty = true;
                 } else {
                     const moderation = await moderateContent(req.user.id, contentToModerate, isImage ? 'image' : 'text', absolutePath);
                     if (!moderation.isSafe) {
                         try { fs.unlinkSync(absolutePath); } catch (_) {}
-                        
                         if (moderation.type === 'low_confidence') {
                             failTask(taskId, 'We could not extract enough learning material: ' + moderation.reason);
                         } else if (moderation.suspended) {
@@ -1465,22 +1466,22 @@ exports.generateQuizQuestions = async (req, res) => {
                         return;
                     }
                 }
-            } else if (topic) {
-                if (topic.trim() === '') {
-                    isTextEmpty = true;
-                } else {
-                    const moderation = await moderateContent(req.user.id, topic, 'text');
-                    if (!moderation.isSafe) {
-                        if (moderation.type === 'low_confidence') {
-                            failTask(taskId, 'We could not extract enough learning material: ' + moderation.reason);
-                        } else if (moderation.suspended) {
-                            failTask(taskId, `ACCOUNT RESTRICTED: ${moderation.reason}`);
-                        } else {
-                            failTask(taskId, `WARNING (Strike ${moderation.strikeCount}): Content moderation failed. ${moderation.reason}`);
-                        }
-                        return;
+            } else if (topic && topic.trim() !== '') {
+                // topic = either user-typed text OR YouTube transcript
+                const moderation = await moderateContent(req.user.id, topic, 'text');
+                if (!moderation.isSafe) {
+                    if (moderation.type === 'low_confidence') {
+                        failTask(taskId, 'We could not extract enough learning material: ' + moderation.reason);
+                    } else if (moderation.suspended) {
+                        failTask(taskId, `ACCOUNT RESTRICTED: ${moderation.reason}`);
+                    } else {
+                        failTask(taskId, `WARNING (Strike ${moderation.strikeCount}): Content moderation failed. ${moderation.reason}`);
                     }
+                    return;
                 }
+            } else if (!req.file && finalVideoUrls.length === 0) {
+                // No file, no YouTube URLs, no topic — nothing to work with
+                isTextEmpty = true;
             }
 
             if (isTextEmpty) {
