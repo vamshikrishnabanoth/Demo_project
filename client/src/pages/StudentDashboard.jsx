@@ -54,6 +54,7 @@ export default function StudentDashboard() {
 
     // Game Arena States
     const [file, setFile] = useState(null);
+    const [videoUrls, setVideoUrls] = useState(['']);
     const [selectedGame, setSelectedGame] = useState('cyber-quest'); // 'cyber-quest'
     const [submitting, setSubmitting] = useState(false);
     
@@ -277,18 +278,46 @@ export default function StudentDashboard() {
         setFile(e.target.files[0]);
     };
 
+    const handleAddVideoUrl = () => {
+        if (videoUrls.length < 2) {
+            setVideoUrls([...videoUrls, '']);
+        }
+    };
+
+    const handleUpdateVideoUrl = (index, value) => {
+        const newUrls = [...videoUrls];
+        newUrls[index] = value;
+        setVideoUrls(newUrls);
+    };
+
+    const handleRemoveVideoUrl = (index) => {
+        const newUrls = [...videoUrls];
+        newUrls.splice(index, 1);
+        if (newUrls.length === 0) newUrls.push('');
+        setVideoUrls(newUrls);
+    };
+
     const handleLaunchGame = async (e) => {
         e.preventDefault();
-        if (!file) {
-            toast.error('Please upload study material first!');
+        const hasFile = !!file;
+        const filteredUrls = videoUrls.filter(u => u.trim() !== '');
+        const hasUrls = filteredUrls.length > 0;
+
+        if (!hasFile && !hasUrls) {
+            toast.error('Please upload study material or provide YouTube links!');
             return;
         }
 
         setSubmitting(true);
         try {
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('type', 'file');
+            if (hasFile) {
+                formData.append('file', file);
+                formData.append('type', 'file');
+            } else {
+                formData.append('videoUrls', JSON.stringify(filteredUrls));
+                formData.append('type', 'topic');
+            }
             formData.append('questionCount', '10');
             formData.append('difficulty', 'Medium'); // standard pool count and baseline
 
@@ -311,7 +340,7 @@ export default function StudentDashboard() {
                     navigate(targetPath, {
                         state: {
                             questions: result.questions,
-                            title: result.title || file.name.replace(/\.[^/.]+$/, '')
+                            title: result.title || (file ? file.name.replace(/\.[^/.]+$/, '') : 'Video Quiz')
                         }
                     });
                 },
@@ -629,6 +658,35 @@ export default function StudentDashboard() {
                                                 </div>
                                             </div>
                                         </div>
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
+                                                OR YouTube Video Links (Max 2)
+                                            </label>
+                                            <div className="space-y-3">
+                                                {videoUrls.map((url, i) => (
+                                                    <div key={i} className="flex gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={url}
+                                                            onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
+                                                            className="flex-1 p-4 bg-white/5 border border-white/10 rounded-xl focus:bg-white/10 focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
+                                                            placeholder="https://youtube.com/watch?v=..."
+                                                            disabled={submitting}
+                                                        />
+                                                    </div>
+                                                ))}
+                                                {videoUrls.length < 2 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddVideoUrl}
+                                                        className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1 mt-2"
+                                                        disabled={submitting}
+                                                    >
+                                                        + Add another video
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {/* Column 2: Choose Game Mode */}
@@ -717,9 +775,9 @@ export default function StudentDashboard() {
                                 <div className="flex justify-center pt-4">
                                     <button
                                         onClick={handleLaunchGame}
-                                        disabled={!file || submitting}
+                                        disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
                                         className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center gap-4 transition-all duration-300 border btn-cinematic
-                                            ${file && !submitting
+                                            ${(file || videoUrls.some(u => u.trim())) && !submitting
                                                 ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_15px_30px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
                                                 : 'bg-white/5 text-white/10 border-white/5 cursor-not-allowed'
                                             }`}

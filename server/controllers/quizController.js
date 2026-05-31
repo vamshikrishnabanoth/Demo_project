@@ -10,6 +10,7 @@ const Groq = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizIntegrity');
+const { YoutubeTranscript } = require('youtube-transcript');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1322,9 +1323,75 @@ exports.generateQuizQuestions = async (req, res) => {
     // Run entire pipeline in background (non-blocking)
     setImmediate(async () => {
         try {
-            let { type, questionCount, difficulty, topic } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls } = req.body;
             let extractedTitle = topic || 'AI Generated Quiz';
             let sourceType = type || 'topic';
+            let combinedTranscript = '';
+
+            // YouTube validation constraints
+            let finalVideoUrls = [];
+            if (videoUrls) {
+                try {
+                    let urlsArray = [];
+                    if (typeof videoUrls === 'string') {
+                        try {
+                            urlsArray = JSON.parse(videoUrls);
+                        } catch(e) {
+                            urlsArray = [videoUrls];
+                        }
+                    } else if (Array.isArray(videoUrls)) {
+                        urlsArray = videoUrls;
+                    }
+                    
+                    if (urlsArray.length > 2) {
+                        failTask(taskId, 'Maximum 2 YouTube links allowed.');
+                        return;
+                    }
+                    
+                    const seenUrls = new Set();
+                    const ytRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
+                    for (const url of urlsArray) {
+                        if (typeof url === 'string' && ytRegex.test(url) && !seenUrls.has(url)) {
+                            seenUrls.add(url);
+                            finalVideoUrls.push(url);
+                        } else if (typeof url === 'string' && !ytRegex.test(url)) {
+                             failTask(taskId, 'Invalid YouTube URL provided.');
+                             return;
+                        }
+                    }
+                } catch (e) {
+                     failTask(taskId, 'Invalid videoUrls format.');
+                     return;
+                }
+            }
+
+            if (finalVideoUrls.length > 0) {
+                 updateTaskStage(taskId, 0, 'Fetching Video Transcripts');
+                 const MAX_TRANSCRIPT_SIZE_PER_VIDEO = 30000;
+                 const MAX_COMBINED_TEXT_SIZE = 50000;
+                 
+                 for (const url of finalVideoUrls) {
+                     try {
+                         const transcriptArray = await YoutubeTranscript.fetchTranscript(url);
+                         let text = transcriptArray.map(t => t.text).join(' ');
+                         if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
+                             text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
+                         }
+                         combinedTranscript += text + ' ';
+                     } catch (err) {
+                         failTask(taskId, 'Failed to fetch transcript for a video. Make sure the video has captions: ' + err.message);
+                         return;
+                     }
+                 }
+                 
+                 if (combinedTranscript.length > MAX_COMBINED_TEXT_SIZE) {
+                     combinedTranscript = combinedTranscript.substring(0, MAX_COMBINED_TEXT_SIZE);
+                 }
+                 
+                 topic = combinedTranscript;
+                 extractedTitle = 'YouTube Video Quiz';
+                 sourceType = 'topic';
+            }
 
             // --- AI MODERATION GUARD ---
             if (req.file) {
