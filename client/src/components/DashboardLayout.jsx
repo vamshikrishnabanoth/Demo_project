@@ -475,7 +475,7 @@ export default function DashboardLayout({ children, role }) {
                                                                         setMessagesOpen(false);
                                                                         navigate(`/live-room-student/${b.pin}`);
                                                                     } catch (err) {
-                                                                        toast.error(err.response?.data?.msg || 'Neural link failed', {
+                                                                        toast.error(err.response?.data?.msg || 'Join Quiz failed', {
                                                                             style: {
                                                                                 background: 'rgba(239, 68, 68, 0.1)',
                                                                                 color: '#ef4444',
