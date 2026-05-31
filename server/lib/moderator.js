@@ -77,8 +77,16 @@ const moderateContent = async (userId, content, type = 'text', filePath = null) 
 
         if (result && result.startsWith("LOW_CONFIDENCE:")) {
             const reason = result.replace("LOW_CONFIDENCE:", "").trim();
-            console.warn(`⚠️ LOW CONFIDENCE IMAGE for user ${userId}: ${reason}`);
-            return { isSafe: false, type: 'low_confidence', reason };
+            // LOW_CONFIDENCE on TEXT means Gemini found the content too technical/ambiguous to classify
+            // This should NOT block PDF/text uploads — only flag truly suspicious images
+            if (type === 'image') {
+                console.warn(`⚠️ LOW CONFIDENCE IMAGE for user ${userId}: ${reason}`);
+                return { isSafe: false, type: 'low_confidence', reason };
+            } else {
+                // For text (PDFs, topics, transcripts) — treat as safe, just log it
+                console.log(`ℹ️ LOW CONFIDENCE TEXT for user ${userId} (treated as SAFE): ${reason}`);
+                return { isSafe: true, type: 'safe' };
+            }
         }
 
         if (result && result.startsWith("VIOLATION:")) {
