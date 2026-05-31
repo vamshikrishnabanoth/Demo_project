@@ -1407,46 +1407,31 @@ exports.generateQuizQuestions = async (req, res) => {
                  updateTaskStage(taskId, 0, 'Processing Video Content');
                  const MAX_TRANSCRIPT_SIZE_PER_VIDEO = 30000;
                  const MAX_COMBINED_TEXT_SIZE = 50000;
-                 const MAX_VIDEO_DURATION_MINUTES = 30; // Limit video length
-                 const AUDIO_DOWNLOAD_TIMEOUT = 60000; // 60 seconds timeout
 
                  for (const url of finalVideoUrls) {
                      let text = '';
-                     let extractionMethod = 'unknown';
 
-                     // ═══════════════════════════════════════════════════════════
-                     // METHOD 1: Transcript Extraction (Fast, Free, Best Quality)
-                     // ═══════════════════════════════════════════════════════════
+                     // METHOD 1: Try transcript (fast, free, best quality)
                      try {
-                         console.log(`[YouTube] Method 1: Attempting transcript extraction for: ${url}`);
+                         console.log(`[YouTube] Attempting transcript extraction for: ${url}`);
                          const transcriptData = await YoutubeTranscript.fetchTranscript(url);
                          
                          if (transcriptData && transcriptData.length > 0) {
                              text = transcriptData.map(item => item.text).join(' ').trim();
-                             extractionMethod = 'transcript';
                              console.log(`[YouTube] ✅ Transcript extracted: ${text.length} chars`);
                          }
                      } catch (transcriptErr) {
                          console.log(`[YouTube] ⚠️ Transcript not available: ${transcriptErr.message}`);
                      }
 
-                     // ═══════════════════════════════════════════════════════════
-                     // METHOD 2: Metadata Fallback (Fast, Free, Decent Quality)
-                     // ═══════════════════════════════════════════════════════════
+                     // METHOD 2: Try metadata (fast, free, decent quality)
                      if (!text || text.length < 100) {
                          try {
-                             console.log(`[YouTube] Method 2: Fetching video metadata...`);
+                             console.log(`[YouTube] Fetching video metadata...`);
                              const ytdl = require('@distube/ytdl-core');
                              
                              const info = await ytdl.getInfo(url);
                              const videoDetails = info.videoDetails;
-                             
-                             // Check video duration limit
-                             const durationMinutes = parseInt(videoDetails.lengthSeconds) / 60;
-                             if (durationMinutes > MAX_VIDEO_DURATION_MINUTES) {
-                                 failTask(taskId, `Video is too long (${Math.round(durationMinutes)} minutes). Please use videos under ${MAX_VIDEO_DURATION_MINUTES} minutes.`);
-                                 return;
-                             }
                              
                              // Combine title and description
                              let metadataText = '';
@@ -1457,10 +1442,8 @@ exports.generateQuizQuestions = async (req, res) => {
                                  metadataText += `Description: ${videoDetails.description}\n\n`;
                              }
                              
-                             // Use metadata if substantial
                              if (metadataText.length > 200) {
                                  text = metadataText;
-                                 extractionMethod = 'metadata';
                                  console.log(`[YouTube] ✅ Metadata extracted: ${text.length} chars`);
                              }
                          } catch (metadataErr) {
@@ -1468,120 +1451,9 @@ exports.generateQuizQuestions = async (req, res) => {
                          }
                      }
 
-                     // ═══════════════════════════════════════════════════════════
-                     // METHOD 3: Whisper Audio Transcription (Slower, Small Cost)
-                     // ═══════════════════════════════════════════════════════════
-                     if (!text || text.length < 100) {
-                         try {
-                             if (!groq) {
-                                 failTask(taskId, 'Could not extract content from this video. The video does not have captions or description. Please configure GROQ_API_KEY for audio transcription, or use a video with captions.');
-                                 return;
-                             }
-
-                             console.log(`[YouTube] Method 3: Downloading audio for transcription...`);
-                             updateTaskStage(taskId, 1, 'Downloading audio from video...');
-                             
-                             const ytdl = require('@distube/ytdl-core');
-                             const tempAudioPath = path.join('uploads', `temp-audio-${Date.now()}.mp3`);
-                             
-                             // Get video info first to check duration
-                             const info = await ytdl.getInfo(url);
-                             const durationMinutes = parseInt(info.videoDetails.lengthSeconds) / 60;
-                             
-                             if (durationMinutes > MAX_VIDEO_DURATION_MINUTES) {
-                                 failTask(taskId, `Video is too long (${Math.round(durationMinutes)} minutes). Please use videos under ${MAX_VIDEO_DURATION_MINUTES} minutes.`);
-                                 return;
-                             }
-
-                             // Download audio only (much faster than full video)
-                             await new Promise((resolve, reject) => {
-                                 const timeout = setTimeout(() => {
-                                     reject(new Error('Audio download timeout'));
-                                 }, AUDIO_DOWNLOAD_TIMEOUT);
-
-                                 const audioStream = ytdl(url, {
-                                     quality: 'lowestaudio',
-                                     filter: 'audioonly'
-                                 });
-
-                                 const writeStream = fs.createWriteStream(tempAudioPath);
-                                 
-                                 audioStream.pipe(writeStream);
-                                 
-                                 writeStream.on('finish', () => {
-                                     clearTimeout(timeout);
-                                     resolve();
-                                 });
-                                 
-                                 writeStream.on('error', (err) => {
-                                     clearTimeout(timeout);
-                                     reject(err);
-                                 });
-                                 
-                                 audioStream.on('error', (err) => {
-                                     clearTimeout(timeout);
-                                     reject(err);
-                                 });
-                             });
-
-                             console.log(`[YouTube] ✅ Audio downloaded: ${tempAudioPath}`);
-                             updateTaskStage(taskId, 2, 'Transcribing audio with Whisper...');
-
-                             // Transcribe with Groq Whisper
-                             const transcription = await groq.audio.transcriptions.create({
-                                 file: fs.createReadStream(tempAudioPath),
-                                 model: "whisper-large-v3",
-                                 prompt: "This is educational content. Focus on key concepts, facts, and explanations.",
-                                 response_format: "text",
-                                 language: "en"
-                             });
-
-                             // Clean up temporary file
-                             try {
-                                 fs.unlinkSync(tempAudioPath);
-                             } catch (cleanupErr) {
-                                 console.log(`[YouTube] ⚠️ Could not delete temp file: ${cleanupErr.message}`);
-                             }
-
-                             if (transcription && transcription.length > 50) {
-                                 text = transcription.trim();
-                                 extractionMethod = 'whisper-audio';
-                                 console.log(`[YouTube] ✅ Whisper transcription: ${text.length} chars`);
-                             } else {
-                                 console.log(`[YouTube] ⚠️ Whisper returned insufficient content`);
-                             }
-
-                         } catch (audioErr) {
-                             console.error(`[YouTube] ❌ Audio transcription failed: ${audioErr.message}`);
-                             
-                             // Clean up temp file if it exists
-                             try {
-                                 const tempFiles = fs.readdirSync('uploads').filter(f => f.startsWith('temp-audio-'));
-                                 tempFiles.forEach(f => fs.unlinkSync(path.join('uploads', f)));
-                             } catch (cleanupErr) {
-                                 // Ignore cleanup errors
-                             }
-                             
-                             // Provide helpful error message
-                             let errorMsg = 'Could not process the YouTube video. ';
-                             if (audioErr.message.includes('timeout')) {
-                                 errorMsg += 'Audio download took too long. Please try a shorter video.';
-                             } else if (audioErr.message.includes('GROQ')) {
-                                 errorMsg += 'Audio transcription service is not configured. Please use a video with captions.';
-                             } else {
-                                 errorMsg += 'Please try a different video, preferably one with captions or a detailed description.';
-                             }
-                             
-                             failTask(taskId, errorMsg);
-                             return;
-                         }
-                     }
-
-                     // ═══════════════════════════════════════════════════════════
-                     // Validate and Apply Limits
-                     // ═══════════════════════════════════════════════════════════
+                     // Validate we got something
                      if (!text || text.length < 50) {
-                         failTask(taskId, 'Could not extract enough educational content from the video. Please try a different video.');
+                         failTask(taskId, 'Could not extract content from this video. Please try a different video, preferably one with captions or a detailed description.');
                          return;
                      }
 
@@ -1591,7 +1463,7 @@ exports.generateQuizQuestions = async (req, res) => {
                      }
                      
                      combinedTranscript += text + ' ';
-                     console.log(`[YouTube] ✅ Content extracted via ${extractionMethod}: ${text.length} chars`);
+                     console.log(`[YouTube] ✅ Content ready: ${text.length} chars`);
                  }
 
                  if (combinedTranscript.length > MAX_COMBINED_TEXT_SIZE) {
