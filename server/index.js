@@ -44,7 +44,24 @@ app.use(morgan('dev')); // Keep dev logging for console
 
 // 1. CORS - MUST BE FIRST to handle preflights correctly
 app.use(cors({
-    origin: ['https://kmit-khaoot.vercel.app', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+        const allowed = [
+            'https://kmit-khaoot.vercel.app',
+            'http://localhost:5173',
+            'http://127.0.0.1:5173',
+        ];
+        // Also allow any Vercel preview deployment URLs (*.vercel.app)
+        const isVercelPreview = /^https:\/\/[a-z0-9-]+-[a-z0-9]+-[a-z0-9]+\.vercel\.app$/.test(origin)
+            || origin.endsWith('.vercel.app');
+        if (allowed.includes(origin) || isVercelPreview) {
+            callback(null, true);
+        } else {
+            console.warn(`[CORS] Blocked origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token', 'Accept']
@@ -100,7 +117,15 @@ app.use('/api/broadcast', require('./routes/broadcast'));
 // Socket.io Setup - Secure CORS
 const io = new Server(server, {
     cors: {
-        origin: ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'],
+        origin: (origin, callback) => {
+            if (!origin) return callback(null, true);
+            const allowed = ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'];
+            if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: ["GET", "POST"]
     }
 });
