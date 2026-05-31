@@ -10,7 +10,12 @@ const socket = io(SOCKET_URL, {
         });
     },
 
-    transports: ['websocket', 'polling'],
+    // Use polling first, then upgrade to websocket.
+    // This is critical for Render.com deployments — Render's free tier
+    // requires the HTTP handshake (polling) before upgrading to WebSocket.
+    // Starting with 'websocket' directly causes the "WebSocket closed before
+    // connection established" error visible in the console.
+    transports: ['polling', 'websocket'],
 
     reconnection: true,
     reconnectionAttempts: Infinity,
@@ -19,9 +24,17 @@ const socket = io(SOCKET_URL, {
 
     timeout: 20000,
 
-    autoConnect: true,
+    // Don't auto-connect on page load — connect only after login token exists.
+    // This prevents the failed socket connection attempt on the login page
+    // when there's no auth token yet.
+    autoConnect: false,
 
     forceNew: false
 });
+
+// Only auto-connect if a token already exists (returning user / page refresh)
+if (localStorage.getItem('token')) {
+    socket.connect();
+}
 
 export default socket;
