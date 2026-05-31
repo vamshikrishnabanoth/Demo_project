@@ -32,9 +32,15 @@ export const AuthProvider = ({ children }) => {
             try {
                 const res = await api.get('/auth/me');
                 setUser(res.data);
-            } catch {
-                // Token is invalid/expired — clear it silently
-                localStorage.removeItem('token');
+            } catch (err) {
+                // Only clear token if the server explicitly tells us the token is invalid/expired (401 or 403)
+                // If it's a temporary network error or 5xx server error, keep the token so we don't force log out!
+                if (err.response?.status === 401 || err.response?.status === 403) {
+                    console.warn('[AuthContext] Session expired/invalid. Clearing token.', err);
+                    localStorage.removeItem('token');
+                } else {
+                    console.error('[AuthContext] Network or server error during auth hydration:', err);
+                }
             } finally {
                 setLoading(false);
             }
