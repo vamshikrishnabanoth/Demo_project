@@ -24,15 +24,29 @@ export const AuthProvider = ({ children }) => {
     // ── Restore session on mount ─────────────────────────────────────────────
     useEffect(() => {
         const checkUser = async () => {
+            console.log('[DIAGNOSTIC-AUTH] Hydration phase initiated.');
             const token = localStorage.getItem('token');
+            console.log('[DIAGNOSTIC-AUTH] Retrieved token from localStorage:', token ? `${token.slice(0, 15)}...` : 'NONE');
             if (!token) {
+                console.log('[DIAGNOSTIC-AUTH] No token found. Skipping session hydration.');
                 setLoading(false);
                 return;
             }
             try {
+                console.log('[DIAGNOSTIC-AUTH] Dispatching GET /auth/me request to backend...');
+                const startTime = Date.now();
                 const res = await api.get('/auth/me');
+                console.log(`[DIAGNOSTIC-AUTH] GET /auth/me succeeded in ${Date.now() - startTime}ms. Payload:`, res.data);
                 setUser(res.data);
             } catch (err) {
+                console.error('[DIAGNOSTIC-AUTH] Hydration failed! Catching error details:', {
+                    message: err.message,
+                    code: err.code,
+                    status: err.response?.status,
+                    statusText: err.response?.statusText,
+                    responseBody: err.response?.data
+                });
+                
                 // Only clear token if the server explicitly tells us the token is invalid/expired (401 or 403)
                 // If it's a temporary network error or 5xx server error, keep the token so we don't force log out!
                 if (err.response?.status === 401 || err.response?.status === 403) {
@@ -42,6 +56,7 @@ export const AuthProvider = ({ children }) => {
                     console.error('[AuthContext] Network or server error during auth hydration:', err);
                 }
             } finally {
+                console.log('[DIAGNOSTIC-AUTH] Hydration completed. Setting loading state to FALSE.');
                 setLoading(false);
             }
         };
