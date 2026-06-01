@@ -221,7 +221,8 @@ export default function CreateQuizText() {
                 navigate('/teacher-dashboard');
             }
         } catch (err) {
-            toast.error(err.response?.data?.msg || 'Network Link Failure');
+            const serverMsg = err.response?.data?.msg || err.response?.data?.message || err.response?.data?.error;
+            toast.error(serverMsg || 'Network Link Failure');
         } finally {
             setLoading(false);
         }

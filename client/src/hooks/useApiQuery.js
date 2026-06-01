@@ -45,7 +45,7 @@ export function useApiQuery(url, {
             return result;
         } catch (err) {
             if (err.name === 'CanceledError' || err.name === 'AbortError') return;
-            const msg = err.response?.data?.msg || 'Network Link Failure';
+            const msg = err.response?.data?.msg || err.response?.data?.message || err.response?.data?.error || 'Network Link Failure';
             setError(msg);
             if (showErrorToast) toast.error(msg);
         } finally {
