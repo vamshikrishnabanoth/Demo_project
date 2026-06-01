@@ -1471,74 +1471,94 @@ exports.generateQuizQuestions = async (req, res) => {
                          }
                      }
 
-                     // METHOD 3: Gemini AI content generation (fallback — no download needed)
-                     if ((!text || text.length < 100) && process.env.GEMINI_API_KEY) {
-                         try {
-                             console.log(`[YouTube] 🤖 Using Gemini AI to generate educational content...`);
-                             updateTaskStage(taskId, 0, 'Generating Content with AI');
-                             const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                             const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-                             const videoHint = getVideoHint(url);
-                             const geminiPrompt = [
-                                 `You are an educational content expert.`,
-                                 `A student has submitted a YouTube video URL for quiz generation: ${url}`,
-                                 `${videoHint}`,
-                                 ``,
-                                 `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
-                                 `that covers the likely key concepts, facts, and learning points from this video.`,
-                                 ``,
-                                 `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
-                                 `Focus on factual, testable knowledge. Use clear, concise language.`,
-                                 `If you cannot determine the topic from the URL, generate content about general educational topics.`,
-                             ].join('\n');
-                             const geminiResult = await model.generateContent(geminiPrompt);
-                             const geminiText = geminiResult.response.text();
-                             if (geminiText && geminiText.length > 200) {
-                                 text = geminiText;
-                                 extractionMethod = 'ai-generated';
-                                 console.log(`[YouTube] ✅ AI-generated content: ${text.length} chars`);
-                             }
-                         } catch (geminiErr) {
-                             console.log(`[YouTube] ⚠️ Gemini AI fallback failed: ${geminiErr.message}`);
-                         }
-                     }
+                      // METHOD 2.5: Try noembed (free, public oEmbed API — very reliable on cloud servers)
+                      if (!text || text.length < 100) {
+                          try {
+                              console.log(`[YouTube] Fetching video oEmbed details...`);
+                              const embedUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
+                              const embedRes = await axios.get(embedUrl);
+                              if (embedRes.data && embedRes.data.title) {
+                                  text = `Title: ${embedRes.data.title}\nAuthor: ${embedRes.data.author_name || ''}`;
+                                  extractionMethod = 'oembed';
+                                  console.log(`[YouTube] ✅ oEmbed metadata extracted: "${embedRes.data.title}"`);
+                              }
+                          } catch (oembedErr) {
+                              console.log(`[YouTube] ⚠️ oEmbed extraction failed: ${oembedErr.message}`);
+                          }
+                      }
 
-                     // METHOD 4: Groq AI content generation (fallback — no download needed, very reliable)
-                     if ((!text || text.length < 100) && groq) {
-                         try {
-                             console.log(`[YouTube] 🤖 Using Groq AI to generate educational content...`);
-                             updateTaskStage(taskId, 0, 'Generating Content with AI');
-                             const videoHint = getVideoHint(url);
-                             const groqPrompt = [
-                                 `You are an educational content expert.`,
-                                 `A student has submitted a YouTube video URL for quiz generation: ${url}`,
-                                 `${videoHint}`,
-                                 ``,
-                                 `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
-                                 `that covers the likely key concepts, facts, and learning points from this video.`,
-                                 ``,
-                                 `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
-                                 `Focus on factual, testable knowledge. Use clear, concise language.`,
-                                 `If you cannot determine the topic from the URL, generate content about general educational topics.`,
-                             ].join('\n');
+                      // METHOD 3: Gemini AI content generation (fallback — no download needed)
+                      if ((!text || text.length < 100 || extractionMethod === 'oembed') && process.env.GEMINI_API_KEY) {
+                          try {
+                              console.log(`[YouTube] 🤖 Using Gemini AI to generate educational content...`);
+                              updateTaskStage(taskId, 0, 'Generating Content with AI');
+                              const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+                              const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+                              const videoHint = getVideoHint(url);
+                              const contextHint = extractionMethod === 'oembed' ? `Video Details from YouTube: ${text}` : '';
+                              const geminiPrompt = [
+                                  `You are an educational content expert.`,
+                                  `A student has submitted a YouTube video URL for quiz generation: ${url}`,
+                                  `${videoHint}`,
+                                  `${contextHint}`,
+                                  ``,
+                                  `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
+                                  `that covers the likely key concepts, facts, and learning points from this video.`,
+                                  ``,
+                                  `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
+                                  `Focus on factual, testable knowledge. Use clear, concise language.`,
+                                  `If you cannot determine the topic from the URL, generate content about general educational topics.`,
+                              ].join('\n');
+                              const geminiResult = await model.generateContent(geminiPrompt);
+                              const geminiText = geminiResult.response.text();
+                              if (geminiText && geminiText.length > 200) {
+                                  text = geminiText;
+                                  extractionMethod = 'ai-generated';
+                                  console.log(`[YouTube] ✅ AI-generated content: ${text.length} chars`);
+                              }
+                          } catch (geminiErr) {
+                              console.log(`[YouTube] ⚠️ Gemini AI fallback failed: ${geminiErr.message}`);
+                          }
+                      }
 
-                             const chatCompletion = await groq.chat.completions.create({
-                                 messages: [{ role: 'user', content: groqPrompt }],
-                                 model: 'llama-3.1-8b-instant',
-                                 temperature: 0.5,
-                                 max_tokens: 2000
-                             });
+                      // METHOD 4: Groq AI content generation (fallback — no download needed, very reliable)
+                      if ((!text || text.length < 100 || extractionMethod === 'oembed') && groq) {
+                          try {
+                              console.log(`[YouTube] 🤖 Using Groq AI to generate educational content...`);
+                              updateTaskStage(taskId, 0, 'Generating Content with AI');
+                              const videoHint = getVideoHint(url);
+                              const contextHint = extractionMethod === 'oembed' ? `Video Details from YouTube: ${text}` : '';
+                              const groqPrompt = [
+                                  `You are an educational content expert.`,
+                                  `A student has submitted a YouTube video URL for quiz generation: ${url}`,
+                                  `${videoHint}`,
+                                  `${contextHint}`,
+                                  ``,
+                                  `Since the video transcript is not directly accessible, generate a comprehensive educational summary`,
+                                  `that covers the likely key concepts, facts, and learning points from this video.`,
+                                  ``,
+                                  `Write 500-800 words of educational content suitable for generating 10 multiple-choice quiz questions.`,
+                                  `Focus on factual, testable knowledge. Use clear, concise language.`,
+                                  `If you cannot determine the topic from the URL, generate content about general educational topics.`,
+                              ].join('\n');
 
-                             const groqText = chatCompletion.choices[0].message.content;
-                             if (groqText && groqText.length > 200) {
-                                 text = groqText;
-                                 extractionMethod = 'groq-ai-generated';
-                                 console.log(`[YouTube] ✅ Groq AI-generated content: ${text.length} chars`);
-                             }
-                         } catch (groqErr) {
-                             console.log(`[YouTube] ⚠️ Groq AI fallback failed: ${groqErr.message}`);
-                         }
-                     }
+                              const chatCompletion = await groq.chat.completions.create({
+                                  messages: [{ role: 'user', content: groqPrompt }],
+                                  model: 'llama-3.1-8b-instant',
+                                  temperature: 0.5,
+                                  max_tokens: 2000
+                              });
+
+                              const groqText = chatCompletion.choices[0].message.content;
+                              if (groqText && groqText.length > 200) {
+                                  text = groqText;
+                                  extractionMethod = 'groq-ai-generated';
+                                  console.log(`[YouTube] ✅ Groq AI-generated content: ${text.length} chars`);
+                              }
+                          } catch (groqErr) {
+                              console.log(`[YouTube] ⚠️ Groq AI fallback failed: ${groqErr.message}`);
+                          }
+                      }
 
                      console.log(`[YouTube] ✅ Content extracted via ${extractionMethod}`);
 
