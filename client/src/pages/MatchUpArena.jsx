@@ -460,15 +460,19 @@ export default function MatchUpArena() {
                                                 style={{ perspective: 1000 }}
                                             >
                                                 <motion.div
-                                                    className={`absolute inset-0 w-full h-full rounded-2xl border flex items-center justify-center p-3 text-center transition-all duration-300 shadow-md ${borderGlowClass}`}
-                                                    style={{ transformStyle: 'preserve-3d' }}
+                                                    className={`absolute inset-0 w-full h-full rounded-2xl border flex items-center justify-center p-3 text-center transition-[border-color,background-color,color,box-shadow,opacity] duration-300 shadow-md ${borderGlowClass}`}
+                                                    style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d' }}
                                                     animate={{ rotateY: isFlipped ? 180 : 0 }}
                                                     transition={{ duration: 0.4 }}
                                                 >
                                                     {/* CARD BACK SIDE (Face Down) */}
                                                     <div 
                                                         className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.01] border-white/5"
-                                                        style={{ backfaceVisibility: 'hidden' }}
+                                                        style={{ 
+                                                            backfaceVisibility: 'hidden', 
+                                                            WebkitBackfaceVisibility: 'hidden',
+                                                            zIndex: isFlipped ? 1 : 2
+                                                        }}
                                                     >
                                                         <span className="text-5xl font-black uppercase tracking-widest text-purple-500/25 select-none">
                                                             {card.type === 'question' ? 'Q' : 'A'}
@@ -478,7 +482,13 @@ export default function MatchUpArena() {
                                                     {/* CARD FRONT SIDE (Face Up - text rotated by 180 degrees to display correctly) */}
                                                     <div 
                                                         className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.03] p-4 text-xs font-semibold overflow-y-auto leading-relaxed select-none"
-                                                        style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                                                        style={{ 
+                                                            backfaceVisibility: 'hidden', 
+                                                            WebkitBackfaceVisibility: 'hidden',
+                                                            transform: 'rotateY(180deg)',
+                                                            WebkitTransform: 'rotateY(180deg)',
+                                                            zIndex: isFlipped ? 2 : 1
+                                                        }}
                                                     >
                                                         <span className="text-[8px] font-black uppercase tracking-widest text-purple-400 absolute top-2 left-3">
                                                             {card.type}
