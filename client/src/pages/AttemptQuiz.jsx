@@ -1458,42 +1458,88 @@ export default function AttemptQuiz() {
             <AnimatePresence>
                 {speedFeedback && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: -30 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: -30 }}
-                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                        className="fixed inset-x-0 top-24 pointer-events-none z-[9999] flex justify-center p-4"
+                        initial={{ opacity: 0, x: 60, scale: 0.85 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 60, scale: 0.85 }}
+                        transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                        className="fixed bottom-8 right-6 pointer-events-none z-[9999] w-72"
                     >
                         <div 
-                            className={`w-full max-w-sm pointer-events-auto p-6 rounded-3xl border shadow-2xl backdrop-blur-xl text-center relative overflow-hidden transition-all duration-300 ${
+                            className={`pointer-events-auto p-5 rounded-3xl border shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-300 ${
                                 speedFeedback.isFast 
-                                    ? 'bg-cyan-950/90 border-cyan-500/30 shadow-cyan-500/20 text-cyan-300' 
-                                    : 'bg-amber-950/90 border-amber-500/30 shadow-amber-500/20 text-amber-300'
+                                    ? 'bg-cyan-950/95 border-cyan-500/40 shadow-cyan-500/25 text-cyan-300' 
+                                    : 'bg-amber-950/95 border-amber-500/40 shadow-amber-500/25 text-amber-300'
                             }`}
                         >
-                            {/* Glow highlights */}
-                            <div className={`absolute -top-12 -left-12 w-24 h-24 rounded-full blur-2xl opacity-40 ${
-                                speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
-                            }`} />
-                            <div className={`absolute -bottom-12 -right-12 w-24 h-24 rounded-full blur-2xl opacity-40 ${
-                                speedFeedback.isFast ? 'bg-blue-400' : 'bg-orange-400'
-                            }`} />
+                            {/* Animated corner glow */}
+                            <motion.div
+                                animate={{ opacity: [0.25, 0.55, 0.25] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className={`absolute -top-8 -right-8 w-20 h-20 rounded-full blur-2xl ${
+                                    speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
+                                }`}
+                            />
+                            <motion.div
+                                animate={{ opacity: [0.15, 0.35, 0.15] }}
+                                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                                className={`absolute -bottom-8 -left-8 w-20 h-20 rounded-full blur-2xl ${
+                                    speedFeedback.isFast ? 'bg-blue-500' : 'bg-orange-500'
+                                }`}
+                            />
 
                             <motion.div 
-                                initial={{ rotate: -10, scale: 0.9 }}
+                                initial={{ rotate: speedFeedback.isFast ? -8 : 8, scale: 0.9 }}
                                 animate={{ rotate: 0, scale: 1 }}
-                                transition={{ type: 'spring', delay: 0.1 }}
-                                className="relative z-10 flex flex-col items-center gap-4"
+                                transition={{ type: 'spring', delay: 0.08 }}
+                                className="relative z-10 flex items-center gap-4"
                             >
-                                <span className={`text-5xl select-none filter drop-shadow`}>
+                                {/* Big emoji */}
+                                <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner ${
+                                    speedFeedback.isFast
+                                        ? 'bg-cyan-900/60 border border-cyan-500/30'
+                                        : 'bg-amber-900/60 border border-amber-500/30'
+                                }`}>
                                     {speedFeedback.isFast ? "⚡" : "🐢"}
-                                </span>
-                                <h3 className={`text-2xl font-black italic uppercase tracking-tighter filter drop-shadow`}>
-                                    {speedFeedback.isFast ? "FAST RESPONSE" : "STAY FOCUS"}
-                                </h3>
-                                <p className="text-white/80 font-bold text-sm leading-relaxed px-2">
-                                    {speedFeedback.message}
-                                </p>
+                                </div>
+
+                                {/* Text block */}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-[10px] font-black uppercase tracking-[0.25em] opacity-60 mb-0.5 ${
+                                        speedFeedback.isFast ? 'text-cyan-400' : 'text-amber-400'
+                                    }`}>
+                                        {speedFeedback.isFast ? 'Response Speed' : 'Pace Alert'}
+                                    </p>
+                                    <h3 className={`text-lg font-black italic uppercase tracking-tight leading-tight ${
+                                        speedFeedback.isFast ? 'text-cyan-200' : 'text-amber-200'
+                                    }`}>
+                                        {speedFeedback.isFast
+                                            ? (speedFeedback.message?.toLowerCase().includes('first') ? 'Lightning Fast! 🔥' :
+                                               speedFeedback.message?.toLowerCase().includes('top') ? 'Top Speed! 🚀' :
+                                               'Quick Reflexes!')
+                                            : (speedFeedback.message?.toLowerCase().includes('last') ? 'Too Slow...' :
+                                               speedFeedback.message?.toLowerCase().includes('half') ? 'Speed Up!' :
+                                               'Pick Up Pace!')}
+                                    </h3>
+                                    <p className="text-white/60 font-semibold text-xs leading-snug mt-1 truncate">
+                                        {speedFeedback.message}
+                                    </p>
+                                </div>
+                            </motion.div>
+
+                            {/* Progress bar draining as toast disappears */}
+                            <motion.div
+                                className={`mt-4 h-1 rounded-full ${
+                                    speedFeedback.isFast ? 'bg-cyan-500/30' : 'bg-amber-500/30'
+                                }`}
+                            >
+                                <motion.div
+                                    initial={{ width: '100%' }}
+                                    animate={{ width: '0%' }}
+                                    transition={{ duration: 4, ease: 'linear' }}
+                                    className={`h-full rounded-full ${
+                                        speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
+                                    }`}
+                                />
                             </motion.div>
                         </div>
                     </motion.div>
@@ -1516,6 +1562,7 @@ export default function AttemptQuiz() {
                 <SubmissionSequence 
                     selectedOption={answers[currentQuestion] || 'N/A'}
                     questionText={quiz.questions[currentQuestion]?.questionText || 'Quiz Complete'}
+                    timeTaken={questionTimes[currentQuestion] || null}
                     onComplete={() => {
                         localStorage.removeItem(`quiz_answers_${id}`);
                         navigate(`/report/${id}`);

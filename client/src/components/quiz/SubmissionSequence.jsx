@@ -28,12 +28,55 @@ const STATIC_PARTICLES = Array.from({ length: 24 }).map((_, i) => {
 export default function SubmissionSequence({ 
     selectedOption = "A", 
     questionText = "Question complete.",
+    timeTaken = null,
     onComplete 
 }) {
     const [progress, setProgress] = useState(0);
     const [showCheck, setShowCheck] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [crashed, setCrashed] = useState(false);
+
+    // Determine responsiveness tier based on timeTaken (seconds)
+    const getResponseTier = () => {
+        if (timeTaken === null) return 'normal';
+        if (timeTaken <= 5) return 'lightning';
+        if (timeTaken <= 12) return 'fast';
+        if (timeTaken <= 25) return 'normal';
+        return 'slow';
+    };
+    const tier = getResponseTier();
+
+    const tierConfig = {
+        lightning: {
+            label: 'LIGHTNING REFLEXES',
+            headline: 'Blazing Fast! ⚡',
+            sub: 'You locked in before most even read the question!',
+            color: 'text-cyan-400',
+            badge: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
+        },
+        fast: {
+            label: 'SHARP RESPONSE',
+            headline: 'Fast & Focused 🎯',
+            sub: 'Excellent reaction — you were ahead of the curve!',
+            color: 'text-green-400',
+            badge: 'bg-green-500/15 border-green-500/30 text-green-300',
+        },
+        normal: {
+            label: 'ANSWER LOCKED',
+            headline: 'Steady & Sure ✅',
+            sub: 'Deliberate choice submitted to the ledger.',
+            color: 'text-[var(--text-accent,#D7AC28)]',
+            badge: 'bg-[var(--bg-accent,#D7AC28)]/10 border-[var(--bg-accent,#D7AC28)]/30 text-[var(--text-accent,#D7AC28)]',
+        },
+        slow: {
+            label: 'LATE RESPONSE',
+            headline: 'Submitted! Keep Pace 🐢',
+            sub: 'Answer received — try to respond faster next time!',
+            color: 'text-amber-400',
+            badge: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+        },
+    };
+    const tc = tierConfig[tier];
 
     // Reduced Motion Detection
     const shouldReduceMotion = typeof window !== 'undefined' 
@@ -125,7 +168,7 @@ export default function SubmissionSequence({
 
     return (
         <div 
-            className="fixed inset-0 z-[4000] flex items-center justify-center bg-black/85 backdrop-blur-md p-6"
+            className="fixed inset-0 z-[4000] flex flex-col items-center justify-center bg-black/85 backdrop-blur-md p-6"
             role="dialog" 
             aria-modal="true" 
             aria-label="Submission progress overlay"
@@ -134,25 +177,16 @@ export default function SubmissionSequence({
                 initial={{ opacity: 0, scale: 0.9, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-full max-w-lg bg-[var(--bg-secondary,#161618)] rounded-[2.5rem] border border-white/10 p-8 sm:p-12 text-center shadow-2xl flex flex-col items-center"
+                className="relative w-full max-w-md bg-[var(--bg-secondary,#161618)] rounded-[2.5rem] border border-white/10 p-8 sm:p-10 text-center shadow-2xl flex flex-col items-center"
             >
                 {/* Header section */}
-                <div className="mb-8">
-                    <p className="text-[10px] font-black text-[var(--text-accent,#D7AC28)] uppercase tracking-[0.4em] mb-2">Sequence Dispatch</p>
+                <div className="mb-6">
+                    <p className="text-[10px] font-black text-[var(--text-accent,#D7AC28)] uppercase tracking-[0.4em] mb-1">Sequence Dispatch</p>
                     <h2 className="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter">SECURE TRANSMISSION</h2>
                 </div>
 
-                {/* Selected option highlight card */}
-                <div className="w-full bg-white/5 border border-white/5 rounded-3xl p-5 mb-8 text-left relative overflow-hidden">
-                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-2">Selected Action</p>
-                    <p className="text-sm font-bold text-white leading-relaxed line-clamp-1 mb-3">{questionText}</p>
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-[var(--bg-accent,#D7AC28)]/10 border border-[var(--bg-accent,#D7AC28)]/30 rounded-xl text-[var(--text-accent,#D7AC28)] font-black text-xs uppercase tracking-widest">
-                        Option Selected: <span className="text-white font-mono">{selectedOption}</span>
-                    </div>
-                </div>
-
                 {/* Progress Ring / Checkmark Drawing area */}
-                <div className="relative w-40 h-40 flex items-center justify-center mb-8">
+                <div className="relative w-32 h-32 flex items-center justify-center mb-6">
                     <svg 
                         className="w-full h-full -rotate-90"
                         viewBox={`0 0 ${radius * 2} ${radius * 2}`}
@@ -169,7 +203,7 @@ export default function SubmissionSequence({
                         />
                         {/* Animated progress circle */}
                         <motion.circle
-                            stroke="var(--bg-accent, #D7AC28)"
+                            stroke={`var(--bg-accent, #D7AC28)`}
                             fill="transparent"
                             strokeWidth={strokeWidth}
                             strokeDasharray={circumference + ' ' + circumference}
@@ -192,7 +226,7 @@ export default function SubmissionSequence({
                                 className="absolute inset-0 flex items-center justify-center text-[var(--success-bg,#22c55e)]"
                             >
                                 <motion.svg 
-                                    className="w-16 h-16" 
+                                    className="w-14 h-14" 
                                     viewBox="0 0 24 24" 
                                     fill="none" 
                                     stroke="currentColor" 
@@ -211,12 +245,29 @@ export default function SubmissionSequence({
                             </motion.div>
                         )}
                     </AnimatePresence>
-
-                    {/* Particle Confetti Burst removed to avoid duplication with answers locked checkmark */}
                 </div>
 
+                {/* Responsiveness response card — positioned BELOW the ring, not overlapping */}
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25, duration: 0.4 }}
+                    className={`w-full border rounded-2xl p-4 mb-5 text-left relative overflow-hidden ${tc.badge}`}
+                >
+                    <p className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">{tc.label}</p>
+                    <h3 className={`text-base font-black italic uppercase tracking-tight leading-snug mb-1 ${tc.color}`}>
+                        {tc.headline}
+                    </h3>
+                    <p className="text-xs font-semibold text-white/50 leading-snug">{tc.sub}</p>
+                    {/* Selected option chip */}
+                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-xl">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-white/30">You chose:</span>
+                        <span className="text-xs font-mono font-black text-white">{selectedOption}</span>
+                    </div>
+                </motion.div>
+
                 {/* Subtitle status messages */}
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                     <p className="text-sm font-black text-white uppercase tracking-widest">
                         {showCheck ? "TRANSMITTED SUCCESSFULLY ✓" : "ENCRYPTING ANSWER PACKET..."}
                     </p>
