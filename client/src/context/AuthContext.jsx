@@ -7,6 +7,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser]       = useState(null);
     const [loading, setLoading] = useState(true);
+    const [authError, setAuthError] = useState(null);
     const [theme, setThemeState] = useState(() => localStorage.getItem('app-theme') || 'celestial');
     const [font, setFontState]   = useState(() => localStorage.getItem('app-font-key') || 'segoe');
 
@@ -22,46 +23,55 @@ export const AuthProvider = ({ children }) => {
     }, [font]);
 
     // ── Restore session on mount ─────────────────────────────────────────────
-    useEffect(() => {
-        const checkUser = async () => {
-            console.log('[DIAGNOSTIC-AUTH] Hydration phase initiated.');
-            const token = localStorage.getItem('token');
-            console.log('[DIAGNOSTIC-AUTH] Retrieved token from localStorage:', token ? `${token.slice(0, 15)}...` : 'NONE');
-            if (!token) {
-                console.log('[DIAGNOSTIC-AUTH] No token found. Skipping session hydration.');
-                setLoading(false);
-                return;
+    const checkUser = useCallback(async () => {
+        console.log('[DIAGNOSTIC-AUTH] Hydration phase initiated.');
+        const token = localStorage.getItem('token');
+        console.log('[DIAGNOSTIC-AUTH] Retrieved token from localStorage:', token ? `${token.slice(0, 15)}...` : 'NONE');
+        if (!token) {
+            console.log('[DIAGNOSTIC-AUTH] No token found. Skipping session hydration.');
+            setLoading(false);
+            return;
+        }
+        try {
+            console.log('[DIAGNOSTIC-AUTH] Dispatching GET /auth/me request to backend...');
+            const startTime = Date.now();
+            const res = await api.get('/auth/me');
+            console.log(`[DIAGNOSTIC-AUTH] GET /auth/me succeeded in ${Date.now() - startTime}ms. Payload:`, res.data);
+            setUser(res.data);
+            setAuthError(null);
+        } catch (err) {
+            console.error('[DIAGNOSTIC-AUTH] Hydration failed! Catching error details:', {
+                message: err.message,
+                code: err.code,
+                status: err.response?.status,
+                statusText: err.response?.statusText,
+                responseBody: err.response?.data
+            });
+            
+            // Only clear token if the server explicitly tells us the token is invalid/expired (401 or 403)
+            // If it's a temporary network error or 5xx server error, keep the token so we don't force log out!
+            if (err.response?.status === 401 || err.response?.status === 403) {
+                console.warn('[AuthContext] Session expired/invalid. Clearing token.', err);
+                localStorage.removeItem('token');
+            } else {
+                console.error('[AuthContext] Network or server error during auth hydration:', err);
+                setAuthError(err);
             }
-            try {
-                console.log('[DIAGNOSTIC-AUTH] Dispatching GET /auth/me request to backend...');
-                const startTime = Date.now();
-                const res = await api.get('/auth/me');
-                console.log(`[DIAGNOSTIC-AUTH] GET /auth/me succeeded in ${Date.now() - startTime}ms. Payload:`, res.data);
-                setUser(res.data);
-            } catch (err) {
-                console.error('[DIAGNOSTIC-AUTH] Hydration failed! Catching error details:', {
-                    message: err.message,
-                    code: err.code,
-                    status: err.response?.status,
-                    statusText: err.response?.statusText,
-                    responseBody: err.response?.data
-                });
-                
-                // Only clear token if the server explicitly tells us the token is invalid/expired (401 or 403)
-                // If it's a temporary network error or 5xx server error, keep the token so we don't force log out!
-                if (err.response?.status === 401 || err.response?.status === 403) {
-                    console.warn('[AuthContext] Session expired/invalid. Clearing token.', err);
-                    localStorage.removeItem('token');
-                } else {
-                    console.error('[AuthContext] Network or server error during auth hydration:', err);
-                }
-            } finally {
-                console.log('[DIAGNOSTIC-AUTH] Hydration completed. Setting loading state to FALSE.');
-                setLoading(false);
-            }
-        };
-        checkUser();
+        } finally {
+            console.log('[DIAGNOSTIC-AUTH] Hydration completed. Setting loading state to FALSE.');
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        checkUser();
+    }, [checkUser]);
+
+    const retryAuth = useCallback(async () => {
+        setAuthError(null);
+        setLoading(true);
+        await checkUser();
+    }, [checkUser]);
 
     // ── Socket: identify user & re-identify on reconnect ────────────────────
     useEffect(() => {
@@ -128,7 +138,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
-            user, loading,
+            user, loading, authError, retryAuth,
             login, register, logout, setRole,
             theme, setTheme,
             font, setFont,
