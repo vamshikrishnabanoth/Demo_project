@@ -219,32 +219,31 @@ export default function AttemptQuiz() {
                 console.log(`[DIAGNOSTIC-QUIZ] Progress payload for current student (${authUser.id}):`, state.progress[authUser.id]);
             }
 
-            // Check if student has already answered this question
-            if (authUser && state.progress && state.progress[authUser.id]) {
-                 const studentProgress = state.progress[authUser.id];
-                 
-                 // Restore answered tracking for logic
-                 const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
-                 console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
-                 setAnsweredQuestions(new Set(answeredList));
+             // Check if student has already answered this question
+             if (authUser && state.progress && state.progress[authUser.id]) {
+                  const studentProgress = state.progress[authUser.id];
+                  
+                  // Restore answered tracking for logic
+                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
+                  console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
+                  setAnsweredQuestions(new Set(answeredList));
 
-                 // Restore superficial answers mapping for UI dots visually
-                 const recoveredAnswers = {};
-                 Object.keys(studentProgress).forEach(qIdx => {
-                      if (studentProgress?.[qIdx]?.answered) {
-                           recoveredAnswers[qIdx] = true;
-                           console.log(`[DIAGNOSTIC-QUIZ] Warning! Overwriting answers mapping for qIdx=${qIdx} with TRUE. Data type:`, typeof recoveredAnswers[qIdx]);
-                      }
-                 });
-                 console.log('[DIAGNOSTIC-QUIZ] Dispatched setAnswers with recovered answers mapping:', recoveredAnswers);
-                 setAnswers(prev => {
-                     const next = { ...prev, ...recoveredAnswers };
-                     console.log('[DIAGNOSTIC-QUIZ] Final answers state after restoration merge:', next);
-                     return next;
-                 });
-            } else {
-                 console.log('[DIAGNOSTIC-QUIZ] No progress state or matching student record to restore in restoreState.');
-            }
+                  // Restore superficial answers mapping for UI dots visually
+                  setAnswers(prev => {
+                      const recoveredAnswers = {};
+                      Object.keys(studentProgress).forEach(qIdx => {
+                           if (studentProgress?.[qIdx]?.answered) {
+                                recoveredAnswers[qIdx] = studentProgress[qIdx].selectedOption || prev[qIdx] || true;
+                                console.log(`[DIAGNOSTIC-QUIZ] Restored answers mapping for qIdx=${qIdx} with:`, recoveredAnswers[qIdx]);
+                           }
+                      });
+                      const next = { ...prev, ...recoveredAnswers };
+                      console.log('[DIAGNOSTIC-QUIZ] Final answers state after restoration merge:', next);
+                      return next;
+                  });
+             } else {
+                  console.log('[DIAGNOSTIC-QUIZ] No progress state or matching student record to restore in restoreState.');
+             }
             
             setWaitingForState(false);
             
@@ -569,7 +568,20 @@ export default function AttemptQuiz() {
 
                 // LIVE QUIZ PAGE REFRESH: restore session from localStorage and auto-rejoin
                 if (res.data.isLive && res.data.status === 'started') {
-                    console.log('[DIAGNOSTIC-QUIZ] Quiz is LIVE and STARTED. Waiting for socket sync state. WARNING: local storage answers restoration block will be skipped!');
+                    console.log('[DIAGNOSTIC-QUIZ] Quiz is LIVE and STARTED. Waiting for socket sync state.');
+                    
+                    // Restoring local answers state immediately from client storage
+                    const localSaved = localStorage.getItem(`quiz_answers_${id}`);
+                    if (localSaved) {
+                        try {
+                            const localAnswers = JSON.parse(localSaved);
+                            console.log('[DIAGNOSTIC-QUIZ] Restoring active answers from localStorage under live quiz load:', localAnswers);
+                            setAnswers(prev => ({ ...prev, ...localAnswers }));
+                        } catch (e) {
+                            console.error('[DIAGNOSTIC-QUIZ] Error parsing localStorage answers for live quiz:', e);
+                        }
+                    }
+
                     setWaitingForState(true);
                     // SAFETY TIMEOUT: If the server never sends change_question (e.g. room state missing),
                     // clear the sync screen after 8 seconds so the student isn't stuck forever.
