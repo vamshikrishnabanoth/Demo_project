@@ -195,7 +195,7 @@ export default function AttemptQuiz() {
         });
 
         socket.on('restoreState', (state) => {
-            console.log('Restoring State on Reconnect (Student):', state);
+            console.log('[DIAGNOSTIC-QUIZ] Reconnection restoreState event fired. Server payload:', state);
             setCurrentQuestion(state.currentQuestionIndex);
 
             // Update total student count
@@ -214,12 +214,18 @@ export default function AttemptQuiz() {
             });
             setAnsweredStudentsSet(answeredSet);
             
+            console.log('[DIAGNOSTIC-QUIZ] Evaluating progress restoration. authUser present:', !!authUser, 'state.progress present:', !!state.progress);
+            if (state.progress && authUser) {
+                console.log(`[DIAGNOSTIC-QUIZ] Progress payload for current student (${authUser.id}):`, state.progress[authUser.id]);
+            }
+
             // Check if student has already answered this question
             if (authUser && state.progress && state.progress[authUser.id]) {
                  const studentProgress = state.progress[authUser.id];
                  
                  // Restore answered tracking for logic
                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
+                 console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
                  setAnsweredQuestions(new Set(answeredList));
 
                  // Restore superficial answers mapping for UI dots visually
@@ -227,9 +233,17 @@ export default function AttemptQuiz() {
                  Object.keys(studentProgress).forEach(qIdx => {
                       if (studentProgress?.[qIdx]?.answered) {
                            recoveredAnswers[qIdx] = true;
+                           console.log(`[DIAGNOSTIC-QUIZ] Warning! Overwriting answers mapping for qIdx=${qIdx} with TRUE. Data type:`, typeof recoveredAnswers[qIdx]);
                       }
                  });
-                 setAnswers(prev => ({ ...prev, ...recoveredAnswers }));
+                 console.log('[DIAGNOSTIC-QUIZ] Dispatched setAnswers with recovered answers mapping:', recoveredAnswers);
+                 setAnswers(prev => {
+                     const next = { ...prev, ...recoveredAnswers };
+                     console.log('[DIAGNOSTIC-QUIZ] Final answers state after restoration merge:', next);
+                     return next;
+                 });
+            } else {
+                 console.log('[DIAGNOSTIC-QUIZ] No progress state or matching student record to restore in restoreState.');
             }
             
             setWaitingForState(false);
@@ -541,20 +555,33 @@ export default function AttemptQuiz() {
 
     useEffect(() => {
         const fetchQuiz = async () => {
+            console.log(`[DIAGNOSTIC-QUIZ] fetchQuiz started for quiz ID: ${id}`);
             try {
                 const res = await api.get(`/quiz/${id}`);
+                console.log('[DIAGNOSTIC-QUIZ] GET /quiz/:id response received. Metadata:', {
+                    title: res.data.title,
+                    isLive: res.data.isLive,
+                    status: res.data.status,
+                    hasPreviousResult: !!res.data.previousResult,
+                    previousResultStatus: res.data.previousResult?.status
+                });
                 setQuiz(res.data);
 
                 // LIVE QUIZ PAGE REFRESH: restore session from localStorage and auto-rejoin
                 if (res.data.isLive && res.data.status === 'started') {
+                    console.log('[DIAGNOSTIC-QUIZ] Quiz is LIVE and STARTED. Waiting for socket sync state. WARNING: local storage answers restoration block will be skipped!');
                     setWaitingForState(true);
                     // SAFETY TIMEOUT: If the server never sends change_question (e.g. room state missing),
                     // clear the sync screen after 8 seconds so the student isn't stuck forever.
-                    setTimeout(() => setWaitingForState(false), 8000);
+                    setTimeout(() => {
+                        console.log('[DIAGNOSTIC-QUIZ] Safety timeout triggered. Clearing waitingForState screen.');
+                        setWaitingForState(false);
+                    }, 8000);
                     // join_room is sent in the dedicated authUser effect below so it fires even
                     // if authUser loads asynchronously after this fetchQuiz effect runs.
                     // Skip previousResult handling — live quiz session is restored
                 } else {
+                    console.log('[DIAGNOSTIC-QUIZ] Quiz is self-paced or live but not active. Restoring from history/localStorage if present...');
                     // If there's a previous result (Completed or In-Progress)
                     if (res.data.previousResult) {
                         const prevResult = res.data.previousResult;
@@ -567,6 +594,7 @@ export default function AttemptQuiz() {
 
                         // BLOCK RE-ENTRY only for regular one-shot quizzes that are already done
                         if (prevResult.status === 'completed' && !allowRetake) {
+                            console.log('[DIAGNOSTIC-QUIZ] Block re-entry condition met. Directing to review mode.');
                             setIsReviewMode(true);
                             setResult(prevResult);
                             setAnswersFromHistory(prevResult.answers);
@@ -578,15 +606,20 @@ export default function AttemptQuiz() {
                             console.log('Resuming quiz attempt...');
                             setAnswersFromHistory(prevResult.answers);
                             const localSaved = localStorage.getItem(`quiz_answers_${id}`);
+                            console.log('[DIAGNOSTIC-QUIZ] Restoring answers from localStorage. Raw payload:', localSaved);
                             if (localSaved) {
                                 const localAnswers = JSON.parse(localSaved);
-                                setAnswers(prev => ({ ...prev, ...localAnswers }));
+                                setAnswers(prev => {
+                                    const next = { ...prev, ...localAnswers };
+                                    console.log('[DIAGNOSTIC-QUIZ] Restored answers state in self-paced mode:', next);
+                                    return next;
+                                });
                             }
                         }
                     }
                 } // end else (non-live or not started)
             } catch (err) {
-                console.error('Error fetching quiz', err);
+                console.error('[DIAGNOSTIC-QUIZ] Error fetching quiz:', err);
                 const error = /** @type {any} */ (err);
                 const errorMsg = error?.response?.data?.msg || error?.response?.data?.message || 'Quiz not found';
                 alert(errorMsg);
