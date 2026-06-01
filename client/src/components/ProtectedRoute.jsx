@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from './loaders/WaitingRoomLoader';
+import ConnectionErrorPage from './ConnectionErrorPage';
 
 // Maps a role to its home route
 const ROLE_HOME = {
@@ -11,7 +12,7 @@ const ROLE_HOME = {
 };
 
 const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
-    const { user, loading } = useContext(AuthContext);
+    const { user, loading, authError, retryAuth } = useContext(AuthContext);
 
     console.log('[DIAGNOSTIC-ROUTE] Evaluating ProtectedRoute:', {
         pathname: window.location.pathname,
@@ -19,13 +20,20 @@ const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
         userPresent: !!user,
         userRole: user?.role || null,
         requiredRoles: roles,
-        allowNone
+        allowNone,
+        authErrorPresent: !!authError
     });
 
     // While auth is being restored from localStorage, show the premium WaitingRoomLoader
     if (loading) {
         console.log('[DIAGNOSTIC-ROUTE] Auth state is currently LOADING. Render WaitingRoomLoader.');
         return <WaitingRoomLoader message="Securing session..." />;
+    }
+
+    // If a connection or server cold start error occurred during hydration, display the connection error page
+    if (authError && localStorage.getItem('token')) {
+        console.warn('[DIAGNOSTIC-ROUTE] Auth hydration failed due to server/network issue. Presenting ConnectionErrorPage.');
+        return <ConnectionErrorPage error={authError} onRetry={retryAuth} />;
     }
 
     // Not logged in → go to login
