@@ -248,11 +248,6 @@ export default function MatchUpArena() {
 
         playSound('select');
         
-        // Flip selected card up
-        const newCards = [...cards];
-        newCards[index].isFlipped = true;
-        setCards(newCards);
-
         const newSelected = [...selectedCards, index];
         setSelectedCards(newSelected);
 
@@ -294,11 +289,6 @@ export default function MatchUpArena() {
 
                 // Flip them back down after a delay
                 setTimeout(() => {
-                    const resetCards = [...cards];
-                    resetCards[firstIdx].isFlipped = false;
-                    resetCards[secondIdx].isFlipped = false;
-                    setCards(resetCards);
-                    
                     setSelectedCards([]);
                     setMismatchedCards([]);
                 }, 1200);
@@ -450,7 +440,7 @@ export default function MatchUpArena() {
                                         const isSelected = selectedCards.includes(index);
                                         const isMatched = matchedCards.includes(card.id);
                                         const isMismatched = mismatchedCards.includes(index);
-                                        const isFlipped = card.isFlipped || isMatched;
+                                        const isFlipped = isSelected || isMatched;
 
                                         // Glow/Border Style Math
                                         let borderGlowClass = 'border-white/5 bg-white/[0.02] hover:border-white/20';
@@ -480,8 +470,9 @@ export default function MatchUpArena() {
                                                         className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.01] border-white/5"
                                                         style={{ backfaceVisibility: 'hidden' }}
                                                     >
-                                                        <Cpu size={24} className="text-purple-500/30 group-hover:scale-110 transition-transform" />
-                                                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 mt-2">Matrix Node</span>
+                                                        <span className="text-5xl font-black uppercase tracking-widest text-purple-500/25 select-none">
+                                                            {card.type === 'question' ? 'Q' : 'A'}
+                                                        </span>
                                                     </div>
 
                                                     {/* CARD FRONT SIDE (Face Up - text rotated by 180 degrees to display correctly) */}
