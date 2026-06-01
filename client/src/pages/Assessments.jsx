@@ -312,7 +312,7 @@ export default function Assessments() {
                                                     Locked
                                                     <Lock size={14} aria-hidden="true" />
                                                 </button>
-                                            ) : quiz.isExpired ? (
+                                            ) : quiz.isExpired && !quiz.isAssessment ? (
                                                 <button
                                                     disabled
                                                     className="bg-white/5 border border-white/5 text-white/10 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
@@ -347,10 +347,10 @@ export default function Assessments() {
                                                     <button
                                                         onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
                                                         className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
-                                                        title={quiz.isAttempted ? 'Practice again' : 'Start assessment'}
+                                                        title={quiz.isAttempted ? 'Practice again' : (quiz.isExpired ? 'Practice' : 'Start assessment')}
                                                     >
                                                         <Play size={14} fill="currentColor" aria-hidden="true" />
-                                                        Start
+                                                        {quiz.isExpired ? 'Practice' : 'Start'}
                                                     </button>
                                                 </div>
                                             )}

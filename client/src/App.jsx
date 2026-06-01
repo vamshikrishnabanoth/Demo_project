@@ -8,7 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import NavigationProgress from './components/NavigationProgress';
 import NavigationSkeleton from './components/NavigationSkeleton';
-import lazyWithSuspense from './utils/lazyWithSuspense';
+import lazyWithSuspense from './utils/LasyWithSuspense';
 import {
     PageTransition,
     FadeTransition,

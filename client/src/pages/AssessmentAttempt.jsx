@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { showConfirm } from '../utils/alerts';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
+import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
+
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -408,7 +410,7 @@ export default function AssessmentAttempt() {
                             </div>
                             <div>
                                 <p className="text-white/40 font-bold uppercase tracking-widest text-[9px] mb-1">Active Question</p>
-                                <p className="text-white font-black text-2xl leading-tight italic uppercase tracking-tight">{currentQ.questionText}</p>
+                                <AdaptiveQuestionContainer questionText={currentQ.questionText} />
                             </div>
                         </div>
 

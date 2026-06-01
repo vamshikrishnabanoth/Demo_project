@@ -740,9 +740,6 @@ exports.getQuizById = async (req, res) => {
                 if (quiz.startTime && new Date(quiz.startTime) > now) {
                     return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
                 }
-                if (quiz.endTime && new Date(quiz.endTime) < now) {
-                    return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting responses.' });
-                }
             }
             normalizedQuestions = normalizedQuestions.map(q => {
                 const { correctAnswer, explanation, ...safeQuestion } = q;
@@ -818,7 +815,7 @@ exports.submitQuiz = async (req, res) => {
         if (quiz.startTime && new Date(quiz.startTime) > now) {
             return res.status(403).json({ msg: `This quiz has not started yet. It is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
         }
-        if (quiz.endTime && new Date(quiz.endTime) < now) {
+        if (quiz.endTime && new Date(quiz.endTime) < now && !quiz.isAssessment) {
             return res.status(403).json({ msg: 'This quiz has expired and is no longer accepting submissions.' });
         }
 

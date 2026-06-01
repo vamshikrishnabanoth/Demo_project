@@ -5,7 +5,7 @@ import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
-import { showConfirm } from '../utils/alerts';
+import { showConfirm, showError, showSuccess } from '../utils/alerts';
 import toast from 'react-hot-toast';
 
 export default function LiveRoomTeacher() {
@@ -52,7 +52,7 @@ export default function LiveRoomTeacher() {
                 socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'teacher' } });
             } catch (err) {
                 console.error(err);
-                alert('Error loading quiz');
+                showError('Error', 'Error loading quiz');
                 navigate('/teacher-dashboard');
             } finally {
                 setLoading(false);
@@ -384,12 +384,12 @@ if (socket.connected) {
 
     const handleIncreaseTime = () => {
         socket.emit('increase_time', { quizId: quiz.id, additionalSeconds: 30 });
-        alert('Added 30 seconds to the clock!');
+        showSuccess('Time Increased', 'Added 30 seconds to the clock!');
     };
 
     const copyCode = () => {
         navigator.clipboard.writeText(joinCode);
-        alert('Join Code copied!');
+        showSuccess('Copied', 'Join Code copied!');
     };
 
     // Merge participants (connected) + leaderboard (submitted) so reconnected students always show

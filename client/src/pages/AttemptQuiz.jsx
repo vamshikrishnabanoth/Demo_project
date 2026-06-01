@@ -9,6 +9,8 @@ import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
+import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
+import { showError, showSuccess } from '../utils/alerts';
 
 
 export default function AttemptQuiz() {
@@ -634,7 +636,7 @@ export default function AttemptQuiz() {
                 console.error('[DIAGNOSTIC-QUIZ] Error fetching quiz:', err);
                 const error = /** @type {any} */ (err);
                 const errorMsg = error?.response?.data?.msg || error?.response?.data?.message || 'Quiz not found';
-                alert(errorMsg);
+                showError('Error', errorMsg);
                 navigate('/student-dashboard');
             } finally {
                 setLoading(false);
@@ -718,7 +720,7 @@ export default function AttemptQuiz() {
     };
 
     const handleSingleQuestionSubmit = () => {
-        if (!answers[currentQuestion]) return alert('Please select an option first!');
+        if (!answers[currentQuestion]) return showError('Attention', 'Please select an option first!');
 
         // isLive && status !== 'finished' → active live session: teacher controls navigation.
         // isLive && status === 'finished'  → async practice of a finished live quiz: student controls.
@@ -726,7 +728,7 @@ export default function AttemptQuiz() {
 
         if (isActiveLive) {
             if (!isOnline) {
-                return alert('You are offline! Wait for your connection to restore before submitting.');
+                return showError('Offline', 'You are offline! Wait for your connection to restore before submitting.');
             }
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
@@ -798,7 +800,7 @@ export default function AttemptQuiz() {
                 // Quiz doesn't allow re-attempts; navigate to latest result
                 navigate(`/report/${id}`);
             } else {
-                alert(msg || 'Submission failed. Please check your connection.');
+                showError('Submission Failed', msg || 'Submission failed. Please check your connection.');
             }
         } finally {
             setSubmitting(false);
@@ -1195,9 +1197,7 @@ export default function AttemptQuiz() {
                                 </div>
                             )}
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-12 leading-[0.9]">
-                            {question.questionText}
-                        </h1>
+                        <AdaptiveQuestionContainer questionText={question.questionText} />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {question.options.map((option, idx) => {
@@ -1382,7 +1382,7 @@ export default function AttemptQuiz() {
                                                 });
 
                                                 setShowNewQuestionModal(false);
-                                                alert(`Answer submitted: ${option}`);
+                                                showSuccess('Success', `Answer submitted: ${option}`);
                                             }}
                                             className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700"
                                         >
