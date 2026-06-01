@@ -49,6 +49,9 @@ export default function MatchUpArena() {
     const [selectedCards, setSelectedCards] = useState([]); // indices of currently selected cards
     const [matchedCards, setMatchedCards] = useState([]);   // IDs of matched cards
     const [mismatchedCards, setMismatchedCards] = useState([]); // indices of mismatched cards (for shake/red borders)
+    const [isStartRevealActive, setIsStartRevealActive] = useState(false);
+    const [revealCountdown, setRevealCountdown] = useState(0);
+
 
     const [moves, setMoves] = useState(0);
     const [matches, setMatches] = useState(0);
@@ -164,13 +167,26 @@ export default function MatchUpArena() {
     // ── Timer clock ──────────────────────────────────────────────────────────
     useEffect(() => {
         let clock;
-        if (gameStatus === 'playing') {
+        if (gameStatus === 'playing' && !isStartRevealActive) {
             clock = setInterval(() => {
                 setTimer(prev => prev + 1);
             }, 1000);
         }
         return () => clearInterval(clock);
-    }, [gameStatus]);
+    }, [gameStatus, isStartRevealActive]);
+
+    // ── Initial Preview Countdown Ticker ─────────────────────────────────────
+    useEffect(() => {
+        let countdownTimer;
+        if (isStartRevealActive && revealCountdown > 0) {
+            countdownTimer = setTimeout(() => {
+                setRevealCountdown(prev => prev - 1);
+            }, 1000);
+        } else if (isStartRevealActive && revealCountdown === 0) {
+            setIsStartRevealActive(false);
+        }
+        return () => clearTimeout(countdownTimer);
+    }, [isStartRevealActive, revealCountdown]);
 
     // ── Generate Pairs & Grid ────────────────────────────────────────────────
     const handleStartGame = () => {
@@ -232,6 +248,8 @@ export default function MatchUpArena() {
         setWrongAttempts(0);
         setGameStatus('playing');
         playSound('victory');
+        setIsStartRevealActive(true);
+        setRevealCountdown(3);
     };
 
     const handleReset = () => {
@@ -244,7 +262,7 @@ export default function MatchUpArena() {
     // ── Card Clicking Flow ───────────────────────────────────────────────────
     const handleCardClick = (index) => {
         // Block clicking if selected indices exceed 2, card is matched, or clicked card is already open
-        if (selectedCards.length >= 2 || matchedCards.includes(cards[index].id) || selectedCards.includes(index) || mismatchedCards.length > 0) return;
+        if (isStartRevealActive || selectedCards.length >= 2 || matchedCards.includes(cards[index].id) || selectedCards.includes(index) || mismatchedCards.length > 0) return;
 
         playSound('select');
         
@@ -428,6 +446,20 @@ export default function MatchUpArena() {
                             {/* Cards Memory Grid (Left 3 columns) */}
                             <div className="lg:col-span-3 flex flex-col justify-between gap-6">
                                 
+                                {isStartRevealActive && (
+                                    <div className="bg-purple-600/10 border border-purple-500/30 text-purple-300 px-6 py-4 rounded-2xl flex items-center justify-between shadow-[0_0_20px_rgba(168,85,247,0.15)] text-xs font-bold uppercase tracking-wider animate-pulse">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-purple-500/20 w-8 h-8 rounded-lg flex items-center justify-center text-purple-400">
+                                                <Eye size={16} />
+                                            </div>
+                                            <span>Memorize the board! Grid reveals ending in:</span>
+                                        </div>
+                                        <span className="font-mono text-sm bg-purple-500/30 border border-purple-500/40 px-4 py-1.5 rounded-xl text-white">
+                                            {revealCountdown}s
+                                        </span>
+                                    </div>
+                                )}
+
                                 {/* Dynamic Grid Container */}
                                 <div className={`grid gap-4 flex-1 ${
                                     difficulty === 'easy'
@@ -440,7 +472,7 @@ export default function MatchUpArena() {
                                         const isSelected = selectedCards.includes(index);
                                         const isMatched = matchedCards.includes(card.id);
                                         const isMismatched = mismatchedCards.includes(index);
-                                        const isFlipped = isSelected || isMatched;
+                                        const isFlipped = isSelected || isMatched || isStartRevealActive;
 
                                         // Glow/Border Style Math
                                         let borderGlowClass = 'border-white/5 bg-white/[0.02] hover:border-white/20';
