@@ -503,7 +503,11 @@ export default function MatchUpArena() {
                                                         style={{ 
                                                             backfaceVisibility: 'hidden', 
                                                             WebkitBackfaceVisibility: 'hidden',
-                                                            zIndex: isFlipped ? 1 : 2
+                                                            transform: 'rotateY(0deg)',
+                                                            WebkitTransform: 'rotateY(0deg)',
+                                                            zIndex: isFlipped ? 1 : 2,
+                                                            opacity: isFlipped ? 0 : 1,
+                                                            transition: 'opacity 0.2s ease-in-out'
                                                         }}
                                                     >
                                                         <span className="text-5xl font-black uppercase tracking-widest text-purple-500/25 select-none">
@@ -519,7 +523,9 @@ export default function MatchUpArena() {
                                                             WebkitBackfaceVisibility: 'hidden',
                                                             transform: 'rotateY(180deg)',
                                                             WebkitTransform: 'rotateY(180deg)',
-                                                            zIndex: isFlipped ? 2 : 1
+                                                            zIndex: isFlipped ? 2 : 1,
+                                                            opacity: isFlipped ? 1 : 0,
+                                                            transition: 'opacity 0.2s ease-in-out'
                                                         }}
                                                     >
                                                         <span className="text-[8px] font-black uppercase tracking-widest text-purple-400 absolute top-2 left-3">
