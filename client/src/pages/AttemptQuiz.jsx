@@ -1458,11 +1458,11 @@ export default function AttemptQuiz() {
             <AnimatePresence>
                 {speedFeedback && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                        initial={{ opacity: 0, scale: 0.8, y: -30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: -50 }}
+                        exit={{ opacity: 0, scale: 0.8, y: -30 }}
                         transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                        className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center p-4"
+                        className="fixed inset-x-0 top-24 pointer-events-none z-[9999] flex justify-center p-4"
                     >
                         <div 
                             className={`w-full max-w-sm pointer-events-auto p-6 rounded-3xl border shadow-2xl backdrop-blur-xl text-center relative overflow-hidden transition-all duration-300 ${

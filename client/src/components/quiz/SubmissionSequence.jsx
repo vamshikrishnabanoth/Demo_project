@@ -212,34 +212,7 @@ export default function SubmissionSequence({
                         )}
                     </AnimatePresence>
 
-                    {/* Particle Confetti Burst */}
-                    {showConfetti && (
-                        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                            {STATIC_PARTICLES.map((p, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    className="absolute left-1/2 top-1/2 rounded-full"
-                                    style={{
-                                        width: p.size,
-                                        height: p.size,
-                                        backgroundColor: particleColors[idx % particleColors.length]
-                                    }}
-                                    initial={{ x: -p.size / 2, y: -p.size / 2, opacity: 1 }}
-                                    animate={{ 
-                                        x: p.x - p.size / 2, 
-                                        y: p.y - p.size / 2, 
-                                        opacity: 0,
-                                        scale: 0.2
-                                    }}
-                                    transition={{ 
-                                        duration: 0.65, 
-                                        ease: "easeOut",
-                                        delay: p.delay 
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    {/* Particle Confetti Burst removed to avoid duplication with answers locked checkmark */}
                 </div>
 
                 {/* Subtitle status messages */}

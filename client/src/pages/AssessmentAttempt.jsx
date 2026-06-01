@@ -82,9 +82,27 @@ export default function AssessmentAttempt() {
     }, [currentIdx]);
 
     const handleSelect = (option) => {
-        // Prevent selection changes if answer is already finalized
-        if (answers[currentIdx]?.finalized) return;
+        // Prevent selection changes if answer is already finalized in normal quizzes
+        if (!quiz?.isAssessment && answers[currentIdx]?.finalized) return;
+        
         setSelected(option);
+
+        // If it is a practice assignment, save the selection immediately to local answers state
+        // to ensure it isn't lost if they jump to another question using the navigation dots.
+        if (quiz?.isAssessment) {
+            const currentQ = quiz.questions[currentIdx];
+            const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
+            const newAnswers = [...answers];
+            newAnswers[currentIdx] = {
+                selectedOption: option,
+                questionText: currentQ.questionText,
+                timeTaken: (answers[currentIdx]?.timeTaken || 0) + timeTaken,
+                finalized: false,
+                skipped: false
+            };
+            setAnswers(newAnswers);
+            questionStartTime.current = Date.now(); // reset start timer
+        }
     };
 
     const triggerConfetti = () => {
@@ -109,7 +127,7 @@ export default function AssessmentAttempt() {
                 };
             });
 
-            await api.post('/quiz/submit', {
+            const res = await api.post('/quiz/submit', {
                 quizId: id,
                 answers: payloadAnswers
             });
@@ -117,7 +135,7 @@ export default function AssessmentAttempt() {
             toast.success('Campaign Concluded! Generating tactical report...');
             triggerConfetti();
             setTimeout(() => {
-                navigate(`/report/${id}`);
+                navigate(`/report/${id}`, { state: { reportData: res.data } });
             }, 1500);
         } catch (err) {
             console.error('Submit error:', err);
@@ -127,7 +145,7 @@ export default function AssessmentAttempt() {
         }
     };
 
-    // Secure choice & lock answer permanently
+    // Secure choice & lock answer permanently in live, or Save & Advance in practice assignments
     const handleNext = async () => {
         if (!quiz) return;
         
@@ -135,10 +153,10 @@ export default function AssessmentAttempt() {
         const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
         
         const newAnswer = {
-            selectedOption: selected || '',
+            selectedOption: selected || (answers[currentIdx]?.selectedOption || ''),
             questionText: currentQ.questionText,
-            timeTaken: timeTaken,
-            finalized: true,
+            timeTaken: (answers[currentIdx]?.timeTaken || 0) + timeTaken,
+            finalized: quiz.isAssessment ? false : true,
             skipped: false
         };
 
@@ -146,6 +164,15 @@ export default function AssessmentAttempt() {
         newAnswers[currentIdx] = newAnswer;
         setAnswers(newAnswers);
         setSelected(null);
+
+        if (quiz.isAssessment) {
+            // Self-paced assignments simply advance, wrapping around
+            const nextIdx = (currentIdx + 1) % quiz.questions.length;
+            setCurrentIdx(nextIdx);
+            setSelected(newAnswers[nextIdx]?.selectedOption || null);
+            toast.success("Progress Saved!");
+            return;
+        }
 
         // Find next unattempted or skipped question index
         let nextIdx = -1;
@@ -176,6 +203,31 @@ export default function AssessmentAttempt() {
         }
     };
 
+    // Go to previous question (only active in practice assessments)
+    const handlePrevious = () => {
+        if (!quiz) return;
+
+        const currentQ = quiz.questions[currentIdx];
+        const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
+
+        const newAnswer = {
+            selectedOption: selected || (answers[currentIdx]?.selectedOption || ''),
+            questionText: currentQ.questionText,
+            timeTaken: (answers[currentIdx]?.timeTaken || 0) + timeTaken,
+            finalized: false,
+            skipped: !selected && (!answers[currentIdx] || answers[currentIdx].skipped)
+        };
+
+        const newAnswers = [...answers];
+        newAnswers[currentIdx] = newAnswer;
+        setAnswers(newAnswers);
+        setSelected(null);
+
+        const prevIdx = (currentIdx - 1 + quiz.questions.length) % quiz.questions.length;
+        setCurrentIdx(prevIdx);
+        setSelected(newAnswers[prevIdx]?.selectedOption || null);
+    };
+
     // Skip the current question (marks as skipped, allows later revisit)
     const handleSkip = () => {
         if (!quiz) return;
@@ -184,9 +236,9 @@ export default function AssessmentAttempt() {
         const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
         
         const skippedAnswer = {
-            selectedOption: selected || '', // preserve temporary selection if any
+            selectedOption: selected || (answers[currentIdx]?.selectedOption || ''),
             questionText: currentQ.questionText,
-            timeTaken: timeTaken,
+            timeTaken: (answers[currentIdx]?.timeTaken || 0) + timeTaken,
             finalized: false,
             skipped: true
         };
@@ -351,8 +403,8 @@ export default function AssessmentAttempt() {
 
                         // Clickability criteria: Must not be finalized, and must have reached it sequential.
                         const firstUnreachedIdx = answers.findIndex(a => a === null);
-                        const isReachable = idx <= (firstUnreachedIdx === -1 ? quiz.questions.length : firstUnreachedIdx);
-                        const isLocked = isFinalized;
+                        const isReachable = quiz.isAssessment ? true : (idx <= (firstUnreachedIdx === -1 ? quiz.questions.length : firstUnreachedIdx));
+                        const isLocked = quiz.isAssessment ? false : isFinalized;
 
                         let dotClass = "w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border transition-all ";
                         
@@ -360,6 +412,8 @@ export default function AssessmentAttempt() {
                             dotClass += "bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] ring-2 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[#0f172a] scale-110";
                         } else if (isFinalized) {
                             dotClass += "bg-green-500/10 border-green-500/30 text-green-400 cursor-not-allowed opacity-60";
+                        } else if (quiz.isAssessment && ans && ans.selectedOption) {
+                            dotClass += "bg-green-500/15 border-green-500/40 text-green-400 hover:bg-green-500/25 cursor-pointer";
                         } else if (isSkipped) {
                             dotClass += "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 cursor-pointer";
                         } else if (!isReachable) {
@@ -377,8 +431,24 @@ export default function AssessmentAttempt() {
                                 toast.error("Please answer or skip previous questions first!");
                                 return;
                             }
+                            
+                            // Save current selection to Answers list if isAssessment
+                            if (quiz.isAssessment) {
+                                const currentQ = quiz.questions[currentIdx];
+                                const timeTaken = Math.round((Date.now() - questionStartTime.current) / 1000);
+                                const newAnswers = [...answers];
+                                newAnswers[currentIdx] = {
+                                    selectedOption: selected || (answers[currentIdx] ? answers[currentIdx].selectedOption : ''),
+                                    questionText: currentQ.questionText,
+                                    timeTaken: (answers[currentIdx]?.timeTaken || 0) + timeTaken,
+                                    finalized: false,
+                                    skipped: !selected && (!answers[currentIdx] || answers[currentIdx].skipped)
+                                };
+                                setAnswers(newAnswers);
+                            }
+
                             setCurrentIdx(idx);
-                            setSelected(ans ? ans.selectedOption : null);
+                            setSelected(answers[idx] ? answers[idx].selectedOption : null);
                         };
 
                         return (
@@ -418,14 +488,15 @@ export default function AssessmentAttempt() {
                         <div className="grid grid-cols-1 gap-4 mb-8">
                             {(currentQ.options || []).map((opt, oi) => {
                                 const isSelected = selected === opt;
+                                const isFinalizedOption = !quiz.isAssessment && isQuestionFinalized;
                                 return (
                                     <motion.button
                                         key={oi}
                                         onClick={() => handleSelect(opt)}
-                                        disabled={isQuestionFinalized}
+                                        disabled={isFinalizedOption}
                                         className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative overflow-hidden btn-press
                                             ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-white' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] text-white/80'}
-                                            ${isQuestionFinalized ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            ${isFinalizedOption ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-md
                                             ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-white/10 text-white/60'}`}>
@@ -439,23 +510,55 @@ export default function AssessmentAttempt() {
 
                         {/* Question Action Controls */}
                         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                            <button
-                                type="button"
-                                onClick={handleSkip}
-                                disabled={submitting || isQuestionFinalized}
-                                className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                                Skip & Proceed
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={handleNext}
-                                disabled={!selected || submitting || isQuestionFinalized}
-                                className="w-full sm:w-auto bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-102 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-b-4 border-orange-700"
-                            >
-                                {submitting ? <Loader2 size={16} className="animate-spin" /> : <>Lock & Advance <ChevronRight size={16} /></>}
-                            </button>
+                            {quiz.isAssessment ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={handlePrevious}
+                                        disabled={submitting || currentIdx === 0}
+                                        className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-40"
+                                    >
+                                        Previous Question
+                                    </button>
+                                    <div className="flex gap-4 w-full sm:w-auto">
+                                        <button
+                                            type="button"
+                                            onClick={handleSkip}
+                                            disabled={submitting}
+                                            className="flex-1 sm:flex-none bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+                                        >
+                                            Skip Question
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleNext}
+                                            disabled={submitting || currentIdx === quiz.questions.length - 1}
+                                            className="flex-1 sm:flex-none bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-102 transition-all flex items-center justify-center gap-2 border-b-4 border-orange-700 disabled:opacity-40"
+                                        >
+                                            Next Question <ChevronRight size={16} />
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={handleSkip}
+                                        disabled={submitting || isQuestionFinalized}
+                                        className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        Skip & Proceed
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleNext}
+                                        disabled={!selected || submitting || isQuestionFinalized}
+                                        className="w-full sm:w-auto bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-102 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-b-4 border-orange-700"
+                                    >
+                                        {submitting ? <Loader2 size={16} className="animate-spin" /> : <>Lock & Advance <ChevronRight size={16} /></>}
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 </AnimatePresence>

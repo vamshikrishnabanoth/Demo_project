@@ -853,6 +853,33 @@ exports.submitQuiz = async (req, res) => {
             };
         });
 
+        // If this is a self-paced practice assessment, do NOT write to the database (protecting teacher dashboards and analytics).
+        // Return a dynamically computed result directly to the student.
+        if (quiz.isAssessment) {
+            const now = new Date();
+            const startedAt = new Date(now.getTime() - (totalTimeTaken * 1000));
+            const normalizedQuestions = normalizeQuestions(quiz.questions);
+
+            const dummyResult = {
+                id: 'practice-result-' + Math.random().toString(36).substring(2, 9),
+                quizId: quizId,
+                studentId: req.user.id,
+                score,
+                totalTimeTaken,
+                totalQuestions: quiz.questions.length,
+                answers: formattedAnswers,
+                status: 'completed',
+                startedAt: startedAt,
+                completedAt: now,
+                lastAnsweredAt: now,
+                quizTitle: quiz.title,
+                questions: normalizedQuestions,
+                rank: 1,
+                totalParticipants: 1
+            };
+            return res.json(dummyResult);
+        }
+
         // Assessments AND finished live quizzes (async practice) allow unlimited re-attempts.
         // The DB has a unique constraint on (quizId, studentId), so we upsert:
         // update the existing record with the latest attempt's data, or create if none exists.

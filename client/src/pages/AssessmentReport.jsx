@@ -41,8 +41,13 @@ const AssessmentReport = () => {
     }, [id]);
 
     useEffect(() => {
-        fetchReport();
-    }, [fetchReport]);
+        if (location.state?.reportData) {
+            setData(location.state.reportData);
+            setLoading(false);
+        } else {
+            fetchReport();
+        }
+    }, [fetchReport, location.state]);
 
     if (loading) return <PremiumLoading />;
     if (!data) return (
