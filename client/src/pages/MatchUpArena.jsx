@@ -501,8 +501,6 @@ export default function MatchUpArena() {
                                                     <div 
                                                         className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.01] border-white/5"
                                                         style={{ 
-                                                            backfaceVisibility: 'hidden', 
-                                                            WebkitBackfaceVisibility: 'hidden',
                                                             transform: 'rotateY(0deg)',
                                                             WebkitTransform: 'rotateY(0deg)',
                                                             zIndex: isFlipped ? 1 : 2,
@@ -519,8 +517,6 @@ export default function MatchUpArena() {
                                                     <div 
                                                         className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.03] p-4 text-xs font-semibold overflow-y-auto leading-relaxed select-none"
                                                         style={{ 
-                                                            backfaceVisibility: 'hidden', 
-                                                            WebkitBackfaceVisibility: 'hidden',
                                                             transform: 'rotateY(180deg)',
                                                             WebkitTransform: 'rotateY(180deg)',
                                                             zIndex: isFlipped ? 2 : 1,
