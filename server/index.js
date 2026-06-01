@@ -453,7 +453,8 @@ io.to(quizId).emit(
                                       if (qIdx !== -1) {
                                           progress[studentIdStr][qIdx] = {
                                               answered: true,
-                                              isCorrect: ans.isCorrect
+                                              isCorrect: ans.isCorrect,
+                                              selectedOption: ans.selectedOption
                                           };
                                       }
                                   });
@@ -794,8 +795,7 @@ io.to(quizId).emit(
             console.log(`[STRICT MODE] Prevented duplicate answer for student ${studentId} on question ${questionIndex}`);
             return;
         }
-        
-        currentProgress[studentId][questionIndex] = { answered: true, isCorrect: false };
+        currentProgress[studentId][questionIndex] = { answered: true, isCorrect: false, selectedOption: answer };
         roomState.set(quizId, { ...state, progress: currentProgress });
 
         try {
@@ -893,12 +893,12 @@ io.to(quizId).emit(
                 // Update in-memory state with the actual isCorrect value for reconnection sync
                 const updatedProgress = state.progress || {};
                 if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
-                updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken };
+                updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
                 // ALSO store by username so teacher UI can find it regardless of key type
                 const studentUsername = result.student ? result.student.username : null;
                 if (studentUsername) {
                     if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
-                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken };
+                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
                 }
                 roomState.set(quizId, { ...state, progress: updatedProgress });
 
