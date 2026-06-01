@@ -1,4 +1,4 @@
-import { lazy, Suspense, useContext } from 'react';
+import { Suspense, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
@@ -8,41 +8,42 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import NavigationProgress from './components/NavigationProgress';
 import NavigationSkeleton from './components/NavigationSkeleton';
+import lazyWithSuspense from './utils/lazyWithSuspense';
 import {
     PageTransition,
     FadeTransition,
     SlideUpTransition,
 } from './components/PageTransition';
 
-const NotFound = lazy(() => import('./pages/NotFound'));
+const NotFound = lazyWithSuspense(() => import('./pages/NotFound'));
 
 // ─── Lazy-loaded pages ────────────────────────────────────────────────────────
-const Login             = lazy(() => import('./pages/Login'));
-const RoleSelection     = lazy(() => import('./pages/RoleSelection'));
-const TeacherDashboard  = lazy(() => import('./pages/TeacherDashboard'));
-const CreateQuizText    = lazy(() => import('./pages/CreateQuizText'));
-const CreateQuizPDF     = lazy(() => import('./pages/CreateQuizPDF'));
-const CreateQuizTopic   = lazy(() => import('./pages/CreateQuizTopic'));
-const CreateQuizVoice   = lazy(() => import('./pages/CreateQuizVoice'));
-const StudentDashboard  = lazy(() => import('./pages/StudentDashboard'));
-const Assessments       = lazy(() => import('./pages/Assessments'));
-const MyQuizzes         = lazy(() => import('./pages/MyQuizzes'));
-const AttemptQuiz       = lazy(() => import('./pages/AttemptQuiz'));
-const QuizAttemptSelector = lazy(() => import('./pages/QuizAttemptSelector'));
-const AssessmentReview  = lazy(() => import('./pages/AssessmentReview'));
-const Profile           = lazy(() => import('./pages/Profile'));
-const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
-const LiveRoomTeacher   = lazy(() => import('./pages/LiveRoomTeacher'));
-const LiveRoomStudent   = lazy(() => import('./pages/LiveRoomStudent'));
-const Leaderboard       = lazy(() => import('./pages/Leaderboard'));
-const AssessmentsHistory = lazy(() => import('./pages/AssessmentsHistory'));
-const AssessmentReport  = lazy(() => import('./pages/AssessmentReport'));
-const QuizAnalytics     = lazy(() => import('./pages/QuizAnalytics'));
-const QuestionAnalysis  = lazy(() => import('./pages/QuestionAnalysis'));
-const AnimationPreview  = lazy(() => import('./pages/AnimationPreview'));
-const CyberQuest        = lazy(() => import('./pages/CyberQuest'));
-const SprintArena       = lazy(() => import('./pages/SprintArena'));
-const MatchUpArena      = lazy(() => import('./pages/MatchUpArena'));
+const Login             = lazyWithSuspense(() => import('./pages/Login'));
+const RoleSelection     = lazyWithSuspense(() => import('./pages/RoleSelection'));
+const TeacherDashboard  = lazyWithSuspense(() => import('./pages/TeacherDashboard'));
+const CreateQuizText    = lazyWithSuspense(() => import('./pages/CreateQuizText'));
+const CreateQuizPDF     = lazyWithSuspense(() => import('./pages/CreateQuizPDF'));
+const CreateQuizTopic   = lazyWithSuspense(() => import('./pages/CreateQuizTopic'));
+const CreateQuizVoice   = lazyWithSuspense(() => import('./pages/CreateQuizVoice'));
+const StudentDashboard  = lazyWithSuspense(() => import('./pages/StudentDashboard'));
+const Assessments       = lazyWithSuspense(() => import('./pages/Assessments'));
+const MyQuizzes         = lazyWithSuspense(() => import('./pages/MyQuizzes'));
+const AttemptQuiz       = lazyWithSuspense(() => import('./pages/AttemptQuiz'));
+const QuizAttemptSelector = lazyWithSuspense(() => import('./pages/QuizAttemptSelector'));
+const AssessmentReview  = lazyWithSuspense(() => import('./pages/AssessmentReview'));
+const Profile           = lazyWithSuspense(() => import('./pages/Profile'));
+const AdminDashboard    = lazyWithSuspense(() => import('./pages/AdminDashboard'));
+const LiveRoomTeacher   = lazyWithSuspense(() => import('./pages/LiveRoomTeacher'));
+const LiveRoomStudent   = lazyWithSuspense(() => import('./pages/LiveRoomStudent'));
+const Leaderboard       = lazyWithSuspense(() => import('./pages/Leaderboard'));
+const AssessmentsHistory = lazyWithSuspense(() => import('./pages/AssessmentsHistory'));
+const AssessmentReport  = lazyWithSuspense(() => import('./pages/AssessmentReport'));
+const QuizAnalytics     = lazyWithSuspense(() => import('./pages/QuizAnalytics'));
+const QuestionAnalysis  = lazyWithSuspense(() => import('./pages/QuestionAnalysis'));
+const AnimationPreview  = lazyWithSuspense(() => import('./pages/AnimationPreview'));
+const CyberQuest        = lazyWithSuspense(() => import('./pages/CyberQuest'));
+const SprintArena       = lazyWithSuspense(() => import('./pages/SprintArena'));
+const MatchUpArena      = lazyWithSuspense(() => import('./pages/MatchUpArena'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
