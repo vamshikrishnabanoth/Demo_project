@@ -173,12 +173,6 @@ const AssessmentReport = () => {
                                     Analytics <TrendingUp size={14} />
                                 </motion.button>
                                 <button
-                                    onClick={() => navigate(`/leaderboard/${id}`)}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-black text-xs uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all active:scale-95 btn-press"
-                                >
-                                    Leaderboard <Trophy size={14} fill="currentColor" />
-                                </button>
-                                <button
                                     onClick={() => navigate('/student-dashboard')}
                                     className="flex-1 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95 btn-press"
                                 >

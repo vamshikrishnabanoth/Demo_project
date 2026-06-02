@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
+const { logSecurityEvent } = require('../middleware/security');
 
 // Rate limiter for authentication (Brute force protection)
 const authLimiter = rateLimit({
@@ -97,6 +98,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     const { email, password } = req.body; // email field is used for Roll Number/Username
+    const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
 
     try {
         // --- RULE 3: Support Username or Email for Login ---
@@ -110,11 +112,63 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         });
 
         if (!user) {
+            // Log failed attempt (user not found) — use generic message to prevent enumeration
+            logSecurityEvent({
+                type: 'LOGIN_FAILED',
+                message: `Failed login attempt for non-existent account`,
+                ip: clientIp,
+                userAgent: req.headers['user-agent']?.substring(0, 200),
+            });
             return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        // --- PROGRESSIVE ACCOUNT LOCKOUT ---
+        if (user.lockoutUntil && new Date() < new Date(user.lockoutUntil)) {
+            const remainingMs = new Date(user.lockoutUntil) - new Date();
+            const remainingMin = Math.ceil(remainingMs / 60000);
+            logSecurityEvent({
+                type: 'LOGIN_LOCKED_OUT',
+                message: `Locked out user attempted login (${remainingMin}min remaining)`,
+                ip: clientIp,
+                userId: user.id,
+            });
+            return res.status(423).json({
+                msg: `Account temporarily locked due to too many failed attempts. Try again in ${remainingMin} minute(s).`
+            });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            // Increment failed login attempts and compute lockout duration
+            const newFailedAttempts = (user.failedLoginAttempts || 0) + 1;
+            let lockoutUntil = null;
+
+            if (newFailedAttempts >= 15) {
+                lockoutUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+            } else if (newFailedAttempts >= 10) {
+                lockoutUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+            } else if (newFailedAttempts >= 5) {
+                lockoutUntil = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+            }
+
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    failedLoginAttempts: newFailedAttempts,
+                    lastFailedLoginAt: new Date(),
+                    lockoutUntil: lockoutUntil,
+                }
+            });
+
+            logSecurityEvent({
+                type: 'LOGIN_FAILED',
+                message: `Failed login attempt #${newFailedAttempts}${lockoutUntil ? ' (account locked)' : ''}`,
+                ip: clientIp,
+                userId: user.id,
+                failedAttempts: newFailedAttempts,
+                userAgent: req.headers['user-agent']?.substring(0, 200),
+            });
+
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }
 
@@ -133,6 +187,25 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             });
         }
 
+        // --- SUCCESSFUL LOGIN: Reset lockout counter ---
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                failedLoginAttempts: 0,
+                lockoutUntil: null,
+                lastFailedLoginAt: null,
+                lastLogin: new Date()
+            }
+        });
+
+        logSecurityEvent({
+            type: 'LOGIN_SUCCESS',
+            message: `Successful login`,
+            ip: clientIp,
+            userId: user.id,
+            role: user.role,
+        });
+
         const payload = {
             user: {
                 id: user.id,
@@ -141,12 +214,6 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                 tokenVersion: user.tokenVersion
             }
         };
-
-        // Update last login
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { lastLogin: new Date() }
-        });
 
         jwt.sign(
             payload,
@@ -169,7 +236,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server error: ' + err.message });
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -313,15 +380,18 @@ router.post('/set-role', auth, async (req, res) => {
 // @route   PUT api/auth/change-password
 // @desc    Change logged-in user's password
 // @access  Private
-router.put('/change-password', auth, async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
+router.put('/change-password', auth, [
+    check('currentPassword', 'Current password is required').not().isEmpty(),
+    check('newPassword', 'New password must be 8+ chars, including 1 uppercase and 1 special char')
+        .isLength({ min: 8 })
+        .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])/)
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
-    if (!currentPassword || !newPassword) {
-        return res.status(400).json({ msg: 'Please provide current and new password.' });
-    }
-    if (newPassword.length < 6) {
-        return res.status(400).json({ msg: 'New password must be at least 6 characters.' });
-    }
+    const { currentPassword, newPassword } = req.body;
 
     try {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
@@ -329,6 +399,12 @@ router.put('/change-password', auth, async (req, res) => {
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) return res.status(400).json({ msg: 'Current password is incorrect.' });
+
+        // Prevent reuse of the same password
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            return res.status(400).json({ msg: 'New password must be different from the current password.' });
+        }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
@@ -341,10 +417,17 @@ router.put('/change-password', auth, async (req, res) => {
             }
         });
 
+        logSecurityEvent({
+            type: 'PASSWORD_CHANGED',
+            message: 'User changed their password',
+            userId: req.user.id,
+            ip: req.ip || 'unknown',
+        });
+
         res.json({ msg: 'Password updated successfully.' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -427,6 +510,33 @@ router.post('/reset-password', authLimiter, [
     } catch (err) {
         console.error('Reset password error:', err);
         res.status(400).json({ msg: 'Invalid or expired password reset token.' });
+    }
+});
+
+// @route   POST api/auth/logout
+// @desc    Logout user & invalidate token immediately (defense-in-depth)
+// @access  Private
+router.post('/logout', auth, async (req, res) => {
+    try {
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: {
+                isOnline: false,
+                tokenVersion: { increment: 1 } // Invalidate the current session token immediately
+            }
+        });
+
+        logSecurityEvent({
+            type: 'LOGOUT',
+            message: 'User logged out securely',
+            userId: req.user.id,
+            ip: req.ip || 'unknown',
+        });
+
+        res.json({ msg: 'Logged out successfully.' });
+    } catch (err) {
+        console.error('Logout error:', err);
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 

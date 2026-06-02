@@ -252,7 +252,7 @@ export default function AttemptQuiz() {
             if (state.quizStatus === 'started') {
                  setTimeLeft(state.remainingTime);
             } else if (state.quizStatus === 'finished') {
-                 navigate(`/leaderboard/${id}`);
+                 navigate(`/report/${id}`);
             }
         });
 
@@ -958,12 +958,6 @@ export default function AttemptQuiz() {
                             className="w-full bg-[var(--bg-accent)] text-[var(--text-on-accent)] py-4 rounded-xl font-black italic uppercase tracking-wider hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
                         >
                             <TrendingUp size={20} /> View Detailed Analytics
-                        </button>
-                        <button
-                            onClick={() => navigate(`/leaderboard/${id}`)}
-                            className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                        >
-                            <Trophy size={20} /> View Leaderboard
                         </button>
                         <div className="grid grid-cols-2 gap-3">
                             <button

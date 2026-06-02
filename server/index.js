@@ -13,10 +13,16 @@ process.on('unhandledRejection', (reason, promise) => {
 const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const slowDown = require('express-slow-down');
 const hpp = require('hpp');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const {
+    requestIdMiddleware,
+    sanitizeInput,
+    sqlInjectionDetector,
+    securityEventLogger,
+} = require('./middleware/security');
 
 const http = require('http');
 const { Server } = require('socket.io');
@@ -42,6 +48,12 @@ app.use(morgan('dev')); // Keep dev logging for console
 
 // --- SECURITY MIDDLEWARE ---
 
+// 0. Request ID — generates unique X-Request-ID for every request (audit trail)
+app.use(requestIdMiddleware);
+
+// 0.5 Security Event Logger — logs auth failures, rate limits, suspicious activity
+app.use(securityEventLogger);
+
 // 1. CORS - MUST BE FIRST to handle preflights correctly
 app.use(cors({
     origin: (origin, callback) => {
@@ -64,13 +76,55 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token', 'Accept', 'X-Request-ID']
 }));
 
-// 2. Set Security HTTP Headers
+// 2. Set Security HTTP Headers (Full OWASP recommended suite)
 app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://fonts.googleapis.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+            imgSrc: ["'self'", "data:", "blob:", "https:"],
+            connectSrc: ["'self'", "https://kmit-khaoot.vercel.app", "https://quiz-backend-qgro.onrender.com", "wss:", "ws:", "http://localhost:5000", "http://localhost:5173"],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"],
+            frameAncestors: ["'none'"],  // Clickjacking protection
+            upgradeInsecureRequests: [],
+        },
+    },
+    // Strict Transport Security — force HTTPS for 1 year
+    strictTransportSecurity: {
+        maxAge: 31536000, // 1 year in seconds
+        includeSubDomains: true,
+        preload: true,
+    },
+    // Prevent MIME sniffing
+    xContentTypeOptions: true,
+    // Clickjacking protection
+    xFrameOptions: { action: 'deny' },
+    // Referrer Policy
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    // Cross-Origin policies
+    crossOriginOpenerPolicy: { policy: 'same-origin' },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    // DNS Prefetch Control
+    dnsPrefetchControl: { allow: false },
+    // Disable X-Powered-By
+    hidePoweredBy: true,
+    // Permissions Policy — restrict browser APIs
+    permittedCrossDomainPolicies: { permittedPolicies: 'none' },
 }));
+
+// 2.5 Additional Permissions-Policy header (camera, microphone, geolocation restrictions)
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+    next();
+});
 
 // 3. Rate Limiting (Brute Force / DOS protection)
 // 500 req / 15 min per IP: enough for a full class session (login + quiz join + answers = ~4 req/action)
@@ -78,20 +132,34 @@ app.use(helmet({
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 500, // limit each IP to 500 requests per windowMs
-    message: 'Too many requests from this IP, please try again after 15 minutes'
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+    standardHeaders: true,  // Return rate limit info in `RateLimit-*` headers
+    legacyHeaders: false,   // Disable `X-RateLimit-*` headers
 });
 app.use('/api/', limiter); // Apply to all API routes
 
-// 4. Body Parser with limit
+// 3.5 Progressive Speed Limiting (DDoS mitigation — slows down repeat offenders)
+const speedLimiter = slowDown({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    delayAfter: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 300, // allow 300 requests per windowMs without delay
+    delayMs: (hits) => (hits - 300) * 100, // add 100ms delay per request above 300
+    maxDelayMs: 5000, // max 5 second delay
+});
+app.use('/api/', speedLimiter);
+
+// 4. Cookie Parser (for secure cookie-based token transport)
+app.use(cookieParser(process.env.COOKIE_SECRET || process.env.JWT_SECRET));
+
+// 5. Body Parser with limit
 app.use(express.json({ limit: '10kb' })); 
 
-// 5. Data Sanitization against NoSQL injection
-app.use(mongoSanitize());
+// 6. Input Sanitization (PostgreSQL-appropriate — strips null bytes, control chars, prototype pollution)
+app.use(sanitizeInput);
 
-// 6. Data Sanitization against XSS
-app.use(xss());
+// 7. SQL Injection Detection (defense-in-depth — Prisma already uses parameterized queries)
+app.use(sqlInjectionDetector);
 
-// 7. Prevent HTTP Parameter Pollution
+// 8. Prevent HTTP Parameter Pollution
 app.use(hpp());
 
 const server = http.createServer(app);
@@ -1146,6 +1214,45 @@ const PORT = process.env.PORT || 5000;
 // ─── HEALTH CHECK ENDPOINT ────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
+
+// ─── GLOBAL SECURITY ERROR HANDLER ────────────────────────────────────────────
+// Catches unhandled errors and masks internal details in production
+app.use((err, req, res, _next) => {
+    const { logSecurityEvent } = require('./middleware/security');
+    const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
+
+    logSecurityEvent({
+        type: 'UNHANDLED_ERROR',
+        message: err.message,
+        ip: clientIp,
+        method: req.method,
+        path: req.originalUrl,
+        requestId: req.requestId,
+        stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+    });
+
+    // CORS errors
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({ msg: 'CORS policy violation' });
+    }
+
+    // Multer file upload errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ msg: 'File too large. Maximum size is 50MB.' });
+    }
+    if (err.message && err.message.includes('Invalid file type')) {
+        return res.status(400).json({ msg: err.message });
+    }
+
+    // Generic error — mask internals in production
+    const statusCode = err.statusCode || err.status || 500;
+    res.status(statusCode).json({
+        msg: process.env.NODE_ENV === 'production'
+            ? 'An unexpected error occurred. Please try again.'
+            : err.message || 'Internal server error',
+        requestId: req.requestId,
+    });
 });
 
 // ─── DATABASE KEEP-ALIVE PING ─────────────────────────────────────────────────

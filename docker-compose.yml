@@ -5,15 +5,24 @@ services:
     build: ./server
     ports:
       - "5000:5000"
+    env_file:
+      - ./server/.env
     environment:
       - PORT=5000
-      - MONGO_URI=mongodb://mongo:27017/ai-quiz-platform
-      - JWT_SECRET=supersecretkey123
-      - GEMINI_API_KEY=AIzaSyAnBdstnyRbqZx4T9QCCzm1VUpUr0a-k_4
-    depends_on:
-      - mongo
+      - NODE_ENV=production
     networks:
       - app-network
+    # Security: Resource limits to prevent container DoS
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    # Security: Restrict filesystem writes to explicit volumes only
+    volumes:
+      - server-uploads:/app/uploads
+      - server-logs:/app/logs
+    restart: unless-stopped
 
   client:
     build: ./client
@@ -23,19 +32,17 @@ services:
       - server
     networks:
       - app-network
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  mongo-data:
+  server-uploads:
+  server-logs:

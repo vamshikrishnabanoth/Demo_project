@@ -480,7 +480,7 @@ export default function StudentDashboard() {
                                     : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
                             }`}
                         >
-                            Neural Link
+                            Join Quiz
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('arena'); }}

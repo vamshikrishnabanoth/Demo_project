@@ -121,7 +121,12 @@ export const AuthProvider = ({ children }) => {
         return res.data;
     }, []);
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (err) {
+            console.error('Failed to notify backend of secure logout:', err);
+        }
         if (user && socket) {
             socket.emit('logout', user.id);
             socket.disconnect();

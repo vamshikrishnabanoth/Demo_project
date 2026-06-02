@@ -10,6 +10,8 @@ const api = axios.create({
     baseURL: API_BASE_URL,
     // Render free-tier cold starts can take 50-60s. 120s gives plenty of headroom.
     timeout: 120000,
+    // SECURITY: Enable cookie-based credentials for secure token transport
+    withCredentials: true,
 });
 
 // ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────

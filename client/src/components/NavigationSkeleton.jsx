@@ -112,7 +112,6 @@ const NavigationSkeleton = () => {
 
     const isFullscreen = ['/login', '/select-role', '/'].some(p => path === p)
         || path.startsWith('/live-room')
-        || path.startsWith('/leaderboard')
         || path.startsWith('/quiz');
 
     return isFullscreen ? <FullscreenSkeleton /> : <DashboardSkeleton />;

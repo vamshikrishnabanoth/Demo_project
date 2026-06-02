@@ -35,7 +35,6 @@ const Profile           = lazyWithSuspense(() => import('./pages/Profile'));
 const AdminDashboard    = lazyWithSuspense(() => import('./pages/AdminDashboard'));
 const LiveRoomTeacher   = lazyWithSuspense(() => import('./pages/LiveRoomTeacher'));
 const LiveRoomStudent   = lazyWithSuspense(() => import('./pages/LiveRoomStudent'));
-const Leaderboard       = lazyWithSuspense(() => import('./pages/Leaderboard'));
 const AssessmentsHistory = lazyWithSuspense(() => import('./pages/AssessmentsHistory'));
 const AssessmentReport  = lazyWithSuspense(() => import('./pages/AssessmentReport'));
 const QuizAnalytics     = lazyWithSuspense(() => import('./pages/QuizAnalytics'));
@@ -103,8 +102,7 @@ function AnimatedRoutes() {
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
                     <Route path="/admin/users"     element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
 
-                    {/* Shared pages — leaderboard gets slide-up (feels like arrival) */}
-                    <Route path="/leaderboard/:quizId" element={<SlideUpTransition><ProtectedRoute roles={['student', 'teacher']}><Leaderboard /></ProtectedRoute></SlideUpTransition>} />
+                    {/* Shared pages */}
                     <Route path="/profile"             element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><Profile /></ProtectedRoute></PageTransition>} />
 
                     <Route path="/" element={<Home />} />

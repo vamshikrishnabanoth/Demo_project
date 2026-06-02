@@ -32,6 +32,11 @@ model User {
   updatedAt        DateTime @default(now()) @updatedAt
   lastLogin        DateTime?
   
+  // Progressive Account Lockout (Brute Force Protection)
+  failedLoginAttempts Int       @default(0)
+  lockoutUntil        DateTime?
+  lastFailedLoginAt   DateTime?
+  
   // Gamification Fields
   xp                  Int       @default(0)
   streak              Int       @default(0)
