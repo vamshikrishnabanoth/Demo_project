@@ -235,8 +235,8 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Server error' });
+        console.error("Login Error:", err);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
     }
 });
 

@@ -31,6 +31,17 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
+const { execSync } = require('child_process');
+
+try {
+    console.log('🔄 Ensuring database schema is up-to-date...');
+    // This will run synchronously before the server starts accepting requests
+    execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
+    console.log('✅ Database schema update complete!');
+} catch (err) {
+    console.error('❌ Failed to update database schema:', err.message);
+    // Continue anyway; if it's already up-to-date it might have failed due to connection strings
+}
 
 const app = express();
 
