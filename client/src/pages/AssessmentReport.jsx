@@ -258,14 +258,20 @@ const AssessmentReport = () => {
                                             <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-accent)] italic border-b border-[var(--bg-accent)]/30 pb-1">Tracker_{i+1}</div>
                                         </div>
                                         <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
-                                        <h3 className="text-4xl font-black text-white italic tracking-tighter whitespace-nowrap flex items-baseline">
-                                            {stat.value}
+                                        <div className="flex flex-col gap-0.5">
+                                            <h3 className={`font-black text-white italic tracking-tighter leading-none ${
+                                                stat.value.length > 7 ? 'text-2xl sm:text-3xl' :
+                                                stat.value.length > 5 ? 'text-3xl sm:text-4xl' :
+                                                'text-4xl'
+                                            }`}>
+                                                {stat.value}
+                                            </h3>
                                             {stat.subValue && (
-                                                <span className="text-xs font-bold text-white/40 uppercase tracking-wider not-italic ml-1.5 shrink-0">
+                                                <span className="text-[10px] sm:text-xs font-bold text-white/40 uppercase tracking-wider not-italic mt-1 shrink-0">
                                                     {stat.subValue}
                                                 </span>
                                             )}
-                                        </h3>
+                                        </div>
                                     </motion.div>
                                 ))}
                             </div>
