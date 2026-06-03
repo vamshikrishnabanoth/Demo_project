@@ -747,16 +747,38 @@ exports.getQuizById = async (req, res) => {
             });
         }
 
+        // SECURITY: Destructure raw questions out of quiz so the original
+        // questions array (which contains correctAnswer) is never included
+        // in the response payload — only normalizedQuestions is sent.
+        const { questions: _rawQuestions, ...safeQuiz } = quiz;
+
+        // SECURITY: Strip correctOption from previousResult answers if the
+        // student hasn't completed the quiz yet (prevents leaking answers
+        // during an in-progress attempt).
+        let safePreviousResult = previousResult;
+        if (previousResult && !isCreator && !isAdmin) {
+            if (previousResult.status !== 'completed') {
+                safePreviousResult = {
+                    ...previousResult,
+                    answers: (previousResult.answers || []).map(a => {
+                        const { correctOption, ...safeAnswer } = a;
+                        return safeAnswer;
+                    })
+                };
+            }
+        }
+
         res.json({
-            ...quiz,
+            ...safeQuiz,
             questions: normalizedQuestions,
-            previousResult
+            previousResult: safePreviousResult
         });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
     }
 };
+
 
 exports.submitQuiz = async (req, res) => {
     try {

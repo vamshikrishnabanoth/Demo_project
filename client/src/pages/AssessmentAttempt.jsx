@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
@@ -11,6 +11,8 @@ import { showConfirm } from '../utils/alerts';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
+import AuthContext from '../context/AuthContext';
+import useExamProctoring from '../hooks/useExamProctoring';
 
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -60,6 +62,18 @@ export default function AssessmentAttempt() {
     const [submitting, setSubmitting] = useState(false);
 
     const questionStartTime = useRef(Date.now());
+
+    // Auth context for proctoring userId
+    const { user: authUser } = useContext(AuthContext);
+
+    // Exam Integrity — strict fullscreen, tab-switch limit, DevTools blocking, resize heuristic
+    useExamProctoring({
+        enabled: !loading && !submitting && !!quiz,
+        quizId: id,
+        userId: authUser?.id,
+        maxTabSwitches: 2,
+        onAutoSubmit: handleFinalSubmit,
+    });
 
     useEffect(() => {
         const fetchQuiz = async () => {

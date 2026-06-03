@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
 import { showError, showSuccess } from '../utils/alerts';
+import useExamProctoring from '../hooks/useExamProctoring';
 
 
 export default function AttemptQuiz() {
@@ -443,51 +444,16 @@ export default function AttemptQuiz() {
         }
     }, [currentQuestion, quiz, isReviewMode, result, id]);
 
-    // Anti-Cheat & Exam Integrity Controls
-    useEffect(() => {
-        if (loading || isReviewMode || result || !quiz) return;
-        
-        // 1. Block Copy-Paste & Cut & Context Menu
-        const blockEvent = (e) => {
-            e.preventDefault();
-            toast.error("Security Warning: Copying/pasting/cutting is disabled during examinations!", { id: "cheat-block-toast" });
-        };
-        const blockContextMenu = (e) => {
-            e.preventDefault();
-            toast.error("Security Warning: Context menus are disabled during examinations!", { id: "cheat-block-toast" });
-        };
-        
-        document.addEventListener('copy', blockEvent);
-        document.addEventListener('paste', blockEvent);
-        document.addEventListener('cut', blockEvent);
-        document.addEventListener('contextmenu', blockContextMenu);
-        
-        // 2. Track Window Focus / Tab Switch Changes
-        const handleVisibilityChange = () => {
-            if (document.hidden && authUser) {
-                // Emit alert to server so the teacher dashboard shows real-time cheat telemetry
-                socket.emit('student_cheated_alert', { 
-                    quizId: id, 
-                    studentId: authUser.id, 
-                    action: 'tab_switch',
-                    timestamp: new Date()
-                });
-                toast.error("CRITICAL SECURITY WARNING: Tab switching is monitored and reported to your teacher!", { 
-                    duration: 5000,
-                    id: "cheat-visibility-toast"
-                });
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        
-        return () => {
-            document.removeEventListener('copy', blockEvent);
-            document.removeEventListener('paste', blockEvent);
-            document.removeEventListener('cut', blockEvent);
-            document.removeEventListener('contextmenu', blockContextMenu);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [quiz, loading, isReviewMode, result, authUser, id]);
+    // Anti-Cheat & Exam Integrity Controls — Centralised via useExamProctoring hook
+    // Covers: strict fullscreen, tab-switch counting (auto-submit at limit),
+    // DevTools shortcut blocking, window-resize heuristic, copy/paste/cut/contextmenu blocking.
+    const { tabSwitchCount } = useExamProctoring({
+        enabled: !loading && !isReviewMode && !result && !!quiz,
+        quizId: id,
+        userId: authUser?.id,
+        maxTabSwitches: 2,
+        onAutoSubmit: submitQuiz,
+    });
 
     // Timer Initialization (Split from focus logic)
     useEffect(() => {
