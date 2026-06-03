@@ -800,7 +800,8 @@ io.to(quizId).emit(
     });
 
     // Tracking student cheating attempts (tab switching, focus loss)
-    socket.on('student_cheated_alert', ({ quizId, studentId, action, timestamp }) => {
+    socket.on('student_cheated_alert', (payload) => {
+        const { quizId, studentId, action, timestamp } = payload;
         // SECURITY CHECK: Verify student identity matches socket.user payload
         if (!socket.user || socket.user.id !== studentId) {
             return;
@@ -809,9 +810,8 @@ io.to(quizId).emit(
 
         // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
         io.to(quizId).emit('student_cheat_warning', {
-            studentId,
+            ...payload,
             username: socket.user.username || 'Student',
-            action,
             timestamp: timestamp || new Date()
         });
     });

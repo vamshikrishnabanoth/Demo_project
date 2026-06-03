@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus } from 'lucide-react';
+import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -23,6 +23,7 @@ export default function LiveRoomTeacher() {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isQuizEnded, setIsQuizEnded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [cheatAlerts, setCheatAlerts] = useState([]);
     const studentsPerPage = 10;
     const hasInitializedTimer = useRef(false);
     const isTransitioning = useRef(false);
@@ -169,6 +170,11 @@ export default function LiveRoomTeacher() {
             setIsTimerRunning(false);
         });
 
+        socket.on('student_cheat_warning', (alert) => {
+            console.log('Received cheat warning:', alert);
+            setCheatAlerts(prev => [alert, ...prev]);
+        });
+
         const handleTeacherReconnect = () => {
     setIsOnline(true);
 
@@ -240,6 +246,7 @@ if (socket.connected) {
             socket.off('quiz_started');
             socket.off('change_question');
             socket.off('student_focus_update');
+            socket.off('student_cheat_warning');
             socket.off('connect');
             socket.off('disconnect');
         };
@@ -675,6 +682,77 @@ if (socket.connected) {
                         </div>
                     </div>
                 )}
+
+                {/* Live Proctoring & Security Dashboard */}
+                <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+                    <div className="bg-red-500/5 border-b border-red-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-black text-red-600 italic uppercase tracking-tighter flex items-center gap-2">
+                                <ShieldAlert size={22} className={cheatAlerts.length > 0 ? "animate-pulse" : ""} />
+                                Live Proctoring & <span className="text-red-700">Security Dashboard</span>
+                            </h2>
+                            <p className="text-red-500/60 text-[10px] font-black uppercase tracking-widest mt-1">
+                                Real-time student cheating alert feed
+                            </p>
+                        </div>
+                        <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
+                            cheatAlerts.length > 0 ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                            {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Alert' : 'Alerts'} Detected
+                        </div>
+                    </div>
+                    
+                    <div className="p-8">
+                        {cheatAlerts.length > 0 ? (
+                            <div className="space-y-4 max-h-[320px] overflow-y-auto pr-2 divide-y divide-slate-100">
+                                {cheatAlerts.map((alert, index) => {
+                                    const time = alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+                                    let details = "";
+                                    if (alert.action === 'devtools_shortcut') {
+                                        details = `Tried to open DevTools using key shortcut (${alert.key || 'F12 / Ctrl+Shift+I / Ctrl+U'}).`;
+                                    } else if (alert.action === 'devtools_resize') {
+                                        details = `Unusual window resize detected (DevTools/Inspector docking). Height Diff: ${alert.heightDiff || 0}px, Width Diff: ${alert.widthDiff || 0}px.`;
+                                    } else if (alert.action === 'tab_switch') {
+                                        details = `Left the active quiz browser tab. Switch count: ${alert.count || 1}.`;
+                                    } else if (alert.action === 'fullscreen_exit') {
+                                        details = `Exited fullscreen mode.`;
+                                    } else {
+                                        details = `Triggered security warning: ${alert.action?.replace('_', ' ')}.`;
+                                    }
+
+                                    return (
+                                        <div 
+                                            key={index} 
+                                            className={`flex items-start gap-4 py-4 ${index > 0 ? 'border-t border-slate-100' : ''} animate-in fade-in slide-in-from-top-4 duration-300`}
+                                        >
+                                            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shrink-0 border border-red-100">
+                                                <AlertTriangle size={18} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold text-slate-800 text-sm">{alert.username}</span>
+                                                    <span className="text-[10px] text-slate-400 font-mono">{time}</span>
+                                                </div>
+                                                <p className="text-xs text-slate-500 font-bold mt-1 leading-relaxed">{details}</p>
+                                            </div>
+                                            <div className="text-[9px] font-black text-red-500 bg-red-50 border border-red-100 px-3 py-1 rounded-xl uppercase tracking-widest shrink-0">
+                                                {alert.action?.replace('_', ' ')}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="py-10 text-center flex flex-col items-center justify-center">
+                                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 mb-4 border border-emerald-100">
+                                    <ShieldCheck size={28} className="animate-pulse" />
+                                </div>
+                                <h4 className="text-sm font-black text-slate-700 uppercase tracking-widest mb-1">Secure Environment</h4>
+                                <p className="text-slate-400 font-bold text-xs">No integrity violations detected from active participants.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {/* Student Progress — Full Width Table with Dots */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
