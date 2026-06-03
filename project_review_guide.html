@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Live Quiz Platform - Comprehensive Review Guide</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0c10;
+            color: #c5c6c7;
+        }
+        @media print {
+            body {
+                background-color: #ffffff;
+                color: #1f2937;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            .no-print {
+                display: none;
+            }
+            .shadow-glow {
+                box-shadow: none !important;
+            }
+            .border-gradient {
+                border-color: #e5e7eb !important;
+            }
+            .bg-dark-card {
+                background-color: #f9fafb !important;
+                border: 1px solid #e5e7eb !important;
+            }
+            .text-glow {
+                text-shadow: none !important;
+            }
+            pre, code {
+                background-color: #f3f4f6 !important;
+                color: #1f2937 !important;
+                border: 1px solid #e5e7eb !important;
+            }
+        }
+        .shadow-glow {
+            box-shadow: 0 0 35px rgba(139, 92, 246, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+        }
+        .bg-dark-card {
+            background-color: rgba(255, 255, 255, 0.015);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 md:p-12 leading-relaxed antialiased">
+    <div class="max-w-5xl mx-auto space-y-12">
+        
+        <!-- SECTION 1: TITLE PAGE -->
+        <header class="page-break flex flex-col justify-between border-b border-purple-500/20 pb-8 min-h-[450px]">
+            <div class="space-y-4 my-auto">
+                <div class="inline-block bg-purple-600/10 border border-purple-500/30 text-purple-400 font-bold uppercase tracking-widest text-xs px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                    System Reference & Documentation Manual
+                </div>
+                <h1 class="text-4xl sm:text-6xl font-black uppercase italic tracking-tighter leading-none text-white">
+                    Role-Based AI <br class="hidden sm:inline"/><span class="text-purple-400 text-glow">Live Quiz Platform</span>
+                </h1>
+                <p class="text-slate-400 text-md sm:text-lg font-medium max-w-3xl mt-4">
+                    A technical review blueprint detailing complete API endpoints routing, relational schema models, Web Audio synthesizers, and the multi-agent AI quiz generation & verification pipeline.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-6 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 border-t border-white/5 pt-8">
+                <div>Document Version: <span class="text-slate-300">1.2.0</span></div>
+                <div class="hidden sm:block">•</div>
+                <div>Status: <span class="text-emerald-400">Production Review Guide</span></div>
+                <div class="hidden sm:block">•</div>
+                <div>Confidential: <span class="text-slate-300">Local Only</span></div>
+            </div>
+        </header>
+
+        <!-- SECTION 2: EXECUTIVE OVERVIEW -->
+        <section class="page-break space-y-6">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                01. Executive Overview
+            </h2>
+            <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                <p class="text-sm text-slate-300">
+                    The platform is a modular classroom assessment application connecting educators and students in real-time. The portal handles administrative quiz controls, automated question generation, websocket rooms, custom game boards, and deep performance analytics.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs uppercase tracking-wider font-bold pt-2">
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-2xl">
+                        <div class="text-purple-400 text-lg font-black">4 Ingestion Ways</div>
+                        <div class="text-slate-400 text-[10px] mt-1">Prompt, PDF, Speech Audio, YouTube URL</div>
+                    </div>
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-2xl">
+                        <div class="text-purple-400 text-lg font-black">2 Arena Lobbies</div>
+                        <div class="text-slate-400 text-[10px] mt-1">Sprint Match & 3D Match-Up Arena</div>
+                    </div>
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-2xl">
+                        <div class="text-purple-400 text-lg font-black">Anti-Cheat Checks</div>
+                        <div class="text-slate-400 text-[10px] mt-1">Duplicate Logins, Server-Side XP Calculations</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: SYSTEM ROUTING REGISTRY -->
+        <section class="page-break space-y-6">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                02. Complete System API Registry
+            </h2>
+            <p class="text-sm text-slate-300">
+                Below is the comprehensive catalog of server endpoints, grouped by features and operational access.
+            </p>
+
+            <div class="space-y-6">
+                <!-- Auth Routes -->
+                <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-purple-400 uppercase">Authentication Routes (/api/auth)</h3>
+                    <div class="space-y-4 text-xs text-slate-300">
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /register</span> - Admin-restricted user registration. Creates teacher, student, or administrator records in the database with encrypted passwords.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /login</span> - Authenticates users via username/email. Generates a signed JWT payload containing tokenVersion and user role. <strong>Blocks duplicate student logins</strong>.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /register-public</span> - Self-registration path for students. Assigns an initial role of `none` prior to workspace setup.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /set-role</span> - Updates and locks a newly registered user's role (`student` | `teacher`). This can only be executed once.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">GET /me</span> - Active session validation path. Resolves user authentication status and returns the profile object.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">PUT /change-password</span> - Updates user password and increments `tokenVersion` in the DB, immediately revoking all previous JWT tokens to force active sessions to re-authenticate.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /forgot-password</span> - Issues a secure, temporary 10-minute password reset token mapped to the user ID.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Routes -->
+                <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-purple-400 uppercase">Quiz & Generator Routes (/api/quiz)</h3>
+                    <div class="space-y-4 text-xs text-slate-300">
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /generate</span> - Spawns an asynchronous AI quiz generation task. Returns a unique `taskId` immediately. The parsing handles PDF parsing (`pdf-parse`) and Office formatting.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">GET /generate/status/:taskId</span> - Status polling endpoint for background quiz generation tasks.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /generate-voice</span> - Generates questions from uploaded audio recordings using the **Groq Whisper API** to transcribe speech to plaintext before calling the generator model.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /create</span> - Persists a manual or AI-generated quiz to the database.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">GET /my-quizzes</span> - Fetches all quizzes created by the logged-in educator.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">GET /result/:quizId</span> - Fetches a student's performance rank and details on completion.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">PATCH /:id/schedule</span> - Updates start and end dates/times for scheduled homework assignments.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">DELETE /:id</span> - Cascade deletes a quiz and its questions.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Routes -->
+                <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-purple-400 uppercase">Student Portal Routes (/api/students)</h3>
+                    <div class="space-y-4 text-xs text-slate-300">
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">GET /gamification</span> - Retrieves XP, login streak metrics, daily missions, and unlocked perks.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /gamification/init</span> - Handles streak checks and daily mission resets.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /game-score</span> - Submits game results from Sprint or Match-Up. <strong>XP is calculated server-side</strong> based on questions, duration, and moves to prevent client-side cheat farming.
+                        </div>
+                        <div class="p-3 bg-black/30 rounded-xl border border-white/5">
+                            <span class="font-mono text-purple-300 font-bold">POST /redeem-perk</span> - Spends student XP to redeem virtual classroom passes, checking monthly limits per ticket.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: THE GENERATOR MODEL & AGENT PIPELINE -->
+        <section class="page-break space-y-6">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                03. The Generative AI & Agent QA Pipeline
+            </h2>
+            <p class="text-sm text-slate-300">
+                To guarantee high-quality pedagogical assessments, the system does not just call an LLM directly. It executes a structured <strong>Agentic Quality Assurance Pipeline</strong>.
+            </p>
+
+            <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                <h3 class="text-lg font-bold text-purple-400 uppercase">Interactive QA Pipeline Flow</h3>
+                
+                <div class="space-y-4 text-xs text-slate-300">
+                    <div class="p-4 bg-white/5 rounded-2xl">
+                        <div class="font-bold text-white uppercase text-xs">Stage 1: The Generator (Google Gemini 1.5)</div>
+                        <p class="mt-1 text-slate-400">
+                            Processes raw plaintext input and generates a draft set of questions, options, and explanations based on the requested count and topic.
+                        </p>
+                    </div>
+                    
+                    <div class="p-4 bg-white/5 rounded-2xl">
+                        <div class="font-bold text-white uppercase text-xs">Stage 2: The Critic Agent (Rule-Based Expert System)</div>
+                        <p class="mt-1 text-slate-400">
+                            Scores each question from 0 to 100 based on 6 weighted criteria: Correctness (30 pts), Clarity (20 pts), Distractor Quality (15 pts), Explanation Length (10 pts), Difficulty Alignment (15 pts), and Concept Uniqueness (10 pts). It also flags whole-quiz issues like answer-position bias or repeated concepts.
+                        </p>
+                    </div>
+                    
+                    <div class="p-4 bg-white/5 rounded-2xl border border-purple-500/20">
+                        <div class="font-bold text-purple-300 uppercase text-xs flex justify-between">
+                            <span>Stage 3: Early Exit Check</span>
+                            <span class="text-emerald-400 font-extrabold">Optimization</span>
+                        </div>
+                        <p class="mt-1 text-slate-400">
+                            If the average score of all draft questions is already <strong>&gt;= 92</strong>, the pipeline skips refinement completely and returns the draft questions. This saves API usage costs and reduces latency.
+                        </p>
+                    </div>
+                    
+                    <div class="p-4 bg-white/5 rounded-2xl">
+                        <div class="font-bold text-white uppercase text-xs">Stage 4: The Refiner Agent (Llama 3.1 8B via Groq)</div>
+                        <p class="mt-1 text-slate-400">
+                            Questions scoring below 95 are refined in parallel:
+                            <br/>• **Minor Refinement (85-94)**: Only punctuation, explanation length, and formatting are corrected.
+                            <br/>• **Full Refinement (&lt;85)**: The question is rewritten based on the specific feedback issues generated by the Critic.
+                        </p>
+                    </div>
+                    
+                    <div class="p-4 bg-white/5 rounded-2xl">
+                        <div class="font-bold text-white uppercase text-xs">Stage 5: Final Validation & Diff Generation</div>
+                        <p class="mt-1 text-slate-400">
+                            The Critic re-scores the refined questions. The pipeline returns the finalized questions alongside a structured report showing the quality score improvement (e.g., from 78 to 96) and a visual diff of the modified questions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SOCKET GATEWAY PROTOCOLS -->
+        <section class="page-break space-y-6">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                04. WebSocket Gateway Communication Protocol
+            </h2>
+            <p class="text-sm text-slate-300">
+                Live classrooms run on a custom WebSocket state room. Below is the protocol matrix:
+            </p>
+
+            <div class="bg-dark-card rounded-3xl p-6 space-y-4 font-mono text-[11px] text-slate-300 overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/10 text-purple-400 uppercase text-[10px]">
+                            <th class="pb-2">Event Name</th>
+                            <th class="pb-2">Direction</th>
+                            <th class="pb-2">Trigger Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <tr>
+                            <td class="py-2 text-white">join_room</td>
+                            <td class="py-2">Client → Server</td>
+                            <td class="py-2 text-slate-400">Student joins the lobby using a PIN code. Registers presence.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-white">reconnectUser</td>
+                            <td class="py-2">Client → Server</td>
+                            <td class="py-2 text-slate-400">Restores student quiz progress from the database after a disconnect.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-white">start_quiz</td>
+                            <td class="py-2">Teacher → Server</td>
+                            <td class="py-2 text-slate-400">Teacher starts the quiz. Emits the first question to the room.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-white">submit_question_answer</td>
+                            <td class="py-2">Client → Server</td>
+                            <td class="py-2 text-slate-400">Submits an answer choice and checks speed against the lobby average.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-white">answer_feedback</td>
+                            <td class="py-2">Server → Client</td>
+                            <td class="py-2 text-slate-400">Emits response speed feedback (cyan or amber popups) to the student.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 6: RELATIONAL PRISMA MODEL -->
+        <section class="page-break space-y-6">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                05. Relational Database Schema blueprint
+            </h2>
+            <div class="bg-dark-card rounded-3xl p-6 space-y-4 font-mono text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
+                <div><span class="text-purple-400 font-bold">model</span> User {</div>
+                <div class="pl-4">id String @id @default(uuid())</div>
+                <div class="pl-4">username String @unique</div>
+                <div class="pl-4">email String @unique</div>
+                <div class="pl-4">password String</div>
+                <div class="pl-4">role String // 'student' | 'teacher' | 'admin'</div>
+                <div class="pl-4">isOnline Boolean @default(false)</div>
+                <div class="pl-4">xp Int @default(0)</div>
+                <div class="pl-4">dailyMissions Json?</div>
+                <div class="pl-4">unlockedPerks Json?</div>
+                <div class="pl-4">createdAt DateTime @default(now())</div>
+                <div>}</div>
+                <div>&nbsp;</div>
+                <div><span class="text-purple-400 font-bold">model</span> Quiz {</div>
+                <div class="pl-4">id String @id @default(uuid())</div>
+                <div class="pl-4">title String</div>
+                <div class="pl-4">topic String</div>
+                <div class="pl-4">creatorId String</div>
+                <div class="pl-4">questions Question[]</div>
+                <div class="pl-4">isLive Boolean @default(false)</div>
+                <div class="pl-4">isAssessment Boolean @default(false)</div>
+                <div class="pl-4">createdAt DateTime @default(now())</div>
+                <div>}</div>
+                <div>&nbsp;</div>
+                <div><span class="text-purple-400 font-bold">model</span> Question {</div>
+                <div class="pl-4">id String @id @default(uuid())</div>
+                <div class="pl-4">quizId String</div>
+                <div class="pl-4">quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)</div>
+                <div class="pl-4">questionText String</div>
+                <div class="pl-4">options String[]</div>
+                <div class="pl-4">correctAnswer String</div>
+                <div class="pl-4">explanation String?</div>
+                <div>}</div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: PRESENTATION PREPARATION -->
+        <section class="space-y-6 pb-12">
+            <h2 class="text-2xl font-extrabold uppercase italic tracking-tight text-white border-l-4 border-purple-500 pl-4">
+                06. Key Review Presentation Talking Points
+            </h2>
+            <div class="bg-dark-card rounded-3xl p-6 space-y-4">
+                <p class="text-xs text-slate-300">
+                    Use these key bullet points to highlight the technical achievements of the project during your review:
+                </p>
+                <ul class="space-y-3 text-xs text-slate-300 list-disc list-inside">
+                    <li><strong>Agentic Quiz QA Pipeline:</strong> Emphasize that the platform uses an intelligent Critic-Refiner loop with an <em>early-exit check</em> to ensure high question quality while keeping token usage efficient.</li>
+                    <li><strong>3-Tier YouTube Ingestion Pipeline:</strong> Discuss the fallback structure (Transcript &rarr; Metadata &rarr; Whisper Audio) that ensures 95% of video URLs work seamlessly.</li>
+                    <li><strong>Browser Stacking Glitch Resolution:</strong> Explain how we resolved Chrome's rounded-corner 3D flattening bug in the Match-Up card game by using explicit transforms, dynamic z-indexing, and opacity cross-fading.</li>
+                    <li><strong>Server-Side XP Validation:</strong> Highlight the anti-farming rules that validate gameplay duration and matched pairs before awarding XP, preventing students from cheating.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

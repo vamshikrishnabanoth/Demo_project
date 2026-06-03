@@ -31,17 +31,7 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
-const { execSync } = require('child_process');
-
-try {
-    console.log('🔄 Ensuring database schema is up-to-date...');
-    // This will run synchronously before the server starts accepting requests
-    execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
-    console.log('✅ Database schema update complete!');
-} catch (err) {
-    console.error('❌ Failed to update database schema:', err.message);
-    // Continue anyway; if it's already up-to-date it might have failed due to connection strings
-}
+const { exec } = require('child_process');
 
 const app = express();
 
@@ -1355,4 +1345,23 @@ prisma.user.updateMany({
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
+
+    // Run database schema push asynchronously after the server binds to the port.
+    // This allows Render container health checks to pass instantly.
+    setImmediate(() => {
+        try {
+            console.log('🔄 Ensuring database schema is up-to-date (asynchronous check)...');
+            exec('npx prisma db push --accept-data-loss', (error, stdout, stderr) => {
+                if (error) {
+                    console.error('❌ Failed to update database schema:', error.message);
+                    return;
+                }
+                console.log('✅ Database schema update complete!');
+                if (stdout) console.log(`[Prisma DB Push Out]: ${stdout}`);
+                if (stderr) console.error(`[Prisma DB Push Err]: ${stderr}`);
+            });
+        } catch (err) {
+            console.error('❌ Failed to initiate database schema update:', err.message);
+        }
+    });
 });
