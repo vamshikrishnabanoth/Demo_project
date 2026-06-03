@@ -726,7 +726,7 @@ export default function AttemptQuiz() {
         console.log("Manual navigation disabled in live mode.");
     };
 
-    const submitQuiz = async () => {
+    async function submitQuiz() {
         if (submitting || isReviewMode) return;
         setSubmitting(true);
         try {

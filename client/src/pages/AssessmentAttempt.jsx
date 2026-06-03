@@ -129,7 +129,7 @@ export default function AssessmentAttempt() {
     };
 
     // Global Final Submission
-    const handleFinalSubmit = async (currentAnswersList = answers) => {
+    async function handleFinalSubmit(currentAnswersList = answers) {
         setSubmitting(true);
         try {
             // Map answers strictly to what the server expects: { selectedOption, timeTaken }
