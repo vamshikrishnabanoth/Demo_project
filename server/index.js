@@ -1210,7 +1210,10 @@ participants[idx].socketId = null;
 });
 });
 
-const PORT = process.env.PORT || 5000;
+// Render injects a default PORT (often 10000) inside all containers, but routes traffic 
+// to the Dockerfile EXPOSE port (5000). To prevent port scan mismatch, we force 
+// port 5000 when running on Render.
+const PORT = process.env.RENDER === 'true' ? 5000 : (process.env.PORT || 5000);
 
 // ─── HEALTH CHECK ENDPOINT ────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
