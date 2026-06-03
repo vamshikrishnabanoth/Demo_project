@@ -774,7 +774,7 @@ export default function AttemptQuiz() {
         }
     };
 
-    if (loading || !quiz) return <WaitingRoomLoader message="Initializing Arena..." />;
+    if (loading || !quiz) return <WaitingRoomLoader message="Initializing Arena..." showCoins={false} />;
 
     if (waitingForState) {
         return (
@@ -959,7 +959,7 @@ export default function AttemptQuiz() {
         : null;
 
     if (!question) {
-        return <WaitingRoomLoader message="Loading Question..." />;
+        return <WaitingRoomLoader message="Loading Question..." showCoins={false} />;
     }
 
     return (

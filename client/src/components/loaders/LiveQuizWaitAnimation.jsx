@@ -77,6 +77,54 @@ function OrbitingStudentAvatars({ count = 6, lowPerformanceMode }) {
                 className="absolute inset-12 rounded-full border border-dashed border-white/10"
             />
             <EnergyCore lowPerformanceMode={lowPerformanceMode} />
+
+            {/* Dynamic Continuous Coins Particle Burst Animation */}
+            {!lowPerformanceMode && (
+                <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
+                    {Array.from({ length: 16 }).map((_, idx) => {
+                        const angle = (idx * 360) / 16;
+                        const rad = (angle * Math.PI) / 180;
+                        const size = 6 + (idx % 3) * 3;
+                        const distance = 90 + (idx % 2) * 50;
+                        const x = Math.cos(rad) * distance;
+                        const y = Math.sin(rad) * distance;
+                        const delay = (idx % 4) * 0.4;
+                        const particleColors = [
+                            'var(--bg-accent, #FFB700)',
+                            '#22c55e',
+                            '#FFB700',
+                            '#60a5fa',
+                            '#a78bfa'
+                        ];
+                        
+                        return (
+                            <motionDiv.div
+                                key={idx}
+                                className="absolute left-1/2 top-1/2 rounded-full"
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    backgroundColor: particleColors[idx % particleColors.length],
+                                    x: -size / 2,
+                                    y: -size / 2,
+                                }}
+                                animate={{
+                                    x: [0, x],
+                                    y: [0, y],
+                                    opacity: [0, 1, 0],
+                                    scale: [0.5, 1.2, 0.2]
+                                }}
+                                transition={{
+                                    duration: 2.2,
+                                    repeat: Infinity,
+                                    ease: "easeOut",
+                                    delay: delay
+                                }}
+                            />
+                        );
+                    })}
+                </div>
+            )}
             
             {avatars.map((_, idx) => {
                 const angle = (idx / avatars.length) * 360;
