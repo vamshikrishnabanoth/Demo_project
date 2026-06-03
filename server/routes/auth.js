@@ -248,7 +248,9 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                         email: user.email, 
                         role: user.role,
                         studentBranch: user.studentBranch,
-                        section: user.section
+                        section: user.section,
+                        name: user.name,
+                        year: user.year
                     } 
                 });
             }
