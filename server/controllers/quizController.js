@@ -565,18 +565,6 @@ exports.deleteQuiz = async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        // ── Integrity lock: non-admin teachers cannot delete published quizzes
-        //    that already have student results (evidence of live data)
-        if (quiz.isLocked && !isAdmin) {
-            const resultCount = await prisma.result.count({ where: { quizId: req.params.id } });
-            if (resultCount > 0) {
-                return res.status(403).json({
-                    msg: 'This published quiz has student results and cannot be deleted. Contact an admin.',
-                    locked: true
-                });
-            }
-        }
-
         // Delete all related results first to avoid foreign key violations
         await prisma.result.deleteMany({
             where: { quizId: req.params.id }

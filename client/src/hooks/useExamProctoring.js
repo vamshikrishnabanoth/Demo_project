@@ -50,105 +50,11 @@ export default function useExamProctoring({
         }
     }, [enabled]);
 
-    // ─── 1. Strict Fullscreen ────────────────────────────────────────────────
-    useEffect(() => {
-        if (!enabled) return;
+    // ─── 1. Fullscreen Mode Removed ──────────────────────────────────────────
+    // (Fullscreen is no longer requested or enforced)
 
-        const requestFS = () => {
-            const el = document.documentElement;
-            if (!document.fullscreenElement) {
-                el.requestFullscreen?.().catch(() => {
-                    // Fullscreen refused (mobile / user denied)
-                    toast.error(
-                        'Fullscreen mode is required during examinations. Some browsers may not support this feature.',
-                        { id: 'fs-denied-toast', duration: 6000 }
-                    );
-                });
-            }
-        };
-
-        // Initial request (small delay so the page renders first)
-        const initTimer = setTimeout(requestFS, 600);
-
-        const onFSChange = () => {
-            const inFS = !!document.fullscreenElement;
-            setIsFullscreen(inFS);
-            if (!inFS && enabled) {
-                toast.error(
-                    '⚠️ SECURITY: You exited fullscreen! Re-entering fullscreen mode…',
-                    { id: 'fs-exit-toast', duration: 4000 }
-                );
-                // Emit alert to teacher
-                if (quizId && userId) {
-                    socket.emit('student_cheated_alert', {
-                        quizId,
-                        studentId: userId,
-                        action: 'fullscreen_exit',
-                        timestamp: new Date(),
-                    });
-                }
-                // Re-request after a brief pause (browsers require user gesture sometimes)
-                setTimeout(requestFS, 800);
-            }
-        };
-
-        document.addEventListener('fullscreenchange', onFSChange);
-        // Set initial state
-        setIsFullscreen(!!document.fullscreenElement);
-
-        return () => {
-            clearTimeout(initTimer);
-            document.removeEventListener('fullscreenchange', onFSChange);
-            // Exit fullscreen on unmount
-            if (document.fullscreenElement) {
-                document.exitFullscreen?.().catch(() => {});
-            }
-        };
-    }, [enabled, quizId, userId]);
-
-    // ─── 2. Tab-Switch Counter + Auto-Submit ─────────────────────────────────
-    useEffect(() => {
-        if (!enabled) return;
-
-        const handleVisibility = () => {
-            if (!document.hidden) return; // Only count when leaving
-
-            tabSwitchRef.current += 1;
-            const count = tabSwitchRef.current;
-            setTabSwitchCount(count);
-
-            // Emit cheat alert to server
-            if (quizId && userId) {
-                socket.emit('student_cheated_alert', {
-                    quizId,
-                    studentId: userId,
-                    action: 'tab_switch',
-                    count,
-                    timestamp: new Date(),
-                });
-            }
-
-            if (count >= maxTabSwitches) {
-                toast.error(
-                    `🚨 CRITICAL: Tab-switch limit (${maxTabSwitches}) exceeded! Your quiz is being auto-submitted.`,
-                    { id: 'tab-limit-toast', duration: 8000 }
-                );
-                if (!hasAutoSubmitted.current && autoSubmitRef.current) {
-                    hasAutoSubmitted.current = true;
-                    autoSubmitRef.current();
-                }
-            } else {
-                const remaining = maxTabSwitches - count;
-                toast.error(
-                    `⚠️ Tab Switch Detected! ${remaining} chance${remaining > 1 ? 's' : ''} remaining before auto-submit.`,
-                    { id: 'tab-warn-toast', duration: 5000 }
-                );
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibility);
-        return () => document.removeEventListener('visibilitychange', handleVisibility);
-    }, [enabled, quizId, userId, maxTabSwitches]);
+    // ─── 2. Tab-Switch Monitoring Removed ─────────────────────────────────────
+    // (Tab switches are no longer monitored or reported)
 
     // ─── 3. DevTools Keyboard Shortcut Blocking ──────────────────────────────
     useEffect(() => {
