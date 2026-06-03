@@ -1259,9 +1259,8 @@ app.use((err, req, res, _next) => {
     // Generic error — mask internals in production
     const statusCode = err.statusCode || err.status || 500;
     res.status(statusCode).json({
-        msg: process.env.NODE_ENV === 'production'
-            ? 'An unexpected error occurred. Please try again.'
-            : err.message || 'Internal server error',
+        msg: err.message || 'Internal server error',
+        stack: err.stack,
         requestId: req.requestId,
     });
 });
