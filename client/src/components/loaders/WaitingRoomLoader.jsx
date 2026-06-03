@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function WaitingRoomLoader({ message = 'Joining Arena...', showCoins = true }) {
+export default function WaitingRoomLoader({ message = 'Joining Arena...', showCoins = false }) {
   const dots = Array.from({ length: 8 });
   const textLetters = Array.from(message);
 

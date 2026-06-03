@@ -154,6 +154,9 @@ export default function LiveRoomTeacher() {
             if (state.progress) {
                 setStudentProgress(state.progress);
             }
+            if (state.cheatAlerts) {
+                setCheatAlerts(state.cheatAlerts);
+            }
 
             if (state.quizStatus === 'started') {
                 setQuiz(prev => prev ? { ...prev, status: 'started' } : null);

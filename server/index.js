@@ -550,7 +550,8 @@ io.to(quizId).emit(
                  quizStatus: state.status,
                  leaderboard: state.leaderboard || [],
                  participants: participants,
-                 progress: state.progress || {}
+                 progress: state.progress || {},
+                 cheatAlerts: state.cheatAlerts || []
              };
              if (state.currentQuestion !== undefined) {
                  socket.emit('change_question', { questionIndex: state.currentQuestion });
@@ -800,7 +801,6 @@ io.to(quizId).emit(
         });
     });
 
-    // Tracking student cheating attempts (tab switching, focus loss)
     socket.on('student_cheated_alert', (payload) => {
         const { quizId, studentId, action, timestamp } = payload;
         // SECURITY CHECK: Verify student identity matches socket.user payload
@@ -809,13 +809,28 @@ io.to(quizId).emit(
         }
         console.log(`[Exam Security Alert] Student ${socket.user.username || studentId} triggered cheat alert: ${action} in quiz ${quizId}`);
 
-        // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
-        io.to(quizId).emit('student_cheat_warning', {
+        const warningPayload = {
             ...payload,
             name: socket.user.name || socket.user.username || 'Student',
             rollNumber: socket.user.username || 'N/A',
             timestamp: timestamp || new Date()
-        });
+        };
+
+        // Save in roomState
+        const state = roomState.get(quizId);
+        if (state) {
+            if (!state.cheatAlerts) {
+                state.cheatAlerts = [];
+            }
+            state.cheatAlerts.push(warningPayload);
+        } else {
+            roomState.set(quizId, {
+                cheatAlerts: [warningPayload]
+            });
+        }
+
+        // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
+        io.to(quizId).emit('student_cheat_warning', warningPayload);
     });
 
     // Increase time for the current question
@@ -991,25 +1006,40 @@ io.to(quizId).emit(
                     "⚡ Quick Response Bonus! Unstoppable!",
                     "⚡ Hyper-Sonic! You're on fire!",
                     "⚡ Mind-Bending Velocity! Incredible reflexes!",
-                    "⚡ Sonic Boom! You answered in the blink of an eye!"
+                    "⚡ Sonic Boom! You answered in the blink of an eye!",
+                    "🚀 Speed Demon! Lock and load for the next one!",
+                    "🔥 Absolute Heat! Superb speed!",
+                    "💫 Brilliant Reflexes! Pure brilliance!",
+                    "🌟 Stellar Velocity! Keep holding the lead!"
                 ];
                 const slowMessages = [
                     "🐢 Smooth and steady, but let's pick up the pace next time!",
                     "⏰ Took your time! Try to lock it in quicker on the next one!",
                     "💡 Great focus, but speed is key! Speed up!",
                     "🏃‍♂️ Slow and calculated! Push your limits and answer faster!",
-                    "⏳ Pondered a bit long! Trust your instincts and click quicker!"
+                    "⏳ Pondered a bit long! Trust your instincts and click quicker!",
+                    "💤 A bit sluggish! Let's pick up the speed!",
+                    "🛹 Riding a slow wave! Time is point in this game!",
+                    "📈 Accurate but slow! Try to optimize your decision time!"
+                ];
+                const unattemptedMessages = [
+                    "⏳ Time is up! You didn't select an answer for this question. Keep moving!",
+                    "❌ Question unanswered! Be sure to lock in a choice before the timer expires.",
+                    "💤 No response detected! Let's get active on the next challenge!",
+                    "⚠️ Unattempted! Don't let the clock run out without locking in your guess."
                 ];
 
-                const isFast = otherTimes.length > 0
+                const isUnattempted = !answer || answer.trim() === '';
+                const isFast = !isUnattempted && (otherTimes.length > 0
                     ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
-                    : (qTimeTaken <= timerMax * 0.3);
+                    : (qTimeTaken <= timerMax * 0.3));
 
-                const messageList = isFast ? fastMessages : slowMessages;
+                const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
                 const feedbackMessage = messageList[Math.floor(Math.random() * messageList.length)];
 
                 socket.emit('answer_feedback', {
                     isFast,
+                    isUnattempted,
                     message: feedbackMessage,
                     timeTaken: qTimeTaken
                 });

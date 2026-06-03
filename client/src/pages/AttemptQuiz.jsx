@@ -1424,7 +1424,9 @@ export default function AttemptQuiz() {
                     >
                         <div 
                             className={`pointer-events-auto p-5 rounded-3xl border shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-300 ${
-                                speedFeedback.isFast 
+                                speedFeedback.isUnattempted
+                                    ? 'bg-red-950/95 border-red-500/40 shadow-red-500/25 text-red-300'
+                                    : speedFeedback.isFast 
                                     ? 'bg-cyan-950/95 border-cyan-500/40 shadow-cyan-500/25 text-cyan-300' 
                                     : 'bg-amber-950/95 border-amber-500/40 shadow-amber-500/25 text-amber-300'
                             }`}
@@ -1434,43 +1436,47 @@ export default function AttemptQuiz() {
                                 animate={{ opacity: [0.25, 0.55, 0.25] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                                 className={`absolute -top-8 -right-8 w-20 h-20 rounded-full blur-2xl ${
-                                    speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
+                                    speedFeedback.isUnattempted ? 'bg-red-500' : speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
                                 }`}
                             />
                             <motion.div
                                 animate={{ opacity: [0.15, 0.35, 0.15] }}
                                 transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
                                 className={`absolute -bottom-8 -left-8 w-20 h-20 rounded-full blur-2xl ${
-                                    speedFeedback.isFast ? 'bg-blue-500' : 'bg-orange-500'
+                                    speedFeedback.isUnattempted ? 'bg-rose-500' : speedFeedback.isFast ? 'bg-blue-500' : 'bg-orange-500'
                                 }`}
                             />
 
                             <motion.div 
-                                initial={{ rotate: speedFeedback.isFast ? -8 : 8, scale: 0.9 }}
+                                initial={{ rotate: speedFeedback.isUnattempted ? 0 : speedFeedback.isFast ? -8 : 8, scale: 0.9 }}
                                 animate={{ rotate: 0, scale: 1 }}
                                 transition={{ type: 'spring', delay: 0.08 }}
                                 className="relative z-10 flex items-center gap-4"
                             >
                                 {/* Big emoji */}
                                 <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner ${
-                                    speedFeedback.isFast
+                                    speedFeedback.isUnattempted
+                                        ? 'bg-red-900/60 border border-red-500/30'
+                                        : speedFeedback.isFast
                                         ? 'bg-cyan-900/60 border border-cyan-500/30'
                                         : 'bg-amber-900/60 border border-amber-500/30'
                                 }`}>
-                                    {speedFeedback.isFast ? "⚡" : "🐢"}
+                                    {speedFeedback.isUnattempted ? "❌" : speedFeedback.isFast ? "⚡" : "🐢"}
                                 </div>
 
                                 {/* Text block */}
                                 <div className="flex-1 min-w-0">
                                     <p className={`text-[10px] font-black uppercase tracking-[0.25em] opacity-60 mb-0.5 ${
-                                        speedFeedback.isFast ? 'text-cyan-400' : 'text-amber-400'
+                                        speedFeedback.isUnattempted ? 'text-red-400' : speedFeedback.isFast ? 'text-cyan-400' : 'text-amber-400'
                                     }`}>
-                                        {speedFeedback.isFast ? 'Response Speed' : 'Pace Alert'}
+                                        {speedFeedback.isUnattempted ? 'Unattempted Alert' : speedFeedback.isFast ? 'Response Speed' : 'Pace Alert'}
                                     </p>
                                     <h3 className={`text-lg font-black italic uppercase tracking-tight leading-tight ${
-                                        speedFeedback.isFast ? 'text-cyan-200' : 'text-amber-200'
+                                        speedFeedback.isUnattempted ? 'text-red-200' : speedFeedback.isFast ? 'text-cyan-200' : 'text-amber-200'
                                     }`}>
-                                        {speedFeedback.isFast
+                                        {speedFeedback.isUnattempted
+                                            ? 'No Answer Locked!'
+                                            : speedFeedback.isFast
                                             ? (speedFeedback.message?.toLowerCase().includes('first') ? 'Lightning Fast! 🔥' :
                                                speedFeedback.message?.toLowerCase().includes('top') ? 'Top Speed! 🚀' :
                                                'Quick Reflexes!')
@@ -1478,7 +1484,7 @@ export default function AttemptQuiz() {
                                                speedFeedback.message?.toLowerCase().includes('half') ? 'Speed Up!' :
                                                'Pick Up Pace!')}
                                     </h3>
-                                    <p className="text-white/60 font-semibold text-xs leading-snug mt-1 truncate">
+                                    <p className="text-white/60 font-semibold text-xs leading-snug mt-1">
                                         {speedFeedback.message}
                                     </p>
                                 </div>
@@ -1487,7 +1493,7 @@ export default function AttemptQuiz() {
                             {/* Progress bar draining as toast disappears */}
                             <motion.div
                                 className={`mt-4 h-1 rounded-full ${
-                                    speedFeedback.isFast ? 'bg-cyan-500/30' : 'bg-amber-500/30'
+                                    speedFeedback.isUnattempted ? 'bg-red-500/30' : speedFeedback.isFast ? 'bg-cyan-500/30' : 'bg-amber-500/30'
                                 }`}
                             >
                                 <motion.div
@@ -1495,7 +1501,7 @@ export default function AttemptQuiz() {
                                     animate={{ width: '0%' }}
                                     transition={{ duration: 4, ease: 'linear' }}
                                     className={`h-full rounded-full ${
-                                        speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
+                                        speedFeedback.isUnattempted ? 'bg-red-400' : speedFeedback.isFast ? 'bg-cyan-400' : 'bg-amber-400'
                                     }`}
                                 />
                             </motion.div>

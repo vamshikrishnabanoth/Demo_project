@@ -143,7 +143,7 @@ const AssessmentReport = () => {
                                     <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Final Standing</p>
                                     <div className="flex flex-col items-center justify-center gap-1">
                                         <span className="text-2xl md:text-3xl font-black italic text-white/60 uppercase tracking-wider">RANK</span>
-                                        <span className={`font-black italic tracking-tighter bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_var(--bg-accent-glow)] leading-none ${
+                                        <span className={`inline-block font-black italic tracking-tighter bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_var(--bg-accent-glow)] leading-normal pb-3 ${
                                             `#${rank}`.length > 5 ? 'text-5xl md:text-6xl' :
                                             `#${rank}`.length > 4 ? 'text-6xl md:text-7xl' :
                                             'text-7xl md:text-8xl'

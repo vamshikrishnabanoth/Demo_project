@@ -51,7 +51,7 @@ function EnergyCore({ lowPerformanceMode }) {
     );
 }
 
-function OrbitingStudentAvatars({ count = 6, lowPerformanceMode }) {
+function OrbitingStudentAvatars({ count = 6, lowPerformanceMode, showCoins = false }) {
     const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
     const maxElements = lowPerformanceMode ? (isMobile ? 3 : 6) : (isMobile ? 6 : 12);
     const finalCount = Math.min(count || 6, maxElements);
@@ -79,7 +79,7 @@ function OrbitingStudentAvatars({ count = 6, lowPerformanceMode }) {
             <EnergyCore lowPerformanceMode={lowPerformanceMode} />
 
             {/* Dynamic Continuous Coins Particle Burst Animation */}
-            {!lowPerformanceMode && (
+            {!lowPerformanceMode && showCoins && (
                 <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
                     {Array.from({ length: 16 }).map((_, idx) => {
                         const angle = (idx * 360) / 16;
@@ -365,7 +365,7 @@ export default function LiveQuizWaitAnimation({
             title: title || 'Waiting for Host...',
             subtitle: subtitle || 'Orbiting student avatars around the live quiz core.',
             detail: detail || `${readyCount} ready${joiningCount ? `, ${joiningCount} joining` : ''}`,
-            visual: <OrbitingStudentAvatars count={readyCount + joiningCount || 6} lowPerformanceMode={lowPerformanceMode} />,
+            visual: <OrbitingStudentAvatars count={readyCount + joiningCount || 6} lowPerformanceMode={lowPerformanceMode} showCoins={true} />,
             icon: <Users size={18} />
         },
         'synchronizing-answers': {
@@ -407,7 +407,7 @@ export default function LiveQuizWaitAnimation({
         title: title || 'Waiting...',
         subtitle: subtitle || 'Orbiting parameters...',
         detail: detail || 'Awaiting telemetry...',
-        visual: <OrbitingStudentAvatars count={6} lowPerformanceMode={lowPerformanceMode} />,
+        visual: <OrbitingStudentAvatars count={6} lowPerformanceMode={lowPerformanceMode} showCoins={false} />,
         icon: <Activity size={18} />
     };
 
