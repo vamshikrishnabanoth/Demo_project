@@ -139,11 +139,18 @@ const AssessmentReport = () => {
                             <div className="bg-[var(--bg-secondary)] border border-white/5 rounded-[3rem] p-10 backdrop-blur-md shadow-2xl mb-10 space-y-6 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 rounded-full blur-2xl -mr-16 -mt-16"></div>
                                 
-                                <div className="space-y-1">
+                                <div className="space-y-2">
                                     <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Final Standing</p>
-                                    <h3 className="text-6xl md:text-7xl font-black italic tracking-tight text-white uppercase leading-none">
-                                        Rank <span className="bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_var(--bg-accent-glow)]">#{rank}</span>
-                                    </h3>
+                                    <div className="flex flex-col items-center justify-center gap-1">
+                                        <span className="text-2xl md:text-3xl font-black italic text-white/60 uppercase tracking-wider">RANK</span>
+                                        <span className={`font-black italic tracking-tighter bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_var(--bg-accent-glow)] leading-none ${
+                                            `#${rank}`.length > 5 ? 'text-5xl md:text-6xl' :
+                                            `#${rank}`.length > 4 ? 'text-6xl md:text-7xl' :
+                                            'text-7xl md:text-8xl'
+                                        }`}>
+                                            #{rank}
+                                        </span>
+                                    </div>
                                     <p className="text-xs font-bold text-white/50 uppercase tracking-widest pt-2">
                                         Out of {totalParticipants} {totalParticipants === 1 ? 'Candidate' : 'Candidates'}
                                     </p>
@@ -228,8 +235,8 @@ const AssessmentReport = () => {
                             {/* Key Metrics Grid */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12 px-4">
                                 {[
-                                    { label: 'Tactical Rank', value: `#${rank}/${totalParticipants}`, icon: Trophy, color: 'text-yellow-400', glow: 'shadow-yellow-400/10' },
-                                    { label: 'Total Score', value: `${score}/${totalQuestions * 10}`, icon: Sparkles, color: 'text-orange-400', glow: 'shadow-orange-400/10' },
+                                    { label: 'Tactical Rank', value: `#${rank}`, subValue: `of ${totalParticipants}`, icon: Trophy, color: 'text-yellow-400', glow: 'shadow-yellow-400/10' },
+                                    { label: 'Total Score', value: `${score}`, subValue: `of ${totalQuestions * 10}`, icon: Sparkles, color: 'text-orange-400', glow: 'shadow-orange-400/10' },
                                     { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-emerald-400', glow: 'shadow-emerald-400/10' },
                                     { label: 'Time Spent', value: `${totalTimeTaken}s`, icon: Clock, color: 'text-blue-400', glow: 'shadow-blue-400/10' },
                                     { label: 'Avg Speed', value: `${avgTime}s/q`, icon: TrendingUp, color: 'text-purple-400', glow: 'shadow-purple-400/10' }
@@ -249,8 +256,13 @@ const AssessmentReport = () => {
                                             <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-accent)] italic border-b border-[var(--bg-accent)]/30 pb-1">Tracker_{i+1}</div>
                                         </div>
                                         <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
-                                        <h3 className="text-4xl font-black text-white italic tracking-tighter whitespace-nowrap">
+                                        <h3 className="text-4xl font-black text-white italic tracking-tighter whitespace-nowrap flex items-baseline">
                                             {stat.value}
+                                            {stat.subValue && (
+                                                <span className="text-xs font-bold text-white/40 uppercase tracking-wider not-italic ml-1.5 shrink-0">
+                                                    {stat.subValue}
+                                                </span>
+                                            )}
                                         </h3>
                                     </motion.div>
                                 ))}

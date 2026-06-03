@@ -165,18 +165,18 @@ export default function MyQuizzes() {
                 ) : filteredQuizzes.length > 0 ? (
                     <div className="space-y-6">
                         {/* Selection & Bulk Actions Control Header */}
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--bg-secondary)]/30 border border-white/5 rounded-3xl px-8 py-4">
-                            <button
-                                onClick={toggleSelectAll}
-                                className="flex items-center gap-3 text-slate-400 hover:text-white font-black italic uppercase tracking-wider text-xs transition-all select-none"
-                            >
-                                <div className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all duration-200 ${selectedQuizIds.length === filteredQuizzes.length ? 'bg-[var(--bg-accent)] border-[var(--bg-accent)] text-white' : 'bg-white/5 border-white/10'}`}>
-                                    {selectedQuizIds.length === filteredQuizzes.length && <CheckCircle size={14} />}
-                                </div>
-                                {selectedQuizIds.length === filteredQuizzes.length ? 'Deselect All' : 'Select All'}
-                            </button>
-                            
-                            {selectedQuizIds.length > 0 && (
+                        {selectedQuizIds.length > 0 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--bg-secondary)]/30 border border-white/5 rounded-3xl px-8 py-4">
+                                <button
+                                    onClick={toggleSelectAll}
+                                    className="flex items-center gap-3 text-slate-400 hover:text-white font-black italic uppercase tracking-wider text-xs transition-all select-none"
+                                >
+                                    <div className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all duration-200 ${selectedQuizIds.length === filteredQuizzes.length ? 'bg-[var(--bg-accent)] border-[var(--bg-accent)] text-white' : 'bg-white/5 border-white/10'}`}>
+                                        {selectedQuizIds.length === filteredQuizzes.length && <CheckCircle size={14} />}
+                                    </div>
+                                    {selectedQuizIds.length === filteredQuizzes.length ? 'Deselect All' : 'Select All'}
+                                </button>
+                                
                                 <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
                                     <span className="text-white font-black italic uppercase tracking-widest text-xs">
                                         {selectedQuizIds.length} {selectedQuizIds.length === 1 ? 'Quiz' : 'Quizzes'} Selected
@@ -188,8 +188,8 @@ export default function MyQuizzes() {
                                         <Trash2 size={14} /> Delete Selected
                                     </button>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 gap-8">
                             {filteredQuizzes.map((quiz) => (
