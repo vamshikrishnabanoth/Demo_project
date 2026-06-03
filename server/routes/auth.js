@@ -337,6 +337,8 @@ router.get('/me', auth, async (req, res) => {
                 role: true,
                 studentBranch: true,
                 section: true,
+                year: true,
+                name: true,
                 createdAt: true,
                 updatedAt: true,
                 lastLogin: true

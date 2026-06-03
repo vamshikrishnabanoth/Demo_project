@@ -72,15 +72,17 @@ export default function Profile() {
         ? new Date(user.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
         : '—';
 
-    const accountDetails = [
-        { icon: User, label: 'Full Name', value: user?.username || '—' },
+    const accountDetails = user?.role === 'student' ? [
+        { icon: User, label: 'Name', value: user?.name || '—' },
+        { icon: Hash, label: 'Roll Number', value: user?.username || '—' },
+        { icon: GraduationCap, label: 'Section', value: user?.section || '—' },
+        { icon: GraduationCap, label: 'Year', value: user?.year || '—' },
+        { icon: GraduationCap, label: 'Department', value: user?.studentBranch || '—' },
+    ] : [
+        { icon: User, label: 'Full Name', value: user?.name || user?.username || '—' },
         { icon: Hash, label: 'Roll Number', value: user?.username || '—' },
         { icon: Mail, label: 'Email', value: user?.email || '—' },
         { icon: Shield, label: 'Role', value: (user?.role || '—').toUpperCase() },
-        ...(user?.role === 'student' ? [
-            { icon: GraduationCap, label: 'Branch', value: user?.studentBranch || '—' },
-            { icon: GraduationCap, label: 'Section', value: user?.section || '—' },
-        ] : []),
         { icon: Activity, label: 'Account Status', value: 'ACTIVE' },
         { icon: Calendar, label: 'Member Since', value: memberSince },
     ];
@@ -118,13 +120,13 @@ export default function Profile() {
                     {/* Info */}
                     <div className="relative z-10">
                         <h1 className="text-4xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter">
-                            {user?.username || 'User'}
+                            {user?.name || user?.username || 'User'}
                         </h1>
                         <div className="flex items-center gap-4 mt-3 flex-wrap">
                             <span className="flex items-center gap-2 px-3 py-1 bg-[var(--bg-accent)]/20 border border-[var(--bg-accent)]/30 rounded-full text-[var(--text-accent)] text-xs font-black uppercase tracking-widest">
                                 <Shield size={12} /> {role}
                             </span>
-                            {user?.email && (
+                            {user?.email && user.email !== user.username && (
                                 <span className="flex items-center gap-2 text-[var(--text-secondary)] text-sm font-bold">
                                     <Mail size={14} /> {user.email}
                                 </span>
