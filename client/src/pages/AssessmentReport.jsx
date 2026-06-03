@@ -141,13 +141,14 @@ const AssessmentReport = () => {
                                 
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Final Standing</p>
-                                    <div className="flex flex-col items-center justify-center gap-1">
+                                    <div className="flex flex-col items-center justify-center gap-1 w-full max-w-full overflow-hidden">
                                         <span className="text-2xl md:text-3xl font-black italic text-white/60 uppercase tracking-wider">RANK</span>
-                                        <div className="drop-shadow-[0_0_30px_var(--bg-accent-glow)] py-2">
+                                        <div className="drop-shadow-[0_0_30px_var(--bg-accent-glow)] py-2 w-full max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin text-center">
                                             <span className={`inline-block font-black italic tracking-tighter bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent leading-normal ${
-                                                `#${rank}`.length > 5 ? 'text-5xl md:text-6xl' :
-                                                `#${rank}`.length > 4 ? 'text-6xl md:text-7xl' :
-                                                'text-7xl md:text-8xl'
+                                                `#${rank}`.length > 6 ? 'text-3xl md:text-4xl' :
+                                                `#${rank}`.length > 5 ? 'text-4xl md:text-5xl' :
+                                                `#${rank}`.length > 4 ? 'text-5xl md:text-6xl' :
+                                                'text-6xl md:text-7xl'
                                             }`}>
                                                 #{rank}
                                             </span>
@@ -258,11 +259,11 @@ const AssessmentReport = () => {
                                             <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-accent)] italic border-b border-[var(--bg-accent)]/30 pb-1">Tracker_{i+1}</div>
                                         </div>
                                         <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
-                                        <div className="flex flex-col gap-0.5">
+                                        <div className="flex flex-col gap-0.5 max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin">
                                             <h3 className={`font-black text-white italic tracking-tighter leading-none ${
-                                                stat.value.length > 7 ? 'text-2xl sm:text-3xl' :
-                                                stat.value.length > 5 ? 'text-3xl sm:text-4xl' :
-                                                'text-4xl'
+                                                stat.value.length > 7 ? 'text-xl sm:text-2xl' :
+                                                stat.value.length > 5 ? 'text-2xl sm:text-3xl' :
+                                                'text-3xl sm:text-4xl'
                                             }`}>
                                                 {stat.value}
                                             </h3>
