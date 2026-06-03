@@ -29,6 +29,25 @@ const loginValidation = [
     check('password', 'Password is required').exists()
 ];
 
+// Debug DB route
+router.get('/debug-db', async (req, res) => {
+    try {
+        const result = await prisma.$queryRaw`SELECT 1 as result`;
+        const userCount = await prisma.user.count();
+        res.json({ success: true, message: 'Database connection successful!', result, userCount });
+    } catch (err) {
+        console.error('Debug DB Error:', err);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Database connection failed!', 
+            error: err.message, 
+            code: err.code,
+            meta: err.meta,
+            stack: err.stack 
+        });
+    }
+});
+
 // @route   POST api/auth/register
 // @desc    Register user (Admin Only)
 // @access  Private/Admin
