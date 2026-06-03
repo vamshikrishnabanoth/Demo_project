@@ -27,27 +27,13 @@ export default function useExamProctoring({
     enabled = false,
     quizId = '',
     userId = '',
-    maxTabSwitches = 2,
-    onAutoSubmit,
 } = {}) {
     const [tabSwitchCount, setTabSwitchCount] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
-    // Refs to survive across re-renders without stale closures
-    const tabSwitchRef = useRef(0);
-    const autoSubmitRef = useRef(onAutoSubmit);
-    const hasAutoSubmitted = useRef(false);
-
-    // Keep the callback ref current
-    useEffect(() => {
-        autoSubmitRef.current = onAutoSubmit;
-    }, [onAutoSubmit]);
-
     // Reset state when proctoring is toggled off/on (e.g. new quiz)
     useEffect(() => {
         if (!enabled) {
-            tabSwitchRef.current = 0;
-            hasAutoSubmitted.current = false;
             setTabSwitchCount(0);
         }
     }, [enabled]);

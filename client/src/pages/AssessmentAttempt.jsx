@@ -71,8 +71,6 @@ export default function AssessmentAttempt() {
         enabled: !loading && !submitting && !!quiz,
         quizId: id,
         userId: authUser?.id,
-        maxTabSwitches: 2,
-        onAutoSubmit: handleFinalSubmit,
     });
 
     useEffect(() => {

@@ -448,11 +448,9 @@ export default function AttemptQuiz() {
     // Covers: strict fullscreen, tab-switch counting (auto-submit at limit),
     // DevTools shortcut blocking, window-resize heuristic, copy/paste/cut/contextmenu blocking.
     const { tabSwitchCount } = useExamProctoring({
-        enabled: !loading && !isReviewMode && !result && !!quiz,
-        quizId: id,
-        userId: authUser?.id,
-        maxTabSwitches: 2,
-        onAutoSubmit: submitQuiz,
+        enabled: quiz?.isLive || quiz?.isActive, // Enable for both live and async
+        quizId: quiz?.id,
+        userId: authUser?.id || authUser?._id,
     });
 
     // Timer Initialization (Split from focus logic)

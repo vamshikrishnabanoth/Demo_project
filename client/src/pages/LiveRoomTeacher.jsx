@@ -427,6 +427,32 @@ if (socket.connected) {
         });
     }, [participants, leaderboard]);
 
+    const groupedCheatAlerts = useMemo(() => {
+        const groups = {};
+        cheatAlerts.forEach(alert => {
+            const rollNo = alert.rollNumber || alert.username || 'N/A';
+            const action = alert.action || 'unknown';
+            const key = `${rollNo}-${action}`;
+            
+            if (!groups[key]) {
+                groups[key] = {
+                    name: alert.name || 'Student',
+                    rollNumber: rollNo,
+                    action: action,
+                    latestTime: alert.timestamp ? new Date(alert.timestamp) : new Date(),
+                    count: 1
+                };
+            } else {
+                groups[key].count += 1;
+                const alertTime = alert.timestamp ? new Date(alert.timestamp) : new Date();
+                if (alertTime > groups[key].latestTime) {
+                    groups[key].latestTime = alertTime;
+                }
+            }
+        });
+        return Object.values(groups).sort((a, b) => b.latestTime - a.latestTime);
+    }, [cheatAlerts]);
+
     // Pagination
     const totalPages = Math.max(1, Math.ceil(allStudents.length / studentsPerPage));
     const paginatedStudents = allStudents.slice(
@@ -698,49 +724,64 @@ if (socket.connected) {
                         <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
                             cheatAlerts.length > 0 ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500'
                         }`}>
-                            {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Alert' : 'Alerts'} Detected
+                            {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Alert' : 'Alerts'} ({groupedCheatAlerts.length} Grouped)
                         </div>
                     </div>
                     
                     <div className="p-8">
-                        {cheatAlerts.length > 0 ? (
-                            <div className="space-y-4 max-h-[320px] overflow-y-auto pr-2 divide-y divide-slate-100">
-                                {cheatAlerts.map((alert, index) => {
-                                    const time = alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-                                    let details = "";
-                                    if (alert.action === 'devtools_shortcut') {
-                                        details = `Tried to open DevTools using key shortcut (${alert.key || 'F12 / Ctrl+Shift+I / Ctrl+U'}).`;
-                                    } else if (alert.action === 'devtools_resize') {
-                                        details = `Unusual window resize detected (DevTools/Inspector docking). Height Diff: ${alert.heightDiff || 0}px, Width Diff: ${alert.widthDiff || 0}px.`;
-                                    } else if (alert.action === 'tab_switch') {
-                                        details = `Left the active quiz browser tab. Switch count: ${alert.count || 1}.`;
-                                    } else if (alert.action === 'fullscreen_exit') {
-                                        details = `Exited fullscreen mode.`;
-                                    } else {
-                                        details = `Triggered security warning: ${alert.action?.replace('_', ' ')}.`;
-                                    }
-
-                                    return (
-                                        <div 
-                                            key={index} 
-                                            className={`flex items-start gap-4 py-4 ${index > 0 ? 'border-t border-slate-100' : ''} animate-in fade-in slide-in-from-top-4 duration-300`}
-                                        >
-                                            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shrink-0 border border-red-100">
-                                                <AlertTriangle size={18} />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-slate-800 text-sm">{alert.username}</span>
-                                                    <span className="text-[10px] text-slate-400 font-mono">{time}</span>
-                                                </div>
-                                                <p className="text-xs text-slate-500 font-bold mt-1 leading-relaxed">{details}</p>
-                                            </div>
-                                            <div className="text-[9px] font-black text-red-500 bg-red-50 border border-red-100 px-3 py-1 rounded-xl uppercase tracking-widest shrink-0">
-                                                {alert.action?.replace('_', ' ')}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                        {groupedCheatAlerts.length > 0 ? (
+                            <div className="max-h-[320px] overflow-y-auto pr-2">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+                                        <tr className="bg-slate-50 border-b border-slate-100">
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Student Name</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Roll Number</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Cheating Event</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Occurrence Time</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {groupedCheatAlerts.map((record, index) => {
+                                            const timeStr = record.latestTime.toLocaleTimeString();
+                                            let eventName = record.action?.replace(/_/g, ' ');
+                                            
+                                            if (record.action === 'devtools_shortcut') {
+                                                eventName = 'DevTools Shortcut Block';
+                                            } else if (record.action === 'devtools_resize') {
+                                                eventName = 'Window Resize Heuristic';
+                                            } else if (record.action === 'clipboard_block' || record.action === 'clipboard') {
+                                                eventName = 'Clipboard Copy/Paste Block';
+                                            } else if (record.action === 'context_block' || record.action === 'contextmenu') {
+                                                eventName = 'Right Click Block';
+                                            }
+                                            
+                                            return (
+                                                <tr key={index} className="hover:bg-slate-50/50 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <span className="font-bold text-slate-800 text-sm">{record.name}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-mono text-xs text-slate-500 font-bold">
+                                                        {record.rollNumber}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-50 border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-wider">
+                                                            <AlertTriangle size={12} /> {eventName}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-xs text-slate-400 font-mono">
+                                                        {timeStr}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <span className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full bg-red-500 text-white font-black text-xs shadow-md shadow-red-500/10">
+                                                            {record.count}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         ) : (
                             <div className="py-10 text-center flex flex-col items-center justify-center">

@@ -215,18 +215,19 @@ io.use(async (socket, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.user = decoded.user;
         
-        // Fetch username from DB if not present in the token (legacy/existing tokens)
-        if (socket.user && socket.user.id && !socket.user.username) {
+        // Fetch username & name from DB to ensure it's up-to-date and complete
+        if (socket.user && socket.user.id) {
             try {
                 const dbUser = await prisma.user.findUnique({
                     where: { id: socket.user.id },
-                    select: { username: true }
+                    select: { username: true, name: true }
                 });
                 if (dbUser) {
                     socket.user.username = dbUser.username;
+                    socket.user.name = dbUser.name || dbUser.username;
                 }
             } catch (dbErr) {
-                console.error('Error fetching username for socket auth:', dbErr);
+                console.error('Error fetching user info for socket auth:', dbErr);
             }
         }
         
@@ -811,7 +812,8 @@ io.to(quizId).emit(
         // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
         io.to(quizId).emit('student_cheat_warning', {
             ...payload,
-            username: socket.user.username || 'Student',
+            name: socket.user.name || socket.user.username || 'Student',
+            rollNumber: socket.user.username || 'N/A',
             timestamp: timestamp || new Date()
         });
     });
