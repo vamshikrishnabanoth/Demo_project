@@ -153,7 +153,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, questionCount = 5, 
 
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 30000,
+                timeout: 300000, // 5 minutes — large audio files (e.g. 42-min lectures) need time to upload
             });
 
             const { taskId } = res.data;
