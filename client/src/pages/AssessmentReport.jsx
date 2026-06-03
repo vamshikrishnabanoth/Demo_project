@@ -144,7 +144,7 @@ const AssessmentReport = () => {
                                     <div className="flex flex-col items-center justify-center gap-1 w-full max-w-full overflow-hidden">
                                         <span className="text-2xl md:text-3xl font-black italic text-white/60 uppercase tracking-wider">RANK</span>
                                         <div className="drop-shadow-[0_0_30px_var(--bg-accent-glow)] py-2 w-full max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin text-center">
-                                            <span className={`inline-block font-black italic tracking-tighter bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent leading-normal ${
+                                            <span className={`inline-block px-6 py-2 font-black italic tracking-normal bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent leading-normal ${
                                                 `#${rank}`.length > 6 ? 'text-3xl md:text-4xl' :
                                                 `#${rank}`.length > 5 ? 'text-4xl md:text-5xl' :
                                                 `#${rank}`.length > 4 ? 'text-5xl md:text-6xl' :
@@ -260,7 +260,7 @@ const AssessmentReport = () => {
                                         </div>
                                         <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
                                         <div className="flex flex-col gap-0.5 max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin">
-                                            <h3 className={`font-black text-white italic tracking-tighter leading-none ${
+                                            <h3 className={`inline-block px-3 py-1 font-black text-white italic tracking-normal leading-normal ${
                                                 stat.value.length > 7 ? 'text-xl sm:text-2xl' :
                                                 stat.value.length > 5 ? 'text-2xl sm:text-3xl' :
                                                 'text-3xl sm:text-4xl'

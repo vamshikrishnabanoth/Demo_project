@@ -1380,7 +1380,7 @@ export default function AttemptQuiz() {
                                 {currentLeaderboard.map((student) => (
                                     <div key={student.studentId} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${student.rank === 1 ? 'bg-yellow-500' :
+                                            <div className={`min-w-[2.5rem] px-2 h-10 rounded-full flex items-center justify-center font-bold text-white ${student.rank === 1 ? 'bg-yellow-500' :
                                                 student.rank === 2 ? 'bg-gray-400' :
                                                     student.rank === 3 ? 'bg-orange-600' :
                                                         'bg-indigo-600'

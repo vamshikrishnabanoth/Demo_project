@@ -379,7 +379,7 @@ export default function QuizAnalytics() {
                             {analytics.topStudents.length > 0 ? analytics.topStudents.map((student, idx) => (
                                 <div key={idx} className="flex items-center justify-between bg-[var(--bg-primary)] border border-white/5 p-4 rounded-2xl hover:bg-[var(--bg-secondary)] transition-colors">
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black italic text-lg ${idx === 0 ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50' : idx === 1 ? 'bg-slate-300/20 text-slate-300 border border-slate-300/50' : idx === 2 ? 'bg-amber-600/20 text-amber-600 border border-amber-600/50' : 'bg-[var(--bg-secondary)] text-slate-400'}`}>
+                                        <div className={`min-w-[2.5rem] px-2.5 h-10 rounded-full flex items-center justify-center font-black italic text-lg ${idx === 0 ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50' : idx === 1 ? 'bg-slate-300/20 text-slate-300 border border-slate-300/50' : idx === 2 ? 'bg-amber-600/20 text-amber-600 border border-amber-600/50' : 'bg-[var(--bg-secondary)] text-slate-400'}`}>
                                             #{student.rank}
                                         </div>
                                         <div>
@@ -565,7 +565,7 @@ export default function QuizAnalytics() {
                                 <tbody>
                                     {analytics.leaderboard.map((student, idx) => (
                                         <tr key={idx} className="border-b border-white/5 premium-table-row group">
-                                            <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic text-center">#{student.rank}</td>
+                                            <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic text-center tracking-normal"><span className="inline-block px-2 py-0.5">#{student.rank}</span></td>
                                             <td className="p-4 text-left">
                                                 <p className="font-black text-white uppercase text-sm">{student.username}</p>
                                                 <p className="text-[10px] text-[var(--text-secondary)] opacity-50 font-mono mt-0.5">{student.id}</p>

@@ -93,7 +93,7 @@ const StudentPerformanceSummary = ({ stats, totalQuestions }) => {
                     </div>
                     <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center group hover:bg-white/10 transition-colors">
                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Class Rank</p>
-                        <p className="text-4xl font-black italic text-white">#{userRank}</p>
+                        <p className="inline-block px-3 py-1 text-4xl font-black italic text-white tracking-normal leading-normal">#{userRank}</p>
                         <p className="text-[10px] font-bold text-gray-600 mt-1">out of {totalParticipants}</p>
                     </div>
                     <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center group hover:bg-white/10 transition-colors">
