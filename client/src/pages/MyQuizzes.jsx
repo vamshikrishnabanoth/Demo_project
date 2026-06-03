@@ -93,9 +93,11 @@ export default function MyQuizzes() {
             await api.delete(`/quiz/${quizId}`);
             setQuizzes(quizzes.filter(q => q.id !== quizId));
             setSelectedQuizIds(prev => prev.filter(id => id !== quizId));
+            toast.success('Quiz deleted successfully');
         } catch (err) {
             console.error('Error deleting quiz', err);
-            showError('Delete Failed', 'Could not delete this quiz. Please try again.');
+            const errorMsg = err.response?.data?.msg || err.response?.data?.message || 'Could not delete this quiz. Please try again.';
+            showError('Delete Failed', errorMsg);
         }
     };
 
@@ -116,7 +118,8 @@ export default function MyQuizzes() {
             toast.success('Selected quizzes deleted successfully', { id: toastId });
         } catch (err) {
             console.error('Error in bulk delete', err);
-            toast.error('Failed to delete some quizzes. Please try again.', { id: toastId });
+            const errorMsg = err.response?.data?.msg || err.response?.data?.message || 'Failed to delete some quizzes. Please try again.';
+            toast.error(errorMsg, { id: toastId });
         }
     };
 
@@ -301,6 +304,7 @@ export default function MyQuizzes() {
                                                 </Link>
 
                                                 <button
+                                                    type="button"
                                                     onClick={() => handleDelete(quiz.id, quiz.title)}
                                                     className="p-3 text-red-500 hover:text-red-400 transition-all group/del shrink-0"
                                                     aria-label={`Delete quiz: ${quiz.title}`}
