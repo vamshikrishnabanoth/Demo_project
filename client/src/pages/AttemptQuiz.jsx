@@ -1077,7 +1077,7 @@ export default function AttemptQuiz() {
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
                 <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
                     <LiveQuizWaitAnimation
-                        variant={totalStudents > 0 && answeredCount < totalStudents ? 'waiting-submissions' : 'synchronizing-answers'}
+                        variant="synchronizing-answers"
                         answeredCount={answeredCount}
                         totalStudents={totalStudents}
                         detail={totalStudents > 0 && answeredCount < totalStudents
