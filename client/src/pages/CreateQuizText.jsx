@@ -43,7 +43,7 @@ export default function CreateQuizText() {
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
     const [regeneratingIdx, setRegeneratingIdx] = useState(null);
     const [finalValidation, setFinalValidation] = useState(null);
-    const [showFinalizeModal, setShowFinalizeModal] = useState(false);
+
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -151,20 +151,19 @@ export default function CreateQuizText() {
         }
     }, [questions, agentReport, title, location.state]);
 
-    // ─── FINALIZE (guarded by confirmation modal) ────────────────────────────
+    // ─── FINALIZE (directly publishes) ─────────────────────────────────────────
     const handleFinalizeClick = (e) => {
         e.preventDefault();
         // Validation Layer first
         if (!title.trim()) return toast.error('Enter a command title');
         const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
         if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete`);
-        // Open confirmation modal
-        setShowFinalizeModal(true);
+        // Directly publish — no confirmation modal
+        handleSubmit();
     };
 
     // ─── ACTUAL SUBMISSION (called from modal confirm) ────────────────────────
     const handleSubmit = async () => {
-        setShowFinalizeModal(false);
         setLoading(true);
 
         let finalStartTime = null;
@@ -498,7 +497,7 @@ export default function CreateQuizText() {
                                         className="px-20 py-8 text-2xl italic"
                                         icon={loading ? Loader2 : CheckCircle}
                                     >
-                                        {loading ? 'PUBLISHING...' : 'FINALIZE MISSION'}
+                                        {loading ? 'PUBLISHING...' : 'FINALIZE QUIZZ'}
                                     </PremiumButton>
                                 </div>
                             </form>
@@ -507,75 +506,7 @@ export default function CreateQuizText() {
                 </AnimatePresence>
             </div>
 
-            {/* ── Finalize Confirmation Modal ───────────────────────────────── */}
-            <AnimatePresence>
-                {showFinalizeModal && (
-                    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            transition={{ duration: 0.25 }}
-                            className="bg-[var(--bg-secondary,#0f1929)] border border-white/10 rounded-3xl max-w-md w-full p-8 space-y-6 shadow-2xl"
-                        >
-                            <div className="flex items-center justify-between">
-                                <h3 className="font-black text-xl text-white uppercase tracking-wider italic">Finalize Quiz?</h3>
-                                <button onClick={() => setShowFinalizeModal(false)} className="text-white/40 hover:text-white transition-colors">
-                                    <X size={20} />
-                                </button>
-                            </div>
 
-                            <div className="space-y-3">
-                                {[
-                                    'Publish optimized questions to your students',
-                                    'Generate a unique quiz code for joining',
-                                    'Agent-verified quality applied',
-                                    'Data protected with SHA-256 integrity hashing',
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-center gap-3 text-sm text-white/70 font-bold">
-                                        <CheckCircle size={16} className="text-emerald-400 flex-shrink-0" />
-                                        <span>{item}</span>
-                                    </div>
-                                ))}
-                                {/* Immutability notice */}
-                                <div className="flex items-start gap-3 text-sm text-amber-300/80 font-bold pt-1 border-t border-white/5">
-                                    <AlertTriangle size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
-                                    <span>Questions become <strong>read-only</strong> after publish. To modify, duplicate this quiz.</span>
-                                </div>
-                            </div>
-
-                            {finalValidation && !finalValidation.passed && (
-                                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <AlertTriangle size={14} className="text-amber-400" />
-                                        <p className="text-xs font-black text-amber-400 uppercase tracking-wider">
-                                            {finalValidation.issues.length} validation issue{finalValidation.issues.length !== 1 ? 's' : ''} detected
-                                        </p>
-                                    </div>
-                                    <p className="text-xs text-white/40 font-bold">You can still publish — these are quality recommendations, not blockers.</p>
-                                </div>
-                            )}
-
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    onClick={() => setShowFinalizeModal(false)}
-                                    className="flex-1 py-4 rounded-2xl border border-white/10 text-white/50 font-black text-sm uppercase tracking-widest hover:bg-white/5 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleSubmit}
-                                    disabled={loading}
-                                    className="flex-1 py-4 rounded-2xl bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black text-sm uppercase tracking-widest hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                                >
-                                    {loading ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
-                                    {loading ? 'Publishing...' : 'Continue'}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
         </DashboardLayout>
     );
 }
