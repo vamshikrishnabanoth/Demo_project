@@ -92,6 +92,7 @@ export default function AttemptQuiz() {
     const quizRef = useRef(null);     // Always-current quiz for socket callbacks
     const authUserRef = useRef(null); // Always-current authUser for socket callbacks
     const currentQuestionRef = useRef(0);
+    const targetEndTimeRef = useRef(null);
     
     const [totalStudents, setTotalStudents] = useState(0);
     const [answeredStudentsSet, setAnsweredStudentsSet] = useState(new Set());
@@ -132,24 +133,6 @@ export default function AttemptQuiz() {
         return () => window.removeEventListener('popstate', handlePopState);
     }, [quiz, isReviewMode, result, navigate]);
 
-    // Timer Logic
-    useEffect(() => {
-        if (loading || isReviewMode || result || !quiz) return;
-
-        const timerId = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    clearInterval(timerId);
-                    handleTimeUp();
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timerId);
-    }, [loading, isReviewMode, result, quiz, currentQuestion]);
-
     // Heartbeat Emitter for Online Status Tracking
     useEffect(() => {
         if (!quiz || !authUser || isReviewMode || result) return;
@@ -162,6 +145,9 @@ export default function AttemptQuiz() {
     useEffect(() => {
         socket.on('timer_update', ({ additionalSeconds }) => {
             console.log('Teacher increased time by:', additionalSeconds);
+            if (targetEndTimeRef.current) {
+                targetEndTimeRef.current += (additionalSeconds * 1000);
+            }
             setTimeLeft(prev => prev + additionalSeconds);
         });
 
@@ -175,6 +161,7 @@ export default function AttemptQuiz() {
 
         socket.on('sync_timer', ({ timeLeft }) => {
             console.log('Syncing timer from server:', timeLeft);
+            targetEndTimeRef.current = Date.now() + (timeLeft * 1000);
             setTimeLeft(timeLeft);
         });
 
@@ -191,7 +178,9 @@ export default function AttemptQuiz() {
 
             // Reset state for new question
             if (quiz && !quiz.duration) {
-                setTimeLeft(quiz.timerPerQuestion || 30);
+                const newDuration = quiz.timerPerQuestion || 30;
+                targetEndTimeRef.current = Date.now() + (newDuration * 1000);
+                setTimeLeft(newDuration);
             }
             // Persist new position offline
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
@@ -251,6 +240,7 @@ export default function AttemptQuiz() {
             setWaitingForState(false);
             
             if (state.quizStatus === 'started') {
+                 targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
                  setTimeLeft(state.remainingTime);
             } else if (state.quizStatus === 'finished') {
                  navigate(`/report/${id}`);
@@ -392,6 +382,7 @@ export default function AttemptQuiz() {
     };
 
     const handleTimeUp = () => {
+        if (result || missionComplete) return; // Do nothing if quiz completed / waiting
         const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
         if (isActiveLive) {
             handleAutoSubmitAnswer();
@@ -401,7 +392,9 @@ export default function AttemptQuiz() {
             } else {
                 if (currentQuestion < quiz.questions.length - 1) {
                     setCurrentQuestion(prev => prev + 1);
-                    setTimeLeft(quiz.timerPerQuestion || 30);
+                    const newDuration = quiz.timerPerQuestion || 30;
+                    targetEndTimeRef.current = Date.now() + (newDuration * 1000);
+                    setTimeLeft(newDuration);
                 } else {
                     submitQuiz();
                 }
@@ -417,7 +410,9 @@ export default function AttemptQuiz() {
             setCurrentQuestion(prev => prev + 1);
             // Reset timer for next question if per-question timer exists
             if (quiz.timerType !== 'totalTime') {
-                setTimeLeft(quiz.timerPerQuestion || 30);
+                const newDuration = quiz.timerPerQuestion || 30;
+                targetEndTimeRef.current = Date.now() + (newDuration * 1000);
+                setTimeLeft(newDuration);
             }
         } else {
             // Last question - navigate to final report
@@ -470,6 +465,7 @@ export default function AttemptQuiz() {
                         totalSeconds = Math.min(totalSeconds, maxRemaining);
                     }
                     setTimeLeft(totalSeconds);
+                    targetEndTimeRef.current = Date.now() + (totalSeconds * 1000);
                     hasInitializedTimer.current = true;
                 }
             } else {
@@ -480,6 +476,7 @@ export default function AttemptQuiz() {
                     pqTime = Math.min(pqTime, maxRemaining);
                 }
                 setTimeLeft(pqTime);
+                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
             }
         }
     }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
@@ -497,22 +494,32 @@ export default function AttemptQuiz() {
         }
 
         const timerId = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
+            if (targetEndTimeRef.current) {
+                const remaining = Math.max(0, Math.ceil((targetEndTimeRef.current - Date.now()) / 1000));
+                setTimeLeft(remaining);
+                if (remaining <= 0) {
+                    clearInterval(timerId);
                     if (quiz.timerType === 'totalTime') {
-                        // Global timer expired -> Submit Quiz
-                        clearInterval(timerId);
                         submitQuiz();
-                        return 0;
                     } else {
-                        // Per question timer expired -> Next Question
-                        clearInterval(timerId);
                         handleTimeUp();
-                        return 0;
                     }
                 }
-                return prev - 1;
-            });
+            } else {
+                setTimeLeft(prev => {
+                    if (prev <= 1) {
+                        clearInterval(timerId);
+                        if (quiz.timerType === 'totalTime') {
+                            submitQuiz();
+                            return 0;
+                        } else {
+                            handleTimeUp();
+                            return 0;
+                        }
+                    }
+                    return prev - 1;
+                });
+            }
         }, 1000);
 
         return () => clearInterval(timerId);
