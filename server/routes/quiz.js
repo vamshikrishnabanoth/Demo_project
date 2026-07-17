@@ -93,7 +93,7 @@ const upload = multer({
     storage: storage,
     limits: {
         fileSize: 200 * 1024 * 1024, // 200MB limit (supports ~2.5 hour lecture recordings)
-        files: 1, // Maximum 1 file per request
+        files: 10, // Maximum 10 files per request (for mixed RAG ingestion)
     },
     fileFilter: (req, file, cb) => {
         // SECURITY: Sanitize original filename — strip path traversal sequences

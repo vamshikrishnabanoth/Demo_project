@@ -310,7 +310,7 @@ export default function CreateQuizTopic() {
                 setWizardStep(1);
             } catch (err) {
                 console.error(err);
-                const errMsg = err.response?.data?.message || 'Academic analysis failed. Please verify your content.';
+                const errMsg = err.response?.data?.message || err.response?.data?.msg || 'Academic analysis failed. Please verify your content.';
                 toast.error(errMsg, { id: toastId });
             } finally {
                 setAnalyzing(false);
