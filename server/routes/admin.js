@@ -196,4 +196,103 @@ router.put('/users/suspend/:id', auth, adminOnly, async (req, res) => {
     }
 });
 
+// POST batch promotion of student year levels
+router.post('/promote', auth, adminOnly, async (req, res) => {
+    try {
+        // 1. Delete year 4 students (graduating seniors)
+        const deleteRes = await prisma.user.deleteMany({
+            where: { role: 'student', year: '4' }
+        });
+
+        // 2. Upgrade Year 3 -> 4
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '3' },
+            data: { year: '4' }
+        });
+
+        // 3. Upgrade Year 2 -> 3
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '2' },
+            data: { year: '3' }
+        });
+
+        // 4. Upgrade Year 1 -> 2
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '1' },
+            data: { year: '2' }
+        });
+
+        res.json({
+            msg: 'Batch year promotion completed successfully!',
+            graduatedCount: deleteRes.count
+        });
+    } catch (err) {
+        console.error('Promotion error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST batch import students from CSV data
+router.post('/import', auth, adminOnly, async (req, res) => {
+    const { students } = req.body;
+    if (!students || !Array.isArray(students)) {
+        return res.status(400).json({ msg: 'Invalid payload: students list is required' });
+    }
+
+    try {
+        let successCount = 0;
+        let errors = [];
+
+        // Loop through students sequentially to hash and insert securely
+        for (const s of students) {
+            const { username, email, password, studentBranch, section, year } = s;
+            if (!username || !email || !password) {
+                errors.push({ email: email || 'unknown', reason: 'Missing username, email, or password' });
+                continue;
+            }
+
+            try {
+                // Check if user already exists
+                const existing = await prisma.user.findFirst({
+                    where: { OR: [{ email }, { username }] }
+                });
+                if (existing) {
+                    errors.push({ email, reason: 'Duplicate username or email already in database' });
+                    continue;
+                }
+
+                // Hash password
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+
+                // Create user
+                await prisma.user.create({
+                    data: {
+                        username,
+                        email,
+                        password: hashedPassword,
+                        role: 'student',
+                        studentBranch: studentBranch || null,
+                        section: section || null,
+                        year: year ? String(year) : '1'
+                    }
+                });
+                successCount++;
+            } catch (innerErr) {
+                errors.push({ email, reason: innerErr.message });
+            }
+        }
+
+        res.json({
+            msg: `Batch import complete. Imported ${successCount} students.`,
+            successCount,
+            failureCount: errors.length,
+            errors
+        });
+    } catch (err) {
+        console.error('Import error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
 module.exports = router;

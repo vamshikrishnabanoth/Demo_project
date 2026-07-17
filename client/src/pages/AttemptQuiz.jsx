@@ -94,6 +94,7 @@ export default function AttemptQuiz() {
     const currentQuestionRef = useRef(0);
     const targetEndTimeRef = useRef(null);
     
+    const [lobbySummary, setLobbySummary] = useState('');
     const [totalStudents, setTotalStudents] = useState(0);
     const [answeredStudentsSet, setAnsweredStudentsSet] = useState(new Set());
     const answeredCount = answeredStudentsSet.size;
@@ -309,6 +310,11 @@ export default function AttemptQuiz() {
             }
         });
 
+        socket.on('lobby_summary_update', ({ lobbySummary }) => {
+            console.log('Received lobby summary update:', lobbySummary);
+            setLobbySummary(lobbySummary);
+        });
+
         return () => {
             socket.off('quiz_ended');
             socket.off('timer_update');
@@ -320,6 +326,7 @@ export default function AttemptQuiz() {
             socket.off('answer_feedback');
             socket.off('participants_update');
             socket.off('student_progress_update');
+            socket.off('lobby_summary_update');
         };
     }, [quiz, authUser, id, navigate]);
 
@@ -1164,83 +1171,97 @@ export default function AttemptQuiz() {
                         </div>
                         <AdaptiveQuestionContainer questionText={question.questionText} />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {question.options.map((option, idx) => {
-                                const isSelected = answers[currentQuestion] === option;
-                                const isCorrect = questionResult?.correctOption === option;
+                        {(!question.options || question.options.length <= 1) ? (
+                            <div className="space-y-4 mb-4">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Your Answer Below</label>
+                                <input
+                                    type="text"
+                                    value={answers[currentQuestion] || ''}
+                                    onChange={(e) => handleOptionSelect(e.target.value)}
+                                    disabled={isReviewMode || isWaiting || submitting || (quiz?.isLive && answeredQuestions.has(currentQuestion))}
+                                    placeholder="Enter short answer..."
+                                    className="w-full p-6 bg-white/5 border-2 border-white/10 rounded-2xl focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-bold text-lg text-white placeholder-slate-700 outline-none"
+                                />
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {question.options.map((option, idx) => {
+                                    const isSelected = answers[currentQuestion] === option;
+                                    const isCorrect = questionResult?.correctOption === option;
 
-                                // Theme-appropriate option styles
-                                const kahootStyles = [
-                                    { icon: Triangle },
-                                    { icon: Diamond },
-                                    { icon: Circle },
-                                    { icon: Square }
-                                ];
-                                const style = kahootStyles[idx % 4];
-                                const ShapeIcon = style.icon;
+                                    // Theme-appropriate option styles
+                                    const kahootStyles = [
+                                        { icon: Triangle },
+                                        { icon: Diamond },
+                                        { icon: Circle },
+                                        { icon: Square }
+                                    ];
+                                    const style = kahootStyles[idx % 4];
+                                    const ShapeIcon = style.icon;
 
-                                let containerClass = 'bg-[var(--bg-secondary)] border border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.02)] text-white hover:border-[var(--bg-accent)]/30';
-                                if (isReviewMode) {
-                                    if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-500/30';
-                                    else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-500/30';
-                                    else containerClass = 'bg-white/5 text-white/20 opacity-40 grayscale';
-                                } else if (isSelected) {
-                                    containerClass = 'bg-[var(--bg-accent)] text-white shadow-[0_0_20px_var(--bg-accent-glow)] ring-4 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)] scale-[0.98]';
-                                }
+                                    let containerClass = 'bg-[var(--bg-secondary)] border border-white/5 shadow-[0_0_20px_rgba(255,255,255,0.02)] text-white hover:border-[var(--bg-accent)]/30';
+                                    if (isReviewMode) {
+                                        if (isCorrect) containerClass = 'bg-green-500 text-white ring-4 ring-green-500/30';
+                                        else if (isSelected && !isCorrect) containerClass = 'bg-red-500 text-white ring-4 ring-red-500/30';
+                                        else containerClass = 'bg-white/5 text-white/20 opacity-40 grayscale';
+                                    } else if (isSelected) {
+                                        containerClass = 'bg-[var(--bg-accent)] text-white shadow-[0_0_20px_var(--bg-accent-glow)] ring-4 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-primary)] scale-[0.98]';
+                                    }
 
-                                // In live mode: lock only after submit, allow free re-selection before
-                                const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
+                                    // In live mode: lock only after submit, allow free re-selection before
+                                    const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
 
-                                // Dim non-selected options once ANY option selected (visual feedback)
-                                if (answers[currentQuestion] && !isSelected && !isReviewMode) {
-                                    containerClass += isSubmittedLive ? ' grayscale' : ' grayscale-[0.5]';
-                                }
+                                    // Dim non-selected options once ANY option selected (visual feedback)
+                                    if (answers[currentQuestion] && !isSelected && !isReviewMode) {
+                                        containerClass += isSubmittedLive ? ' grayscale' : ' grayscale-[0.5]';
+                                    }
 
-                                return (
-                                    <motion.button
-                                        key={`opt-${idx}-${option}`}
-                                        disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
-                                        onClick={() => handleOptionSelect(option)}
-                                        style={{ willChange: 'transform' }}
-                                        animate={{
-                                            scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
-                                            opacity: answers[currentQuestion] && !isSelected && !isReviewMode
-                                                ? (isSubmittedLive ? 0.2 : 0.4)
-                                                : 1
-                                        }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                        className={`relative min-h-[6rem] md:min-h-[7rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed`}
-                                    >
-                                        <div className="flex-shrink-0 bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
-                                            <ShapeIcon size={24} fill="white" strokeWidth={0} />
-                                        </div>
-                                        <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0">{option}</span>
-
-                                        {isSelected && !isReviewMode && (
-                                            <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white text-black rounded-full px-2 py-1 shadow-lg">
-                                                {isSubmittedLive ? (
-                                                    <motion.div
-                                                        initial={{ rotate: -90, scale: 0 }}
-                                                        animate={{ rotate: 0, scale: 1 }}
-                                                        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                                                        className="flex items-center justify-center text-red-600"
-                                                    >
-                                                        <Lock size={12} className="fill-red-600/10" />
-                                                    </motion.div>
-                                                ) : null}
-                                                <motion.div
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
-                                                >
-                                                    <CheckCircle size={14} className="text-green-600" />
-                                                </motion.div>
+                                    return (
+                                        <motion.button
+                                            key={`opt-${idx}-${option}`}
+                                            disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
+                                            onClick={() => handleOptionSelect(option)}
+                                            style={{ willChange: 'transform' }}
+                                            animate={{
+                                                scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
+                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode
+                                                    ? (isSubmittedLive ? 0.2 : 0.4)
+                                                    : 1
+                                            }}
+                                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                            className={`relative min-h-[6rem] md:min-h-[7rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed`}
+                                        >
+                                            <div className="flex-shrink-0 bg-white/20 p-3 rounded-xl backdrop-blur-md transition-transform group-hover:scale-110">
+                                                <ShapeIcon size={24} fill="white" strokeWidth={0} />
                                             </div>
-                                        )}
-                                    </motion.button>
-                                );
-                            })}
-                        </div>
+                                            <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0">{option}</span>
+
+                                            {isSelected && !isReviewMode && (
+                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white text-black rounded-full px-2 py-1 shadow-lg">
+                                                    {isSubmittedLive ? (
+                                                        <motion.div
+                                                            initial={{ rotate: -90, scale: 0 }}
+                                                            animate={{ rotate: 0, scale: 1 }}
+                                                            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                                                            className="flex items-center justify-center text-red-600"
+                                                        >
+                                                            <Lock size={12} className="fill-red-600/10" />
+                                                        </motion.div>
+                                                    ) : null}
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
+                                                    >
+                                                        <CheckCircle size={14} className="text-green-600" />
+                                                    </motion.div>
+                                                </div>
+                                            )}
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {isReviewMode && !questionResult?.isCorrect && (
                             <div className="mt-8 p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-4 text-green-400">

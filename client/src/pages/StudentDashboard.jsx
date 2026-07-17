@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
     Trophy, Play, Users, Star, ArrowRight, Target, Sparkles, 
     Zap, Rocket, Globe, Brain, Cpu, MessageSquare, Clock, BarChart3, 
-    ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2
+    ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2,
+    Hash, Gauge, Database, Sliders, Book
 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
@@ -52,11 +53,19 @@ export default function StudentDashboard() {
     
     const maxChars = 6;
 
-    // Game Arena States
-    const [file, setFile] = useState(null);
-    const [videoUrls, setVideoUrls] = useState(['']);
-    const [selectedGame, setSelectedGame] = useState('cyber-quest'); // 'cyber-quest'
+    // AI Revision Hub States
     const [submitting, setSubmitting] = useState(false);
+    const [revTopic, setRevTopic] = useState('');
+    const [revQuestionCount, setRevQuestionCount] = useState(5);
+    const [revDifficulty, setRevDifficulty] = useState('Medium');
+    const [revAvailableDocs, setRevAvailableDocs] = useState([]);
+    const [revSelectedDocs, setRevSelectedDocs] = useState([]);
+    const [revRatios, setRevRatios] = useState({
+        theory: 50,
+        code_debugging: 25,
+        fill_blank: 25,
+        scenario: 0
+    });
     
     // Polling States
     const [polling, setPolling]       = useState(false);
@@ -76,6 +85,17 @@ export default function StudentDashboard() {
     const [unlockedPerks, setUnlockedPerks] = useState([]);
     const [redeeming, setRedeeming] = useState(false);
     const [showTicket, setShowTicket] = useState(null); // holds perk object to show ticket
+
+    // Flashcard States
+    const [revSubTab, setRevSubTab] = useState('generate'); // 'generate' | 'flashcards'
+    const [revisionHistory, setRevisionHistory] = useState([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+    const [selectedDeckQuizId, setSelectedDeckQuizId] = useState(null);
+    const [selectedDeckTitle, setSelectedDeckTitle] = useState('');
+    const [currentFlashcards, setCurrentFlashcards] = useState([]);
+    const [currentCardIndex, setCurrentCardIndex] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false);
+    const [loadingDeck, setLoadingDeck] = useState(false);
 
     // Read-only: just hydrate UI state, no DB mutations
     const fetchGamification = async () => {
@@ -123,12 +143,68 @@ export default function StudentDashboard() {
         }
     }, [user]);
 
-    // Run init when user switches to the gamification tab
+    useEffect(() => {
+        const fetchDocs = async () => {
+            try {
+                const res = await api.get('/quiz/documents');
+                setRevAvailableDocs(res.data || []);
+            } catch (err) {
+                console.error('Failed to load documents:', err);
+            }
+        };
+        fetchDocs();
+    }, []);
+
     useEffect(() => {
         if (activeTab === 'gamification' && user?.id) {
             initGamification();
         }
     }, [activeTab]);
+
+    const fetchRevisionHistory = async () => {
+        setLoadingHistory(true);
+        try {
+            const res = await api.get('/quiz/history/student');
+            const attempted = (res.data || []).filter(q => q.isAttempted);
+            setRevisionHistory(attempted);
+        } catch (err) {
+            console.error('Failed to load revision history:', err);
+        } finally {
+            setLoadingHistory(false);
+        }
+    };
+
+    const handleSelectDeck = async (quizId, quizTitle) => {
+        setLoadingDeck(true);
+        try {
+            const res = await api.get(`/quiz/${quizId}`);
+            const flashcards = res.data.aiFlashcards || [];
+            if (flashcards.length === 0) {
+                const fallbackCards = (res.data.questions || []).map((q) => ({
+                    front: q.questionText,
+                    back: q.correctAnswer || (q.options && q.options[0]) || 'Answer unavailable'
+                }));
+                setCurrentFlashcards(fallbackCards);
+            } else {
+                setCurrentFlashcards(flashcards);
+            }
+            setSelectedDeckQuizId(quizId);
+            setSelectedDeckTitle(quizTitle || res.data.title);
+            setCurrentCardIndex(0);
+            setIsFlipped(false);
+        } catch (err) {
+            console.error('Failed to load flashcards:', err);
+            toast.error('Failed to load flashcards');
+        } finally {
+            setLoadingDeck(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'arena' && user?.id) {
+            fetchRevisionHistory();
+        }
+    }, [activeTab, user]);
 
     const handleRedeemPerk = async (perkId, perkName, cost) => {
         if (xp < cost) return toast.error('Not enough XP!');
@@ -274,75 +350,96 @@ export default function StudentDashboard() {
         pollIntervalRef.current = setInterval(doPoll, 1500);
     }, [stopPolling]);
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+    const handleRevSliderChange = (changedFlavor, newValue) => {
+        const val = Math.min(100, Math.max(0, parseInt(newValue) || 0));
+        const otherFlavors = ['theory', 'code_debugging', 'fill_blank', 'scenario'].filter(f => f !== changedFlavor);
+        const currentOthersSum = otherFlavors.reduce((sum, f) => sum + revRatios[f], 0);
+        const remaining = 100 - val;
+
+        let newRatios = { ...revRatios, [changedFlavor]: val };
+
+        if (currentOthersSum === 0) {
+            const equalShare = remaining / otherFlavors.length;
+            otherFlavors.forEach(f => {
+                newRatios[f] = equalShare;
+            });
+        } else {
+            otherFlavors.forEach(f => {
+                newRatios[f] = (revRatios[f] / currentOthersSum) * remaining;
+            });
+        }
+
+        let newRatiosInt = {};
+        Object.keys(newRatios).forEach(k => {
+            newRatiosInt[k] = Math.round(newRatios[k]);
+        });
+
+        let sum = Object.values(newRatiosInt).reduce((s, v) => s + v, 0);
+        let diff = 100 - sum;
+
+        if (diff !== 0) {
+            const adjustKey = otherFlavors.sort((a, b) => newRatiosInt[b] - newRatiosInt[a])[0];
+            newRatiosInt[adjustKey] = Math.max(0, newRatiosInt[adjustKey] + diff);
+        }
+
+        setRevRatios(newRatiosInt);
     };
 
-    const handleAddVideoUrl = () => {
-        if (videoUrls.length < 2) {
-            setVideoUrls([...videoUrls, '']);
+    const toggleRevDocument = (docName) => {
+        if (revSelectedDocs.includes(docName)) {
+            setRevSelectedDocs(revSelectedDocs.filter(d => d !== docName));
+        } else {
+            setRevSelectedDocs([...revSelectedDocs, docName]);
         }
     };
 
-    const handleUpdateVideoUrl = (index, value) => {
-        const newUrls = [...videoUrls];
-        newUrls[index] = value;
-        setVideoUrls(newUrls);
-    };
-
-    const handleRemoveVideoUrl = (index) => {
-        const newUrls = [...videoUrls];
-        newUrls.splice(index, 1);
-        if (newUrls.length === 0) newUrls.push('');
-        setVideoUrls(newUrls);
-    };
-
-    const handleLaunchGame = async (e) => {
+    const handleLaunchRevisionQuiz = async (e) => {
         e.preventDefault();
-        const hasFile = !!file;
-        const filteredUrls = videoUrls.filter(u => u.trim() !== '');
-        const hasUrls = filteredUrls.length > 0;
-
-        if (!hasFile && !hasUrls) {
-            toast.error('Please upload study material or provide YouTube links!');
-            return;
-        }
+        if (!revTopic.trim()) return;
 
         setSubmitting(true);
-        try {
-            const formData = new FormData();
-            if (hasFile) {
-                formData.append('file', file);
-                formData.append('type', 'file');
-            } else {
-                formData.append('videoUrls', JSON.stringify(filteredUrls));
-                formData.append('type', 'topic');
-            }
-            formData.append('questionCount', '10');
-            formData.append('difficulty', 'Medium'); // standard pool count and baseline
+        const targetRatiosPayload = {
+            theory: revRatios.theory / 100,
+            code_debugging: revRatios.code_debugging / 100,
+            fill_blank: revRatios.fill_blank / 100,
+            scenario: revRatios.scenario / 100
+        };
 
-            const res = await api.post('/quiz/generate', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 30000,
-            });
+        try {
+            const res = await api.post('/quiz/generate', {
+                topic: revTopic,
+                type: 'topic',
+                questionCount: revQuestionCount,
+                difficulty: revDifficulty,
+                source_material_id: revSelectedDocs.length > 0 ? revSelectedDocs.join(',') : null,
+                target_ratios: targetRatiosPayload
+            }, { timeout: 180000 });
 
             const { taskId } = res.data;
             if (!taskId) throw new Error('No taskId returned from server');
 
             startPolling(taskId, {
-                onComplete: (result) => {
-                    setSubmitting(false);
-                    // Navigate to the correct game page, passing generated questions and material name
-                    let targetPath = '/cyber-quest';
-                    if (selectedGame === 'sprint-arena') targetPath = '/sprint-arena';
-                    else if (selectedGame === 'match-up') targetPath = '/match-up-arena';
-
-                    navigate(targetPath, {
-                        state: {
+                onComplete: async (result) => {
+                    try {
+                        const createRes = await api.post('/quiz/create', {
+                            title: result.title || `Revision: ${revTopic}`,
                             questions: result.questions,
-                            title: result.title || (file ? file.name.replace(/\.[^/.]+$/, '') : 'Video Quiz')
-                        }
-                    });
+                            duration: 10,
+                            timerType: 'totalTime',
+                            accessType: 'restricted',
+                            isAssessment: true,
+                            isLive: false,
+                            assignedStudents: [user.id]
+                        });
+                        
+                        setSubmitting(false);
+                        toast.success('Mock Quiz Generated & Saved! Initiating Revision Session...');
+                        navigate(`/quiz/attempt/${createRes.data.id}`);
+                    } catch (saveErr) {
+                        console.error(saveErr);
+                        toast.error('Failed to register revision quiz in database.');
+                        setSubmitting(false);
+                    }
                 },
                 onError: (msg) => {
                     toast.error(msg || 'AI parser failed. Please retry.');
@@ -351,7 +448,7 @@ export default function StudentDashboard() {
             });
         } catch (err) {
             console.error(err);
-            toast.error('Failed to parse materials. Ensure server is online.');
+            toast.error('Failed to start practicing. Please try again.');
             setSubmitting(false);
         }
     };
@@ -490,7 +587,7 @@ export default function StudentDashboard() {
                                     : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
                             }`}
                         >
-                            Game Arena
+                            AI Revision Hub
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
@@ -619,182 +716,375 @@ export default function StudentDashboard() {
                                 transition={{ duration: 0.4 }}
                                 className="space-y-10 max-w-4xl mx-auto text-left"
                             >
-                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                                    
-                                    {/* Column 1: Document Uploader */}
-                                    <div className="lg:col-span-2 space-y-6">
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
-                                                Step 1: Upload Study Material
-                                            </label>
-                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)]/50 transition-all bg-white/5 group/upload">
-                                                <input
-                                                    type="file"
-                                                    accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.txt"
-                                                    onChange={handleFileChange}
-                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                                                    required
-                                                />
-                                                <div className="p-8 flex flex-col items-center gap-4 text-center">
-                                                    {file ? (
-                                                        <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-300">
-                                                            <div className="bg-[var(--bg-accent)] p-4 rounded-xl text-[var(--text-on-accent)] shadow-[0_5px_20px_var(--bg-accent-glow)]">
-                                                                <FilePlus size={32} />
-                                                            </div>
-                                                            <p className="font-black text-sm text-[var(--text-primary)] italic max-w-[180px] truncate">{file.name}</p>
-                                                            <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[9px]">Material Locked In</p>
+                                <div className="flex gap-4 border-b border-white/10 pb-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setRevSubTab('generate')}
+                                        className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 ${
+                                            revSubTab === 'generate'
+                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        Generate Practice Match
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setRevSubTab('flashcards'); fetchRevisionHistory(); }}
+                                        className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 ${
+                                            revSubTab === 'flashcards'
+                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        Self-Paced Flashcard Decks
+                                    </button>
+                                </div>
+
+                                {revSubTab === 'generate' ? (
+                                    <form onSubmit={handleLaunchRevisionQuiz} className="space-y-8">
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-8 glass-panel relative overflow-hidden group">
+                                            <div className="relative z-10 space-y-6">
+                                                <div>
+                                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-3">Topic / Subject to Practice</label>
+                                                    <input
+                                                        type="text"
+                                                        value={revTopic}
+                                                        onChange={(e) => setRevTopic(e.target.value)}
+                                                        required
+                                                        placeholder="e.g. Race Conditions, CPU Scheduling, React Hooks"
+                                                        className="w-full p-6 bg-white/5 border-2 border-transparent rounded-[1.5rem] focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-black text-xl text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
+                                                    />
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="bg-white/5 p-6 rounded-2xl border border-[var(--border-color)] flex items-center gap-4">
+                                                        <Hash size={24} className="text-[var(--bg-accent)]" />
+                                                        <div className="flex-1">
+                                                            <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1">Question Count</label>
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                max="20"
+                                                                value={revQuestionCount}
+                                                                onChange={(e) => { const v = parseInt(e.target.value); setRevQuestionCount(isNaN(v) ? '' : v); }}
+                                                                className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full"
+                                                            />
                                                         </div>
-                                                    ) : (
-                                                        <>
-                                                            <div className="bg-white/5 p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
-                                                                <Upload size={32} />
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-[var(--text-primary)] font-black text-sm italic">SELECT DOCUMENT</p>
-                                                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[8px] mt-1">PDF, DOCX, PPTX, JPG, PNG (MAX 10MB)</p>
-                                                            </div>
-                                                        </>
-                                                    )}
+                                                    </div>
+
+                                                    <div className="bg-white/5 p-6 rounded-2xl border border-[var(--border-color)] flex items-center gap-4">
+                                                        <Gauge size={24} className="text-purple-400" />
+                                                        <div className="flex-1">
+                                                            <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1">Difficulty</label>
+                                                            <select
+                                                                value={revDifficulty}
+                                                                onChange={(e) => setRevDifficulty(e.target.value)}
+                                                                className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
+                                                            >
+                                                                <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
+                                                                <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
+                                                                <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
+                                                                <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
-                                                OR YouTube Video Links (Max 2)
-                                            </label>
-                                            <div className="space-y-3">
-                                                {videoUrls.map((url, i) => (
-                                                    <div key={i} className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            value={url}
-                                                            onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
-                                                            className="flex-1 p-4 bg-white/5 border border-white/10 rounded-xl focus:bg-white/10 focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
-                                                            placeholder="https://youtube.com/watch?v=..."
-                                                            disabled={submitting}
-                                                        />
+
+                                        {/* Textbook selector */}
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-8 glass-panel relative overflow-hidden">
+                                            <div className="relative z-10 space-y-4">
+                                                <div className="flex items-center gap-3 text-blue-400">
+                                                    <Database size={20} />
+                                                    <label className="block text-sm font-black uppercase tracking-wider text-[var(--text-primary)]">Textbooks & Lecture Transcripts (RAG)</label>
+                                                </div>
+                                                <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-widest italic">Optionally target college materials to query context parser</p>
+                                                
+                                                {revAvailableDocs.length === 0 ? (
+                                                    <div className="p-6 rounded-xl border border-dashed border-[var(--border-color)] bg-white/5 text-center text-[var(--text-secondary)] font-bold text-xs uppercase">
+                                                        No textbooks uploaded yet. General LLM knowledge will be utilized.
                                                     </div>
-                                                ))}
-                                                {videoUrls.length < 2 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleAddVideoUrl}
-                                                        className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1 mt-2"
-                                                        disabled={submitting}
-                                                    >
-                                                        + Add another video
-                                                    </button>
+                                                ) : (
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                                        {revAvailableDocs.map((doc, idx) => {
+                                                            const isSelected = revSelectedDocs.includes(doc);
+                                                            return (
+                                                                <button
+                                                                    key={idx}
+                                                                    type="button"
+                                                                    onClick={() => toggleRevDocument(doc)}
+                                                                    className={`p-4 rounded-xl border text-left font-black text-xs uppercase transition-all duration-300 flex items-center justify-between ${
+                                                                        isSelected
+                                                                            ? 'bg-blue-600/20 border-blue-500 text-blue-400 shadow-lg'
+                                                                            : 'bg-white/5 border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-white/10'
+                                                                    }`}
+                                                                >
+                                                                    <span className="truncate pr-4">{doc}</span>
+                                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center border font-black text-[10px] ${
+                                                                        isSelected ? 'bg-blue-500 border-blue-500 text-white' : 'border-[var(--border-color)]'
+                                                                    }`}>
+                                                                        {isSelected ? '✓' : ''}
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Column 2: Choose Game Mode */}
-                                    <div className="lg:col-span-3 space-y-6">
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel">
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
-                                                Step 2: Select Game Arena
-                                            </label>
-                                            
-                                            <div className="flex flex-col gap-4">
-                                                {/* Cyber Quest Card (Active) */}
-                                                <div 
-                                                    onClick={() => setSelectedGame('cyber-quest')}
-                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
-                                                        selectedGame === 'cyber-quest'
-                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/5 shadow-[0_0_20px_rgba(0,240,255,0.15)]'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10'
-                                                    }`}
-                                                >
-                                                    <div className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] w-12 h-12 rounded-xl flex items-center justify-center">
-                                                        <Sparkles size={24} />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-white uppercase italic text-sm tracking-wide">Cyber Quest</h3>
-                                                            <span className="text-[var(--text-accent)] font-bold text-[8px] uppercase tracking-widest border border-[var(--text-accent)]/30 px-2 py-0.5 rounded">READY</span>
-                                                        </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
-                                                            Progress through 10 cyberpunk difficulty tiers. Use 50:50, Shield, and Skip lifelines to win.
-                                                        </p>
-                                                    </div>
+                                        {/* Flavor Mix Sliders */}
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-8 glass-panel relative overflow-hidden">
+                                            <div className="relative z-10 space-y-6">
+                                                <div className="flex items-center gap-3 text-emerald-400">
+                                                    <Sliders size={20} />
+                                                    <label className="block text-sm font-black uppercase tracking-wider text-[var(--text-primary)]">Quiz Flavor Composition</label>
                                                 </div>
-
-                                                {/* Sprint Arena Card (Unlocked!) */}
-                                                <div 
-                                                    onClick={() => setSelectedGame('sprint-arena')}
-                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
-                                                        selectedGame === 'sprint-arena'
-                                                            ? 'border-pink-500 bg-pink-500/5 shadow-[0_0_20px_rgba(219,39,119,0.15)] opacity-100'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
-                                                    }`}
-                                                >
-                                                    <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
-                                                        <Clock size={24} />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Sprint Arena</h3>
-                                                            <span className="text-pink-400 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
+                                                
+                                                <div className="space-y-4">
+                                                    {/* Theory */}
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between font-black uppercase text-xs italic">
+                                                            <span className="text-blue-400">Theory & Conceptual MCQs</span>
+                                                            <span className="text-white">{revRatios.theory}%</span>
                                                         </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
-                                                            Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
-                                                        </p>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={revRatios.theory}
+                                                            onChange={(e) => handleRevSliderChange('theory', e.target.value)}
+                                                            className="w-full accent-blue-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
+                                                        />
                                                     </div>
-                                                </div>
 
-                                                {/* Match-Up Card (Unlocked!) */}
-                                                <div 
-                                                    onClick={() => setSelectedGame('match-up')}
-                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
-                                                        selectedGame === 'match-up'
-                                                            ? 'border-purple-500 bg-purple-500/5 shadow-[0_0_20px_rgba(168,85,247,0.15)] opacity-100'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
-                                                    }`}
-                                                >
-                                                    <div className="bg-purple-600/10 text-purple-400 w-12 h-12 rounded-xl flex items-center justify-center">
-                                                        <Cpu size={24} />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Match-Up Match</h3>
-                                                            <span className="text-purple-400 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
+                                                    {/* Code Debugging */}
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between font-black uppercase text-xs italic">
+                                                            <span className="text-purple-400">Code Debugging & Compilation</span>
+                                                            <span className="text-white">{revRatios.code_debugging}%</span>
                                                         </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
-                                                            Visual cognitive card-matching memory board. Solve vocabulary and concepts in record times.
-                                                        </p>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={revRatios.code_debugging}
+                                                            onChange={(e) => handleRevSliderChange('code_debugging', e.target.value)}
+                                                            className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
+                                                        />
+                                                    </div>
+
+                                                    {/* Fill in the blank */}
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between font-black uppercase text-xs italic">
+                                                            <span className="text-amber-400">Fill-in-the-Blank & Short Syntax</span>
+                                                            <span className="text-white">{revRatios.fill_blank}%</span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={revRatios.fill_blank}
+                                                            onChange={(e) => handleRevSliderChange('fill_blank', e.target.value)}
+                                                            className="w-full accent-amber-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
+                                                        />
+                                                    </div>
+
+                                                    {/* Scenario based */}
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between font-black uppercase text-xs italic">
+                                                            <span className="text-emerald-400">Scenario-Based Challenges</span>
+                                                            <span className="text-white">{revRatios.scenario}%</span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={revRatios.scenario}
+                                                            onChange={(e) => handleRevSliderChange('scenario', e.target.value)}
+                                                            className="w-full accent-emerald-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Launch Game button */}
-                                <div className="flex justify-center pt-4">
-                                    <button
-                                        onClick={handleLaunchGame}
-                                        disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
-                                        className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center gap-4 transition-all duration-300 border btn-cinematic
-                                            ${(file || videoUrls.some(u => u.trim())) && !submitting
-                                                ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_15px_30px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                                : 'bg-white/5 text-white/10 border-white/5 cursor-not-allowed'
-                                            }`}
-                                    >
-                                        {submitting ? (
-                                            <>
-                                                <Loader2 size={24} className="animate-spin" />
-                                                ANALYZING MATERIAL...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Play size={24} fill="currentColor" />
-                                                LAUNCH GAME MODE
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+                                        {/* Practice quiz trigger */}
+                                        <div className="flex justify-center pt-4">
+                                            <button
+                                                type="submit"
+                                                disabled={submitting || !revTopic.trim()}
+                                                className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center gap-4 transition-all duration-300 border btn-cinematic
+                                                    ${revTopic.trim() && !submitting
+                                                        ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_15px_30px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                                        : 'bg-white/5 text-white/10 border-white/5 cursor-not-allowed'
+                                                    }`}
+                                            >
+                                                {submitting ? (
+                                                    <>
+                                                        <Loader2 size={24} className="animate-spin" />
+                                                        GENERATING PRACTICE TEST...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Sparkles size={24} />
+                                                        LAUNCH REVISION MATCH
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    /* Flashcard Deck Player View */
+                                    selectedDeckQuizId ? (
+                                        <div className="space-y-6 max-w-xl mx-auto bg-white/5 border border-[var(--border-color)] rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+                                            <div className="flex items-center justify-between relative z-10">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedDeckQuizId(null)}
+                                                    className="text-xs font-black text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-2 hover:opacity-85"
+                                                >
+                                                    ← Back to Decks
+                                                </button>
+                                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                                                    Card {currentCardIndex + 1} of {currentFlashcards.length}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-lg md:text-xl font-black text-white italic uppercase truncate text-center relative z-10">
+                                                {selectedDeckTitle}
+                                            </h3>
+
+                                            {loadingDeck ? (
+                                                <div className="flex flex-col items-center justify-center p-12 text-slate-400 gap-3">
+                                                    <Loader2 className="animate-spin text-[var(--bg-accent)]" size={32} />
+                                                    <span className="font-black text-xs uppercase tracking-widest">Hydrating Decks...</span>
+                                                </div>
+                                            ) : currentFlashcards.length === 0 ? (
+                                                <div className="bg-white/5 border border-[var(--border-color)] rounded-3xl p-16 text-center text-slate-400 uppercase font-black text-xs tracking-wider">
+                                                    No study cards generated for this session.
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-8 relative z-10">
+                                                    {/* 3D Flip Card Container */}
+                                                    <div className="w-full h-80 relative" style={{ perspective: 1000 }}>
+                                                        <motion.div
+                                                            className="w-full h-full relative cursor-pointer"
+                                                            onClick={() => setIsFlipped(!isFlipped)}
+                                                            animate={{ rotateY: isFlipped ? 180 : 0 }}
+                                                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                                                            style={{ transformStyle: 'preserve-3d' }}
+                                                        >
+                                                            {/* Front Side */}
+                                                            <div 
+                                                                className="absolute inset-0 w-full h-full bg-slate-900 border border-white/10 rounded-3xl p-8 flex flex-col justify-between"
+                                                                style={{ backfaceVisibility: 'hidden' }}
+                                                            >
+                                                                <span className="text-[9px] font-black uppercase text-[var(--text-accent)] tracking-widest">Concept / Question</span>
+                                                                <div className="flex-1 flex items-center justify-center text-center px-4">
+                                                                    <p className="text-base md:text-lg font-bold text-white leading-relaxed">{currentFlashcards[currentCardIndex]?.front}</p>
+                                                                </div>
+                                                                <span className="text-[9px] text-center text-slate-500 font-black uppercase tracking-widest animate-pulse">Click to Reveal Answer</span>
+                                                            </div>
+
+                                                            {/* Back Side */}
+                                                            <div 
+                                                                className="absolute inset-0 w-full h-full bg-zinc-950 border border-[var(--bg-accent)]/30 rounded-3xl p-8 flex flex-col justify-between"
+                                                                style={{ 
+                                                                    backfaceVisibility: 'hidden',
+                                                                    transform: 'rotateY(180deg)'
+                                                                }}
+                                                            >
+                                                                <span className="text-[9px] font-black uppercase text-emerald-400 tracking-widest">Revision Explanation</span>
+                                                                <div className="flex-1 flex items-center justify-center text-center px-4 overflow-y-auto max-h-48">
+                                                                    <p className="text-xs md:text-sm font-semibold text-slate-200 leading-relaxed whitespace-pre-line">{currentFlashcards[currentCardIndex]?.back}</p>
+                                                                </div>
+                                                                <span className="text-[9px] text-center text-slate-500 font-black uppercase tracking-widest">Click to Flip Back</span>
+                                                            </div>
+                                                        </motion.div>
+                                                    </div>
+
+                                                    {/* Controls */}
+                                                    <div className="flex items-center justify-between">
+                                                        <button
+                                                            type="button"
+                                                            disabled={currentCardIndex === 0}
+                                                            onClick={() => {
+                                                                setIsFlipped(false);
+                                                                setTimeout(() => setCurrentCardIndex(prev => Math.max(0, prev - 1)), 150);
+                                                            }}
+                                                            className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 font-black text-xs uppercase tracking-wider text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                                        >
+                                                            ← Previous
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsFlipped(!isFlipped)}
+                                                            className="px-6 py-3 rounded-xl bg-blue-600/20 border border-blue-500 text-blue-400 font-black text-xs uppercase tracking-wider hover:bg-blue-600/30 transition-all"
+                                                        >
+                                                            Flip Card
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            disabled={currentCardIndex === currentFlashcards.length - 1}
+                                                            onClick={() => {
+                                                                setIsFlipped(false);
+                                                                setTimeout(() => setCurrentCardIndex(prev => Math.min(currentFlashcards.length - 1, prev + 1)), 150);
+                                                            }}
+                                                            className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 font-black text-xs uppercase tracking-wider text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                                        >
+                                                            Next →
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-6">
+                                            {loadingHistory ? (
+                                                <div className="flex flex-col items-center justify-center p-12 text-slate-400 gap-3">
+                                                    <Loader2 className="animate-spin text-[var(--bg-accent)]" size={32} />
+                                                    <span className="font-black text-xs uppercase tracking-widest">Loading study decks...</span>
+                                                </div>
+                                            ) : revisionHistory.length === 0 ? (
+                                                <div className="bg-white/5 border border-dashed border-[var(--border-color)] rounded-3xl p-16 text-center text-slate-500 uppercase font-black text-xs tracking-wider">
+                                                    Complete at least one practice quiz or live quiz to generate review flashcards.
+                                                </div>
+                                            ) : (
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                                    {revisionHistory.map((deck) => (
+                                                        <div 
+                                                            key={deck.id}
+                                                            className="bg-white/5 border border-[var(--border-color)] rounded-[1.8rem] p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-all duration-300"
+                                                        >
+                                                            <div className="space-y-2">
+                                                                <span className="inline-block text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest bg-[var(--bg-accent)]/15 px-3 py-1 rounded-full">
+                                                                    {deck.subject}
+                                                                </span>
+                                                                <h4 className="font-bold text-white text-base leading-snug line-clamp-2">
+                                                                    {deck.title}
+                                                                </h4>
+                                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                                                    Score: {deck.score}/{deck.totalQuestions * 10}
+                                                                </p>
+                                                            </div>
+                                                            
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleSelectDeck(deck.id, deck.title)}
+                                                                className="mt-6 w-full py-3.5 rounded-xl bg-blue-600 text-white font-black text-xs uppercase tracking-wider hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                                                            >
+                                                                <Book size={14} /> Start Study Deck
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                )}
                             </motion.div>
                         ) : activeTab === 'gamification' ? (
                             <motion.div

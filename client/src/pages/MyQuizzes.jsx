@@ -34,6 +34,12 @@ export default function MyQuizzes() {
     const [selectedQuizIds, setSelectedQuizIds] = useState([]);
     const [editingScheduleId, setEditingScheduleId] = useState(null);
 
+    // Filters state
+    const [filterType, setFilterType] = useState('All');
+    const [filterYear, setFilterYear] = useState('All');
+    const [filterBranch, setFilterBranch] = useState('All');
+    const [filterSection, setFilterSection] = useState('All');
+
     const fetchQuizzes = async () => {
         try {
             const res = await api.get('/quiz/my-quizzes');
@@ -123,10 +129,36 @@ export default function MyQuizzes() {
         }
     };
 
-    const filteredQuizzes = quizzes.filter(quiz =>
-        quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        quiz.topic?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredQuizzes = quizzes.filter(quiz => {
+        const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            quiz.topic?.toLowerCase().includes(searchTerm.toLowerCase());
+            
+        let matchesType = true;
+        if (filterType === 'Live') matchesType = quiz.isLive && quiz.isActive;
+        else if (filterType === 'Assessment') matchesType = !quiz.isLive && quiz.isAssessment && quiz.isActive;
+        else if (filterType === 'Closed') matchesType = !quiz.isActive;
+        
+        let matchesYear = true;
+        let matchesBranch = true;
+        let matchesSection = true;
+        
+        if (quiz.assignedGroups) {
+            try {
+                const groups = typeof quiz.assignedGroups === 'string' ? JSON.parse(quiz.assignedGroups) : quiz.assignedGroups;
+                if (filterYear !== 'All' && groups.year && groups.year !== filterYear) matchesYear = false;
+                if (filterBranch !== 'All' && groups.branch && groups.branch !== filterBranch) matchesBranch = false;
+                if (filterSection !== 'All' && groups.section && groups.section !== filterSection) matchesSection = false;
+            } catch (e) {
+                if (filterYear !== 'All' || filterBranch !== 'All' || filterSection !== 'All') {
+                    matchesYear = false;
+                }
+            }
+        } else if (filterYear !== 'All' || filterBranch !== 'All' || filterSection !== 'All') {
+            matchesYear = false;
+        }
+        
+        return matchesSearch && matchesType && matchesYear && matchesBranch && matchesSection;
+    });
 
     return (
         <DashboardLayout role="teacher">
@@ -148,6 +180,89 @@ export default function MyQuizzes() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent)]/20 focus:border-[var(--bg-accent)]/50 transition-all uppercase tracking-tighter"
                         />
+                    </div>
+                </div>
+
+                {/* Filters Row */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-white/5 border border-white/10 p-6 rounded-3xl glass-panel">
+                    {/* Type Filter */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Type</label>
+                        <select
+                            value={filterType}
+                            onChange={(e) => setFilterType(e.target.value)}
+                            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL TYPES</option>
+                            <option value="Live" className="bg-slate-900 text-white">LIVE SESSION</option>
+                            <option value="Assessment" className="bg-slate-900 text-white">ASSESSMENT</option>
+                            <option value="Closed" className="bg-slate-900 text-white">CLOSED / DRAFT</option>
+                        </select>
+                    </div>
+
+                    {/* Year Filter */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Year</label>
+                        <select
+                            value={filterYear}
+                            onChange={(e) => setFilterYear(e.target.value)}
+                            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL YEARS</option>
+                            <option value="1" className="bg-slate-900 text-white">YEAR 1</option>
+                            <option value="2" className="bg-slate-900 text-white">YEAR 2</option>
+                            <option value="3" className="bg-slate-900 text-white">YEAR 3</option>
+                            <option value="4" className="bg-slate-900 text-white">YEAR 4</option>
+                        </select>
+                    </div>
+
+                    {/* Branch Filter */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Branch</label>
+                        <select
+                            value={filterBranch}
+                            onChange={(e) => setFilterBranch(e.target.value)}
+                            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL BRANCHES</option>
+                            <option value="CSE" className="bg-slate-900 text-white">CSE</option>
+                            <option value="CSM" className="bg-slate-900 text-white">CSM</option>
+                            <option value="CSD" className="bg-slate-900 text-white">CSD</option>
+                            <option value="IT" className="bg-slate-900 text-white">IT</option>
+                        </select>
+                    </div>
+
+                    {/* Section Filter */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Section</label>
+                        <select
+                            value={filterSection}
+                            onChange={(e) => setFilterSection(e.target.value)}
+                            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL SECTIONS</option>
+                            <option value="A" className="bg-slate-900 text-white">SECTION A</option>
+                            <option value="B" className="bg-slate-900 text-white">SECTION B</option>
+                            <option value="C" className="bg-slate-900 text-white">SECTION C</option>
+                            <option value="D" className="bg-slate-900 text-white">SECTION D</option>
+                        </select>
+                    </div>
+
+                    {/* Clear Filters Button */}
+                    <div className="flex flex-col justify-end">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFilterType('All');
+                                setFilterYear('All');
+                                setFilterBranch('All');
+                                setFilterSection('All');
+                                setSearchTerm('');
+                            }}
+                            className="w-full bg-white/5 border border-dashed border-white/10 hover:bg-white/10 hover:border-white/20 transition-all rounded-xl py-3 text-center text-xs font-black italic uppercase text-slate-400 hover:text-white"
+                        >
+                            CLEAR FILTERS
+                        </button>
                     </div>
                 </div>
 
