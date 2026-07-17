@@ -496,29 +496,43 @@ export default function AssessmentAttempt() {
                             </div>
                         </div>
 
-                        {/* Options Group */}
-                        <div className="grid grid-cols-1 gap-4 mb-8">
-                            {(currentQ.options || []).map((opt, oi) => {
-                                const isSelected = selected === opt;
-                                const isFinalizedOption = !quiz.isAssessment && isQuestionFinalized;
-                                return (
-                                    <motion.button
-                                        key={oi}
-                                        onClick={() => handleSelect(opt)}
-                                        disabled={isFinalizedOption}
-                                        className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative overflow-hidden btn-press
-                                            ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-white' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] text-white/80'}
-                                            ${isFinalizedOption ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    >
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-md
-                                            ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-white/10 text-white/60'}`}>
-                                            {LETTERS[oi]}
-                                        </div>
-                                        <span className="font-bold text-lg flex-1">{opt}</span>
-                                    </motion.button>
-                                );
-                            })}
-                        </div>
+                        {/* Options Group or Text Input for Fill-in-the-blank */}
+                        {(!currentQ.options || currentQ.options.length <= 1) ? (
+                            <div className="space-y-4 mb-8">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Your Answer Below</label>
+                                <input
+                                    type="text"
+                                    value={selected || ''}
+                                    onChange={(e) => handleSelect(e.target.value)}
+                                    disabled={isQuestionFinalized}
+                                    placeholder="Enter short answer..."
+                                    className="w-full p-6 bg-white/5 border-2 border-white/10 rounded-2xl focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-bold text-lg text-white placeholder-slate-700 outline-none"
+                                />
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-4 mb-8">
+                                {(currentQ.options || []).map((opt, oi) => {
+                                    const isSelected = selected === opt;
+                                    const isFinalizedOption = !quiz.isAssessment && isQuestionFinalized;
+                                    return (
+                                        <motion.button
+                                            key={oi}
+                                            onClick={() => handleSelect(opt)}
+                                            disabled={isFinalizedOption}
+                                            className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative overflow-hidden btn-press
+                                                ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-white' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] text-white/80'}
+                                                ${isFinalizedOption ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        >
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-md
+                                                ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-white/10 text-white/60'}`}>
+                                                {LETTERS[oi]}
+                                            </div>
+                                            <span className="font-bold text-lg flex-1">{opt}</span>
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* Question Action Controls */}
                         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">

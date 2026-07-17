@@ -25,26 +25,52 @@ if (process.env.GROQ_API_KEY) {
 
 
 /**
- * Transcribes audio file using Groq Whisper
+ * Transcribes audio file locally using Python faster-whisper with cloud fallback
  */
 const transcribeAudio = async (filePath) => {
     try {
-        if (!groq) {
-            console.error('❌ Transcription Error: Groq client not initialized (missing API key)');
-            return null;
-        }
-        console.log('🎙️ Transcribing audio with Groq Whisper...');
-        const transcription = await groq.audio.transcriptions.create({
-            file: fs.createReadStream(filePath),
-            model: "whisper-large-v3",
-            prompt: "This is a transcript of a classroom lecture. Focus on educational concepts. Ignore classroom management talk like 'sit down' or 'be quiet'.", // Context hint
-            response_format: "text",
+        const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+        console.log(`🎙️ Transcribing audio locally via Python Whisper service: ${AI_SERVICE_URL}/transcribe`);
+        
+        const FormData = require('form-data');
+        const formData = new FormData();
+        formData.append('file', fs.createReadStream(filePath), {
+            filename: path.basename(filePath)
         });
-        return transcription;
+
+        const response = await axios.post(`${AI_SERVICE_URL}/transcribe`, formData, {
+            headers: {
+                ...formData.getHeaders()
+            },
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
+        });
+
+        if (response.data && response.data.status === 'success') {
+            console.log(`✅ Local transcription successful! Text: "${response.data.text.substring(0, 60)}..."`);
+            return response.data.text;
+        }
     } catch (err) {
-        console.error('❌ Transcription Error:', err.message);
-        return null;
+        console.error('❌ Local Speech-to-Text failed or offline:', err.message);
     }
+    
+    // Cloud fallback to Groq Whisper if local is offline
+    if (process.env.GROQ_API_KEY && groq) {
+        try {
+            console.log('🎙️ Local Whisper offline/failed. Falling back to Groq Cloud Whisper...');
+            const transcription = await groq.audio.transcriptions.create({
+                file: fs.createReadStream(filePath),
+                model: "whisper-large-v3",
+                prompt: "This is a transcript of a classroom lecture. Focus on educational concepts. Ignore classroom management talk like 'sit down' or 'be quiet'.",
+                response_format: "text",
+            });
+            return transcription;
+        } catch (groqErr) {
+            console.error('❌ Groq Cloud Transcription Fallback Error:', groqErr.message);
+        }
+    }
+    
+    return null;
 };
 
 // Mock AI Generation for fallback
@@ -184,7 +210,7 @@ const checkAiServiceOnline = async (url) => {
 
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 // Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null) => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
     // Probe the AI Service first — instant fallback if completely offline
@@ -195,14 +221,27 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     }
 
     try {
-        console.log(`🚀 Sending to Fine-Tuned AI at ${AI_SERVICE_URL}: ${type} | Count: ${count}`);
+        console.log(`🚀 Sending to Fine-Tuned AI at ${AI_SERVICE_URL}: ${type || 'multi-input'} | Count: ${count}`);
 
-        const response = await axios.post(`${AI_SERVICE_URL}/generate`, {
-            type,
-            content,
+        const payload = {
             count: parseInt(count),
-            difficulty
-        }, {
+            difficulty,
+            source_material_id,
+            target_ratios
+        };
+
+        if (inputs && inputs.length > 0) {
+            payload.inputs = inputs;
+        } else {
+            payload.type = type;
+            payload.content = content;
+        }
+
+        if (topic_weights) {
+            payload.topic_weights = topic_weights;
+        }
+
+        const response = await axios.post(`${AI_SERVICE_URL}/generate`, payload, {
             headers: { 'Bypass-Tunnel-Reminder': 'true' },
             timeout: 300000 // 5 min — fine-tuned model needs time for generator-critic pipeline
         });
@@ -414,6 +453,11 @@ exports.createQuiz = async (req, res) => {
             console.log(`[QuizCreated] Hashed frozen payload: hash=${finalQuizHash.slice(0, 16)}...`);
         }
 
+                let parsedFlashcards = null;
+        if (req.body.aiFlashcards) {
+            parsedFlashcards = typeof req.body.aiFlashcards === 'string' ? JSON.parse(req.body.aiFlashcards) : req.body.aiFlashcards;
+        }
+
         const newQuiz = await prisma.quiz.create({
             data: {
                 title: title || `${topic || content || 'Untitled'} Quiz`,
@@ -440,7 +484,9 @@ exports.createQuiz = async (req, res) => {
                 quizHash: finalQuizHash,
                 publishedAt: finalPublishedAt,
                 publishedBy: finalIsLocked ? req.user.id : null,
-                version: finalVersion
+                version: finalVersion,
+                lobbySummary: req.body.lobbySummary || null,
+                aiFlashcards: parsedFlashcards || null
             }
         });
 
@@ -1395,10 +1441,50 @@ exports.generateQuizQuestions = async (req, res) => {
     // Run entire pipeline in background (non-blocking)
     setImmediate(async () => {
         try {
-            let { type, questionCount, difficulty, topic, videoUrls } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards } = req.body;
             let extractedTitle = topic || 'AI Generated Quiz';
             let sourceType = type || 'topic';
             let combinedTranscript = '';
+
+            let parsedInputs = null;
+            if (inputs) {
+                parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
+            } else if (req.files && req.files.length > 0) {
+                parsedInputs = [];
+                for (const file of req.files) {
+                    const filePath = path.resolve(file.path);
+                    const ext = path.extname(file.originalname).toLowerCase();
+                    
+                    let textContent = "";
+                    if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+                        textContent = await extractText(filePath);
+                    } else {
+                        const buffer = fs.readFileSync(filePath);
+                        textContent = "base64:" + buffer.toString('base64');
+                    }
+                    
+                    parsedInputs.push({
+                        type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
+                        content: textContent || filePath,
+                        source_name: file.originalname
+                    });
+                    
+                    try { fs.unlinkSync(filePath); } catch (_) {}
+                }
+                
+                if (topic && topic.trim() !== '') {
+                    parsedInputs.push({
+                        type: 'text',
+                        content: topic,
+                        source_name: 'Text Prompts'
+                    });
+                }
+            }
+
+            let parsedTopicWeights = null;
+            if (topic_weights) {
+                parsedTopicWeights = typeof topic_weights === 'string' ? JSON.parse(topic_weights) : topic_weights;
+            }
 
             // YouTube validation constraints
             let finalVideoUrls = [];
@@ -1596,13 +1682,11 @@ exports.generateQuizQuestions = async (req, res) => {
 
                      console.log(`[YouTube] ✅ Content extracted via ${extractionMethod}`);
 
-                     // Validate we got something
                      if (!text || text.length < 50) {
                          failTask(taskId, 'Could not extract content from this video. The video may be private, age-restricted, or unavailable. Please try a different public educational video.');
                          return;
                      }
 
-                     // Apply size limits
                      if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
                          text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
                      }
@@ -1633,9 +1717,8 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let isTextEmpty = false;
 
-            // ── YouTube-only path: topic was populated from transcript above ───────
-            // No file → no req.file block needed; topic holds the transcript already
-            if (req.file) {
+            if (parsedInputs && parsedInputs.length > 0) {
+            } else if (req.file) {
                 const ext = path.extname(req.file.originalname).toLowerCase();
                 const isImage = ['.jpg', '.jpeg', '.png'].includes(ext);
                 const contentToModerate = isImage ? '' : (extractedText || topic || '');
@@ -1657,7 +1740,6 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                 }
             } else if (topic && topic.trim() !== '') {
-                // topic = either user-typed text OR YouTube transcript
                 const moderation = await moderateContent(req.user.id, topic, 'text');
                 if (!moderation.isSafe) {
                     if (moderation.type === 'low_confidence') {
@@ -1670,7 +1752,6 @@ exports.generateQuizQuestions = async (req, res) => {
                     return;
                 }
             } else if (!req.file && finalVideoUrls.length === 0) {
-                // No file, no YouTube URLs, no topic — nothing to work with
                 isTextEmpty = true;
             }
 
@@ -1682,27 +1763,26 @@ exports.generateQuizQuestions = async (req, res) => {
                 return;
             }
 
-            // ── Stage 0: Generate Questions ──────────────────────────────────
             console.log(`\n[Generator Started] type=${sourceType} topic="${topic ? topic.substring(0, 30) : ''}..." count=${questionCount}`);
             updateTaskStage(taskId, 0, 'Generating Questions');
 
             let finalQuestions = [];
-            if (req.file) {
+            if (parsedInputs && parsedInputs.length > 0) {
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, target_ratios, parsedInputs, parsedTopicWeights);
+            } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
+                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty, source_material_id, target_ratios);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, target_ratios);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
-                // Cleanup uploaded file
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, target_ratios);
             }
 
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
 
-            // ── Stages 1-3: Agentic Quality Pipeline ─────────────────────────
             let agentReport = null;
             try {
                 const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 90000;
@@ -1726,7 +1806,6 @@ exports.generateQuizQuestions = async (req, res) => {
                 agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [], questionDiffs: [] };
             }
 
-            // ── Stage 3: Final Validation ─────────────────────────────────────
             console.log(`\n[Final Validation] Running final quiz validator...`);
             updateTaskStage(taskId, 3, 'Preparing Final Quiz');
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
@@ -1737,6 +1816,8 @@ exports.generateQuizQuestions = async (req, res) => {
                 duration:        10,
                 agentReport,
                 finalValidation: validation,
+                lobbySummary:    lobby_summary || null,
+                aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null
             });
 
         } catch (err) {
@@ -1809,6 +1890,10 @@ exports.getStudentHistory = async (req, res) => {
 
 exports.getLiveQuizzes = async (req, res) => {
     try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id }
+        });
+
         // Fetch currently active quizzes AND finished live quizzes (for async practice)
         const quizzes = await prisma.quiz.findMany({
             where: {
@@ -1821,9 +1906,49 @@ exports.getLiveQuizzes = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
+        let studentFilteredQuizzes = quizzes;
+        if (user && user.role === 'student') {
+            studentFilteredQuizzes = quizzes.filter(quiz => {
+                // 1. Quizzes created by the student themselves (practice tests) are always visible
+                if (quiz.createdById === user.id) return true;
+                
+                // 2. Public quizzes are always visible
+                if (quiz.accessType === 'public') return true;
+                
+                // 3. If restricted, check assignedStudents
+                if (quiz.assignedStudents && quiz.assignedStudents.includes(user.id)) return true;
+                
+                // 4. Check assignedGroups targeting parameters
+                if (quiz.assignedGroups) {
+                    try {
+                        const groups = typeof quiz.assignedGroups === 'string' ? JSON.parse(quiz.assignedGroups) : quiz.assignedGroups;
+                        const groupsArray = Array.isArray(groups) ? groups : [groups];
+                        
+                        return groupsArray.some(group => {
+                            if (group.branch && user.studentBranch && group.branch.toLowerCase() !== user.studentBranch.toLowerCase()) {
+                                return false;
+                            }
+                            if (group.section && user.section && group.section.toLowerCase() !== user.section.toLowerCase()) {
+                                return false;
+                            }
+                            if (group.year && user.year && String(group.year) !== String(user.year)) {
+                                return false;
+                            }
+                            return true;
+                        });
+                    } catch (e) {
+                        return false;
+                    }
+                }
+                
+                // Default private quizzes are hidden
+                return false;
+            });
+        }
+
         const now = new Date();
 
-        const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
+        const quizzesWithAttempts = await Promise.all(studentFilteredQuizzes.map(async (quiz) => {
             // Get the student's LATEST result for this quiz (for resultId link)
             const result = await prisma.result.findFirst({
                 where: { quizId: quiz.id, studentId: req.user.id },
@@ -1893,7 +2018,7 @@ exports.generateQuizFromVoice = async (req, res) => {
     setImmediate(async () => {
         const absolutePath = path.resolve(req.file.path);
         try {
-            const { questionCount, difficulty } = req.body;
+            const { questionCount, difficulty, source_material_id, target_ratios } = req.body;
 
             // ── Stage 0: Uploading / Transcribing ──────────────────────────
             console.log(`\n[Voice Generator Started] Transcribing audio...`);
@@ -1920,7 +2045,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             // ── Stage 0: Generate Questions from transcript ─────────────
             console.log(`[Generator Started] Generating from voice transcript...`);
-            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium');
+            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, target_ratios);
             console.log(`[Questions Generated] count=${draftQuestions.length}`);
 
             // Cleanup audio file
@@ -2091,5 +2216,90 @@ exports.updateSchedule = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+exports.getIngestedDocuments = async (req, res) => {
+    try {
+        const docs = await prisma.documentChunk.findMany({
+            select: { source: true },
+            distinct: ['source']
+        });
+        res.json(docs.map(d => d.source));
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error: ' + err.message });
+    }
+};
+
+exports.analyzeSources = async (req, res) => {
+    try {
+        const inputs = [];
+
+        // 1. Process files
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const filePath = path.resolve(file.path);
+                const ext = path.extname(file.originalname).toLowerCase();
+                
+                let textContent = "";
+                if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+                    textContent = await extractText(filePath);
+                } else {
+                    const buffer = fs.readFileSync(filePath);
+                    textContent = "base64:" + buffer.toString('base64');
+                }
+                
+                inputs.push({
+                    type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
+                    content: textContent || filePath,
+                    source_name: file.originalname
+                });
+                
+                try { fs.unlinkSync(filePath); } catch (_) {}
+            }
+        }
+
+        // 2. Process text prompts
+        if (req.body.text_prompts) {
+            let prompts = [];
+            try {
+                prompts = typeof req.body.text_prompts === 'string' 
+                    ? JSON.parse(req.body.text_prompts) 
+                    : req.body.text_prompts;
+            } catch (e) {
+                prompts = [req.body.text_prompts];
+            }
+            const promptsArray = Array.isArray(prompts) ? prompts : [prompts];
+            for (const p of promptsArray) {
+                if (p && p.trim() !== '') {
+                    inputs.push({
+                        type: 'text',
+                        content: p,
+                        source_name: 'Text Prompt'
+                    });
+                }
+            }
+        }
+
+        if (inputs.length === 0) {
+            return res.status(400).json({ msg: 'No input sources provided.' });
+        }
+
+        const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+        const response = await axios.post(`${AI_SERVICE_URL}/analyze-sources`, {
+            inputs
+        }, {
+            headers: { 'Bypass-Tunnel-Reminder': 'true' },
+            timeout: 90000
+        });
+
+        res.json(response.data);
+    } catch (err) {
+        console.error('Error in analyzeSources:', err.message);
+        if (err.response && err.response.status === 422) {
+            return res.status(422).json(err.response.data.detail || err.response.data);
+        }
+        res.status(500).json({ msg: 'Failed to analyze sources: ' + err.message });
     }
 };

@@ -185,6 +185,8 @@ app.use('/api/broadcast', require('./routes/broadcast'));
 
 // Socket.io Setup - Secure CORS
 const io = new Server(server, {
+    pingTimeout: 60000,
+    pingInterval: 25000,
     cors: {
         origin: (origin, callback) => {
             if (!origin) return callback(null, true);
@@ -341,6 +343,18 @@ io.on('connection', async (socket) => {
         }
 
         socket.join(quizId);
+
+        // Fetch and emit lobby study summary to the user
+        prisma.quiz.findUnique({
+            where: { id: quizId },
+            select: { lobbySummary: true }
+        }).then(q => {
+            if (q && q.lobbySummary) {
+                socket.emit('lobby_summary_update', { lobbySummary: q.lobbySummary });
+            }
+        }).catch(err => {
+            console.error('Error fetching lobby summary on join_room:', err);
+        });
 
         // Track this socket's association for disconnect cleanup
         socketToUser.set(socket.id, { quizId, username: socket.user.username });

@@ -59,6 +59,10 @@ export default function Assessments() {
     const [search, setSearch] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+    // Filters state
+    const [filterDifficulty, setFilterDifficulty] = useState('All');
+    const [filterStatus, setFilterStatus] = useState('All');
+
     // Integrated centralized data fetching with 30s caching
     const { data: quizzes, loading, error, refetch } = useApiQuery('/quiz/available', {
         errorMessage: 'Could not load assessment records'
@@ -66,10 +70,18 @@ export default function Assessments() {
 
     const safeQuizzes = quizzes || [];
 
-    const filteredQuizzes = safeQuizzes.filter(q => 
-        q.title.toLowerCase().includes(search.toLowerCase()) ||
-        q.topic?.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredQuizzes = safeQuizzes.filter(q => {
+        const matchesSearch = q.title.toLowerCase().includes(search.toLowerCase()) ||
+            q.topic?.toLowerCase().includes(search.toLowerCase());
+            
+        const matchesDifficulty = filterDifficulty === 'All' || q.difficulty === filterDifficulty;
+        
+        let matchesStatus = true;
+        if (filterStatus === 'Attempted') matchesStatus = q.isAttempted;
+        else if (filterStatus === 'Unattempted') matchesStatus = !q.isAttempted;
+        
+        return matchesSearch && matchesDifficulty && matchesStatus;
+    });
 
     const handleAttemptClick = async (quiz) => {
         if (quiz.accessType === 'public') {
@@ -157,24 +169,53 @@ export default function Assessments() {
                         </h1>
                         <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">Select a tactical trial to initiate your progression</p>
                     </div>
+                </div>
 
-                    {/* Animated Search Bar */}
-                    <div className="w-full md:w-96">
-                        <motion.div 
-                            animate={{ scale: isSearchFocused ? 1.02 : 1 }}
-                            className="relative group"
-                        >
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[var(--bg-accent)] transition-colors" size={20} aria-hidden="true" />
+                {/* Search & Filters Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 bg-white/5 border border-white/10 p-6 rounded-[2rem] glass-panel">
+                    {/* Search */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Search</label>
+                        <div className="relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                             <input
                                 type="text"
-                                placeholder="Query tactical trials..."
+                                placeholder="Search quizzes..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                onFocus={() => setIsSearchFocused(true)}
-                                onBlur={() => setIsSearchFocused(false)}
-                                className="w-full bg-[var(--bg-secondary)] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/60 focus:outline-none focus:border-[var(--bg-accent)] focus:bg-white/[0.08] transition-all font-medium shadow-xl"
+                                className="w-full bg-[var(--bg-secondary)] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-xs font-bold text-white placeholder-white/40 focus:outline-none focus:border-[var(--bg-accent)] transition-all"
                             />
-                        </motion.div>
+                        </div>
+                    </div>
+
+                    {/* Difficulty */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Difficulty</label>
+                        <select
+                            value={filterDifficulty}
+                            onChange={(e) => setFilterDifficulty(e.target.value)}
+                            className="bg-[var(--bg-secondary)] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL DIFFICULTIES</option>
+                            <option value="Easy" className="bg-slate-900 text-white">EASY</option>
+                            <option value="Medium" className="bg-slate-900 text-white">MEDIUM</option>
+                            <option value="Thinkable" className="bg-slate-900 text-white">THINKABLE</option>
+                            <option value="Hard" className="bg-slate-900 text-white">HARD</option>
+                        </select>
+                    </div>
+
+                    {/* Status */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</label>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="bg-[var(--bg-secondary)] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none"
+                        >
+                            <option value="All" className="bg-slate-900 text-white">ALL STATUSES</option>
+                            <option value="Attempted" className="bg-slate-900 text-white">ATTEMPTED</option>
+                            <option value="Unattempted" className="bg-slate-900 text-white">UNATTEMPTED</option>
+                        </select>
                     </div>
                 </div>
 

@@ -28,17 +28,43 @@ const FILE_SIGNATURES = {
 };
 
 function verifyFileMagicBytes(filePath, ext) {
-    const signatures = FILE_SIGNATURES[ext];
-    if (!signatures) return true; // No signature to check (e.g., .txt)
+    const isAudioExt = ['.webm', '.mp3', '.wav', '.m4a', '.ogg'].includes(ext);
     
     try {
         const fs = require('fs');
-        const buffer = Buffer.alloc(12);
+        const buffer = Buffer.alloc(256);
         const fd = fs.openSync(filePath, 'r');
-        fs.readSync(fd, buffer, 0, 12, 0);
+        const bytesRead = fs.readSync(fd, buffer, 0, 256, 0);
         fs.closeSync(fd);
         
-        return signatures.some(sig => buffer.slice(0, sig.length).equals(sig));
+        const matchSignature = (targetExt) => {
+            const signatures = FILE_SIGNATURES[targetExt];
+            if (!signatures) return false;
+            return signatures.some(sig => buffer.slice(0, sig.length).equals(sig));
+        };
+
+        if (matchSignature(ext)) return true;
+
+        if (ext === '.webm') {
+            const webmHeader = Buffer.from([0x1A, 0x45, 0xDF, 0xA3]);
+            for (let i = 0; i <= bytesRead - 4; i++) {
+                if (buffer[i] === 0x1A && buffer[i+1] === 0x45 && buffer[i+2] === 0xDF && buffer[i+3] === 0xA3) {
+                    return true;
+                }
+            }
+        }
+
+        if (isAudioExt) {
+            const audioExts = ['.webm', '.mp3', '.wav', '.m4a', '.ogg'];
+            for (const aExt of audioExts) {
+                if (matchSignature(aExt)) return true;
+            }
+        }
+        
+        const signatures = FILE_SIGNATURES[ext];
+        if (!signatures) return true;
+        
+        return false;
     } catch (err) {
         console.error('MIME verification error:', err.message);
         return false;
@@ -131,6 +157,31 @@ const verifyUploadedFile = (req, res, next) => {
     next();
 };
 
+const verifyUploadedFiles = (req, res, next) => {
+    if (!req.files || req.files.length === 0) return next();
+    
+    const fs = require('fs');
+    for (const file of req.files) {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const filePath = path.resolve(file.path);
+        
+        if (!verifyFileMagicBytes(filePath, ext)) {
+            for (const f of req.files) {
+                try { fs.unlinkSync(path.resolve(f.path)); } catch (_) {}
+            }
+            console.warn(`[SECURITY] MIME mismatch blocked: ${file.originalname} (claimed ${ext}, failed magic bytes check)`);
+            return res.status(400).json({ 
+                msg: 'File rejected: file content does not match the declared file type. Possible extension spoofing detected.' 
+            });
+        }
+    }
+    next();
+};
+
+// @route   POST api/quiz/analyze-sources
+// @desc    Analyze multiple mixed input sources (PDFs, texts)
+router.post('/analyze-sources', auth, upload.array('files', 10), verifyUploadedFiles, quizController.analyzeSources);
+
 // @route   POST api/quiz/generate-voice
 // @desc    Transcribe audio and generate quiz questions
 router.post('/generate-voice', auth, upload.single('file'), verifyUploadedFile, quizController.generateQuizFromVoice);
@@ -149,7 +200,7 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
-router.post('/generate', auth, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.generateQuizQuestions);
+router.post('/generate', auth, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
 
 // @route   GET api/quiz/generate/status/:taskId
 // @desc    Poll status of an async generation task
@@ -182,6 +233,10 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
 // @route   GET api/quiz/my-quizzes
 // @desc    Get all quizzes created by current user
 router.get('/my-quizzes', auth, quizController.getMyQuizzes);
+
+// @route   GET api/quiz/documents
+// @desc    Get all unique sources of ingested documents
+router.get('/documents', auth, quizController.getIngestedDocuments);
 
 // @route   GET api/quiz/live
 // @desc    Get all active quizzes for students

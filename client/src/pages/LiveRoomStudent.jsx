@@ -41,6 +41,7 @@ export default function LiveRoomStudent() {
 
     const [participants, setParticipants] = useState([]);
     const [displayCount, setDisplayCount] = useState(0);
+    const [lobbySummary, setLobbySummary] = useState('');
 
     // Theme-based custom icons
     const getThemeIcon = () => {
@@ -130,9 +131,15 @@ export default function LiveRoomStudent() {
             setParticipants(participantsList);
         };
 
+        const handleLobbySummaryUpdate = ({ lobbySummary }) => {
+            console.log('Student received lobby study summary update:', lobbySummary);
+            setLobbySummary(lobbySummary);
+        };
+
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
         socket.on('participants_update', handleParticipantsUpdate);
+        socket.on('lobby_summary_update', handleLobbySummaryUpdate);
         socket.on('restoreState', (state) => {
             console.log('Student restoreState:', state);
             if (state && state.participants) {
@@ -156,6 +163,7 @@ export default function LiveRoomStudent() {
             socket.off('connect', handleConnect);
             socket.off('restoreState');
             socket.off('participants_update', handleParticipantsUpdate);
+            socket.off('lobby_summary_update', handleLobbySummaryUpdate);
         };
     }, [quiz, user, navigate]);
 
@@ -297,6 +305,22 @@ export default function LiveRoomStudent() {
                                 ? `${readyCount} students ready... ${joiningCount} more joining!`
                                 : `${readyCount} ${readyCount === 1 ? 'student' : 'students'} ready!`}
                         />
+                        {lobbySummary && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-[var(--glass-bg)] p-8 rounded-[2rem] border border-[var(--border-color)] text-left space-y-4 shadow-xl"
+                            >
+                                <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+                                    <Crown className="text-[var(--text-accent)] animate-pulse" size={24} />
+                                    <h3 className="text-lg font-black text-[var(--text-primary)] uppercase tracking-wide italic">Pre-Game RAG Study Guide</h3>
+                                </div>
+                                <div className="text-sm text-[var(--text-secondary)] font-medium leading-relaxed whitespace-pre-line space-y-2">
+                                    {lobbySummary}
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Feature Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <motion.div 
