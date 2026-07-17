@@ -5,11 +5,11 @@ import DashboardLayout from '../components/DashboardLayout';
 import { 
     Book, Hash, Gauge, Sparkles, Loader2, Database, Sliders, 
     FileText, Plus, Trash2, Mic, Play, Square, CheckCircle, 
-    Award, Check, AlertCircle, HelpCircle
+    Award, Check, AlertCircle, HelpCircle, X, ChevronRight,
+    PauseCircle, PlayCircle, StopCircle, Trash, CheckSquare
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
-import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
@@ -21,7 +21,20 @@ export default function CreateQuizTopic() {
 
     // Voice recording states
     const [recording, setRecording] = useState(false);
+    const [recordingPaused, setRecordingPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
+    const audioChunksRef = useRef([]);
+
+    // Dropdown / Modal Input states
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [showTextModal, setShowTextModal] = useState(false);
+    const [textModalType, setTextModalType] = useState('context'); // 'context' | 'description'
+    const [textInputContent, setTextInputContent] = useState('');
+
+    // Wizard modal states
+    const [showWizard, setShowWizard] = useState(false);
+    const [wizardStep, setWizardStep] = useState(1);
+    const [ratiosModified, setRatiosModified] = useState(false);
 
     // Analysis states
     const [analyzing, setAnalyzing] = useState(false);
@@ -45,6 +58,8 @@ export default function CreateQuizTopic() {
     const pollIntervalRef = useRef(null);
     const startTimeRef    = useRef(null);
     const elapsedRef      = useRef(null);
+
+    const fileInputRef = useRef(null);
 
     const stopPolling = useCallback(() => {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -125,17 +140,20 @@ export default function CreateQuizTopic() {
         setRatios(newRatiosInt);
     };
 
-    // Live Microphone Recording
+    // Live Microphone Recording Logic
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-            const chunks = [];
+            audioChunksRef.current = [];
+            
             recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
             };
             recorder.onstop = async () => {
-                const blob = new Blob(chunks, { type: 'audio/webm' });
+                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                if (audioChunksRef.current.length === 0) return;
+                
                 const formData = new FormData();
                 formData.append('file', blob, 'recording.webm');
                 
@@ -159,11 +177,26 @@ export default function CreateQuizTopic() {
                     toast.error('Failed to transcribe voice.', { id: toastId });
                 }
             };
-            recorder.start();
+            recorder.start(250);
             setMediaRecorder(recorder);
             setRecording(true);
+            setRecordingPaused(false);
         } catch (err) {
             toast.error('Could not access microphone. Verify hardware permissions.');
+        }
+    };
+
+    const pauseRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.pause();
+            setRecordingPaused(true);
+        }
+    };
+
+    const resumeRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'paused') {
+            mediaRecorder.resume();
+            setRecordingPaused(false);
         }
     };
 
@@ -172,19 +205,34 @@ export default function CreateQuizTopic() {
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
             setRecording(false);
+            setRecordingPaused(false);
         }
     };
 
-    // Add manual text prompts
-    const handleAddTextPrompt = () => {
-        if (!textPrompt.trim()) return;
+    const cancelRecording = () => {
+        if (mediaRecorder) {
+            audioChunksRef.current = [];
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            setRecording(false);
+            setRecordingPaused(false);
+            toast.success('Recording discarded.');
+        }
+    };
+
+    // Add manual text prompts / descriptions
+    const handleAddTextInput = () => {
+        if (!textInputContent.trim()) return;
         setInputs(prev => [...prev, {
             id: Math.random().toString(),
             type: 'text',
-            content: textPrompt,
-            source_name: `Text Prompt: "${textPrompt.substring(0, 20)}..."`
+            content: textInputContent,
+            source_name: textModalType === 'description'
+                ? `Description: "${textInputContent.substring(0, 20)}..."`
+                : `Context: "${textInputContent.substring(0, 20)}..."`
         }]);
-        setTextPrompt('');
+        setTextInputContent('');
+        setShowTextModal(false);
         setAnalyzedData(null); // Reset analysis
     };
 
@@ -213,55 +261,63 @@ export default function CreateQuizTopic() {
         setAnalyzedData(null); // Reset analysis
     };
 
-    // Step 1: Pre-Analysis
-    const handleAnalyzeSources = async () => {
+    // Trigger analysis + launch wizard modal flow
+    const handleStartWizard = async () => {
         if (inputs.length === 0) return;
-        setAnalyzing(true);
-        const formData = new FormData();
-        
-        const fileInputs = inputs.filter(inp => inp.file);
-        const textInputs = inputs.filter(inp => !inp.file);
-        
-        fileInputs.forEach(inp => {
-            formData.append('files', inp.file);
-        });
-        
-        formData.append('text_prompts', JSON.stringify(textInputs.map(t => t.content)));
-        
-        const toastId = toast.loading('Analyzing curriculum sources & computing token density...');
-        try {
-            const res = await api.post('/quiz/analyze-sources', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+        if (!analyzedData) {
+            setAnalyzing(true);
+            const formData = new FormData();
+            
+            const fileInputs = inputs.filter(inp => inp.file);
+            const textInputs = inputs.filter(inp => !inp.file);
+            
+            fileInputs.forEach(inp => {
+                formData.append('files', inp.file);
             });
             
-            toast.success('RAG Source analysis complete!', { id: toastId });
-            setAnalyzedData(res.data);
+            formData.append('text_prompts', JSON.stringify(textInputs.map(t => t.content)));
             
-            // Set default sliders from recommendations
-            if (res.data.ai_recommendation) {
-                const rec = res.data.ai_recommendation;
-                setRatios({
-                    theory: Math.round((rec.theory || 0) * 100),
-                    code_debugging: Math.round((rec.code_debugging || 0) * 100),
-                    fill_blank: Math.round((rec.fill_blank || 0) * 100),
-                    scenario: Math.round((rec.scenario || 0) * 100),
+            const toastId = toast.loading('Analyzing curriculum sources & computing token density...');
+            try {
+                const res = await api.post('/quiz/analyze-sources', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 });
+                
+                toast.success('RAG Source analysis complete!', { id: toastId });
+                setAnalyzedData(res.data);
+                
+                // Set default sliders from recommendations
+                if (res.data.ai_recommendation) {
+                    const rec = res.data.ai_recommendation;
+                    setRatios({
+                        theory: Math.round((rec.theory || 0) * 100),
+                        code_debugging: Math.round((rec.code_debugging || 0) * 100),
+                        fill_blank: Math.round((rec.fill_blank || 0) * 100),
+                        scenario: Math.round((rec.scenario || 0) * 100),
+                    });
+                }
+                
+                // Set topic weights matrix
+                if (res.data.concepts) {
+                    const initialWeights = {};
+                    res.data.concepts.forEach(c => {
+                        initialWeights[c.concept_tag] = c.weight_score;
+                    });
+                    setTopicWeights(initialWeights);
+                }
+
+                setShowWizard(true);
+                setWizardStep(1);
+            } catch (err) {
+                console.error(err);
+                const errMsg = err.response?.data?.message || 'Academic analysis failed. Please verify your content.';
+                toast.error(errMsg, { id: toastId });
+            } finally {
+                setAnalyzing(false);
             }
-            
-            // Set topic weights matrix
-            if (res.data.concepts) {
-                const initialWeights = {};
-                res.data.concepts.forEach(c => {
-                    initialWeights[c.concept_tag] = c.weight_score;
-                });
-                setTopicWeights(initialWeights);
-            }
-        } catch (err) {
-            console.error(err);
-            const errMsg = err.response?.data?.message || 'Academic analysis failed. Please verify your content.';
-            toast.error(errMsg, { id: toastId });
-        } finally {
-            setAnalyzing(false);
+        } else {
+            setShowWizard(true);
+            setWizardStep(1);
         }
     };
 
@@ -272,20 +328,7 @@ export default function CreateQuizTopic() {
         }));
     };
 
-    const applyRecommendedRatios = () => {
-        if (analyzedData && analyzedData.ai_recommendation) {
-            const rec = analyzedData.ai_recommendation;
-            setRatios({
-                theory: Math.round((rec.theory || 0) * 100),
-                code_debugging: Math.round((rec.code_debugging || 0) * 100),
-                fill_blank: Math.round((rec.fill_blank || 0) * 100),
-                scenario: Math.round((rec.scenario || 0) * 100),
-            });
-            toast.success('AI recommendations applied!');
-        }
-    };
-
-    // Step 2: Generation Request
+    // Submit generation
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (inputs.length === 0) return;
@@ -367,57 +410,120 @@ export default function CreateQuizTopic() {
                     isVoice={false}
                 />
             )}
-            <div className="max-w-7xl mx-auto pb-20 relative px-4 sm:px-6">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
-
-                <div className="mb-10">
-                    <h1 className="text-4xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
+            
+            <div className="flex flex-col min-h-[calc(100vh-6.5rem)] w-full">
+                
+                {/* Header branding */}
+                <div className="p-6 pb-2 border-b border-white/5 bg-slate-950/20">
+                    <h1 className="text-3xl font-black text-white tracking-tight italic uppercase">
                         NotebookLM + Kahoot <span className="text-[var(--bg-accent)]">Workspace</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] mt-2 font-bold uppercase tracking-wider text-sm italic">
-                        Multi-modal curriculum generation. Upload PDFs, write prompts, record voice, and customize topic weights.
+                    <p className="text-[var(--text-secondary)] mt-1 font-bold uppercase tracking-wider text-[10px] italic">
+                        Ingest curriculum documents, audio lectures, or text context to launch smart quizzes.
                     </p>
                 </div>
 
                 {pollError && (
-                    <div className="mb-6 px-5 py-4 rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 font-bold text-sm uppercase tracking-wider">
+                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 font-bold text-xs uppercase tracking-wider">
                         ⚠ {pollError}
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    {/* COLUMN 1: INGESTION HUB (lg:col-span-4) */}
-                    <div className="lg:col-span-4 bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6 flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                                <h2 className="text-lg font-black text-[var(--text-primary)] uppercase italic">Inputs Docket</h2>
-                                <span className="bg-white/10 text-[var(--text-primary)] px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase">
+                {/* UPPER SPLIT SCREEN WORKSPACE */}
+                <div className="flex flex-col lg:flex-row flex-grow w-full bg-slate-950/10">
+                    
+                    {/* LEFT PANEL: Ingestion Sidebar (25% or fixed width) */}
+                    <div className="w-full lg:w-80 bg-slate-900/30 backdrop-blur-md border-r border-white/10 p-6 flex flex-col justify-between shrink-0 space-y-6">
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                                <h2 className="text-sm font-black text-white uppercase italic">Active Sources</h2>
+                                <span className="bg-white/10 text-white px-2 py-0.5 rounded-full text-[9px] font-black uppercase">
                                     {inputs.length} Sources
                                 </span>
                             </div>
 
-                            {/* Inputs list */}
+                            {/* Dropdown Add Input Selection */}
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDropdown(!showDropdown)}
+                                    className="w-full py-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white rounded-xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2 transition-all"
+                                >
+                                    <Plus size={16} /> Add Input
+                                </button>
+                                
+                                {showDropdown && (
+                                    <div className="absolute left-0 right-0 mt-2 bg-slate-900 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-20">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowDropdown(false);
+                                                fileInputRef.current.click();
+                                            }}
+                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
+                                        >
+                                            <FileText size={14} className="text-blue-400" /> Upload Document
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowDropdown(false);
+                                                setTextModalType('description');
+                                                setTextInputContent('');
+                                                setShowTextModal(true);
+                                            }}
+                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
+                                        >
+                                            <Plus size={14} className="text-purple-400" /> Add Short Description
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowDropdown(false);
+                                                setTextModalType('context');
+                                                setTextInputContent('');
+                                                setShowTextModal(true);
+                                            }}
+                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
+                                        >
+                                            <Plus size={14} className="text-emerald-400" /> Enter Topic Context
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Hidden file input */}
+                            <input 
+                                type="file" 
+                                ref={fileInputRef}
+                                multiple 
+                                onChange={handleFileUpload} 
+                                className="hidden"
+                                accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
+                            />
+
+                            {/* Ingested sources itemizer */}
                             {inputs.length === 0 ? (
-                                <div className="py-8 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center p-5 bg-black/10">
-                                    <Database size={32} className="text-[var(--text-secondary)] mb-3 animate-bounce" />
-                                    <p className="text-xs font-bold text-[var(--text-secondary)] uppercase">Docket is empty</p>
-                                    <p className="text-[10px] text-[var(--text-secondary)]/50 mt-0.5 max-w-[180px]">Add text prompts, upload files, or record speech below</p>
+                                <div className="py-10 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-black/10">
+                                    <Database size={24} className="text-slate-500 mb-2" />
+                                    <p className="text-[10px] font-black text-slate-400 uppercase">Docket is empty</p>
+                                    <p className="text-[8px] text-slate-500 uppercase mt-0.5">Upload curriculum guides or record audio lecture</p>
                                 </div>
                             ) : (
-                                <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                                     {inputs.map((inp) => (
-                                        <div key={inp.id} className="flex items-center justify-between p-3.5 bg-white/5 rounded-xl border border-white/5 hover:border-[var(--bg-accent)] transition-all">
-                                            <div className="flex items-center gap-2.5 truncate">
-                                                <FileText size={16} className="text-[var(--bg-accent)] shrink-0" />
+                                        <div key={inp.id} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:border-[var(--bg-accent)] transition-all">
+                                            <div className="flex items-center gap-2 truncate">
+                                                <FileText size={14} className="text-[var(--bg-accent)] shrink-0" />
                                                 <div className="truncate">
-                                                    <p className="text-[11px] font-black text-[var(--text-primary)] uppercase truncate">{inp.source_name}</p>
-                                                    <p className="text-[8px] font-bold text-[var(--text-secondary)] uppercase">{inp.type}</p>
+                                                    <p className="text-[10px] font-black text-white uppercase truncate">{inp.source_name}</p>
+                                                    <p className="text-[8px] font-bold text-slate-500 uppercase">{inp.type}</p>
                                                 </div>
                                             </div>
                                             <button 
                                                 type="button" 
                                                 onClick={() => handleRemoveInput(inp.id)}
-                                                className="text-red-500 hover:text-red-400 p-1.5 hover:bg-white/5 rounded-full transition-all"
+                                                className="text-red-500 hover:text-red-400 p-1 hover:bg-white/5 rounded-full transition-all"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -425,321 +531,470 @@ export default function CreateQuizTopic() {
                                     ))}
                                 </div>
                             )}
-
-                            {/* Source Adding Controls */}
-                            <div className="mt-6 pt-5 border-t border-white/10 space-y-4">
-                                {/* File Upload Button */}
-                                <div>
-                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">Upload Files (PDF, Image, Docx)</label>
-                                    <div className="relative group">
-                                        <input 
-                                            type="file" 
-                                            multiple 
-                                            onChange={handleFileUpload} 
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
-                                        />
-                                        <div className="p-3 bg-white/5 hover:bg-white/10 border border-dashed border-white/15 group-hover:border-[var(--bg-accent)] transition-all rounded-xl flex items-center justify-center gap-2">
-                                            <Plus size={16} className="text-[var(--text-secondary)]" />
-                                            <span className="text-[11px] font-black text-[var(--text-primary)] uppercase">Select Files</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Text Prompt Input */}
-                                <div>
-                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">Write Text Prompt / Syllabus Point</label>
-                                    <div className="flex gap-2">
-                                        <textarea
-                                            value={textPrompt}
-                                            onChange={(e) => setTextPrompt(e.target.value)}
-                                            placeholder="Write core curriculum guidelines..."
-                                            rows={2}
-                                            className="flex-1 p-2.5 bg-white/5 border border-white/10 rounded-xl text-xs text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 focus:outline-none focus:border-[var(--bg-accent)] resize-none"
-                                        />
-                                        <button 
-                                            type="button"
-                                            onClick={handleAddTextPrompt}
-                                            className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-3 rounded-xl font-black text-[10px] uppercase italic tracking-wider shrink-0 hover:scale-105 active:scale-95 transition-all"
-                                        >
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Microphone live voice record */}
-                                <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[9px] font-black text-[var(--text-primary)] uppercase">Live Speech Input</p>
-                                        <p className="text-[8px] text-[var(--text-secondary)] font-bold uppercase mt-0.5">Stream transcription offline</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={recording ? stopRecording : startRecording}
-                                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                                            recording 
-                                                ? 'bg-red-600 text-white animate-pulse' 
-                                                : 'bg-white/10 hover:bg-white/15 text-[var(--text-primary)]'
-                                        }`}
-                                    >
-                                        {recording ? <Square size={14} /> : <Mic size={16} />}
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
-                        {/* Pre-Analysis CTA */}
-                        <div className="pt-4 border-t border-white/10 mt-4">
-                            <button
-                                type="button"
-                                onClick={handleAnalyzeSources}
-                                disabled={inputs.length === 0 || analyzing}
-                                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-wider italic text-xs hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
-                            >
-                                {analyzing ? <Loader2 className="animate-spin" size={14} /> : <Database size={14} />}
-                                {analyzing ? 'ANALYZING...' : 'ANALYZE CURRICULUM SOURCES'}
-                            </button>
+                        {/* Status tracker */}
+                        <div className="pt-4 border-t border-white/15">
+                            <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-slate-400">
+                                <span className={`w-2 h-2 rounded-full ${inputs.length > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
+                                {inputs.length > 0 ? `${inputs.length} active syllabus source(s)` : 'No active sources'}
+                            </div>
                         </div>
                     </div>
 
-                    {/* COLUMN 2: TUNING MATRIX (lg:col-span-5) */}
-                    <div className="lg:col-span-5 space-y-6">
-                        {/* Core settings */}
-                        <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6">
-                            <h2 className="text-lg font-black text-[var(--text-primary)] uppercase italic border-b border-white/10 pb-3">General Settings</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
-                                    <div className="bg-[var(--bg-accent)] w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-on-accent)]">
-                                        <Hash size={20} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Question Count</p>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            max="20"
-                                            value={questionCount}
-                                            onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
-                                            className="bg-transparent border-none text-base font-black text-[var(--text-primary)] italic outline-none w-full"
-                                            disabled={isLoading}
-                                        />
-                                    </div>
-                                </div>
+                    {/* CENTER STAGE: Premium audio recorder & speech workspace */}
+                    <div className="flex-grow p-12 flex flex-col items-center justify-center relative min-h-[450px]">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
-                                <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
-                                    <div className="bg-purple-600 w-10 h-10 rounded-lg flex items-center justify-center text-white">
-                                        <Gauge size={20} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Difficulty</p>
-                                        <select
-                                            value={difficulty}
-                                            onChange={(e) => setDifficulty(e.target.value)}
-                                            className="bg-transparent border-none text-base font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
-                                            disabled={isLoading}
-                                        >
-                                            <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
-                                            <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
-                                            <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
-                                            <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
-                                        </select>
-                                    </div>
+                        <div className="flex flex-col items-center justify-center text-center space-y-6 max-w-lg">
+                            {/* Pulsing Mic Circle Button */}
+                            <button
+                                type="button"
+                                onClick={recording ? stopRecording : startRecording}
+                                disabled={analyzing || submitting}
+                                className={`w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-700 relative group border ${
+                                    recording
+                                        ? 'bg-red-500/10 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.3)] animate-pulse'
+                                        : 'bg-white/5 border-white/10 hover:border-[var(--bg-accent)] hover:bg-white/10 shadow-[0_0_30px_rgba(255,255,255,0.02)]'
+                                }`}
+                            >
+                                <Mic 
+                                    size={64} 
+                                    className={`transition-all duration-500 ${
+                                        recording ? 'text-red-500 scale-110' : 'text-slate-300 group-hover:text-[var(--text-accent)]'
+                                    }`} 
+                                />
+                                {recording && (
+                                    <span className="absolute bottom-6 text-[9px] font-black text-red-500 uppercase tracking-widest animate-pulse">
+                                        {recordingPaused ? 'PAUSED' : 'RECORDING'}
+                                    </span>
+                                )}
+                            </button>
+                            
+                            {/* Waveform Animation Visualizer */}
+                            {recording && (
+                                <div className="flex items-center gap-1.5 h-10 justify-center py-2">
+                                    {[...Array(12)].map((_, i) => (
+                                        <div 
+                                            key={i} 
+                                            className={`w-1.5 bg-red-500 rounded-full transition-all duration-300 ${
+                                                recordingPaused ? 'h-2 animate-none' : 'h-10 animate-pulse'
+                                            }`}
+                                            style={{ 
+                                                animationDelay: `${i * 100}ms`,
+                                                animationDuration: `${0.6 + (i % 3) * 0.2}s`
+                                            }}
+                                        />
+                                    ))}
                                 </div>
+                            )}
+
+                            {/* Voice tactile controllers */}
+                            {recording ? (
+                                <div className="flex items-center gap-4 pt-2">
+                                    {recordingPaused ? (
+                                        <button
+                                            type="button"
+                                            onClick={resumeRecording}
+                                            className="px-5 py-2 bg-green-600/20 border border-green-500/30 text-green-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-green-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                        >
+                                            <PlayCircle size={14} /> Resume
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={pauseRecording}
+                                            className="px-5 py-2 bg-amber-600/20 border border-amber-500/30 text-amber-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-amber-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                        >
+                                            <PauseCircle size={14} /> Pause
+                                        </button>
+                                    )}
+                                    
+                                    <button
+                                        type="button"
+                                        onClick={stopRecording}
+                                        className="px-5 py-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-blue-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                    >
+                                        <StopCircle size={14} /> Stop & Sync
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={cancelRecording}
+                                        className="px-5 py-2 bg-red-600/20 border border-red-500/30 text-red-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-red-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                    >
+                                        <Trash2 size={14} /> Cancel
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-1.5">
+                                    <p className="text-sm font-black text-white uppercase italic tracking-wide">Tap microphone to record syllabus explanation</p>
+                                    <p className="text-[10px] text-slate-400/60 uppercase font-black tracking-widest">Supports voice lectures or live mic inputs</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* BOTTOM EXECUTION FOOTER */}
+                <div className="w-full bg-slate-900/50 backdrop-blur-lg border-t border-white/10 p-5 flex items-center justify-center shrink-0">
+                    <button
+                        type="button"
+                        disabled={inputs.length === 0 || analyzing || submitting}
+                        onClick={handleStartWizard}
+                        className="w-full max-w-4xl py-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black text-lg italic uppercase tracking-wider rounded-2xl shadow-xl shadow-yellow-500/10 hover:scale-[1.01] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 btn-cinematic"
+                    >
+                        {analyzing ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                        {analyzing ? 'ANALYZING CURRICULUM...' : 'GENERATE HYBRID QUIZ'}
+                    </button>
+                </div>
+            </div>
+
+            {/* TEXT PROMPT MODAL POPUP */}
+            {showTextModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-slate-900 border border-white/10 rounded-[2rem] p-6 w-full max-w-md space-y-4 shadow-2xl relative">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h3 className="text-sm font-black text-white uppercase italic">
+                                {textModalType === 'description' ? 'Add Topic Description' : 'Enter Curriculum Context'}
+                            </h3>
+                            <button 
+                                type="button" 
+                                onClick={() => setShowTextModal(false)}
+                                className="text-slate-400 hover:text-white"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+                        <textarea
+                            value={textInputContent}
+                            onChange={(e) => setTextInputContent(e.target.value)}
+                            placeholder={
+                                textModalType === 'description' 
+                                    ? 'Enter a brief summary or description of the syllabus topic...' 
+                                    : 'Paste curriculum guides, textbook chapters, or syllabus points here...'
+                            }
+                            rows={6}
+                            className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[var(--bg-accent)] resize-none"
+                        />
+                        <div className="flex justify-end gap-2 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setShowTextModal(false)}
+                                className="px-4 py-2 border border-white/10 text-white rounded-lg text-[10px] font-black uppercase hover:bg-white/5 transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleAddTextInput}
+                                className="px-4 py-2 bg-[var(--bg-accent)] text-white rounded-lg text-[10px] font-black uppercase hover:bg-[var(--bg-accent-hover)] transition-all"
+                            >
+                                Add Input
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* SEQUENTIAL WIZARD DIALOGUE OVERLAY */}
+            {showWizard && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 w-full max-w-xl space-y-6 text-left relative overflow-hidden shadow-2xl">
+                        
+                        {/* Header step progress */}
+                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                            <div>
+                                <h3 className="text-xl font-black text-white uppercase italic">
+                                    {wizardStep === 1 && 'Step 1: General Constraints'}
+                                    {wizardStep === 2 && 'Step 2: AI Formats & Styles'}
+                                    {wizardStep === 3 && 'Step 3: Topic Stress Matrix'}
+                                </h3>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                                    Wizard Progress: Step {wizardStep} of 3
+                                </p>
                             </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowWizard(false)}
+                                className="p-2 bg-white/5 hover:bg-red-500/10 rounded-full text-slate-400 hover:text-red-500 transition-all"
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
-                        {/* RAG curriculum concepts placeholder or slides */}
-                        {!analyzedData ? (
-                            <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel text-center text-[var(--text-secondary)] font-bold py-16 flex flex-col items-center justify-center uppercase space-y-3">
-                                <AlertCircle size={32} className="text-blue-400 animate-pulse" />
-                                <p className="text-xs max-w-xs leading-relaxed">Click &quot;Analyze Curriculum Sources&quot; on the left docket to extract curriculum concepts and ratios.</p>
-                            </div>
-                        ) : (
+                        {/* STEP 1: CONSTRAINTS */}
+                        {wizardStep === 1 && (
                             <div className="space-y-6">
-                                {/* Extracted Topics / Stressed Topics Slider Matrix */}
-                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-4">
-                                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                        <div>
-                                            <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic">Curriculum Concepts Matrix</h2>
-                                            <p className="text-[var(--text-secondary)] text-[8px] font-bold uppercase mt-0.5">Set concept weights to guide generation</p>
+                                <div className="space-y-4">
+                                    {/* Question Count */}
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
+                                        <div className="bg-[var(--bg-accent)] w-12 h-12 rounded-xl flex items-center justify-center text-[var(--text-on-accent)]">
+                                            <Hash size={24} />
                                         </div>
-                                        <Award className="text-blue-400" size={20} />
+                                        <div className="flex-1">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Question Count</p>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="20"
+                                                value={questionCount}
+                                                onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
+                                                className="bg-transparent border-none text-xl font-black text-white italic outline-none w-full"
+                                                disabled={isLoading}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                                        {analyzedData.concepts && analyzedData.concepts.length > 0 ? (
-                                            analyzedData.concepts.map((concept, idx) => {
-                                                const currentWeight = topicWeights[concept.concept_tag] ?? concept.weight_score;
-                                                return (
-                                                    <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-all space-y-1.5">
-                                                        <div className="flex justify-between font-black uppercase text-[10px]">
-                                                            <span className="text-[var(--text-primary)] truncate max-w-[180px]">{concept.concept_tag}</span>
-                                                            <span className={`${currentWeight > 0 ? 'text-blue-400' : 'text-red-500'}`}>
-                                                                {currentWeight > 0 ? `Stress: ${currentWeight.toFixed(1)}` : 'DISABLED'}
-                                                            </span>
-                                                        </div>
-                                                        <input
-                                                            type="range"
-                                                            min="0.0"
-                                                            max="1.0"
-                                                            step="0.1"
-                                                            value={currentWeight}
-                                                            onChange={(e) => handleTopicWeightChange(concept.concept_tag, e.target.value)}
-                                                            className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                                        />
-                                                    </div>
-                                                );
-                                            })
-                                        ) : (
-                                            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase">No specific concepts isolated.</p>
-                                        )}
+                                    {/* Difficulty */}
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
+                                        <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+                                            <Gauge size={24} />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Difficulty</p>
+                                            <select
+                                                value={difficulty}
+                                                onChange={(e) => setDifficulty(e.target.value)}
+                                                className="bg-transparent border-none text-xl font-black text-white italic outline-none w-full appearance-none cursor-pointer text-white bg-slate-900"
+                                                disabled={isLoading}
+                                            >
+                                                <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
+                                                <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
+                                                <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
+                                                <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Dynamic Slider Mix */}
-                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-4">
-                                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                        <div>
-                                            <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic">Question Type Mix</h2>
-                                            <p className="text-[var(--text-secondary)] text-[8px] font-bold uppercase mt-0.5">Customize composition of questions</p>
+                                <div className="flex justify-end pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setWizardStep(2)}
+                                        className="px-8 py-3 bg-[var(--bg-accent)] text-white rounded-xl font-black uppercase text-xs italic tracking-wider hover:bg-[var(--bg-accent-hover)] transition-all flex items-center gap-2"
+                                    >
+                                        Continue <ChevronRight size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* STEP 2: AI FORMATS & STYLES */}
+                        {wizardStep === 2 && (
+                            <div className="space-y-6">
+                                {!ratiosModified ? (
+                                    <div className="space-y-6">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {/* MCQ Checkbox */}
+                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={ratios.theory > 0}
+                                                    readOnly
+                                                    className="w-4 h-4 rounded border-white/10 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                />
+                                                <span className="text-xs font-black uppercase text-white">Theory MCQs</span>
+                                            </div>
+
+                                            {/* Code Debugging Checkbox */}
+                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={ratios.code_debugging > 0}
+                                                    readOnly
+                                                    className="w-4 h-4 rounded border-white/10 text-purple-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                />
+                                                <span className="text-xs font-black uppercase text-white">Code Debugging</span>
+                                            </div>
+
+                                            {/* Fill in Blank Checkbox */}
+                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={ratios.fill_blank > 0}
+                                                    readOnly
+                                                    className="w-4 h-4 rounded border-white/10 text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                />
+                                                <span className="text-xs font-black uppercase text-white">Fill-in-the-Blank</span>
+                                            </div>
+
+                                            {/* Scenario Challenges Checkbox */}
+                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={ratios.scenario > 0}
+                                                    readOnly
+                                                    className="w-4 h-4 rounded border-white/10 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                />
+                                                <span className="text-xs font-black uppercase text-white">Scenario Challenges</span>
+                                            </div>
                                         </div>
-                                        {analyzedData.ai_recommendation && (
-                                            <button 
-                                                type="button" 
-                                                onClick={applyRecommendedRatios}
-                                                className="px-2.5 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-full text-[9px] font-black uppercase italic hover:bg-blue-600/30 active:scale-95 transition-all flex items-center gap-1.5"
+
+                                        <div className="bg-blue-600/10 border border-blue-500/20 p-4 rounded-xl flex items-center gap-2.5">
+                                            <Sparkles size={16} className="text-blue-400 shrink-0" />
+                                            <p className="text-[10px] font-black uppercase text-blue-400 tracking-wider">
+                                                ✨ AI Recommended Layout calculated by token-density analysis
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                            <button
+                                                type="button"
+                                                onClick={() => setRatiosModified(true)}
+                                                className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
                                             >
-                                                <Sparkles size={10} /> Auto-Mix
+                                                Modify Layout
                                             </button>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-4 pt-2">
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                <span className="text-blue-400">Theory MCQs</span>
-                                                <span className="text-[var(--text-primary)] font-black">{ratios.theory}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={ratios.theory}
-                                                onChange={(e) => handleSliderChange('theory', e.target.value)}
-                                                className="w-full accent-blue-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
-                                                disabled={isLoading}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                <span className="text-purple-400">Code Debugging</span>
-                                                <span className="text-[var(--text-primary)] font-black">{ratios.code_debugging}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={ratios.code_debugging}
-                                                onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
-                                                className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
-                                                disabled={isLoading}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                <span className="text-amber-400">Fill-in-the-Blank</span>
-                                                <span className="text-[var(--text-primary)] font-black">{ratios.fill_blank}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={ratios.fill_blank}
-                                                onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
-                                                className="w-full accent-amber-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
-                                                disabled={isLoading}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                <span className="text-emerald-400">Scenario Challenges</span>
-                                                <span className="text-[var(--text-primary)] font-black">{ratios.scenario}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={ratios.scenario}
-                                                onChange={(e) => handleSliderChange('scenario', e.target.value)}
-                                                className="w-full accent-emerald-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
-                                                disabled={isLoading}
-                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setWizardStep(3)}
+                                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all"
+                                            >
+                                                Accept Layout
+                                            </button>
                                         </div>
                                     </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <p className="text-xs font-black text-white uppercase italic">Customize Format Ratios</p>
+                                        
+                                        <div className="space-y-4">
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                    <span className="text-blue-400">Theory MCQs</span>
+                                                    <span className="text-white">{ratios.theory}%</span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    value={ratios.theory}
+                                                    onChange={(e) => handleSliderChange('theory', e.target.value)}
+                                                    className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                    <span className="text-purple-400">Code Debugging</span>
+                                                    <span className="text-white">{ratios.code_debugging}%</span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    value={ratios.code_debugging}
+                                                    onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
+                                                    className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                    <span className="text-amber-400">Fill-in-the-Blank</span>
+                                                    <span className="text-white">{ratios.fill_blank}%</span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    value={ratios.fill_blank}
+                                                    onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
+                                                    className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                    <span className="text-emerald-400">Scenario Challenges</span>
+                                                    <span className="text-white">{ratios.scenario}%</span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    value={ratios.scenario}
+                                                    onChange={(e) => handleSliderChange('scenario', e.target.value)}
+                                                    className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-between pt-6 border-t border-white/10">
+                                            <button
+                                                type="button"
+                                                onClick={() => setRatiosModified(false)}
+                                                className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
+                                            >
+                                                Back to AI Recs
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setWizardStep(3)}
+                                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all"
+                                            >
+                                                Continue to Step 3
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* STEP 3: TOPIC STRESSING */}
+                        {wizardStep === 3 && (
+                            <div className="space-y-6">
+                                <div className="space-y-4 max-h-[250px] overflow-y-auto pr-1">
+                                    {analyzedData && analyzedData.concepts && analyzedData.concepts.length > 0 ? (
+                                        analyzedData.concepts.map((concept, idx) => {
+                                            const currentWeight = topicWeights[concept.concept_tag] ?? concept.weight_score;
+                                            return (
+                                                <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-all space-y-1.5">
+                                                    <div className="flex justify-between font-black uppercase text-[10px]">
+                                                        <span className="text-white truncate max-w-[200px]">{concept.concept_tag}</span>
+                                                        <span className={`${currentWeight > 0 ? 'text-blue-400' : 'text-red-500'}`}>
+                                                            {currentWeight > 0 ? `Stress: ${currentWeight.toFixed(1)}` : 'DISABLED'}
+                                                        </span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="0.0"
+                                                        max="1.0"
+                                                        step="0.1"
+                                                        value={currentWeight}
+                                                        onChange={(e) => handleTopicWeightChange(concept.concept_tag, e.target.value)}
+                                                        className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                    />
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p className="text-xs text-slate-400 font-bold uppercase">No extracted concepts to stress.</p>
+                                    )}
+                                </div>
+
+                                <div className="flex justify-between pt-4 border-t border-white/10">
+                                    <button
+                                        type="button"
+                                        onClick={() => setWizardStep(2)}
+                                        className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { setShowWizard(false); handleSubmit(e); }}
+                                        className="px-6 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase text-[10px] tracking-wider hover:scale-105 transition-all"
+                                    >
+                                        Confirm & Launch Quiz Room
+                                    </button>
                                 </div>
                             </div>
                         )}
                     </div>
-
-                    {/* COLUMN 3: ACTION PANEL (lg:col-span-3) */}
-                    <div className="lg:col-span-3 lg:sticky lg:top-6 space-y-6">
-                        <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6">
-                            <h2 className="text-lg font-black text-white uppercase italic border-b border-white/10 pb-3">Session Control</h2>
-                            
-                            <div className="space-y-4">
-                                {/* Sources indicator */}
-                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
-                                    <div className="flex items-center gap-2">
-                                        <Database size={16} className={inputs.length > 0 ? "text-green-400" : "text-amber-500"} />
-                                        <span className="text-xs font-bold text-slate-300 uppercase">Active Sources</span>
-                                    </div>
-                                    <span className="text-xs font-black text-white uppercase">{inputs.length}</span>
-                                </div>
-
-                                {/* Analysis state check */}
-                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
-                                    <div className="flex items-center gap-2">
-                                        <Sparkles size={16} className={analyzedData ? "text-green-400" : "text-amber-500"} />
-                                        <span className="text-xs font-bold text-slate-300 uppercase">Analysis Status</span>
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-                                        analyzedData ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                    }`}>
-                                        {analyzedData ? 'Analyzed' : 'Pending'}
-                                    </span>
-                                </div>
-
-                                {/* Ratios state check */}
-                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
-                                    <div className="flex items-center gap-2">
-                                        <Sliders size={16} className="text-green-400" />
-                                        <span className="text-xs font-bold text-slate-300 uppercase">Ratio Validation</span>
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-                                        100% OK
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Golden Generate CTA */}
-                            <div className="pt-2">
-                                <button
-                                    type="button"
-                                    onClick={handleSubmit}
-                                    disabled={isLoading || inputs.length === 0}
-                                    className="group w-full py-4 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-2xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-[var(--bg-accent-glow)] font-black text-sm italic uppercase tracking-wider active:scale-95 border-b-4 border-[var(--bg-accent-hover)] btn-cinematic flex items-center justify-center gap-2"
-                                >
-                                    {isLoading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={14} />}
-                                    {isLoading ? 'GENERATING...' : 'GENERATE HYBRID QUIZ'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
+            )}
         </DashboardLayout>
     );
 }
