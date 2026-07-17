@@ -188,14 +188,26 @@ const extractText = async (filePath) => {
 const checkAiServiceOnline = async (url) => {
     try {
         console.log(`🔍 Probing local AI Service at ${url}...`);
-        await axios.get(url, { 
+        const res = await axios.get(url, { 
             headers: { 'Bypass-Tunnel-Reminder': 'true' },
             timeout: 1500 
         });
-        return true;
+        return res.status === 200;
     } catch (err) {
         if (err.response) {
             console.log(`ℹ️ AI Service replied with HTTP status ${err.response.status}`);
+            // If the response is a 404, check if it's FastAPI's default 404 or an Ngrok tunnel error.
+            // FastAPI returns JSON: {"detail":"Not Found"}. Ngrok returns an HTML warning page.
+            if (err.response.status === 404) {
+                const isFastApiJson = err.response.headers['content-type']?.includes('application/json') &&
+                                     err.response.data && 
+                                     (err.response.data.detail === 'Not Found' || err.response.data.detail === 'Method Not Allowed');
+                if (isFastApiJson) {
+                    return true;
+                }
+                console.log(`⚠️ AI Service tunnel is offline or not found (HTTP 404 from Ngrok).`);
+                return false;
+            }
             // 502/503/504 errors mean the Ngrok/Localhost tunnel is up but the local service itself is stopped
             if ([502, 503, 504].includes(err.response.status)) {
                 console.log(`⚠️ AI Service tunnel is active but the local Python service is completely stopped.`);

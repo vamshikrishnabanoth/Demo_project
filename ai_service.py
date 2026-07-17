@@ -174,6 +174,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"status": "online", "service": "quiz-expert-ai"}
+
 class MultiInputSource(BaseModel):
     type: str # 'text', 'pdf', 'docx', 'pptx', 'image', 'voice'
     content: str
