@@ -385,41 +385,41 @@ export default function CreateQuizTopic() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* LEFT COLUMN: MULTI-INPUT DOCKET SIDEBAR */}
-                    <div className="lg:col-span-5 bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel space-y-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    {/* COLUMN 1: INGESTION HUB (lg:col-span-4) */}
+                    <div className="lg:col-span-4 bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6 flex flex-col justify-between">
                         <div>
-                            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
-                                <h2 className="text-xl font-black text-[var(--text-primary)] uppercase italic">Inputs Docket</h2>
-                                <span className="bg-white/10 text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase">
+                            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                                <h2 className="text-lg font-black text-[var(--text-primary)] uppercase italic">Inputs Docket</h2>
+                                <span className="bg-white/10 text-[var(--text-primary)] px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase">
                                     {inputs.length} Sources
                                 </span>
                             </div>
 
                             {/* Inputs list */}
                             {inputs.length === 0 ? (
-                                <div className="py-12 border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-center p-6 bg-black/10">
-                                    <Database size={40} className="text-[var(--text-secondary)] mb-4 animate-bounce" />
-                                    <p className="text-sm font-bold text-[var(--text-secondary)] uppercase">Docket is empty</p>
-                                    <p className="text-xs text-[var(--text-secondary)]/50 mt-1 max-w-[200px]">Add text prompts, upload files, or record speech below</p>
+                                <div className="py-8 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center p-5 bg-black/10">
+                                    <Database size={32} className="text-[var(--text-secondary)] mb-3 animate-bounce" />
+                                    <p className="text-xs font-bold text-[var(--text-secondary)] uppercase">Docket is empty</p>
+                                    <p className="text-[10px] text-[var(--text-secondary)]/50 mt-0.5 max-w-[180px]">Add text prompts, upload files, or record speech below</p>
                                 </div>
                             ) : (
-                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                                <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
                                     {inputs.map((inp) => (
-                                        <div key={inp.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-[var(--bg-accent)] transition-all">
-                                            <div className="flex items-center gap-3 truncate">
-                                                <FileText size={18} className="text-[var(--bg-accent)] shrink-0" />
+                                        <div key={inp.id} className="flex items-center justify-between p-3.5 bg-white/5 rounded-xl border border-white/5 hover:border-[var(--bg-accent)] transition-all">
+                                            <div className="flex items-center gap-2.5 truncate">
+                                                <FileText size={16} className="text-[var(--bg-accent)] shrink-0" />
                                                 <div className="truncate">
-                                                    <p className="text-xs font-black text-[var(--text-primary)] uppercase truncate">{inp.source_name}</p>
-                                                    <p className="text-[9px] font-bold text-[var(--text-secondary)] uppercase">{inp.type}</p>
+                                                    <p className="text-[11px] font-black text-[var(--text-primary)] uppercase truncate">{inp.source_name}</p>
+                                                    <p className="text-[8px] font-bold text-[var(--text-secondary)] uppercase">{inp.type}</p>
                                                 </div>
                                             </div>
                                             <button 
                                                 type="button" 
                                                 onClick={() => handleRemoveInput(inp.id)}
-                                                className="text-red-500 hover:text-red-400 p-2 hover:bg-white/5 rounded-full transition-all"
+                                                className="text-red-500 hover:text-red-400 p-1.5 hover:bg-white/5 rounded-full transition-all"
                                             >
-                                                <Trash2 size={16} />
+                                                <Trash2 size={14} />
                                             </button>
                                         </div>
                                     ))}
@@ -427,10 +427,10 @@ export default function CreateQuizTopic() {
                             )}
 
                             {/* Source Adding Controls */}
-                            <div className="mt-8 pt-6 border-t border-white/10 space-y-6">
+                            <div className="mt-6 pt-5 border-t border-white/10 space-y-4">
                                 {/* File Upload Button */}
                                 <div>
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-2">Upload Files (PDF, Image, Docx)</label>
+                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">Upload Files (PDF, Image, Docx)</label>
                                     <div className="relative group">
                                         <input 
                                             type="file" 
@@ -439,28 +439,28 @@ export default function CreateQuizTopic() {
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                             accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
                                         />
-                                        <div className="p-4 bg-white/5 hover:bg-white/10 border-2 border-dashed border-white/15 group-hover:border-[var(--bg-accent)] transition-all rounded-2xl flex items-center justify-center gap-3">
-                                            <Plus size={18} className="text-[var(--text-secondary)]" />
-                                            <span className="text-xs font-black text-[var(--text-primary)] uppercase">Select Files</span>
+                                        <div className="p-3 bg-white/5 hover:bg-white/10 border border-dashed border-white/15 group-hover:border-[var(--bg-accent)] transition-all rounded-xl flex items-center justify-center gap-2">
+                                            <Plus size={16} className="text-[var(--text-secondary)]" />
+                                            <span className="text-[11px] font-black text-[var(--text-primary)] uppercase">Select Files</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Text Prompt Input */}
                                 <div>
-                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-2">Write Text Prompt / Syllabus Point</label>
+                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">Write Text Prompt / Syllabus Point</label>
                                     <div className="flex gap-2">
                                         <textarea
                                             value={textPrompt}
                                             onChange={(e) => setTextPrompt(e.target.value)}
                                             placeholder="Write core curriculum guidelines..."
                                             rows={2}
-                                            className="flex-1 p-3 bg-white/5 border border-white/10 rounded-2xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 focus:outline-none focus:border-[var(--bg-accent)] resize-none"
+                                            className="flex-1 p-2.5 bg-white/5 border border-white/10 rounded-xl text-xs text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 focus:outline-none focus:border-[var(--bg-accent)] resize-none"
                                         />
                                         <button 
                                             type="button"
                                             onClick={handleAddTextPrompt}
-                                            className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-4 rounded-2xl font-black text-xs uppercase italic tracking-wider shrink-0 hover:scale-105 active:scale-95 transition-all"
+                                            className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-3 rounded-xl font-black text-[10px] uppercase italic tracking-wider shrink-0 hover:scale-105 active:scale-95 transition-all"
                                         >
                                             Add
                                         </button>
@@ -468,49 +468,49 @@ export default function CreateQuizTopic() {
                                 </div>
 
                                 {/* Microphone live voice record */}
-                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                                <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center justify-between">
                                     <div>
-                                        <p className="text-[10px] font-black text-[var(--text-primary)] uppercase">Live Speech Input</p>
-                                        <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase mt-0.5">Stream transcription offline</p>
+                                        <p className="text-[9px] font-black text-[var(--text-primary)] uppercase">Live Speech Input</p>
+                                        <p className="text-[8px] text-[var(--text-secondary)] font-bold uppercase mt-0.5">Stream transcription offline</p>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={recording ? stopRecording : startRecording}
-                                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                                             recording 
                                                 ? 'bg-red-600 text-white animate-pulse' 
                                                 : 'bg-white/10 hover:bg-white/15 text-[var(--text-primary)]'
                                         }`}
                                     >
-                                        {recording ? <Square size={16} /> : <Mic size={18} />}
+                                        {recording ? <Square size={14} /> : <Mic size={16} />}
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         {/* Pre-Analysis CTA */}
-                        <div className="pt-6 mt-6 border-t border-white/10">
+                        <div className="pt-4 border-t border-white/10 mt-4">
                             <button
                                 type="button"
                                 onClick={handleAnalyzeSources}
                                 disabled={inputs.length === 0 || analyzing}
-                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-wider italic text-sm hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-500/20"
+                                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-wider italic text-xs hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
                             >
-                                {analyzing ? <Loader2 className="animate-spin" size={16} /> : <Database size={16} />}
-                                {analyzing ? 'ANALYZING SOURCES...' : 'ANALYZE CURRICULUM SOURCES'}
+                                {analyzing ? <Loader2 className="animate-spin" size={14} /> : <Database size={14} />}
+                                {analyzing ? 'ANALYZING...' : 'ANALYZE CURRICULUM SOURCES'}
                             </button>
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: CONFIGURATIONS & STRESSED TOPICS */}
-                    <div className="lg:col-span-7 space-y-8">
+                    {/* COLUMN 2: TUNING MATRIX (lg:col-span-5) */}
+                    <div className="lg:col-span-5 space-y-6">
                         {/* Core settings */}
-                        <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel space-y-6">
-                            <h2 className="text-xl font-black text-[var(--text-primary)] uppercase italic border-b border-white/10 pb-4">General Settings</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
-                                    <div className="bg-[var(--bg-accent)] w-12 h-12 rounded-xl flex items-center justify-center text-[var(--text-on-accent)]">
-                                        <Hash size={24} />
+                        <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6">
+                            <h2 className="text-lg font-black text-[var(--text-primary)] uppercase italic border-b border-white/10 pb-3">General Settings</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                    <div className="bg-[var(--bg-accent)] w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-on-accent)]">
+                                        <Hash size={20} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Question Count</p>
@@ -520,22 +520,22 @@ export default function CreateQuizTopic() {
                                             max="20"
                                             value={questionCount}
                                             onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
-                                            className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full"
+                                            className="bg-transparent border-none text-base font-black text-[var(--text-primary)] italic outline-none w-full"
                                             disabled={isLoading}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
-                                    <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white">
-                                        <Gauge size={24} />
+                                <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                    <div className="bg-purple-600 w-10 h-10 rounded-lg flex items-center justify-center text-white">
+                                        <Gauge size={20} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Difficulty</p>
                                         <select
                                             value={difficulty}
                                             onChange={(e) => setDifficulty(e.target.value)}
-                                            className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
+                                            className="bg-transparent border-none text-base font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
                                             disabled={isLoading}
                                         >
                                             <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
@@ -548,78 +548,76 @@ export default function CreateQuizTopic() {
                             </div>
                         </div>
 
-                        {/* RAG curriculum concepts (Step 2 configuration) */}
+                        {/* RAG curriculum concepts placeholder or slides */}
                         {!analyzedData ? (
-                            <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-12 glass-panel text-center text-[var(--text-secondary)] font-bold py-16 flex flex-col items-center justify-center uppercase space-y-4">
-                                <AlertCircle size={40} className="text-blue-400 animate-pulse" />
-                                <p className="text-sm">Click &quot;Analyze Curriculum Sources&quot; on the left docket drawer to extract topics and customize ratios.</p>
+                            <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel text-center text-[var(--text-secondary)] font-bold py-16 flex flex-col items-center justify-center uppercase space-y-3">
+                                <AlertCircle size={32} className="text-blue-400 animate-pulse" />
+                                <p className="text-xs max-w-xs leading-relaxed">Click &quot;Analyze Curriculum Sources&quot; on the left docket to extract curriculum concepts and ratios.</p>
                             </div>
                         ) : (
-                            <>
+                            <div className="space-y-6">
                                 {/* Extracted Topics / Stressed Topics Slider Matrix */}
-                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel space-y-6">
-                                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-4">
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                         <div>
-                                            <h2 className="text-xl font-black text-[var(--text-primary)] uppercase italic">Curriculum Concepts Matrix</h2>
-                                            <p className="text-[var(--text-secondary)] text-[10px] font-bold uppercase mt-1">Stress key topics to guide generation (set to 0.0 to disable)</p>
+                                            <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic">Curriculum Concepts Matrix</h2>
+                                            <p className="text-[var(--text-secondary)] text-[8px] font-bold uppercase mt-0.5">Set concept weights to guide generation</p>
                                         </div>
-                                        <Award className="text-blue-400" size={24} />
+                                        <Award className="text-blue-400" size={20} />
                                     </div>
 
-                                    <div className="space-y-4 pt-2">
+                                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
                                         {analyzedData.concepts && analyzedData.concepts.length > 0 ? (
                                             analyzedData.concepts.map((concept, idx) => {
                                                 const currentWeight = topicWeights[concept.concept_tag] ?? concept.weight_score;
                                                 return (
-                                                    <div key={idx} className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all space-y-2">
-                                                        <div className="flex justify-between font-black uppercase text-xs">
-                                                            <span className="text-[var(--text-primary)]">{concept.concept_tag}</span>
+                                                    <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-all space-y-1.5">
+                                                        <div className="flex justify-between font-black uppercase text-[10px]">
+                                                            <span className="text-[var(--text-primary)] truncate max-w-[180px]">{concept.concept_tag}</span>
                                                             <span className={`${currentWeight > 0 ? 'text-blue-400' : 'text-red-500'}`}>
                                                                 {currentWeight > 0 ? `Stress: ${currentWeight.toFixed(1)}` : 'DISABLED'}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-4">
-                                                            <input
-                                                                type="range"
-                                                                min="0.0"
-                                                                max="1.0"
-                                                                step="0.1"
-                                                                value={currentWeight}
-                                                                onChange={(e) => handleTopicWeightChange(concept.concept_tag, e.target.value)}
-                                                                className="w-full accent-blue-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
-                                                            />
-                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0.0"
+                                                            max="1.0"
+                                                            step="0.1"
+                                                            value={currentWeight}
+                                                            onChange={(e) => handleTopicWeightChange(concept.concept_tag, e.target.value)}
+                                                            className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                        />
                                                     </div>
                                                 );
                                             })
                                         ) : (
-                                            <p className="text-xs text-[var(--text-secondary)] font-bold uppercase">No specific concepts isolated. General context mapping will be used.</p>
+                                            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase">No specific concepts isolated.</p>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Dynamic Slider Mix */}
-                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-8 glass-panel space-y-6">
-                                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-4">
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                         <div>
-                                            <h2 className="text-xl font-black text-[var(--text-primary)] uppercase italic">Question Type Mix</h2>
-                                            <p className="text-[var(--text-secondary)] text-[10px] font-bold uppercase mt-1">Accept recommended ratios or manually customize</p>
+                                            <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic">Question Type Mix</h2>
+                                            <p className="text-[var(--text-secondary)] text-[8px] font-bold uppercase mt-0.5">Customize composition of questions</p>
                                         </div>
                                         {analyzedData.ai_recommendation && (
                                             <button 
                                                 type="button" 
                                                 onClick={applyRecommendedRatios}
-                                                className="px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-black uppercase italic hover:bg-blue-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                                className="px-2.5 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-full text-[9px] font-black uppercase italic hover:bg-blue-600/30 active:scale-95 transition-all flex items-center gap-1.5"
                                             >
-                                                <Sparkles size={12} /> Use AI Recommendation
+                                                <Sparkles size={10} /> Auto-Mix
                                             </button>
                                         )}
                                     </div>
 
-                                    <div className="space-y-6 pt-4">
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between font-black uppercase text-xs italic">
-                                                <span className="text-blue-400">Theory & Conceptual MCQs</span>
+                                    <div className="space-y-4 pt-2">
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                <span className="text-blue-400">Theory MCQs</span>
                                                 <span className="text-[var(--text-primary)] font-black">{ratios.theory}%</span>
                                             </div>
                                             <input
@@ -628,14 +626,14 @@ export default function CreateQuizTopic() {
                                                 max="100"
                                                 value={ratios.theory}
                                                 onChange={(e) => handleSliderChange('theory', e.target.value)}
-                                                className="w-full accent-blue-500 bg-white/10 h-2.5 rounded-lg appearance-none cursor-pointer"
+                                                className="w-full accent-blue-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
                                                 disabled={isLoading}
                                             />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between font-black uppercase text-xs italic">
-                                                <span className="text-purple-400">Code Debugging & Compilation</span>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                <span className="text-purple-400">Code Debugging</span>
                                                 <span className="text-[var(--text-primary)] font-black">{ratios.code_debugging}%</span>
                                             </div>
                                             <input
@@ -644,14 +642,14 @@ export default function CreateQuizTopic() {
                                                 max="100"
                                                 value={ratios.code_debugging}
                                                 onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
-                                                className="w-full accent-purple-500 bg-white/10 h-2.5 rounded-lg appearance-none cursor-pointer"
+                                                className="w-full accent-purple-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
                                                 disabled={isLoading}
                                             />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between font-black uppercase text-xs italic">
-                                                <span className="text-amber-400">Fill-in-the-Blank & Short Syntax</span>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                <span className="text-amber-400">Fill-in-the-Blank</span>
                                                 <span className="text-[var(--text-primary)] font-black">{ratios.fill_blank}%</span>
                                             </div>
                                             <input
@@ -660,14 +658,14 @@ export default function CreateQuizTopic() {
                                                 max="100"
                                                 value={ratios.fill_blank}
                                                 onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
-                                                className="w-full accent-amber-500 bg-white/10 h-2.5 rounded-lg appearance-none cursor-pointer"
+                                                className="w-full accent-amber-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
                                                 disabled={isLoading}
                                             />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between font-black uppercase text-xs italic">
-                                                <span className="text-emerald-400">Scenario-Based Challenges</span>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                <span className="text-emerald-400">Scenario Challenges</span>
                                                 <span className="text-[var(--text-primary)] font-black">{ratios.scenario}%</span>
                                             </div>
                                             <input
@@ -676,27 +674,70 @@ export default function CreateQuizTopic() {
                                                 max="100"
                                                 value={ratios.scenario}
                                                 onChange={(e) => handleSliderChange('scenario', e.target.value)}
-                                                className="w-full accent-emerald-500 bg-white/10 h-2.5 rounded-lg appearance-none cursor-pointer"
+                                                className="w-full accent-emerald-500 bg-white/10 h-2 rounded-lg appearance-none cursor-pointer"
                                                 disabled={isLoading}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                            </>
+                            </div>
                         )}
                     </div>
-                </div>
 
-                <div className="flex justify-center pt-10">
-                    <button
-                        type="button"
-                        onClick={handleSubmit}
-                        disabled={isLoading || inputs.length === 0}
-                        className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-24 py-6 rounded-[2rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-2xl italic uppercase tracking-tighter active:scale-95 border-b-6 border-[var(--bg-accent-hover)] btn-cinematic"
-                    >
-                        {isLoading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
-                        {isLoading ? 'GENERATING...' : 'GENERATE HYBRID QUIZ'}
-                    </button>
+                    {/* COLUMN 3: ACTION PANEL (lg:col-span-3) */}
+                    <div className="lg:col-span-3 lg:sticky lg:top-6 space-y-6">
+                        <div className="bg-white/5 rounded-[2.5rem] border border-[var(--border-color)] p-6 glass-panel space-y-6">
+                            <h2 className="text-lg font-black text-white uppercase italic border-b border-white/10 pb-3">Session Control</h2>
+                            
+                            <div className="space-y-4">
+                                {/* Sources indicator */}
+                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <Database size={16} className={inputs.length > 0 ? "text-green-400" : "text-amber-500"} />
+                                        <span className="text-xs font-bold text-slate-300 uppercase">Active Sources</span>
+                                    </div>
+                                    <span className="text-xs font-black text-white uppercase">{inputs.length}</span>
+                                </div>
+
+                                {/* Analysis state check */}
+                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <Sparkles size={16} className={analyzedData ? "text-green-400" : "text-amber-500"} />
+                                        <span className="text-xs font-bold text-slate-300 uppercase">Analysis Status</span>
+                                    </div>
+                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                                        analyzedData ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                    }`}>
+                                        {analyzedData ? 'Analyzed' : 'Pending'}
+                                    </span>
+                                </div>
+
+                                {/* Ratios state check */}
+                                <div className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <Sliders size={16} className="text-green-400" />
+                                        <span className="text-xs font-bold text-slate-300 uppercase">Ratio Validation</span>
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
+                                        100% OK
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Golden Generate CTA */}
+                            <div className="pt-2">
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={isLoading || inputs.length === 0}
+                                    className="group w-full py-4 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-2xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-[var(--bg-accent-glow)] font-black text-sm italic uppercase tracking-wider active:scale-95 border-b-4 border-[var(--bg-accent-hover)] btn-cinematic flex items-center justify-center gap-2"
+                                >
+                                    {isLoading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={14} />}
+                                    {isLoading ? 'GENERATING...' : 'GENERATE HYBRID QUIZ'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </DashboardLayout>
