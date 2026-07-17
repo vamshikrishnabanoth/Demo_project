@@ -2287,14 +2287,78 @@ exports.analyzeSources = async (req, res) => {
         }
 
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-        const response = await axios.post(`${AI_SERVICE_URL}/analyze-sources`, {
-            inputs
-        }, {
-            headers: { 'Bypass-Tunnel-Reminder': 'true' },
-            timeout: 90000
-        });
+        const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
 
-        res.json(response.data);
+        if (isOnline) {
+            console.log('🔌 Local AI is online. Calling local FastAPI for analysis...');
+            const response = await axios.post(`${AI_SERVICE_URL}/analyze-sources`, {
+                inputs
+            }, {
+                headers: { 'Bypass-Tunnel-Reminder': 'true' },
+                timeout: 90000
+            });
+            return res.json(response.data);
+        } else {
+            console.log('⚠️ Local AI is offline. Falling back to Groq Cloud API for source analysis...');
+            if (process.env.GROQ_API_KEY && groq) {
+                const aggregatedText = inputs
+                    .filter(inp => inp.type !== 'image' && inp.content)
+                    .map(inp => inp.content)
+                    .join('\n\n');
+
+                if (!aggregatedText || aggregatedText.trim().length < 20) {
+                    return res.status(400).json({ msg: 'Content too short or unextractable for analysis.' });
+                }
+
+                const prompt = `You are an elite academic analyzer. Analyze the textbook/lecture context below.
+
+Context:
+${aggregatedText.substring(0, 6000)}
+
+Tasks:
+1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic, or 'fail' if it is gibberish, casual chat, or spam.
+2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).
+3. Generate 5 core study flashcards (Q&A style for post-quiz review).
+4. Suggest target ratios for question types (theory, code_debugging, fill_blank, scenario) based on content structure (e.g., if there is code, suggest higher code_debugging ratio).
+5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).
+
+Return ONLY a clean JSON object conforming strictly to this format:
+{
+  "relevancy_verdict": "pass",
+  "relevancy_reason": "...",
+  "lobby_summary": "- Key concept 1...\\n- Key concept 2...",
+  "ai_flashcards": [
+    {"question": "...", "answer": "..."}
+  ],
+  "ai_recommendation": {
+    "theory": 0.4,
+    "code_debugging": 0.3,
+    "fill_blank": 0.2,
+    "scenario": 0.1
+  },
+  "concepts": [
+    {"concept_tag": "...", "weight_score": 0.85}
+  ]
+}`;
+
+                const chatCompletion = await groq.chat.completions.create({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'llama-3.1-8b-instant',
+                    response_format: { type: "json_object" }
+                });
+
+                const data = JSON.parse(chatCompletion.choices[0].message.content);
+                if (data.relevancy_verdict === 'fail') {
+                    return res.status(422).json({
+                        status: 'validation_error',
+                        message: data.relevancy_reason || 'Non-academic content detected.'
+                    });
+                }
+                return res.json(data);
+            } else {
+                return res.status(503).json({ msg: 'Local AI is offline and Groq API key is missing.' });
+            }
+        }
     } catch (err) {
         console.error('Error in analyzeSources:', err.message);
         if (err.response && err.response.status === 422) {
