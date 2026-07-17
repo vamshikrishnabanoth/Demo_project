@@ -107,6 +107,8 @@ const generateFallbackMockQuestions = (count = 5) => {
 const generateFallbackQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
     console.log(`🔄 Local AI failed. Initiating Groq Cloud Fallback...`);
     
+    const safeContent = (content && typeof content === 'string') ? content : '';
+    
     if (process.env.GROQ_API_KEY && groq) {
         try {
             console.log(`🤖 Calling Groq (llama-3.1-8b-instant) for resilient generation...`);
@@ -115,7 +117,7 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 You are an expert quiz generator.
                 Generate a set of multiple-choice questions based on the following input:
                 
-                Topic/Content: ${content.substring(0, 4000)}
+                Topic/Content: ${safeContent.substring(0, 5000)}
                 Difficulty: ${difficulty}
                 Count: ${count}
                 
@@ -225,11 +227,21 @@ const checkAiServiceOnline = async (url) => {
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null) => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
+    const getFallbackContent = () => {
+        if (inputs && inputs.length > 0) {
+            return inputs
+                .filter(inp => inp.type !== 'image' && inp.content)
+                .map(inp => inp.content)
+                .join('\n\n');
+        }
+        return content;
+    };
+
     // Probe the AI Service first — instant fallback if completely offline
     const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
     if (!isOnline) {
         console.log(`⚠️ Fine-Tuned AI is offline. Falling back to Groq Cloud.`);
-        return generateFallbackQuestions(type, content, count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
     }
 
     try {
@@ -264,10 +276,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         }
 
         console.log(`⚠️ Fine-Tuned AI returned empty — falling back to Groq.`);
-        return generateFallbackQuestions(type, content, count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
     } catch (err) {
         console.error(`❌ Fine-Tuned AI error: ${err.message} — falling back to Groq.`);
-        return generateFallbackQuestions(type, content, count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
     }
 };
 
