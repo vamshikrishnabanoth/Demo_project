@@ -182,6 +182,10 @@ const verifyUploadedFiles = (req, res, next) => {
 // @desc    Analyze multiple mixed input sources (PDFs, texts)
 router.post('/analyze-sources', auth, upload.array('files', 10), verifyUploadedFiles, quizController.analyzeSources);
 
+// @route   POST api/quiz/transcribe
+// @desc    Transcribe audio for inputs docket
+router.post('/transcribe', auth, upload.single('file'), verifyUploadedFile, quizController.transcribe);
+
 // @route   POST api/quiz/generate-voice
 // @desc    Transcribe audio and generate quiz questions
 router.post('/generate-voice', auth, upload.single('file'), verifyUploadedFile, quizController.generateQuizFromVoice);

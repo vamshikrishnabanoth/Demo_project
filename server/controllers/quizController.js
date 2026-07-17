@@ -2303,3 +2303,27 @@ exports.analyzeSources = async (req, res) => {
         res.status(500).json({ msg: 'Failed to analyze sources: ' + err.message });
     }
 };
+
+exports.transcribe = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ msg: 'No audio file uploaded' });
+    }
+
+    const absolutePath = path.resolve(req.file.path);
+    try {
+        const transcript = await transcribeAudio(absolutePath);
+        
+        // Clean up audio file
+        try { fs.unlinkSync(absolutePath); } catch (_) {}
+
+        if (!transcript || transcript.trim().length < 5) {
+            return res.status(422).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
+        }
+
+        res.json({ text: transcript });
+    } catch (err) {
+        console.error('Error in transcribe controller:', err.message);
+        try { fs.unlinkSync(absolutePath); } catch (_) {}
+        res.status(500).json({ msg: 'Transcription failed: ' + err.message });
+    }
+};
