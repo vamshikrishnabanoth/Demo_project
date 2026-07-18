@@ -223,24 +223,56 @@ export default function CreateQuizTopic() {
                     const formData = new FormData();
                     formData.append('file', blob, 'recording.webm');
                     
-                    const toastId = toast.loading('Transcribing live voice recording offline...');
+                    const toastId = toast.loading('Transcribing live voice recording...');
                     try {
-                        const transcribeRes = await api.post('/quiz/transcribe', formData, {
-                            headers: { 'Content-Type': 'multipart/form-data' }
-                        });
-                        toast.success('Speech transcribed successfully!', { id: toastId });
-                        
-                        if (transcribeRes.data && transcribeRes.data.text) {
+                        let transcriptText = "";
+                        let localOnline = false;
+
+                        // Check if the local Python service is running directly on localhost
+                        try {
+                            const ping = await fetch('http://localhost:8000/', { mode: 'cors' });
+                            if (ping.ok) localOnline = true;
+                        } catch (_) {
+                            localOnline = false;
+                        }
+
+                        if (localOnline) {
+                            console.log('⚡ Local Python Service detected! Sending audio directly to localhost to avoid proxy timeouts...');
+                            const localRes = await fetch('http://localhost:8000/transcribe', {
+                                method: 'POST',
+                                body: formData,
+                                mode: 'cors'
+                            });
+                            
+                            if (localRes.ok) {
+                                const data = await localRes.json();
+                                transcriptText = data.text || "";
+                            } else {
+                                throw new Error('Local service transcription error.');
+                            }
+                        } else {
+                            console.log('☁️ Local service not found on localhost. Routing via Render cloud backend...');
+                            const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                            });
+                            transcriptText = transcribeRes.data.text;
+                        }
+
+                        if (transcriptText && transcriptText.trim().length > 5) {
+                            toast.success('Speech transcribed successfully!', { id: toastId });
                             setInputs(prev => [...prev, {
                                 id: Math.random().toString(),
                                 type: 'voice',
-                                content: transcribeRes.data.text,
+                                content: transcriptText,
                                 source_name: `Voice Transcript (${new Date().toLocaleTimeString()})`
                             }]);
                             setAnalyzedData(null); // Reset analysis
+                        } else {
+                            toast.error('Could not capture clear speech. Please try speaking closer to the mic.', { id: toastId });
                         }
                     } catch (err) {
-                        toast.error('Failed to transcribe voice.', { id: toastId });
+                        console.error('Transcription failed:', err);
+                        toast.error('Failed to transcribe voice: ' + (err.response?.data?.msg || err.message), { id: toastId });
                     }
                     
                     // Terminate the background worker when compile completes
