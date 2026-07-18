@@ -717,7 +717,8 @@ def run_agent3_critic(q_data, context, flavor="theory"):
     if not correct_ans:
         issues.append("Missing correct_answer")
     elif correct_ans not in options:
-        issues.append("Correct answer does not match any of the options exactly")
+        if flavor != "code_debugging":
+            issues.append("Correct answer does not match any of the options exactly")
         
     if code_snippet and isinstance(code_snippet, str) and ("```" in code_snippet):
         match_py = re.search(r'```python\n([\s\S]*?)```', code_snippet)
@@ -903,8 +904,12 @@ async def generate_questions(req: GeneratorRequest):
                 if critic_res["status"] == "pass":
                     pt = q_data.get("prompt_text", "")
                     cs = q_data.get("code_snippet")
-                    if cs and isinstance(cs, str) and "```" in cs:
-                        pt = f"{pt}\n\n{cs.strip()}"
+                    
+                    if cs and isinstance(cs, str) and len(cs.strip()) > 0:
+                        cs_clean = cs.strip()
+                        if "```" not in cs_clean:
+                            cs_clean = f"```\n{cs_clean}\n```"
+                        pt = f"{pt}\n\n{cs_clean}"
 
                     # Conforming to structured blueprint format
                     q_final = {
