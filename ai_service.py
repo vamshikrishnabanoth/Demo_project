@@ -901,14 +901,19 @@ async def generate_questions(req: GeneratorRequest):
                             break
                 
                 if critic_res["status"] == "pass":
+                    pt = q_data.get("prompt_text", "")
+                    cs = q_data.get("code_snippet")
+                    if cs and isinstance(cs, str) and "```" in cs:
+                        pt = f"{pt}\n\n{cs.strip()}"
+
                     # Conforming to structured blueprint format
                     q_final = {
                         "id": f"q_id_{str(i+1).zfill(3)}",
                         "type": flavor,
                         "concept_tag": q_data.get("concept_tag", concept.get("concept_tag")),
                         "weight_score": float(concept.get("weight_score", 0.75)),
-                        "prompt_text": q_data.get("prompt_text"),
-                        "code_snippet": q_data.get("code_snippet") or None,
+                        "prompt_text": pt,
+                        "code_snippet": cs or None,
                         "options": q_data.get("options", []),
                         "correct_answer": q_data.get("correct_answer") or q_data.get("correctAnswer"),
                         "explanation": q_data.get("explanation")
