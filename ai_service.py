@@ -324,7 +324,7 @@ async def analyze_sources(req: AnalyzeRequest):
         "You are an elite academic analyzer. Analyze the textbook/lecture context below.\n\n"
         f"Context:\n{context[:6000]}\n\n"
         "Tasks:\n"
-        "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic, or 'fail' if it is gibberish, casual chat, or spam.\n"
+        "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
         "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
         "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
         "4. Suggest target ratios for question types (theory, code_debugging, fill_blank, scenario) based on content structure (e.g., if there is code, suggest higher code_debugging ratio).\n"
