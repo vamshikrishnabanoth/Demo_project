@@ -24,6 +24,57 @@ export default function CreateQuizTopic() {
     const [recordingPaused, setRecordingPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const audioChunksRef = useRef([]);
+    const backgroundWorkerRef = useRef(null);
+    const wakeLockRef = useRef(null);
+
+    const requestWakeLock = async () => {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLockRef.current = await navigator.wakeLock.request('screen');
+                console.log('🔒 System Wake Lock activated. Laptop will not sleep.');
+            }
+        } catch (err) {
+            console.warn(`Failed to lock system power state: ${err.message}`);
+        }
+    };
+
+    const releaseWakeLock = useCallback(() => {
+        if (wakeLockRef.current !== null) {
+            wakeLockRef.current.release()
+                .then(() => {
+                    wakeLockRef.current = null;
+                    console.log('🔓 System Wake Lock released.');
+                })
+                .catch(err => {
+                    console.error('Error releasing wake lock:', err);
+                });
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleVisibilityChange = async () => {
+            if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLockRef.current = await navigator.wakeLock.request('screen');
+                        console.log('🔒 System Wake Lock re-acquired.');
+                    }
+                } catch (err) {
+                    console.warn(`Failed to re-acquire wake lock: ${err.message}`);
+                }
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            if (backgroundWorkerRef.current) {
+                backgroundWorkerRef.current.terminate();
+            }
+            if (wakeLockRef.current) {
+                wakeLockRef.current.release().catch(() => {});
+            }
+        };
+    }, []);
 
     // Dropdown / Modal Input states
     const [showDropdown, setShowDropdown] = useState(false);
@@ -143,46 +194,70 @@ export default function CreateQuizTopic() {
     // Live Microphone Recording Logic
     const startRecording = async () => {
         try {
+            // 1. Activate Wake Lock
+            await requestWakeLock();
+
+            // 2. Initialize Web Worker thread
+            backgroundWorkerRef.current = new Worker('/audioWorker.js');
+
+            // 3. Request user microphone permissions
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // 4. Configure MediaRecorder
             const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
             audioChunksRef.current = [];
             
+            backgroundWorkerRef.current.postMessage({ type: 'START' });
+
             recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) audioChunksRef.current.push(e.data);
-            };
-            recorder.onstop = async () => {
-                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                if (audioChunksRef.current.length === 0) return;
-                
-                const formData = new FormData();
-                formData.append('file', blob, 'recording.webm');
-                
-                const toastId = toast.loading('Transcribing live voice recording offline...');
-                try {
-                    const transcribeRes = await api.post('/quiz/transcribe', formData, {
-                        headers: { 'Content-Type': 'multipart/form-data' }
-                    });
-                    toast.success('Speech transcribed successfully!', { id: toastId });
-                    
-                    if (transcribeRes.data && transcribeRes.data.text) {
-                        setInputs(prev => [...prev, {
-                            id: Math.random().toString(),
-                            type: 'voice',
-                            content: transcribeRes.data.text,
-                            source_name: `Voice Transcript (${new Date().toLocaleTimeString()})`
-                        }]);
-                        setAnalyzedData(null); // Reset analysis
-                    }
-                } catch (err) {
-                    toast.error('Failed to transcribe voice.', { id: toastId });
+                if (e.data && e.data.size > 0) {
+                    // Send raw chunk to background worker instantly
+                    backgroundWorkerRef.current?.postMessage({ type: 'DATA_AVAILABLE', data: e.data });
                 }
             };
-            recorder.start(250);
+
+            // Handle voice compilation from worker
+            backgroundWorkerRef.current.onmessage = async (e) => {
+                if (e.data.type === 'RECORDING_COMPLETE') {
+                    const blob = e.data.blob;
+                    const formData = new FormData();
+                    formData.append('file', blob, 'recording.webm');
+                    
+                    const toastId = toast.loading('Transcribing live voice recording offline...');
+                    try {
+                        const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                            headers: { 'Content-Type': 'multipart/form-data' }
+                        });
+                        toast.success('Speech transcribed successfully!', { id: toastId });
+                        
+                        if (transcribeRes.data && transcribeRes.data.text) {
+                            setInputs(prev => [...prev, {
+                                id: Math.random().toString(),
+                                type: 'voice',
+                                content: transcribeRes.data.text,
+                                source_name: `Voice Transcript (${new Date().toLocaleTimeString()})`
+                            }]);
+                            setAnalyzedData(null); // Reset analysis
+                        }
+                    } catch (err) {
+                        toast.error('Failed to transcribe voice.', { id: toastId });
+                    }
+                    
+                    // Terminate the background worker when compile completes
+                    if (backgroundWorkerRef.current) {
+                        backgroundWorkerRef.current.terminate();
+                        backgroundWorkerRef.current = null;
+                    }
+                }
+            };
+
+            recorder.start(1000); // Forces chunk updates every 1 second
             setMediaRecorder(recorder);
             setRecording(true);
             setRecordingPaused(false);
         } catch (err) {
             toast.error('Could not access microphone. Verify hardware permissions.');
+            releaseWakeLock();
         }
     };
 
@@ -204,6 +279,13 @@ export default function CreateQuizTopic() {
         if (mediaRecorder) {
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            
+            // Signal the Web Worker to stop and assemble the blob
+            backgroundWorkerRef.current?.postMessage({ type: 'STOP' });
+
+            // Release wake lock
+            releaseWakeLock();
+
             setRecording(false);
             setRecordingPaused(false);
         }
@@ -211,9 +293,18 @@ export default function CreateQuizTopic() {
 
     const cancelRecording = () => {
         if (mediaRecorder) {
-            audioChunksRef.current = [];
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
+
+            // Terminate background worker instantly
+            if (backgroundWorkerRef.current) {
+                backgroundWorkerRef.current.terminate();
+                backgroundWorkerRef.current = null;
+            }
+
+            // Release wake lock
+            releaseWakeLock();
+
             setRecording(false);
             setRecordingPaused(false);
             toast.success('Recording discarded.');
