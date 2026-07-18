@@ -138,6 +138,12 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 - Fill-in-the-Blank MCQs (${interviewCount} questions): Focus on trade-offs, comparisons, and technical optimization choices.
                 - Scenario MCQs (${scenarioCount} questions): Focus on real-world system design, production failures, or case studies.
                 
+                [STRICT GROUNDING CONSTRAINT]
+                You must extract ONLY core academic, structural, and theoretical concepts present within the text body.
+                CRITICAL WARNING: Completely ignore any references to dates, times, AM/PM, audio lengths, transcription artifacts, or file names. Under no circumstances should a question or answer choice analyze when a recording happened, what a file name is, or how data was collected.
+                
+                COMPLEXITY MANDATE: Do not create circular questions where the answer repeats words from the question stem. Focus on operational logic, mechanics, and engineering trade-offs.
+
                 Return a JSON object with a single key "questions", which contains an array of question objects.
                 Each question object MUST have exactly these keys:
                 - questionText (string)

@@ -300,6 +300,20 @@ def call_groq_fallback(prompt, json_mode=True):
     else:
         raise ValueError(f"Groq API returned status {response.status_code}: {response.text}")
 
+def sanitize_source_text(text: str) -> str:
+    """
+    Strips out file names, timestamps, and structural labels like
+    'Voice Transcript (12:23:03 AM)' so the LLM never sees them.
+    """
+    # Remove strings like 'Voice Transcript (XX:XX:XX AM/PM)' case-insensitively
+    text = re.sub(r'(?i)voice\s+transcript\s*\([^)]+\)', '', text)
+    
+    # Remove standalone timestamps like 12:23:03 AM
+    text = re.sub(r'\b\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM|am|pm)\b', '', text)
+    
+    # Clean up double newlines left over by stripping
+    return re.sub(r'\n\s*\n', '\n', text).strip()
+
 def resolve_input_sources(inputs):
     aggregated_texts = []
     for inp in inputs:
@@ -321,7 +335,9 @@ def resolve_input_sources(inputs):
                     print(f"Error parsing base64 file source: {e}")
                     source_text = ""
         if source_text and len(source_text.strip()) > 10:
-            aggregated_texts.append(source_text.strip())
+            sanitized = sanitize_source_text(source_text)
+            if len(sanitized.strip()) > 10:
+                aggregated_texts.append(sanitized.strip())
     return "\n\n".join(aggregated_texts)
 
 def deduplicate_text_chunks(text, embed_model, max_tokens=500, overlap_percent=10):
@@ -708,6 +724,10 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         f"You MUST strictly follow these criteria: '{targeted_criteria}'\n\n"
         f"Task:\n{type_instruction}\n\n"
         f"CRITICAL: Avoid repeating the topics of these existing questions: {generated_so_far}\n\n"
+        "[STRICT GROUNDING CONSTRAINT]\n"
+        "You must extract ONLY core academic, structural, and theoretical concepts present within the text body.\n"
+        "CRITICAL WARNING: Completely ignore any references to dates, times, AM/PM, audio lengths, transcription artifacts, or file names. Under no circumstances should a question or answer choice analyze when a recording happened, what a file name is, or how data was collected.\n\n"
+        "COMPLEXITY MANDATE: Do not create circular questions where the answer repeats words from the question stem. Focus on operational logic, mechanics (e.g., how splitting criteria work in Random Forests), and architectural design trade-offs.\n\n"
         "Return ONLY a clean JSON object conforming to this schema:\n"
         "{\n"
         "  \"concept_tag\": \"concept\",\n"
@@ -774,13 +794,57 @@ def run_agent3_critic(q_data, context, flavor="theory"):
     
     if not prompt_text:
         issues.append("Missing prompt_text")
+    else:
+        # Rule X (Zero Metadata Leak)
+        metadata_indicators = [
+            r'\b\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM|am|pm)\b',
+            r'\b(?:voice\s+)?transcript\b',
+            r'\bfile\s+name\b',
+            r'\b\.pdf\b|\b\.docx\b|\b\.pptx\b|\b\.txt\b|\b\.webm\b',
+            r'\brecording\b'
+        ]
+        for pattern in metadata_indicators:
+            if re.search(pattern, prompt_text, re.IGNORECASE):
+                issues.append("Question contains timestamps, file names, or recording properties (Metadata Leak).")
+                break
+
     if not options or len(options) < 4:
         issues.append("Fewer than 4 options provided")
+    else:
+        # Check options for metadata leaks
+        for opt in options:
+            metadata_indicators = [
+                r'\b\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM|am|pm)\b',
+                r'\b(?:voice\s+)?transcript\b',
+                r'\bfile\s+name\b',
+                r'\b\.pdf\b|\b\.docx\b|\b\.pptx\b|\b\.txt\b|\b\.webm\b',
+                r'\brecording\b'
+            ]
+            leak_found = False
+            for pattern in metadata_indicators:
+                if re.search(pattern, opt, re.IGNORECASE):
+                    issues.append("An option choice contains metadata leaks (timestamps/file details).")
+                    leak_found = True
+                    break
+            if leak_found:
+                break
+
     if not correct_ans:
         issues.append("Missing correct_answer")
     elif correct_ans not in options:
         if flavor != "code_debugging":
             issues.append("Correct answer does not match any of the options exactly")
+            
+    # Rule Y (Circular Verification)
+    if correct_ans and prompt_text:
+        prompt_clean = re.sub(r'[^\w\s]', '', prompt_text.lower())
+        ans_clean = re.sub(r'[^\w\s]', '', correct_ans.lower())
+        prompt_words = set(prompt_clean.split())
+        ans_words = set(ans_clean.split())
+        if len(ans_words) > 0:
+            overlap = prompt_words.intersection(ans_words)
+            if len(overlap) / len(ans_words) > 0.8:
+                issues.append("Question is circular (the correct answer repeats almost all words from the question stem).")
         
     if code_snippet and isinstance(code_snippet, str) and ("```" in code_snippet):
         match_py = re.search(r'```python\n([\s\S]*?)```', code_snippet)
