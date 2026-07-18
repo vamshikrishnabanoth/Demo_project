@@ -1488,7 +1488,7 @@ exports.generateQuizQuestions = async (req, res) => {
     // Run entire pipeline in background (non-blocking)
     setImmediate(async () => {
         try {
-            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts } = req.body;
             let extractedTitle = topic || 'AI Generated Quiz';
             let sourceType = type || 'topic';
             let combinedTranscript = '';
@@ -1501,34 +1501,55 @@ exports.generateQuizQuestions = async (req, res) => {
             let parsedInputs = null;
             if (inputs) {
                 parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
-            } else if (req.files && req.files.length > 0) {
+            } else {
                 parsedInputs = [];
-                for (const file of req.files) {
-                    const filePath = path.resolve(file.path);
-                    const ext = path.extname(file.originalname).toLowerCase();
-                    
-                    let textContent = "";
-                    if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
-                        textContent = await extractText(filePath);
-                    } else {
-                        const buffer = fs.readFileSync(filePath);
-                        textContent = "base64:" + buffer.toString('base64');
+                if (req.files && req.files.length > 0) {
+                    for (const file of req.files) {
+                        const filePath = path.resolve(file.path);
+                        const ext = path.extname(file.originalname).toLowerCase();
+                        
+                        let textContent = "";
+                        if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+                            textContent = await extractText(filePath);
+                        } else {
+                            const buffer = fs.readFileSync(filePath);
+                            textContent = "base64:" + buffer.toString('base64');
+                        }
+                        
+                        parsedInputs.push({
+                            type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
+                            content: textContent || filePath,
+                            source_name: file.originalname
+                        });
+                        
+                        try { fs.unlinkSync(filePath); } catch (_) {}
                     }
-                    
-                    parsedInputs.push({
-                        type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
-                        content: textContent || filePath,
-                        source_name: file.originalname
+                }
+
+                if (text_prompts) {
+                    let prompts = [];
+                    try {
+                        prompts = typeof text_prompts === 'string' ? JSON.parse(text_prompts) : text_prompts;
+                    } catch (e) {
+                        prompts = [text_prompts];
+                    }
+                    const promptsArray = Array.isArray(prompts) ? prompts : [prompts];
+                    promptsArray.forEach((p, idx) => {
+                        if (p && p.trim() !== '') {
+                            parsedInputs.push({
+                                type: 'text',
+                                content: p,
+                                source_name: `Text Prompt ${idx + 1}`
+                            });
+                        }
                     });
-                    
-                    try { fs.unlinkSync(filePath); } catch (_) {}
                 }
                 
-                if (topic && topic.trim() !== '') {
+                if (parsedInputs.length === 0 && topic && topic.trim() !== '' && !videoUrls) {
                     parsedInputs.push({
                         type: 'text',
                         content: topic,
-                        source_name: 'Text Prompts'
+                        source_name: 'Topic Input'
                     });
                 }
             }
