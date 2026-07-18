@@ -1470,6 +1470,11 @@ exports.generateQuizQuestions = async (req, res) => {
             let sourceType = type || 'topic';
             let combinedTranscript = '';
 
+            let parsedTargetRatios = null;
+            if (target_ratios) {
+                parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
             let parsedInputs = null;
             if (inputs) {
                 parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
@@ -1792,17 +1797,17 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, target_ratios, parsedInputs, parsedTopicWeights);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, parsedTargetRatios, parsedInputs, parsedTopicWeights);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty, source_material_id, target_ratios);
+                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty, source_material_id, parsedTargetRatios);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, target_ratios);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, parsedTargetRatios);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, target_ratios);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, parsedTargetRatios);
             }
 
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
@@ -2044,6 +2049,11 @@ exports.generateQuizFromVoice = async (req, res) => {
         try {
             const { questionCount, difficulty, source_material_id, target_ratios } = req.body;
 
+            let parsedTargetRatios = null;
+            if (target_ratios) {
+                parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
             // ── Stage 0: Uploading / Transcribing ──────────────────────────
             console.log(`\n[Voice Generator Started] Transcribing audio...`);
             updateTaskStage(taskId, 0, 'Transcribing Audio');
@@ -2069,7 +2079,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             // ── Stage 0: Generate Questions from transcript ─────────────
             console.log(`[Generator Started] Generating from voice transcript...`);
-            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, target_ratios);
+            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, parsedTargetRatios);
             console.log(`[Questions Generated] count=${draftQuestions.length}`);
 
             // Cleanup audio file
