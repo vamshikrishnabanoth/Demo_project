@@ -12,6 +12,7 @@ const { createTask, updateTaskStage, completeTask, failTask } = require('../serv
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
+const { logPipelineStep } = require('../utils/logger');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1503,6 +1504,13 @@ exports.generateQuizQuestions = async (req, res) => {
                 parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
             }
 
+            logPipelineStep("1", "Incoming Payload Extraction", "Raw values from React Form State", {
+                topic,
+                hasTextPrompts: !!text_prompts,
+                rawTextPromptsLength: text_prompts ? text_prompts.length : 0,
+                teacherSliders: parsedTargetRatios
+            });
+
             let parsedInputs = null;
             if (inputs) {
                 parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
@@ -1578,6 +1586,12 @@ exports.generateQuizQuestions = async (req, res) => {
                     textChunk = topic;
                 }
 
+                logPipelineStep("2", "Input Assembly & Context Aggregation", "Concatenated text content ready for density classification", {
+                    totalLength: textChunk ? textChunk.length : 0,
+                    numberOfInputs: parsedInputs ? parsedInputs.length : 0,
+                    sampleSnippet: textChunk ? textChunk.substring(0, 200) + "..." : "None"
+                });
+
                 if (textChunk && textChunk.trim().length > 0) {
                     console.log('📄 Aggregated context text for density classification (length:', textChunk.length, ')');
                     const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
@@ -1591,6 +1605,11 @@ exports.generateQuizQuestions = async (req, res) => {
             } else {
                 blendedRatios = { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 };
             }
+
+            logPipelineStep("3", "Dynamic Weight Allocation Matrix", "Alpha blend execution with Hard Zero enforcement", {
+                teacherRequested: parsedTargetRatios,
+                finalDatabaseRatios: blendedRatios
+            });
 
             // YouTube validation constraints
             let finalVideoUrls = [];
