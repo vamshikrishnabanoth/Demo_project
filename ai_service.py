@@ -921,9 +921,33 @@ def run_agent2_repair(q_data, issues, context):
         return data
     else:
         raise Exception("Repair failed")
+def log_pipeline_step(step_number, step_name, data_description, payload):
+    CYAN = '\033[36m'
+    GREEN = '\033[32m'
+    GRAY = '\033[90m'
+    RESET = '\033[0m'
+    print(f"{GRAY}\n========================================================{RESET}")
+    print(f"{CYAN}➡️ [STEP {step_number}] {step_name}{RESET}")
+    print(f"{GRAY}📋 Data State: {data_description}{RESET}")
+    print(f"{GRAY}--------------------------------------------------------{RESET}")
+    import json
+    if isinstance(payload, (dict, list)):
+        print(f"{GREEN}{json.dumps(payload, indent=2)}{RESET}")
+    else:
+        print(f"{GREEN}{payload}{RESET}")
+    print(f"{GRAY}========================================================{RESET}\n")
 
 @app.post("/generate")
 async def generate_questions(req: GeneratorRequest):
+    log_pipeline_step("1", "Incoming Payload Extraction", "Raw values from request body received by local Python service", {
+        "inputs_count": len(req.inputs) if req.inputs else 0,
+        "type": req.type,
+        "content_length": len(req.content) if req.content else 0,
+        "difficulty": req.difficulty,
+        "count": req.count,
+        "target_ratios": req.target_ratios
+    })
+
     if req.inputs:
         resolved_text = resolve_input_sources(req.inputs)
         if not resolved_text or len(resolved_text.strip()) < 50:
@@ -963,6 +987,11 @@ async def generate_questions(req: GeneratorRequest):
             query = "Important core concepts"
             context = get_relevant_context(source_text, query, top_k=5)
 
+    log_pipeline_step("2", "Input Assembly & Context Aggregation", "Grounded text content assembled for AI agents", {
+        "total_context_length": len(context) if context else 0,
+        "sample_snippet": context[:250] + "..." if context else "None"
+    })
+
     # 1. Determine Target Flavor Ratios and Question count
     ratios = req.target_ratios or {"theory": 1.0, "code_debugging": 0.0, "fill_blank": 0.0, "scenario": 0.0}
     total_count = req.count
@@ -984,6 +1013,11 @@ async def generate_questions(req: GeneratorRequest):
         counts[f] = c
         accumulated_count += c
     counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
+
+    log_pipeline_step("3", "Dynamic Weight Allocation Matrix", "Ratios blend calculation complete", {
+        "requested_ratios": ratios,
+        "calculated_counts_per_flavor": counts
+    })
 
     print(f"")
     print(f"={'='*55}")
