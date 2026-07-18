@@ -169,6 +169,49 @@ export default function CreateQuizPDF() {
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
+    // Dynamic question flavor state (sums to 100)
+    const [ratios, setRatios] = useState({
+        theory: 100,
+        code_debugging: 0,
+        fill_blank: 0,
+        scenario: 0
+    });
+
+    const handleSliderChange = (changedFlavor, newValue) => {
+        const val = Math.min(100, Math.max(0, parseInt(newValue) || 0));
+        const otherFlavors = ['theory', 'code_debugging', 'fill_blank', 'scenario'].filter(f => f !== changedFlavor);
+        const currentOthersSum = otherFlavors.reduce((sum, f) => sum + ratios[f], 0);
+        const remaining = 100 - val;
+
+        let newRatios = { ...ratios, [changedFlavor]: val };
+
+        if (currentOthersSum === 0) {
+            const equalShare = remaining / otherFlavors.length;
+            otherFlavors.forEach(f => {
+                newRatios[f] = equalShare;
+            });
+        } else {
+            otherFlavors.forEach(f => {
+                newRatios[f] = (ratios[f] / currentOthersSum) * remaining;
+            });
+        }
+
+        let newRatiosInt = {};
+        Object.keys(newRatios).forEach(k => {
+            newRatiosInt[k] = Math.round(newRatios[k]);
+        });
+
+        let sum = Object.values(newRatiosInt).reduce((s, v) => s + v, 0);
+        let diff = 100 - sum;
+
+        if (diff !== 0) {
+            const adjustKey = otherFlavors.sort((a, b) => newRatiosInt[b] - newRatiosInt[a])[0];
+            newRatiosInt[adjustKey] = Math.max(0, newRatiosInt[adjustKey] + diff);
+        }
+
+        setRatios(newRatiosInt);
+    };
+
     // ── Inline polling state ────────────────────────────────────────────────
     const [polling, setPolling]       = useState(false);
     const [stage, setStage]           = useState(0);
@@ -238,6 +281,14 @@ export default function CreateQuizPDF() {
             formData.append('type', 'file');
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
+
+            const targetRatiosPayload = {
+                theory: ratios.theory / 100,
+                code_debugging: ratios.code_debugging / 100,
+                fill_blank: ratios.fill_blank / 100,
+                scenario: ratios.scenario / 100
+            };
+            formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
 
             const res = await api.post('/quiz/generate', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -365,6 +416,68 @@ export default function CreateQuizPDF() {
                                             <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
                                             <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white/5 p-8 rounded-[2rem] border border-[var(--border-color)] glass-panel space-y-4">
+                                <p className="text-xs font-black text-[var(--text-secondary)] uppercase italic">Question Distribution</p>
+                                <div className="space-y-4">
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                            <span className="text-blue-400">Theory MCQs</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.theory}%</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={ratios.theory}
+                                            onChange={(e) => handleSliderChange('theory', e.target.value)}
+                                            className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                            <span className="text-purple-400">Code Debugging</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.code_debugging}%</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={ratios.code_debugging}
+                                            onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
+                                            className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                            <span className="text-amber-400">Fill-in-the-Blank</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.fill_blank}%</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={ratios.fill_blank}
+                                            onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
+                                            className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                            <span className="text-emerald-400">Scenario Challenges</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.scenario}%</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={ratios.scenario}
+                                            onChange={(e) => handleSliderChange('scenario', e.target.value)}
+                                            className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                        />
                                     </div>
                                 </div>
                             </div>

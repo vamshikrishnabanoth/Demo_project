@@ -591,7 +591,7 @@ def run_agent1_analyzer(context, count):
     
     return [{"concept_tag": "General Course Concept", "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
 
-def run_agent2_generator(concept, question_type, context, generated_so_far=""):
+def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium"):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
     print(f"  [AGENT 2] Flavor Generator: Creating question on '{concept_tag}' (flavor: {question_type})...")
@@ -621,11 +621,42 @@ def run_agent2_generator(concept, question_type, context, generated_so_far=""):
             "The options must provide alternative high-level system resolutions where only one accurately balances safety, efficiency, and scalability. Correct answer goes to correct_answer."
         )
 
+    difficultyPrompts = {
+        "easy": {
+            "theory": "Focus on straightforward definitions and core protocol identification.",
+            "coding": "Provide short, simple code snippets. Focus on basic output prediction or obvious missing syntax errors.",
+            "fill_blank": "Ask about standard definitions or clear, elementary differences between two core concepts.",
+            "scenario": "Simple, single-variable real-world applications with straightforward outcomes."
+        },
+        "medium": {
+            "theory": "Focus on how mechanisms interact with each other and standard architectural workflows.",
+            "coding": "Include loops, basic algorithmic structures, or functional tracking where state changes.",
+            "fill_blank": "Focus on standard efficiency trade-offs, like time-complexity differences.",
+            "scenario": "Introduce minor engineering bottlenecks or common edge-case system failures."
+        },
+        "hard": {
+            "theory": "Test deep internal mechanics, architectural limitations, and complex structural constraints.",
+            "coding": "Provide highly optimized or multi-threaded code snippets. Include hidden bugs, memory leaks, or tricky recursion logic.",
+            "fill_blank": "Demand defense of custom system design choices under heavy resource constraints or scale requirements.",
+            "scenario": "Construct deep, multi-layered system design failures with conflicting parameters (e.g., consistency vs availability)."
+        }
+    }
+    
+    diff_key = difficulty.lower()
+    if diff_key not in difficultyPrompts: diff_key = "medium"
+    
+    matrix_cat = question_type
+    if matrix_cat == "code_debugging": matrix_cat = "coding"
+    
+    targeted_criteria = difficultyPrompts[diff_key].get(matrix_cat, "Focus on general knowledge.")
+
     prompt = (
         "You are an elite Computer Science and Engineering curriculum developer. Your task is to write high-fidelity academic evaluations.\n\n"
         f"Context chunks:\n{context[:2000]}\n\n"
         f"Target Concept: {concept_tag} (Importance Weight: {weight_score})\n"
         f"Question Type: {question_type}\n\n"
+        f"CRITICAL DIFFICULTY INSTRUCTION ({difficulty.upper()}):\n"
+        f"You MUST strictly follow these criteria: '{targeted_criteria}'\n\n"
         f"Task:\n{type_instruction}\n\n"
         f"CRITICAL: Avoid repeating the topics of these existing questions: {generated_so_far}\n\n"
         "Return ONLY a clean JSON object conforming to this schema:\n"
@@ -683,7 +714,7 @@ def check_js_syntax(code):
     except Exception:
         return True, []
 
-def run_agent3_critic(q_data, context):
+def run_agent3_critic(q_data, context, flavor="theory"):
     print("  [AGENT 3] System Critic: Validating drafted question...")
     issues = []
     
@@ -699,7 +730,8 @@ def run_agent3_critic(q_data, context):
     if not correct_ans:
         issues.append("Missing correct_answer")
     elif correct_ans not in options:
-        issues.append("Correct answer does not match any of the options exactly")
+        if flavor != "code_debugging":
+            issues.append("Correct answer does not match any of the options exactly")
         
     if code_snippet and isinstance(code_snippet, str) and ("```" in code_snippet):
         match_py = re.search(r'```python\n([\s\S]*?)```', code_snippet)
@@ -707,14 +739,16 @@ def run_agent3_critic(q_data, context):
         
         if match_py:
             code = match_py.group(1)
-            valid, errs = check_python_syntax(code)
-            if not valid:
-                issues.extend(errs)
+            if flavor != "code_debugging":
+                valid, errs = check_python_syntax(code)
+                if not valid:
+                    issues.extend(errs)
         elif match_js:
             code = match_js.group(1)
-            valid, errs = check_js_syntax(code)
-            if not valid:
-                issues.extend(errs)
+            if flavor != "code_debugging":
+                valid, errs = check_js_syntax(code)
+                if not valid:
+                    issues.extend(errs)
                 
     if len(set(options)) < len(options):
         issues.append("Duplicate options detected")
@@ -814,12 +848,15 @@ async def generate_questions(req: GeneratorRequest):
         
     counts = {}
     accumulated_count = 0
-    flavors = list(ratios.keys())
-    for f in flavors[:-1]:
-        c = int(total_count * (ratios[f] / sum_ratios))
+    active_flavors = [f for f in ratios.keys() if ratios[f] > 0]
+    if not active_flavors:
+        active_flavors = ["theory"]
+        
+    for f in active_flavors[:-1]:
+        c = int(round(total_count * (ratios[f] / sum_ratios)))
         counts[f] = c
         accumulated_count += c
-    counts[flavors[-1]] = max(0, total_count - accumulated_count)
+    counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
 
     print(f"")
     print(f"={'='*55}")
@@ -863,29 +900,38 @@ async def generate_questions(req: GeneratorRequest):
         # Initial Draft Generation by Agent 2
         for attempt in range(3):
             try:
-                q_data = run_agent2_generator(concept, flavor, context, generated_so_far)
+                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, req.difficulty)
                 
                 # Validation by Agent 3
-                critic_res = run_agent3_critic(q_data, context)
+                critic_res = run_agent3_critic(q_data, context, flavor)
                 
                 # Self-Correction Loop if failed
                 if critic_res["status"] == "fail":
                     for repair_pass in range(2):
                         print(f"  [AGENT 3] Forcing self-correction repair pass {repair_pass+1}/2...")
                         q_data = run_agent2_repair(q_data, critic_res["issues"], context)
-                        critic_res = run_agent3_critic(q_data, context)
+                        critic_res = run_agent3_critic(q_data, context, flavor)
                         if critic_res["status"] == "pass":
                             break
                 
                 if critic_res["status"] == "pass":
+                    pt = q_data.get("prompt_text", "")
+                    cs = q_data.get("code_snippet")
+                    
+                    if cs and isinstance(cs, str) and len(cs.strip()) > 0:
+                        cs_clean = cs.strip()
+                        if "```" not in cs_clean:
+                            cs_clean = f"```\n{cs_clean}\n```"
+                        pt = f"{pt}\n\n{cs_clean}"
+
                     # Conforming to structured blueprint format
                     q_final = {
                         "id": f"q_id_{str(i+1).zfill(3)}",
                         "type": flavor,
                         "concept_tag": q_data.get("concept_tag", concept.get("concept_tag")),
                         "weight_score": float(concept.get("weight_score", 0.75)),
-                        "prompt_text": q_data.get("prompt_text"),
-                        "code_snippet": q_data.get("code_snippet") or None,
+                        "prompt_text": pt,
+                        "code_snippet": cs or None,
                         "options": q_data.get("options", []),
                         "correct_answer": q_data.get("correct_answer") or q_data.get("correctAnswer"),
                         "explanation": q_data.get("explanation")

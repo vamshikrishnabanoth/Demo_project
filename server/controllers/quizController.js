@@ -103,8 +103,7 @@ const generateFallbackMockQuestions = (count = 5) => {
     return questions;
 };
 
-// Cloud-based Groq fallback or pre-formatted mock fallback
-const generateFallbackQuestions = async (type, content, count = 5, difficulty = 'Medium') => {
+const generateFallbackQuestions = async (type, content, count = 5, difficulty = 'Medium', targetRatios = null) => {
     console.log(`🔄 Local AI failed. Initiating Groq Cloud Fallback...`);
     
     const safeContent = (content && typeof content === 'string') ? content : '';
@@ -113,13 +112,31 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
         try {
             console.log(`🤖 Calling Groq (llama-3.1-8b-instant) for resilient generation...`);
             
+            // Calculate dynamic count allocations based on blended target ratios
+            const ratios = targetRatios || { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 };
+            const theoryCount = Math.round((ratios.theory || 0) * count);
+            const codingCount = Math.round((ratios.code_debugging || 0) * count);
+            const interviewCount = Math.round((ratios.fill_blank || 0) * count);
+            const scenarioCount = Math.round((ratios.scenario || 0) * count);
+            
+            // Adjust rounding errors to match requested total count exactly
+            let totalComputed = theoryCount + codingCount + interviewCount + scenarioCount;
+            let diff = count - totalComputed;
+            let adjustedTheoryCount = Math.max(0, theoryCount + diff);
+
             const prompt = `
                 You are an expert quiz generator.
-                Generate a set of multiple-choice questions based on the following input:
+                Generate a set of strictly Multiple-Choice Questions (MCQs) based on the following input:
                 
                 Topic/Content: ${safeContent.substring(0, 5000)}
                 Difficulty: ${difficulty}
-                Count: ${count}
+                Total Count: ${count}
+                
+                You MUST distribute the generated MCQs precisely across these profile distributions:
+                - Theory MCQs (${adjustedTheoryCount} questions): Test foundational concepts and definitions.
+                - Code Debugging MCQs (${codingCount} questions): Include a code snippet in the question text and test debugging, output tracing, or structural analysis.
+                - Fill-in-the-Blank MCQs (${interviewCount} questions): Focus on trade-offs, comparisons, and technical optimization choices.
+                - Scenario MCQs (${scenarioCount} questions): Focus on real-world system design, production failures, or case studies.
                 
                 Return a JSON object with a single key "questions", which contains an array of question objects.
                 Each question object MUST have exactly these keys:
@@ -241,7 +258,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
     if (!isOnline) {
         console.log(`⚠️ Fine-Tuned AI is offline. Falling back to Groq Cloud.`);
-        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty, target_ratios);
     }
 
     try {
@@ -276,10 +293,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         }
 
         console.log(`⚠️ Fine-Tuned AI returned empty — falling back to Groq.`);
-        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty, target_ratios);
     } catch (err) {
         console.error(`❌ Fine-Tuned AI error: ${err.message} — falling back to Groq.`);
-        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty);
+        return generateFallbackQuestions(type, getFallbackContent(), count, difficulty, target_ratios);
     }
 };
 
@@ -1470,6 +1487,11 @@ exports.generateQuizQuestions = async (req, res) => {
             let sourceType = type || 'topic';
             let combinedTranscript = '';
 
+            let parsedTargetRatios = null;
+            if (target_ratios) {
+                parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
             let parsedInputs = null;
             if (inputs) {
                 parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
@@ -1508,6 +1530,34 @@ exports.generateQuizQuestions = async (req, res) => {
             let parsedTopicWeights = null;
             if (topic_weights) {
                 parsedTopicWeights = typeof topic_weights === 'string' ? JSON.parse(topic_weights) : topic_weights;
+            }
+
+            // Apply Token Density Classifier and Dynamic Weight Allocator
+            let blendedRatios = null;
+            if (parsedTargetRatios) {
+                // Aggregate text from RAG inputs
+                let textChunk = '';
+                if (parsedInputs && parsedInputs.length > 0) {
+                    textChunk = parsedInputs
+                        .filter(inp => inp.type !== 'image' && inp.content)
+                        .map(inp => inp.content)
+                        .join('\n\n');
+                } else if (topic) {
+                    textChunk = topic;
+                }
+
+                if (textChunk && textChunk.trim().length > 0) {
+                    console.log('📄 Aggregated context text for density classification (length:', textChunk.length, ')');
+                    const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
+                    const textDensity = calculateTokenDensity(textChunk);
+                    blendedRatios = computeDynamicBlend(parsedTargetRatios, textDensity);
+                    console.log('📊 Factual Text Density:', textDensity);
+                    console.log('⚖️ Blended Dynamic Ratios passed to Generators:', blendedRatios);
+                } else {
+                    blendedRatios = parsedTargetRatios;
+                }
+            } else {
+                blendedRatios = { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 };
             }
 
             // YouTube validation constraints
@@ -1792,17 +1842,17 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, target_ratios, parsedInputs, parsedTopicWeights);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty, source_material_id, target_ratios);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, target_ratios);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, target_ratios);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios);
             }
 
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
@@ -2044,6 +2094,11 @@ exports.generateQuizFromVoice = async (req, res) => {
         try {
             const { questionCount, difficulty, source_material_id, target_ratios } = req.body;
 
+            let parsedTargetRatios = null;
+            if (target_ratios) {
+                parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
             // ── Stage 0: Uploading / Transcribing ──────────────────────────
             console.log(`\n[Voice Generator Started] Transcribing audio...`);
             updateTaskStage(taskId, 0, 'Transcribing Audio');
@@ -2067,9 +2122,18 @@ exports.generateQuizFromVoice = async (req, res) => {
             console.log(`✅ Transcript length: ${transcript.length} chars`);
             updateTaskStage(taskId, 0, 'Generating Questions');
 
+            let blendedRatios = parsedTargetRatios;
+            if (transcript && transcript.trim().length > 0) {
+                const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
+                const textDensity = calculateTokenDensity(transcript);
+                blendedRatios = computeDynamicBlend(parsedTargetRatios || { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 }, textDensity);
+                console.log('🎙️ Voice Transcript Density Analysis:', textDensity);
+                console.log('⚖️ Blended Dynamic Ratios for Voice:', blendedRatios);
+            }
+
             // ── Stage 0: Generate Questions from transcript ─────────────
             console.log(`[Generator Started] Generating from voice transcript...`);
-            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, target_ratios);
+            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios);
             console.log(`[Questions Generated] count=${draftQuestions.length}`);
 
             // Cleanup audio file
