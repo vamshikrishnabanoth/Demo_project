@@ -26,6 +26,31 @@ export default function CreateQuizTopic() {
     const audioChunksRef = useRef([]);
     const backgroundWorkerRef = useRef(null);
     const wakeLockRef = useRef(null);
+    const [recordingDuration, setRecordingDuration] = useState(0);
+    const [transcribing, setTranscribing] = useState(false);
+
+    const formatTime = (secs) => {
+        const h = Math.floor(secs / 3600);
+        const m = Math.floor((secs % 3600) / 60);
+        const s = secs % 60;
+        return [
+            h > 0 ? h : null,
+            h > 0 ? String(m).padStart(2, '0') : m,
+            String(s).padStart(2, '0')
+        ].filter(x => x !== null).join(':');
+    };
+
+    useEffect(() => {
+        let interval = null;
+        if (recording && !recordingPaused) {
+            interval = setInterval(() => {
+                setRecordingDuration(prev => prev + 1);
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [recording, recordingPaused]);
 
     const requestWakeLock = async () => {
         try {
@@ -194,6 +219,10 @@ export default function CreateQuizTopic() {
     // Live Microphone Recording Logic
     const startRecording = async () => {
         try {
+            // Reset timer duration and loader
+            setRecordingDuration(0);
+            setTranscribing(false);
+
             // 1. Activate Wake Lock
             await requestWakeLock();
 
@@ -273,6 +302,8 @@ export default function CreateQuizTopic() {
                     } catch (err) {
                         console.error('Transcription failed:', err);
                         toast.error('Failed to transcribe voice: ' + (err.response?.data?.msg || err.message), { id: toastId });
+                    } finally {
+                        setTranscribing(false); // SHUT TRANSCRIBING LOADER
                     }
                     
                     // Terminate the background worker when compile completes
@@ -309,6 +340,7 @@ export default function CreateQuizTopic() {
 
     const stopRecording = () => {
         if (mediaRecorder) {
+            setTranscribing(true); // START TRANSCRIBING LOADER
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
             
@@ -325,6 +357,7 @@ export default function CreateQuizTopic() {
 
     const cancelRecording = () => {
         if (mediaRecorder) {
+            setTranscribing(false);
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
 
@@ -669,6 +702,17 @@ export default function CreateQuizTopic() {
                     <div className="flex-grow p-12 flex flex-col items-center justify-center relative min-h-[450px]">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
 
+                        {transcribing && (
+                            <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center text-center p-6 z-30">
+                                <div className="relative w-24 h-24 mb-4 flex items-center justify-center">
+                                    <div className="absolute inset-0 border-4 border-t-[var(--bg-accent)] border-white/5 rounded-full animate-spin"></div>
+                                    <Mic size={36} className="text-[var(--bg-accent)] animate-pulse" />
+                                </div>
+                                <p className="text-sm font-black text-white uppercase italic tracking-wider animate-pulse">⚡ Transcribing Lecture Audio...</p>
+                                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1.5 font-mono">Whisper is analyzing speech patterns locally on your machine</p>
+                            </div>
+                        )}
+
                         <div className="flex flex-col items-center justify-center text-center space-y-6 max-w-lg">
                             {/* Pulsing Mic Circle Button */}
                             <button
@@ -686,10 +730,12 @@ export default function CreateQuizTopic() {
                                     className={`transition-all duration-500 ${
                                         recording ? 'text-red-500 scale-110' : 'text-slate-300 group-hover:text-[var(--text-accent)]'
                                     }`} 
+                                    style={{ transform: recording ? 'translateY(-12px)' : 'none' }}
                                 />
                                 {recording && (
-                                    <span className="absolute bottom-6 text-[9px] font-black text-red-500 uppercase tracking-widest animate-pulse">
-                                        {recordingPaused ? 'PAUSED' : 'RECORDING'}
+                                    <span className="absolute bottom-4 text-[10px] font-black text-red-500 uppercase tracking-widest flex flex-col items-center gap-0.5">
+                                        <span className="animate-pulse">{recordingPaused ? 'PAUSED' : 'RECORDING'}</span>
+                                        <span className="text-[12px] text-white font-mono">{formatTime(recordingDuration)}</span>
                                     </span>
                                 )}
                             </button>

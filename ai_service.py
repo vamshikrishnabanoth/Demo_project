@@ -53,7 +53,11 @@ whisper_model = None
 try:
     print("Loading Local Whisper Engine...")
     from faster_whisper import WhisperModel
-    whisper_model = WhisperModel("base", device="auto", compute_type="float32")
+    try:
+        # Enforce int8 quantization for 4x faster CPU execution
+        whisper_model = WhisperModel("base", device="auto", compute_type="int8")
+    except Exception:
+        whisper_model = WhisperModel("base", device="auto", compute_type="default")
     print("Local Whisper Engine loaded successfully!")
 except Exception as e:
     print(f"⚠️ Warning: Could not initialize local Whisper: {e}. Voice transcription will fall back to cloud/mock.")
