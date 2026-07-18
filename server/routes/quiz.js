@@ -205,6 +205,7 @@ router.post('/submit', auth, quizController.submitAttempt);
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
 router.post('/generate', auth, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
+router.post('/generate/callback/:taskId', quizController.taskCompleteCallback);
 
 // @route   GET api/quiz/generate/status/:taskId
 // @desc    Poll status of an async generation task

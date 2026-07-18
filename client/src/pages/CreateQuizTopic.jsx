@@ -492,10 +492,10 @@ export default function CreateQuizTopic() {
         setSubmitting(true);
         
         const targetRatiosPayload = {
-            theory: ratios.theory / 100,
-            code_debugging: ratios.code_debugging / 100,
-            fill_blank: ratios.fill_blank / 100,
-            scenario: ratios.scenario / 100
+            theory: ratios.theory <= 0 ? 0 : parseFloat((ratios.theory / 100).toFixed(2)),
+            code_debugging: ratios.code_debugging <= 0 ? 0 : parseFloat((ratios.code_debugging / 100).toFixed(2)),
+            fill_blank: ratios.fill_blank <= 0 ? 0 : parseFloat((ratios.fill_blank / 100).toFixed(2)),
+            scenario: ratios.scenario <= 0 ? 0 : parseFloat((ratios.scenario / 100).toFixed(2))
         };
 
         const formData = new FormData();

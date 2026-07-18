@@ -20,7 +20,7 @@ import numpy as np
 import faiss
 import requests
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from fastapi.middleware.cors import CORSMiddleware
@@ -226,6 +226,8 @@ class GeneratorRequest(BaseModel):
     target_ratios: Optional[dict] = None
     source_material_id: Optional[str] = None
     topic_weights: Optional[dict] = None
+    callback_url: Optional[str] = None
+    taskId: Optional[str] = None
 
 class IngestRequest(BaseModel):
     source: str
@@ -937,8 +939,7 @@ def log_pipeline_step(step_number, step_name, data_description, payload):
         print(f"{GREEN}{payload}{RESET}")
     print(f"{GRAY}========================================================{RESET}\n")
 
-@app.post("/generate")
-async def generate_questions(req: GeneratorRequest):
+def execute_generation_logic(req: GeneratorRequest):
     log_pipeline_step("1", "Incoming Payload Extraction", "Raw values from request body received by local Python service", {
         "inputs_count": len(req.inputs) if req.inputs else 0,
         "type": req.type,
@@ -1183,6 +1184,31 @@ async def generate_questions(req: GeneratorRequest):
         raise HTTPException(status_code=500, detail="AI failed to generate any questions.")
 
     return payload_response
+
+def run_generation_task(req: GeneratorRequest):
+    try:
+        result = execute_generation_logic(req)
+        # Post success callback
+        print(f"  [BACKGROUND] Generation complete. Sending success callback to {req.callback_url}...")
+        res = requests.post(req.callback_url, json={"status": "success", "result": result}, headers={"Content-Type": "application/json"}, timeout=30)
+        print(f"  [BACKGROUND] Callback response status: {res.status_code}")
+    except Exception as e:
+        print(f"  [BACKGROUND] Generation failed: {e}. Sending failure callback to {req.callback_url}...")
+        try:
+            res = requests.post(req.callback_url, json={"status": "failed", "error": str(e)}, headers={"Content-Type": "application/json"}, timeout=30)
+            print(f"  [BACKGROUND] Callback response status: {res.status_code}")
+        except Exception as cb_err:
+            print(f"  [BACKGROUND] Error sending failure callback: {cb_err}")
+
+@app.post("/generate")
+async def generate_questions(req: GeneratorRequest, background_tasks: BackgroundTasks):
+    if req.callback_url:
+        print(f"  [PIPELINE] Received async request. Scheduling background generation task. callback_url={req.callback_url}")
+        background_tasks.add_task(run_generation_task, req)
+        return {"status": "accepted", "msg": "Quiz generation started in background", "taskId": req.taskId}
+    
+    # Otherwise synchronous execution
+    return execute_generation_logic(req)
 
 if __name__ == "__main__":
     print(f"AI Service starting on port 8000 using local model: {MODEL_NAME}")

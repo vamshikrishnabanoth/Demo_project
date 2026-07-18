@@ -248,7 +248,7 @@ const checkAiServiceOnline = async (url) => {
 
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 // Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null) => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null) => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
     const getFallbackContent = () => {
@@ -289,10 +289,22 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             payload.topic_weights = topic_weights;
         }
 
+        if (taskId) {
+            payload.taskId = taskId;
+        }
+        if (callbackUrl) {
+            payload.callback_url = callbackUrl;
+        }
+
         const response = await axios.post(`${AI_SERVICE_URL}/generate`, payload, {
             headers: { 'Bypass-Tunnel-Reminder': 'true' },
-            timeout: 300000 // 5 min — fine-tuned model needs time for generator-critic pipeline
+            timeout: callbackUrl ? 15000 : 300000 // Short handshake timeout if async callback is used
         });
+
+        if (response.data && response.data.status === 'accepted') {
+            console.log(`🔌 [ASYNC] Local AI accepted task ${taskId}. Handshake complete.`);
+            return 'ACCEPTED';
+        }
 
         if (response.data && response.data.questions && response.data.questions.length > 0) {
             console.log(`✅ Fine-Tuned AI delivered ${response.data.questions.length} questions.`);
@@ -1890,20 +1902,36 @@ exports.generateQuizQuestions = async (req, res) => {
 
             console.log(`\n[Generator Started] type=${sourceType} topic="${topic ? topic.substring(0, 30) : ''}..." count=${questionCount}`);
             updateTaskStage(taskId, 0, 'Generating Questions');
+            
+            const { getTask: getTaskFromMgr } = require('../services/taskManager');
+            const taskObj = getTaskFromMgr(taskId);
+            if (taskObj) {
+                taskObj.extractedTitle = extractedTitle;
+                taskObj.lobbySummary = lobby_summary;
+                taskObj.aiFlashcards = ai_flashcards;
+                taskObj.difficulty = difficulty || 'Medium';
+            }
+
+            const callbackUrl = `${req.protocol}://${req.get('host')}/api/quiz/generate/callback/${taskId}`;
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
+            }
+
+            if (finalQuestions === 'ACCEPTED') {
+                console.log(`🔌 [ASYNC] Local AI service processing task ${taskId} in background. Pausing Node execution.`);
+                return;
             }
 
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
@@ -2532,4 +2560,63 @@ exports.transcribe = async (req, res) => {
         try { fs.unlinkSync(absolutePath); } catch (_) {}
         res.status(500).json({ msg: 'Transcription failed: ' + err.message });
     }
+};
+
+exports.taskCompleteCallback = async (req, res) => {
+    const { taskId } = req.params;
+    const { status, result, error } = req.body;
+    console.log(`📡 [CALLBACK] Received callback for task ${taskId}: status=${status}`);
+    
+    const { getTask, completeTask, failTask } = require('../services/taskManager');
+    const task = getTask(taskId);
+    if (!task) {
+        console.log(`📡 [CALLBACK] Task ${taskId} not found or expired.`);
+        return res.status(404).json({ msg: 'Task not found or expired' });
+    }
+    
+    if (status === 'success') {
+        let finalQuestions = result.questions;
+        let agentReport = null;
+        try {
+            const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 90000;
+            const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+
+            const pipelineResult = await runAgentPipeline({
+                draftQuestions: finalQuestions,
+                groqClient:     agentGroq,
+                difficulty:     task.difficulty || 'Medium',
+                topic:          task.extractedTitle || '',
+                timeoutMs:      agentTimeoutMs,
+                onProgress: (stage, label) => updateTaskStage(taskId, stage, label),
+            });
+
+            finalQuestions = pipelineResult.questions;
+            agentReport    = pipelineResult.agentReport;
+
+            console.log(`✅ [AgentPipeline CALLBACK] verdict=${agentReport.verdict} | scoreBefore=${agentReport.scoreBefore} | scoreAfter=${agentReport.scoreAfter} | changed=${agentReport.questionsChanged}`);
+        } catch (pipelineErr) {
+            console.warn('⚠️ [AgentPipeline CALLBACK] Non-fatal error — returning raw questions:', pipelineErr.message);
+            agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [], questionDiffs: [] };
+        }
+
+        console.log(`\n[Final Validation CALLBACK] Running final quiz validator...`);
+        updateTaskStage(taskId, 3, 'Preparing Final Quiz');
+        const validation = finalQuizValidator(finalQuestions, task.difficulty || 'Medium');
+
+        completeTask(taskId, {
+            questions:       finalQuestions,
+            title:           task.extractedTitle || 'AI Generated Quiz',
+            duration:        10,
+            agentReport,
+            finalValidation: validation,
+            lobbySummary:    task.lobbySummary || null,
+            aiFlashcards:    task.aiFlashcards ? (typeof task.aiFlashcards === 'string' ? JSON.parse(task.aiFlashcards) : task.aiFlashcards) : null
+        });
+        console.log(`📡 [CALLBACK] Task ${taskId} marked as COMPLETED.`);
+    } else {
+        failTask(taskId, error || 'Generation failed');
+        console.log(`📡 [CALLBACK] Task ${taskId} marked as FAILED. Error: ${error}`);
+    }
+    
+    res.json({ msg: 'Callback processed successfully' });
 };
