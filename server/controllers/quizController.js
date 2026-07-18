@@ -2376,29 +2376,33 @@ exports.analyzeSources = async (req, res) => {
 
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
         const isOnline = await checkAiServiceOnline(AI_SERVICE_URL);
-
         if (isOnline) {
-            console.log('🔌 Local AI is online. Calling local FastAPI for analysis...');
-            const response = await axios.post(`${AI_SERVICE_URL}/analyze-sources`, {
-                inputs
-            }, {
-                headers: { 'Bypass-Tunnel-Reminder': 'true' },
-                timeout: 90000
-            });
-            return res.json(response.data);
-        } else {
-            console.log('⚠️ Local AI is offline. Falling back to Groq Cloud API for source analysis...');
-            if (process.env.GROQ_API_KEY && groq) {
-                const aggregatedText = inputs
-                    .filter(inp => inp.type !== 'image' && inp.content)
-                    .map(inp => inp.content)
-                    .join('\n\n');
+            try {
+                console.log('🔌 Local AI is online. Calling local FastAPI for analysis...');
+                const response = await axios.post(`${AI_SERVICE_URL}/analyze-sources`, {
+                    inputs
+                }, {
+                    headers: { 'Bypass-Tunnel-Reminder': 'true' },
+                    timeout: 90000
+                });
+                return res.json(response.data);
+            } catch (err) {
+                console.error(`⚠️ Local FastAPI /analyze-sources failed: ${err.message}. Falling back to Groq Cloud...`);
+            }
+        }
 
-                if (!aggregatedText || aggregatedText.trim().length < 20) {
-                    return res.status(400).json({ msg: 'Content too short or unextractable for analysis.' });
-                }
+        console.log('⚠️ Local AI is offline or failed. Falling back to Groq Cloud API for source analysis...');
+        if (process.env.GROQ_API_KEY && groq) {
+            const aggregatedText = inputs
+                .filter(inp => inp.type !== 'image' && inp.content)
+                .map(inp => inp.content)
+                .join('\n\n');
 
-                const prompt = `You are an elite academic analyzer. Analyze the textbook/lecture context below.
+            if (!aggregatedText || aggregatedText.trim().length < 20) {
+                return res.status(400).json({ msg: 'Content too short or unextractable for analysis.' });
+            }
+
+            const prompt = `You are an elite academic analyzer. Analyze the textbook/lecture context below.
 
 Context:
 ${aggregatedText.substring(0, 6000)}
@@ -2429,23 +2433,22 @@ Return ONLY a clean JSON object conforming strictly to this format:
   ]
 }`;
 
-                const chatCompletion = await groq.chat.completions.create({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'llama-3.1-8b-instant',
-                    response_format: { type: "json_object" }
-                });
+            const chatCompletion = await groq.chat.completions.create({
+                messages: [{ role: 'user', content: prompt }],
+                model: 'llama-3.1-8b-instant',
+                response_format: { type: "json_object" }
+            });
 
-                const data = JSON.parse(chatCompletion.choices[0].message.content);
-                if (data.relevancy_verdict === 'fail') {
-                    return res.status(422).json({
-                        status: 'validation_error',
-                        message: data.relevancy_reason || 'Non-academic content detected.'
-                    });
-                }
-                return res.json(data);
-            } else {
-                return res.status(503).json({ msg: 'Local AI is offline and Groq API key is missing.' });
+            const data = JSON.parse(chatCompletion.choices[0].message.content);
+            if (data.relevancy_verdict === 'fail') {
+                return res.status(422).json({
+                    status: 'validation_error',
+                    message: data.relevancy_reason || 'Non-academic content detected.'
+                });
             }
+            return res.json(data);
+        } else {
+            return res.status(503).json({ msg: 'Local AI is offline and Groq API key is missing.' });
         }
     } catch (err) {
         console.error('Error in analyzeSources:', err.message);

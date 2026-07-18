@@ -277,6 +277,29 @@ async def ingest_document(req: IngestRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+def call_groq_fallback(prompt, json_mode=True):
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        raise ValueError("Groq API Key is not set in environment.")
+    
+    headers = {
+        "Authorization": f"Bearer {groq_api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messages": [{"role": "user", "content": prompt}],
+        "model": "llama-3.1-8b-instant",
+        "temperature": 0.2
+    }
+    if json_mode:
+        payload["response_format"] = {"type": "json_object"}
+        
+    response = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=45)
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"]
+    else:
+        raise ValueError(f"Groq API returned status {response.status_code}: {response.text}")
+
 def resolve_input_sources(inputs):
     aggregated_texts = []
     for inp in inputs:
@@ -396,8 +419,30 @@ async def analyze_sources(req: AnalyzeRequest):
     except HTTPException as he:
         raise he
     except Exception as e:
-        print(f"Analysis failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        print(f"⚠️ Local Ollama failed or timed out: {e}. Trying Groq Cloud fallback...")
+        if os.getenv("GROQ_API_KEY"):
+            try:
+                raw_text = call_groq_fallback(prompt, json_mode=True)
+                data = robust_json_loads(raw_text)
+                
+                if data.get("relevancy_verdict") == "fail":
+                    raise HTTPException(
+                        status_code=422,
+                        detail={
+                            "status": "validation_error",
+                            "message": data.get("relevancy_reason") or "Non-academic content detected."
+                        }
+                    )
+                    
+                print("✅ Successfully recovered via Groq Cloud fallback!")
+                return data
+            except HTTPException as he2:
+                raise he2
+            except Exception as e2:
+                print(f"❌ Groq fallback also failed: {e2}")
+                raise HTTPException(status_code=500, detail=f"Ollama timed out and Groq fallback failed: {str(e2)}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Ollama timed out/failed and no GROQ_API_KEY is configured. Error: {str(e)}")
 
 @app.post("/transcribe")
 async def transcribe_audio_file(file: UploadFile = File(...)):
