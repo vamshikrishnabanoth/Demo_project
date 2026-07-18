@@ -19,7 +19,7 @@ import tempfile
 import numpy as np
 import faiss
 import requests
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
@@ -200,14 +200,14 @@ class AnalyzeRequest(BaseModel):
     inputs: List[MultiInputSource]
 
 class GeneratorRequest(BaseModel):
-    inputs: List[MultiInputSource] = None
-    type: str = None # Backwards compatibility
-    content: str = None # Backwards compatibility
+    inputs: Optional[List[MultiInputSource]] = None
+    type: Optional[str] = None # Backwards compatibility
+    content: Optional[str] = None # Backwards compatibility
     count: int = 5
     difficulty: str = "Medium"
-    target_ratios: dict = None
-    source_material_id: str = None
-    topic_weights: dict = None
+    target_ratios: Optional[dict] = None
+    source_material_id: Optional[str] = None
+    topic_weights: Optional[dict] = None
 
 class IngestRequest(BaseModel):
     source: str
