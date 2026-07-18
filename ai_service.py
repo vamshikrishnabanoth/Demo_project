@@ -701,7 +701,7 @@ def check_js_syntax(code):
     except Exception:
         return True, []
 
-def run_agent3_critic(q_data, context):
+def run_agent3_critic(q_data, context, flavor="theory"):
     print("  [AGENT 3] System Critic: Validating drafted question...")
     issues = []
     
@@ -725,14 +725,16 @@ def run_agent3_critic(q_data, context):
         
         if match_py:
             code = match_py.group(1)
-            valid, errs = check_python_syntax(code)
-            if not valid:
-                issues.extend(errs)
+            if flavor != "code_debugging":
+                valid, errs = check_python_syntax(code)
+                if not valid:
+                    issues.extend(errs)
         elif match_js:
             code = match_js.group(1)
-            valid, errs = check_js_syntax(code)
-            if not valid:
-                issues.extend(errs)
+            if flavor != "code_debugging":
+                valid, errs = check_js_syntax(code)
+                if not valid:
+                    issues.extend(errs)
                 
     if len(set(options)) < len(options):
         issues.append("Duplicate options detected")
@@ -832,12 +834,15 @@ async def generate_questions(req: GeneratorRequest):
         
     counts = {}
     accumulated_count = 0
-    flavors = list(ratios.keys())
-    for f in flavors[:-1]:
-        c = int(total_count * (ratios[f] / sum_ratios))
+    active_flavors = [f for f in ratios.keys() if ratios[f] > 0]
+    if not active_flavors:
+        active_flavors = ["theory"]
+        
+    for f in active_flavors[:-1]:
+        c = int(round(total_count * (ratios[f] / sum_ratios)))
         counts[f] = c
         accumulated_count += c
-    counts[flavors[-1]] = max(0, total_count - accumulated_count)
+    counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
 
     print(f"")
     print(f"={'='*55}")
@@ -884,14 +889,14 @@ async def generate_questions(req: GeneratorRequest):
                 q_data = run_agent2_generator(concept, flavor, context, generated_so_far, req.difficulty)
                 
                 # Validation by Agent 3
-                critic_res = run_agent3_critic(q_data, context)
+                critic_res = run_agent3_critic(q_data, context, flavor)
                 
                 # Self-Correction Loop if failed
                 if critic_res["status"] == "fail":
                     for repair_pass in range(2):
                         print(f"  [AGENT 3] Forcing self-correction repair pass {repair_pass+1}/2...")
                         q_data = run_agent2_repair(q_data, critic_res["issues"], context)
-                        critic_res = run_agent3_critic(q_data, context)
+                        critic_res = run_agent3_critic(q_data, context, flavor)
                         if critic_res["status"] == "pass":
                             break
                 
