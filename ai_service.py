@@ -578,7 +578,7 @@ def run_agent1_analyzer(context, count):
     
     return [{"concept_tag": "General Course Concept", "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
 
-def run_agent2_generator(concept, question_type, context, generated_so_far=""):
+def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium"):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
     print(f"  [AGENT 2] Flavor Generator: Creating question on '{concept_tag}' (flavor: {question_type})...")
@@ -608,11 +608,42 @@ def run_agent2_generator(concept, question_type, context, generated_so_far=""):
             "The options must provide alternative high-level system resolutions where only one accurately balances safety, efficiency, and scalability. Correct answer goes to correct_answer."
         )
 
+    difficultyPrompts = {
+        "easy": {
+            "theory": "Focus on straightforward definitions and core protocol identification.",
+            "coding": "Provide short, simple code snippets. Focus on basic output prediction or obvious missing syntax errors.",
+            "fill_blank": "Ask about standard definitions or clear, elementary differences between two core concepts.",
+            "scenario": "Simple, single-variable real-world applications with straightforward outcomes."
+        },
+        "medium": {
+            "theory": "Focus on how mechanisms interact with each other and standard architectural workflows.",
+            "coding": "Include loops, basic algorithmic structures, or functional tracking where state changes.",
+            "fill_blank": "Focus on standard efficiency trade-offs, like time-complexity differences.",
+            "scenario": "Introduce minor engineering bottlenecks or common edge-case system failures."
+        },
+        "hard": {
+            "theory": "Test deep internal mechanics, architectural limitations, and complex structural constraints.",
+            "coding": "Provide highly optimized or multi-threaded code snippets. Include hidden bugs, memory leaks, or tricky recursion logic.",
+            "fill_blank": "Demand defense of custom system design choices under heavy resource constraints or scale requirements.",
+            "scenario": "Construct deep, multi-layered system design failures with conflicting parameters (e.g., consistency vs availability)."
+        }
+    }
+    
+    diff_key = difficulty.lower()
+    if diff_key not in difficultyPrompts: diff_key = "medium"
+    
+    matrix_cat = question_type
+    if matrix_cat == "code_debugging": matrix_cat = "coding"
+    
+    targeted_criteria = difficultyPrompts[diff_key].get(matrix_cat, "Focus on general knowledge.")
+
     prompt = (
         "You are an elite Computer Science and Engineering curriculum developer. Your task is to write high-fidelity academic evaluations.\n\n"
         f"Context chunks:\n{context[:2000]}\n\n"
         f"Target Concept: {concept_tag} (Importance Weight: {weight_score})\n"
         f"Question Type: {question_type}\n\n"
+        f"CRITICAL DIFFICULTY INSTRUCTION ({difficulty.upper()}):\n"
+        f"You MUST strictly follow these criteria: '{targeted_criteria}'\n\n"
         f"Task:\n{type_instruction}\n\n"
         f"CRITICAL: Avoid repeating the topics of these existing questions: {generated_so_far}\n\n"
         "Return ONLY a clean JSON object conforming to this schema:\n"
@@ -850,7 +881,7 @@ async def generate_questions(req: GeneratorRequest):
         # Initial Draft Generation by Agent 2
         for attempt in range(3):
             try:
-                q_data = run_agent2_generator(concept, flavor, context, generated_so_far)
+                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, req.difficulty)
                 
                 # Validation by Agent 3
                 critic_res = run_agent3_critic(q_data, context)
