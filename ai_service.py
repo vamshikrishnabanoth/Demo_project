@@ -68,7 +68,21 @@ except Exception as e:
 def get_db_connection():
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL is not set in environment.")
-    return psycopg2.connect(DATABASE_URL)
+    
+    url = DATABASE_URL
+    if "connection_limit" in url:
+        import urllib.parse as urlparse
+        try:
+            parsed = urlparse.urlparse(url)
+            query = urlparse.parse_qs(parsed.query)
+            query.pop('connection_limit', None)
+            new_query = urlparse.urlencode(query, doseq=True)
+            parsed = parsed._replace(query=new_query)
+            url = urlparse.urlunparse(parsed)
+        except Exception as e:
+            print(f"Error stripping connection_limit: {e}")
+            
+    return psycopg2.connect(url)
 
 def recursive_token_splitter(text, max_tokens=500, overlap_percent=10):
     if not text or not text.strip():
