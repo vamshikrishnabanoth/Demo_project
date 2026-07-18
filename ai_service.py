@@ -19,6 +19,7 @@ import tempfile
 import numpy as np
 import faiss
 import requests
+from typing import List
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
@@ -166,6 +167,9 @@ def get_relevant_context(text, query, top_k=3):
 # -----------------------------
 # 3. FASTAPI SERVICE
 # -----------------------------
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -173,6 +177,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    print("❌ Validation Error Details:", exc.errors())
+    print("❌ Request Body Sent:", exc.body)
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors(), "body": exc.body},
+    )
 
 @app.get("/")
 async def root():
@@ -184,10 +197,10 @@ class MultiInputSource(BaseModel):
     source_name: str = "Unknown Source"
 
 class AnalyzeRequest(BaseModel):
-    inputs: list[MultiInputSource]
+    inputs: List[MultiInputSource]
 
 class GeneratorRequest(BaseModel):
-    inputs: list[MultiInputSource] = None
+    inputs: List[MultiInputSource] = None
     type: str = None # Backwards compatibility
     content: str = None # Backwards compatibility
     count: int = 5
