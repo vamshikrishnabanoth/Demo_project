@@ -431,7 +431,7 @@ async def analyze_sources(req: AnalyzeRequest):
     }
     
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+        response = requests.post(OLLAMA_URL, json=payload, timeout=180)
         if response.status_code == 200:
             raw_text = response.json().get("response", "")
             data = robust_json_loads(raw_text)
@@ -658,7 +658,7 @@ def run_agent1_analyzer(context, count):
         }
     }
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+        response = requests.post(OLLAMA_URL, json=payload, timeout=180)
         if response.status_code == 200:
             raw_text = response.json().get("response", "")
             data = robust_json_loads(raw_text)
@@ -770,7 +770,7 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         }
     }
     
-    response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+    response = requests.post(OLLAMA_URL, json=payload, timeout=180)
     if response.status_code == 200:
         raw_text = response.json().get("response", "")
         data = robust_json_loads(raw_text)
@@ -914,7 +914,7 @@ def run_agent2_repair(q_data, issues, context):
         }
     }
     
-    response = requests.post(OLLAMA_URL, json=payload, timeout=90)
+    response = requests.post(OLLAMA_URL, json=payload, timeout=180)
     if response.status_code == 200:
         raw_text = response.json().get("response", "")
         data = robust_json_loads(raw_text)
@@ -1072,6 +1072,59 @@ async def generate_questions(req: GeneratorRequest):
                     print(f"  [REJECT] Attempt {attempt+1} failed QA validation: {critic_res['issues']}")
             except Exception as e:
                 print(f"  [WARN] Attempt {attempt+1} execution error: {e}")
+                err_str = str(e).lower()
+                if "timeout" in err_str or "read timed out" in err_str or "connection" in err_str:
+                    print("  [AGENT 2] ⚡ Timeout detected. Instantly routing this question to Groq Cloud safety handler...")
+                    if os.getenv("GROQ_API_KEY"):
+                        try:
+                            # Construct prompt for Groq to generate a single question conforming to schema
+                            prompt = (
+                                "You are an elite Computer Science curriculum developer. Generate a single question.\n\n"
+                                f"Context:\n{context[:2000]}\n\n"
+                                f"Concept: {concept.get('concept_tag')}\n"
+                                f"Type: {flavor}\n"
+                                f"Difficulty: {req.difficulty}\n"
+                                f"Already generated questions: {generated_so_far}\n\n"
+                                "Return ONLY a clean JSON object conforming to this schema:\n"
+                                "{\n"
+                                "  \"concept_tag\": \"concept\",\n"
+                                "  \"prompt_text\": \"Question text...\",\n"
+                                "  \"code_snippet\": \"Markdown code snippet or null\",\n"
+                                "  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n"
+                                "  \"correct_answer\": \"Exact copy of correct option from options\",\n"
+                                "  \"explanation\": \"Detailed explanation explaining the solution...\"\n"
+                                "}"
+                            )
+                            raw_text = call_groq_fallback(prompt, json_mode=True)
+                            q_data = robust_json_loads(raw_text)
+                            
+                            # Standardize snippet formatting
+                            pt = q_data.get("prompt_text", "")
+                            cs = q_data.get("code_snippet")
+                            if cs and isinstance(cs, str) and len(cs.strip()) > 0:
+                                cs_clean = cs.strip()
+                                if "```" not in cs_clean:
+                                    cs_clean = f"```\n{cs_clean}\n```"
+                                pt = f"{pt}\n\n{cs_clean}"
+
+                            q_final = {
+                                "id": f"q_id_{str(i+1).zfill(3)}",
+                                "type": flavor,
+                                "concept_tag": q_data.get("concept_tag", concept.get("concept_tag")),
+                                "weight_score": float(concept.get("weight_score", 0.75)),
+                                "prompt_text": pt,
+                                "code_snippet": cs or None,
+                                "options": q_data.get("options", []),
+                                "correct_answer": q_data.get("correct_answer") or q_data.get("correctAnswer"),
+                                "explanation": q_data.get("explanation")
+                            }
+                            questions.append(q_final)
+                            generated_so_far += f" [{q_final['prompt_text']}] "
+                            print(f"  [ACCEPT] Question {i+1} accepted via Groq Cloud fallback safety handler ✓")
+                            q_success = True
+                            break
+                        except Exception as ge:
+                            print(f"  [AGENT 2] Groq fallback safety handler failed: {ge}")
 
         if not q_success:
             print(f"  [FAIL] Failed to generate a clean {flavor} question after 3 attempts.")

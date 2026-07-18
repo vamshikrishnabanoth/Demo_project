@@ -2389,7 +2389,7 @@ exports.analyzeSources = async (req, res) => {
                     inputs
                 }, {
                     headers: { 'Bypass-Tunnel-Reminder': 'true' },
-                    timeout: 90000
+                    timeout: 180000
                 });
                 return res.json(response.data);
             } catch (err) {
