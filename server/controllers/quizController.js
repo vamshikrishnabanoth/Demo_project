@@ -1488,6 +1488,11 @@ exports.generateQuizQuestions = async (req, res) => {
     // Run entire pipeline in background (non-blocking)
     setImmediate(async () => {
         try {
+            console.log('\n=================== [PAYLOAD DEBUG] ===================');
+            console.log('Incoming req.body payload:');
+            console.log(JSON.stringify(req.body, null, 2));
+            console.log('========================================================\n');
+
             let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts } = req.body;
             let extractedTitle = topic || 'AI Generated Quiz';
             let sourceType = type || 'topic';
