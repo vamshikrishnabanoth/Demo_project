@@ -1800,7 +1800,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, parsedTargetRatios, parsedInputs, parsedTopicWeights);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty, source_material_id, parsedTargetRatios);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, parsedTargetRatios);
                 } else {
                     finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, parsedTargetRatios);
                 }
