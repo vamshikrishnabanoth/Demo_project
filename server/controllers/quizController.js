@@ -192,7 +192,7 @@ const extractText = async (filePath) => {
             return new Promise((resolve, reject) => {
                 officeParser.parseOffice(filePath, (data, err) => {
                     if (err) return reject(err);
-                    resolve(data);
+                    resolve(typeof data === 'string' ? data : JSON.stringify(data));
                 });
             });
         }
