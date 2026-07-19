@@ -1705,12 +1705,25 @@ exports.generateQuizQuestions = async (req, res) => {
                     const textDensity = calculateTokenDensity(textChunk);
                     blendedRatios = computeDynamicBlend(parsedTargetRatios, textDensity);
                     console.log('📊 Factual Text Density:', textDensity);
-                    console.log('⚖️ Blended Dynamic Ratios passed to Generators:', blendedRatios);
+                    
+                    const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
+                    const isNonComp = keywords.some(kw => extractedTitle.toLowerCase().includes(kw));
+                    const formalNames = {
+                        CONCEPTS_AND_DEFINITIONS: "Core Theory",
+                        COMPARISONS_AND_TRADEOFFS: "Analytical Reasoning",
+                        FORMULAS_AND_CALCULATIONS: "Numerical Design",
+                        CASE_STUDIES_AND_SCENARIOS: "Real-World Application",
+                        PRACTICAL_AND_LAB_TASKS: isNonComp ? "Design Optimization & Lab Tracing" : "Implementation Synthesis"
+                    };
+                    console.log('⚖️ Blended Dynamic Ratios passed to Generators:');
+                    Object.entries(blendedRatios).forEach(([k, v]) => {
+                        console.log(`   - ${k} (${formalNames[k]}): ${(v * 100).toFixed(0)}%`);
+                    });
                 } else {
                     blendedRatios = parsedTargetRatios;
                 }
             } else {
-                blendedRatios = { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 };
+                blendedRatios = { CONCEPTS_AND_DEFINITIONS: 0.2, COMPARISONS_AND_TRADEOFFS: 0.2, FORMULAS_AND_CALCULATIONS: 0.2, CASE_STUDIES_AND_SCENARIOS: 0.2, PRACTICAL_AND_LAB_TASKS: 0.2 };
             }
 
             logPipelineStep("3", "Dynamic Weight Allocation Matrix", "Alpha blend execution with Hard Zero enforcement", {
@@ -2300,9 +2313,22 @@ exports.generateQuizFromVoice = async (req, res) => {
             if (transcript && transcript.trim().length > 0) {
                 const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
                 const textDensity = calculateTokenDensity(transcript);
-                blendedRatios = computeDynamicBlend(parsedTargetRatios || { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 }, textDensity);
+                blendedRatios = computeDynamicBlend(parsedTargetRatios || { CONCEPTS_AND_DEFINITIONS: 0.2, COMPARISONS_AND_TRADEOFFS: 0.2, FORMULAS_AND_CALCULATIONS: 0.2, CASE_STUDIES_AND_SCENARIOS: 0.2, PRACTICAL_AND_LAB_TASKS: 0.2 }, textDensity);
                 console.log('🎙️ Voice Transcript Density Analysis:', textDensity);
-                console.log('⚖️ Blended Dynamic Ratios for Voice:', blendedRatios);
+                
+                const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
+                const isNonComp = keywords.some(kw => (extractedTitle || '').toLowerCase().includes(kw));
+                const formalNames = {
+                    CONCEPTS_AND_DEFINITIONS: "Core Theory",
+                    COMPARISONS_AND_TRADEOFFS: "Analytical Reasoning",
+                    FORMULAS_AND_CALCULATIONS: "Numerical Design",
+                    CASE_STUDIES_AND_SCENARIOS: "Real-World Application",
+                    PRACTICAL_AND_LAB_TASKS: isNonComp ? "Design Optimization & Lab Tracing" : "Implementation Synthesis"
+                };
+                console.log('⚖️ Blended Dynamic Ratios for Voice:');
+                Object.entries(blendedRatios).forEach(([k, v]) => {
+                    console.log(`   - ${k} (${formalNames[k]}): ${(v * 100).toFixed(0)}%`);
+                });
             }
 
             // ── Stage 0: Generate Questions from transcript ─────────────

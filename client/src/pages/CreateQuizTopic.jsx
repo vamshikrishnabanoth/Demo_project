@@ -119,11 +119,11 @@ export default function CreateQuizTopic() {
 
     // Dynamic question flavor state (sums to 100)
     const [ratios, setRatios] = useState({
-        CORE_THEORY: 20,
-        ANALYTICAL_REASONING: 20,
-        NUMERICAL_DESIGN: 20,
-        REAL_WORLD_APPLICATION: 20,
-        IMPLEMENTATION_SYNTHESIS: 20
+        CONCEPTS_AND_DEFINITIONS: 20,
+        COMPARISONS_AND_TRADEOFFS: 20,
+        FORMULAS_AND_CALCULATIONS: 20,
+        CASE_STUDIES_AND_SCENARIOS: 20,
+        PRACTICAL_AND_LAB_TASKS: 20
     });
     const [aiBaselineRatios, setAiBaselineRatios] = useState(null);
 
@@ -238,7 +238,7 @@ export default function CreateQuizTopic() {
             return;
         }
 
-        const keys = ['CORE_THEORY', 'ANALYTICAL_REASONING', 'NUMERICAL_DESIGN', 'REAL_WORLD_APPLICATION', 'IMPLEMENTATION_SYNTHESIS'];
+        const keys = ['CONCEPTS_AND_DEFINITIONS', 'COMPARISONS_AND_TRADEOFFS', 'FORMULAS_AND_CALCULATIONS', 'CASE_STUDIES_AND_SCENARIOS', 'PRACTICAL_AND_LAB_TASKS'];
         const otherFlavors = keys.filter(f => f !== changedFlavor);
         const currentOthersSum = otherFlavors.reduce((sum, f) => sum + ratios[f], 0);
         const remaining = 100 - val;
@@ -461,7 +461,7 @@ export default function CreateQuizTopic() {
                 file: file,
                 source_name: file.name,
                 startPage: 1,
-                endPage: 999
+                endPage: ''
             };
         });
 
@@ -510,11 +510,11 @@ export default function CreateQuizTopic() {
                 if (res.data.ai_recommendation) {
                     const rec = res.data.ai_recommendation;
                     const baseline = {
-                        CORE_THEORY: Math.round((rec.CORE_THEORY || 0) * 100),
-                        ANALYTICAL_REASONING: Math.round((rec.ANALYTICAL_REASONING || 0) * 100),
-                        NUMERICAL_DESIGN: Math.round((rec.NUMERICAL_DESIGN || 0) * 100),
-                        REAL_WORLD_APPLICATION: Math.round((rec.REAL_WORLD_APPLICATION || 0) * 100),
-                        IMPLEMENTATION_SYNTHESIS: Math.round((rec.IMPLEMENTATION_SYNTHESIS || 0) * 100)
+                        CONCEPTS_AND_DEFINITIONS: Math.round((rec.CONCEPTS_AND_DEFINITIONS || rec.CORE_THEORY || 0) * 100),
+                        COMPARISONS_AND_TRADEOFFS: Math.round((rec.COMPARISONS_AND_TRADEOFFS || rec.ANALYTICAL_REASONING || 0) * 100),
+                        FORMULAS_AND_CALCULATIONS: Math.round((rec.FORMULAS_AND_CALCULATIONS || rec.NUMERICAL_DESIGN || 0) * 100),
+                        CASE_STUDIES_AND_SCENARIOS: Math.round((rec.CASE_STUDIES_AND_SCENARIOS || rec.REAL_WORLD_APPLICATION || 0) * 100),
+                        PRACTICAL_AND_LAB_TASKS: Math.round((rec.PRACTICAL_AND_LAB_TASKS || rec.IMPLEMENTATION_SYNTHESIS || 0) * 100)
                     };
                     let sumRec = Object.values(baseline).reduce((s, v) => s + v, 0);
                     if (sumRec !== 100 && sumRec > 0) {
@@ -522,21 +522,21 @@ export default function CreateQuizTopic() {
                         const maxKey = keys.reduce((a, b) => baseline[a] > baseline[b] ? a : b);
                         baseline[maxKey] += (100 - sumRec);
                     } else if (sumRec === 0) {
-                        baseline.CORE_THEORY = 20;
-                        baseline.ANALYTICAL_REASONING = 20;
-                        baseline.NUMERICAL_DESIGN = 20;
-                        baseline.REAL_WORLD_APPLICATION = 20;
-                        baseline.IMPLEMENTATION_SYNTHESIS = 20;
+                        baseline.CONCEPTS_AND_DEFINITIONS = 20;
+                        baseline.COMPARISONS_AND_TRADEOFFS = 20;
+                        baseline.FORMULAS_AND_CALCULATIONS = 20;
+                        baseline.CASE_STUDIES_AND_SCENARIOS = 20;
+                        baseline.PRACTICAL_AND_LAB_TASKS = 20;
                     }
                     setAiBaselineRatios(baseline);
                     setRatios(baseline);
                 } else {
                     const defaultBase = {
-                        CORE_THEORY: 20,
-                        ANALYTICAL_REASONING: 20,
-                        NUMERICAL_DESIGN: 20,
-                        REAL_WORLD_APPLICATION: 20,
-                        IMPLEMENTATION_SYNTHESIS: 20
+                        CONCEPTS_AND_DEFINITIONS: 20,
+                        COMPARISONS_AND_TRADEOFFS: 20,
+                        FORMULAS_AND_CALCULATIONS: 20,
+                        CASE_STUDIES_AND_SCENARIOS: 20,
+                        PRACTICAL_AND_LAB_TASKS: 20
                     };
                     setAiBaselineRatios(defaultBase);
                     setRatios(defaultBase);
@@ -581,11 +581,11 @@ export default function CreateQuizTopic() {
         setSubmitting(true);
         
         const targetRatiosPayload = {
-            CORE_THEORY: ratios.CORE_THEORY <= 0 ? 0 : parseFloat((ratios.CORE_THEORY / 100).toFixed(2)),
-            ANALYTICAL_REASONING: ratios.ANALYTICAL_REASONING <= 0 ? 0 : parseFloat((ratios.ANALYTICAL_REASONING / 100).toFixed(2)),
-            NUMERICAL_DESIGN: ratios.NUMERICAL_DESIGN <= 0 ? 0 : parseFloat((ratios.NUMERICAL_DESIGN / 100).toFixed(2)),
-            REAL_WORLD_APPLICATION: ratios.REAL_WORLD_APPLICATION <= 0 ? 0 : parseFloat((ratios.REAL_WORLD_APPLICATION / 100).toFixed(2)),
-            IMPLEMENTATION_SYNTHESIS: ratios.IMPLEMENTATION_SYNTHESIS <= 0 ? 0 : parseFloat((ratios.IMPLEMENTATION_SYNTHESIS / 100).toFixed(2))
+            CONCEPTS_AND_DEFINITIONS: ratios.CONCEPTS_AND_DEFINITIONS <= 0 ? 0 : parseFloat((ratios.CONCEPTS_AND_DEFINITIONS / 100).toFixed(2)),
+            COMPARISONS_AND_TRADEOFFS: ratios.COMPARISONS_AND_TRADEOFFS <= 0 ? 0 : parseFloat((ratios.COMPARISONS_AND_TRADEOFFS / 100).toFixed(2)),
+            FORMULAS_AND_CALCULATIONS: ratios.FORMULAS_AND_CALCULATIONS <= 0 ? 0 : parseFloat((ratios.FORMULAS_AND_CALCULATIONS / 100).toFixed(2)),
+            CASE_STUDIES_AND_SCENARIOS: ratios.CASE_STUDIES_AND_SCENARIOS <= 0 ? 0 : parseFloat((ratios.CASE_STUDIES_AND_SCENARIOS / 100).toFixed(2)),
+            PRACTICAL_AND_LAB_TASKS: ratios.PRACTICAL_AND_LAB_TASKS <= 0 ? 0 : parseFloat((ratios.PRACTICAL_AND_LAB_TASKS / 100).toFixed(2))
         };
 
         const formData = new FormData();
@@ -1093,55 +1093,55 @@ export default function CreateQuizTopic() {
                                 {!ratiosModified ? (
                                     <div className="space-y-6">
                                         <div className="grid grid-cols-2 gap-4">
-                                            {/* CORE_THEORY */}
+                                            {/* CONCEPTS_AND_DEFINITIONS */}
                                             <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
-                                                    checked={ratios.CORE_THEORY > 0}
+                                                    checked={ratios.CONCEPTS_AND_DEFINITIONS > 0}
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
                                                 <span className="text-xs font-black uppercase text-white">Theory</span>
                                             </div>
 
-                                            {/* ANALYTICAL_REASONING */}
+                                            {/* COMPARISONS_AND_TRADEOFFS */}
                                             <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
-                                                    checked={ratios.ANALYTICAL_REASONING > 0}
+                                                    checked={ratios.COMPARISONS_AND_TRADEOFFS > 0}
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-purple-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
                                                 <span className="text-xs font-black uppercase text-white">Analytical Reasoning</span>
                                             </div>
 
-                                            {/* NUMERICAL_DESIGN */}
+                                            {/* FORMULAS_AND_CALCULATIONS */}
                                             <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
-                                                    checked={ratios.NUMERICAL_DESIGN > 0}
+                                                    checked={ratios.FORMULAS_AND_CALCULATIONS > 0}
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
                                                 <span className="text-xs font-black uppercase text-white">Numerical Design</span>
                                             </div>
 
-                                            {/* REAL_WORLD_APPLICATION */}
+                                            {/* CASE_STUDIES_AND_SCENARIOS */}
                                             <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
-                                                    checked={ratios.REAL_WORLD_APPLICATION > 0}
+                                                    checked={ratios.CASE_STUDIES_AND_SCENARIOS > 0}
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
                                                 <span className="text-xs font-black uppercase text-white">Real-World Application</span>
                                             </div>
 
-                                            {/* IMPLEMENTATION_SYNTHESIS */}
+                                            {/* PRACTICAL_AND_LAB_TASKS */}
                                             <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3 col-span-2 justify-center">
                                                 <input 
                                                     type="checkbox"
-                                                    checked={ratios.IMPLEMENTATION_SYNTHESIS > 0}
+                                                    checked={ratios.PRACTICAL_AND_LAB_TASKS > 0}
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-rose-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
@@ -1179,84 +1179,84 @@ export default function CreateQuizTopic() {
                                      <div className="space-y-4">
                                          <p className="text-xs font-black text-white uppercase italic">Customize Format Ratios</p>
                                          <div className="space-y-4">
-                                              {/* CORE_THEORY */}
+                                              {/* CONCEPTS_AND_DEFINITIONS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-blue-400">Theory</span>
-                                                      <span className="text-white">{ratios.CORE_THEORY}%</span>
+                                                      <span className="text-white">{ratios.CONCEPTS_AND_DEFINITIONS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
                                                       min="0"
                                                       max="100"
-                                                      value={ratios.CORE_THEORY}
-                                                      onChange={(e) => handleSliderChange('CORE_THEORY', e.target.value)}
+                                                      value={ratios.CONCEPTS_AND_DEFINITIONS}
+                                                      onChange={(e) => handleSliderChange('CONCEPTS_AND_DEFINITIONS', e.target.value)}
                                                       className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>
 
-                                              {/* ANALYTICAL_REASONING */}
+                                              {/* COMPARISONS_AND_TRADEOFFS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-purple-400">Analytical Reasoning</span>
-                                                      <span className="text-white">{ratios.ANALYTICAL_REASONING}%</span>
+                                                      <span className="text-white">{ratios.COMPARISONS_AND_TRADEOFFS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
                                                       min="0"
                                                       max="100"
-                                                      value={ratios.ANALYTICAL_REASONING}
-                                                      onChange={(e) => handleSliderChange('ANALYTICAL_REASONING', e.target.value)}
+                                                      value={ratios.COMPARISONS_AND_TRADEOFFS}
+                                                      onChange={(e) => handleSliderChange('COMPARISONS_AND_TRADEOFFS', e.target.value)}
                                                       className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>
 
-                                              {/* NUMERICAL_DESIGN */}
+                                              {/* FORMULAS_AND_CALCULATIONS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-amber-400">Numerical Design</span>
-                                                      <span className="text-white">{ratios.NUMERICAL_DESIGN}%</span>
+                                                      <span className="text-white">{ratios.FORMULAS_AND_CALCULATIONS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
                                                       min="0"
                                                       max="100"
-                                                      value={ratios.NUMERICAL_DESIGN}
-                                                      onChange={(e) => handleSliderChange('NUMERICAL_DESIGN', e.target.value)}
+                                                      value={ratios.FORMULAS_AND_CALCULATIONS}
+                                                      onChange={(e) => handleSliderChange('FORMULAS_AND_CALCULATIONS', e.target.value)}
                                                       className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>
 
-                                              {/* REAL_WORLD_APPLICATION */}
+                                              {/* CASE_STUDIES_AND_SCENARIOS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-emerald-400">Real-World Application</span>
-                                                      <span className="text-white">{ratios.REAL_WORLD_APPLICATION}%</span>
+                                                      <span className="text-white">{ratios.CASE_STUDIES_AND_SCENARIOS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
                                                       min="0"
                                                       max="100"
-                                                      value={ratios.REAL_WORLD_APPLICATION}
-                                                      onChange={(e) => handleSliderChange('REAL_WORLD_APPLICATION', e.target.value)}
+                                                      value={ratios.CASE_STUDIES_AND_SCENARIOS}
+                                                      onChange={(e) => handleSliderChange('CASE_STUDIES_AND_SCENARIOS', e.target.value)}
                                                       className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>
 
-                                              {/* IMPLEMENTATION_SYNTHESIS */}
+                                              {/* PRACTICAL_AND_LAB_TASKS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-rose-400">
                                                           {isNonComputational ? "Design Optimization & Lab Tracing" : "Implementation & Synthesis"}
                                                       </span>
-                                                      <span className="text-white">{ratios.IMPLEMENTATION_SYNTHESIS}%</span>
+                                                      <span className="text-white">{ratios.PRACTICAL_AND_LAB_TASKS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
                                                       min="0"
                                                       max="100"
-                                                      value={ratios.IMPLEMENTATION_SYNTHESIS}
-                                                      onChange={(e) => handleSliderChange('IMPLEMENTATION_SYNTHESIS', e.target.value)}
+                                                      value={ratios.PRACTICAL_AND_LAB_TASKS}
+                                                      onChange={(e) => handleSliderChange('PRACTICAL_AND_LAB_TASKS', e.target.value)}
                                                       className="w-full accent-rose-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>

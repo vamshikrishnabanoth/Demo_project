@@ -604,11 +604,11 @@ async def analyze_sources(req: AnalyzeRequest):
         "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
         "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
         "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
-        "   - 'CORE_THEORY' (Concepts, Explanations, Viva)\n"
-        "   - 'ANALYTICAL_REASONING' (Trade-offs, Comparisons, Error analysis)\n"
-        "   - 'NUMERICAL_DESIGN' (Calculations, Architecture, Diagram tracing)\n"
-        "   - 'REAL_WORLD_APPLICATION' (Case studies, Engineering scenarios)\n"
-        "   - 'IMPLEMENTATION_SYNTHESIS' (Coding, Debugging, Practical compilation)\n"
+        "   - 'CONCEPTS_AND_DEFINITIONS' (Core Theory)\n"
+        "   - 'COMPARISONS_AND_TRADEOFFS' (Analytical Reasoning)\n"
+        "   - 'FORMULAS_AND_CALCULATIONS' (Numerical Design)\n"
+        "   - 'CASE_STUDIES_AND_SCENARIOS' (Real-World Application)\n"
+        "   - 'PRACTICAL_AND_LAB_TASKS' (Implementation Synthesis)\n"
         "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n"
         "6. Classify contextual examples into either 'CLASSIC_DOMAIN_STANDARD' (foundational standard examples common to the domain) or 'TRANSIENT_ANALOGY' (casual/metaphorical settings or temporary stories). If an example is classified as a 'TRANSIENT_ANALOGY', extract the underlying mathematical/logical rule, and place the specific characters/names/settings used into an 'isolated_narratives' exclusion array of strings.\n\n"
         "Return ONLY a clean JSON object conforming strictly to this format:\n"
@@ -620,11 +620,11 @@ async def analyze_sources(req: AnalyzeRequest):
         "    {\"question\": \"...\", \"answer\": \"...\"}\n"
         "  ],\n"
         "  \"ai_recommendation\": {\n"
-        "    \"CORE_THEORY\": 0.2,\n"
-        "    \"ANALYTICAL_REASONING\": 0.2,\n"
-        "    \"NUMERICAL_DESIGN\": 0.2,\n"
-        "    \"REAL_WORLD_APPLICATION\": 0.2,\n"
-        "    \"IMPLEMENTATION_SYNTHESIS\": 0.2\n"
+        "    \"CONCEPTS_AND_DEFINITIONS\": 0.2,\n"
+        "    \"COMPARISONS_AND_TRADEOFFS\": 0.2,\n"
+        "    \"FORMULAS_AND_CALCULATIONS\": 0.2,\n"
+        "    \"CASE_STUDIES_AND_SCENARIOS\": 0.2,\n"
+        "    \"PRACTICAL_AND_LAB_TASKS\": 0.2\n"
         "  },\n"
         "  \"concepts\": [\n"
         "    {\"concept_tag\": \"...\", \"weight_score\": 0.85}\n"
@@ -680,11 +680,11 @@ async def analyze_sources(req: AnalyzeRequest):
                     "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
                     "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
                     "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
-                    "   - 'CORE_THEORY' (Concepts, Explanations, Viva)\n"
-                    "   - 'ANALYTICAL_REASONING' (Trade-offs, Comparisons, Error analysis)\n"
-                    "   - 'NUMERICAL_DESIGN' (Calculations, Architecture, Diagram tracing)\n"
-                    "   - 'REAL_WORLD_APPLICATION' (Case studies, Engineering scenarios)\n"
-                    "   - 'IMPLEMENTATION_SYNTHESIS' (Coding, Debugging, Practical compilation)\n"
+                    "   - 'CONCEPTS_AND_DEFINITIONS' (Core Theory)\n"
+                    "   - 'COMPARISONS_AND_TRADEOFFS' (Analytical Reasoning)\n"
+                    "   - 'FORMULAS_AND_CALCULATIONS' (Numerical Design)\n"
+                    "   - 'CASE_STUDIES_AND_SCENARIOS' (Real-World Application)\n"
+                    "   - 'PRACTICAL_AND_LAB_TASKS' (Implementation Synthesis)\n"
                     "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n"
                     "6. Classify contextual examples into either 'CLASSIC_DOMAIN_STANDARD' (foundational standard examples common to the domain) or 'TRANSIENT_ANALOGY' (casual/metaphorical settings or temporary stories). If an example is classified as a 'TRANSIENT_ANALOGY', extract the underlying mathematical/logical rule, and place the specific characters/names/settings used into an 'isolated_narratives' exclusion array of strings.\n\n"
                     "Return ONLY a clean JSON object conforming strictly to this format:\n"
@@ -696,11 +696,11 @@ async def analyze_sources(req: AnalyzeRequest):
                     "    {\"question\": \"...\", \"answer\": \"...\"}\n"
                     "  ],\n"
                     "  \"ai_recommendation\": {\n"
-                    "    \"CORE_THEORY\": 0.2,\n"
-                    "    \"ANALYTICAL_REASONING\": 0.2,\n"
-                    "    \"NUMERICAL_DESIGN\": 0.2,\n"
-                    "    \"REAL_WORLD_APPLICATION\": 0.2,\n"
-                    "    \"IMPLEMENTATION_SYNTHESIS\": 0.2\n"
+                    "    \"CONCEPTS_AND_DEFINITIONS\": 0.2,\n"
+                    "    \"COMPARISONS_AND_TRADEOFFS\": 0.2,\n"
+                    "    \"FORMULAS_AND_CALCULATIONS\": 0.2,\n"
+                    "    \"CASE_STUDIES_AND_SCENARIOS\": 0.2,\n"
+                    "    \"PRACTICAL_AND_LAB_TASKS\": 0.2\n"
                     "  },\n"
                     "  \"concepts\": [\n"
                     "    {\"concept_tag\": \"...\", \"weight_score\": 0.85}\n"
@@ -955,27 +955,27 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
     weight_score = concept.get("weight_score", 0.75)
     
     type_instruction = ""
-    if question_type == "CORE_THEORY":
+    if question_type == "CONCEPTS_AND_DEFINITIONS":
         type_instruction = (
             "Write a Core Theory MCQ. Focus entirely on concepts, explanations, and viva-style terminology. "
             "Ask about definitions, protocols, mechanisms, or conceptual principles."
         )
-    elif question_type == "ANALYTICAL_REASONING":
+    elif question_type == "COMPARISONS_AND_TRADEOFFS":
         type_instruction = (
             "Write an Analytical Reasoning MCQ. Focus on trade-offs, comparisons, and error analysis. "
             "Ask the student to compare two approaches, analyze why a certain design succeeds/fails, or identify logic/reasoning errors."
         )
-    elif question_type == "NUMERICAL_DESIGN":
+    elif question_type == "FORMULAS_AND_CALCULATIONS":
         type_instruction = (
             "Write a Numerical Design MCQ. Focus on calculations, architecture, and diagram/state tracing. "
             "Include calculations, math expressions, complexity derivations, or trace parameters through an architecture."
         )
-    elif question_type == "REAL_WORLD_APPLICATION":
+    elif question_type == "CASE_STUDIES_AND_SCENARIOS":
         type_instruction = (
             "Write a Real-World Application MCQ. Focus on case studies and engineering scenarios. "
             "Construct a realistic domain-specific scenario (e.g. electrical wiring, chemical reaction setup, or software scaling) and ask for the best practical solution."
         )
-    elif question_type == "IMPLEMENTATION_SYNTHESIS":
+    elif question_type == "PRACTICAL_AND_LAB_TASKS":
         type_instruction = (
             "Write an Implementation & Synthesis MCQ. Focus on coding, debugging, and practical syntax compilation. "
             "Include a code fragment or data struct declaration (in code_snippet field if it is programming syntax), and ask to predict the output, locate a bug, or complete the declaration."
@@ -983,25 +983,25 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
 
     difficultyPrompts = {
         "easy": {
-            "CORE_THEORY": "Identify straightforward definitions or basic protocol/concept names.",
-            "ANALYTICAL_REASONING": "Identify simple differences or obvious advantages between two concepts.",
-            "NUMERICAL_DESIGN": "Simple direct calculations or basic parameter identification.",
-            "REAL_WORLD_APPLICATION": "Direct single-variable applications with simple outcomes.",
-            "IMPLEMENTATION_SYNTHESIS": "Short, simple code blocks or basic syntax identification."
+            "CONCEPTS_AND_DEFINITIONS": "Identify straightforward definitions or basic protocol/concept names.",
+            "COMPARISONS_AND_TRADEOFFS": "Identify simple differences or obvious advantages between two concepts.",
+            "FORMULAS_AND_CALCULATIONS": "Simple direct calculations or basic parameter identification.",
+            "CASE_STUDIES_AND_SCENARIOS": "Direct single-variable applications with simple outcomes.",
+            "PRACTICAL_AND_LAB_TASKS": "Short, simple code blocks or basic syntax identification."
         },
         "medium": {
-            "CORE_THEORY": "Explain how mechanisms interact or standard workflows.",
-            "ANALYTICAL_REASONING": "Analyze trade-offs, state-space exploration, or standard error conditions.",
-            "NUMERICAL_DESIGN": "Multi-step calculations, simple diagram/memory tracing, or time/space complexities.",
-            "REAL_WORLD_APPLICATION": "Introduce minor engineering bottlenecks, common system failures, or design trade-offs.",
-            "IMPLEMENTATION_SYNTHESIS": "Code prediction involving loops, basic conditional checks, or state updates."
+            "CONCEPTS_AND_DEFINITIONS": "Explain how mechanisms interact or standard workflows.",
+            "COMPARISONS_AND_TRADEOFFS": "Analyze trade-offs, state-space exploration, or standard error conditions.",
+            "FORMULAS_AND_CALCULATIONS": "Multi-step calculations, simple diagram/memory tracing, or time/space complexities.",
+            "CASE_STUDIES_AND_SCENARIOS": "Introduce minor engineering bottlenecks, common system failures, or design trade-offs.",
+            "PRACTICAL_AND_LAB_TASKS": "Code prediction involving loops, basic conditional checks, or state updates."
         },
         "hard": {
-            "CORE_THEORY": "Test deep internal mechanics, architectural limits, and complex theoretical constraints.",
-            "ANALYTICAL_REASONING": "Evaluate complex state transitions, hidden structural flaws, or multi-dimensional trade-offs.",
-            "NUMERICAL_DESIGN": "Deep computational calculations, complex diagram tracing, multi-variable optimization, or proof-of-correctness tracing.",
-            "REAL_WORLD_APPLICATION": "Construct deep, multi-layered system failure scenarios with conflicting resource/performance metrics.",
-            "IMPLEMENTATION_SYNTHESIS": "Analyze highly optimized snippets, multi-threaded tasks, tricky recursion, or memory allocation bugs."
+            "CONCEPTS_AND_DEFINITIONS": "Test deep internal mechanics, architectural limits, and complex theoretical constraints.",
+            "COMPARISONS_AND_TRADEOFFS": "Evaluate complex state transitions, hidden structural flaws, or multi-dimensional trade-offs.",
+            "FORMULAS_AND_CALCULATIONS": "Deep computational calculations, complex diagram tracing, multi-variable optimization, or proof-of-correctness tracing.",
+            "CASE_STUDIES_AND_SCENARIOS": "Construct deep, multi-layered system failure scenarios with conflicting resource/performance metrics.",
+            "PRACTICAL_AND_LAB_TASKS": "Analyze highly optimized snippets, multi-threaded tasks, tricky recursion, or memory allocation bugs."
         }
     }
     
@@ -1015,7 +1015,7 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         exclusions_str = ", ".join([f'"{n}"' for n in isolated_narratives])
         narrative_mutation_instruction = (
             f"NARRATIVE MUTATION MANDATE:\n"
-            f"When generating questions under the REAL_WORLD_APPLICATION or NUMERICAL_DESIGN archetypes, review the following narrative/scenario exclusions: [{exclusions_str}].\n"
+            f"When generating questions under the CASE_STUDIES_AND_SCENARIOS or FORMULAS_AND_CALCULATIONS archetypes, review the following narrative/scenario exclusions: [{exclusions_str}].\n"
             f"You are STRICTLY PROHIBITED from using these exact scenarios, names, characters, or settings in your question stem or choices. "
             f"Instead, construct a structurally isomorphic (parallel) real-world scenario that tests the exact same concept using a brand-new application domain.\n\n"
         )
@@ -1139,7 +1139,7 @@ def run_agent3_critic(q_data, context, flavor="theory"):
     if not correct_ans:
         issues.append("Missing correct_answer")
     elif correct_ans not in options:
-        if flavor != "IMPLEMENTATION_SYNTHESIS":
+        if flavor != "PRACTICAL_AND_LAB_TASKS":
             issues.append("Correct answer does not match any of the options exactly")
             
     # Rule Y (Circular Verification)
@@ -1159,13 +1159,13 @@ def run_agent3_critic(q_data, context, flavor="theory"):
         
         if match_py:
             code = match_py.group(1)
-            if flavor != "IMPLEMENTATION_SYNTHESIS":
+            if flavor != "PRACTICAL_AND_LAB_TASKS":
                 valid, errs = check_python_syntax(code)
                 if not valid:
                     issues.extend(errs)
         elif match_js:
             code = match_js.group(1)
-            if flavor != "IMPLEMENTATION_SYNTHESIS":
+            if flavor != "PRACTICAL_AND_LAB_TASKS":
                 valid, errs = check_js_syntax(code)
                 if not valid:
                     issues.extend(errs)
@@ -1351,65 +1351,7 @@ def execute_generation_logic(req: GeneratorRequest):
             context = get_relevant_context(source_text, query, top_k=5)
         print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
 
-    # 1. Determine Target Flavor Ratios and Question count
-    default_ratios = {
-        "CORE_THEORY": 0.2,
-        "ANALYTICAL_REASONING": 0.2,
-        "NUMERICAL_DESIGN": 0.2,
-        "REAL_WORLD_APPLICATION": 0.2,
-        "IMPLEMENTATION_SYNTHESIS": 0.2
-    }
-    ratios = req.target_ratios or default_ratios
-    total_count = req.count
-    
-    # Calculate counts per flavor
-    sum_ratios = sum(ratios.values())
-    if sum_ratios == 0:
-        ratios = default_ratios
-        sum_ratios = 1.0
-        
-    counts = {}
-    accumulated_count = 0
-    active_flavors = [f for f in ratios.keys() if ratios[f] > 0]
-    if not active_flavors:
-        active_flavors = ["CORE_THEORY"]
-        
-    for f in active_flavors[:-1]:
-        c = int(round(total_count * (ratios[f] / sum_ratios)))
-        counts[f] = c
-        accumulated_count += c
-    counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
-
-    print_stage_header("3", "DYNAMIC RATIO MATRIX (THE TEACHER'S SLIDERS)")
-    requested_list = []
-    for flavor_key, flavor_val in ratios.items():
-        lbl = flavor_key.replace("_", " ").title()
-        requested_list.append(f"{lbl} ({int(flavor_val * 100)}%)")
-    requested_str = " | ".join(requested_list)
-    print(f"[Requested]    : {requested_str}")
-    print(f"[Hard Zero]    : Enforced! Small margins eliminated to maximize quiz focus.")
-    
-    final_list = []
-    emojis = {
-        "CORE_THEORY": "📚",
-        "ANALYTICAL_REASONING": "🔍",
-        "NUMERICAL_DESIGN": "⚙️",
-        "REAL_WORLD_APPLICATION": "💼",
-        "IMPLEMENTATION_SYNTHESIS": "💻"
-    }
-    for f_key, f_cnt in counts.items():
-        if f_cnt > 0:
-            emoji = emojis.get(f_key, "❓")
-            lbl = f_key.replace("_", " ").title()
-            final_list.append(f"{emoji} {f_cnt} {lbl} Question{'s' if f_cnt > 1 else ''}")
-    final_count_str = " | ".join(final_list)
-    print(f"[Final Count]  : {final_count_str}")
-
-    print_stage_header("4", "3-AGENT COGNITIVE GENERATION PIPELINE")
-    print(f"={'='*55}")
-    print(f"")
-
-    # 2. Executing Agent 1: Concept & Weight Analyzer
+    # Determine topic fallback for logs and RAG
     topic_fallback = "General Course Concept"
     if req.inputs:
         names = [inp.source_name for inp in req.inputs if inp.source_name and inp.source_name != "Unknown Source"]
@@ -1426,6 +1368,76 @@ def execute_generation_logic(req: GeneratorRequest):
     elif req.content and req.type == 'topic':
         topic_fallback = req.content
 
+    keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying']
+    is_non_computational = any(kw in topic_fallback.lower() for kw in keywords)
+
+    formal_names = {
+        "CONCEPTS_AND_DEFINITIONS": "Core Theory",
+        "COMPARISONS_AND_TRADEOFFS": "Analytical Reasoning",
+        "FORMULAS_AND_CALCULATIONS": "Numerical Design",
+        "CASE_STUDIES_AND_SCENARIOS": "Real-World Application",
+        "PRACTICAL_AND_LAB_TASKS": "Design Optimization & Lab Tracing" if is_non_computational else "Implementation Synthesis"
+    }
+
+    # Determine Target Flavor Ratios and Question count
+    default_ratios = {
+        "CONCEPTS_AND_DEFINITIONS": 0.2,
+        "COMPARISONS_AND_TRADEOFFS": 0.2,
+        "FORMULAS_AND_CALCULATIONS": 0.2,
+        "CASE_STUDIES_AND_SCENARIOS": 0.2,
+        "PRACTICAL_AND_LAB_TASKS": 0.2
+    }
+    ratios = req.target_ratios or default_ratios
+    total_count = req.count
+    
+    # Calculate counts per flavor
+    sum_ratios = sum(ratios.values())
+    if sum_ratios == 0:
+        ratios = default_ratios
+        sum_ratios = 1.0
+        
+    counts = {}
+    accumulated_count = 0
+    active_flavors = [f for f in ratios.keys() if ratios[f] > 0]
+    if not active_flavors:
+        active_flavors = ["CONCEPTS_AND_DEFINITIONS"]
+        
+    for f in active_flavors[:-1]:
+        c = int(round(total_count * (ratios[f] / sum_ratios)))
+        counts[f] = c
+        accumulated_count += c
+    counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
+
+    print_stage_header("3", "DYNAMIC RATIO MATRIX (THE TEACHER'S SLIDERS)")
+    requested_list = []
+    for flavor_key, flavor_val in ratios.items():
+        formal = formal_names.get(flavor_key, "Unknown")
+        requested_list.append(f"{flavor_key} ({formal}) ({int(flavor_val * 100)}%)")
+    requested_str = " | ".join(requested_list)
+    print(f"[Requested]    : {requested_str}")
+    print(f"[Hard Zero]    : Enforced! Small margins eliminated to maximize quiz focus.")
+    
+    final_list = []
+    emojis = {
+        "CONCEPTS_AND_DEFINITIONS": "📚",
+        "COMPARISONS_AND_TRADEOFFS": "🔍",
+        "FORMULAS_AND_CALCULATIONS": "⚙️",
+        "CASE_STUDIES_AND_SCENARIOS": "💼",
+        "PRACTICAL_AND_LAB_TASKS": "💻"
+    }
+    for f_key, f_cnt in counts.items():
+        if f_cnt > 0:
+            emoji = emojis.get(f_key, "❓")
+            formal = formal_names.get(f_key, "Unknown")
+            final_list.append(f"{emoji} {f_cnt} {f_key} ({formal}) Question{'s' if f_cnt > 1 else ''}")
+    final_count_str = " | ".join(final_list)
+    print(f"[Final Count]  : {final_count_str}")
+
+    print_stage_header("4", "3-AGENT COGNITIVE GENERATION PIPELINE")
+    print(f"={'='*55}")
+    print(f"")
+
+    # 2. Executing Agent 1: Concept & Weight Analyzer
     concepts, extracted_exclusions = run_agent1_analyzer(context, count=total_count, topic_fallback=topic_fallback)
     
     # Merge narrative exclusions
@@ -1485,7 +1497,7 @@ def execute_generation_logic(req: GeneratorRequest):
         formats_list.extend([flavor] * cnt)
     
     while len(formats_list) < total_count:
-        formats_list.append("CORE_THEORY")
+        formats_list.append("CONCEPTS_AND_DEFINITIONS")
     formats_list = formats_list[:total_count]
     
     slots = []
@@ -1513,7 +1525,8 @@ def execute_generation_logic(req: GeneratorRequest):
 
     # 3. Executing Agent 2 Generator & Agent 3 Critic loop
     for i, (concept, flavor, slot_diff) in enumerate(generation_tasks):
-        print(f"\n• QUESTION {i+1} [Flavor: {flavor.upper()}]")
+        formal = formal_names.get(flavor, "Unknown")
+        print(f"\n• QUESTION {i+1} [Flavor: {flavor} ({formal})]")
         q_success = False
         
         # Initial Draft Generation by Agent 2

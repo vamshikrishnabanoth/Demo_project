@@ -168,16 +168,16 @@ export default function CreateQuizPDF() {
     const [difficulty, setDifficulty] = useState('Medium');
     const [submitting, setSubmitting] = useState(false);
     const [startPage, setStartPage] = useState(1);
-    const [endPage, setEndPage] = useState(999);
+    const [endPage, setEndPage] = useState('');
     const navigate = useNavigate();
 
     // Dynamic question flavor state (sums to 100)
     const [ratios, setRatios] = useState({
-        CORE_THEORY: 20,
-        ANALYTICAL_REASONING: 20,
-        NUMERICAL_DESIGN: 20,
-        REAL_WORLD_APPLICATION: 20,
-        IMPLEMENTATION_SYNTHESIS: 20
+        CONCEPTS_AND_DEFINITIONS: 20,
+        COMPARISONS_AND_TRADEOFFS: 20,
+        FORMULAS_AND_CALCULATIONS: 20,
+        CASE_STUDIES_AND_SCENARIOS: 20,
+        PRACTICAL_AND_LAB_TASKS: 20
     });
     const [aiBaselineRatios, setAiBaselineRatios] = useState(null);
 
@@ -213,7 +213,7 @@ export default function CreateQuizPDF() {
             return;
         }
 
-        const keys = ['CORE_THEORY', 'ANALYTICAL_REASONING', 'NUMERICAL_DESIGN', 'REAL_WORLD_APPLICATION', 'IMPLEMENTATION_SYNTHESIS'];
+        const keys = ['CONCEPTS_AND_DEFINITIONS', 'COMPARISONS_AND_TRADEOFFS', 'FORMULAS_AND_CALCULATIONS', 'CASE_STUDIES_AND_SCENARIOS', 'PRACTICAL_AND_LAB_TASKS'];
         const otherFlavors = keys.filter(f => f !== changedFlavor);
         const currentOthersSum = otherFlavors.reduce((sum, f) => sum + ratios[f], 0);
         const remaining = 100 - val;
@@ -349,14 +349,14 @@ export default function CreateQuizPDF() {
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
             formData.append('startPage', startPage.toString());
-            formData.append('endPage', endPage.toString());
+            formData.append('endPage', (endPage || '999').toString());
 
             const targetRatiosPayload = {
-                CORE_THEORY: ratios.CORE_THEORY / 100,
-                ANALYTICAL_REASONING: ratios.ANALYTICAL_REASONING / 100,
-                NUMERICAL_DESIGN: ratios.NUMERICAL_DESIGN / 100,
-                REAL_WORLD_APPLICATION: ratios.REAL_WORLD_APPLICATION / 100,
-                IMPLEMENTATION_SYNTHESIS: ratios.IMPLEMENTATION_SYNTHESIS / 100
+                CONCEPTS_AND_DEFINITIONS: ratios.CONCEPTS_AND_DEFINITIONS / 100,
+                COMPARISONS_AND_TRADEOFFS: ratios.COMPARISONS_AND_TRADEOFFS / 100,
+                FORMULAS_AND_CALCULATIONS: ratios.FORMULAS_AND_CALCULATIONS / 100,
+                CASE_STUDIES_AND_SCENARIOS: ratios.CASE_STUDIES_AND_SCENARIOS / 100,
+                PRACTICAL_AND_LAB_TASKS: ratios.PRACTICAL_AND_LAB_TASKS / 100
             };
             formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
 
@@ -463,7 +463,11 @@ export default function CreateQuizPDF() {
                                                                 type="number" 
                                                                 min="1" 
                                                                 value={endPage} 
-                                                                onChange={(e) => setEndPage(Math.max(1, parseInt(e.target.value) || 999))}
+                                                                placeholder="All"
+                                                                onChange={(e) => {
+                                                                    const val = e.target.value;
+                                                                    setEndPage(val === '' ? '' : Math.max(1, parseInt(val) || ''));
+                                                                }}
                                                                 className="w-20 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-xs font-bold" 
                                                             />
                                                         </div>
@@ -472,7 +476,7 @@ export default function CreateQuizPDF() {
                                                 
                                                 <button 
                                                     type="button" 
-                                                    onClick={() => { setFile(null); setStartPage(1); setEndPage(999); }} 
+                                                    onClick={() => { setFile(null); setStartPage(1); setEndPage(''); }} 
                                                     className="mt-2 text-xs font-black uppercase text-red-500 hover:text-red-400 border border-red-500/20 px-4 py-2 rounded-xl hover:bg-red-500/5 transition-all"
                                                 >
                                                     Remove File
@@ -533,84 +537,84 @@ export default function CreateQuizPDF() {
                             <div className="bg-white/5 p-8 rounded-[2rem] border border-[var(--border-color)] glass-panel space-y-4">
                                 <p className="text-xs font-black text-[var(--text-secondary)] uppercase italic">Question Distribution</p>
                                 <div className="space-y-4">
-                                    {/* CORE_THEORY */}
+                                    {/* CONCEPTS_AND_DEFINITIONS */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-blue-400">Theory</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.CORE_THEORY}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.CONCEPTS_AND_DEFINITIONS}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.CORE_THEORY}
-                                            onChange={(e) => handleSliderChange('CORE_THEORY', e.target.value)}
+                                            value={ratios.CONCEPTS_AND_DEFINITIONS}
+                                            onChange={(e) => handleSliderChange('CONCEPTS_AND_DEFINITIONS', e.target.value)}
                                             className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
 
-                                    {/* ANALYTICAL_REASONING */}
+                                    {/* COMPARISONS_AND_TRADEOFFS */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-purple-400">Analytical Reasoning</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.ANALYTICAL_REASONING}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.COMPARISONS_AND_TRADEOFFS}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.ANALYTICAL_REASONING}
-                                            onChange={(e) => handleSliderChange('ANALYTICAL_REASONING', e.target.value)}
+                                            value={ratios.COMPARISONS_AND_TRADEOFFS}
+                                            onChange={(e) => handleSliderChange('COMPARISONS_AND_TRADEOFFS', e.target.value)}
                                             className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
 
-                                    {/* NUMERICAL_DESIGN */}
+                                    {/* FORMULAS_AND_CALCULATIONS */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-amber-400">Numerical Design</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.NUMERICAL_DESIGN}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.FORMULAS_AND_CALCULATIONS}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.NUMERICAL_DESIGN}
-                                            onChange={(e) => handleSliderChange('NUMERICAL_DESIGN', e.target.value)}
+                                            value={ratios.FORMULAS_AND_CALCULATIONS}
+                                            onChange={(e) => handleSliderChange('FORMULAS_AND_CALCULATIONS', e.target.value)}
                                             className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
 
-                                    {/* REAL_WORLD_APPLICATION */}
+                                    {/* CASE_STUDIES_AND_SCENARIOS */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-emerald-400">Real-World Application</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.REAL_WORLD_APPLICATION}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.CASE_STUDIES_AND_SCENARIOS}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.REAL_WORLD_APPLICATION}
-                                            onChange={(e) => handleSliderChange('REAL_WORLD_APPLICATION', e.target.value)}
+                                            value={ratios.CASE_STUDIES_AND_SCENARIOS}
+                                            onChange={(e) => handleSliderChange('CASE_STUDIES_AND_SCENARIOS', e.target.value)}
                                             className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
 
-                                    {/* IMPLEMENTATION_SYNTHESIS */}
+                                    {/* PRACTICAL_AND_LAB_TASKS */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-rose-400">
                                                 {isNonComputational ? "Design Optimization & Lab Tracing" : "Implementation & Synthesis"}
                                             </span>
-                                            <span className="text-[var(--text-primary)]">{ratios.IMPLEMENTATION_SYNTHESIS}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.PRACTICAL_AND_LAB_TASKS}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.IMPLEMENTATION_SYNTHESIS}
-                                            onChange={(e) => handleSliderChange('IMPLEMENTATION_SYNTHESIS', e.target.value)}
+                                            value={ratios.PRACTICAL_AND_LAB_TASKS}
+                                            onChange={(e) => handleSliderChange('PRACTICAL_AND_LAB_TASKS', e.target.value)}
                                             className="w-full accent-rose-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
