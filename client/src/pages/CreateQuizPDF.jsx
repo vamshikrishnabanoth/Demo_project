@@ -167,19 +167,47 @@ export default function CreateQuizPDF() {
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
     const [submitting, setSubmitting] = useState(false);
+    const [startPage, setStartPage] = useState(1);
+    const [endPage, setEndPage] = useState(999);
     const navigate = useNavigate();
 
     // Dynamic question flavor state (sums to 100)
     const [ratios, setRatios] = useState({
-        theory: 100,
-        code_debugging: 0,
-        fill_blank: 0,
-        scenario: 0
+        CORE_THEORY: 20,
+        ANALYTICAL_REASONING: 20,
+        NUMERICAL_DESIGN: 20,
+        REAL_WORLD_APPLICATION: 20,
+        IMPLEMENTATION_SYNTHESIS: 20
     });
+    const [aiBaselineRatios, setAiBaselineRatios] = useState(null);
+
+    // Dynamic Branch UI Filter: check if course context is non-computational
+    const isNonComputational = useMemo(() => {
+        const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
+        const fileName = (file?.name || '').toLowerCase();
+        return keywords.some(kw => fileName.includes(kw));
+    }, [file]);
+
+    const isImageOrScan = useMemo(() => {
+        if (!file) return false;
+        const ext = file.name.split('.').pop().toLowerCase();
+        const nameLower = file.name.toLowerCase();
+        return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
+    }, [file]);
 
     const handleSliderChange = (changedFlavor, newValue) => {
         const val = Math.min(100, Math.max(0, parseInt(newValue) || 0));
-        const otherFlavors = ['theory', 'code_debugging', 'fill_blank', 'scenario'].filter(f => f !== changedFlavor);
+        
+        // Zero-Out Safety Check: Calculate sum if this change goes through
+        const potentialRatios = { ...ratios, [changedFlavor]: val };
+        const potentialSum = Object.values(potentialRatios).reduce((s, v) => s + v, 0);
+        if (potentialSum === 0) {
+            // Prevent total lock-up state by returning early if all values would sum to 0%
+            return;
+        }
+
+        const keys = ['CORE_THEORY', 'ANALYTICAL_REASONING', 'NUMERICAL_DESIGN', 'REAL_WORLD_APPLICATION', 'IMPLEMENTATION_SYNTHESIS'];
+        const otherFlavors = keys.filter(f => f !== changedFlavor);
         const currentOthersSum = otherFlavors.reduce((sum, f) => sum + ratios[f], 0);
         const remaining = 100 - val;
 
@@ -313,12 +341,15 @@ export default function CreateQuizPDF() {
             formData.append('type', 'file');
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
+            formData.append('startPage', startPage.toString());
+            formData.append('endPage', endPage.toString());
 
             const targetRatiosPayload = {
-                theory: ratios.theory / 100,
-                code_debugging: ratios.code_debugging / 100,
-                fill_blank: ratios.fill_blank / 100,
-                scenario: ratios.scenario / 100
+                CORE_THEORY: ratios.CORE_THEORY / 100,
+                ANALYTICAL_REASONING: ratios.ANALYTICAL_REASONING / 100,
+                NUMERICAL_DESIGN: ratios.NUMERICAL_DESIGN / 100,
+                REAL_WORLD_APPLICATION: ratios.REAL_WORLD_APPLICATION / 100,
+                IMPLEMENTATION_SYNTHESIS: ratios.IMPLEMENTATION_SYNTHESIS / 100
             };
             formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
 
@@ -384,21 +415,61 @@ export default function CreateQuizPDF() {
                             <div className="space-y-6">
                                 <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Select Document</label>
                                 <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-[2.5rem] hover:border-[var(--bg-accent)]/50 transition-all bg-white/5 group/upload">
-                                    <input
-                                        type="file"
-                                        accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
-                                        onChange={handleFileChange}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                                        required
-                                    />
+                                    {!file && (
+                                        <input
+                                            type="file"
+                                            accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.gif,.webp"
+                                            onChange={handleFileChange}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                            required
+                                        />
+                                    )}
                                     <div className="p-16 flex flex-col items-center gap-6">
                                         {file ? (
-                                            <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
+                                            <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300 z-30 pointer-events-auto">
                                                 <div className="bg-[var(--bg-accent)] p-6 rounded-[1.5rem] text-[var(--text-on-accent)] shadow-[0_10px_40px_var(--bg-accent-glow)]">
                                                     <FilePlus size={48} />
                                                 </div>
-                                                <p className="font-black text-2xl text-[var(--text-primary)] italic tracking-tighter">{file.name}</p>
-                                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs">Ready for processing</p>
+                                                <p className="font-black text-2xl text-[var(--text-primary)] italic tracking-tighter">
+                                                    {isImageOrScan ? "Handwritten Notes Scan" : file.name}
+                                                </p>
+                                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs">
+                                                    {isImageOrScan ? file.name : "Ready for processing"}
+                                                </p>
+                                                
+                                                {/* Start/End page selectors inside card */}
+                                                {!isImageOrScan && (
+                                                    <div className="mt-4 flex gap-4 items-center bg-white/5 p-4 rounded-xl border border-white/5">
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Start Page/Slide</label>
+                                                            <input 
+                                                                type="number" 
+                                                                min="1" 
+                                                                value={startPage} 
+                                                                onChange={(e) => setStartPage(Math.max(1, parseInt(e.target.value) || 1))}
+                                                                className="w-20 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-xs font-bold" 
+                                                            />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">End Page/Slide</label>
+                                                            <input 
+                                                                type="number" 
+                                                                min="1" 
+                                                                value={endPage} 
+                                                                onChange={(e) => setEndPage(Math.max(1, parseInt(e.target.value) || 999))}
+                                                                className="w-20 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-xs font-bold" 
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => { setFile(null); setStartPage(1); setEndPage(999); }} 
+                                                    className="mt-2 text-xs font-black uppercase text-red-500 hover:text-red-400 border border-red-500/20 px-4 py-2 rounded-xl hover:bg-red-500/5 transition-all"
+                                                >
+                                                    Remove File
+                                                </button>
                                             </div>
                                         ) : (
                                             <>
@@ -455,60 +526,85 @@ export default function CreateQuizPDF() {
                             <div className="bg-white/5 p-8 rounded-[2rem] border border-[var(--border-color)] glass-panel space-y-4">
                                 <p className="text-xs font-black text-[var(--text-secondary)] uppercase italic">Question Distribution</p>
                                 <div className="space-y-4">
+                                    {/* CORE_THEORY */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
                                             <span className="text-blue-400">Theory</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.theory}%</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.CORE_THEORY}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.theory}
-                                            onChange={(e) => handleSliderChange('theory', e.target.value)}
+                                            value={ratios.CORE_THEORY}
+                                            onChange={(e) => handleSliderChange('CORE_THEORY', e.target.value)}
                                             className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
+
+                                    {/* ANALYTICAL_REASONING */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-purple-400">Coding</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.code_debugging}%</span>
+                                            <span className="text-purple-400">Analytical Reasoning</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.ANALYTICAL_REASONING}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.code_debugging}
-                                            onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
+                                            value={ratios.ANALYTICAL_REASONING}
+                                            onChange={(e) => handleSliderChange('ANALYTICAL_REASONING', e.target.value)}
                                             className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
+
+                                    {/* NUMERICAL_DESIGN */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-amber-400">Technical Interview</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.fill_blank}%</span>
+                                            <span className="text-amber-400">Numerical Design</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.NUMERICAL_DESIGN}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.fill_blank}
-                                            onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
+                                            value={ratios.NUMERICAL_DESIGN}
+                                            onChange={(e) => handleSliderChange('NUMERICAL_DESIGN', e.target.value)}
                                             className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
+
+                                    {/* REAL_WORLD_APPLICATION */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-emerald-400">Real-World Scenario</span>
-                                            <span className="text-[var(--text-primary)]">{ratios.scenario}%</span>
+                                            <span className="text-emerald-400">Real-World Application</span>
+                                            <span className="text-[var(--text-primary)]">{ratios.REAL_WORLD_APPLICATION}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={ratios.scenario}
-                                            onChange={(e) => handleSliderChange('scenario', e.target.value)}
+                                            value={ratios.REAL_WORLD_APPLICATION}
+                                            onChange={(e) => handleSliderChange('REAL_WORLD_APPLICATION', e.target.value)}
                                             className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                        />
+                                    </div>
+
+                                    {/* IMPLEMENTATION_SYNTHESIS */}
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                            <span className="text-rose-400">
+                                                {isNonComputational ? "Design Optimization & Lab Tracing" : "Implementation & Synthesis"}
+                                            </span>
+                                            <span className="text-[var(--text-primary)]">{ratios.IMPLEMENTATION_SYNTHESIS}%</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={ratios.IMPLEMENTATION_SYNTHESIS}
+                                            onChange={(e) => handleSliderChange('IMPLEMENTATION_SYNTHESIS', e.target.value)}
+                                            className="w-full accent-rose-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     </div>
                                 </div>

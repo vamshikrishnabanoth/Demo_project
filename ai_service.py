@@ -243,6 +243,7 @@ class GeneratorRequest(BaseModel):
     topic_weights: Optional[dict] = None
     callback_url: Optional[str] = None
     taskId: Optional[str] = None
+    isolated_narratives: Optional[List[str]] = None
 
 class IngestRequest(BaseModel):
     source: str
@@ -362,18 +363,174 @@ def sanitize_source_text(text: str) -> str:
     # Clean up double newlines left over by stripping
     return re.sub(r'\n\s*\n', '\n', text).strip()
 
+def call_vision_model(img_b64, mime_type):
+    prompt = (
+        "Transcribe all text from this image. Convert all mathematical equations and formulas into strict, clean inline or display LaTeX syntax ($...$ or $$...$$). "
+        "For any hand-drawn architectural blocks, circuits, or diagrams, output a clear, detailed structural Markdown description mapping the inputs, outputs, and components."
+    )
+    
+    # 1. Try Groq Multimodal Vision (llama-3.2-11b-vision-preview)
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if groq_api_key:
+        print("  [VISION LAYER] Querying Groq Vision Model (llama-3.2-11b-vision-preview)...")
+        headers = {
+            "Authorization": f"Bearer {groq_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data_url = f"data:{mime_type};base64,{img_b64}"
+        payload = {
+            "model": "llama-3.2-11b-vision-preview",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": prompt
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": data_url
+                            }
+                        }
+                    ]
+                }
+            ],
+            "temperature": 0.2
+        }
+        
+        try:
+            response = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=45)
+            if response.status_code == 200:
+                transcription = response.json()["choices"][0]["message"]["content"]
+                print(f"  [VISION LAYER] Successfully transcribed {len(transcription)} chars using Groq Vision.")
+                return transcription
+            else:
+                print(f"  [VISION LAYER] Groq Vision API returned {response.status_code}: {response.text}")
+        except Exception as e:
+            print(f"  [VISION LAYER] Groq Vision error: {e}")
+            
+    # 2. Fallback to Local Ollama Vision (llama3.2-vision)
+    print("  [VISION LAYER] Querying Local Ollama Vision (llama3.2-vision)...")
+    payload = {
+        "model": "llama3.2-vision",
+        "prompt": prompt,
+        "images": [img_b64],
+        "stream": False,
+        "options": {
+            "temperature": 0.2
+        }
+    }
+    
+    try:
+        response = requests.post(OLLAMA_URL.replace("/api/chat", "/api/generate").replace("/api/generate", "/api/generate"), json=payload, timeout=90)
+        if response.status_code == 200:
+            transcription = response.json().get("response", "")
+            print(f"  [VISION LAYER] Successfully transcribed {len(transcription)} chars using Local Ollama Vision.")
+            return transcription
+        else:
+            print(f"  [VISION LAYER] Local Ollama Vision API returned {response.status_code}: {response.text}")
+    except Exception as e:
+        print(f"  [VISION LAYER] Local Ollama Vision error: {e}")
+        
+    return ""
+
+def process_image_sources(inp):
+    print(f"  [VISION LAYER] Intercepting source: {inp.source_name} ({inp.type})")
+    
+    is_pdf = False
+    file_bytes = None
+    
+    if inp.content.startswith("base64:"):
+        b64_data = inp.content[7:]
+        file_bytes = base64.b64decode(b64_data)
+        if file_bytes.startswith(b'%PDF'):
+            is_pdf = True
+    elif os.path.exists(inp.content):
+        ext = os.path.splitext(inp.content)[1].lower()
+        if ext == '.pdf':
+            is_pdf = True
+            with open(inp.content, 'rb') as f:
+                file_bytes = f.read()
+        else:
+            with open(inp.content, 'rb') as f:
+                file_bytes = f.read()
+                
+    if not file_bytes:
+        return ""
+
+    images_to_process = []
+    
+    if is_pdf:
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                tmp.write(file_bytes)
+                tmp_path = tmp.name
+                
+            reader = PdfReader(tmp_path)
+            page_index = 1
+            for page in reader.pages:
+                for img_obj in page.images:
+                    img_data = img_obj.data
+                    img_b64 = base64.b64encode(img_data).decode('utf-8')
+                    ext = os.path.splitext(img_obj.name)[1].lower() if img_obj.name else '.png'
+                    m_type = "image/jpeg" if ext in ['.jpg', '.jpeg'] else "image/png"
+                    images_to_process.append((img_b64, m_type))
+                
+                if not page.images:
+                    try:
+                        from pdf2image import convert_from_path
+                        pages = convert_from_path(tmp_path, first_page=page_index, last_page=page_index)
+                        for p in pages:
+                            import io
+                            img_byte_arr = io.BytesIO()
+                            p.save(img_byte_arr, format='PNG')
+                            img_data = img_byte_arr.getvalue()
+                            img_b64 = base64.b64encode(img_data).decode('utf-8')
+                            images_to_process.append((img_b64, "image/png"))
+                    except Exception as pe:
+                        print(f"  [VISION LAYER] pdf2image fallback skipped: {pe}")
+                page_index += 1
+            os.remove(tmp_path)
+        except Exception as e:
+            print(f"  [VISION LAYER] Error processing PDF scan: {e}")
+    else:
+        ext = os.path.splitext(inp.source_name)[1].lower() if inp.source_name else '.png'
+        m_type = "image/jpeg" if ext in ['.jpg', '.jpeg'] else "image/png"
+        img_b64 = base64.b64encode(file_bytes).decode('utf-8')
+        images_to_process.append((img_b64, m_type))
+        
+    if not images_to_process:
+        print("  [VISION LAYER] No images found to process.")
+        return ""
+        
+    transcriptions = []
+    for idx, (img_b64, mime_type) in enumerate(images_to_process):
+        print(f"  [VISION LAYER] Processing image {idx+1}/{len(images_to_process)}...")
+        trans = call_vision_model(img_b64, mime_type)
+        if trans:
+            transcriptions.append(trans)
+            
+    return "\n\n".join(transcriptions)
+
 def resolve_input_sources(inputs):
     aggregated_texts = []
+    voice_transcripts = []
+    
     for inp in inputs:
-        source_text = inp.content
-        if inp.type in ['pdf', 'docx', 'pptx', 'image']:
+        source_text = ""
+        if inp.type in ['image', 'handwritten_scan']:
+            source_text = process_image_sources(inp)
+        elif inp.type in ['pdf', 'docx', 'pptx']:
             if os.path.exists(inp.content):
                 source_text = extract_text_from_file(inp.content)
             elif inp.content.startswith("base64:"):
                 try:
                     b64_data = inp.content[7:]
                     file_data = base64.b64decode(b64_data)
-                    ext = inp.type if inp.type != 'image' else 'png'
+                    ext = inp.type
                     with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as tmp:
                         tmp.write(file_data)
                         tmp_path = tmp.name
@@ -382,11 +539,24 @@ def resolve_input_sources(inputs):
                 except Exception as e:
                     print(f"Error parsing base64 file source: {e}")
                     source_text = ""
+        else:
+            source_text = inp.content
+        
         if source_text and len(source_text.strip()) > 10:
             sanitized = sanitize_source_text(source_text)
             if len(sanitized.strip()) > 10:
-                aggregated_texts.append(sanitized.strip())
-    return "\n\n".join(aggregated_texts)
+                if inp.type == 'voice':
+                    voice_transcripts.append(sanitized.strip())
+                else:
+                    aggregated_texts.append(sanitized.strip())
+                    
+    combined = []
+    if voice_transcripts:
+        combined.append("=== VOICE TRANSCRIPT CONTEXT ===\n" + "\n\n".join(voice_transcripts))
+    if aggregated_texts:
+        combined.append("=== DOCUMENT CONTEXT ===\n" + "\n\n".join(aggregated_texts))
+        
+    return "\n\n".join(combined) if combined else ""
 
 def deduplicate_text_chunks(text, embed_model, max_tokens=500, overlap_percent=10):
     chunks = recursive_token_splitter(text, max_tokens, overlap_percent)
@@ -426,13 +596,21 @@ async def analyze_sources(req: AnalyzeRequest):
     print("  [AGENT 1] Analyzing academic content, token density, summaries, and topics...")
     prompt = (
         "You are an elite academic analyzer. Analyze the textbook/lecture context below.\n\n"
+        "MANDATORY CONTEXTUAL DE-NOISING PASS:\n"
+        "You must explicitly inspect the provided context. If it contains audio transcripts or speech data, identify and strip out all non-pedagogical clutter: classroom management comments, administrative/scheduling remarks (e.g., homework deadlines, quiz notifications), and unrelated conversational anecdotes. Process only the pure, academic, and engineering concepts.\n\n"
         f"Context:\n{context[:6000]}\n\n"
         "Tasks:\n"
         "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
         "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
         "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
-        "4. Suggest target ratios for question types (theory, code_debugging, fill_blank, scenario) based on content structure (e.g., if there is code, suggest higher code_debugging ratio).\n"
-        "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n\n"
+        "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
+        "   - 'CORE_THEORY' (Concepts, Explanations, Viva)\n"
+        "   - 'ANALYTICAL_REASONING' (Trade-offs, Comparisons, Error analysis)\n"
+        "   - 'NUMERICAL_DESIGN' (Calculations, Architecture, Diagram tracing)\n"
+        "   - 'REAL_WORLD_APPLICATION' (Case studies, Engineering scenarios)\n"
+        "   - 'IMPLEMENTATION_SYNTHESIS' (Coding, Debugging, Practical compilation)\n"
+        "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n"
+        "6. Classify contextual examples into either 'CLASSIC_DOMAIN_STANDARD' (foundational standard examples common to the domain) or 'TRANSIENT_ANALOGY' (casual/metaphorical settings or temporary stories). If an example is classified as a 'TRANSIENT_ANALOGY', extract the underlying mathematical/logical rule, and place the specific characters/names/settings used into an 'isolated_narratives' exclusion array of strings.\n\n"
         "Return ONLY a clean JSON object conforming strictly to this format:\n"
         "{\n"
         "  \"relevancy_verdict\": \"pass\",\n"
@@ -442,13 +620,17 @@ async def analyze_sources(req: AnalyzeRequest):
         "    {\"question\": \"...\", \"answer\": \"...\"}\n"
         "  ],\n"
         "  \"ai_recommendation\": {\n"
-        "    \"theory\": 0.4,\n"
-        "    \"code_debugging\": 0.3,\n"
-        "    \"fill_blank\": 0.2,\n"
-        "    \"scenario\": 0.1\n"
+        "    \"CORE_THEORY\": 0.2,\n"
+        "    \"ANALYTICAL_REASONING\": 0.2,\n"
+        "    \"NUMERICAL_DESIGN\": 0.2,\n"
+        "    \"REAL_WORLD_APPLICATION\": 0.2,\n"
+        "    \"IMPLEMENTATION_SYNTHESIS\": 0.2\n"
         "  },\n"
         "  \"concepts\": [\n"
         "    {\"concept_tag\": \"...\", \"weight_score\": 0.85}\n"
+        "  ],\n"
+        "  \"isolated_narratives\": [\n"
+        "    \"Name of character/setting/anecdote to exclude (e.g. Alice and Bob, dining philosophers setting, specific car factory anecdote)\"\n"
         "  ]\n"
         "}"
     )
@@ -490,13 +672,21 @@ async def analyze_sources(req: AnalyzeRequest):
                 fallback_context = context[:1500]
                 fallback_prompt = (
                     "You are an elite academic analyzer. Analyze the textbook/lecture context below.\n\n"
+                    "MANDATORY CONTEXTUAL DE-NOISING PASS:\n"
+                    "You must explicitly inspect the provided context. If it contains audio transcripts or speech data, identify and strip out all non-pedagogical clutter: classroom management comments, administrative/scheduling remarks (e.g., homework deadlines, quiz notifications), and unrelated conversational anecdotes. Process only the pure, academic, and engineering concepts.\n\n"
                     f"Context:\n{fallback_context}\n\n"
                     "Tasks:\n"
                     "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
                     "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
                     "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
-                    "4. Suggest target ratios for question types (theory, code_debugging, fill_blank, scenario) based on content structure (e.g., if there is code, suggest higher code_debugging ratio).\n"
-                    "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n\n"
+                    "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
+                    "   - 'CORE_THEORY' (Concepts, Explanations, Viva)\n"
+                    "   - 'ANALYTICAL_REASONING' (Trade-offs, Comparisons, Error analysis)\n"
+                    "   - 'NUMERICAL_DESIGN' (Calculations, Architecture, Diagram tracing)\n"
+                    "   - 'REAL_WORLD_APPLICATION' (Case studies, Engineering scenarios)\n"
+                    "   - 'IMPLEMENTATION_SYNTHESIS' (Coding, Debugging, Practical compilation)\n"
+                    "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n"
+                    "6. Classify contextual examples into either 'CLASSIC_DOMAIN_STANDARD' (foundational standard examples common to the domain) or 'TRANSIENT_ANALOGY' (casual/metaphorical settings or temporary stories). If an example is classified as a 'TRANSIENT_ANALOGY', extract the underlying mathematical/logical rule, and place the specific characters/names/settings used into an 'isolated_narratives' exclusion array of strings.\n\n"
                     "Return ONLY a clean JSON object conforming strictly to this format:\n"
                     "{\n"
                     "  \"relevancy_verdict\": \"pass\",\n"
@@ -506,13 +696,17 @@ async def analyze_sources(req: AnalyzeRequest):
                     "    {\"question\": \"...\", \"answer\": \"...\"}\n"
                     "  ],\n"
                     "  \"ai_recommendation\": {\n"
-                    "    \"theory\": 0.4,\n"
-                    "    \"code_debugging\": 0.3,\n"
-                    "    \"fill_blank\": 0.2,\n"
-                    "    \"scenario\": 0.1\n"
+                    "    \"CORE_THEORY\": 0.2,\n"
+                    "    \"ANALYTICAL_REASONING\": 0.2,\n"
+                    "    \"NUMERICAL_DESIGN\": 0.2,\n"
+                    "    \"REAL_WORLD_APPLICATION\": 0.2,\n"
+                    "    \"IMPLEMENTATION_SYNTHESIS\": 0.2\n"
                     "  },\n"
                     "  \"concepts\": [\n"
                     "    {\"concept_tag\": \"...\", \"weight_score\": 0.85}\n"
+                    "  ],\n"
+                    "  \"isolated_narratives\": [\n"
+                    "    \"Name of character/setting/anecdote to exclude (e.g. Alice and Bob, dining philosophers setting, specific car factory anecdote)\"\n"
                     "  ]\n"
                     "}"
                 )
@@ -707,13 +901,13 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
     print("  [AGENT 1] Executing Semantic Weight & Concept Analyzer...")
     prompt = (
         "You are an expert university academic analyst. Your goal is to inspect the parsed source content chunks and isolate the primary learning objectives.\n\n"
+        "MANDATORY CONTEXTUAL DE-NOISING PASS:\n"
+        "You must explicitly inspect the provided context. If it contains audio transcripts or speech data, identify and strip out all non-pedagogical clutter: classroom management comments, administrative/scheduling remarks (e.g., homework deadlines, quiz notifications), and unrelated conversational anecdotes. Process only the pure, academic, and engineering concepts.\n\n"
         f"Context Chunks:\n{context[:4000]}\n\n"
-        "Task:\n"
-        "Identify the core structural topics within the provided text. Critically evaluate word usage, explicit focus flags (e.g., 'pay close attention here', 'this will form part of your assessment'), and text frequency.\n\n"
-        f"Identify at least {count} distinct core concepts.\n\n"
-        "Return ONLY a clean JSON object containing a list of topics with their estimated relative importance weights (0.0 to 1.0) and anchor text citations.\n"
-        "Do NOT include markdown formatting outside the JSON block. Do NOT include extra commentary.\n\n"
-        "FORMAT REQUIRED:\n"
+        "Tasks:\n"
+        f"1. Identify at least {count} distinct core concepts from the de-noised text.\n"
+        "2. Classify contextual examples into either 'CLASSIC_DOMAIN_STANDARD' (foundational standard examples common to the domain) or 'TRANSIENT_ANALOGY' (casual/metaphorical settings or temporary stories). If an example is classified as a 'TRANSIENT_ANALOGY', extract the underlying mathematical/logical rule, and place the specific characters/names/settings used into an 'isolated_narratives' exclusion array of strings.\n\n"
+        "Return ONLY a clean JSON object conforming strictly to this format:\n"
         "{\n"
         "  \"concepts\": [\n"
         "    {\n"
@@ -721,6 +915,9 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
         "      \"weight_score\": 0.85,\n"
         "      \"anchor_citation\": \"To achieve process synchronization, operating systems use semaphores...\"\n"
         "    }\n"
+        "  ],\n"
+        "  \"isolated_narratives\": [\n"
+        "    \"Alice and Bob\", \"dining philosophers table setup\", \"specific car factory narrative\"\n"
         "  ]\n"
         "}"
     )
@@ -741,8 +938,9 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
             raw_text = response.json().get("response", "")
             data = robust_json_loads(raw_text)
             concepts = data.get("concepts", [])
-            print(f"  ├── [Agent 1 Analyzer] : Extracted {len(concepts)} concepts successfully.")
-            return concepts
+            isolated_narratives = data.get("isolated_narratives", [])
+            print(f"  ├── [Agent 1 Analyzer] : Extracted {len(concepts)} concepts and {len(isolated_narratives)} narrative exclusions.")
+            return concepts, isolated_narratives
     except Exception as e:
         err_str = str(e).lower()
         if "timeout" in err_str or "read timed out" in err_str:
@@ -750,68 +948,83 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
         else:
             print(f"  ├── [Agent 1 Analyzer] : ⚠️ Concept mapping failed ({e}) -> Fallback to topic from filenames.")
     
-    return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
+    return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}], []
 
-def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium"):
+def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium", isolated_narratives=None):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
     
     type_instruction = ""
-    if question_type == "theory":
+    if question_type == "CORE_THEORY":
         type_instruction = (
-            "Write a Theory & Conceptual MCQ. Focus entirely on core academic definitions, relational logic, architectural structures, and syllabus theory.\n"
-            "Format the question with a prompt_text, and a list of 4 options (in options field) where exactly one correct option is copy-pasted into correct_answer."
+            "Write a Core Theory MCQ. Focus entirely on concepts, explanations, and viva-style terminology. "
+            "Ask about definitions, protocols, mechanisms, or conceptual principles."
         )
-    elif question_type == "code_debugging":
+    elif question_type == "ANALYTICAL_REASONING":
         type_instruction = (
-            "Write a Code Debugging & Compilation MCQ.\n"
-            "Create a structured Markdown-supported code fragment (in code_snippet field, e.g., JavaScript, Python, or SQL) containing an intentional syntax, logical, or runtime bug.\n"
-            "The prompt_text should ask the student to identify the vulnerability/bug or predict the execution output. Provide 4 options where exactly one is correct."
+            "Write an Analytical Reasoning MCQ. Focus on trade-offs, comparisons, and error analysis. "
+            "Ask the student to compare two approaches, analyze why a certain design succeeds/fails, or identify logic/reasoning errors."
         )
-    elif question_type == "fill_blank":
+    elif question_type == "NUMERICAL_DESIGN":
         type_instruction = (
-            "Write a Fill-in-the-Blank or Short Syntax Entry prompt.\n"
-            "Create a code snippet, math formula, or data declaration (in code_snippet, or place in prompt_text if not code) with specific lines or properties replaced with empty character gaps (e.g. '______').\n"
-            "Provide a prompt_text asking the student to fill in the blank. The options field should contain 4 choices representing alternative syntax fills, and the correct_answer must be the exact correct characters for the gap."
+            "Write a Numerical Design MCQ. Focus on calculations, architecture, and diagram/state tracing. "
+            "Include calculations, math expressions, complexity derivations, or trace parameters through an architecture."
         )
-    elif question_type == "scenario":
+    elif question_type == "REAL_WORLD_APPLICATION":
         type_instruction = (
-            "Write a Scenario-Based Enterprise Challenge.\n"
-            "Construct a realistic engineering design constraint or system architecture bottleneck (e.g. 'Our database connection pool is dropping incoming requests at a specific load...').\n"
-            "The options must provide alternative high-level system resolutions where only one accurately balances safety, efficiency, and scalability. Correct answer goes to correct_answer."
+            "Write a Real-World Application MCQ. Focus on case studies and engineering scenarios. "
+            "Construct a realistic domain-specific scenario (e.g. electrical wiring, chemical reaction setup, or software scaling) and ask for the best practical solution."
+        )
+    elif question_type == "IMPLEMENTATION_SYNTHESIS":
+        type_instruction = (
+            "Write an Implementation & Synthesis MCQ. Focus on coding, debugging, and practical syntax compilation. "
+            "Include a code fragment or data struct declaration (in code_snippet field if it is programming syntax), and ask to predict the output, locate a bug, or complete the declaration."
         )
 
     difficultyPrompts = {
         "easy": {
-            "theory": "Focus on straightforward definitions and core protocol identification.",
-            "coding": "Provide short, simple code snippets. Focus on basic output prediction or obvious missing syntax errors.",
-            "fill_blank": "Ask about standard definitions or clear, elementary differences between two core concepts.",
-            "scenario": "Simple, single-variable real-world applications with straightforward outcomes."
+            "CORE_THEORY": "Identify straightforward definitions or basic protocol/concept names.",
+            "ANALYTICAL_REASONING": "Identify simple differences or obvious advantages between two concepts.",
+            "NUMERICAL_DESIGN": "Simple direct calculations or basic parameter identification.",
+            "REAL_WORLD_APPLICATION": "Direct single-variable applications with simple outcomes.",
+            "IMPLEMENTATION_SYNTHESIS": "Short, simple code blocks or basic syntax identification."
         },
         "medium": {
-            "theory": "Focus on how mechanisms interact with each other and standard architectural workflows.",
-            "coding": "Include loops, basic algorithmic structures, or functional tracking where state changes.",
-            "fill_blank": "Focus on standard efficiency trade-offs, like time-complexity differences.",
-            "scenario": "Introduce minor engineering bottlenecks or common edge-case system failures."
+            "CORE_THEORY": "Explain how mechanisms interact or standard workflows.",
+            "ANALYTICAL_REASONING": "Analyze trade-offs, state-space exploration, or standard error conditions.",
+            "NUMERICAL_DESIGN": "Multi-step calculations, simple diagram/memory tracing, or time/space complexities.",
+            "REAL_WORLD_APPLICATION": "Introduce minor engineering bottlenecks, common system failures, or design trade-offs.",
+            "IMPLEMENTATION_SYNTHESIS": "Code prediction involving loops, basic conditional checks, or state updates."
         },
         "hard": {
-            "theory": "Test deep internal mechanics, architectural limitations, and complex structural constraints.",
-            "coding": "Provide highly optimized or multi-threaded code snippets. Include hidden bugs, memory leaks, or tricky recursion logic.",
-            "fill_blank": "Demand defense of custom system design choices under heavy resource constraints or scale requirements.",
-            "scenario": "Construct deep, multi-layered system design failures with conflicting parameters (e.g., consistency vs availability)."
+            "CORE_THEORY": "Test deep internal mechanics, architectural limits, and complex theoretical constraints.",
+            "ANALYTICAL_REASONING": "Evaluate complex state transitions, hidden structural flaws, or multi-dimensional trade-offs.",
+            "NUMERICAL_DESIGN": "Deep computational calculations, complex diagram tracing, multi-variable optimization, or proof-of-correctness tracing.",
+            "REAL_WORLD_APPLICATION": "Construct deep, multi-layered system failure scenarios with conflicting resource/performance metrics.",
+            "IMPLEMENTATION_SYNTHESIS": "Analyze highly optimized snippets, multi-threaded tasks, tricky recursion, or memory allocation bugs."
         }
     }
     
     diff_key = difficulty.lower()
     if diff_key not in difficultyPrompts: diff_key = "medium"
     
-    matrix_cat = question_type
-    if matrix_cat == "code_debugging": matrix_cat = "coding"
-    
-    targeted_criteria = difficultyPrompts[diff_key].get(matrix_cat, "Focus on general knowledge.")
+    targeted_criteria = difficultyPrompts[diff_key].get(question_type, "Focus on general knowledge.")
+
+    narrative_mutation_instruction = ""
+    if isolated_narratives and len(isolated_narratives) > 0:
+        exclusions_str = ", ".join([f'"{n}"' for n in isolated_narratives])
+        narrative_mutation_instruction = (
+            f"NARRATIVE MUTATION MANDATE:\n"
+            f"When generating questions under the REAL_WORLD_APPLICATION or NUMERICAL_DESIGN archetypes, review the following narrative/scenario exclusions: [{exclusions_str}].\n"
+            f"You are STRICTLY PROHIBITED from using these exact scenarios, names, characters, or settings in your question stem or choices. "
+            f"Instead, construct a structurally isomorphic (parallel) real-world scenario that tests the exact same concept using a brand-new application domain.\n\n"
+        )
 
     prompt = (
         "You are an elite Computer Science and Engineering curriculum developer. Your task is to write high-fidelity academic evaluations.\n\n"
+        f"{narrative_mutation_instruction}"
+        "DIAGRAM AND GRAPHICS SAFEGUARD:\n"
+        "For any image/diagram-based text descriptions extracted from slides, you are only permitted to reproduce them if they represent standard engineering blueprints or industry-standard topologies. If the slide context indicates a non-standard or arbitrary sketch, synthesize a descriptive text-based conceptual evaluation instead.\n\n"
         f"Context chunks:\n{context[:2000]}\n\n"
         f"Target Concept: {concept_tag} (Importance Weight: {weight_score})\n"
         f"Question Type: {question_type}\n\n"
@@ -926,7 +1139,7 @@ def run_agent3_critic(q_data, context, flavor="theory"):
     if not correct_ans:
         issues.append("Missing correct_answer")
     elif correct_ans not in options:
-        if flavor != "code_debugging":
+        if flavor != "IMPLEMENTATION_SYNTHESIS":
             issues.append("Correct answer does not match any of the options exactly")
             
     # Rule Y (Circular Verification)
@@ -946,13 +1159,13 @@ def run_agent3_critic(q_data, context, flavor="theory"):
         
         if match_py:
             code = match_py.group(1)
-            if flavor != "code_debugging":
+            if flavor != "IMPLEMENTATION_SYNTHESIS":
                 valid, errs = check_python_syntax(code)
                 if not valid:
                     issues.extend(errs)
         elif match_js:
             code = match_js.group(1)
-            if flavor != "code_debugging":
+            if flavor != "IMPLEMENTATION_SYNTHESIS":
                 valid, errs = check_js_syntax(code)
                 if not valid:
                     issues.extend(errs)
@@ -1139,20 +1352,27 @@ def execute_generation_logic(req: GeneratorRequest):
         print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
 
     # 1. Determine Target Flavor Ratios and Question count
-    ratios = req.target_ratios or {"theory": 1.0, "code_debugging": 0.0, "fill_blank": 0.0, "scenario": 0.0}
+    default_ratios = {
+        "CORE_THEORY": 0.2,
+        "ANALYTICAL_REASONING": 0.2,
+        "NUMERICAL_DESIGN": 0.2,
+        "REAL_WORLD_APPLICATION": 0.2,
+        "IMPLEMENTATION_SYNTHESIS": 0.2
+    }
+    ratios = req.target_ratios or default_ratios
     total_count = req.count
     
     # Calculate counts per flavor
     sum_ratios = sum(ratios.values())
     if sum_ratios == 0:
-        ratios = {"theory": 1.0, "code_debugging": 0.0, "fill_blank": 0.0, "scenario": 0.0}
+        ratios = default_ratios
         sum_ratios = 1.0
         
     counts = {}
     accumulated_count = 0
     active_flavors = [f for f in ratios.keys() if ratios[f] > 0]
     if not active_flavors:
-        active_flavors = ["theory"]
+        active_flavors = ["CORE_THEORY"]
         
     for f in active_flavors[:-1]:
         c = int(round(total_count * (ratios[f] / sum_ratios)))
@@ -1170,7 +1390,13 @@ def execute_generation_logic(req: GeneratorRequest):
     print(f"[Hard Zero]    : Enforced! Small margins eliminated to maximize quiz focus.")
     
     final_list = []
-    emojis = {"theory": "📝", "code_debugging": "💻", "fill_blank": "✏️", "scenario": "🎬"}
+    emojis = {
+        "CORE_THEORY": "📚",
+        "ANALYTICAL_REASONING": "🔍",
+        "NUMERICAL_DESIGN": "⚙️",
+        "REAL_WORLD_APPLICATION": "💼",
+        "IMPLEMENTATION_SYNTHESIS": "💻"
+    }
     for f_key, f_cnt in counts.items():
         if f_cnt > 0:
             emoji = emojis.get(f_key, "❓")
@@ -1200,7 +1426,16 @@ def execute_generation_logic(req: GeneratorRequest):
     elif req.content and req.type == 'topic':
         topic_fallback = req.content
 
-    concepts = run_agent1_analyzer(context, count=total_count, topic_fallback=topic_fallback)
+    concepts, extracted_exclusions = run_agent1_analyzer(context, count=total_count, topic_fallback=topic_fallback)
+    
+    # Merge narrative exclusions
+    isolated_narratives = []
+    if req.isolated_narratives:
+        isolated_narratives.extend(req.isolated_narratives)
+    if extracted_exclusions:
+        isolated_narratives.extend(extracted_exclusions)
+    isolated_narratives = list(set(isolated_narratives))
+
     if not concepts:
         concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
 
@@ -1213,28 +1448,78 @@ def execute_generation_logic(req: GeneratorRequest):
         if not concepts:
             concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
 
-    # Create the queue of generation tasks
-    generation_tasks = []
-    concept_idx = 0
+    # --- Two-Pass Calculation ---
+    # Pass 1: Quantity & Depth (allocate question slots proportional to stress weight)
+    sum_weights = sum(float(c.get("weight_score", 0.75)) for c in concepts)
+    concept_slots = {}
+    allocated_sum = 0
+    
+    if sum_weights > 0:
+        for c in concepts[:-1]:
+            tag = c["concept_tag"]
+            slot_cnt = int(round(total_count * (float(c.get("weight_score", 0.75)) / sum_weights)))
+            concept_slots[tag] = slot_cnt
+            allocated_sum += slot_cnt
+        # Remainder to the last one
+        last_tag = concepts[-1]["concept_tag"]
+        concept_slots[last_tag] = max(0, total_count - allocated_sum)
+    else:
+        # Equal distribution if all weights are zero
+        equal_share = total_count // len(concepts)
+        for c in concepts[:-1]:
+            concept_slots[c["concept_tag"]] = equal_share
+            allocated_sum += equal_share
+        concept_slots[concepts[-1]["concept_tag"]] = max(0, total_count - allocated_sum)
+        
+    # Check total slot allocation sum (Pass 1 Rounding Safeguard)
+    total_slots_allocated = sum(concept_slots.values())
+    if total_slots_allocated != total_count:
+        diff = total_count - total_slots_allocated
+        highest_stressed = max(concepts, key=lambda x: float(x.get("weight_score", 0.75)))
+        highest_tag = highest_stressed["concept_tag"]
+        concept_slots[highest_tag] = max(0, concept_slots[highest_tag] + diff)
+
+    # Pass 2: Flavor Injection (pair slots with Global Archetype ratio formats)
+    formats_list = []
     for flavor, cnt in counts.items():
-        for _ in range(cnt):
-            # Select concept wrapping around if fewer concepts than total count
-            concept = concepts[concept_idx % len(concepts)]
-            generation_tasks.append((concept, flavor))
-            concept_idx += 1
+        formats_list.extend([flavor] * cnt)
+    
+    while len(formats_list) < total_count:
+        formats_list.append("CORE_THEORY")
+    formats_list = formats_list[:total_count]
+    
+    slots = []
+    for concept in concepts:
+        c_count = concept_slots.get(concept["concept_tag"], 0)
+        # Determine difficulty based on stress weight score
+        w = float(concept.get("weight_score", 0.75))
+        if w >= 0.8:
+            slot_diff = "Hard"
+        elif w >= 0.4:
+            slot_diff = "Medium"
+        else:
+            slot_diff = "Easy"
+        for _ in range(c_count):
+            slots.append((concept, slot_diff))
+            
+    generation_tasks = []
+    for i in range(total_count):
+        concept, slot_diff = slots[i]
+        flavor = formats_list[i]
+        generation_tasks.append((concept, flavor, slot_diff))
 
     questions = []
     generated_so_far = ""
 
     # 3. Executing Agent 2 Generator & Agent 3 Critic loop
-    for i, (concept, flavor) in enumerate(generation_tasks):
+    for i, (concept, flavor, slot_diff) in enumerate(generation_tasks):
         print(f"\n• QUESTION {i+1} [Flavor: {flavor.upper()}]")
         q_success = False
         
         # Initial Draft Generation by Agent 2
         for attempt in range(3):
             try:
-                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, req.difficulty)
+                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives)
                 print(f"  ├── [Agent 2 Creator]  : Drafted a multiple-choice question on '{concept.get('concept_tag')}'.")
                 
                 # Validation by Agent 3
@@ -1279,8 +1564,21 @@ def execute_generation_logic(req: GeneratorRequest):
                     if os.getenv("GROQ_API_KEY"):
                         try:
                             # Construct prompt for Groq to generate a single question conforming to schema
+                            narrative_mutation_instruction = ""
+                            if isolated_narratives and len(isolated_narratives) > 0:
+                                exclusions_str = ", ".join([f'"{n}"' for n in isolated_narratives])
+                                narrative_mutation_instruction = (
+                                    f"NARRATIVE MUTATION MANDATE:\n"
+                                    f"When generating questions under the REAL_WORLD_APPLICATION or NUMERICAL_DESIGN archetypes, review the following narrative/scenario exclusions: [{exclusions_str}].\n"
+                                    f"You are STRICTLY PROHIBITED from using these exact scenarios, names, characters, or settings in your question stem or choices. "
+                                    f"Instead, construct a structurally isomorphic (parallel) real-world scenario that tests the exact same concept using a brand-new application domain.\n\n"
+                                )
+
                             prompt = (
                                 "You are an elite Computer Science curriculum developer. Generate a single question.\n\n"
+                                f"{narrative_mutation_instruction}"
+                                "DIAGRAM AND GRAPHICS SAFEGUARD:\n"
+                                "For any image/diagram-based text descriptions extracted from slides, you are only permitted to reproduce them if they represent standard engineering blueprints or industry-standard topologies. If the slide context indicates a non-standard or arbitrary sketch, synthesize a descriptive text-based conceptual evaluation instead.\n\n"
                                 f"Context:\n{context[:2000]}\n\n"
                                 f"Concept: {concept.get('concept_tag')}\n"
                                 f"Type: {flavor}\n"
@@ -1332,9 +1630,11 @@ def execute_generation_logic(req: GeneratorRequest):
         "quiz_metadata": {
             "source_material_id": req.source_material_id or "kmit_dynamic_gen",
             "total_questions": len(questions),
-            "target_ratios": ratios
+            "target_ratios": ratios,
+            "isolated_narratives": isolated_narratives
         },
-        "questions": questions
+        "questions": questions,
+        "isolated_narratives": isolated_narratives
     }
     
     print_stage_header("5", "FAULT-TOLERANT WEBHOOK CALLBACK DISPATCH")

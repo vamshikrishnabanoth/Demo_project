@@ -114,14 +114,21 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
             console.log(`🤖 Calling Groq (llama-3.1-8b-instant) for resilient generation...`);
             
             // Calculate dynamic count allocations based on blended target ratios
-            const ratios = targetRatios || { theory: 0.25, code_debugging: 0.25, fill_blank: 0.25, scenario: 0.25 };
-            const theoryCount = Math.round((ratios.theory || 0) * count);
-            const codingCount = Math.round((ratios.code_debugging || 0) * count);
-            const interviewCount = Math.round((ratios.fill_blank || 0) * count);
-            const scenarioCount = Math.round((ratios.scenario || 0) * count);
+            const ratios = targetRatios || {
+                CORE_THEORY: 0.2,
+                ANALYTICAL_REASONING: 0.2,
+                NUMERICAL_DESIGN: 0.2,
+                REAL_WORLD_APPLICATION: 0.2,
+                IMPLEMENTATION_SYNTHESIS: 0.2
+            };
+            const theoryCount = Math.round((ratios.CORE_THEORY || 0) * count);
+            const analyticalCount = Math.round((ratios.ANALYTICAL_REASONING || 0) * count);
+            const numericalCount = Math.round((ratios.NUMERICAL_DESIGN || 0) * count);
+            const applicationCount = Math.round((ratios.REAL_WORLD_APPLICATION || 0) * count);
+            const synthesisCount = Math.round((ratios.IMPLEMENTATION_SYNTHESIS || 0) * count);
             
             // Adjust rounding errors to match requested total count exactly
-            let totalComputed = theoryCount + codingCount + interviewCount + scenarioCount;
+            let totalComputed = theoryCount + analyticalCount + numericalCount + applicationCount + synthesisCount;
             let diff = count - totalComputed;
             let adjustedTheoryCount = Math.max(0, theoryCount + diff);
 
@@ -134,10 +141,11 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 Total Count: ${count}
                 
                 You MUST distribute the generated MCQs precisely across these profile distributions:
-                - Theory MCQs (${adjustedTheoryCount} questions): Test foundational concepts and definitions.
-                - Code Debugging MCQs (${codingCount} questions): Include a code snippet in the question text and test debugging, output tracing, or structural analysis.
-                - Fill-in-the-Blank MCQs (${interviewCount} questions): Focus on trade-offs, comparisons, and technical optimization choices.
-                - Scenario MCQs (${scenarioCount} questions): Focus on real-world system design, production failures, or case studies.
+                - CORE_THEORY (${adjustedTheoryCount} questions): Test foundational concepts, core explanations, and definitions.
+                - ANALYTICAL_REASONING (${analyticalCount} questions): Test trade-offs, comparisons, and logical/error analysis.
+                - NUMERICAL_DESIGN (${numericalCount} questions): Test calculation-based problems, architecture tracing, and state/diagram tracking.
+                - REAL_WORLD_APPLICATION (${applicationCount} questions): Test case studies, production setups, and real-world engineering constraints.
+                - IMPLEMENTATION_SYNTHESIS (${synthesisCount} questions): Test coding execution, practical syntax bugs, debugging, or code snippet predictions.
                 
                 [STRICT GROUNDING CONSTRAINT]
                 You must extract ONLY core academic, structural, and theoretical concepts present within the text body.
@@ -212,6 +220,55 @@ const extractText = async (filePath) => {
     }
 };
 
+const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
+    try {
+        const ext = path.extname(filePath).toLowerCase();
+        const start = Math.max(1, startPage);
+        const end = Math.max(start, endPage);
+
+        if (ext === '.pdf') {
+            const dataBuffer = fs.readFileSync(filePath);
+            let pagesText = [];
+            const options = {
+                pagerender: function(pageData) {
+                    return pageData.getTextContent().then(function(textContent) {
+                        let text = textContent.items.map(item => item.str).join(' ');
+                        pagesText.push(text);
+                        return text;
+                    });
+                }
+            };
+            await pdfParse(dataBuffer, options);
+            const s = start - 1;
+            const e = Math.min(pagesText.length, end);
+            return pagesText.slice(s, e).join('\n\n');
+        } else if (ext === '.docx') {
+            const result = await mammoth.extractRawText({ path: filePath });
+            const lines = result.value.split('\n');
+            const linesPerPage = 30;
+            const s = (start - 1) * linesPerPage;
+            const e = Math.min(lines.length, end * linesPerPage);
+            return lines.slice(s, e).join('\n');
+        } else if (['.pptx', '.xlsx'].includes(ext)) {
+            const parsedText = await new Promise((resolve, reject) => {
+                officeParser.parseOffice(filePath, (data, err) => {
+                    if (err) return reject(err);
+                    resolve(typeof data === 'string' ? data : JSON.stringify(data));
+                });
+            });
+            const chunks = parsedText.split('\n');
+            const chunksPerSlide = 15;
+            const s = (start - 1) * chunksPerSlide;
+            const e = Math.min(chunks.length, end * chunksPerSlide);
+            return chunks.slice(s, e).join('\n');
+        }
+        return fs.readFileSync(filePath, 'utf8');
+    } catch (err) {
+        console.error('❌ Scoped Extraction Error:', err.message);
+        return extractText(filePath);
+    }
+};
+
 
 const checkAiServiceOnline = async (url) => {
     try {
@@ -250,7 +307,7 @@ const checkAiServiceOnline = async (url) => {
 
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 // Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null) => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null) => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
     const getFallbackContent = () => {
@@ -296,6 +353,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         }
         if (callbackUrl) {
             payload.callback_url = callbackUrl;
+        }
+        if (isolated_narratives) {
+            payload.isolated_narratives = isolated_narratives;
         }
 
         const response = await axios.post(`${AI_SERVICE_URL}/generate`, payload, {
@@ -1508,7 +1568,17 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log(JSON.stringify(req.body, null, 2));
             console.log('========================================================\n');
 
-            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives } = req.body;
+            let start = startPage ? parseInt(startPage) : 1;
+            let end = endPage ? parseInt(endPage) : 999;
+            let parsedIsolatedNarratives = null;
+            if (isolated_narratives) {
+                try {
+                    parsedIsolatedNarratives = typeof isolated_narratives === 'string' ? JSON.parse(isolated_narratives) : isolated_narratives;
+                } catch (e) {
+                    console.error('Error parsing isolated_narratives:', e);
+                }
+            }
             let extractedTitle = topic || 'AI Generated Quiz';
             let sourceType = type || 'topic';
             let combinedTranscript = '';
@@ -1530,23 +1600,46 @@ exports.generateQuizQuestions = async (req, res) => {
                 parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
             } else {
                 parsedInputs = [];
+                let fileConfigs = [];
+                if (req.body.file_configs) {
+                    try {
+                        fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
+                    } catch (e) {
+                        console.error('Error parsing file_configs:', e);
+                    }
+                }
+
                 if (req.files && req.files.length > 0) {
                     for (const file of req.files) {
                         const filePath = path.resolve(file.path);
                         const ext = path.extname(file.originalname).toLowerCase();
+                        const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                         
                         let textContent = "";
-                        if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
-                            textContent = await extractText(filePath);
-                        } else {
+                        const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+                        let isHandwrittenScan = isImage;
+                        
+                        if (isImage) {
                             const buffer = fs.readFileSync(filePath);
                             textContent = "base64:" + buffer.toString('base64');
+                        } else {
+                            textContent = await extractTextWithRange(filePath, config.startPage, config.endPage);
+                            if (ext === '.pdf') {
+                                const fileNameLower = file.originalname.toLowerCase();
+                                if (fileNameLower.includes('scan') || fileNameLower.includes('handwritten') || fileNameLower.includes('handwriting') || (!textContent || textContent.trim().length < 100)) {
+                                    isHandwrittenScan = true;
+                                    const buffer = fs.readFileSync(filePath);
+                                    textContent = "base64:" + buffer.toString('base64');
+                                }
+                            }
                         }
                         
                         parsedInputs.push({
-                            type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
+                            type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
                             content: textContent || filePath,
-                            source_name: file.originalname
+                            source_name: file.originalname,
+                            startPage: config.startPage || 1,
+                            endPage: config.endPage || 999
                         });
                         
                         try { fs.unlinkSync(filePath); } catch (_) {}
@@ -1850,7 +1943,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
                 if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
-                     extractedText = await extractText(absolutePath);
+                     extractedText = await extractTextWithRange(absolutePath, start, end);
                 }
             }
 
@@ -1918,17 +2011,17 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
             }
 
             if (finalQuestions === 'ACCEPTED') {
@@ -2406,23 +2499,46 @@ exports.analyzeSources = async (req, res) => {
         const inputs = [];
 
         // 1. Process files
+        let fileConfigs = [];
+        if (req.body.file_configs) {
+            try {
+                fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
+            } catch (e) {
+                console.error('Error parsing file_configs in analyzeSources:', e);
+            }
+        }
+
         if (req.files && req.files.length > 0) {
             for (const file of req.files) {
                 const filePath = path.resolve(file.path);
                 const ext = path.extname(file.originalname).toLowerCase();
+                const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                 
                 let textContent = "";
-                if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
-                    textContent = await extractText(filePath);
-                } else {
+                const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+                let isHandwrittenScan = isImage;
+                
+                if (isImage) {
                     const buffer = fs.readFileSync(filePath);
                     textContent = "base64:" + buffer.toString('base64');
+                } else {
+                    textContent = await extractTextWithRange(filePath, config.startPage, config.endPage);
+                    if (ext === '.pdf') {
+                        const fileNameLower = file.originalname.toLowerCase();
+                        if (fileNameLower.includes('scan') || fileNameLower.includes('handwritten') || fileNameLower.includes('handwriting') || (!textContent || textContent.trim().length < 100)) {
+                            isHandwrittenScan = true;
+                            const buffer = fs.readFileSync(filePath);
+                            textContent = "base64:" + buffer.toString('base64');
+                        }
+                    }
                 }
                 
                 inputs.push({
-                    type: ['.jpg', '.jpeg', '.png'].includes(ext) ? 'image' : ext.replace('.', ''),
+                    type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
                     content: textContent || filePath,
-                    source_name: file.originalname
+                    source_name: file.originalname,
+                    startPage: config.startPage || 1,
+                    endPage: config.endPage || 999
                 });
                 
                 try { fs.unlinkSync(filePath); } catch (_) {}
