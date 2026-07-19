@@ -717,18 +717,7 @@ export default function CreateQuizTopic() {
                                         >
                                             <FileText size={14} className="text-blue-400" /> Upload Document
                                         </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowDropdown(false);
-                                                setTextModalType('description');
-                                                setTextInputContent('');
-                                                setShowTextModal(true);
-                                            }}
-                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
-                                        >
-                                            <Plus size={14} className="text-purple-400" /> Add Short Description
-                                        </button>
+
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -809,10 +798,11 @@ export default function CreateQuizTopic() {
                                                         </span>
                                                         <input 
                                                             type="number" 
-                                                            min="1" 
-                                                            value={inp.endPage || 999} 
+                                                            min="1"
+                                                            placeholder="All"
+                                                            value={inp.endPage === '' || inp.endPage == null ? '' : inp.endPage} 
                                                             onChange={(e) => {
-                                                                const val = Math.max(1, parseInt(e.target.value) || 999);
+                                                                const val = e.target.value === '' ? '' : Math.max(1, parseInt(e.target.value) || 1);
                                                                 setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
                                                                 setAnalyzedData(null);
                                                             }}

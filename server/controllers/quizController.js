@@ -2621,7 +2621,7 @@ exports.analyzeSources = async (req, res) => {
                 .map(inp => inp.content)
                 .join('\n\n');
 
-            if (!aggregatedText || aggregatedText.trim().length < 20) {
+            if (!aggregatedText || aggregatedText.trim().length < 2) {
                 return res.status(400).json({ msg: 'Content too short or unextractable for analysis.' });
             }
 

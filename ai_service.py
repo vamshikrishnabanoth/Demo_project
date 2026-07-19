@@ -587,7 +587,7 @@ async def analyze_sources(req: AnalyzeRequest):
         raise HTTPException(status_code=400, detail="No input sources provided.")
         
     text = resolve_input_sources(req.inputs)
-    if not text or len(text.strip()) < 50:
+    if not text or len(text.strip()) < 2:
         raise HTTPException(status_code=400, detail="Content too short or unextractable.")
         
     chunks = deduplicate_text_chunks(text, embed_model)
@@ -1307,7 +1307,7 @@ def execute_generation_logic(req: GeneratorRequest):
 
     if req.inputs:
         resolved_text = resolve_input_sources(req.inputs)
-        if not resolved_text or len(resolved_text.strip()) < 50:
+        if not resolved_text or len(resolved_text.strip()) < 2:
             raise HTTPException(status_code=400, detail="Content too short or unextractable from sources.")
         
         print_stage_header("2", "CONTENT SANITIZATION & METADATA STRIPPING")
