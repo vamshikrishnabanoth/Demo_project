@@ -195,6 +195,13 @@ export default function CreateQuizPDF() {
         return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
     }, [file]);
 
+    const fileLabel = useMemo(() => {
+        if (!file) return "Page";
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext === 'pptx' || ext === 'ppt') return "Slide";
+        return "Page";
+    }, [file]);
+
     const handleSliderChange = (changedFlavor, newValue) => {
         const val = Math.min(100, Math.max(0, parseInt(newValue) || 0));
         
@@ -441,7 +448,7 @@ export default function CreateQuizPDF() {
                                                 {!isImageOrScan && (
                                                     <div className="mt-4 flex gap-4 items-center bg-white/5 p-4 rounded-xl border border-white/5">
                                                         <div className="flex flex-col gap-1">
-                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Start Page/Slide</label>
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Start {fileLabel}</label>
                                                             <input 
                                                                 type="number" 
                                                                 min="1" 
@@ -451,7 +458,7 @@ export default function CreateQuizPDF() {
                                                             />
                                                         </div>
                                                         <div className="flex flex-col gap-1">
-                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">End Page/Slide</label>
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">End {fileLabel}</label>
                                                             <input 
                                                                 type="number" 
                                                                 min="1" 

@@ -669,10 +669,10 @@ export default function CreateQuizTopic() {
                 {/* Header branding */}
                 <div className="p-6 pb-2 border-b border-white/5 bg-slate-950/20">
                     <h1 className="text-3xl font-black text-white tracking-tight italic uppercase">
-                        NotebookLM + Kahoot <span className="text-[var(--bg-accent)]">Workspace</span>
+                        Kahoot <span className="text-[var(--bg-accent)]">AI Studio</span>
                     </h1>
                     <p className="text-[var(--text-secondary)] mt-1 font-bold uppercase tracking-wider text-[10px] italic">
-                        Ingest curriculum documents, audio lectures, or text context to launch smart quizzes.
+                        Transform course material into gamified learning assessments.
                     </p>
                 </div>
 
@@ -784,10 +784,13 @@ export default function CreateQuizTopic() {
                                             </div>
 
                                             {/* Page range scoping selectors inside the card */}
-                                            {inp.file && inp.type !== 'image' && (
+                                            {/* Page range scoping selectors inside the card */}
+                                            {inp.file && inp.type !== 'image' && inp.type !== 'handwritten_scan' && (
                                                 <div className="flex items-center gap-3 mt-1 pt-2 border-t border-white/5">
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[8px] font-black text-slate-400 uppercase">Start:</span>
+                                                        <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                            Start {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
+                                                        </span>
                                                         <input 
                                                             type="number" 
                                                             min="1" 
@@ -801,7 +804,9 @@ export default function CreateQuizTopic() {
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[8px] font-black text-slate-400 uppercase">End:</span>
+                                                        <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                            End {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
+                                                        </span>
                                                         <input 
                                                             type="number" 
                                                             min="1" 
