@@ -49,8 +49,41 @@ export default function CreateQuizText() {
     useEffect(() => {
         // Support both key names: 'questions' (from AI generator) and 'generatedQuestions' (legacy)
         const incoming = location.state?.questions || location.state?.generatedQuestions;
-        if (incoming) {
-            setQuestions(incoming);
+        if (incoming && Array.isArray(incoming)) {
+            const normalized = incoming.map((q) => {
+                let opts = q.options;
+                if (!Array.isArray(opts)) {
+                    if (opts && typeof opts === 'object') {
+                        // If it's a dict { A, B, C, D }, extract the values in ordered list format
+                        const keys = Object.keys(opts).sort();
+                        opts = keys.map(k => opts[k]);
+                    } else {
+                        opts = ['', '', '', ''];
+                    }
+                }
+                while (opts.length < 4) {
+                    opts.push(`Option ${opts.length + 1}`);
+                }
+                const cleanOpts = opts.slice(0, 4).map(String);
+                
+                // Map correctAnswer values to exact match in options list
+                let correctVal = q.correctAnswer || q.correct_answer || q.correct_ans || '';
+                if (correctVal === 'A' || correctVal === 'B' || correctVal === 'C' || correctVal === 'D') {
+                    const idx = correctVal.charCodeAt(0) - 65;
+                    correctVal = cleanOpts[idx] || '';
+                }
+
+                return {
+                    ...q,
+                    questionText: q.questionText || q.prompt_text || q.question || '',
+                    options: cleanOpts,
+                    correctAnswer: correctVal,
+                    concept_tag: q.concept_tag || q.sub_topic || '',
+                    points: q.points || 10
+                };
+            });
+
+            setQuestions(normalized);
             setIsGeneratedSource(true);
             if (location.state.title)           setTitle(location.state.title);
             if (location.state.duration)        setDuration(location.state.duration);
