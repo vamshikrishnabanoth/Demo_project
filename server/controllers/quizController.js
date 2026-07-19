@@ -223,8 +223,8 @@ const extractText = async (filePath) => {
 const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
-        const start = Math.max(1, startPage);
-        const end = Math.max(start, endPage);
+        let start = Math.max(1, startPage);
+        let end = Math.max(start, endPage);
 
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
@@ -239,17 +239,23 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
                 }
             };
             await pdfParse(dataBuffer, options);
-            const s = start - 1;
-            const e = Math.min(pagesText.length, end);
+            const total = pagesText.length;
+            if (start > total) start = total;
+            if (end > total) end = total;
+            const s = Math.max(0, start - 1);
+            const e = Math.min(total, end);
             return pagesText.slice(s, e).join('\n\n');
         } else if (ext === '.docx') {
             const result = await mammoth.extractRawText({ path: filePath });
             const lines = result.value.split('\n');
             const linesPerPage = 30;
-            const s = (start - 1) * linesPerPage;
+            const total = Math.max(1, Math.ceil(lines.length / linesPerPage));
+            if (start > total) start = total;
+            if (end > total) end = total;
+            const s = Math.max(0, (start - 1) * linesPerPage);
             const e = Math.min(lines.length, end * linesPerPage);
             return lines.slice(s, e).join('\n');
-        } else if (['.pptx', '.xlsx'].includes(ext)) {
+        } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             const parsedText = await new Promise((resolve, reject) => {
                 officeParser.parseOffice(filePath, (data, err) => {
                     if (err) return reject(err);
@@ -258,7 +264,10 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
             });
             const chunks = parsedText.split('\n');
             const chunksPerSlide = 15;
-            const s = (start - 1) * chunksPerSlide;
+            const total = Math.max(1, Math.ceil(chunks.length / chunksPerSlide));
+            if (start > total) start = total;
+            if (end > total) end = total;
+            const s = Math.max(0, (start - 1) * chunksPerSlide);
             const e = Math.min(chunks.length, end * chunksPerSlide);
             return chunks.slice(s, e).join('\n');
         }
@@ -485,6 +494,59 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
 
 const generateJoinCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+exports.getFileMetadata = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ msg: 'No file uploaded.' });
+    }
+    const filePath = path.resolve(req.file.path);
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    try {
+        let totalCount = 1;
+        let type = 'pages';
+
+        if (ext === '.pdf') {
+            const dataBuffer = fs.readFileSync(filePath);
+            const data = await pdfParse(dataBuffer);
+            totalCount = data.numpages || 1;
+            type = 'pages';
+        } else if (ext === '.docx') {
+            const result = await mammoth.extractRawText({ path: filePath });
+            const lines = result.value.split('\n');
+            const linesPerPage = 30;
+            totalCount = Math.max(1, Math.ceil(lines.length / linesPerPage));
+            type = 'pages';
+        } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
+            const parsedText = await new Promise((resolve, reject) => {
+                officeParser.parseOffice(filePath, (data, err) => {
+                    if (err) return reject(err);
+                    resolve(typeof data === 'string' ? data : JSON.stringify(data));
+                });
+            });
+            const chunks = parsedText.split('\n');
+            const chunksPerSlide = 15;
+            totalCount = Math.max(1, Math.ceil(chunks.length / chunksPerSlide));
+            type = 'slides';
+        } else {
+            totalCount = 1;
+            type = 'pages';
+        }
+
+        // Clean up the file immediately after metadata extraction
+        try { fs.unlinkSync(filePath); } catch (_) {}
+
+        return res.json({
+            success: true,
+            totalCount,
+            type,
+            name: req.file.originalname
+        });
+    } catch (err) {
+        console.error('Error extracting file metadata:', err);
+        try { fs.unlinkSync(filePath); } catch (_) {}
+        return res.status(500).json({ msg: 'Failed to parse file metadata.' });
+    }
 };
 
 exports.createQuiz = async (req, res) => {

@@ -169,6 +169,8 @@ export default function CreateQuizPDF() {
     const [submitting, setSubmitting] = useState(false);
     const [startPage, setStartPage] = useState(1);
     const [endPage, setEndPage] = useState('');
+    const [maxPages, setMaxPages] = useState(null);
+    const [fetchingMetadata, setFetchingMetadata] = useState(false);
     const navigate = useNavigate();
 
     // Dynamic question flavor state (sums to 100)
@@ -188,11 +190,11 @@ export default function CreateQuizPDF() {
         return keywords.some(kw => fileName.includes(kw));
     }, [file]);
 
-    const isImageOrScan = useMemo(() => {
+    const isImageOrTextScan = useMemo(() => {
         if (!file) return false;
         const ext = file.name.split('.').pop().toLowerCase();
         const nameLower = file.name.toLowerCase();
-        return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
+        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
     }, [file]);
 
     const fileLabel = useMemo(() => {
@@ -333,8 +335,41 @@ export default function CreateQuizPDF() {
     }, [stopPolling]);
     // ───────────────────────────────────────────────────────────────────────
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+    const handleFileChange = async (e) => {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+
+        setFile(selectedFile);
+        setMaxPages(null);
+
+        const ext = selectedFile.name.split('.').pop().toLowerCase();
+        const isDoc = ['pdf', 'docx', 'pptx', 'ppt', 'xls', 'xlsx'].includes(ext);
+        const isImageOrTxt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) ||
+                             selectedFile.name.toLowerCase().includes('scan') ||
+                             selectedFile.name.toLowerCase().includes('handwritten') ||
+                             selectedFile.name.toLowerCase().includes('handwriting');
+
+        if (isDoc && !isImageOrTxt) {
+            setFetchingMetadata(true);
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            try {
+                const res = await api.post('/quiz/file-metadata', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                if (res.data && res.data.success) {
+                    setMaxPages(res.data.totalCount);
+                    setEndPage(res.data.totalCount);
+                }
+            } catch (err) {
+                console.error('Error fetching file metadata:', err);
+                toast.error('Failed to parse document page count.');
+            } finally {
+                setFetchingMetadata(false);
+            }
+        } else {
+            setEndPage('');
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -425,7 +460,7 @@ export default function CreateQuizPDF() {
                                     {!file && (
                                         <input
                                             type="file"
-                                            accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.gif,.webp"
+                                            accept=".pdf,.docx,.pptx,.ppt,.txt,.jpg,.jpeg,.png,.gif,.webp"
                                             onChange={handleFileChange}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                             required
@@ -438,22 +473,36 @@ export default function CreateQuizPDF() {
                                                     <FilePlus size={48} />
                                                 </div>
                                                 <p className="font-black text-2xl text-[var(--text-primary)] italic tracking-tighter">
-                                                    {isImageOrScan ? "Handwritten Notes Scan" : file.name}
+                                                    {isImageOrTextScan ? "Handwritten Notes / Text Source" : file.name}
                                                 </p>
                                                 <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs">
-                                                    {isImageOrScan ? file.name : "Ready for processing"}
+                                                    {isImageOrTextScan ? file.name : "Ready for processing"}
                                                 </p>
                                                 
+                                                {fetchingMetadata && (
+                                                    <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest animate-pulse mt-2">
+                                                        ⚡ Reading document page length...
+                                                    </p>
+                                                )}
+
                                                 {/* Start/End page selectors inside card */}
-                                                {!isImageOrScan && (
+                                                {!isImageOrTextScan && (
                                                     <div className="mt-4 flex gap-4 items-center bg-white/5 p-4 rounded-xl border border-white/5">
                                                         <div className="flex flex-col gap-1">
                                                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Start {fileLabel}</label>
                                                             <input 
                                                                 type="number" 
                                                                 min="1" 
+                                                                max={maxPages || undefined}
                                                                 value={startPage} 
-                                                                onChange={(e) => setStartPage(Math.max(1, parseInt(e.target.value) || 1))}
+                                                                onChange={(e) => {
+                                                                    let val = parseInt(e.target.value) || 1;
+                                                                    val = Math.max(1, val);
+                                                                    if (maxPages && val > maxPages) {
+                                                                        val = maxPages;
+                                                                    }
+                                                                    setStartPage(val);
+                                                                }}
                                                                 className="w-20 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-xs font-bold" 
                                                             />
                                                         </div>
@@ -462,11 +511,21 @@ export default function CreateQuizPDF() {
                                                             <input 
                                                                 type="number" 
                                                                 min="1" 
+                                                                max={maxPages || undefined}
                                                                 value={endPage} 
                                                                 placeholder="All"
                                                                 onChange={(e) => {
-                                                                    const val = e.target.value;
-                                                                    setEndPage(val === '' ? '' : Math.max(1, parseInt(val) || ''));
+                                                                    const rawVal = e.target.value;
+                                                                    if (rawVal === '') {
+                                                                        setEndPage('');
+                                                                    } else {
+                                                                        let val = parseInt(rawVal) || 1;
+                                                                        val = Math.max(1, val);
+                                                                        if (maxPages && val > maxPages) {
+                                                                            val = maxPages;
+                                                                        }
+                                                                        setEndPage(val);
+                                                                    }
                                                                 }}
                                                                 className="w-20 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-xs font-bold" 
                                                             />
@@ -476,7 +535,7 @@ export default function CreateQuizPDF() {
                                                 
                                                 <button 
                                                     type="button" 
-                                                    onClick={() => { setFile(null); setStartPage(1); setEndPage(''); }} 
+                                                    onClick={() => { setFile(null); setStartPage(1); setEndPage(''); setMaxPages(null); }} 
                                                     className="mt-2 text-xs font-black uppercase text-red-500 hover:text-red-400 border border-red-500/20 px-4 py-2 rounded-xl hover:bg-red-500/5 transition-all"
                                                 >
                                                     Remove File

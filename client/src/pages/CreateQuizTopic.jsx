@@ -449,7 +449,7 @@ export default function CreateQuizTopic() {
     };
 
     // Add file uploads
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         const files = Array.from(e.target.files);
         if (!files.length) return;
 
@@ -457,17 +457,53 @@ export default function CreateQuizTopic() {
             const ext = file.name.split('.').pop().toLowerCase();
             return {
                 id: Math.random().toString(),
-                type: ['jpg', 'jpeg', 'png'].includes(ext) ? 'image' : ext,
+                type: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) ? 'image' : ext,
                 file: file,
                 source_name: file.name,
                 startPage: 1,
-                endPage: ''
+                endPage: '',
+                maxPages: null,
+                fetchingMetadata: false
             };
         });
 
         setInputs(prev => [...prev, ...newInputs]);
         setAnalyzedData(null); // Reset analysis
         e.target.value = null; // reset file input
+
+        // Asynchronously fetch metadata for each document
+        for (const inputObj of newInputs) {
+            const ext = inputObj.file.name.split('.').pop().toLowerCase();
+            const isDoc = ['pdf', 'docx', 'pptx', 'ppt', 'xls', 'xlsx'].includes(ext);
+            const isImageOrTxt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) ||
+                                 inputObj.file.name.toLowerCase().includes('scan') ||
+                                 inputObj.file.name.toLowerCase().includes('handwritten') ||
+                                 inputObj.file.name.toLowerCase().includes('handwriting');
+
+            if (isDoc && !isImageOrTxt) {
+                setInputs(prev => prev.map(item => item.id === inputObj.id ? { ...item, fetchingMetadata: true } : item));
+                const formData = new FormData();
+                formData.append('file', inputObj.file);
+
+                try {
+                    const res = await api.post('/quiz/file-metadata', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    });
+                    if (res.data && res.data.success) {
+                        setInputs(prev => prev.map(item => item.id === inputObj.id ? { 
+                            ...item, 
+                            maxPages: res.data.totalCount, 
+                            endPage: res.data.totalCount 
+                        } : item));
+                    }
+                } catch (err) {
+                    console.error('Error fetching file metadata:', err);
+                    toast.error(`Failed to parse page count for ${inputObj.file.name}`);
+                } finally {
+                    setInputs(prev => prev.map(item => item.id === inputObj.id ? { ...item, fetchingMetadata: false } : item));
+                }
+            }
+        }
     };
 
     const handleRemoveInput = (id) => {
@@ -772,45 +808,64 @@ export default function CreateQuizTopic() {
                                                 </button>
                                             </div>
 
-                                            {/* Page range scoping selectors inside the card */}
-                                            {/* Page range scoping selectors inside the card */}
-                                            {inp.file && inp.type !== 'image' && inp.type !== 'handwritten_scan' && (
-                                                <div className="flex items-center gap-3 mt-1 pt-2 border-t border-white/5">
-                                                    <div className="flex items-center gap-1">
-                                                        <span className="text-[8px] font-black text-slate-400 uppercase">
-                                                            Start {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
-                                                        </span>
-                                                        <input 
-                                                            type="number" 
-                                                            min="1" 
-                                                            value={inp.startPage || 1} 
-                                                            onChange={(e) => {
-                                                                const val = Math.max(1, parseInt(e.target.value) || 1);
-                                                                setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, startPage: val } : item));
-                                                                setAnalyzedData(null);
-                                                            }}
-                                                            className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <span className="text-[8px] font-black text-slate-400 uppercase">
-                                                            End {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
-                                                        </span>
-                                                        <input 
-                                                            type="number" 
-                                                            min="1"
-                                                            placeholder="All"
-                                                            value={inp.endPage === '' || inp.endPage == null ? '' : inp.endPage} 
-                                                            onChange={(e) => {
-                                                                const val = e.target.value === '' ? '' : Math.max(1, parseInt(e.target.value) || 1);
-                                                                setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
-                                                                setAnalyzedData(null);
-                                                            }}
-                                                            className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
-                                                        />
-                                                    </div>
+                                            {inp.fetchingMetadata && (
+                                                <div className="text-[8px] font-black text-purple-400 uppercase animate-pulse mt-1 pt-1 border-t border-white/5">
+                                                    ⚡ Reading document page length...
                                                 </div>
                                             )}
+
+                                            {/* Page range scoping selectors inside the card */}
+                                            {inp.file && !['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image', 'handwritten_scan'].includes(inp.type) && !inp.source_name.toLowerCase().includes('scan') && !inp.source_name.toLowerCase().includes('handwritten') && !inp.source_name.toLowerCase().includes('handwriting') && (
+                                                <div className="flex items-center gap-3 mt-1 pt-2 border-t border-white/5">
+                                                     <div className="flex items-center gap-1">
+                                                         <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                             Start {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
+                                                         </span>
+                                                         <input 
+                                                             type="number" 
+                                                             min="1" 
+                                                             max={inp.maxPages || undefined}
+                                                             value={inp.startPage || 1} 
+                                                             onChange={(e) => {
+                                                                 const rawVal = e.target.value;
+                                                                 let val = Math.max(1, parseInt(rawVal) || 1);
+                                                                 if (inp.maxPages && val > inp.maxPages) {
+                                                                     val = inp.maxPages;
+                                                                 }
+                                                                 setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, startPage: val } : item));
+                                                                 setAnalyzedData(null);
+                                                             }}
+                                                             className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
+                                                         />
+                                                     </div>
+                                                     <div className="flex items-center gap-1">
+                                                         <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                             End {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
+                                                         </span>
+                                                         <input 
+                                                             type="number" 
+                                                             min="1"
+                                                             max={inp.maxPages || undefined}
+                                                             placeholder="All"
+                                                             value={inp.endPage === '' || inp.endPage == null ? '' : inp.endPage} 
+                                                             onChange={(e) => {
+                                                                 const rawVal = e.target.value;
+                                                                 if (rawVal === '') {
+                                                                     setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: '' } : item));
+                                                                 } else {
+                                                                     let val = Math.max(1, parseInt(rawVal) || 1);
+                                                                     if (inp.maxPages && val > inp.maxPages) {
+                                                                         val = inp.maxPages;
+                                                                     }
+                                                                     setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
+                                                                 }
+                                                                 setAnalyzedData(null);
+                                                             }}
+                                                             className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
+                                                         />
+                                                     </div>
+                                                 </div>
+                                             )}
                                         </div>
                                     ))}
                                 </div>
