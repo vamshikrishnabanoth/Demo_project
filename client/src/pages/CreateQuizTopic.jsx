@@ -1017,7 +1017,7 @@ export default function CreateQuizTopic() {
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Fill-in-the-Blank</span>
+                                                <span className="text-xs font-black uppercase text-white">Fill in the Blanks</span>
                                             </div>
 
                                             {/* Scenario Challenges Checkbox */}
@@ -1093,7 +1093,7 @@ export default function CreateQuizTopic() {
 
                                             <div className="space-y-1">
                                                 <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                    <span className="text-amber-400">Fill-in-the-Blank</span>
+                                                    <span className="text-amber-400">Fill in the Blanks</span>
                                                     <span className="text-white">{ratios.fill_blank}%</span>
                                                 </div>
                                                 <input

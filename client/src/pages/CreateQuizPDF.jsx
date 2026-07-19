@@ -485,7 +485,7 @@ export default function CreateQuizPDF() {
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-amber-400">Fill-in-the-Blank</span>
+                                            <span className="text-amber-400">Fill in the Blanks</span>
                                             <span className="text-[var(--text-primary)]">{ratios.fill_blank}%</span>
                                         </div>
                                         <input
