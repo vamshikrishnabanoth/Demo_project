@@ -647,7 +647,7 @@ def critic_evaluate(q_text, q_opts, q_ans, topic, difficulty):
         return 7, "Critic evaluation error, defaulting to pass."
 
 
-def run_agent1_analyzer(context, count):
+def run_agent1_analyzer(context, count, topic_fallback="General Course Concept"):
     print("  [AGENT 1] Executing Semantic Weight & Concept Analyzer...")
     prompt = (
         "You are an expert university academic analyst. Your goal is to inspect the parsed source content chunks and isolate the primary learning objectives.\n\n"
@@ -690,7 +690,7 @@ def run_agent1_analyzer(context, count):
     except Exception as e:
         print(f"  [AGENT 1] Concept mapping failed: {e}")
     
-    return [{"concept_tag": "General Course Concept", "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
+    return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
 
 def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium"):
     concept_tag = concept.get("concept_tag", "General Course Concept")
@@ -1102,9 +1102,25 @@ def execute_generation_logic(req: GeneratorRequest):
     print(f"")
 
     # 2. Executing Agent 1: Concept & Weight Analyzer
-    concepts = run_agent1_analyzer(context, count=total_count)
+    topic_fallback = "General Course Concept"
+    if req.inputs:
+        names = [inp.source_name for inp in req.inputs if inp.source_name and inp.source_name != "Unknown Source"]
+        if names:
+            clean_names = []
+            for name in names:
+                cleaned = re.sub(r'\.[a-zA-Z0-9]+$', '', name)
+                cleaned = re.sub(r'(?i)voice\s+transcript\s*\([^)]+\)', '', cleaned)
+                cleaned = cleaned.strip()
+                if cleaned:
+                    clean_names.append(cleaned)
+            if clean_names:
+                topic_fallback = " ".join(clean_names)
+    elif req.content and req.type == 'topic':
+        topic_fallback = req.content
+
+    concepts = run_agent1_analyzer(context, count=total_count, topic_fallback=topic_fallback)
     if not concepts:
-        concepts = [{"concept_tag": "Syllabus Core Topic", "weight_score": 0.75, "anchor_citation": "Direct context"}]
+        concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
 
     if req.topic_weights:
         for c in concepts:
@@ -1113,7 +1129,7 @@ def execute_generation_logic(req: GeneratorRequest):
                 c["weight_score"] = float(req.topic_weights[c_tag])
         concepts = [c for c in concepts if c.get("weight_score", 0.0) > 0.0]
         if not concepts:
-            concepts = [{"concept_tag": "Syllabus Core Topic", "weight_score": 0.75, "anchor_citation": "Direct context"}]
+            concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
 
     # Create the queue of generation tasks
     generation_tasks = []
