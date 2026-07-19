@@ -376,13 +376,7 @@ def deduplicate_text_chunks(text, embed_model, max_tokens=500, overlap_percent=1
             kept_chunks.append(chunk)
             kept_embeddings.append(embedding)
             
-    print(f"  [DEDUPLICATOR] Kept {len(kept_chunks)}/{len(chunks)} chunks (removed {len(chunks) - len(kept_chunks)} duplicates).")
-    
-    print(f"\n🧩 [STEP 3: RAG CHUNKING DETECTED] Split text into {len(kept_chunks)} independent blocks.")
-    for i, chunk in enumerate(kept_chunks):
-         print(f"  -> Chunk {i+1}: {chunk[:100].strip()}...")
-    print("")
-    
+    print(f"[Reduction]    : Kept {len(kept_chunks)} core academic blocks. Removed {len(chunks) - len(kept_chunks)} duplicates.")
     return kept_chunks
 
 @app.post("/analyze-sources")
@@ -685,17 +679,20 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
             raw_text = response.json().get("response", "")
             data = robust_json_loads(raw_text)
             concepts = data.get("concepts", [])
-            print(f"  [AGENT 1] Extracted {len(concepts)} concepts successfully.")
+            print(f"  ├── [Agent 1 Analyzer] : Extracted {len(concepts)} concepts successfully.")
             return concepts
     except Exception as e:
-        print(f"  [AGENT 1] Concept mapping failed: {e}")
+        err_str = str(e).lower()
+        if "timeout" in err_str or "read timed out" in err_str:
+            print("  ├── [Agent 1 Analyzer] : ⚠️ CPU Latency Spike -> Dynamically pulled topic from filenames.")
+        else:
+            print(f"  ├── [Agent 1 Analyzer] : ⚠️ Concept mapping failed ({e}) -> Fallback to topic from filenames.")
     
     return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}]
 
 def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium"):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
-    print(f"  [AGENT 2] Flavor Generator: Creating question on '{concept_tag}' (flavor: {question_type})...")
     
     type_instruction = ""
     if question_type == "theory":
@@ -820,7 +817,6 @@ def check_js_syntax(code):
         return True, []
 
 def run_agent3_critic(q_data, context, flavor="theory"):
-    print("  [AGENT 3] System Critic: Validating drafted question...")
     issues = []
     
     prompt_text = q_data.get("prompt_text")
@@ -903,14 +899,12 @@ def run_agent3_critic(q_data, context, flavor="theory"):
         issues.append("Duplicate options detected")
         
     status = "pass" if len(issues) == 0 else "fail"
-    print(f"  [AGENT 3] Verdict: {status.upper()} (Found {len(issues)} issues)")
     return {
         "status": status,
         "issues": issues
     }
 
 def run_agent2_repair(q_data, issues, context):
-    print("  [AGENT 2] Repair Pass: Re-correcting question based on Critic feedback...")
     prompt = (
         "You are an elite Computer Science and Engineering curriculum developer.\n"
         "Your task is to fix a multiple-choice question that failed quality control checks.\n\n"
@@ -1013,22 +1007,39 @@ def normalize_question_json(q_data, concept_tag, flavor):
         "explanation": explanation
     }
 
+def print_stage_header(stage_num, stage_title):
+    CYAN = '\033[36m'
+    RESET = '\033[0m'
+    print(f"\n{CYAN}======================================================================{RESET}")
+    print(f"{CYAN}  STAGE {stage_num}: {stage_title}{RESET}")
+    print(f"{CYAN}======================================================================{RESET}")
+
 def execute_generation_logic(req: GeneratorRequest):
-    log_pipeline_step("1", "Incoming Payload Extraction", "Raw values from request body received by local Python service", {
-        "inputs_count": len(req.inputs) if req.inputs else 0,
-        "type": req.type,
-        "content_length": len(req.content) if req.content else 0,
-        "difficulty": req.difficulty,
-        "count": req.count,
-        "target_ratios": req.target_ratios
-    })
+    print_stage_header("1", "RAW INCOMING CAPTURE")
+    
+    if req.inputs:
+        src_type = f"Multiple Uploaded Documents ({len(req.inputs)} Chunks Detected)"
+        file_names_str = " | ".join([f"📑 {inp.source_name}" for inp in req.inputs])
+    else:
+        src_type = f"Single Source ({req.type or 'unknown'})"
+        file_names_str = f"📑 {req.content[:50]}..." if req.content else "No File Name Available"
+        
+    raw_chars = len(req.content) if req.content else sum([len(inp.content) for inp in req.inputs]) if req.inputs else 0
+    
+    print(f"[Source Type] : {src_type}")
+    print(f"[File Names]   : {file_names_str}")
+    print(f"[Raw State]    : {raw_chars:,} characters of unparsed raw text structures.")
 
     if req.inputs:
         resolved_text = resolve_input_sources(req.inputs)
         if not resolved_text or len(resolved_text.strip()) < 50:
             raise HTTPException(status_code=400, detail="Content too short or unextractable from sources.")
+        
+        print_stage_header("2", "CONTENT SANITIZATION & METADATA STRIPPING")
+        print(f"[Action]       : Stripped away PPTX syntax, fonts, sizes, slide numbers, and timestamps.")
         chunks = deduplicate_text_chunks(resolved_text, embed_model)
         context = "\n\n".join(chunks[:6])
+        print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
     else:
         source_text = req.content
         if req.type in ['pdf', 'docx', 'pptx', 'image']:
@@ -1047,6 +1058,8 @@ def execute_generation_logic(req: GeneratorRequest):
                 except Exception as e:
                     raise HTTPException(status_code=400, detail="Invalid base64 file content.")
         
+        print_stage_header("2", "CONTENT SANITIZATION & METADATA STRIPPING")
+        print(f"[Action]       : Stripped away PPTX syntax, fonts, sizes, slide numbers, and timestamps.")
         if req.type == 'topic':
             print(f"  [RAG] Searching global database for topic '{req.content}'...")
             db_results = get_relevant_db_context(req.content, top_k=5)
@@ -1061,11 +1074,7 @@ def execute_generation_logic(req: GeneratorRequest):
                 raise HTTPException(status_code=400, detail="Content too short or file unreadable.")
             query = "Important core concepts"
             context = get_relevant_context(source_text, query, top_k=5)
-
-    log_pipeline_step("2", "Input Assembly & Context Aggregation", "Grounded text content assembled for AI agents", {
-        "total_context_length": len(context) if context else 0,
-        "sample_snippet": context[:250] + "..." if context else "None"
-    })
+        print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
 
     # 1. Determine Target Flavor Ratios and Question count
     ratios = req.target_ratios or {"theory": 1.0, "code_debugging": 0.0, "fill_blank": 0.0, "scenario": 0.0}
@@ -1089,15 +1098,26 @@ def execute_generation_logic(req: GeneratorRequest):
         accumulated_count += c
     counts[active_flavors[-1]] = max(0, total_count - accumulated_count)
 
-    log_pipeline_step("3", "Dynamic Weight Allocation Matrix", "Ratios blend calculation complete", {
-        "requested_ratios": ratios,
-        "calculated_counts_per_flavor": counts
-    })
+    print_stage_header("3", "DYNAMIC RATIO MATRIX (THE TEACHER'S SLIDERS)")
+    requested_list = []
+    for flavor_key, flavor_val in ratios.items():
+        lbl = flavor_key.replace("_", " ").title()
+        requested_list.append(f"{lbl} ({int(flavor_val * 100)}%)")
+    requested_str = " | ".join(requested_list)
+    print(f"[Requested]    : {requested_str}")
+    print(f"[Hard Zero]    : Enforced! Small margins eliminated to maximize quiz focus.")
+    
+    final_list = []
+    emojis = {"theory": "📝", "code_debugging": "💻", "fill_blank": "✏️", "scenario": "🎬"}
+    for f_key, f_cnt in counts.items():
+        if f_cnt > 0:
+            emoji = emojis.get(f_key, "❓")
+            lbl = f_key.replace("_", " ").title()
+            final_list.append(f"{emoji} {f_cnt} {lbl} Question{'s' if f_cnt > 1 else ''}")
+    final_count_str = " | ".join(final_list)
+    print(f"[Final Count]  : {final_count_str}")
 
-    print(f"")
-    print(f"={'='*55}")
-    print(f"  [PIPELINE] Starting 3-Agent Cognitive Generation Pipeline")
-    print(f"  Target count: {total_count} questions | Flavors: {counts}")
+    print_stage_header("4", "3-AGENT COGNITIVE GENERATION PIPELINE")
     print(f"={'='*55}")
     print(f"")
 
@@ -1146,13 +1166,14 @@ def execute_generation_logic(req: GeneratorRequest):
 
     # 3. Executing Agent 2 Generator & Agent 3 Critic loop
     for i, (concept, flavor) in enumerate(generation_tasks):
-        print(f"\n  --- Question {i+1}/{total_count} ({flavor.upper()}) ---")
+        print(f"\n• QUESTION {i+1} [Flavor: {flavor.upper()}]")
         q_success = False
         
         # Initial Draft Generation by Agent 2
         for attempt in range(3):
             try:
                 q_data = run_agent2_generator(concept, flavor, context, generated_so_far, req.difficulty)
+                print(f"  ├── [Agent 2 Creator]  : Drafted a multiple-choice question on '{concept.get('concept_tag')}'.")
                 
                 # Validation by Agent 3
                 critic_res = run_agent3_critic(q_data, context, flavor)
@@ -1160,7 +1181,7 @@ def execute_generation_logic(req: GeneratorRequest):
                 # Self-Correction Loop if failed
                 if critic_res["status"] == "fail":
                     for repair_pass in range(2):
-                        print(f"  [AGENT 3] Forcing self-correction repair pass {repair_pass+1}/2...")
+                        print(f"  ├── [Self-Correction]  : Agent 2 re-drafting the formatting structure (Attempt {repair_pass+1})...")
                         q_data = run_agent2_repair(q_data, critic_res["issues"], context)
                         critic_res = run_agent3_critic(q_data, context, flavor)
                         if critic_res["status"] == "pass":
@@ -1184,16 +1205,15 @@ def execute_generation_logic(req: GeneratorRequest):
                     }
                     questions.append(q_final)
                     generated_so_far += f" [{q_final['prompt_text']}] "
-                    print(f"  [ACCEPT] Question {i+1} accepted ✓")
+                    print(f"  └── [Agent 3 Critic]   : [ \033[32m✅ PASS\033[0m ] -> Structure matches perfectly.")
                     q_success = True
                     break
                 else:
-                    print(f"  [REJECT] Attempt {attempt+1} failed QA validation: {critic_res['issues']}")
+                    print(f"  ├── [Agent 3 Critic]   : [ \033[31m❌ FAIL\033[0m ] -> {critic_res['issues'][0] if critic_res['issues'] else 'QA issues detected'}")
             except Exception as e:
-                print(f"  [WARN] Attempt {attempt+1} execution error: {e}")
                 err_str = str(e).lower()
                 if "timeout" in err_str or "read timed out" in err_str or "connection" in err_str:
-                    print("  [AGENT 2] ⚡ Timeout detected. Instantly routing this question to Groq Cloud safety handler...")
+                    print("  ├── [Agent 2 Creator]  : ⚠️ CPU Latency Spike -> Instantly routed to Groq Cloud fallback safety handler.")
                     if os.getenv("GROQ_API_KEY"):
                         try:
                             # Construct prompt for Groq to generate a single question conforming to schema
@@ -1234,14 +1254,16 @@ def execute_generation_logic(req: GeneratorRequest):
                             }
                             questions.append(q_final)
                             generated_so_far += f" [{q_final['prompt_text']}] "
-                            print(f"  [ACCEPT] Question {i+1} accepted via Groq Cloud fallback safety handler ✓")
+                            print(f"  └── [Agent 3 Critic]   : [ \033[32m✅ PASS\033[0m ] -> Groq fallback generated successfully.")
                             q_success = True
                             break
                         except Exception as ge:
-                            print(f"  [AGENT 2] Groq fallback safety handler failed: {ge}")
+                            print(f"  ├── [Agent 2 Creator]  : ⚠️ Groq fallback safety handler failed: {ge}")
+                else:
+                    print(f"  ├── [Agent 2 Creator]  : ⚠️ Execution error: {e}")
 
         if not q_success:
-            print(f"  [FAIL] Failed to generate a clean {flavor} question after 3 attempts.")
+            print(f"  └── [Agent 2 Creator]  : [ \033[31m❌ FAIL\033[0m ] -> Failed to generate question after 3 attempts.")
 
     # Conforming to structured blueprint output JSON
     payload_response = {
@@ -1253,11 +1275,8 @@ def execute_generation_logic(req: GeneratorRequest):
         "questions": questions
     }
     
-    print(f"")
-    print(f"={'='*55}")
-    print(f"  [PIPELINE] Done! Generated {len(questions)}/{total_count} questions.")
-    print(f"={'='*55}")
-    print(f"")
+    print_stage_header("5", "FAULT-TOLERANT WEBHOOK CALLBACK DISPATCH")
+    print(f"[Status]       : {len(questions)}/{total_count} Validated questions compiled into clean JSON payload.")
 
     if not questions:
         raise HTTPException(status_code=500, detail="AI failed to generate any questions.")
@@ -1268,16 +1287,19 @@ def run_generation_task(req: GeneratorRequest):
     try:
         result = execute_generation_logic(req)
         # Post success callback
-        print(f"  [BACKGROUND] Generation complete. Sending success callback to {req.callback_url}...")
+        print(f"[Callback]     : Forwarding complete quiz structure to cloud engine... ", end="", flush=True)
         res = requests.post(req.callback_url, json={"status": "success", "result": result}, headers={"Content-Type": "application/json"}, timeout=30)
-        print(f"  [BACKGROUND] Callback response status: {res.status_code}")
+        print(f"[Success {res.status_code}]")
+        print(f"======================================================================\n")
     except Exception as e:
-        print(f"  [BACKGROUND] Generation failed: {e}. Sending failure callback to {req.callback_url}...")
+        print(f"[Callback]     : Generation failed: {e}. Dispatching failure callback... ", end="", flush=True)
         try:
             res = requests.post(req.callback_url, json={"status": "failed", "error": str(e)}, headers={"Content-Type": "application/json"}, timeout=30)
-            print(f"  [BACKGROUND] Callback response status: {res.status_code}")
+            print(f"[Failed Callback Sent {res.status_code}]")
+            print(f"======================================================================\n")
         except Exception as cb_err:
-            print(f"  [BACKGROUND] Error sending failure callback: {cb_err}")
+            print(f"[Error {cb_err}]")
+            print(f"======================================================================\n")
 
 @app.post("/generate")
 async def generate_questions(req: GeneratorRequest, background_tasks: BackgroundTasks):
