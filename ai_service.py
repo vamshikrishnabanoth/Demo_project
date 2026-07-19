@@ -294,6 +294,7 @@ async def ingest_document(req: IngestRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 def call_groq_fallback(prompt, json_mode=True):
+    import time
     groq_api_key = os.getenv("GROQ_API_KEY")
     if not groq_api_key:
         raise ValueError("Groq API Key is not set in environment.")
@@ -302,19 +303,35 @@ def call_groq_fallback(prompt, json_mode=True):
         "Authorization": f"Bearer {groq_api_key}",
         "Content-Type": "application/json"
     }
-    payload = {
-        "messages": [{"role": "user", "content": prompt}],
-        "model": "llama-3.1-8b-instant",
-        "temperature": 0.2
-    }
-    if json_mode:
-        payload["response_format"] = {"type": "json_object"}
-        
-    response = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=45)
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
-    else:
-        raise ValueError(f"Groq API returned status {response.status_code}: {response.text}")
+    
+    # Rotate models to bypass TPM rate limits if hit
+    models = ["llama-3.1-8b-instant", "gemma2-9b-it", "mixtral-8x7b-32768"]
+    
+    for attempt in range(4):
+        model = models[attempt % len(models)]
+        payload = {
+            "messages": [{"role": "user", "content": prompt}],
+            "model": model,
+            "temperature": 0.2
+        }
+        if json_mode:
+            payload["response_format"] = {"type": "json_object"}
+            
+        try:
+            response = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=45)
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+            elif response.status_code == 429:
+                print(f"  [GROQ] ⚠️ 429 Rate Limit on {model}. Retrying next model in 3 seconds...")
+                time.sleep(3)
+            else:
+                print(f"  [GROQ] ⚠️ API returned {response.status_code}. Retrying...")
+                time.sleep(2)
+        except Exception as e:
+            print(f"  [GROQ] ⚠️ Request error: {e}. Retrying...")
+            time.sleep(2)
+            
+    raise ValueError("Groq API failed after 4 retries.")
 
 def sanitize_source_text(text: str) -> str:
     """

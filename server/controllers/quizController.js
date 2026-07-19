@@ -150,8 +150,9 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 - questionText (string)
                 - options (array of exactly 4 strings)
                 - correctAnswer (string, must exactly match one of the options)
+                - explanation (string containing a detailed academic explanation of at least 20 characters)
                 
-                Do not return any conversational text, explanations, or markdown formatting wrapper except the JSON block.
+                Do not return any conversational text or markdown formatting wrapper except the JSON block.
             `;
             
             const chatCompletion = await groq.chat.completions.create({
@@ -171,6 +172,7 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                     questionText: q.questionText,
                     options: q.options.slice(0, 4),
                     correctAnswer: q.correctAnswer,
+                    explanation: q.explanation || 'An explanation detailing the correct concept answer choice.',
                     points: 10,
                     type: 'multiple-choice'
                 }));
