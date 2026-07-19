@@ -44,7 +44,7 @@ export default function QuizQuestionEditor({
                     </div>
                     <div className="flex-1">
                         <PremiumInput
-                            label="Neural Query"
+                            label={question.concept_tag || "Neural Query"}
                             placeholder="Ask your question here..."
                             value={question.questionText}
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}

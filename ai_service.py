@@ -87,8 +87,23 @@ def get_db_connection():
 def recursive_token_splitter(text, max_tokens=500, overlap_percent=10):
     if not text or not text.strip():
         return []
+    
+    # Pre-split giant texts to prevent token index blowouts & warnings
+    if len(text) > 10000:
+        blocks = []
+        step = 8000
+        for i in range(0, len(text), step):
+            block = text[i:i+10000].strip()
+            if len(block) > 10:
+                blocks.append(block)
+        
+        all_chunks = []
+        for block in blocks:
+            all_chunks.extend(recursive_token_splitter(block, max_tokens, overlap_percent))
+        return all_chunks
+
     try:
-        tokens = embed_model.tokenizer.encode(text, add_special_tokens=False)
+        tokens = embed_model.tokenizer.encode(text, add_special_tokens=False, truncation=True, max_length=10000)
     except Exception as e:
         print(f"Tokenization error, falling back to character approximation: {e}")
         # Fallback character approximation (1 token ~= 4 chars)
@@ -471,7 +486,37 @@ async def analyze_sources(req: AnalyzeRequest):
         print(f"⚠️ Local Ollama failed or timed out: {e}. Trying Groq Cloud fallback...")
         if os.getenv("GROQ_API_KEY"):
             try:
-                raw_text = call_groq_fallback(prompt, json_mode=True)
+                # Trim the context inside prompt to avoid TPM limit on Groq
+                fallback_context = context[:1500]
+                fallback_prompt = (
+                    "You are an elite academic analyzer. Analyze the textbook/lecture context below.\n\n"
+                    f"Context:\n{fallback_context}\n\n"
+                    "Tasks:\n"
+                    "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
+                    "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
+                    "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
+                    "4. Suggest target ratios for question types (theory, code_debugging, fill_blank, scenario) based on content structure (e.g., if there is code, suggest higher code_debugging ratio).\n"
+                    "5. Extract 5-10 specific curriculum concept tags and baseline weights (0.0 to 1.0).\n\n"
+                    "Return ONLY a clean JSON object conforming strictly to this format:\n"
+                    "{\n"
+                    "  \"relevancy_verdict\": \"pass\",\n"
+                    "  \"relevancy_reason\": \"...\",\n"
+                    "  \"lobby_summary\": \"- Key concept 1...\\n- Key concept 2...\",\n"
+                    "  \"ai_flashcards\": [\n"
+                    "    {\"question\": \"...\", \"answer\": \"...\"}\n"
+                    "  ],\n"
+                    "  \"ai_recommendation\": {\n"
+                    "    \"theory\": 0.4,\n"
+                    "    \"code_debugging\": 0.3,\n"
+                    "    \"fill_blank\": 0.2,\n"
+                    "    \"scenario\": 0.1\n"
+                    "  },\n"
+                    "  \"concepts\": [\n"
+                    "    {\"concept_tag\": \"...\", \"weight_score\": 0.85}\n"
+                    "  ]\n"
+                    "}"
+                )
+                raw_text = call_groq_fallback(fallback_prompt, json_mode=True)
                 data = robust_json_loads(raw_text)
                 
                 if data.get("relevancy_verdict") == "fail":
