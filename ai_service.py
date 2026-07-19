@@ -996,6 +996,13 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
             "CASE_STUDIES_AND_SCENARIOS": "Introduce minor engineering bottlenecks, common system failures, or design trade-offs.",
             "PRACTICAL_AND_LAB_TASKS": "Code prediction involving loops, basic conditional checks, or state updates."
         },
+        "thinkable": {
+            "CONCEPTS_AND_DEFINITIONS": "Probe nuanced distinctions between closely related concepts or edge-case protocol behaviors.",
+            "COMPARISONS_AND_TRADEOFFS": "Evaluate multi-factor trade-off scenarios where no single answer is obviously dominant.",
+            "FORMULAS_AND_CALCULATIONS": "Multi-step derivations with intermediate rounding decisions or boundary-condition choices.",
+            "CASE_STUDIES_AND_SCENARIOS": "Scenarios with partially conflicting design constraints requiring prioritization logic.",
+            "PRACTICAL_AND_LAB_TASKS": "Subtle bugs involving off-by-one errors, scope shadowing, or unexpected type coercions."
+        },
         "hard": {
             "CONCEPTS_AND_DEFINITIONS": "Test deep internal mechanics, architectural limits, and complex theoretical constraints.",
             "COMPARISONS_AND_TRADEOFFS": "Evaluate complex state transitions, hidden structural flaws, or multi-dimensional trade-offs.",
@@ -1009,6 +1016,42 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
     if diff_key not in difficultyPrompts: diff_key = "medium"
     
     targeted_criteria = difficultyPrompts[diff_key].get(question_type, "Focus on general knowledge.")
+
+    # ── Derive psychometric difficulty tier (1-3) for distractor calibration ──
+    # Tier 1 (Easy)   → distinct, non-overlapping distractors
+    # Tier 2 (Medium/Thinkable) → procedural-mistake or calculation-slip distractors
+    # Tier 3 (Hard)   → maximum confusion via identical vocabulary / subtle sign/operator changes
+    _tier_map = {"easy": 1, "medium": 2, "thinkable": 2, "hard": 3}
+    difficulty_tier = _tier_map.get(diff_key, 2)
+
+    if difficulty_tier == 1:
+        distractor_instruction = (
+            "DISTRACTOR CALIBRATION (Tier 1 — Distinct):\n"
+            "Incorrect options must be clearly distinct, conceptually non-overlapping terms. "
+            "Each wrong option should belong to a different area of the topic so a well-prepared "
+            "student can immediately distinguish it from the correct answer."
+        )
+    elif difficulty_tier == 2:
+        distractor_instruction = (
+            "DISTRACTOR CALIBRATION (Tier 2 — Procedural Traps):\n"
+            "Incorrect options must represent classic procedural mistakes or common calculation slips "
+            "directly related to the source text. Each distractor should reflect a real error path a "
+            "student might take (e.g., swapping two related parameters, off-by-one in a formula, "
+            "applying the wrong formula variant, or confusing a near-synonym concept). "
+            "Wrong options must not be obviously wrong at a glance."
+        )
+    else:  # tier 3
+        distractor_instruction = (
+            "DISTRACTOR CALIBRATION (Tier 3 — Maximum Cognitive Proximity):\n"
+            "This is a PRECISION MEMORY question. Distractors must use IDENTICAL vocabulary and "
+            "structural syntax as the correct answer. Alter ONLY a single subtle element per distractor: "
+            "a mathematical sign (+ vs −), a logical operator (AND vs OR, < vs ≤), a boundary condition "
+            "(n-1 vs n, 2^k vs 2^(k-1)), or a single key term replaced with its near-synonym. "
+            "All four options must look highly similar so that only a student who memorized the exact "
+            "definition can distinguish the correct one. "
+            "FORBIDDEN: Do NOT use options from different conceptual domains or obviously incorrect "
+            "catch-all phrases. Every distractor must be a plausible near-miss of the correct answer."
+        )
 
     narrative_mutation_instruction = ""
     if isolated_narratives and len(isolated_narratives) > 0:
@@ -1028,8 +1071,9 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         f"Context chunks:\n{context[:2000]}\n\n"
         f"Target Concept: {concept_tag} (Importance Weight: {weight_score})\n"
         f"Question Type: {question_type}\n\n"
-        f"CRITICAL DIFFICULTY INSTRUCTION ({difficulty.upper()}):\n"
+        f"CRITICAL DIFFICULTY INSTRUCTION ({difficulty.upper()}, Tier {difficulty_tier}/3):\n"
         f"You MUST strictly follow these criteria: '{targeted_criteria}'\n\n"
+        f"{distractor_instruction}\n\n"
         f"Task:\n{type_instruction}\n\n"
         f"CRITICAL: Avoid repeating the topics of these existing questions: {generated_so_far}\n\n"
         "[STRICT GROUNDING CONSTRAINT]\n"
@@ -1091,9 +1135,13 @@ def check_js_syntax(code):
     except Exception:
         return True, []
 
-def run_agent3_critic(q_data, context, flavor="theory"):
+def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium"):
     issues = []
     
+    # Derive tier for distractor precision checks
+    _tier_map = {"easy": 1, "medium": 2, "thinkable": 2, "hard": 3}
+    difficulty_tier = _tier_map.get(difficulty.lower(), 2)
+
     prompt_text = q_data.get("prompt_text")
     options = q_data.get("options", [])
     correct_ans = q_data.get("correct_answer") or q_data.get("correctAnswer")
@@ -1135,6 +1183,32 @@ def run_agent3_critic(q_data, context, flavor="theory"):
                     break
             if leak_found:
                 break
+
+        # ── Tier 3 Distractor Precision Check ─────────────────────────────────
+        # For Hard/Tier-3 questions, reject distractors that are structurally
+        # asymmetric or trivially eliminable by surface-level keyword mismatch.
+        if difficulty_tier == 3 and correct_ans and correct_ans in options:
+            correct_tokens = set(re.sub(r'[^\w\s]', ' ', correct_ans.lower()).split())
+            trivially_weak_distractors = 0
+            for opt in options:
+                if opt == correct_ans:
+                    continue
+                opt_tokens = set(re.sub(r'[^\w\s]', ' ', opt.lower()).split())
+                # Compute token overlap between this distractor and the correct answer
+                if len(correct_tokens) > 0:
+                    overlap_ratio = len(correct_tokens.intersection(opt_tokens)) / len(correct_tokens)
+                    # A distractor with < 30% token overlap with the correct answer
+                    # is structurally asymmetric and trivially eliminable at Tier 3
+                    if overlap_ratio < 0.30:
+                        trivially_weak_distractors += 1
+            # Fail if more than 1 distractor is trivially eliminable
+            if trivially_weak_distractors > 1:
+                issues.append(
+                    f"TIER-3 PRECISION FAILURE: {trivially_weak_distractors} distractor(s) have <30% vocabulary "
+                    "overlap with the correct answer and can be eliminated by simple keyword scanning. "
+                    "All distractors must use identical structural vocabulary as the correct answer, "
+                    "differing only in a single subtle sign, operator, or boundary condition."
+                )
 
     if not correct_ans:
         issues.append("Missing correct_answer")
@@ -1535,15 +1609,15 @@ def execute_generation_logic(req: GeneratorRequest):
                 q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives)
                 print(f"  ├── [Agent 2 Creator]  : Drafted a multiple-choice question on '{concept.get('concept_tag')}'.")
                 
-                # Validation by Agent 3
-                critic_res = run_agent3_critic(q_data, context, flavor)
+                # Validation by Agent 3 (with difficulty for tier-based distractor checks)
+                critic_res = run_agent3_critic(q_data, context, flavor, slot_diff)
                 
                 # Self-Correction Loop if failed
                 if critic_res["status"] == "fail":
                     for repair_pass in range(2):
                         print(f"  ├── [Self-Correction]  : Agent 2 re-drafting the formatting structure (Attempt {repair_pass+1})...")
                         q_data = run_agent2_repair(q_data, critic_res["issues"], context)
-                        critic_res = run_agent3_critic(q_data, context, flavor)
+                        critic_res = run_agent3_critic(q_data, context, flavor, slot_diff)
                         if critic_res["status"] == "pass":
                             break
                 
