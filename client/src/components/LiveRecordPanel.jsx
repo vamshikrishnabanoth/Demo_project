@@ -82,7 +82,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                 questionText: q.questionText || q.prompt_text || q.question || '',
                                 options: cleanOpts,
                                 correctAnswer: correctVal,
-                                concept_tag: q.concept_tag || q.sub_topic || '',
+                                concept_tag: q.concept_tag || q.sub_topic || result.title || 'Curriculum Concept',
                                 points: q.points || 10
                             };
                         });
