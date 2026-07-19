@@ -1348,6 +1348,64 @@ def execute_generation_logic(req: GeneratorRequest):
 def run_generation_task(req: GeneratorRequest):
     try:
         result = execute_generation_logic(req)
+        
+        # Determine topic fallback for sub_topic mapping
+        topic_fallback = "General Course Concept"
+        if req.inputs:
+            names = [inp.source_name for inp in req.inputs if inp.source_name and inp.source_name != "Unknown Source"]
+            if names:
+                clean_names = []
+                for name in names:
+                    cleaned = re.sub(r'\.[a-zA-Z0-9]+$', '', name)
+                    cleaned = re.sub(r'(?i)voice\s+transcript\s*\([^)]+\)', '', cleaned)
+                    cleaned = cleaned.strip()
+                    if cleaned:
+                        clean_names.append(cleaned)
+                if clean_names:
+                    topic_fallback = " ".join(clean_names)
+        elif req.content and req.type == 'topic':
+            topic_fallback = req.content
+
+        # Enforce strict key normalization on callback dispatch
+        normalized_questions = []
+        for i, q in enumerate(result.get("questions", [])):
+            raw_options = q.get("options")
+            options_list = []
+            if isinstance(raw_options, list):
+                options_list = [str(o) for o in raw_options]
+            elif isinstance(raw_options, dict):
+                sorted_keys = sorted(raw_options.keys())
+                options_list = [str(raw_options[k]) for k in sorted_keys]
+            while len(options_list) < 4:
+                options_list.append(f"Option {len(options_list)+1}")
+            options_list = options_list[:4]
+            
+            # Map options uniformly to object containing keys { A, B, C, D }
+            options_dict = {
+                "A": options_list[0],
+                "B": options_list[1],
+                "C": options_list[2],
+                "D": options_list[3]
+            }
+
+            norm_q = {
+                "id": q.get("id") or f"q_id_{str(i+1).zfill(3)}",
+                "type": q.get("type") or "theory",
+                "concept_tag": q.get("concept_tag") or topic_fallback,
+                "sub_topic": q.get("concept_tag") or topic_fallback, # UI displays actual topic
+                "weight_score": float(q.get("weight_score") or 0.75),
+                "prompt_text": q.get("prompt_text") or q.get("questionText") or "",
+                "questionText": q.get("prompt_text") or q.get("questionText") or "",
+                "code_snippet": q.get("code_snippet"),
+                "options": options_dict, # Object containing { A, B, C, D }
+                "correct_answer": q.get("correct_answer") or q.get("correctAnswer") or "",
+                "correctAnswer": q.get("correct_answer") or q.get("correctAnswer") or "",
+                "explanation": q.get("explanation") or "Detailed explanation for solution choice."
+            }
+            normalized_questions.append(norm_q)
+
+        result["questions"] = normalized_questions
+
         # Post success callback
         print(f"[Callback]     : Forwarding complete quiz structure to cloud engine... ", end="", flush=True)
         res = requests.post(req.callback_url, json={"status": "success", "result": result}, headers={"Content-Type": "application/json"}, timeout=30)

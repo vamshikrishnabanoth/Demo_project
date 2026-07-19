@@ -783,9 +783,9 @@ const normalizeQuestions = (questions) => {
         }
         return {
             ...q,
-            questionText: q.questionText || q.question || '',
+            questionText: q.questionText || q.prompt_text || q.question || '',
             options,
-            correctAnswer: q.correctAnswer || q.correct_answer || '',
+            correctAnswer: q.correctAnswer || q.correct_answer || q.correct_ans || '',
             points: q.points || 10,
         };
     });
@@ -2577,7 +2577,7 @@ exports.taskCompleteCallback = async (req, res) => {
     }
     
     if (status === 'success') {
-        let finalQuestions = result.questions;
+        let finalQuestions = normalizeQuestions(result.questions);
         let agentReport = null;
         try {
             const agentTimeoutMs = parseInt(process.env.AGENT_TIMEOUT_MS) || 90000;
@@ -2592,12 +2592,13 @@ exports.taskCompleteCallback = async (req, res) => {
                 onProgress: (stage, label) => updateTaskStage(taskId, stage, label),
             });
 
-            finalQuestions = pipelineResult.questions;
+            finalQuestions = normalizeQuestions(pipelineResult.questions);
             agentReport    = pipelineResult.agentReport;
 
             console.log(`✅ [AgentPipeline CALLBACK] verdict=${agentReport.verdict} | scoreBefore=${agentReport.scoreBefore} | scoreAfter=${agentReport.scoreAfter} | changed=${agentReport.questionsChanged}`);
         } catch (pipelineErr) {
-            console.warn('⚠️ [AgentPipeline CALLBACK] Non-fatal error — returning raw questions:', pipelineErr.message);
+            console.warn('⚠️ [AgentPipeline CALLBACK] Non-fatal error — returning normalized questions:', pipelineErr.message);
+            finalQuestions = normalizeQuestions(finalQuestions);
             agentReport = { verdict: 'review', fallback: true, error: pipelineErr.message, perQuestion: [], questionDiffs: [] };
         }
 
