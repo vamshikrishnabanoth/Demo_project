@@ -881,7 +881,19 @@ exports.getLiveQuizzes = async (req, res) => {
 // every question object has:
 //   questionText  – string
 //   options       – array of strings (never null / undefined / object)
-//   correctAnswer – string
+//   correctAnswer – string (always resolved to actual text, never a label/index)
+//   correct_option – integer index of correctAnswer in the (shuffled) options array
+
+// Fisher-Yates in-place shuffle (modifies a copy)
+const fisherYatesShuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+};
+
 const normalizeQuestions = (questions) => {
     if (!Array.isArray(questions)) {
         // Prisma may return a JSON string in rare Supabase/direct-SQL inserts
@@ -903,11 +915,35 @@ const normalizeQuestions = (questions) => {
                 typeof o === 'string' ? o : (o?.text || o?.label || String(o))
             );
         }
+
+        // ── Resolve correctAnswer to actual option text ───────────────────
+        // AI models sometimes emit a label ("A") or a 0-based index ("2") instead
+        // of the full option string.  Normalise it once so downstream logic is
+        // always comparing text-to-text.
+        const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+        const labels = ['a', 'b', 'c', 'd', 'e'];
+        const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
+        let correctString = rawCorrect;
+        if (labelIdx !== -1 && options[labelIdx]) {
+            correctString = options[labelIdx];
+        } else if (rawCorrect !== '' && !isNaN(rawCorrect) && options[parseInt(rawCorrect)]) {
+            correctString = options[parseInt(rawCorrect)];
+        }
+
+        // ── Fisher-Yates shuffle of option positions ──────────────────────
+        const shuffledOptions = fisherYatesShuffle(options);
+
+        // Re-map correct_option to the new index of the correct string
+        const newCorrectIdx = shuffledOptions.indexOf(correctString);
+        const resolvedCorrectIdx = newCorrectIdx !== -1 ? newCorrectIdx : 0;
+
         return {
             ...q,
             questionText: q.questionText || q.prompt_text || q.question || '',
-            options,
-            correctAnswer: q.correctAnswer || q.correct_answer || q.correct_ans || '',
+            options: shuffledOptions,
+            correctAnswer: correctString,
+            correct_option: resolvedCorrectIdx,
+            correctOption:  resolvedCorrectIdx,
             points: q.points || 10,
         };
     });
@@ -960,7 +996,8 @@ exports.getQuizById = async (req, res) => {
                 }
             }
             normalizedQuestions = normalizedQuestions.map(q => {
-                const { correctAnswer, explanation, ...safeQuestion } = q;
+                // Strip every field that reveals the correct answer to students
+                const { correctAnswer, explanation, correct_option, correctOption, ...safeQuestion } = q;
                 return safeQuestion;
             });
         }
@@ -1237,7 +1274,8 @@ exports.getLatestResult = async (req, res) => {
         let questions = quiz ? (quiz.questions || []) : [];
         if (result.status !== 'completed') {
             questions = questions.map(q => {
-                const { correctAnswer, explanation, ...safeQuestion } = q;
+                // Strip every field that reveals the correct answer to students
+                const { correctAnswer, explanation, correct_option, correctOption, ...safeQuestion } = q;
                 return safeQuestion;
             });
         }
