@@ -377,6 +377,12 @@ def deduplicate_text_chunks(text, embed_model, max_tokens=500, overlap_percent=1
             kept_embeddings.append(embedding)
             
     print(f"  [DEDUPLICATOR] Kept {len(kept_chunks)}/{len(chunks)} chunks (removed {len(chunks) - len(kept_chunks)} duplicates).")
+    
+    print(f"\n🧩 [STEP 3: RAG CHUNKING DETECTED] Split text into {len(kept_chunks)} independent blocks.")
+    for i, chunk in enumerate(kept_chunks):
+         print(f"  -> Chunk {i+1}: {chunk[:100].strip()}...")
+    print("")
+    
     return kept_chunks
 
 @app.post("/analyze-sources")
@@ -492,6 +498,20 @@ async def transcribe_audio_file(file: UploadFile = File(...)):
         segments, info = whisper_model.transcribe(tmp_path, beam_size=5)
         text = " ".join([segment.text for segment in segments])
         
+        raw_text = text.strip()
+        
+        print("\n" + "="*60)
+        print("🎙️ [STEP 1: WHISPER TRANSCRIPTION RAW OUTPUT]")
+        print(f"Content: {raw_text}")
+        print("="*60 + "\n")
+        
+        cleaned_text = sanitize_source_text(raw_text)
+        
+        print("\n" + "="*60)
+        print("🧹 [STEP 2: SANITIZED TEXT PAYLOAD]")
+        print(f"Content: {cleaned_text}")
+        print("="*60 + "\n")
+        
         try:
             os.remove(tmp_path)
         except Exception:
@@ -499,7 +519,7 @@ async def transcribe_audio_file(file: UploadFile = File(...)):
             
         return {
             "status": "success",
-            "text": text.strip(),
+            "text": cleaned_text,
             "language": info.language,
             "duration": info.duration
         }
@@ -939,6 +959,60 @@ def log_pipeline_step(step_number, step_name, data_description, payload):
         print(f"{GREEN}{payload}{RESET}")
     print(f"{GRAY}========================================================{RESET}\n")
 
+def normalize_question_json(q_data, concept_tag, flavor):
+    # 1. Normalize prompt_text
+    prompt_text = q_data.get("prompt_text") or q_data.get("questionText") or q_data.get("question") or q_data.get("text") or ""
+    
+    # 2. Normalize code_snippet
+    code_snippet = q_data.get("code_snippet") or q_data.get("code")
+    if code_snippet and isinstance(code_snippet, str) and len(code_snippet.strip()) > 0:
+        cs_clean = code_snippet.strip()
+        if "```" not in cs_clean:
+            cs_clean = f"```\n{cs_clean}\n```"
+        if cs_clean not in prompt_text:
+            prompt_text = f"{prompt_text}\n\n{cs_clean}"
+    else:
+        code_snippet = None
+        
+    # 3. Normalize options
+    raw_options = q_data.get("options")
+    options = []
+    if isinstance(raw_options, list):
+        options = [str(o) for o in raw_options]
+    elif isinstance(raw_options, dict):
+        # Sort by key to maintain A, B, C, D order
+        sorted_keys = sorted(raw_options.keys())
+        options = [str(raw_options[k]) for k in sorted_keys]
+        
+    # Ensure exactly 4 options
+    while len(options) < 4:
+        options.append(f"Option {len(options)+1}")
+    options = options[:4]
+    
+    # 4. Normalize correct_answer
+    correct_answer = q_data.get("correct_answer") or q_data.get("correctAnswer") or q_data.get("answer") or ""
+    # If correct_answer is just "A", "B", "C", "D": map it to the corresponding option value
+    if correct_answer in ["A", "B", "C", "D"] and isinstance(raw_options, dict):
+        correct_answer = raw_options.get(correct_answer, correct_answer)
+    elif correct_answer in ["A", "B", "C", "D"] and len(options) >= 4:
+        idx = ord(correct_answer) - ord('A')
+        if 0 <= idx < len(options):
+            correct_answer = options[idx]
+            
+    # 5. Normalize explanation
+    explanation = q_data.get("explanation") or q_data.get("reason") or "No explanation provided."
+    
+    return {
+        "concept_tag": q_data.get("concept_tag") or concept_tag,
+        "prompt_text": prompt_text,
+        "questionText": prompt_text, # Dual keys compatibility
+        "code_snippet": code_snippet,
+        "options": options,
+        "correct_answer": correct_answer,
+        "correctAnswer": correct_answer, # Dual keys compatibility
+        "explanation": explanation
+    }
+
 def execute_generation_logic(req: GeneratorRequest):
     log_pipeline_step("1", "Incoming Payload Extraction", "Raw values from request body received by local Python service", {
         "inputs_count": len(req.inputs) if req.inputs else 0,
@@ -1077,26 +1151,20 @@ def execute_generation_logic(req: GeneratorRequest):
                             break
                 
                 if critic_res["status"] == "pass":
-                    pt = q_data.get("prompt_text", "")
-                    cs = q_data.get("code_snippet")
+                    normalized = normalize_question_json(q_data, concept.get("concept_tag"), flavor)
                     
-                    if cs and isinstance(cs, str) and len(cs.strip()) > 0:
-                        cs_clean = cs.strip()
-                        if "```" not in cs_clean:
-                            cs_clean = f"```\n{cs_clean}\n```"
-                        pt = f"{pt}\n\n{cs_clean}"
-
-                    # Conforming to structured blueprint format
                     q_final = {
                         "id": f"q_id_{str(i+1).zfill(3)}",
                         "type": flavor,
-                        "concept_tag": q_data.get("concept_tag", concept.get("concept_tag")),
+                        "concept_tag": normalized["concept_tag"],
                         "weight_score": float(concept.get("weight_score", 0.75)),
-                        "prompt_text": pt,
-                        "code_snippet": cs or None,
-                        "options": q_data.get("options", []),
-                        "correct_answer": q_data.get("correct_answer") or q_data.get("correctAnswer"),
-                        "explanation": q_data.get("explanation")
+                        "prompt_text": normalized["prompt_text"],
+                        "questionText": normalized["questionText"],
+                        "code_snippet": normalized["code_snippet"],
+                        "options": normalized["options"],
+                        "correct_answer": normalized["correct_answer"],
+                        "correctAnswer": normalized["correctAnswer"],
+                        "explanation": normalized["explanation"]
                     }
                     questions.append(q_final)
                     generated_so_far += f" [{q_final['prompt_text']}] "
@@ -1133,25 +1201,20 @@ def execute_generation_logic(req: GeneratorRequest):
                             raw_text = call_groq_fallback(prompt, json_mode=True)
                             q_data = robust_json_loads(raw_text)
                             
-                            # Standardize snippet formatting
-                            pt = q_data.get("prompt_text", "")
-                            cs = q_data.get("code_snippet")
-                            if cs and isinstance(cs, str) and len(cs.strip()) > 0:
-                                cs_clean = cs.strip()
-                                if "```" not in cs_clean:
-                                    cs_clean = f"```\n{cs_clean}\n```"
-                                pt = f"{pt}\n\n{cs_clean}"
-
+                            normalized = normalize_question_json(q_data, concept.get("concept_tag"), flavor)
+                            
                             q_final = {
                                 "id": f"q_id_{str(i+1).zfill(3)}",
                                 "type": flavor,
-                                "concept_tag": q_data.get("concept_tag", concept.get("concept_tag")),
+                                "concept_tag": normalized["concept_tag"],
                                 "weight_score": float(concept.get("weight_score", 0.75)),
-                                "prompt_text": pt,
-                                "code_snippet": cs or None,
-                                "options": q_data.get("options", []),
-                                "correct_answer": q_data.get("correct_answer") or q_data.get("correctAnswer"),
-                                "explanation": q_data.get("explanation")
+                                "prompt_text": normalized["prompt_text"],
+                                "questionText": normalized["questionText"],
+                                "code_snippet": normalized["code_snippet"],
+                                "options": normalized["options"],
+                                "correct_answer": normalized["correct_answer"],
+                                "correctAnswer": normalized["correctAnswer"],
+                                "explanation": normalized["explanation"]
                             }
                             questions.append(q_final)
                             generated_so_far += f" [{q_final['prompt_text']}] "
