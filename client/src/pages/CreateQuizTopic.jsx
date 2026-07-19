@@ -164,6 +164,38 @@ export default function CreateQuizTopic() {
 
                 if (status === 'COMPLETED' && result) {
                     stopPolling();
+                    if (result.questions && Array.isArray(result.questions)) {
+                        result.questions = result.questions.map((q) => {
+                            let opts = q.options;
+                            if (!Array.isArray(opts)) {
+                                if (opts && typeof opts === 'object') {
+                                    const keys = Object.keys(opts).sort();
+                                    opts = keys.map(k => opts[k]);
+                                } else {
+                                    opts = ['', '', '', ''];
+                                }
+                            }
+                            while (opts.length < 4) {
+                                opts.push(`Option ${opts.length + 1}`);
+                            }
+                            const cleanOpts = opts.slice(0, 4).map(String);
+                            
+                            let correctVal = q.correctAnswer || q.correct_answer || q.correct_ans || '';
+                            if (correctVal === 'A' || correctVal === 'B' || correctVal === 'C' || correctVal === 'D') {
+                                const idx = correctVal.charCodeAt(0) - 65;
+                                correctVal = cleanOpts[idx] || '';
+                            }
+                            
+                            return {
+                                ...q,
+                                questionText: q.questionText || q.prompt_text || q.question || '',
+                                options: cleanOpts,
+                                correctAnswer: correctVal,
+                                concept_tag: q.concept_tag || q.sub_topic || '',
+                                points: q.points || 10
+                            };
+                        });
+                    }
                     if (onComplete) onComplete(result);
                 } else if (status === 'FAILED' || status === 'EXPIRED' || status === 'NOT_FOUND') {
                     stopPolling();
