@@ -995,7 +995,7 @@ export default function CreateQuizTopic() {
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Theory MCQs</span>
+                                                <span className="text-xs font-black uppercase text-white">Theory</span>
                                             </div>
 
                                             {/* Code Debugging Checkbox */}
@@ -1006,7 +1006,7 @@ export default function CreateQuizTopic() {
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-purple-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Code Debugging</span>
+                                                <span className="text-xs font-black uppercase text-white">Coding</span>
                                             </div>
 
                                             {/* Fill in Blank Checkbox */}
@@ -1017,7 +1017,7 @@ export default function CreateQuizTopic() {
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Fill in the Blanks</span>
+                                                <span className="text-xs font-black uppercase text-white">Technical Interview</span>
                                             </div>
 
                                             {/* Scenario Challenges Checkbox */}
@@ -1028,7 +1028,7 @@ export default function CreateQuizTopic() {
                                                     readOnly
                                                     className="w-4 h-4 rounded border-white/10 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Scenario Challenges</span>
+                                                <span className="text-xs font-black uppercase text-white">Real-World Scenario</span>
                                             </div>
                                         </div>
 
@@ -1057,70 +1057,69 @@ export default function CreateQuizTopic() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
-                                        <p className="text-xs font-black text-white uppercase italic">Customize Format Ratios</p>
-                                        
-                                        <div className="space-y-4">
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                    <span className="text-blue-400">Theory MCQs</span>
-                                                    <span className="text-white">{ratios.theory}%</span>
-                                                </div>
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    value={ratios.theory}
-                                                    onChange={(e) => handleSliderChange('theory', e.target.value)}
-                                                    className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </div>
+                                     <div className="space-y-4">
+                                         <p className="text-xs font-black text-white uppercase italic">Customize Format Ratios</p>
+                                         <div className="space-y-4">
+                                             <div className="space-y-1">
+                                                 <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                     <span className="text-blue-400">Theory</span>
+                                                     <span className="text-white">{ratios.theory}%</span>
+                                                 </div>
+                                                 <input
+                                                     type="range"
+                                                     min="0"
+                                                     max="100"
+                                                     value={ratios.theory}
+                                                     onChange={(e) => handleSliderChange('theory', e.target.value)}
+                                                     className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                 />
+                                             </div>
 
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                    <span className="text-purple-400">Code Debugging</span>
-                                                    <span className="text-white">{ratios.code_debugging}%</span>
-                                                </div>
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    value={ratios.code_debugging}
-                                                    onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
-                                                    className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </div>
+                                             <div className="space-y-1">
+                                                 <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                     <span className="text-purple-400">Coding</span>
+                                                     <span className="text-white">{ratios.code_debugging}%</span>
+                                                 </div>
+                                                 <input
+                                                     type="range"
+                                                     min="0"
+                                                     max="100"
+                                                     value={ratios.code_debugging}
+                                                     onChange={(e) => handleSliderChange('code_debugging', e.target.value)}
+                                                     className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                 />
+                                             </div>
 
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                    <span className="text-amber-400">Fill in the Blanks</span>
-                                                    <span className="text-white">{ratios.fill_blank}%</span>
-                                                </div>
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    value={ratios.fill_blank}
-                                                    onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
-                                                    className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </div>
+                                             <div className="space-y-1">
+                                                 <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                     <span className="text-amber-400">Technical Interview</span>
+                                                     <span className="text-white">{ratios.fill_blank}%</span>
+                                                 </div>
+                                                 <input
+                                                     type="range"
+                                                     min="0"
+                                                     max="100"
+                                                     value={ratios.fill_blank}
+                                                     onChange={(e) => handleSliderChange('fill_blank', e.target.value)}
+                                                     className="w-full accent-amber-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                 />
+                                             </div>
 
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                    <span className="text-emerald-400">Scenario Challenges</span>
-                                                    <span className="text-white">{ratios.scenario}%</span>
-                                                </div>
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    value={ratios.scenario}
-                                                    onChange={(e) => handleSliderChange('scenario', e.target.value)}
-                                                    className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                                />
-                                            </div>
-                                        </div>
+                                             <div className="space-y-1">
+                                                 <div className="flex justify-between font-black uppercase text-[10px] italic">
+                                                     <span className="text-emerald-400">Real-World Scenario</span>
+                                                     <span className="text-white">{ratios.scenario}%</span>
+                                                 </div>
+                                                 <input
+                                                     type="range"
+                                                     min="0"
+                                                     max="100"
+                                                     value={ratios.scenario}
+                                                     onChange={(e) => handleSliderChange('scenario', e.target.value)}
+                                                     className="w-full accent-emerald-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                 />
+                                             </div>
+                                         </div>
 
                                         <div className="flex justify-between pt-6 border-t border-white/10">
                                             <button

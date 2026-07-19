@@ -457,7 +457,7 @@ export default function CreateQuizPDF() {
                                 <div className="space-y-4">
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-blue-400">Theory MCQs</span>
+                                            <span className="text-blue-400">Theory</span>
                                             <span className="text-[var(--text-primary)]">{ratios.theory}%</span>
                                         </div>
                                         <input
@@ -471,7 +471,7 @@ export default function CreateQuizPDF() {
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-purple-400">Code Debugging</span>
+                                            <span className="text-purple-400">Coding</span>
                                             <span className="text-[var(--text-primary)]">{ratios.code_debugging}%</span>
                                         </div>
                                         <input
@@ -485,7 +485,7 @@ export default function CreateQuizPDF() {
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-amber-400">Fill in the Blanks</span>
+                                            <span className="text-amber-400">Technical Interview</span>
                                             <span className="text-[var(--text-primary)]">{ratios.fill_blank}%</span>
                                         </div>
                                         <input
@@ -499,7 +499,7 @@ export default function CreateQuizPDF() {
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                            <span className="text-emerald-400">Scenario Challenges</span>
+                                            <span className="text-emerald-400">Real-World Scenario</span>
                                             <span className="text-[var(--text-primary)]">{ratios.scenario}%</span>
                                         </div>
                                         <input
