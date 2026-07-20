@@ -581,6 +581,90 @@ def deduplicate_text_chunks(text, embed_model, max_tokens=500, overlap_percent=1
     print(f"[Reduction]    : Kept {len(kept_chunks)} core academic blocks. Removed {len(chunks) - len(kept_chunks)} duplicates.")
     return kept_chunks
 
+def calibrate_ratios_by_heuristics(text: str, current_ratios: dict) -> dict:
+    import re
+    
+    text_lower = text.lower()
+    
+    # Heuristical counts
+    code_keywords = [
+        r'#include', r'void\s+\*', r'pthread_create', r'int\s+main', r'gcc\s+', r'ctime',
+        r'st_mode', r'd_name', r'struct\s+stat', r'msgget\(', r'sem_wait\(', r'sem_post\(',
+        r'fork\(', r'kill\(', r'close\(', r'write\(', r'read\(', r'open\(', r'printf\(', 
+        r'scanf\(', r'opendir\(', r'readdir\(', r'closedir\(', r'd_ino', r'inode\b', 
+        r'pointer', r'\.c\b', r'-lpthread', r'sem_init\('
+    ]
+    code_count = 0
+    for kw in code_keywords:
+        try:
+            code_count += len(re.findall(kw, text_lower if '\\s' not in kw and '\\(' not in kw else text))
+        except Exception:
+            pass
+            
+    math_keywords = [
+        r'pageno\b', r'logicaladdress', r'physicaladdress', r'pagesize', r'offset\b', 
+        r'frameno\b', r'pagetable', r'need\s*=\s*max', r'max\s*-\s*alloc', r'safe\s+sequence',
+        r'avail\[', r'alloc\[', r'need\[', r'max\[', r'banker\'s', r'matrix', r'allocation',
+        r'sem_init\(&empty', r'la%pagesize', r'la/pagesize', r'frame\s*×\s*pagesize'
+    ]
+    math_count = 0
+    for kw in math_keywords:
+        try:
+            math_count += len(re.findall(kw, text_lower))
+        except Exception:
+            pass
+
+    theory_keywords = [
+        r'define\b', r'definition', r'explain\b', r'concept', r'viva\b', r'theory', r'what is'
+    ]
+    theory_count = sum(len(re.findall(kw, text_lower)) for kw in theory_keywords)
+
+    comparison_keywords = [
+        r'versus', r'vs\b', r'difference\b', r'advantage', r'disadvantage', r'trade-off', r'compare'
+    ]
+    comparison_count = sum(len(re.findall(kw, text_lower)) for kw in comparison_keywords)
+
+    scenario_keywords = [
+        r'scenario', r'case study', r'real-world', r'industrial', r'application'
+    ]
+    scenario_count = sum(len(re.findall(kw, text_lower)) for kw in scenario_keywords)
+
+    # If there is strong evidence of code / math / theory / comparisons, we calibrate
+    total_score = code_count + math_count + theory_count + comparison_count + scenario_count
+    if total_score > 3:
+        w_practical = max(0.1, float(code_count) * 2.0)
+        w_formulas = max(0.1, float(math_count) * 2.0)
+        w_theory = max(0.1, float(theory_count) * 0.8)
+        w_comparison = max(0.1, float(comparison_count) * 1.0)
+        w_scenario = max(0.1, float(scenario_count) * 1.0)
+        
+        # Boosts
+        if code_count > 2:
+            w_practical += 4.0
+        if math_count > 1:
+            w_formulas += 3.0
+            
+        sum_w = w_practical + w_formulas + w_theory + w_comparison + w_scenario
+        
+        # Calculate ratio values
+        new_ratios = {
+            "CONCEPTS_AND_DEFINITIONS": round(w_theory / sum_w, 2),
+            "COMPARISONS_AND_TRADEOFFS": round(w_comparison / sum_w, 2),
+            "FORMULAS_AND_CALCULATIONS": round(w_formulas / sum_w, 2),
+            "CASE_STUDIES_AND_SCENARIOS": round(w_scenario / sum_w, 2),
+            "PRACTICAL_AND_LAB_TASKS": round(w_practical / sum_w, 2)
+        }
+        
+        # Ensure sum is exactly 1.0
+        diff = round(1.0 - sum(new_ratios.values()), 2)
+        if diff != 0.0:
+            max_key = max(new_ratios, key=new_ratios.get)
+            new_ratios[max_key] = round(new_ratios[max_key] + diff, 2)
+            
+        return new_ratios
+        
+    return current_ratios
+
 @app.post("/analyze-sources")
 async def analyze_sources(req: AnalyzeRequest):
     if not req.inputs:
@@ -603,7 +687,7 @@ async def analyze_sources(req: AnalyzeRequest):
         "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
         "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
         "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
-        "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
+        "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (Do NOT always output exactly 0.2 for all categories. If the text is heavily programming/lab-based, allocate more weight to PRACTICAL_AND_LAB_TASKS. If it has math formulas/matrices, allocate more weight to FORMULAS_AND_CALCULATIONS. The sum of all ratios must be exactly 1.0):\n"
         "   - 'CONCEPTS_AND_DEFINITIONS' (Core Theory)\n"
         "   - 'COMPARISONS_AND_TRADEOFFS' (Analytical Reasoning)\n"
         "   - 'FORMULAS_AND_CALCULATIONS' (Numerical Design)\n"
@@ -660,6 +744,10 @@ async def analyze_sources(req: AnalyzeRequest):
                         "message": data.get("relevancy_reason") or "Non-academic content detected."
                     }
                 )
+            
+            # Post-process to dynamically shift recommended ratios based on coding/formula heuristics
+            if "ai_recommendation" in data and isinstance(data["ai_recommendation"], dict):
+                data["ai_recommendation"] = calibrate_ratios_by_heuristics(text, data["ai_recommendation"])
                 
             return data
     except HTTPException as he:
@@ -679,7 +767,7 @@ async def analyze_sources(req: AnalyzeRequest):
                     "1. Check if the content is educational/academic. Set 'relevancy_verdict' to 'pass' if it is academic (note: programming manuals, code files, syntax lists, data structures, and computer science slides are 100% academic/educational), or 'fail' if it is gibberish, casual chat, or spam.\n"
                     "2. Create a bulleted lobby summary (3-4 concise, high-impact bullet points for a quiz lobby study panel).\n"
                     "3. Generate 5 core study flashcards (Q&A style for post-quiz review).\n"
-                    "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (even if non-computational):\n"
+                    "4. Suggest target ratios distributing a total weight of 1.0 across these 5 Master Academic Archetypes based on pedagogical intent (Do NOT always output exactly 0.2 for all categories. If the text is heavily programming/lab-based, allocate more weight to PRACTICAL_AND_LAB_TASKS. If it has math formulas/matrices, allocate more weight to FORMULAS_AND_CALCULATIONS. The sum of all ratios must be exactly 1.0):\n"
                     "   - 'CONCEPTS_AND_DEFINITIONS' (Core Theory)\n"
                     "   - 'COMPARISONS_AND_TRADEOFFS' (Analytical Reasoning)\n"
                     "   - 'FORMULAS_AND_CALCULATIONS' (Numerical Design)\n"
@@ -721,6 +809,10 @@ async def analyze_sources(req: AnalyzeRequest):
                             "message": data.get("relevancy_reason") or "Non-academic content detected."
                         }
                     )
+                
+                # Post-process to dynamically shift recommended ratios based on coding/formula heuristics
+                if "ai_recommendation" in data and isinstance(data["ai_recommendation"], dict):
+                    data["ai_recommendation"] = calibrate_ratios_by_heuristics(text, data["ai_recommendation"])
                     
                 print("✅ Successfully recovered via Groq Cloud fallback!")
                 return data
