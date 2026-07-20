@@ -952,6 +952,7 @@ const normalizeQuestions = (questions) => {
             correct_option: resolvedCorrectIdx,
             correctOption:  resolvedCorrectIdx,
             points: q.points || 10,
+            blooms_level: q.blooms_level || q.bloomsLevel || 'Remember/Understand'
         };
     });
 };

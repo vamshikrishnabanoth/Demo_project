@@ -6,6 +6,9 @@ B) Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).
 C) (A) is true, but (R) is false.
 D) (A) is false, but (R) is true.
 Do NOT use code blocks unless strictly necessary. Focus on conceptual comparisons and logical causality.
+
+Ensure you also return the "blooms_level" string attribute (which for this style should be "Analyze").
+
 Target Concept: {concept_tag}
 Difficulty: {difficulty}
 Context chunks: {context}

@@ -2,7 +2,15 @@ Write a Debugging & Logical Flaw Multiple-Choice Question (MCQ).
 The question stem MUST explicitly present a broken algorithm, a faulty architectural configuration, or a code snippet with a logical flaw or boundary error.
 Ask the student to detect the bug, find the failing boundary condition, or identify the line causing the logic error.
 Provide the faulty code block inside the 'code_snippet' field (wrapped in markdown gates, e.g. ```{programming_language} ... ```).
+
+DIFFICULTY LINE LENGTH & STRUCTURAL MANDATES:
+Current Target Difficulty: {difficulty}
+- If Difficulty is Easy: Limit code block to 5-10 lines, focusing on a single foundational algorithmic block.
+- If Difficulty is Medium: Target 15-20 lines, incorporating conditional boundaries or dual-concept logic blocks.
+- If Difficulty is Hard: Target 25-30 lines, forcing the structural integration of pointers, inheritance, recursion, or advanced memory layouts.
+
+Ensure you also return the "blooms_level" string attribute (which for this style should be "Analyze").
+
 Target Concept: {concept_tag}
-Difficulty: {difficulty}
 Context chunks: {context}
 Programming Language: {programming_language}

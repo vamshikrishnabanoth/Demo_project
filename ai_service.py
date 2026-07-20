@@ -1205,7 +1205,8 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         "    \"Option D\"\n"
         "  ],\n"
         "  \"correct_answer\": \"Exact copy of the correct option from options\",\n"
-        "  \"explanation\": \"Detailed explanation explaining the solution...\"\n"
+        "  \"explanation\": \"Detailed explanation explaining the solution...\",\n"
+        "  \"blooms_level\": \"Remember/Understand or Apply or Analyze or Create\"\n"
         "}"
     )
 
@@ -1274,14 +1275,74 @@ def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium", que
     # ── Style Validation Checks ──
     if question_style in ['OUTPUT_PREDICTION', 'DEBUGGING', 'CODE_COMPLETION', 'COMPILER_ERROR']:
         has_code = False
+        raw_code = ""
         if code_snippet and "```" in code_snippet:
             has_code = True
+            match = re.search(r'```(?:[a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```', code_snippet)
+            if match:
+                raw_code = match.group(1)
+            else:
+                raw_code = code_snippet.replace("```", "").strip()
         elif prompt_text and "```" in prompt_text:
             has_code = True
+            match = re.search(r'```(?:[a-zA-Z0-9+#-]+)?\n([\s\S]*?)\n```', prompt_text)
+            if match:
+                raw_code = match.group(1)
+            else:
+                raw_code = prompt_text.replace("```", "").strip()
             
         if not has_code:
             issues.append(f"Style validation failure: Style '{question_style}' requires an executable markdown code block (```)")
             return {"status": "fail", "issues": issues}
+
+        # ── Sandbox Execution Validator ──
+        is_python = False
+        if "python" in (code_snippet or "").lower() or "python" in (prompt_text or "").lower() or "pandas" in (prompt_text or "").lower() or "numpy" in (prompt_text or "").lower():
+            is_python = True
+            
+        if is_python and question_style == 'OUTPUT_PREDICTION' and raw_code.strip():
+            import subprocess
+            import sys
+            import tempfile
+            import os
+            
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w", encoding="utf-8") as temp_file:
+                    temp_file.write(raw_code)
+                    temp_filepath = temp_file.name
+                
+                res = subprocess.run(
+                    [sys.executable, temp_filepath],
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+                
+                try: os.unlink(temp_filepath)
+                except Exception: pass
+                
+                if res.returncode == 0:
+                    stdout_val = res.stdout.strip()
+                    clean_ans = str(correct_ans).strip()
+                    if clean_ans not in stdout_val and stdout_val not in clean_ans:
+                        print(f"CRITIC_WARN: Sandbox Execution Mismatch. stdout was '{stdout_val}', expected match with '{clean_ans}'")
+                        issues.append(f"CRITIC_WARN: Sandbox Execution Mismatch (stdout: '{stdout_val}', expected: '{clean_ans}')")
+                        return {"status": "fail", "issues": issues}
+                else:
+                    stderr_val = res.stderr.strip().split('\n')[-1]
+                    print(f"CRITIC_WARN: Sandbox Execution Error: {stderr_val}")
+                    issues.append(f"CRITIC_WARN: Sandbox Execution Error ({stderr_val})")
+                    return {"status": "fail", "issues": issues}
+            except subprocess.TimeoutExpired:
+                try: os.unlink(temp_filepath)
+                except Exception: pass
+                print("CRITIC_WARN: Sandbox Execution Timeout expired.")
+                issues.append("CRITIC_WARN: Sandbox Execution Timeout expired.")
+                return {"status": "fail", "issues": issues}
+            except Exception as se:
+                try: os.unlink(temp_filepath)
+                except Exception: pass
+                print(f"CRITIC_WARN: Sandbox Execution system error: {se}")
 
     # ── Token Similarity Shield ──
     # Compare every option against every other option, and against the correct answer.
@@ -1512,6 +1573,21 @@ def normalize_question_json(q_data, concept_tag, flavor):
             
     # 5. Normalize explanation
     explanation = q_data.get("explanation") or q_data.get("reason") or "No explanation provided."
+    # 6. Normalize blooms_level
+    blooms_level = q_data.get("blooms_level") or q_data.get("bloomsLevel")
+    if not blooms_level:
+        if flavor == "CONCEPTS_AND_DEFINITIONS":
+            blooms_level = "Remember/Understand"
+        elif flavor == "COMPARISONS_AND_TRADEOFFS":
+            blooms_level = "Analyze"
+        elif flavor == "FORMULAS_AND_CALCULATIONS":
+            blooms_level = "Apply"
+        elif flavor == "CASE_STUDIES_AND_SCENARIOS":
+            blooms_level = "Apply"
+        elif flavor == "PRACTICAL_AND_LAB_TASKS":
+            blooms_level = "Apply"
+        else:
+            blooms_level = "Remember/Understand"
     
     return {
         "concept_tag": q_data.get("concept_tag") or concept_tag,
@@ -1521,7 +1597,8 @@ def normalize_question_json(q_data, concept_tag, flavor):
         "options": options,
         "correct_answer": correct_answer,
         "correctAnswer": correct_answer, # Dual keys compatibility
-        "explanation": explanation
+        "explanation": explanation,
+        "blooms_level": blooms_level
     }
 
 def print_stage_header(stage_num, stage_title):
@@ -1966,7 +2043,8 @@ def execute_generation_logic(req: GeneratorRequest):
                         "options": normalized["options"],
                         "correct_answer": normalized["correct_answer"],
                         "correctAnswer": normalized["correctAnswer"],
-                        "explanation": normalized["explanation"]
+                        "explanation": normalized["explanation"],
+                        "blooms_level": normalized["blooms_level"]
                     }
                     questions.append(q_final)
                     generated_so_far += f" [{q_final['prompt_text']}] "
@@ -2028,7 +2106,8 @@ def execute_generation_logic(req: GeneratorRequest):
                                 "options": normalized["options"],
                                 "correct_answer": normalized["correct_answer"],
                                 "correctAnswer": normalized["correctAnswer"],
-                                "explanation": normalized["explanation"]
+                                "explanation": normalized["explanation"],
+                                "blooms_level": normalized["blooms_level"]
                             }
                             questions.append(q_final)
                             generated_so_far += f" [{q_final['prompt_text']}] "
@@ -2119,7 +2198,8 @@ def run_generation_task(req: GeneratorRequest):
                 "options": options_dict, # Object containing { A, B, C, D }
                 "correct_answer": q.get("correct_answer") or q.get("correctAnswer") or "",
                 "correctAnswer": q.get("correct_answer") or q.get("correctAnswer") or "",
-                "explanation": q.get("explanation") or "Detailed explanation for solution choice."
+                "explanation": q.get("explanation") or "Detailed explanation for solution choice.",
+                "blooms_level": q.get("blooms_level") or "Remember/Understand"
             }
             normalized_questions.append(norm_q)
 

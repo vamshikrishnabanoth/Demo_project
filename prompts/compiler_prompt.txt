@@ -2,7 +2,15 @@ Write a Compiler Error multiple-choice question.
 The stem MUST present a code snippet containing a syntax violation, type mismatch, scoping issue, or package import failure.
 Ask the student to identify why the code will fail compilation or what compile-time error will be thrown.
 Provide the faulty code block inside the 'code_snippet' field (wrapped in markdown gates, e.g. ```{programming_language} ... ```).
+
+DIFFICULTY LINE LENGTH & STRUCTURAL MANDATES:
+Current Target Difficulty: {difficulty}
+- If Difficulty is Easy: Limit code block to 5-10 lines, focusing on a single foundational algorithmic block.
+- If Difficulty is Medium: Target 15-20 lines, incorporating conditional boundaries or dual-concept logic blocks.
+- If Difficulty is Hard: Target 25-30 lines, forcing the structural integration of pointers, inheritance, recursion, or advanced memory layouts.
+
+Ensure you also return the "blooms_level" string attribute (which for this style should be "Analyze").
+
 Target Concept: {concept_tag}
-Difficulty: {difficulty}
 Context chunks: {context}
 Programming Language: {programming_language}

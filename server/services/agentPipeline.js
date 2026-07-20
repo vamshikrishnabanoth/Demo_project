@@ -351,6 +351,7 @@ async function refineQuestion(q, criticResult, groqClient, difficulty, isMinor) 
                 explanation:   refined.explanation || q.explanation || '',
                 points:        refined.points || q.points || 10,
                 type:          'multiple-choice',
+                blooms_level:  q.blooms_level || 'Remember/Understand'
             };
             _promptCache.set(cacheKey, result);
             return { question: result, refined: true };
