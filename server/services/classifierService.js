@@ -50,7 +50,7 @@ function calculateTokenDensity(text) {
  * Blends the teacher's preference weights with the factual text density
  * and normalizes them to equal exactly 1.0 (100%), honoring the Hard Zero rule.
  */
-function computeDynamicBlend(teacherWeights, textDensity) {
+function computeDynamicBlend(teacherWeights, textDensity, textContext = '') {
     const alpha = 0.6; 
     
     const tw = {
@@ -60,6 +60,60 @@ function computeDynamicBlend(teacherWeights, textDensity) {
         CASE_STUDIES_AND_SCENARIOS: teacherWeights.CASE_STUDIES_AND_SCENARIOS ?? teacherWeights.REAL_WORLD_APPLICATION ?? 0.2,
         PRACTICAL_AND_LAB_TASKS: teacherWeights.PRACTICAL_AND_LAB_TASKS ?? teacherWeights.IMPLEMENTATION_SYNTHESIS ?? 0.2
     };
+
+    const executionMessages = [];
+    const lowerContext = textContext.toLowerCase();
+
+    // 1. Pure COA hardware architectures vs High PRACTICAL_AND_LAB_TASKS
+    const coaKeywords = ['coa', 'stack organization', 'accumulator organization', 'stack architecture', 'register organization', 'accumulator machine', 'cpu organization', 'instruction format', 'instruction cycle', 'hardware architecture', 'computer organization', 'addressing mode', 'cpu architecture', 'assembly language', 'instruction set architecture', 'isa', 'mips', 'risc', 'cisc', 'microarchitecture', 'arithmetic logic unit', 'pipeline hazard', 'cache', 'bus'];
+    const isCOA = coaKeywords.some(kw => lowerContext.includes(kw));
+
+    // 2. Abstract flowchart logic vs High CASE_STUDIES_AND_SCENARIOS
+    const flowchartKeywords = ['flowchart', 'flow chart', 'control flow graph', 'cfg', 'pseudocode', 'pseudo code', 'program flow', 'flow-chart'];
+    const isFlowchart = flowchartKeywords.some(kw => lowerContext.includes(kw));
+
+    if (isCOA && tw.PRACTICAL_AND_LAB_TASKS > 0.05) {
+        const originalVal = tw.PRACTICAL_AND_LAB_TASKS;
+        tw.PRACTICAL_AND_LAB_TASKS = 0.05;
+        const diff = originalVal - 0.05;
+        const otherCats = ['CONCEPTS_AND_DEFINITIONS', 'COMPARISONS_AND_TRADEOFFS', 'FORMULAS_AND_CALCULATIONS', 'CASE_STUDIES_AND_SCENARIOS'];
+        const otherSum = otherCats.reduce((s, cat) => s + tw[cat], 0);
+        if (otherSum > 0) {
+            otherCats.forEach(cat => {
+                tw[cat] += diff * (tw[cat] / otherSum);
+            });
+        } else {
+            otherCats.forEach(cat => {
+                tw[cat] += diff / otherCats.length;
+            });
+        }
+        executionMessages.push(
+            "We clamped 'Implementation Synthesis' (Practical & Lab Tasks) to 5% because pure COA hardware architectures focus on low-level assembly tracing rather than high-level code implementation."
+        );
+    }
+
+    if (isFlowchart && tw.CASE_STUDIES_AND_SCENARIOS > 0.05) {
+        const originalVal = tw.CASE_STUDIES_AND_SCENARIOS;
+        tw.CASE_STUDIES_AND_SCENARIOS = 0.05;
+        const diff = originalVal - 0.05;
+        let otherCats = ['CONCEPTS_AND_DEFINITIONS', 'COMPARISONS_AND_TRADEOFFS', 'FORMULAS_AND_CALCULATIONS', 'PRACTICAL_AND_LAB_TASKS'];
+        if (isCOA) {
+            otherCats = ['CONCEPTS_AND_DEFINITIONS', 'COMPARISONS_AND_TRADEOFFS', 'FORMULAS_AND_CALCULATIONS'];
+        }
+        const otherSum = otherCats.reduce((s, cat) => s + tw[cat], 0);
+        if (otherSum > 0) {
+            otherCats.forEach(cat => {
+                tw[cat] += diff * (tw[cat] / otherSum);
+            });
+        } else {
+            otherCats.forEach(cat => {
+                tw[cat] += diff / otherCats.length;
+            });
+        }
+        executionMessages.push(
+            "We clamped 'Real-World Application' (Case Studies & Scenarios) to 5% because abstract flowchart logic is best evaluated through design analysis rather than large system scenarios."
+        );
+    }
 
     let blended = {};
     let totalBlendedSum = 0;
@@ -105,7 +159,10 @@ function computeDynamicBlend(teacherWeights, textDensity) {
         finalRatios[maxCat] = parseFloat((finalRatios[maxCat] + diff).toFixed(2));
     }
 
-    return finalRatios;
+    return {
+        ratios: finalRatios,
+        executionMessages
+    };
 }
 
 module.exports = { calculateTokenDensity, computeDynamicBlend };

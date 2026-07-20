@@ -90,6 +90,21 @@ export default function CreateQuizText() {
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
             if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
             toast.success('AI Intel Injected Successfully');
+
+            if (location.state.executionMessages && Array.isArray(location.state.executionMessages) && location.state.executionMessages.length > 0) {
+                location.state.executionMessages.forEach(msg => {
+                    toast(msg, {
+                        icon: 'ℹ️',
+                        duration: 8000,
+                        style: {
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            padding: '16px',
+                            color: '#fff',
+                            background: '#0f172a',
+                        }
+                    });
+                });
+            }
         }
     }, [location.state]);
 

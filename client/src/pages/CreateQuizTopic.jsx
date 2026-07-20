@@ -672,7 +672,8 @@ export default function CreateQuizTopic() {
                             agentReport:     result.agentReport || null,
                             finalValidation: result.finalValidation || null,
                             lobbySummary:    result.lobbySummary || null,
-                            aiFlashcards:    result.aiFlashcards || null
+                            aiFlashcards:    result.aiFlashcards || null,
+                            executionMessages: result.metadata?.executionMessages || []
                         },
                     });
                 },

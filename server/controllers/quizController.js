@@ -226,6 +226,12 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
         let start = Math.max(1, startPage);
         let end = Math.max(start, endPage);
 
+        if (start > end) {
+            const temp = start;
+            start = end;
+            end = temp;
+        }
+
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
             let pagesText = [];
@@ -1774,13 +1780,39 @@ exports.generateQuizQuestions = async (req, res) => {
                 }
             }
 
+            let isSparse = false;
+            if (parsedInputs && parsedInputs.length > 0) {
+                parsedInputs.forEach(inp => {
+                    if (inp.type !== 'image' && inp.content) {
+                        const pages = (inp.endPage - inp.startPage + 1) || 1;
+                        if (inp.content.length / pages < 150) {
+                            isSparse = true;
+                        }
+                    }
+                });
+            }
+
             let parsedTopicWeights = null;
             if (topic_weights) {
                 parsedTopicWeights = typeof topic_weights === 'string' ? JSON.parse(topic_weights) : topic_weights;
             }
 
+            if (isSparse) {
+                console.warn("⚠️ Content-Sparse Ingestion detected (< 150 chars/page). Boosting global topic/voice weights.");
+                if (!parsedTopicWeights) {
+                    parsedTopicWeights = {};
+                }
+                if (topic) {
+                    parsedTopicWeights[topic] = 1.0;
+                }
+                Object.keys(parsedTopicWeights).forEach(k => {
+                    parsedTopicWeights[k] = Math.min(1.0, parsedTopicWeights[k] * 1.5);
+                });
+            }
+
             // Apply Token Density Classifier and Dynamic Weight Allocator
             let blendedRatios = null;
+            let executionMessages = [];
             if (parsedTargetRatios) {
                 // Aggregate text from RAG inputs
                 let textChunk = '';
@@ -1803,7 +1835,9 @@ exports.generateQuizQuestions = async (req, res) => {
                     console.log('📄 Aggregated context text for density classification (length:', textChunk.length, ')');
                     const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
                     const textDensity = calculateTokenDensity(textChunk);
-                    blendedRatios = computeDynamicBlend(parsedTargetRatios, textDensity);
+                    const blendRes = computeDynamicBlend(parsedTargetRatios, textDensity, textChunk);
+                    blendedRatios = blendRes.ratios;
+                    executionMessages = blendRes.executionMessages;
                     console.log('📊 Factual Text Density:', textDensity);
                     
                     const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
@@ -2118,6 +2152,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 taskObj.lobbySummary = lobby_summary;
                 taskObj.aiFlashcards = ai_flashcards;
                 taskObj.difficulty = difficulty || 'Medium';
+                taskObj.executionMessages = executionMessages || [];
             }
 
             const callbackUrl = `${req.protocol}://${req.get('host')}/api/quiz/generate/callback/${taskId}`;
@@ -2171,6 +2206,8 @@ exports.generateQuizQuestions = async (req, res) => {
             updateTaskStage(taskId, 3, 'Preparing Final Quiz');
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
 
+            const { getTask: getTaskFromMgr } = require('../services/taskManager');
+            const finalTaskObj = getTaskFromMgr(taskId);
             completeTask(taskId, {
                 questions:       finalQuestions,
                 title:           extractedTitle,
@@ -2178,7 +2215,10 @@ exports.generateQuizQuestions = async (req, res) => {
                 agentReport,
                 finalValidation: validation,
                 lobbySummary:    lobby_summary || null,
-                aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null
+                aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null,
+                metadata: {
+                    executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []
+                }
             });
 
         } catch (err) {
@@ -2410,14 +2450,19 @@ exports.generateQuizFromVoice = async (req, res) => {
             updateTaskStage(taskId, 0, 'Generating Questions');
 
             let blendedRatios = parsedTargetRatios;
+            let executionMessages = [];
+            const voiceTitle = `Voice Quiz: ${new Date().toLocaleTimeString()}`;
+            const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
+            const isNonComp = keywords.some(kw => voiceTitle.toLowerCase().includes(kw) || transcript.toLowerCase().includes(kw));
+
             if (transcript && transcript.trim().length > 0) {
                 const { calculateTokenDensity, computeDynamicBlend } = require('../services/classifierService');
                 const textDensity = calculateTokenDensity(transcript);
-                blendedRatios = computeDynamicBlend(parsedTargetRatios || { CONCEPTS_AND_DEFINITIONS: 0.2, COMPARISONS_AND_TRADEOFFS: 0.2, FORMULAS_AND_CALCULATIONS: 0.2, CASE_STUDIES_AND_SCENARIOS: 0.2, PRACTICAL_AND_LAB_TASKS: 0.2 }, textDensity);
+                const blendRes = computeDynamicBlend(parsedTargetRatios || { CONCEPTS_AND_DEFINITIONS: 0.2, COMPARISONS_AND_TRADEOFFS: 0.2, FORMULAS_AND_CALCULATIONS: 0.2, CASE_STUDIES_AND_SCENARIOS: 0.2, PRACTICAL_AND_LAB_TASKS: 0.2 }, textDensity, transcript);
+                blendedRatios = blendRes.ratios;
+                executionMessages = blendRes.executionMessages;
                 console.log('🎙️ Voice Transcript Density Analysis:', textDensity);
                 
-                const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
-                const isNonComp = keywords.some(kw => (extractedTitle || '').toLowerCase().includes(kw));
                 const formalNames = {
                     CONCEPTS_AND_DEFINITIONS: "Core Theory",
                     COMPARISONS_AND_TRADEOFFS: "Analytical Reasoning",
@@ -2469,12 +2514,15 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             completeTask(taskId, {
                 questions:       finalQuestions,
-                title:           `Voice Quiz: ${new Date().toLocaleTimeString()}`,
+                title:           voiceTitle,
                 transcript,
                 duration:        10,
                 agentReport,
                 finalValidation: validation,
                 isVoice:         true,
+                metadata: {
+                    executionMessages: executionMessages
+                }
             });
 
         } catch (err) {
@@ -2848,6 +2896,10 @@ exports.taskCompleteCallback = async (req, res) => {
         updateTaskStage(taskId, 3, 'Preparing Final Quiz');
         const validation = finalQuizValidator(finalQuestions, task.difficulty || 'Medium');
 
+        let mergedMessages = task.executionMessages || [];
+        if (result && result.quiz_metadata && result.quiz_metadata.execution_messages) {
+            mergedMessages = [...new Set([...mergedMessages, ...result.quiz_metadata.execution_messages])];
+        }
         completeTask(taskId, {
             questions:       finalQuestions,
             title:           task.extractedTitle || 'AI Generated Quiz',
@@ -2855,7 +2907,10 @@ exports.taskCompleteCallback = async (req, res) => {
             agentReport,
             finalValidation: validation,
             lobbySummary:    task.lobbySummary || null,
-            aiFlashcards:    task.aiFlashcards ? (typeof task.aiFlashcards === 'string' ? JSON.parse(task.aiFlashcards) : task.aiFlashcards) : null
+            aiFlashcards:    task.aiFlashcards ? (typeof task.aiFlashcards === 'string' ? JSON.parse(task.aiFlashcards) : task.aiFlashcards) : null,
+            metadata: {
+                executionMessages: mergedMessages
+            }
         });
         console.log(`📡 [CALLBACK] Task ${taskId} marked as COMPLETED.`);
     } else {

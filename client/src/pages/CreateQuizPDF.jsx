@@ -413,6 +413,7 @@ export default function CreateQuizPDF() {
                             source:          'generated',
                             agentReport:     result.agentReport || null,
                             finalValidation: result.finalValidation || null,
+                            executionMessages: result.metadata?.executionMessages || []
                         },
                     });
                 },

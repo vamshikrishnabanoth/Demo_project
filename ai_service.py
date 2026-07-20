@@ -1042,10 +1042,15 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
     
     return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}], []
 
-def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium", isolated_narratives=None):
+def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium", isolated_narratives=None, is_compression_sieve=False, temp_offset=0.0, freq_penalty=None):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
     
+    _tier_map = {"easy": 1, "medium": 2, "thinkable": 2, "hard": 3}
+    diff_key = difficulty.lower()
+    if diff_key not in _tier_map: diff_key = "medium"
+    difficulty_tier = _tier_map.get(diff_key, 2)
+
     type_instruction = ""
     if question_type == "CONCEPTS_AND_DEFINITIONS":
         type_instruction = (
@@ -1054,13 +1059,22 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         )
     elif question_type == "COMPARISONS_AND_TRADEOFFS":
         type_instruction = (
-            "Write an Analytical Reasoning MCQ. Focus on trade-offs, comparisons, and error analysis. "
-            "Ask the student to compare two approaches, analyze why a certain design succeeds/fails, or identify logic/reasoning errors."
+            "Write an Analytical Reasoning MCQ focusing on comparisons, trade-offs, or error analysis.\n"
+            "Specifically, for the 'error_analysis' subcategory: The question stem MUST explicitly present a broken algorithm, "
+            "a faulty architectural configuration, or a code snippet with a logical flaw, forcing students to detect the exact boundary error.\n"
+            "Additionally, you are authorized and expected to generate formal Assertion & Reasoning templates. The stem must format a clear "
+            "Assertion (A) and Reason (R) layout, and the options MUST follow the standard psychometric grid:\n"
+            "  A) Both (A) and (R) are true, and (R) is the correct explanation of (A).\n"
+            "  B) Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).\n"
+            "  C) (A) is true, but (R) is false.\n"
+            "  D) (A) is false, but (R) is true."
         )
     elif question_type == "FORMULAS_AND_CALCULATIONS":
         type_instruction = (
-            "Write a Numerical Design MCQ. Focus on calculations, architecture, and diagram/state tracing. "
-            "Include calculations, math expressions, complexity derivations, or trace parameters through an architecture."
+            "Write a Numerical Design MCQ focusing on calculations, architecture, and diagram/state tracing.\n"
+            "Specifically, for the 'diagram_flowchart_parsing' subcategory: Force the generation of textual data flow sequences, "
+            "state-machine execution steps, or ASCII execution loops in the question stem. Questions must target precise "
+            "step-by-step navigation, tracing, or structural memorization."
         )
     elif question_type == "CASE_STUDIES_AND_SCENARIOS":
         type_instruction = (
@@ -1069,8 +1083,13 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         )
     elif question_type == "PRACTICAL_AND_LAB_TASKS":
         type_instruction = (
-            "Write an Implementation & Synthesis MCQ. Focus on coding, debugging, and practical syntax compilation. "
-            "Include a code fragment or data struct declaration (in code_snippet field if it is programming syntax), and ask to predict the output, locate a bug, or complete the declaration."
+            "Write an Implementation & Synthesis MCQ focusing on coding, debugging, and practical syntax compilation.\n"
+            "Specifically, for the 'code_implementation' & 'output_prediction_dryrun' subcategories: Wrap functional, "
+            "highly specific code blocks inside clean markdown gates (```lang ... ```) (e.g. ```python ... ``` or ```javascript ... ```). "
+            f"Adjust the structural code syntax complexity directly to match the chosen difficulty tier (current tier: {difficulty_tier}):\n"
+            "  - Tier 1: Very simple syntax, basic operations, direct variables.\n"
+            "  - Tier 2: Loops, simple conditional checks, basic data structures or state updates.\n"
+            "  - Tier 3: Tricky recursion, pointer/memory allocation, multi-threaded concepts, or optimization blocks."
         )
 
     difficultyPrompts = {
@@ -1104,17 +1123,7 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         }
     }
     
-    diff_key = difficulty.lower()
-    if diff_key not in difficultyPrompts: diff_key = "medium"
-    
     targeted_criteria = difficultyPrompts[diff_key].get(question_type, "Focus on general knowledge.")
-
-    # ── Derive psychometric difficulty tier (1-3) for distractor calibration ──
-    # Tier 1 (Easy)   → distinct, non-overlapping distractors
-    # Tier 2 (Medium/Thinkable) → procedural-mistake or calculation-slip distractors
-    # Tier 3 (Hard)   → maximum confusion via identical vocabulary / subtle sign/operator changes
-    _tier_map = {"easy": 1, "medium": 2, "thinkable": 2, "hard": 3}
-    difficulty_tier = _tier_map.get(diff_key, 2)
 
     if difficulty_tier == 1:
         distractor_instruction = (
@@ -1155,8 +1164,20 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
             f"Instead, construct a structurally isomorphic (parallel) real-world scenario that tests the exact same concept using a brand-new application domain.\n\n"
         )
 
+    compression_sieve_instruction = ""
+    if is_compression_sieve:
+        compression_sieve_instruction = (
+            "COMPRESSION SIEVE MANDATE:\n"
+            "Because you are generating a very short quiz (<= 5 questions) from a very large amount of material (>5000 tokens), "
+            "each question MUST be a multi-concept synthesis question. Do NOT ask about isolated trivial details. "
+            "Instead, design high-level questions that require the student to synthesize, compare, and integrate multiple concepts "
+            "from the source text simultaneously (e.g. how a design decision affects memory layout and time complexity together, "
+            "or comparing the trade-offs of two different architectures in a single question).\n\n"
+        )
+
     prompt = (
         "You are an elite Computer Science and Engineering curriculum developer. Your task is to write high-fidelity academic evaluations.\n\n"
+        f"{compression_sieve_instruction}"
         f"{narrative_mutation_instruction}"
         "DIAGRAM AND GRAPHICS SAFEGUARD:\n"
         "For any image/diagram-based text descriptions extracted from slides, you are only permitted to reproduce them if they represent standard engineering blueprints or industry-standard topologies. If the slide context indicates a non-standard or arbitrary sketch, synthesize a descriptive text-based conceptual evaluation instead.\n\n"
@@ -1188,17 +1209,28 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
         "}"
     )
 
+    temp_map = {
+        "CONCEPTS_AND_DEFINITIONS": 0.15,
+        "FORMULAS_AND_CALCULATIONS": 0.2,
+        "CASE_STUDIES_AND_SCENARIOS": 0.65,
+        "COMPARISONS_AND_TRADEOFFS": 0.4,
+        "PRACTICAL_AND_LAB_TASKS": 0.4
+    }
+    temperature = temp_map.get(question_type, 0.4) + temp_offset
+
     payload = {
         "model": MODEL_NAME,
         "prompt": prompt,
         "stream": False,
         "format": "json",
         "options": {
-            "temperature": 0.4,
+            "temperature": temperature,
             "repeat_penalty": 1.15,
             "num_ctx": 4096
         }
     }
+    if freq_penalty is not None:
+        payload["options"]["frequency_penalty"] = freq_penalty
     
     response = requests.post(OLLAMA_URL, json=payload, timeout=180)
     if response.status_code == 200:
@@ -1238,6 +1270,38 @@ def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium"):
     options = q_data.get("options", [])
     correct_ans = q_data.get("correct_answer") or q_data.get("correctAnswer")
     code_snippet = q_data.get("code_snippet")
+
+    # ── Token Similarity Shield ──
+    # Compare every option against every other option, and against the correct answer.
+    if options:
+        def compute_iou(s1, s2):
+            w1 = set(re.sub(r'[^\w\s]', ' ', str(s1).lower()).split())
+            w2 = set(re.sub(r'[^\w\s]', ' ', str(s2).lower()).split())
+            if not w1 and not w2:
+                return 0.0
+            union = w1.union(w2)
+            if not union:
+                return 0.0
+            return len(w1.intersection(w2)) / len(union)
+
+        # Check options against correct answer
+        if correct_ans:
+            for opt in options:
+                if opt != correct_ans:
+                    iou = compute_iou(opt, correct_ans)
+                    if iou > 0.75:
+                        print(f"CRITIC_WARN: High Semantic Overlap Detected (IoU: {iou:.2f}) between option '{opt}' and correct answer '{correct_ans}'")
+                        issues.append("CRITIC_WARN: High Semantic Overlap Detected")
+                        return {"status": "fail", "issues": issues}
+
+        # Check options against each other
+        for idx1 in range(len(options)):
+            for idx2 in range(idx1 + 1, len(options)):
+                iou = compute_iou(options[idx1], options[idx2])
+                if iou > 0.75:
+                    print(f"CRITIC_WARN: High Semantic Overlap Detected (IoU: {iou:.2f}) between options '{options[idx1]}' and '{options[idx2]}'")
+                    issues.append("CRITIC_WARN: High Semantic Overlap Detected")
+                    return {"status": "fail", "issues": issues}
     
     if not prompt_text:
         issues.append("Missing prompt_text")
@@ -1471,6 +1535,8 @@ def execute_generation_logic(req: GeneratorRequest):
     print(f"[File Names]   : {file_names_str}")
     print(f"[Raw State]    : {raw_chars:,} characters of unparsed raw text structures.")
 
+    MAX_CONTEXT_CHARS = 12000
+
     if req.inputs:
         resolved_text = resolve_input_sources(req.inputs)
         if not resolved_text or len(resolved_text.strip()) < 2:
@@ -1479,7 +1545,17 @@ def execute_generation_logic(req: GeneratorRequest):
         print_stage_header("2", "CONTENT SANITIZATION & METADATA STRIPPING")
         print(f"[Action]       : Stripped away PPTX syntax, fonts, sizes, slide numbers, and timestamps.")
         chunks = deduplicate_text_chunks(resolved_text, embed_model)
-        context = "\n\n".join(chunks[:6])
+        
+        # Context-Length Budgeting chunk sieve
+        context_parts = []
+        current_len = 0
+        for chunk in chunks:
+            if current_len + len(chunk) + 2 > MAX_CONTEXT_CHARS:
+                if len(context_parts) > 0:
+                    break
+            context_parts.append(chunk)
+            current_len += len(chunk) + 2
+        context = "\n\n".join(context_parts)
         print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
     else:
         source_text = req.content
@@ -1505,8 +1581,18 @@ def execute_generation_logic(req: GeneratorRequest):
             print(f"  [RAG] Searching global database for topic '{req.content}'...")
             db_results = get_relevant_db_context(req.content, top_k=5)
             if db_results:
-                context = "\n\n".join([r["content"] for r in db_results])
-                print(f"  [RAG] Found {len(db_results)} matching chunks in database.")
+                # Sieve database results to fit MAX_CONTEXT_CHARS
+                context_parts = []
+                current_len = 0
+                for r in db_results:
+                    chunk = r["content"]
+                    if current_len + len(chunk) + 2 > MAX_CONTEXT_CHARS:
+                        if len(context_parts) > 0:
+                            break
+                    context_parts.append(chunk)
+                    current_len += len(chunk) + 2
+                context = "\n\n".join(context_parts)
+                print(f"  [RAG] Found {len(db_results)} matching chunks in database. Sieved to {len(context_parts)} chunks.")
             else:
                 context = f"Syllabus topic: {req.content}"
                 print("  [RAG] No matching chunks found in database. Using empty fallback.")
@@ -1514,7 +1600,18 @@ def execute_generation_logic(req: GeneratorRequest):
             if not source_text or len(source_text) < 2:
                 raise HTTPException(status_code=400, detail="Content too short or file unreadable.")
             query = "Important core concepts"
-            context = get_relevant_context(source_text, query, top_k=5)
+            raw_context = get_relevant_context(source_text, query, top_k=5)
+            # Sieve raw_context to fit MAX_CONTEXT_CHARS
+            chunks = raw_context.split('\n\n')
+            context_parts = []
+            current_len = 0
+            for chunk in chunks:
+                if current_len + len(chunk) + 2 > MAX_CONTEXT_CHARS:
+                    if len(context_parts) > 0:
+                        break
+                context_parts.append(chunk)
+                current_len += len(chunk) + 2
+            context = "\n\n".join(context_parts)
         print(f"[Clean Text]   : \"{context[:150].strip().replace(chr(10), ' ')}...\"")
 
     # Determine topic fallback for logs and RAG
@@ -1555,7 +1652,80 @@ def execute_generation_logic(req: GeneratorRequest):
     }
     ratios = req.target_ratios or default_ratios
     total_count = req.count
+
+    # Contextual evaluation layer for thematic incompatibility
+    execution_messages = []
+    text_content = context.lower()
     
+    coa_keywords = ['coa', 'stack organization', 'accumulator organization', 'stack architecture', 'register organization', 'accumulator machine', 'cpu organization', 'instruction format', 'instruction cycle', 'hardware architecture', 'computer organization', 'addressing mode', 'cpu architecture', 'assembly language', 'instruction set architecture', 'isa', 'mips', 'risc', 'cisc', 'microarchitecture', 'arithmetic logic unit', 'pipeline hazard', 'cache', 'bus']
+    is_coa = any(kw in text_content for kw in coa_keywords) or any(kw in topic_fallback.lower() for kw in coa_keywords)
+    
+    flowchart_keywords = ['flowchart', 'flow chart', 'control flow graph', 'cfg', 'pseudocode', 'pseudo code', 'program flow', 'flow-chart']
+    is_flowchart = any(kw in text_content for kw in flowchart_keywords) or any(kw in topic_fallback.lower() for kw in flowchart_keywords)
+
+    normalized_ratios = {
+        "CONCEPTS_AND_DEFINITIONS": float(ratios.get("CONCEPTS_AND_DEFINITIONS") or ratios.get("CORE_THEORY") or 0.2),
+        "COMPARISONS_AND_TRADEOFFS": float(ratios.get("COMPARISONS_AND_TRADEOFFS") or ratios.get("ANALYTICAL_REASONING") or 0.2),
+        "FORMULAS_AND_CALCULATIONS": float(ratios.get("FORMULAS_AND_CALCULATIONS") or ratios.get("NUMERICAL_DESIGN") or 0.2),
+        "CASE_STUDIES_AND_SCENARIOS": float(ratios.get("CASE_STUDIES_AND_SCENARIOS") or ratios.get("REAL_WORLD_APPLICATION") or 0.2),
+        "PRACTICAL_AND_LAB_TASKS": float(ratios.get("PRACTICAL_AND_LAB_TASKS") or ratios.get("IMPLEMENTATION_SYNTHESIS") or 0.2),
+    }
+
+    if is_coa and normalized_ratios["PRACTICAL_AND_LAB_TASKS"] > 0.05:
+        original_val = normalized_ratios["PRACTICAL_AND_LAB_TASKS"]
+        normalized_ratios["PRACTICAL_AND_LAB_TASKS"] = 0.05
+        diff = original_val - 0.05
+        other_cats = ["CONCEPTS_AND_DEFINITIONS", "COMPARISONS_AND_TRADEOFFS", "FORMULAS_AND_CALCULATIONS", "CASE_STUDIES_AND_SCENARIOS"]
+        other_sum = sum(normalized_ratios[cat] for cat in other_cats)
+        if other_sum > 0:
+            for cat in other_cats:
+                normalized_ratios[cat] += diff * (normalized_ratios[cat] / other_sum)
+        else:
+            for cat in other_cats:
+                normalized_ratios[cat] += diff / len(other_cats)
+        for cat in normalized_ratios:
+            normalized_ratios[cat] = round(normalized_ratios[cat], 2)
+        total_sum = sum(normalized_ratios.values())
+        if abs(total_sum - 1.0) > 0.0001:
+            diff_round = round(1.0 - total_sum, 2)
+            max_cat = max(other_cats, key=lambda c: normalized_ratios[c])
+            normalized_ratios[max_cat] = round(normalized_ratios[max_cat] + diff_round, 2)
+        execution_messages.append(
+            "We clamped 'Implementation Synthesis' (Practical & Lab Tasks) to 5% because pure COA hardware architectures focus on low-level assembly tracing rather than high-level code implementation."
+        )
+
+    if is_flowchart and normalized_ratios["CASE_STUDIES_AND_SCENARIOS"] > 0.05:
+        original_val = normalized_ratios["CASE_STUDIES_AND_SCENARIOS"]
+        normalized_ratios["CASE_STUDIES_AND_SCENARIOS"] = 0.05
+        diff = original_val - 0.05
+        other_cats = ["CONCEPTS_AND_DEFINITIONS", "COMPARISONS_AND_TRADEOFFS", "FORMULAS_AND_CALCULATIONS", "PRACTICAL_AND_LAB_TASKS"]
+        if is_coa:
+            other_cats = ["CONCEPTS_AND_DEFINITIONS", "COMPARISONS_AND_TRADEOFFS", "FORMULAS_AND_CALCULATIONS"]
+        other_sum = sum(normalized_ratios[cat] for cat in other_cats)
+        if other_sum > 0:
+            for cat in other_cats:
+                normalized_ratios[cat] += diff * (normalized_ratios[cat] / other_sum)
+        else:
+            for cat in other_cats:
+                normalized_ratios[cat] += diff / len(other_cats)
+        for cat in normalized_ratios:
+            normalized_ratios[cat] = round(normalized_ratios[cat], 2)
+        total_sum = sum(normalized_ratios.values())
+        if abs(total_sum - 1.0) > 0.0001:
+            diff_round = round(1.0 - total_sum, 2)
+            max_cat = max(other_cats, key=lambda c: normalized_ratios[c])
+            normalized_ratios[max_cat] = round(normalized_ratios[max_cat] + diff_round, 2)
+        execution_messages.append(
+            "We clamped 'Real-World Application' (Case Studies & Scenarios) to 5% because abstract flowchart logic is best evaluated through design analysis rather than large system scenarios."
+        )
+
+    ratios = normalized_ratios
+    
+    # Compression Sieve Detection: total questions <= 5 and input length > 5000 tokens (approx 20,000 chars)
+    is_compression_sieve = (total_count <= 5) and (len(context) > 20000)
+    if is_compression_sieve:
+        print("[Compression Sieve] Activated: input length > 5000 tokens and total questions <= 5. Emphasizing multi-concept synthesis questions.")
+
     # Calculate counts per flavor
     sum_ratios = sum(ratios.values())
     if sum_ratios == 0:
@@ -1707,7 +1877,18 @@ def execute_generation_logic(req: GeneratorRequest):
         # Initial Draft Generation by Agent 2
         for attempt in range(3):
             try:
-                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives)
+                temp_offset = 0.0
+                freq_penalty = None
+                if attempt == 1:
+                    temp_offset = 0.15
+                    freq_penalty = 0.4
+                    print("  ├── [Self-Healing]     : Attempt 2 - elevating temperature by +0.15 and frequency_penalty to 0.4")
+                elif attempt == 2:
+                    temp_offset = 0.30
+                    freq_penalty = 0.4
+                    print("  ├── [Self-Healing]     : Attempt 3 - elevating temperature by +0.30 and frequency_penalty to 0.4")
+
+                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives, is_compression_sieve, temp_offset=temp_offset, freq_penalty=freq_penalty)
                 print(f"  ├── [Agent 2 Creator]  : Drafted a multiple-choice question on '{concept.get('concept_tag')}'.")
                 
                 # Validation by Agent 3 (with difficulty for tier-based distractor checks)
@@ -1811,7 +1992,7 @@ def execute_generation_logic(req: GeneratorRequest):
                     print(f"  ├── [Agent 2 Creator]  : ⚠️ Execution error: {e}")
 
         if not q_success:
-            print(f"  └── [Agent 2 Creator]  : [ \033[31m❌ FAIL\033[0m ] -> Failed to generate question after 3 attempts.")
+            print(f"  └── [Agent 2 Creator]  : [ \033[31m❌ FAIL\033[0m ] -> Failed to generate question after 3 attempts. Gracefully bypassing and dropping corrupted node.")
 
     # Conforming to structured blueprint output JSON
     payload_response = {
@@ -1819,7 +2000,8 @@ def execute_generation_logic(req: GeneratorRequest):
             "source_material_id": req.source_material_id or "kmit_dynamic_gen",
             "total_questions": len(questions),
             "target_ratios": ratios,
-            "isolated_narratives": isolated_narratives
+            "isolated_narratives": isolated_narratives,
+            "execution_messages": execution_messages
         },
         "questions": questions,
         "isolated_narratives": isolated_narratives
