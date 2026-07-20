@@ -540,6 +540,8 @@ def resolve_input_sources(inputs):
                 except Exception as e:
                     print(f"Error parsing base64 file source: {e}")
                     source_text = ""
+            else:
+                source_text = inp.content
         else:
             source_text = inp.content
         
