@@ -2206,7 +2206,6 @@ exports.generateQuizQuestions = async (req, res) => {
             updateTaskStage(taskId, 3, 'Preparing Final Quiz');
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
 
-            const { getTask: getTaskFromMgr } = require('../services/taskManager');
             const finalTaskObj = getTaskFromMgr(taskId);
             completeTask(taskId, {
                 questions:       finalQuestions,
