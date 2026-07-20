@@ -1,0 +1,8 @@
+Write a Code Completion / Fill-in-the-Blank Multiple-Choice Question (MCQ).
+The question stem MUST present a code snippet containing missing tokens, variables, or functions (represented by blank spaces or underscores, e.g., ___).
+Ask the student which option correctly completes the snippet to achieve a specified execution behavior.
+Provide the incomplete code snippet inside the 'code_snippet' field (wrapped in markdown gates, e.g. ```{programming_language} ... ```).
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Programming Language: {programming_language}

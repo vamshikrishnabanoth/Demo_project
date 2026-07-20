@@ -244,6 +244,7 @@ class GeneratorRequest(BaseModel):
     callback_url: Optional[str] = None
     taskId: Optional[str] = None
     isolated_narratives: Optional[List[str]] = None
+    question_style: Optional[str] = "MIXED"
 
 class IngestRequest(BaseModel):
     source: str
@@ -1042,7 +1043,7 @@ def run_agent1_analyzer(context, count, topic_fallback="General Course Concept")
     
     return [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context chunk"}], []
 
-def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium", isolated_narratives=None, is_compression_sieve=False, temp_offset=0.0, freq_penalty=None):
+def run_agent2_generator(concept, question_type, context, generated_so_far="", difficulty="Medium", isolated_narratives=None, is_compression_sieve=False, temp_offset=0.0, freq_penalty=None, programming_language="Python/JavaScript", question_style="THEORY"):
     concept_tag = concept.get("concept_tag", "General Course Concept")
     weight_score = concept.get("weight_score", 0.75)
     
@@ -1051,46 +1052,45 @@ def run_agent2_generator(concept, question_type, context, generated_so_far="", d
     if diff_key not in _tier_map: diff_key = "medium"
     difficulty_tier = _tier_map.get(diff_key, 2)
 
-    type_instruction = ""
-    if question_type == "CONCEPTS_AND_DEFINITIONS":
-        type_instruction = (
-            "Write a Core Theory MCQ. Focus entirely on concepts, explanations, and viva-style terminology. "
-            "Ask about definitions, protocols, mechanisms, or conceptual principles."
+    # ── Decoupled Strategy Engine (Question Style Plugin Matrix) ──
+    import os
+    style_files = {
+        "THEORY": "theory_prompt.txt",
+        "OUTPUT_PREDICTION": "output_prompt.txt",
+        "DEBUGGING": "debug_prompt.txt",
+        "ASSERTION_REASONING": "assertion_reason_prompt.txt",
+        "TRACE_EXECUTION": "trace_prompt.txt",
+        "COMPILER_ERROR": "compiler_prompt.txt",
+        "CODE_COMPLETION": "completion_prompt.txt"
+    }
+    
+    filename = style_files.get(question_style, "theory_prompt.txt")
+    prompts_dir = os.path.join(os.path.dirname(__file__), "prompts")
+    filepath = os.path.join(prompts_dir, filename)
+    
+    strategy_content = ""
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                strategy_content = f.read()
+        except Exception as e:
+            print(f"  ├── [Strategy Engine] : ⚠️ Error loading strategy prompt file: {e}")
+            
+    if not strategy_content:
+        strategy_content = "Write a conceptual multiple-choice question."
+        
+    try:
+        type_instruction = strategy_content.format(
+            concept_tag=concept_tag,
+            difficulty=difficulty,
+            context=context[:2000],
+            programming_language=programming_language
         )
-    elif question_type == "COMPARISONS_AND_TRADEOFFS":
-        type_instruction = (
-            "Write an Analytical Reasoning MCQ focusing on comparisons, trade-offs, or error analysis.\n"
-            "Specifically, for the 'error_analysis' subcategory: The question stem MUST explicitly present a broken algorithm, "
-            "a faulty architectural configuration, or a code snippet with a logical flaw, forcing students to detect the exact boundary error.\n"
-            "Additionally, you are authorized and expected to generate formal Assertion & Reasoning templates. The stem must format a clear "
-            "Assertion (A) and Reason (R) layout, and the options MUST follow the standard psychometric grid:\n"
-            "  A) Both (A) and (R) are true, and (R) is the correct explanation of (A).\n"
-            "  B) Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).\n"
-            "  C) (A) is true, but (R) is false.\n"
-            "  D) (A) is false, but (R) is true."
-        )
-    elif question_type == "FORMULAS_AND_CALCULATIONS":
-        type_instruction = (
-            "Write a Numerical Design MCQ focusing on calculations, architecture, and diagram/state tracing.\n"
-            "Specifically, for the 'diagram_flowchart_parsing' subcategory: Force the generation of textual data flow sequences, "
-            "state-machine execution steps, or ASCII execution loops in the question stem. Questions must target precise "
-            "step-by-step navigation, tracing, or structural memorization."
-        )
-    elif question_type == "CASE_STUDIES_AND_SCENARIOS":
-        type_instruction = (
-            "Write a Real-World Application MCQ. Focus on case studies and engineering scenarios. "
-            "Construct a realistic domain-specific scenario (e.g. electrical wiring, chemical reaction setup, or software scaling) and ask for the best practical solution."
-        )
-    elif question_type == "PRACTICAL_AND_LAB_TASKS":
-        type_instruction = (
-            "Write an Implementation & Synthesis MCQ focusing on coding, debugging, and practical syntax compilation.\n"
-            "Specifically, for the 'code_implementation' & 'output_prediction_dryrun' subcategories: Wrap functional, "
-            "highly specific code blocks inside clean markdown gates (```lang ... ```) (e.g. ```python ... ``` or ```javascript ... ```). "
-            f"Adjust the structural code syntax complexity directly to match the chosen difficulty tier (current tier: {difficulty_tier}):\n"
-            "  - Tier 1: Very simple syntax, basic operations, direct variables.\n"
-            "  - Tier 2: Loops, simple conditional checks, basic data structures or state updates.\n"
-            "  - Tier 3: Tricky recursion, pointer/memory allocation, multi-threaded concepts, or optimization blocks."
-        )
+    except Exception as fe:
+        type_instruction = strategy_content.replace("{concept_tag}", concept_tag)\
+                                           .replace("{difficulty}", difficulty)\
+                                           .replace("{context}", context[:2000])\
+                                           .replace("{programming_language}", programming_language)
 
     difficultyPrompts = {
         "easy": {
@@ -1259,7 +1259,7 @@ def check_js_syntax(code):
     except Exception:
         return True, []
 
-def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium"):
+def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium", question_style="THEORY"):
     issues = []
     
     # Derive tier for distractor precision checks
@@ -1270,6 +1270,18 @@ def run_agent3_critic(q_data, context, flavor="theory", difficulty="Medium"):
     options = q_data.get("options", [])
     correct_ans = q_data.get("correct_answer") or q_data.get("correctAnswer")
     code_snippet = q_data.get("code_snippet")
+
+    # ── Style Validation Checks ──
+    if question_style in ['OUTPUT_PREDICTION', 'DEBUGGING', 'CODE_COMPLETION', 'COMPILER_ERROR']:
+        has_code = False
+        if code_snippet and "```" in code_snippet:
+            has_code = True
+        elif prompt_text and "```" in prompt_text:
+            has_code = True
+            
+        if not has_code:
+            issues.append(f"Style validation failure: Style '{question_style}' requires an executable markdown code block (```)")
+            return {"status": "fail", "issues": issues}
 
     # ── Token Similarity Shield ──
     # Compare every option against every other option, and against the correct answer.
@@ -1631,6 +1643,26 @@ def execute_generation_logic(req: GeneratorRequest):
     elif req.content and req.type == 'topic':
         topic_fallback = req.content
 
+    # ── Language Awareness Router ──
+    programming_language = "Python/JavaScript"
+    language_check_str = (topic_fallback + " " + context).lower()
+    
+    cpp_keywords = ['virtual function', 'pointer', 'c++', 'struct', 'header file', 'class template', 'memory allocation', 'cpp', 'destructor', 'constructor overload']
+    python_keywords = ['pandas', 'dataframe', 'numpy', 'django', 'python', 'list comprehension', 'decorator', 'flask', 'pip', 'scikit']
+    java_keywords = ['jvm', 'java', 'collections', 'interface', 'abstract class', 'garbage collection', 'package import', 'spring boot', 'extends', 'implements']
+    sql_keywords = ['sql', 'select', 'join', 'database', 'query', 'primary key', 'foreign key', 'schema', 'table', 'where clause']
+    
+    if any(kw in language_check_str for kw in cpp_keywords):
+        programming_language = "C++"
+    elif any(kw in language_check_str for kw in java_keywords):
+        programming_language = "Java"
+    elif any(kw in language_check_str for kw in sql_keywords):
+        programming_language = "SQL"
+    elif any(kw in language_check_str for kw in python_keywords):
+        programming_language = "Python"
+        
+    print(f"[Language Router] Detected target programming language: {programming_language}")
+
     keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying']
     is_non_computational = any(kw in topic_fallback.lower() for kw in keywords)
 
@@ -1863,15 +1895,32 @@ def execute_generation_logic(req: GeneratorRequest):
     for i in range(total_count):
         concept, slot_diff = slots[i]
         flavor = formats_list[i]
-        generation_tasks.append((concept, flavor, slot_diff))
+        
+        # Style resolution strategy selector
+        resolved_style = req.question_style
+        if not resolved_style or resolved_style == "MIXED":
+            if flavor == "CONCEPTS_AND_DEFINITIONS":
+                resolved_style = "THEORY"
+            elif flavor == "COMPARISONS_AND_TRADEOFFS":
+                resolved_style = "ASSERTION_REASONING"
+            elif flavor == "FORMULAS_AND_CALCULATIONS":
+                resolved_style = "TRACE_EXECUTION"
+            elif flavor == "CASE_STUDIES_AND_SCENARIOS":
+                resolved_style = "THEORY"
+            elif flavor == "PRACTICAL_AND_LAB_TASKS":
+                resolved_style = "OUTPUT_PREDICTION"
+            else:
+                resolved_style = "THEORY"
+                
+        generation_tasks.append((concept, flavor, slot_diff, resolved_style))
 
     questions = []
     generated_so_far = ""
 
     # 3. Executing Agent 2 Generator & Agent 3 Critic loop
-    for i, (concept, flavor, slot_diff) in enumerate(generation_tasks):
+    for i, (concept, flavor, slot_diff, resolved_style) in enumerate(generation_tasks):
         formal = formal_names.get(flavor, "Unknown")
-        print(f"\n• QUESTION {i+1} [Flavor: {flavor} ({formal})]")
+        print(f"\n• QUESTION {i+1} [Flavor: {flavor} ({formal}) | Style: {resolved_style}]")
         q_success = False
         
         # Initial Draft Generation by Agent 2
@@ -1888,18 +1937,18 @@ def execute_generation_logic(req: GeneratorRequest):
                     freq_penalty = 0.4
                     print("  ├── [Self-Healing]     : Attempt 3 - elevating temperature by +0.30 and frequency_penalty to 0.4")
 
-                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives, is_compression_sieve, temp_offset=temp_offset, freq_penalty=freq_penalty)
+                q_data = run_agent2_generator(concept, flavor, context, generated_so_far, slot_diff, isolated_narratives, is_compression_sieve, temp_offset=temp_offset, freq_penalty=freq_penalty, programming_language=programming_language, question_style=resolved_style)
                 print(f"  ├── [Agent 2 Creator]  : Drafted a multiple-choice question on '{concept.get('concept_tag')}'.")
                 
                 # Validation by Agent 3 (with difficulty for tier-based distractor checks)
-                critic_res = run_agent3_critic(q_data, context, flavor, slot_diff)
+                critic_res = run_agent3_critic(q_data, context, flavor, slot_diff, question_style=resolved_style)
                 
                 # Self-Correction Loop if failed
                 if critic_res["status"] == "fail":
                     for repair_pass in range(2):
                         print(f"  ├── [Self-Correction]  : Agent 2 re-drafting the formatting structure (Attempt {repair_pass+1})...")
                         q_data = run_agent2_repair(q_data, critic_res["issues"], context)
-                        critic_res = run_agent3_critic(q_data, context, flavor, slot_diff)
+                        critic_res = run_agent3_critic(q_data, context, flavor, slot_diff, question_style=resolved_style)
                         if critic_res["status"] == "pass":
                             break
                 

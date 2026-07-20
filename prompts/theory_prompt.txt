@@ -1,0 +1,7 @@
+Write a Core Theory Multiple-Choice Question (MCQ).
+Focus entirely on concepts, definitions, trade-offs, explanation of mechanisms, or general principles.
+You MUST write a purely conceptual question. Do NOT include any code blocks, code fragments, or programming syntax in the question stem or options.
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Language Context: {programming_language}

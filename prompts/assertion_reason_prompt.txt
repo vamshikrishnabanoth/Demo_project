@@ -1,0 +1,12 @@
+Write an Assertion & Reasoning Multiple-Choice Question (MCQ).
+The stem MUST format a clear Assertion (A) and Reason (R) layout, testing analytical reasoning, trade-offs, or structural comparisons.
+The options MUST follow this exact psychometric grid:
+A) Both (A) and (R) are true, and (R) is the correct explanation of (A).
+B) Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).
+C) (A) is true, but (R) is false.
+D) (A) is false, but (R) is true.
+Do NOT use code blocks unless strictly necessary. Focus on conceptual comparisons and logical causality.
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Language Context: {programming_language}

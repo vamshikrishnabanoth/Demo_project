@@ -1,0 +1,8 @@
+Write a Debugging & Logical Flaw Multiple-Choice Question (MCQ).
+The question stem MUST explicitly present a broken algorithm, a faulty architectural configuration, or a code snippet with a logical flaw or boundary error.
+Ask the student to detect the bug, find the failing boundary condition, or identify the line causing the logic error.
+Provide the faulty code block inside the 'code_snippet' field (wrapped in markdown gates, e.g. ```{programming_language} ... ```).
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Programming Language: {programming_language}

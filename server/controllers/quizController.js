@@ -322,7 +322,7 @@ const checkAiServiceOnline = async (url) => {
 
 // LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
 // Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null) => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED') => {
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
     const getFallbackContent = () => {
@@ -343,13 +343,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     }
 
     try {
-        console.log(`🚀 Sending to Fine-Tuned AI at ${AI_SERVICE_URL}: ${type || 'multi-input'} | Count: ${count}`);
+        console.log(`🚀 Sending to Fine-Tuned AI at ${AI_SERVICE_URL}: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
         const payload = {
             count: parseInt(count),
             difficulty,
             source_material_id,
-            target_ratios
+            target_ratios,
+            question_style: questionStyle
         };
 
         if (inputs && inputs.length > 0) {
@@ -1674,7 +1675,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log(JSON.stringify(req.body, null, 2));
             console.log('========================================================\n');
 
-            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives, questionStyle } = req.body;
             let start = startPage ? parseInt(startPage) : 1;
             let end = endPage ? parseInt(endPage) : 999;
             let parsedIsolatedNarratives = null;
@@ -1692,6 +1693,24 @@ exports.generateQuizQuestions = async (req, res) => {
             let parsedTargetRatios = null;
             if (target_ratios) {
                 parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
+            let derivedStyle = questionStyle || 'MIXED';
+            if (derivedStyle === 'MIXED' && parsedTargetRatios) {
+                const conceptsVal = parsedTargetRatios.CONCEPTS_AND_DEFINITIONS || 0;
+                const comparisonsVal = parsedTargetRatios.COMPARISONS_AND_TRADEOFFS || 0;
+                const formulasVal = parsedTargetRatios.FORMULAS_AND_CALCULATIONS || 0;
+                const scenariosVal = parsedTargetRatios.CASE_STUDIES_AND_SCENARIOS || 0;
+                const practicalVal = parsedTargetRatios.PRACTICAL_AND_LAB_TASKS || 0;
+
+                const theorySum = conceptsVal + comparisonsVal + scenariosVal;
+                if (practicalVal > 0.5) {
+                    derivedStyle = 'OUTPUT_PREDICTION';
+                } else if (formulasVal > 0.5) {
+                    derivedStyle = 'TRACE_EXECUTION';
+                } else if (theorySum > 0.7) {
+                    derivedStyle = 'THEORY';
+                }
             }
 
             logPipelineStep("1", "Incoming Payload Extraction", "Raw values from React Form State", {
@@ -2159,17 +2178,17 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
             }
 
             if (finalQuestions === 'ACCEPTED') {
@@ -2418,11 +2437,29 @@ exports.generateQuizFromVoice = async (req, res) => {
     setImmediate(async () => {
         const absolutePath = path.resolve(req.file.path);
         try {
-            const { questionCount, difficulty, source_material_id, target_ratios } = req.body;
+            const { questionCount, difficulty, source_material_id, target_ratios, questionStyle } = req.body;
 
             let parsedTargetRatios = null;
             if (target_ratios) {
                 parsedTargetRatios = typeof target_ratios === 'string' ? JSON.parse(target_ratios) : target_ratios;
+            }
+
+            let derivedStyle = questionStyle || 'MIXED';
+            if (derivedStyle === 'MIXED' && parsedTargetRatios) {
+                const conceptsVal = parsedTargetRatios.CONCEPTS_AND_DEFINITIONS || 0;
+                const comparisonsVal = parsedTargetRatios.COMPARISONS_AND_TRADEOFFS || 0;
+                const formulasVal = parsedTargetRatios.FORMULAS_AND_CALCULATIONS || 0;
+                const scenariosVal = parsedTargetRatios.CASE_STUDIES_AND_SCENARIOS || 0;
+                const practicalVal = parsedTargetRatios.PRACTICAL_AND_LAB_TASKS || 0;
+
+                const theorySum = conceptsVal + comparisonsVal + scenariosVal;
+                if (practicalVal > 0.5) {
+                    derivedStyle = 'OUTPUT_PREDICTION';
+                } else if (formulasVal > 0.5) {
+                    derivedStyle = 'TRACE_EXECUTION';
+                } else if (theorySum > 0.7) {
+                    derivedStyle = 'THEORY';
+                }
             }
 
             // ── Stage 0: Uploading / Transcribing ──────────────────────────
@@ -2477,7 +2514,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             // ── Stage 0: Generate Questions from transcript ─────────────
             console.log(`[Generator Started] Generating from voice transcript...`);
-            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios);
+            const draftQuestions = await generateQuestions('topic', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios, null, null, taskId, callbackUrl, null, derivedStyle);
             console.log(`[Questions Generated] count=${draftQuestions.length}`);
 
             // Cleanup audio file

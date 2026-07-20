@@ -1,0 +1,7 @@
+Write a Trace Execution & Diagram Analysis Multiple-Choice Question (MCQ).
+The question stem MUST present a textual data flow sequence, state-machine execution steps, or an ASCII execution loop or diagram.
+Ask the student to trace parameters, predict variables at specific steps, or track transition pathways.
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Programming Language Context: {programming_language}

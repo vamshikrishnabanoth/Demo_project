@@ -1,0 +1,9 @@
+Write a Code-Output Prediction Multiple-Choice Question (MCQ).
+The question stem MUST present a functional, syntactically correct code block of 10-30 lines in the specified programming language.
+The stem MUST ask: "What is the output of the following code snippet?" or similar.
+Do NOT ask theoretical or conceptual questions. All 4 option choices must represent concrete, plausible outputs (e.g., specific return values, console print results, off-by-one indices, compiler error states).
+Provide the code block inside the 'code_snippet' field (wrapped in markdown gates, e.g. ```{programming_language} ... ```).
+Target Concept: {concept_tag}
+Difficulty: {difficulty}
+Context chunks: {context}
+Programming Language: {programming_language}
