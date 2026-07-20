@@ -1679,7 +1679,16 @@ def execute_generation_logic(req: GeneratorRequest):
             slot_diff = "Easy"
         for _ in range(c_count):
             slots.append((concept, slot_diff))
-            
+
+    # Guard: if rounding left slots shorter than total_count, pad with the first concept
+    if not slots:
+        fallback_concept = {"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}
+        slots = [(fallback_concept, "Medium")] * total_count
+    elif len(slots) < total_count:
+        pad_concept, pad_diff = slots[-1]
+        while len(slots) < total_count:
+            slots.append((pad_concept, pad_diff))
+
     generation_tasks = []
     for i in range(total_count):
         concept, slot_diff = slots[i]
@@ -1891,9 +1900,15 @@ def run_generation_task(req: GeneratorRequest):
         print(f"[Success {res.status_code}]")
         print(f"======================================================================\n")
     except Exception as e:
-        print(f"[Callback]     : Generation failed: {e}. Dispatching failure callback... ", end="", flush=True)
+        import traceback
+        exc_type = type(e).__name__
+        exc_msg = str(e) or "(empty exception message — likely an IndexError or NoneType access)"
+        full_trace = traceback.format_exc()
+        print(f"[Callback]     : Generation failed [{exc_type}]: {exc_msg}")
+        print(f"[Traceback]    : {full_trace[:600]}")
+        print(f"[Callback]     : Dispatching failure callback... ", end="", flush=True)
         try:
-            res = requests.post(req.callback_url, json={"status": "failed", "error": str(e)}, headers={"Content-Type": "application/json"}, timeout=30)
+            res = requests.post(req.callback_url, json={"status": "failed", "error": f"[{exc_type}] {exc_msg}"}, headers={"Content-Type": "application/json"}, timeout=30)
             print(f"[Failed Callback Sent {res.status_code}]")
             print(f"======================================================================\n")
         except Exception as cb_err:
