@@ -15,6 +15,7 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
+import DeveloperModeInspector from '../components/quiz/DeveloperModeInspector';
 import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizText() {
@@ -22,6 +23,7 @@ export default function CreateQuizText() {
     const location = useLocation();
     
     // ─── STATE MANAGEMENT ───────────────────────────────────────────────────
+    const [devMode, setDevMode] = useState(false);
     const [title, setTitle] = useState('');
     const [isAssessment, setIsAssessment] = useState(false);
     const [duration, setDuration] = useState(30);
@@ -289,7 +291,20 @@ export default function CreateQuizText() {
                             <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
+                    <button
+                        type="button"
+                        onClick={() => setDevMode(!devMode)}
+                        className={`px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
+                            devMode ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-lg' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
+                        }`}
+                    >
+                        {devMode ? '🛠️ Developer Mode ON' : '🛠️ Enable Dev Mode'}
+                    </button>
                 </div>
+
+                {devMode && (
+                    <DeveloperModeInspector taskId={location.state?.taskId} />
+                )}
 
                 {/* Tab Interface - Centered */}
                 {!isGeneratedSource && (

@@ -117,7 +117,8 @@ export default function CreateQuizTopic() {
     const [analyzedData, setAnalyzedData] = useState(null);
     const [topicWeights, setTopicWeights] = useState({});
 
-    // Dynamic question flavor state (sums to 100)
+    const [interviewMode, setInterviewMode] = useState(false);
+    const [questionStyle, setQuestionStyle] = useState('MIXED');
     const [ratios, setRatios] = useState({
         CONCEPTS_AND_DEFINITIONS: 20,
         COMPARISONS_AND_TRADEOFFS: 20,
@@ -643,6 +644,8 @@ export default function CreateQuizTopic() {
         formData.append('difficulty', difficulty);
         formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
         formData.append('text_prompts', JSON.stringify(textInputs.map(t => t.content)));
+        formData.append('interview_mode', interviewMode ? 'true' : 'false');
+        formData.append('question_style', questionStyle || 'MIXED');
         
         if (analyzedData) {
             formData.append('topic_weights', JSON.stringify(topicWeights));
@@ -665,6 +668,7 @@ export default function CreateQuizTopic() {
                 onComplete: (result) => {
                     navigate('/create-quiz/text', {
                         state: {
+                            taskId:          taskId,
                             questions:       result.questions,
                             title:           result.title || `Curriculum Quiz: ${inputs[0]?.source_name}`,
                             duration:        result.duration || 10,

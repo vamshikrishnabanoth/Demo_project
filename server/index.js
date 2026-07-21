@@ -182,6 +182,9 @@ app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/search', require('./routes/search'));
 app.use('/api/students', require('./routes/students'));
 app.use('/api/broadcast', require('./routes/broadcast'));
+app.use('/api/developer', require('./routes/developer'));
+app.use('/api/knowledge', require('./routes/knowledge'));
+
 
 // Socket.io Setup - Secure CORS
 const io = new Server(server, {

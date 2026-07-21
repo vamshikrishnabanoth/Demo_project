@@ -16,6 +16,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), 'server', '.env'
 if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 import tempfile
+import hashlib
 import numpy as np
 import faiss
 import requests
@@ -26,6 +27,66 @@ from sentence_transformers import SentenceTransformer
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import ast
+
+# ── Pedagogical Configuration & Redis Centralized Caching Setup ──────────────
+PEDAGOGICAL_CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config', 'pedagogical_config.json')
+
+def load_pedagogical_config():
+    if os.path.exists(PEDAGOGICAL_CONFIG_PATH):
+        try:
+            with open(PEDAGOGICAL_CONFIG_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Error loading pedagogical config: {e}")
+    return {
+        "importance_weights": {"coverage": 0.25, "depth": 0.20, "repetition": 0.15, "teacher_emphasis": 0.20, "dependency": 0.10, "learning_objectives": 0.10},
+        "feature_flags": {"enable_legacy_classifier": False, "enable_redis_cache": True, "enable_planner_validator": True},
+        "coding_subdivisions": {
+            "implementation": ["write_code", "code_completion", "fill_in_blank"],
+            "analysis": ["output_prediction", "debugging", "trace_execution", "compiler_error"]
+        }
+    }
+
+pedagogical_config = load_pedagogical_config()
+
+# Redis Centralized Cache setup (multi-worker support)
+redis_client = None
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+try:
+    import redis
+    redis_client = redis.from_url(REDIS_URL, decode_responses=True)
+    redis_client.ping()
+    print("✅ Redis Centralized Stage A Cache connected successfully.")
+except Exception as re_err:
+    print(f"ℹ️ Redis offline or unavailable. Falling back to in-memory Stage A cache.")
+    redis_client = None
+
+_in_memory_stage_a_cache = {}
+
+def get_stage_a_cache(content_hash: str):
+    if redis_client:
+        try:
+            val = redis_client.get(f"stage_a:{content_hash}")
+            if val:
+                return json.loads(val)
+        except Exception:
+            pass
+    return _in_memory_stage_a_cache.get(content_hash)
+
+def set_stage_a_cache(content_hash: str, data: dict, ttl_seconds: int = 43200):
+    if redis_client:
+        try:
+            redis_client.setex(f"stage_a:{content_hash}", ttl_seconds, json.dumps(data))
+            return
+        except Exception:
+            pass
+    _in_memory_stage_a_cache[content_hash] = data
+
+def compute_normalized_hash(text: str) -> str:
+    """Computes SHA-256 content_hash AFTER text cleaning/normalization to prevent minor formatting cache busts."""
+    normalized = re.sub(r'\s+', ' ', (text or '').strip().lower())
+    return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
+
 
 # Extractors
 import easyocr
@@ -245,6 +306,20 @@ class GeneratorRequest(BaseModel):
     taskId: Optional[str] = None
     isolated_narratives: Optional[List[str]] = None
     question_style: Optional[str] = "MIXED"
+    interview_mode: Optional[bool] = False
+
+class StageAAnalysisRequest(BaseModel):
+    inputs: Optional[List[MultiInputSource]] = None
+    content: Optional[str] = None
+    type: Optional[str] = None
+
+class StageBPlannerRequest(BaseModel):
+    stage_a_data: dict
+    count: int = 5
+    difficulty: str = "Medium"
+    question_style: str = "MIXED"
+    interview_mode: bool = False
+
 
 class IngestRequest(BaseModel):
     source: str
@@ -827,6 +902,35 @@ async def analyze_sources(req: AnalyzeRequest):
         else:
             raise HTTPException(status_code=500, detail=f"Ollama timed out/failed and no GROQ_API_KEY is configured. Error: {str(e)}")
 
+@app.post("/stage-a-analysis")
+async def get_stage_a_analysis(req: StageAAnalysisRequest):
+    text = ""
+    if req.inputs:
+        text = resolve_input_sources(req.inputs)
+    elif req.content:
+        text = req.content
+    
+    if not text or len(text.strip()) < 2:
+        raise HTTPException(status_code=400, detail="Content too short or unextractable for Stage A analysis.")
+
+    stage_a_res = run_stage_a_content_understanding(text)
+    return stage_a_res
+
+@app.post("/stage-b-blueprint")
+async def get_stage_b_blueprint(req: StageBPlannerRequest):
+    try:
+        blueprint = run_stage_b_academic_planner(
+            stage_a_data=req.stage_a_data,
+            question_count=req.count,
+            difficulty=req.difficulty,
+            question_style=req.question_style,
+            interview_mode=req.interview_mode
+        )
+        return blueprint
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
 @app.post("/transcribe")
 async def transcribe_audio_file(file: UploadFile = File(...)):
     if not whisper_model:
@@ -933,6 +1037,422 @@ def robust_json_loads(text):
         pass
 
     raise json.JSONDecodeError("Failed to extract JSON from Ollama response.", text, 0)
+
+
+# -----------------------------
+# STAGE A: CONTENT UNDERSTANDING & SUITABILITY VECTOR
+# -----------------------------
+def run_stage_a_content_understanding(context: str, topic_fallback: str = "General Course Concept") -> dict:
+    cleaned_context = sanitize_source_text(context)
+    content_hash = compute_normalized_hash(cleaned_context)
+    
+    cached = get_stage_a_cache(content_hash)
+    if cached:
+        print(f"  [STAGE A CACHE HIT] Reusing cached Content Understanding for hash: {content_hash[:10]}...")
+        return cached
+
+    print("  [STAGE A] Executing Multi-Factor Concept Importance & Suitability Vector Analysis...")
+    weights = pedagogical_config.get("importance_weights", {})
+    
+    prompt = (
+        "You are an expert Computer Science Curriculum Architect and Data Extractor.\n"
+        "Your objective is to analyze raw educational transcripts, documents, or slides and extract core academic concepts, their relationships, and their suitability for assessment.\n\n"
+        "You will NOT generate quiz questions. Your only job is to understand the text and output a strict, mathematically graded JSON blueprint.\n\n"
+        "### EXTRACTION RULES & SCORING RUBRIC\n"
+        "You must evaluate concepts on a scale of 0.0 to 1.0. Do NOT calculate final weighted scores; only provide the raw component scores based on this rubric:\n\n"
+        "1. Importance Breakdown (0.0 - 1.0):\n"
+        "   - coverage: How much of the text is dedicated to this concept?\n"
+        "   - depth: Are there technical definitions, formulas, code snippets, or deep explanations?\n"
+        "   - repetition: Does the concept appear multiple times across different sections?\n"
+        "   - teacher_emphasis: Did the text explicitly highlight this? (e.g., 'Note this', 'Important', 'Exam topic' = 0.9+).\n"
+        "   - dependency: Is this a foundational concept that other topics rely on?\n"
+        "   - learning_objectives: Does this align closely with the overarching theme of the text?\n\n"
+        "2. Extraction Confidence (0.0 - 1.0):\n"
+        "   - Rate the clarity of the source text for this concept.\n"
+        "   - 0.95+ = Perfectly clear, highly detailed text.\n"
+        "   - 0.60 = Ambiguous, messy OCR, or poorly explained text.\n"
+        "   - 0.30 = Barely readable or highly fragmented context.\n\n"
+        "3. Global Assessment Suitability (0.0 - 1.0):\n"
+        "   - theory: How well does this entire text lend itself to conceptual/definition questions?\n"
+        "   - coding: How well does this text lend itself to implementation, debugging, or dry-run questions?\n"
+        "   - scenario: How well does this text support real-world application or system design questions?\n\n"
+        "4. Evidence & Citations:\n"
+        "   - Provide 1-2 brief, exact quotes from the text as `evidence` to justify your scores.\n"
+        "   - Provide a rough locator as `citations` (e.g., 'Paragraph 3', 'Chunk 4', or 'Slide 12').\n\n"
+        "5. Isolated Narratives:\n"
+        "   - Identify and isolate any metaphorical stories, fictional settings, or names used merely for teaching (e.g., 'Alice and Bob', 'Dining Philosophers', 'Bank Account Example').\n\n"
+        f"Context:\n{cleaned_context[:6000]}\n\n"
+        "Return ONLY a clean JSON object conforming strictly to this format:\n"
+        "{\n"
+        "  \"concepts\": [\n"
+        "    {\n"
+        "      \"concept\": \"Binary Search\",\n"
+        "      \"concept_type\": \"algorithm\",\n"
+        "      \"extraction_confidence\": 0.95,\n"
+        "      \"recommended_bloom_levels\": [\"Understand\", \"Apply\"],\n"
+        "      \"importance_breakdown\": {\n"
+        "        \"coverage\": 0.8,\n"
+        "        \"depth\": 0.9,\n"
+        "        \"repetition\": 0.7,\n"
+        "        \"teacher_emphasis\": 0.9,\n"
+        "        \"dependency\": 0.85,\n"
+        "        \"learning_objectives\": 0.9\n"
+        "      },\n"
+        "      \"evidence\": [\"Binary search operates in logarithmic time...\"],\n"
+        "      \"citations\": [\"Chunk 4\"]\n"
+        "    }\n"
+        "  ],\n"
+        "  \"concept_graph\": {\n"
+        "    \"nodes\": [\"Sorting\", \"Binary Search\"],\n"
+        "    \"edges\": [\n"
+        "      {\"source\": \"Sorting\", \"target\": \"Binary Search\", \"relation\": \"REQUIRES\"}\n"
+        "    ]\n"
+        "  },\n"
+        "  \"suitability\": {\n"
+        "    \"theory\": 0.9,\n"
+        "    \"coding\": 0.8,\n"
+        "    \"scenario\": 0.7\n"
+        "  },\n"
+        "  \"suitability_reasoning\": {\n"
+        "    \"theory\": \"High conceptual content present...\",\n"
+        "    \"coding\": \"Code examples present...\"\n"
+        "  },\n"
+        "  \"isolated_narratives\": [\"Alice and Bob transfer example\"]\n"
+        "}"
+    )
+
+    payload = {
+        "model": MODEL_NAME,
+        "prompt": prompt,
+        "stream": False,
+        "format": "json",
+        "options": { "temperature": 0.2, "num_ctx": 6144 }
+    }
+
+    def process_stage_a_concepts(data: dict) -> dict:
+        weights = pedagogical_config.get("importance_weights", {
+            "coverage": 0.25, "depth": 0.20, "repetition": 0.15,
+            "teacher_emphasis": 0.20, "dependency": 0.10, "learning_objectives": 0.10
+        })
+        sum_w = sum(weights.values()) or 1.0
+
+        norm_concepts = []
+        for c in data.get("concepts", []):
+            c_name = c.get("concept") or c.get("concept_tag") or topic_fallback
+            c_type = c.get("concept_type", "theory")
+            c_blooms = c.get("recommended_bloom_levels", ["Understand", "Apply"])
+            c_conf = float(c.get("extraction_confidence") or c.get("confidence") or 0.90)
+            
+            bd = c.get("importance_breakdown", {})
+            cov = float(bd.get("coverage", 0.75))
+            dep = float(bd.get("depth", 0.75))
+            rep = float(bd.get("repetition", 0.75))
+            te  = float(bd.get("teacher_emphasis", 0.75))
+            dp  = float(bd.get("dependency", 0.75))
+            lo  = float(bd.get("learning_objectives", 0.75))
+            
+            raw_score = (
+                cov * weights.get("coverage", 0.25) +
+                dep * weights.get("depth", 0.20) +
+                rep * weights.get("repetition", 0.15) +
+                te  * weights.get("teacher_emphasis", 0.20) +
+                dp  * weights.get("dependency", 0.10) +
+                lo  * weights.get("learning_objectives", 0.10)
+            ) / sum_w
+            
+            final_imp = round(raw_score, 4)
+            eff_score = round(final_imp * c_conf, 4)
+
+            norm_concepts.append({
+                "concept": c_name,
+                "concept_tag": c_name,
+                "concept_type": c_type,
+                "recommended_bloom_levels": c_blooms,
+                "final_importance_score": final_imp,
+                "importance_score": final_imp,
+                "extraction_confidence": c_conf,
+                "confidence": c_conf,
+                "effective_score": eff_score,
+                "importance_breakdown": bd,
+                "evidence": c.get("evidence", []),
+                "citations": c.get("citations", [])
+            })
+
+        data["concepts"] = norm_concepts
+        return data
+
+    try:
+        response = requests.post(OLLAMA_URL, json=payload, timeout=180)
+        if response.status_code == 200:
+            raw_text = response.json().get("response", "")
+            data = robust_json_loads(raw_text)
+            data = process_stage_a_concepts(data)
+            data["content_hash"] = content_hash
+            set_stage_a_cache(content_hash, data)
+            print(f"  ├── [Stage A] Extracted {len(data.get('concepts', []))} concepts with Suitability: {data.get('suitability')}")
+            return data
+    except Exception as e:
+        print(f"  ├── [Stage A] Ollama failed ({e}). Falling back to Groq Cloud for Stage A...")
+        if os.getenv("GROQ_API_KEY"):
+            try:
+                raw_text = call_groq_fallback(prompt, json_mode=True)
+                data = robust_json_loads(raw_text)
+                data = process_stage_a_concepts(data)
+                data["content_hash"] = content_hash
+                set_stage_a_cache(content_hash, data)
+                return data
+            except Exception as ge:
+                print(f"  ├── [Stage A] Groq fallback error: {ge}")
+
+    fallback_data = {
+        "concepts": [{
+            "concept": topic_fallback,
+            "concept_tag": topic_fallback,
+            "concept_type": "theory",
+            "recommended_bloom_levels": ["Understand", "Apply"],
+            "final_importance_score": 0.75,
+            "importance_score": 0.75,
+            "extraction_confidence": 0.85,
+            "confidence": 0.85,
+            "effective_score": 0.6375,
+            "importance_breakdown": {"coverage": 0.75, "depth": 0.75, "repetition": 0.75, "teacher_emphasis": 0.75, "dependency": 0.75, "learning_objectives": 0.75},
+            "evidence": ["Direct context"],
+            "citations": ["Chunk 1"]
+        }],
+        "suitability": {"theory": 0.8, "coding": 0.5, "scenario": 0.5},
+        "suitability_reasoning": {"theory": "Direct text analysis", "coding": "General content"},
+        "concept_graph": {"nodes": [topic_fallback], "edges": []},
+        "prerequisite_graph": {"dependencies": []},
+        "evidence": ["Direct context"],
+        "citations": ["Chunk 1"],
+        "isolated_narratives": [],
+        "content_hash": content_hash
+    }
+    set_stage_a_cache(content_hash, fallback_data)
+    return fallback_data
+
+
+# -----------------------------
+# PLANNER VALIDATOR CIRCUIT BREAKER
+# -----------------------------
+def validate_stage_b_blueprint(blueprint: dict) -> (bool, List[str]):
+    errors = []
+    if not blueprint or not isinstance(blueprint, dict):
+        return False, ["Blueprint is empty or not a JSON object"]
+    
+    slots = blueprint.get("slots", [])
+    if not slots or len(slots) == 0:
+        errors.append("Blueprint contains 0 slots")
+        
+    for idx, slot in enumerate(slots):
+        s_idx = slot.get("slot_index", idx + 1)
+        if not slot.get("concept_tag"):
+            errors.append(f"Slot {s_idx}: Missing concept_tag")
+        if not slot.get("archetype"):
+            errors.append(f"Slot {s_idx}: Missing archetype")
+        if not slot.get("blooms_level"):
+            errors.append(f"Slot {s_idx}: Missing blooms_level")
+        if not slot.get("question_style"):
+            errors.append(f"Slot {s_idx}: Missing question_style")
+
+    blooms = set(slot.get("blooms_level") for slot in slots if slot.get("blooms_level"))
+    if len(blooms) == 0:
+        errors.append("No valid Bloom's levels present in slots")
+
+    return (len(errors) == 0, errors)
+
+
+# -----------------------------
+# STAGE B: ACADEMIC PLANNER
+# -----------------------------
+# -----------------------------
+# STAGE B: ACADEMIC PLANNER
+# -----------------------------
+def run_stage_b_academic_planner(
+    stage_a_data: dict,
+    question_count: int,
+    difficulty: str = "Medium",
+    question_style: str = "MIXED",
+    interview_mode: bool = False
+) -> dict:
+    import math
+    print(f"  [STAGE B PLANNER] Generating Blueprint for Count: {question_count} | Difficulty: {difficulty} | Style: {question_style} | Interview Mode: {interview_mode}")
+    
+    raw_concepts = stage_a_data.get("concepts", [])
+    NOISE_THRESHOLD = 0.30
+    
+    # 1. Effective Score = Final Importance Score * Extraction Confidence
+    scored_concepts = []
+    for c in raw_concepts:
+        c_name = c.get("concept") or c.get("concept_tag") or "General Course Concept"
+        c_imp = float(c.get("final_importance_score") or c.get("importance_score") or 0.75)
+        c_conf = float(c.get("extraction_confidence") or c.get("confidence") or 0.90)
+        c_type = c.get("concept_type", "Definition")
+        eff_score = round(c_imp * c_conf, 4)
+        
+        norm_c = {
+            "concept": c_name,
+            "concept_tag": c_name,
+            "concept_type": c_type,
+            "final_importance_score": c_imp,
+            "importance_score": c_imp,
+            "extraction_confidence": c_conf,
+            "confidence": c_conf,
+            "effective_score": eff_score,
+            "citations": c.get("citations", ["chunk_01"])
+        }
+        
+        if eff_score >= NOISE_THRESHOLD:
+            scored_concepts.append(norm_c)
+        else:
+            print(f"  [STAGE B PLANNER] Discarded noise concept below threshold (< {NOISE_THRESHOLD}): '{c_name}' (effective_score: {eff_score:.4f})")
+            
+    scored_concepts.sort(key=lambda x: x["effective_score"], reverse=True)
+            
+    if not scored_concepts:
+        scored_concepts = [{
+            "concept": "General Course Concept",
+            "concept_tag": "General Course Concept",
+            "concept_type": "Definition",
+            "final_importance_score": 0.75,
+            "extraction_confidence": 1.0,
+            "confidence": 1.0,
+            "effective_score": 0.75,
+            "citations": ["chunk_01"]
+        }]
+
+    concepts = scored_concepts
+    num_valid = len(concepts)
+
+    # 2. Adaptive Allocation Caps
+    if num_valid <= 2:
+        cap_percentage = 0.60
+    elif num_valid <= 4:
+        cap_percentage = 0.45
+    elif num_valid <= 9:
+        cap_percentage = 0.35
+    else:
+        cap_percentage = 0.25
+
+    max_per_concept = max(1, math.floor(question_count * cap_percentage))
+
+    suitability = stage_a_data.get("suitability", {"theory": 0.8, "coding": 0.5, "scenario": 0.5})
+
+    # 3. Pattern Diversity Catalog
+    pattern_catalog = {
+        "THEORY": ["Assertion_Reasoning", "Comparison_Matrix", "Definition_Core", "Tradeoff_Analysis"],
+        "CODING": ["Dry_Run", "Debugging", "Implementation_Flaw", "Complexity_Analysis"],
+        "SCENARIO": ["System_Tradeoff", "Failure_Diagnosis", "Architecture_Design"],
+        "INTERVIEW": ["Concept_Explanation", "Edge_Case_Handling", "Optimization_Challenge"]
+    }
+
+    concept_usage = {c["concept"]: 0 for c in concepts}
+
+    bloom_map = {
+        "Easy": ["Remember", "Understand"],
+        "Medium": ["Understand", "Apply"],
+        "Thinkable": ["Apply", "Analyze"],
+        "Hard": ["Analyze", "Evaluate", "Create"]
+    }
+    allowed_blooms = bloom_map.get(difficulty, ["Understand", "Apply"])
+
+    slots = []
+    quiz_blueprint = []
+
+    for i in range(question_count):
+        # Select concept honoring max allocation cap
+        available_concepts = [c for c in concepts if concept_usage[c["concept"]] < max_per_concept]
+        if not available_concepts:
+            available_concepts = concepts # Reset cap if all maxed out
+        
+        concept_obj = available_concepts[i % len(available_concepts)]
+        concept_name = concept_obj["concept"]
+        concept_usage[concept_name] += 1
+        repeat_idx = concept_usage[concept_name] - 1
+
+        # Determine pattern & style
+        if interview_mode:
+            cat_key = "INTERVIEW"
+            assessment_style = "Interview"
+        elif question_style == "CODING" or (question_style == "MIXED" and i % 2 == 1 and suitability.get("coding", 0.5) >= 0.4):
+            cat_key = "CODING"
+            assessment_style = "Coding"
+        elif question_style == "SCENARIO" or (question_style == "MIXED" and i % 3 == 2 and suitability.get("scenario", 0.5) >= 0.4):
+            cat_key = "SCENARIO"
+            assessment_style = "Scenario"
+        else:
+            cat_key = "THEORY"
+            assessment_style = "Theory"
+
+        patterns = pattern_catalog[cat_key]
+        question_pattern = patterns[repeat_idx % len(patterns)]
+        bloom_level = allowed_blooms[i % len(allowed_blooms)]
+
+        q_id = f"q_{i+1:02d}"
+
+        # Blueprint Item (Directive Contract)
+        blueprint_item = {
+            "question_id": q_id,
+            "assessment_style": assessment_style,
+            "concept": concept_name,
+            "concept_type": concept_obj.get("concept_type", "Definition"),
+            "bloom_level": bloom_level,
+            "difficulty_calibration": difficulty,
+            "difficulty_reason": [
+                f"Evaluates {concept_name} at {bloom_level} level",
+                f"Pattern {question_pattern} requires procedural mastery",
+                f"Difficulty calibrated for {difficulty} academic band"
+            ],
+            "question_pattern": question_pattern,
+            "assessment_objective": f"Evaluate whether the student understands and can execute {question_pattern} for {concept_name}.",
+            "expected_answer_type": "Multiple Choice Option",
+            "estimated_time_minutes": 2 if assessment_style != "Coding" else 3,
+            "distractor_rules": f"Construct plausible distractors testing common misconceptions for {question_pattern}.",
+            "context_citations": {
+                "chunk_ids": concept_obj.get("citations", ["chunk_01"]),
+                "page": i + 1
+            }
+        }
+        quiz_blueprint.append(blueprint_item)
+
+        # Legacy slots compatibility
+        slots.append({
+            "slot_index": i + 1,
+            "question_id": q_id,
+            "concept": concept_name,
+            "concept_tag": concept_name,
+            "final_importance_score": concept_obj.get("final_importance_score", 0.75),
+            "importance_score": concept_obj.get("importance_score", 0.75),
+            "extraction_confidence": concept_obj.get("extraction_confidence", 0.90),
+            "confidence": concept_obj.get("confidence", 0.90),
+            "effective_score": concept_obj.get("effective_score", 0.75),
+            "archetype": "PRACTICAL_AND_LAB_TASKS" if cat_key == "CODING" else ("CASE_STUDIES_AND_SCENARIOS" if cat_key == "SCENARIO" else "CONCEPTS_AND_DEFINITIONS"),
+            "pattern_type": cat_key,
+            "specific_pattern": question_pattern,
+            "question_style": question_style,
+            "blooms_level": bloom_level,
+            "calibrated_difficulty": difficulty
+        })
+
+    blueprint = {
+        "blueprint_version": "3.0",
+        "total_slots": len(slots),
+        "requested_difficulty": difficulty,
+        "question_style": question_style,
+        "interview_mode": interview_mode,
+        "suitability": suitability,
+        "slots": slots,
+        "quiz_blueprint": quiz_blueprint
+    }
+
+    if pedagogical_config.get("feature_flags", {}).get("enable_planner_validator", True):
+        validated, val_errors = validate_stage_b_blueprint(blueprint)
+        if not validated:
+            raise ValueError(f"Planner Circuit Breaker Error: {'; '.join(val_errors)}")
+
+    print(f"  └── [STAGE B PLANNER] Blueprint created & validated cleanly with {len(quiz_blueprint)} items.")
+    return blueprint
+
 
 
 # -----------------------------
@@ -1884,9 +2404,11 @@ def execute_generation_logic(req: GeneratorRequest):
     print(f"={'='*55}")
     print(f"")
 
-    # 2. Executing Agent 1: Concept & Weight Analyzer
-    concepts, extracted_exclusions = run_agent1_analyzer(context, count=total_count, topic_fallback=topic_fallback)
-    
+    # ── STAGE A: Content Understanding ──
+    stage_a_data = run_stage_a_content_understanding(context, topic_fallback=topic_fallback)
+    concepts = stage_a_data.get("concepts", [])
+    extracted_exclusions = stage_a_data.get("isolated_narratives", [])
+
     # Merge narrative exclusions
     isolated_narratives = []
     if req.isolated_narratives:
@@ -1895,103 +2417,28 @@ def execute_generation_logic(req: GeneratorRequest):
         isolated_narratives.extend(extracted_exclusions)
     isolated_narratives = list(set(isolated_narratives))
 
-    if not concepts:
-        concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
+    # ── STAGE B: Academic Planner & Circuit Breaker Validator ──
+    interview_mode_flag = bool(getattr(req, 'interview_mode', False) or (req.question_style == "INTERVIEW"))
+    stage_b_blueprint = run_stage_b_academic_planner(
+        stage_a_data=stage_a_data,
+        question_count=total_count,
+        difficulty=req.difficulty or "Medium",
+        question_style=req.question_style or "MIXED",
+        interview_mode=interview_mode_flag
+    )
 
-    if req.topic_weights:
-        for c in concepts:
-            c_tag = c.get("concept_tag")
-            if c_tag in req.topic_weights:
-                c["weight_score"] = float(req.topic_weights[c_tag])
-        concepts = [c for c in concepts if c.get("weight_score", 0.0) > 0.0]
-        if not concepts:
-            concepts = [{"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}]
-
-    # --- Two-Pass Calculation ---
-    # Pass 1: Quantity & Depth (allocate question slots proportional to stress weight)
-    sum_weights = sum(float(c.get("weight_score", 0.75)) for c in concepts)
-    concept_slots = {}
-    allocated_sum = 0
-    
-    if sum_weights > 0:
-        for c in concepts[:-1]:
-            tag = c["concept_tag"]
-            slot_cnt = int(round(total_count * (float(c.get("weight_score", 0.75)) / sum_weights)))
-            concept_slots[tag] = slot_cnt
-            allocated_sum += slot_cnt
-        # Remainder to the last one
-        last_tag = concepts[-1]["concept_tag"]
-        concept_slots[last_tag] = max(0, total_count - allocated_sum)
-    else:
-        # Equal distribution if all weights are zero
-        equal_share = total_count // len(concepts)
-        for c in concepts[:-1]:
-            concept_slots[c["concept_tag"]] = equal_share
-            allocated_sum += equal_share
-        concept_slots[concepts[-1]["concept_tag"]] = max(0, total_count - allocated_sum)
-        
-    # Check total slot allocation sum (Pass 1 Rounding Safeguard)
-    total_slots_allocated = sum(concept_slots.values())
-    if total_slots_allocated != total_count:
-        diff = total_count - total_slots_allocated
-        highest_stressed = max(concepts, key=lambda x: float(x.get("weight_score", 0.75)))
-        highest_tag = highest_stressed["concept_tag"]
-        concept_slots[highest_tag] = max(0, concept_slots[highest_tag] + diff)
-
-    # Pass 2: Flavor Injection (pair slots with Global Archetype ratio formats)
-    formats_list = []
-    for flavor, cnt in counts.items():
-        formats_list.extend([flavor] * cnt)
-    
-    while len(formats_list) < total_count:
-        formats_list.append("CONCEPTS_AND_DEFINITIONS")
-    formats_list = formats_list[:total_count]
-    
-    slots = []
-    for concept in concepts:
-        c_count = concept_slots.get(concept["concept_tag"], 0)
-        # Determine difficulty based on stress weight score
-        w = float(concept.get("weight_score", 0.75))
-        if w >= 0.8:
-            slot_diff = "Hard"
-        elif w >= 0.4:
-            slot_diff = "Medium"
-        else:
-            slot_diff = "Easy"
-        for _ in range(c_count):
-            slots.append((concept, slot_diff))
-
-    # Guard: if rounding left slots shorter than total_count, pad with the first concept
-    if not slots:
-        fallback_concept = {"concept_tag": topic_fallback, "weight_score": 0.75, "anchor_citation": "Direct context"}
-        slots = [(fallback_concept, "Medium")] * total_count
-    elif len(slots) < total_count:
-        pad_concept, pad_diff = slots[-1]
-        while len(slots) < total_count:
-            slots.append((pad_concept, pad_diff))
-
+    # Compile generation tasks directly from Stage B Blueprint slots
     generation_tasks = []
-    for i in range(total_count):
-        concept, slot_diff = slots[i]
-        flavor = formats_list[i]
-        
-        # Style resolution strategy selector
-        resolved_style = req.question_style
-        if not resolved_style or resolved_style == "MIXED":
-            if flavor == "CONCEPTS_AND_DEFINITIONS":
-                resolved_style = "THEORY"
-            elif flavor == "COMPARISONS_AND_TRADEOFFS":
-                resolved_style = "ASSERTION_REASONING"
-            elif flavor == "FORMULAS_AND_CALCULATIONS":
-                resolved_style = "TRACE_EXECUTION"
-            elif flavor == "CASE_STUDIES_AND_SCENARIOS":
-                resolved_style = "THEORY"
-            elif flavor == "PRACTICAL_AND_LAB_TASKS":
-                resolved_style = "OUTPUT_PREDICTION"
-            else:
-                resolved_style = "THEORY"
-                
-        generation_tasks.append((concept, flavor, slot_diff, resolved_style))
+    for slot in stage_b_blueprint["slots"]:
+        concept_obj = {
+            "concept_tag": slot["concept_tag"],
+            "weight_score": slot.get("importance_score", 0.75)
+        }
+        flavor = slot["archetype"]
+        slot_diff = slot["calibrated_difficulty"]
+        resolved_style = slot["question_style"]
+        generation_tasks.append((concept_obj, flavor, slot_diff, resolved_style))
+
 
     questions = []
     generated_so_far = ""

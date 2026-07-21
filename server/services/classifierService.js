@@ -4,6 +4,15 @@
  * Scans text to detect the 5 Master Academic Archetype footprint keywords.
  */
 function calculateTokenDensity(text) {
+    if (process.env.ENABLE_LEGACY_CLASSIFIER !== 'true') {
+        return {
+            CONCEPTS_AND_DEFINITIONS: 0.2,
+            COMPARISONS_AND_TRADEOFFS: 0.2,
+            FORMULAS_AND_CALCULATIONS: 0.2,
+            CASE_STUDIES_AND_SCENARIOS: 0.2,
+            PRACTICAL_AND_LAB_TASKS: 0.2
+        };
+    }
     if (!text || typeof text !== 'string') {
         return {
             CONCEPTS_AND_DEFINITIONS: 0.2,
@@ -51,6 +60,20 @@ function calculateTokenDensity(text) {
  * and normalizes them to equal exactly 1.0 (100%), honoring the Hard Zero rule.
  */
 function computeDynamicBlend(teacherWeights, textDensity, textContext = '') {
+    if (process.env.ENABLE_LEGACY_CLASSIFIER !== 'true') {
+        const tw = {
+            CONCEPTS_AND_DEFINITIONS: teacherWeights.CONCEPTS_AND_DEFINITIONS ?? teacherWeights.CORE_THEORY ?? 0.2,
+            COMPARISONS_AND_TRADEOFFS: teacherWeights.COMPARISONS_AND_TRADEOFFS ?? teacherWeights.ANALYTICAL_REASONING ?? 0.2,
+            FORMULAS_AND_CALCULATIONS: teacherWeights.FORMULAS_AND_CALCULATIONS ?? teacherWeights.NUMERICAL_DESIGN ?? 0.2,
+            CASE_STUDIES_AND_SCENARIOS: teacherWeights.CASE_STUDIES_AND_SCENARIOS ?? teacherWeights.REAL_WORLD_APPLICATION ?? 0.2,
+            PRACTICAL_AND_LAB_TASKS: teacherWeights.PRACTICAL_AND_LAB_TASKS ?? teacherWeights.IMPLEMENTATION_SYNTHESIS ?? 0.2
+        };
+        const sum = Object.values(tw).reduce((a, b) => a + b, 0) || 1.0;
+        const normalized = {};
+        Object.keys(tw).forEach(k => normalized[k] = parseFloat((tw[k] / sum).toFixed(2)));
+        return { ratios: normalized, executionMessages: ["[Pedagogical Engine] Pass-through active (Legacy keyword density classifier disabled)."] };
+    }
+
     const alpha = 0.6; 
     
     const tw = {

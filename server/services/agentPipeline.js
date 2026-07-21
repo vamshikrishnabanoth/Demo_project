@@ -403,6 +403,10 @@ function buildReport(
     // refinerExecuted = true when refiner was invoked (including early-exit = already excellent)
     const refinerExecuted = refinerStatus !== 'unavailable';
 
+    // Concept Coverage Metric calculation: Unique Concepts Tested / Important Concepts Detected
+    const uniqueTested = new Set((finalCriticResults || []).map((_, i) => (questionDiffs[i]?.after?.concept_tag || '').toLowerCase().trim()).filter(Boolean)).size;
+    const conceptCoverage = uniqueTested > 0 ? parseFloat((uniqueTested / Math.max(1, questionDiffs.length)).toFixed(2)) : 1.0;
+
     return {
         verdict,
         avgScore:         avgQuality,
@@ -413,6 +417,7 @@ function buildReport(
         totalMs,
         criticMs,
         quizIssues,
+        conceptCoverage,
         // Summary for teacher banner
         generated,
         generatorExecuted: true,

@@ -136,12 +136,25 @@ model Broadcast {
 }
 
 model DocumentChunk {
-  id        String                    @id @default(uuid())
-  content   String
-  embedding Unsupported("vector(384)")?
-  source    String
-  metadata  Json?
-  createdAt DateTime                  @default(now())
+  id         String                    @id @default(uuid())
+  content    String
+  embedding  Unsupported("vector(384)")?
+  source     String
+  sourceType String                    @default("SESSION") // 'SESSION' or 'COLLEGE'
+  metadata   Json?
+  createdAt  DateTime                  @default(now())
+}
+
+model TeacherFeedback {
+  id                  String   @id @default(uuid())
+  teacherId           String
+  quizId              String?
+  questionId          String?
+  actionType          String   // 'accepted_without_edits', 'edited_distractor', 'corrected_difficulty', 'deleted'
+  originalQuestion    Json?
+  modifiedQuestion    Json?
+  metadata            Json?
+  createdAt           DateTime @default(now())
 }
 
 model QuizSession {
@@ -156,3 +169,4 @@ model QuizSession {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
 }
+

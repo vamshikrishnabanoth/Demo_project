@@ -50,6 +50,21 @@ export default function QuizQuestionEditor({
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
                             className="text-xl italic"
                         />
+                        {question.assessment_objective && (
+                            <p className="mt-2 text-xs font-mono text-emerald-400/90 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                                🎯 Objective: {question.assessment_objective}
+                            </p>
+                        )}
+                        {question.difficulty_reason && Array.isArray(question.difficulty_reason) && (
+                            <div className="mt-2 text-xs font-mono text-amber-300/80 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
+                                <span className="font-bold text-amber-400">⚖️ Calibration Rationale:</span>
+                                <ul className="list-disc list-inside mt-1 space-y-0.5">
+                                    {question.difficulty_reason.map((r, rIdx) => (
+                                        <li key={rIdx}>{r}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </div>
 

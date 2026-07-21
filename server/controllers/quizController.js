@@ -681,6 +681,23 @@ exports.createQuiz = async (req, res) => {
             }
         });
 
+        // Feedback Flywheel Logging (accepted_without_edits vs edited)
+        try {
+            await prisma.teacherFeedback.create({
+                data: {
+                    teacherId: req.user.id,
+                    quizId: newQuiz.id,
+                    actionType: req.body.isEdited ? 'edited' : 'accepted_without_edits',
+                    metadata: {
+                        questionCount: finalQuestions.length,
+                        difficulty: newQuiz.difficulty
+                    }
+                }
+            });
+        } catch (fbErr) {
+            console.error('TeacherFeedback logging notice:', fbErr.message);
+        }
+
         // Trigger background automated broadcast if the live quiz is active
         await autoBroadcastLiveQuiz(newQuiz, req);
 

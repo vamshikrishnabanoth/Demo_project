@@ -1,0 +1,19 @@
+{
+  "importance_weights": {
+    "coverage": 0.25,
+    "depth": 0.20,
+    "repetition": 0.15,
+    "teacher_emphasis": 0.20,
+    "dependency": 0.10,
+    "learning_objectives": 0.10
+  },
+  "feature_flags": {
+    "enable_legacy_classifier": false,
+    "enable_redis_cache": true,
+    "enable_planner_validator": true
+  },
+  "coding_subdivisions": {
+    "implementation": ["write_code", "code_completion", "fill_in_blank"],
+    "analysis": ["output_prediction", "debugging", "trace_execution", "compiler_error"]
+  }
+}
