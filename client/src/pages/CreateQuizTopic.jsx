@@ -641,11 +641,13 @@ export default function CreateQuizTopic() {
         formData.append('file_configs', JSON.stringify(fileConfigs));
         formData.append('topic', inputs.map(i => i.source_name).join(', '));
         formData.append('questionCount', questionCount);
+        formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
         formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
         formData.append('text_prompts', JSON.stringify(textInputs.map(t => t.content)));
         formData.append('interview_mode', interviewMode ? 'true' : 'false');
         formData.append('question_style', questionStyle || 'MIXED');
+        formData.append('assessment_style', questionStyle || 'MIXED');
         
         if (analyzedData) {
             formData.append('topic_weights', JSON.stringify(topicWeights));
