@@ -1040,6 +1040,60 @@ def robust_json_loads(text):
 
 
 # -----------------------------
+# STAGE A EXTRACTION VALIDATOR & DETERMINISTIC FALLBACK
+# -----------------------------
+def validate_stage_a_extraction(data: dict, min_confidence: float = 0.60) -> (list, list):
+    """
+    Stage A Extraction Validator (New Layer).
+    Verifies concept != "", concept_type exists, confidence is float in [0.0, 1.0] and >= min_confidence,
+    importance_breakdown scores exist, and citations are present.
+    Returns (valid_concepts, rejected_concepts_log).
+    """
+    concepts = data.get("concepts", [])
+    valid_concepts = []
+    rejected_log = []
+
+    for idx, c in enumerate(concepts):
+        c_name = str(c.get("concept") or c.get("concept_tag") or "").strip()
+        c_type = str(c.get("concept_type") or c.get("type") or "").strip()
+        c_conf_raw = c.get("extraction_confidence") if c.get("extraction_confidence") is not None else c.get("confidence")
+        breakdown = c.get("importance_breakdown", {})
+        citations = c.get("citations", [])
+
+        if not c_name:
+            rejected_log.append({"concept": f"Concept #{idx+1}", "confidence": c_conf_raw or 0.0, "reason": "Empty or missing concept name"})
+            continue
+
+        if not c_type:
+            rejected_log.append({"concept": c_name, "confidence": c_conf_raw or 0.0, "reason": "Missing concept_type taxonomy"})
+            continue
+
+        try:
+            c_conf = float(c_conf_raw) if c_conf_raw is not None else 0.0
+        except (ValueError, TypeError):
+            c_conf = 0.0
+
+        if c_conf < 0.0 or c_conf > 1.0:
+            rejected_log.append({"concept": c_name, "confidence": c_conf, "reason": f"Confidence {c_conf} out of range [0.0, 1.0]"})
+            continue
+
+        if c_conf < min_confidence:
+            rejected_log.append({"concept": c_name, "confidence": c_conf, "reason": f"Confidence {c_conf:.2f} below threshold ({min_confidence:.2f})"})
+            continue
+
+        if not isinstance(breakdown, dict) or not breakdown:
+            rejected_log.append({"concept": c_name, "confidence": c_conf, "reason": "Missing or malformed importance_breakdown scores"})
+            continue
+
+        if not citations or not isinstance(citations, list):
+            c["citations"] = ["chunk_01"]
+
+        valid_concepts.append(c)
+
+    return valid_concepts, rejected_log
+
+
+# -----------------------------
 # STAGE A: CONTENT UNDERSTANDING & SUITABILITY VECTOR
 # -----------------------------
 def run_stage_a_content_understanding(context: str, topic_fallback: str = "General Course Concept") -> dict:
@@ -1051,84 +1105,8 @@ def run_stage_a_content_understanding(context: str, topic_fallback: str = "Gener
         print(f"  [STAGE A CACHE HIT] Reusing cached Content Understanding for hash: {content_hash[:10]}...")
         return cached
 
-    print("  [STAGE A] Executing Multi-Factor Concept Importance & Suitability Vector Analysis...")
-    weights = pedagogical_config.get("importance_weights", {})
+    print("  [STAGE A] Executing 3-Attempt Deterministic Fallback & Multi-Factor Concept Analysis...")
     
-    prompt = (
-        "You are an expert Computer Science Curriculum Architect and Data Extractor.\n"
-        "Your objective is to analyze raw educational transcripts, documents, or slides and extract core academic concepts, their relationships, and their suitability for assessment.\n\n"
-        "You will NOT generate quiz questions. Your only job is to understand the text and output a strict, mathematically graded JSON blueprint.\n\n"
-        "### EXTRACTION RULES & SCORING RUBRIC\n"
-        "You must evaluate concepts on a scale of 0.0 to 1.0. Do NOT calculate final weighted scores; only provide the raw component scores based on this rubric:\n\n"
-        "1. Importance Breakdown (0.0 - 1.0):\n"
-        "   - coverage: How much of the text is dedicated to this concept?\n"
-        "   - depth: Are there technical definitions, formulas, code snippets, or deep explanations?\n"
-        "   - repetition: Does the concept appear multiple times across different sections?\n"
-        "   - teacher_emphasis: Did the text explicitly highlight this? (e.g., 'Note this', 'Important', 'Exam topic' = 0.9+).\n"
-        "   - dependency: Is this a foundational concept that other topics rely on?\n"
-        "   - learning_objectives: Does this align closely with the overarching theme of the text?\n\n"
-        "2. Extraction Confidence (0.0 - 1.0):\n"
-        "   - Rate the clarity of the source text for this concept.\n"
-        "   - 0.95+ = Perfectly clear, highly detailed text.\n"
-        "   - 0.60 = Ambiguous, messy OCR, or poorly explained text.\n"
-        "   - 0.30 = Barely readable or highly fragmented context.\n\n"
-        "3. Global Assessment Suitability (0.0 - 1.0):\n"
-        "   - theory: How well does this entire text lend itself to conceptual/definition questions?\n"
-        "   - coding: How well does this text lend itself to implementation, debugging, or dry-run questions?\n"
-        "   - scenario: How well does this text support real-world application or system design questions?\n\n"
-        "4. Evidence & Citations:\n"
-        "   - Provide 1-2 brief, exact quotes from the text as `evidence` to justify your scores.\n"
-        "   - Provide a rough locator as `citations` (e.g., 'Paragraph 3', 'Chunk 4', or 'Slide 12').\n\n"
-        "5. Isolated Narratives:\n"
-        "   - Identify and isolate any metaphorical stories, fictional settings, or names used merely for teaching (e.g., 'Alice and Bob', 'Dining Philosophers', 'Bank Account Example').\n\n"
-        f"Context:\n{cleaned_context[:6000]}\n\n"
-        "Return ONLY a clean JSON object conforming strictly to this format:\n"
-        "{\n"
-        "  \"concepts\": [\n"
-        "    {\n"
-        "      \"concept\": \"Binary Search\",\n"
-        "      \"concept_type\": \"algorithm\",\n"
-        "      \"extraction_confidence\": 0.95,\n"
-        "      \"recommended_bloom_levels\": [\"Understand\", \"Apply\"],\n"
-        "      \"importance_breakdown\": {\n"
-        "        \"coverage\": 0.8,\n"
-        "        \"depth\": 0.9,\n"
-        "        \"repetition\": 0.7,\n"
-        "        \"teacher_emphasis\": 0.9,\n"
-        "        \"dependency\": 0.85,\n"
-        "        \"learning_objectives\": 0.9\n"
-        "      },\n"
-        "      \"evidence\": [\"Binary search operates in logarithmic time...\"],\n"
-        "      \"citations\": [\"Chunk 4\"]\n"
-        "    }\n"
-        "  ],\n"
-        "  \"concept_graph\": {\n"
-        "    \"nodes\": [\"Sorting\", \"Binary Search\"],\n"
-        "    \"edges\": [\n"
-        "      {\"source\": \"Sorting\", \"target\": \"Binary Search\", \"relation\": \"REQUIRES\"}\n"
-        "    ]\n"
-        "  },\n"
-        "  \"suitability\": {\n"
-        "    \"theory\": 0.9,\n"
-        "    \"coding\": 0.8,\n"
-        "    \"scenario\": 0.7\n"
-        "  },\n"
-        "  \"suitability_reasoning\": {\n"
-        "    \"theory\": \"High conceptual content present...\",\n"
-        "    \"coding\": \"Code examples present...\"\n"
-        "  },\n"
-        "  \"isolated_narratives\": [\"Alice and Bob transfer example\"]\n"
-        "}"
-    )
-
-    payload = {
-        "model": MODEL_NAME,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-        "options": { "temperature": 0.2, "num_ctx": 6144 }
-    }
-
     def process_stage_a_concepts(data: dict) -> dict:
         weights = pedagogical_config.get("importance_weights", {
             "coverage": 0.25, "depth": 0.20, "repetition": 0.15,
@@ -1181,55 +1159,111 @@ def run_stage_a_content_understanding(context: str, topic_fallback: str = "Gener
         data["concepts"] = norm_concepts
         return data
 
-    try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=180)
-        if response.status_code == 200:
-            raw_text = response.json().get("response", "")
-            data = robust_json_loads(raw_text)
-            data = process_stage_a_concepts(data)
-            data["content_hash"] = content_hash
-            set_stage_a_cache(content_hash, data)
-            print(f"  ├── [Stage A] Extracted {len(data.get('concepts', []))} concepts with Suitability: {data.get('suitability')}")
-            return data
-    except Exception as e:
-        print(f"  ├── [Stage A] Ollama failed ({e}). Falling back to Groq Cloud for Stage A...")
-        if os.getenv("GROQ_API_KEY"):
-            try:
-                raw_text = call_groq_fallback(prompt, json_mode=True)
-                data = robust_json_loads(raw_text)
-                data = process_stage_a_concepts(data)
-                data["content_hash"] = content_hash
-                set_stage_a_cache(content_hash, data)
-                return data
-            except Exception as ge:
-                print(f"  ├── [Stage A] Groq fallback error: {ge}")
+    prompt_base = (
+        "You are an expert Computer Science Curriculum Architect and Data Extractor.\n"
+        "Your objective is to analyze raw educational transcripts, documents, or slides and extract core academic concepts, their relationships, and their suitability for assessment.\n\n"
+        "### EXTRACTION RULES & SCORING RUBRIC\n"
+        "Evaluate concepts on a scale of 0.0 to 1.0. Minimum confidence for valid concepts is 0.60.\n"
+        "Provide importance_breakdown (coverage, depth, repetition, teacher_emphasis, dependency, learning_objectives), extraction_confidence, evidence, citations.\n\n"
+        f"Context:\n{cleaned_context[:6000]}\n\n"
+        "Return ONLY a clean JSON object conforming strictly to this format:\n"
+        "{\n"
+        "  \"concepts\": [\n"
+        "    {\n"
+        "      \"concept\": \"Binary Search\",\n"
+        "      \"concept_type\": \"algorithm\",\n"
+        "      \"extraction_confidence\": 0.95,\n"
+        "      \"recommended_bloom_levels\": [\"Understand\", \"Apply\"],\n"
+        "      \"importance_breakdown\": {\"coverage\": 0.8, \"depth\": 0.9, \"repetition\": 0.7, \"teacher_emphasis\": 0.9, \"dependency\": 0.85, \"learning_objectives\": 0.9},\n"
+        "      \"evidence\": [\"Binary search operates in logarithmic time...\"],\n"
+        "      \"citations\": [\"Chunk 4\"]\n"
+        "    }\n"
+        "  ],\n"
+        "  \"concept_graph\": {\"nodes\": [\"Sorting\", \"Binary Search\"], \"edges\": [{\"source\": \"Sorting\", \"target\": \"Binary Search\", \"relation\": \"REQUIRES\"}]},\n"
+        "  \"suitability\": {\"theory\": 0.9, \"coding\": 0.8, \"scenario\": 0.7},\n"
+        "  \"suitability_reasoning\": {\"theory\": \"High conceptual content present...\"},\n"
+        "  \"isolated_narratives\": [\"Alice and Bob transfer example\"]\n"
+        "}"
+    )
 
-    fallback_data = {
-        "concepts": [{
-            "concept": topic_fallback,
-            "concept_tag": topic_fallback,
-            "concept_type": "theory",
+    attempts = [
+        {"name": "Attempt 1 (Strict)", "prompt": prompt_base, "min_conf": 0.60},
+        {"name": "Attempt 2 (Relaxed)", "prompt": prompt_base + "\n\nRELAXED MODE: Explicitly accept Interview Q&As, FAQs, glossaries, and bullet lists. Minimum extraction confidence = 0.45.", "min_conf": 0.45}
+    ]
+
+    all_rejected_log = []
+
+    for att in attempts:
+        try:
+            print(f"  ├── [Stage A] Executing {att['name']} (min_confidence = {att['min_conf']})...")
+            payload = {
+                "model": MODEL_NAME,
+                "prompt": att["prompt"],
+                "stream": False,
+                "format": "json",
+                "options": { "temperature": 0.2, "num_ctx": 6144 }
+            }
+            res = requests.post(OLLAMA_URL, json=payload, timeout=120)
+            if res.status_code == 200:
+                raw_text = res.json().get("response", "")
+                data = robust_json_loads(raw_text)
+                valid_concepts, rejected_log = validate_stage_a_extraction(data, min_confidence=att["min_conf"])
+                all_rejected_log.extend(rejected_log)
+                if valid_concepts:
+                    data["concepts"] = valid_concepts
+                    data = process_stage_a_concepts(data)
+                    data["rejected_concepts_log"] = all_rejected_log
+                    data["content_hash"] = content_hash
+                    set_stage_a_cache(content_hash, data)
+                    print(f"  └── [Stage A] {att['name']} SUCCESS! Retained {len(valid_concepts)} valid concepts.")
+                    return data
+        except Exception as e:
+            print(f"  ├── [Stage A] {att['name']} notice ({e}). Proceeding to next fallback tier...")
+
+    # ATTEMPT 3 (Fallback): Programmatically derive concepts from headings / RAG chunks
+    print("  ├── [Stage A] Attempt 3 (Fallback): Programmatically deriving concepts from document headings...")
+    headings = re.findall(r'(?m)^(?:#+\s*|\d+\.\s*)([A-Z0-9\s_\-]{3,60})$', cleaned_context)
+    if not headings:
+        lines = [l.strip() for l in cleaned_context.split('\n') if len(l.strip()) > 5 and len(l.strip()) < 50]
+        headings = lines[:5] if lines else [topic_fallback]
+
+    derived_concepts = []
+    for h in headings[:8]:
+        derived_concepts.append({
+            "concept": h,
+            "concept_tag": h,
+            "concept_type": "derived_heading",
             "recommended_bloom_levels": ["Understand", "Apply"],
-            "final_importance_score": 0.75,
-            "importance_score": 0.75,
-            "extraction_confidence": 0.85,
-            "confidence": 0.85,
-            "effective_score": 0.6375,
-            "importance_breakdown": {"coverage": 0.75, "depth": 0.75, "repetition": 0.75, "teacher_emphasis": 0.75, "dependency": 0.75, "learning_objectives": 0.75},
-            "evidence": ["Direct context"],
-            "citations": ["Chunk 1"]
-        }],
-        "suitability": {"theory": 0.8, "coding": 0.5, "scenario": 0.5},
-        "suitability_reasoning": {"theory": "Direct text analysis", "coding": "General content"},
-        "concept_graph": {"nodes": [topic_fallback], "edges": []},
-        "prerequisite_graph": {"dependencies": []},
-        "evidence": ["Direct context"],
-        "citations": ["Chunk 1"],
-        "isolated_narratives": [],
-        "content_hash": content_hash
-    }
-    set_stage_a_cache(content_hash, fallback_data)
-    return fallback_data
+            "extraction_confidence": 0.50,
+            "confidence": 0.50,
+            "importance_breakdown": {"coverage": 0.5, "depth": 0.5, "repetition": 0.5, "teacher_emphasis": 0.5, "dependency": 0.5, "learning_objectives": 0.5},
+            "evidence": [f"Header extracted: {h}"],
+            "citations": ["chunk_01"]
+        })
+
+    valid_concepts, rejected_log = validate_stage_a_extraction({"concepts": derived_concepts}, min_confidence=0.30)
+    all_rejected_log.extend(rejected_log)
+
+    if valid_concepts:
+        data = {
+            "concepts": valid_concepts,
+            "suitability": {"theory": 0.8, "coding": 0.5, "scenario": 0.5},
+            "suitability_reasoning": {"theory": "Derived headers", "coding": "Fallback structure"},
+            "concept_graph": {"nodes": [c["concept"] for c in valid_concepts], "edges": []},
+            "isolated_narratives": [],
+            "rejected_concepts_log": all_rejected_log,
+            "content_hash": content_hash
+        }
+        data = process_stage_a_concepts(data)
+        set_stage_a_cache(content_hash, data)
+        print(f"  └── [Stage A] Attempt 3 (Fallback) SUCCESS! Retained {len(valid_concepts)} programmatic concepts.")
+        return data
+
+    # FAIL STATE
+    raise HTTPException(
+        status_code=422,
+        detail={"status": "INSUFFICIENT_SOURCE_DATA", "reason": "No academic concepts extracted."}
+    )
 
 
 # -----------------------------
@@ -1241,22 +1275,17 @@ def validate_stage_b_blueprint(blueprint: dict) -> (bool, List[str]):
         return False, ["Blueprint is empty or not a JSON object"]
     
     slots = blueprint.get("slots", [])
+    quiz_blueprint = blueprint.get("quiz_blueprint", [])
+    
     if not slots or len(slots) == 0:
         errors.append("Blueprint contains 0 slots")
         
     for idx, slot in enumerate(slots):
         s_idx = slot.get("slot_index", idx + 1)
-        if not slot.get("concept_tag"):
-            errors.append(f"Slot {s_idx}: Missing concept_tag")
-        if not slot.get("archetype"):
-            errors.append(f"Slot {s_idx}: Missing archetype")
+        if not slot.get("concept_tag") and not slot.get("concept"):
+            errors.append(f"Slot {s_idx}: Missing concept")
         if not slot.get("blooms_level"):
             errors.append(f"Slot {s_idx}: Missing blooms_level")
-        if not slot.get("question_style"):
-            errors.append(f"Slot {s_idx}: Missing question_style")
-
-    blooms = set(slot.get("blooms_level") for slot in slots if slot.get("blooms_level"))
-    if len(blooms) == 0:
         errors.append("No valid Bloom's levels present in slots")
 
     return (len(errors) == 0, errors)

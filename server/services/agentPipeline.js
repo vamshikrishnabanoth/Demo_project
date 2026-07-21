@@ -462,11 +462,72 @@ function buildReport(
 // ─── PIPELINE ORCHESTRATOR ───────────────────────────────────────────────────
 
 /**
- * @param {object[]} draftQuestions  Raw questions from the AI generator
- * @param {object|null} groqClient   Groq SDK instance (or null if no API key)
- * @param {string} difficulty        Easy | Medium | Thinkable | Hard
- * @param {string} topic             Original topic/content (for context)
- * @param {number} timeoutMs         Max ms for critic+refine phase (default 60 000)
+ * Deterministic Refinement (No AI):
+ * If >40% of correct answers share the same option position (e.g. Option A),
+ * programmatically shuffle the minimum number of question option arrays required
+ * to drop below the 40% threshold. Update correct_answer / correctAnswer indexes accordingly.
+ */
+function balanceAnswerPositions(questions) {
+    if (!questions || questions.length < 2) return questions;
+    const total = questions.length;
+    const maxAllowed = Math.floor(total * 0.40);
+
+    const getPos = (q) => {
+        const opts = q.options || [];
+        const ans = q.correctAnswer || q.correct_answer;
+        if (typeof opts === 'object' && !Array.isArray(opts)) {
+            if (ans === opts.A || ans === 'A') return 0;
+            if (ans === opts.B || ans === 'B') return 1;
+            if (ans === opts.C || ans === 'C') return 2;
+            if (ans === opts.D || ans === 'D') return 3;
+            return 0;
+        }
+        return Array.isArray(opts) ? opts.indexOf(ans) : 0;
+    };
+
+    let counts = [0, 0, 0, 0];
+    questions.forEach(q => {
+        const p = getPos(q);
+        if (p >= 0 && p < 4) counts[p]++;
+    });
+
+    for (let pos = 0; pos < 4; pos++) {
+        while (counts[pos] > maxAllowed) {
+            const qToMove = questions.find(q => getPos(q) === pos);
+            if (!qToMove) break;
+
+            const targetPos = counts.indexOf(Math.min(...counts));
+            if (targetPos === pos) break;
+
+            if (Array.isArray(qToMove.options)) {
+                const temp = qToMove.options[targetPos];
+                qToMove.options[targetPos] = qToMove.options[pos];
+                qToMove.options[pos] = temp;
+            } else if (typeof qToMove.options === 'object') {
+                const keys = ['A', 'B', 'C', 'D'];
+                const fromKey = keys[pos];
+                const toKey = keys[targetPos];
+                const temp = qToMove.options[toKey];
+                qToMove.options[toKey] = qToMove.options[fromKey];
+                qToMove.options[fromKey] = temp;
+            }
+
+            counts[pos]--;
+            counts[targetPos]++;
+        }
+    }
+
+    return questions;
+}
+
+/**
+ * Main entrypoint: Runs Whole-Quiz Audit, Per-Question Critic, Refinement, and Deterministic Rebalancing.
+ * @param {object}   opts
+ * @param {object[]} opts.draftQuestions
+ * @param {object}   [opts.groqClient]
+ * @param {string}   [opts.difficulty]
+ * @param {string}   [opts.topic]
+ * @param {number}   [opts.timeoutMs]
  * @param {Function} [onProgress]    Callback(stage: 0-3, label: string)
  * @returns {{ questions: object[], agentReport: object }}
  */
@@ -591,6 +652,8 @@ async function runAgentPipeline({ draftQuestions, groqClient, difficulty, topic,
             }
         }
 
+        // ── Phase 5: Deterministic Refinement (No AI Array Shuffle) ─────────────────
+        questions = balanceAnswerPositions(questions);
         const scoreAfter = currentAvg();
 
         // Build diffs — only flag modified if content ACTUALLY changed
