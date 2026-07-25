@@ -128,6 +128,89 @@
     radial-gradient(at 50% 50%, #FAF9F6 0px, transparent 100%);
 }
 
+/* ─── GLOBAL FOCUS OUTLINE & RING OVERRIDES ─────────────────────────────── */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+[data-theme="india"] input:focus,
+[data-theme="india"] select:focus,
+[data-theme="india"] textarea:focus,
+[data-theme="india"] button:focus-visible,
+[data-theme="india"] [role="button"]:focus-visible,
+[data-theme="india"] a:focus-visible {
+  outline: 2px solid #D96B27 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(217, 107, 39, 0.25) !important;
+  border-color: #D96B27 !important;
+}
+
+[data-theme="celestial"] input:focus,
+[data-theme="celestial"] select:focus,
+[data-theme="celestial"] textarea:focus,
+[data-theme="celestial"] button:focus-visible,
+[data-theme="celestial"] [role="button"]:focus-visible,
+[data-theme="celestial"] a:focus-visible {
+  outline: 2px solid #133E87 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(19, 62, 135, 0.25) !important;
+  border-color: #133E87 !important;
+}
+
+/* ─── STRICT THEME 2 (SAFFRON DAWN) ZERO-BLUE ENFORCEMENT ───────────────── */
+[data-theme="india"] .border-blue-50,
+[data-theme="india"] .border-blue-100,
+[data-theme="india"] .border-blue-200,
+[data-theme="india"] .border-blue-300,
+[data-theme="india"] .border-blue-400,
+[data-theme="india"] .border-blue-500,
+[data-theme="india"] .border-blue-600,
+[data-theme="india"] .border-indigo-100,
+[data-theme="india"] .border-indigo-200,
+[data-theme="india"] .border-purple-200,
+[data-theme="india"] .border-\[\#133E87\],
+[data-theme="india"] .border-\[\#a8c5e2\],
+[data-theme="india"] .border-\[\#9cbcd8\],
+[data-theme="india"] [class*="border-blue-"],
+[data-theme="india"] [class*="focus:border-blue-"],
+[data-theme="india"] [class*="focus:ring-blue-"] {
+  border-color: #FED7AA !important;
+  --tw-ring-color: rgba(217, 107, 39, 0.3) !important;
+}
+
+[data-theme="india"] .bg-blue-50,
+[data-theme="india"] .bg-blue-100,
+[data-theme="india"] .bg-blue-500\/5,
+[data-theme="india"] .bg-blue-500\/10,
+[data-theme="india"] .bg-blue-500\/15,
+[data-theme="india"] .bg-blue-500\/20,
+[data-theme="india"] .bg-indigo-50,
+[data-theme="india"] .bg-purple-50,
+[data-theme="india"] .bg-\[\#133E87\]\/5,
+[data-theme="india"] .bg-\[\#133E87\]\/10,
+[data-theme="india"] .bg-\[\#133E87\]\/15,
+[data-theme="india"] .bg-\[\#133E87\]\/20,
+[data-theme="india"] [class*="bg-blue-"]:not(.bg-white) {
+  background-color: #FFF7ED !important;
+}
+
+[data-theme="india"] .text-blue-400,
+[data-theme="india"] .text-blue-500,
+[data-theme="india"] .text-blue-600,
+[data-theme="india"] .text-blue-700,
+[data-theme="india"] .text-indigo-600,
+[data-theme="india"] .text-purple-700,
+[data-theme="india"] .text-\[\#133E87\],
+[data-theme="india"] [class*="text-blue-"] {
+  color: #D96B27 !important;
+}
+
+[data-theme="india"] [class*="shadow-blue-"],
+[data-theme="india"] .shadow-\[\#133E87\]\/40 {
+  --tw-shadow-color: rgba(217, 107, 39, 0.2) !important;
+}
+
 /* ─── PERFORMANCE & LAYOUT ───────────────────────────────────────────────── */
 [data-framer-appear-id], .framer-motion-page {
   will-change: opacity, transform;
@@ -575,6 +658,8 @@ button[class*="bg-white"] * {
 .bg-\[\#133E87\] span,
 .bg-\[\#133E87\] svg,
 a.bg-\[\#133E87\] *,
+.bg-\[var\(--bg-saffron\)\] *,
+.bg-\[var\(--bg-saffron\)\] svg,
 .teacher-launch-btn *,
 .text-white-force,
 .text-white-force *,
@@ -1627,7 +1712,7 @@ svg.recharts-surface *:focus {
   box-shadow: 0 0 0 3px rgba(19, 62, 135, 0.20) !important;
 }
 
-/* ─── TIRANGA HORIZON THEME ENHANCEMENTS & CONSISTENCY ─────────────────── */
+/* ─── TIRANGA HORIZON / SAFFRON DAWN THEME ENHANCEMENTS & CONSISTENCY ──── */
 [data-theme="india"] .badge-sand,
 [data-theme="india"] .tag-sand,
 [data-theme="india"] .badge-accent {
@@ -1658,6 +1743,16 @@ svg.recharts-surface *:focus {
   box-shadow: 0 0 0 3px rgba(217, 107, 39, 0.25) !important;
 }
 
+[data-theme="india"] input.global-search-input:focus,
+[data-theme="india"] input.bg-transparent:focus,
+input.global-search-input:focus,
+.global-search-input:focus {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 /* ─── DYNAMIC BLACK & SAFFRON-ORANGE TYPOGRAPHY PAIRING ──────────────────── */
 [data-theme="india"] h1,
 [data-theme="india"] h2,
@@ -1673,5 +1768,99 @@ svg.recharts-surface *:focus {
 [data-theme="india"] .text-accent-force {
   color: #D96B27 !important;
 }
+
+/* ─── PURGE ALL BLUE SHADES, BORDERS, CONTAINERS, BUTTONS & ICONS UNDER SAFFRON DAWN ─── */
+[data-theme="india"] .bg-blue-50,
+[data-theme="india"] .bg-blue-100,
+[data-theme="india"] .bg-blue-500\/5,
+[data-theme="india"] .bg-blue-500\/10,
+[data-theme="india"] .bg-blue-500\/15,
+[data-theme="india"] .bg-blue-500\/20,
+[data-theme="india"] .bg-blue-600\/10,
+[data-theme="india"] .bg-blue-50\/40,
+[data-theme="india"] .bg-blue-50\/50,
+[data-theme="india"] .bg-blue-50\/80,
+[data-theme="india"] .bg-indigo-50,
+[data-theme="india"] .bg-indigo-50\/50,
+[data-theme="india"] .bg-sky-50 {
+  background-color: #FFF7ED !important;
+}
+
+[data-theme="india"] .bg-blue-500,
+[data-theme="india"] .bg-blue-600,
+[data-theme="india"] .bg-blue-700,
+[data-theme="india"] .bg-blue-800,
+[data-theme="india"] .bg-blue-900,
+[data-theme="india"] .bg-\[\#133E87\],
+[data-theme="india"] .bg-\[\#2563EB\],
+[data-theme="india"] .hover\:bg-blue-700:hover,
+[data-theme="india"] .hover\:bg-blue-500:hover,
+[data-theme="india"] .hover\:bg-\[\#0e2e65\]:hover,
+[data-theme="india"] .hover\:bg-\[\#0d2d65\]:hover {
+  background-color: #D96B27 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="india"] .text-blue-400,
+[data-theme="india"] .text-blue-500,
+[data-theme="india"] .text-blue-600,
+[data-theme="india"] .text-blue-700,
+[data-theme="india"] .text-blue-800,
+[data-theme="india"] .text-blue-900,
+[data-theme="india"] .text-\[\#133E87\],
+[data-theme="india"] .text-\[\#2563EB\],
+[data-theme="india"] .text-\[\#0e2e65\],
+[data-theme="india"] .hover\:text-blue-600:hover,
+[data-theme="india"] .hover\:text-\[\#133E87\]:hover,
+[data-theme="india"] .group:hover .group-hover\:text-\[\#2563EB\] {
+  color: #D96B27 !important;
+}
+
+[data-theme="india"] .border-blue-100,
+[data-theme="india"] .border-blue-200,
+[data-theme="india"] .border-blue-300,
+[data-theme="india"] .border-blue-400,
+[data-theme="india"] .border-blue-500,
+[data-theme="india"] .border-blue-500\/20,
+[data-theme="india"] .border-blue-500\/30,
+[data-theme="india"] .border-blue-500\/40,
+[data-theme="india"] .border-blue-600,
+[data-theme="india"] .border-\[\#9cbcd8\],
+[data-theme="india"] .border-\[\#133E87\],
+[data-theme="india"] .hover\:border-\[\#133E87\]:hover,
+[data-theme="india"] .hover\:border-blue-400\/50:hover,
+[data-theme="india"] .focus\:border-\[\#133E87\]:focus,
+[data-theme="india"] .focus\:border-blue-500:focus {
+  border-color: #FED7AA !important;
+}
+
+[data-theme="india"] .focus\:ring-blue-100:focus,
+[data-theme="india"] .focus\:ring-blue-500:focus {
+  --tw-ring-color: rgba(217, 107, 39, 0.25) !important;
+}
+
+[data-theme="india"] .accent-blue-500 {
+  accent-color: #D96B27 !important;
+}
+
+[data-theme="india"] .from-blue-50,
+[data-theme="india"] .from-blue-100,
+[data-theme="india"] .from-\[\#f0f6ff\] {
+  --tw-gradient-from: #FFF7ED !important;
+}
+
+[data-theme="india"] .to-blue-50\/50,
+[data-theme="india"] .to-indigo-50\/50,
+[data-theme="india"] .to-\[\#dbeafe\] {
+  --tw-gradient-to: #FFEDD5 !important;
+}
+
+[data-theme="india"] .shadow-blue-500\/5,
+[data-theme="india"] .shadow-blue-500\/10,
+[data-theme="india"] .shadow-\[\#133E87\]\/30,
+[data-theme="india"] .shadow-\[\#133E87\]\/40 {
+  --tw-shadow-color: rgba(217, 107, 39, 0.15) !important;
+}
+
 
 

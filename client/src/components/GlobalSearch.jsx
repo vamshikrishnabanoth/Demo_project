@@ -237,7 +237,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     placeholder="Search by title, student, subject, topic, faculty..."
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    className="flex-1 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
+                                    className="flex-1 bg-transparent global-search-input text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
                                     aria-autocomplete="list"
                                     aria-controls="search-results-listbox"
                                 />

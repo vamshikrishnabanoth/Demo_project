@@ -72,18 +72,36 @@ const AssessmentReport = () => {
     ];
     const COLORS = ['#10b981', '#f43f5e'];
 
+    // Theme 1: Blue Shades Only (Extreme High Contrast — Dark/Light Alternating)
     const BLUE_SHADES = [
-        '#133E87', // Deep Navy
-        '#2563EB', // Royal Indigo Blue
-        '#0284C7', // Ocean Blue
-        '#0ea5e9', // Bright Sky Blue
-        '#1d4ed8', // Vivid Blue
-        '#0284c7', // Deep Azure
-        '#3b82f6', // Sapphire Blue
-        '#0369A1', // Midnight Azure
-        '#1e40af', // Dark Cobalt
-        '#38bdf8', // Light Cyan Blue
+        '#0B192C', // 1. Deep Midnight Navy (Very Dark)
+        '#38BDF8', // 2. Vivid Electric Cyan (Very Light & Bright)
+        '#1D4ED8', // 3. Royal Cobalt Blue (Rich Medium Dark)
+        '#BAE6FD', // 4. Ice Cyan Blue (Pastel Extra Light)
+        '#0369A1', // 5. Deep Ocean Azure (Medium Dark)
+        '#2563EB', // 6. Bright Electric Indigo (Vivid Medium)
+        '#0C4A6E', // 7. Dark Abyss Steel Navy (Dark)
+        '#60A5FA', // 8. Soft Sky Powder Blue (Light)
+        '#1E3A8A', // 9. Deep Ink Cobalt (Very Dark)
+        '#06B6D4'  // 10. Bright Turquoise Cyan (Vivid Light)
     ];
+
+    // Theme 2: Orange Shades Only (Extreme High Contrast — Dark/Light Alternating)
+    const SAFFRON_SHADES = [
+        '#9A3412', // 1. Deep Terracotta Rust (Very Dark)
+        '#FED7AA', // 2. Soft Warm Apricot (Very Light)
+        '#D96B27', // 3. Warm Heritage Saffron (Medium Dark)
+        '#FFEDD5', // 4. Cream Peach Saffron (Pastel Extra Light)
+        '#C2410C', // 5. Deep Burnt Orange (Dark)
+        '#FF8C00', // 6. Vivid Dark Orange (Bright Medium)
+        '#7C2D12', // 7. Dark Mahogany Rust (Extra Dark)
+        '#FB923C', // 8. Warm Sunset Amber (Light)
+        '#B8571B', // 9. Rich Crimson Saffron (Dark Medium)
+        '#F59E0B'  // 10. Bright Golden Amber (Vivid Light)
+    ];
+
+    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
+    const GRAPH_SHADES = isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
@@ -150,7 +168,7 @@ const AssessmentReport = () => {
                                 <Sparkles className="absolute top-2 right-2 text-amber-400 z-10" size={16} fill="currentColor" />
                             </motion.div>
 
-                            <p className="text-[10px] font-black tracking-[0.4em] text-[#133E87] uppercase mb-2" style={{ color: '#133E87' }}>Assessment Concluded</p>
+                            <p className="text-[10px] font-black tracking-[0.4em] text-[var(--text-accent)] uppercase mb-2">Assessment Concluded</p>
                             <h2 className="text-2xl sm:text-4xl font-black italic tracking-tight text-[#0f172a] uppercase mb-6 leading-tight max-w-md mx-auto" style={{ color: '#0f172a' }}>
                                 {quizTitle}
                             </h2>
@@ -184,8 +202,8 @@ const AssessmentReport = () => {
                                 <div className="w-full h-px bg-slate-200 my-4" />
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-200 p-4 rounded-2xl text-left">
-                                        <p className="text-[9px] font-black text-[#133E87] uppercase tracking-widest mb-1" style={{ color: '#133E87' }}>Tactical Yield</p>
+                                    <div className="bg-gradient-to-br from-[var(--accent-sand)] to-amber-50/50 border border-[var(--border-color)] p-4 rounded-2xl text-left">
+                                        <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1">Tactical Yield</p>
                                         <p className="text-xl font-black italic text-[#0f172a]" style={{ color: '#0f172a' }}>{score} <span className="text-[10px] font-bold text-[#4B5563]">/ {totalQuestions * 10} Pts</span></p>
                                     </div>
                                     <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200 p-4 rounded-2xl text-left">
@@ -201,8 +219,7 @@ const AssessmentReport = () => {
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
                                     onClick={() => setShowAnalytics(true)}
-                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#133E87] hover:bg-[#0e2e65] text-white font-black text-xs uppercase tracking-widest transition-all shadow-md border border-[#133E87] cursor-pointer"
-                                    style={{ backgroundColor: '#133E87', color: '#ffffff' }}
+                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white font-black text-xs uppercase tracking-widest transition-all shadow-md border border-[var(--bg-saffron)] cursor-pointer"
                                 >
                                     <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analytics</span> 
                                     <TrendingUp size={16} className="text-white" />
@@ -215,15 +232,15 @@ const AssessmentReport = () => {
                                     onClick={() => navigate('/student-dashboard')}
                                     className="flex-1 flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-lg"
                                     style={{
-                                        backgroundColor: isDashHovered ? '#133E87' : '#EFF6FF',
-                                        borderColor: isDashHovered ? '#133E87' : '#BFDBFE',
-                                        color: isDashHovered ? '#ffffff' : '#133E87'
+                                        backgroundColor: isDashHovered ? 'var(--bg-saffron)' : 'var(--accent-sand)',
+                                        borderColor: isDashHovered ? 'var(--bg-saffron)' : 'var(--border-color)',
+                                        color: isDashHovered ? '#ffffff' : 'var(--text-accent)'
                                     }}
                                 >
-                                    <Home size={18} style={{ color: isDashHovered ? '#ffffff' : '#133E87' }} className="transition-colors duration-200" />
+                                    <Home size={18} style={{ color: isDashHovered ? '#ffffff' : 'var(--text-accent)' }} className="transition-colors duration-200" />
                                     <span 
                                         className="font-black text-xs uppercase tracking-widest transition-colors duration-200"
-                                        style={{ color: isDashHovered ? '#ffffff' : '#133E87' }}
+                                        style={{ color: isDashHovered ? '#ffffff' : 'var(--text-accent)' }}
                                     >
                                         Dashboard
                                     </span>
@@ -384,7 +401,7 @@ const AssessmentReport = () => {
                                                 />
                                                 <Bar dataKey="time" radius={[8, 8, 0, 0]} maxBarSize={45}>
                                                     {timeData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill="#133E87" />
+                                                        <Cell key={`cell-${index}`} fill={GRAPH_SHADES[index % GRAPH_SHADES.length]} />
                                                     ))}
                                                 </Bar>
                                             </BarChart>
@@ -618,7 +635,7 @@ const AssessmentReport = () => {
                                 <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-10">
                                     <div className="space-y-8">
                                         <div>
-                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-[0.2em] mb-4" style={{ color: '#133E87' }}>Question Directive</p>
+                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
                                             <p className="text-xl font-bold text-[#0f172a] leading-relaxed" style={{ color: '#0f172a' }}>{details.questionText}</p>
                                         </div>
 
@@ -638,9 +655,9 @@ const AssessmentReport = () => {
                                         </div>
 
                                         <div className="relative">
-                                            <div className="relative p-8 rounded-[2rem] bg-blue-50/50 border-2 border-blue-200">
+                                            <div className="relative p-8 rounded-[2rem] bg-[var(--accent-sand)]/60 border-2 border-[var(--border-color)]">
                                                 <div className="flex items-center justify-between mb-4">
-                                                    <Sparkles size={20} className="text-[#133E87]" />
+                                                    <Sparkles size={20} className="text-[var(--text-accent)]" />
                                                     <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
                                                         details.confidence === 'High' 
                                                         ? 'bg-emerald-100 text-emerald-800 border-emerald-400' 
@@ -657,7 +674,7 @@ const AssessmentReport = () => {
                                                 ) : (
                                                     <div className="space-y-6 text-[#0f172a]">
                                                         <div>
-                                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-widest mb-1.5" style={{ color: '#133E87' }}>Question Directive</p>
+                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Question Directive</p>
                                                             <p className="text-base font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.questionText}</p>
                                                         </div>
                                                         <div className="pt-4 border-t border-slate-200">
@@ -665,7 +682,7 @@ const AssessmentReport = () => {
                                                             <p className="text-sm font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.correctOption}</p>
                                                         </div>
                                                         <div className="pt-4 border-t border-slate-200">
-                                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-widest mb-1.5" style={{ color: '#133E87' }}>Why Correct</p>
+                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Why Correct</p>
                                                             <p className="text-sm font-bold leading-relaxed text-[#0f172a] italic" style={{ color: '#0f172a' }}>{details.whyCorrect}</p>
                                                         </div>
                                                         {details.whyOthersIncorrect && (
@@ -676,7 +693,7 @@ const AssessmentReport = () => {
                                                         )}
                                                         {details.takeaway && (
                                                             <div className="pt-4 border-t border-slate-200">
-                                                                <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-1.5">Learning Takeaway</p>
+                                                                <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Learning Takeaway</p>
                                                                 <p className="text-sm font-bold leading-relaxed text-[#0f172a] italic" style={{ color: '#0f172a' }}>{details.takeaway}</p>
                                                             </div>
                                                         )}
@@ -690,8 +707,7 @@ const AssessmentReport = () => {
                                         {details.confidence !== 'Low' && (
                                             <button 
                                                 onClick={() => setShowDetailed(!showDetailed)}
-                                                className="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all !text-white bg-[#133E87] hover:bg-[#0e2e65] active:scale-95 shadow-md border border-[#133E87]"
-                                                style={{ backgroundColor: '#133E87', color: '#ffffff' }}
+                                                className="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all !text-white bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] active:scale-95 shadow-md border border-[var(--bg-saffron)]"
                                             >
                                                 <span className="!text-white font-black" style={{ color: '#ffffff' }}>
                                                     {showDetailed ? 'Standard Response' : 'Detailed Analysis'}

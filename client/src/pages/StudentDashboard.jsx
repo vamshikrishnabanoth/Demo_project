@@ -648,12 +648,12 @@ export default function StudentDashboard() {
                                                 <div className="p-8 flex flex-col items-center gap-4 text-center">
                                                     {file ? (
                                                         <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-300">
-                                                            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shadow-xs">
-                                                                <FileCheck size={28} className="text-[#133E87]" />
+                                                            <div className="w-14 h-14 rounded-2xl bg-[var(--accent-sand)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-accent)] shadow-xs">
+                                                                <FileCheck size={28} className="text-[var(--text-accent)]" />
                                                             </div>
                                                             <p className="font-black text-sm text-[#0f172a] italic max-w-[200px] truncate" style={{ color: '#0f172a' }}>{file.name}</p>
-                                                            <div className="px-3 py-1 rounded-full bg-blue-50 border border-blue-200">
-                                                                <p className="text-[9px] font-black text-[#133E87] uppercase tracking-widest" style={{ color: '#133E87' }}>Material Locked In</p>
+                                                            <div className="px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
+                                                                <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest">Material Locked In</p>
                                                             </div>
                                                         </div>
                                                     ) : (
@@ -833,7 +833,7 @@ export default function StudentDashboard() {
                                                         <h3 className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
                                                             {m.title}
                                                             {m.required && <span className="bg-pink-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Main (Streak +1)</span>}
-                                                            {!m.required && <span className="bg-blue-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
+                                                            {!m.required && <span className="bg-[var(--bg-accent)] text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
                                                         </h3>
                                                     </div>
                                                     <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-600' : 'text-[var(--text-secondary)]'}`}>
@@ -871,7 +871,7 @@ export default function StudentDashboard() {
                                             };
 
                                             return [
-                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
+                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-[var(--text-accent)]', border: 'border-[var(--border-color)]', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
                                                 { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
                                                 { id: 'perk_golden', name: '⚡ Golden Perk — Free Streak Save', cost: 0, icon: Star, color: 'text-yellow-400', border: 'border-yellow-500', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
                                             ].map(perk => {

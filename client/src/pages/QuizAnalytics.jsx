@@ -11,30 +11,49 @@ import {
     Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home
 } from 'lucide-react';
 
+// Theme 1: Blue Shades Only (Extreme High Contrast — Dark/Light Alternating)
 const BLUE_SHADES = [
-    '#133E87', // Deep Navy
-    '#2563EB', // Royal Indigo Blue
-    '#0284C7', // Ocean Blue
-    '#0ea5e9', // Bright Sky Blue
-    '#1d4ed8', // Vivid Blue
-    '#0284c7', // Deep Azure
-    '#3b82f6', // Sapphire Blue
-    '#0369A1', // Midnight Azure
-    '#1e40af', // Dark Cobalt
-    '#38bdf8', // Light Cyan Blue
+    '#0B192C', // 1. Deep Midnight Navy (Very Dark)
+    '#38BDF8', // 2. Vivid Electric Cyan (Very Light & Bright)
+    '#1D4ED8', // 3. Royal Cobalt Blue (Rich Medium Dark)
+    '#BAE6FD', // 4. Ice Cyan Blue (Pastel Extra Light)
+    '#0369A1', // 5. Deep Ocean Azure (Medium Dark)
+    '#2563EB', // 6. Bright Electric Indigo (Vivid Medium)
+    '#0C4A6E', // 7. Dark Abyss Steel Navy (Dark)
+    '#60A5FA', // 8. Soft Sky Powder Blue (Light)
+    '#1E3A8A', // 9. Deep Ink Cobalt (Very Dark)
+    '#06B6D4'  // 10. Bright Turquoise Cyan (Vivid Light)
 ];
-const COLORS = BLUE_SHADES;
+
+// Theme 2: Orange Shades Only (Extreme High Contrast — Dark/Light Alternating)
+const SAFFRON_SHADES = [
+    '#9A3412', // 1. Deep Terracotta Rust (Very Dark)
+    '#FED7AA', // 2. Soft Warm Apricot (Very Light)
+    '#D96B27', // 3. Warm Heritage Saffron (Medium Dark)
+    '#FFEDD5', // 4. Cream Peach Saffron (Pastel Extra Light)
+    '#C2410C', // 5. Deep Burnt Orange (Dark)
+    '#FF8C00', // 6. Vivid Dark Orange (Bright Medium)
+    '#7C2D12', // 7. Dark Mahogany Rust (Extra Dark)
+    '#FB923C', // 8. Warm Sunset Amber (Light)
+    '#B8571B', // 9. Rich Crimson Saffron (Dark Medium)
+    '#F59E0B'  // 10. Bright Golden Amber (Vivid Light)
+];
+
+const getThemePalette = () => {
+    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
+    return isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
+};
 const PIE_COLORS = ['#10b981', '#ef4444'];
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white border-2 border-[#9cbcd8] p-4 rounded-2xl shadow-xl backdrop-blur-md" style={{ color: '#0f172a' }}>
+            <div className="bg-white border-2 border-[var(--border-color)] p-4 rounded-2xl shadow-xl backdrop-blur-md" style={{ color: '#0f172a' }}>
                 <p className="font-black text-[#0f172a] text-sm tracking-wide mb-1" style={{ color: '#0f172a' }}>{label || 'Metric'}</p>
                 <div className="border-t border-slate-200 my-2"></div>
                 {payload.map((entry, index) => {
                     // Resolve exact bin fill color for tooltip bullet & value indicator
-                    const binColor = entry.payload?.fill || entry.fill || entry.color || '#133E87';
+                    const binColor = entry.payload?.fill || entry.fill || entry.color || 'var(--bg-accent)';
                     return (
                         <div key={index} className="flex items-center gap-2.5 text-xs py-1" style={{ color: '#0f172a' }}>
                             <div 
@@ -277,12 +296,12 @@ export default function QuizAnalytics() {
                 {/* KPI Overview Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 border border-blue-200' },
+                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
                         { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
                         { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
                         { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
                     ].map((kpi, idx) => (
-                        <div key={idx} className="bg-white border-2 border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#133E87] transition-all duration-300 group">
+                        <div key={idx} className="bg-white border-2 border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[var(--bg-accent)] transition-all duration-300 group">
                             <div className={`p-4 rounded-2xl ${kpi.bg} ${kpi.color} group-hover:scale-105 transition-transform`}>
                                 <kpi.icon size={28} />
                             </div>
@@ -308,14 +327,14 @@ export default function QuizAnalytics() {
                         <div className="w-full overflow-x-auto premium-scrollbar">
                             <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                    <BarChart data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                                         <XAxis dataKey="range" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                         <Bar dataKey="count" name="Count of Students" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                             {analytics.scoreDistribution.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
+                                                <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
                                             ))}
                                         </Bar>
                                     </BarChart>
@@ -376,14 +395,14 @@ export default function QuizAnalytics() {
                         <div className="w-full overflow-x-auto premium-scrollbar pb-2">
                             <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={(radarData || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                    <BarChart data={(radarData || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                                         <XAxis dataKey="subject" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <YAxis domain={[0, 100]} stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                                         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                         <Bar dataKey="A" name="Avg Score (%)" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                             {radarData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
+                                                <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
                                             ))}
                                         </Bar>
                                     </BarChart>
@@ -404,7 +423,7 @@ export default function QuizAnalytics() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
-                                        TOP PERFORMERS <span className="text-[#133E87]">(LEADERBOARD)</span>
+                                        TOP PERFORMERS <span className="text-[var(--text-accent)]">(LEADERBOARD)</span>
                                     </h3>
                                     <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
                                         Ranked by score, accuracy & time taken
@@ -465,7 +484,7 @@ export default function QuizAnalytics() {
                                         {/* Right: Score & Accuracy Badge */}
                                         <div className="text-right flex flex-col items-end gap-1">
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-2xl font-black text-[#133E87] italic" style={{ color: '#133E87' }}>
+                                                <span className="text-2xl font-black text-[var(--text-accent)] italic">
                                                     {student.score}
                                                 </span>
                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -477,7 +496,7 @@ export default function QuizAnalytics() {
                                                     student.accuracy >= 80 
                                                         ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800' 
                                                         : student.accuracy >= 50 
-                                                        ? 'bg-blue-500/15 border-blue-500/40 text-blue-800' 
+                                                        ? 'bg-[var(--accent-sand)] border-[var(--border-color)] text-[var(--text-accent)]' 
                                                         : 'bg-amber-500/15 border-amber-500/40 text-amber-800'
                                                 }`}
                                             >
@@ -511,7 +530,7 @@ export default function QuizAnalytics() {
                                         name: `Q${q.questionIndex + 1}`, 
                                         index: q.questionIndex, 
                                         correct: q.correct,
-                                        fill: BLUE_SHADES[idx % BLUE_SHADES.length] 
+                                        fill: getThemePalette()[idx % getThemePalette().length] 
                                     }))} 
                                     margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
                                     onClick={(state) => {
@@ -544,7 +563,7 @@ export default function QuizAnalytics() {
                                                         y={y + 15} 
                                                         textAnchor="middle" 
                                                         fill="#334155" 
-                                                        className="font-bold hover:fill-[#133E87] transition-colors hover:underline"
+                                                        className="font-bold hover:fill-[var(--text-accent)] transition-colors hover:underline"
                                                         style={{ fontSize: '12px', fontWeight: 700 }}
                                                     >
                                                         {payload.value}
@@ -557,7 +576,7 @@ export default function QuizAnalytics() {
                                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                     <Bar dataKey="correct" name="Correct Answers" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                         {analytics.questionPerformance.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
+                                            <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
                                         ))}
                                     </Bar>
                                 </BarChart>
@@ -620,7 +639,7 @@ export default function QuizAnalytics() {
                                         <td className="p-4 text-right">
                                             <Link 
                                                 to={`/analytics/question/${id}/${idx}`}
-                                                className="inline-flex items-center gap-1.5 bg-[#133E87] hover:bg-[#0d2d65] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[#133E87] text-white-force"
+                                                className="inline-flex items-center gap-1.5 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[var(--bg-saffron)] text-white-force"
                                                 style={{ color: '#ffffff' }}
                                             >
                                                 <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
@@ -638,7 +657,7 @@ export default function QuizAnalytics() {
                     <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                                <div className="w-10 h-10 rounded-xl bg-[var(--accent-sand)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-accent)]">
                                     <Users size={22} />
                                 </div>
                                 <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Tactical Memory Map</h3>
@@ -715,7 +734,7 @@ export default function QuizAnalytics() {
                                                 </div>
                                             </td>
                                             <td className="p-4 text-center">
-                                                <span className="text-xl font-black italic text-[#133E87]" style={{ color: '#133E87' }}>{student.score}</span>
+                                                <span className="text-xl font-black italic text-[var(--text-accent)]">{student.score}</span>
                                             </td>
                                         </tr>
                                     ))}

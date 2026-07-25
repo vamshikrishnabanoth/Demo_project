@@ -298,12 +298,12 @@ export default function AdminDashboard() {
                 {/* Global Compact Stats Grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {[
-                        { label: 'Total Entities', value: stats.total, icon: Users, color: 'text-[#133E87]', bg: 'bg-blue-50 border border-blue-200' },
+                        { label: 'Total Entities', value: stats.total, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
                         { label: 'Active Teachers', value: stats.teachers, icon: UserCheck, color: 'text-amber-700', bg: 'bg-amber-50 border border-amber-200' },
                         { label: 'Active Students', value: stats.students, icon: GraduationCap, color: 'text-sky-700', bg: 'bg-sky-50 border border-sky-200' },
                         { label: 'System Admins', value: stats.admins, icon: Shield, color: 'text-red-700', bg: 'bg-red-50 border border-red-200' },
                     ].map((s, i) => (
-                        <div key={i} className="bg-white border-2 border-[var(--border-color)] p-4 sm:p-5 rounded-2xl shadow-xs hover:shadow-md hover:border-[#133E87] transition-all duration-300 flex items-center justify-between gap-3">
+                        <div key={i} className="bg-white border-2 border-[var(--border-color)] p-4 sm:p-5 rounded-2xl shadow-xs hover:shadow-md hover:border-[var(--bg-accent)] transition-all duration-300 flex items-center justify-between gap-3">
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#334155]" style={{ color: '#334155' }}>{s.label}</p>
                                 <h3 className="text-2xl sm:text-3xl font-black text-[#0f172a] italic tracking-tight mt-0.5" style={{ color: '#0f172a' }}>{s.value}</h3>
@@ -331,12 +331,12 @@ export default function AdminDashboard() {
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-black uppercase tracking-wider text-xs sm:text-sm border-2 transition-all duration-200 cursor-pointer shadow-sm active:scale-95 ${
                                     isActive
-                                        ? 'bg-[#133E87] hover:bg-[#0e2e65] text-white border-[#133E87] shadow-md shadow-[#133E87]/20 !text-white text-white-force'
-                                        : 'bg-white/90 hover:bg-white text-[#0f172a] hover:text-[#133E87] border-[#9cbcd8] hover:border-[#133E87]'
+                                        ? 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] shadow-md !text-white text-white-force'
+                                        : 'bg-white/90 hover:bg-white text-[#0f172a] hover:text-[var(--text-accent)] border-[var(--border-color)] hover:border-[var(--bg-accent)]'
                                 }`}
-                                style={isActive ? { backgroundColor: '#133E87', color: '#ffffff', borderColor: '#133E87' } : { backgroundColor: '#ffffff', color: '#0f172a', borderColor: '#9cbcd8' }}
+                                style={isActive ? { backgroundColor: 'var(--bg-accent)', color: '#ffffff', borderColor: 'var(--bg-accent)' } : { backgroundColor: '#ffffff', color: '#0f172a', borderColor: 'var(--border-color)' }}
                             >
-                                <Icon size={18} className={isActive ? '!text-white' : 'text-[#133E87]'} style={isActive ? { color: '#ffffff', stroke: '#ffffff' } : { color: '#133E87' }} />
+                                <Icon size={18} className={isActive ? '!text-white' : 'text-[var(--text-accent)]'} style={isActive ? { color: '#ffffff', stroke: '#ffffff' } : { color: 'var(--text-accent)' }} />
                                 <span className={isActive ? '!text-white font-black' : 'font-black text-[#0f172a]'} style={isActive ? { color: '#ffffff' } : { color: '#0f172a' }}>
                                     {tab.label}
                                 </span>
@@ -427,7 +427,7 @@ export default function AdminDashboard() {
                                                                 <div className="flex flex-col gap-0.5">
                                                                     <p className="text-xs text-[#334155] font-medium" style={{ color: '#334155' }}>{u.email}</p>
                                                                     {u.role === 'student' && (u.studentBranch || u.section) && (
-                                                                        <p className="text-[10px] text-[#133E87] font-black uppercase tracking-widest" style={{ color: '#133E87' }}>
+                                                                        <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">
                                                                             {u.studentBranch || '—'} / {u.section || '—'} {u.year ? `/ YEAR ${u.year}` : ''}
                                                                         </p>
                                                                     )}
@@ -521,7 +521,7 @@ export default function AdminDashboard() {
                         <div className="lg:col-span-1">
                             <GlassCard className="space-y-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-blue-600/10 text-blue-400 rounded-2xl">
+                                    <div className="p-3 bg-[var(--bg-accent)]/10 text-[var(--text-accent)] rounded-2xl">
                                         <Upload size={24} />
                                     </div>
                                     <div>
@@ -539,7 +539,7 @@ export default function AdminDashboard() {
                                             value={sourceName}
                                             onChange={(e) => setSourceName(e.target.value)}
                                             required
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 outline-none focus:border-blue-500 transition-all text-sm uppercase"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 outline-none focus:border-[var(--bg-accent)] transition-all text-sm uppercase"
                                         />
                                     </div>
 
@@ -550,15 +550,14 @@ export default function AdminDashboard() {
                                             accept=".pdf,.docx,.pptx,.txt"
                                             required
                                             onChange={(e) => setSelectedFile(e.target.files[0])}
-                                            className="w-full text-slate-400 font-bold text-xs uppercase cursor-pointer file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-blue-600/20 file:text-blue-400 file:cursor-pointer hover:file:bg-blue-600/30"
+                                            className="w-full text-slate-400 font-bold text-xs uppercase cursor-pointer file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-[var(--bg-accent)]/20 file:text-[var(--text-accent)] file:cursor-pointer hover:file:bg-[var(--bg-accent)]/30"
                                         />
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={ingesting || !selectedFile || !sourceName.trim()}
-                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[#133E87] hover:bg-[#0e2e65] disabled:cursor-not-allowed !text-white text-white-force font-black py-4 rounded-2xl text-xs uppercase tracking-widest transition-all shadow-lg cursor-pointer opacity-100"
-                                        style={{ backgroundColor: '#133E87', color: '#ffffff', opacity: 1 }}
+                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] disabled:cursor-not-allowed !text-white text-white-force font-black py-4 rounded-2xl text-xs uppercase tracking-widest transition-all shadow-lg cursor-pointer opacity-100"
                                     >
                                         {ingesting ? (
                                             <Loader2 className="animate-spin !text-white" size={18} style={{ color: '#ffffff' }} />

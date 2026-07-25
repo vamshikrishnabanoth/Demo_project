@@ -179,15 +179,15 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 {/* Progress Bar */}
                 <div className="w-full max-w-xs h-2 bg-slate-100 border border-slate-300 rounded-full overflow-hidden shadow-inner my-2">
                     <motion.div
-                        className="h-full bg-[#133E87] rounded-full"
+                        className="h-full bg-[var(--bg-saffron)] rounded-full"
                         animate={{ width: `${pct}%` }}
                         transition={{ duration: 0.5, ease: 'easeInOut' }}
                     />
                 </div>
 
                 {/* Stage Badge */}
-                <div className="mt-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200">
-                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#133E87]" style={{ color: '#133E87' }}>
+                <div className="mt-2 px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
                         Agent Pipeline · Stage {resolvedStage + 1} of {stageList.length}
                     </p>
                 </div>

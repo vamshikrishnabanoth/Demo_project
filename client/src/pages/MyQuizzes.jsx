@@ -244,13 +244,17 @@ export default function MyQuizzes() {
                                         <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-xl ${quiz.isActive ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-accent)]/15 text-[var(--text-accent)] border border-[var(--border-color)]'}`}>
                                             <FileText size={40} />
                                         </div>
-                                        <div className="space-y-4">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-3 flex-wrap">
-                                                    <h3 className="text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors">{quiz.title}</h3>
+                                        <div className="space-y-4 min-w-0 flex-1">
+                                            <div className="space-y-1 min-w-0">
+                                                <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap min-w-0">
+                                                    <div className="max-w-[220px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] overflow-x-auto premium-scrollbar py-1 shrink-0">
+                                                        <h3 className="text-2xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors whitespace-nowrap" title={quiz.title}>
+                                                            {quiz.title}
+                                                        </h3>
+                                                    </div>
                                                     {/* Lock badge for published (immutable) quizzes */}
                                                     {quiz.isLocked && (
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-600/30 text-amber-800 text-[10px] font-black uppercase tracking-widest">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-600/30 text-amber-800 text-[10px] font-black uppercase tracking-widest shrink-0">
                                                             <Lock size={10} /> Published · Read-only
                                                         </span>
                                                     )}

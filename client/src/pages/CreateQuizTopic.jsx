@@ -733,7 +733,7 @@ export default function CreateQuizTopic() {
                         <div className="space-y-5">
                             <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
                                 <div className="flex items-center gap-2.5">
-                                    <span className="px-2.5 py-1 bg-blue-50 text-[#133E87] border border-blue-200 rounded-lg text-[9px] font-black uppercase tracking-wider">Step 1</span>
+                                    <span className="px-2.5 py-1 bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)] rounded-lg text-[9px] font-black uppercase tracking-wider">Step 1</span>
                                     <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic tracking-wide">Active Sources</h2>
                                 </div>
                                 <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)] shadow-xs">
@@ -746,10 +746,9 @@ export default function CreateQuizTopic() {
                                 <button 
                                     type="button"
                                     onClick={() => setShowDropdown(prev => !prev)}
-                                    className="w-full py-4 bg-white border-2 border-[#133E87] !text-[#133E87] rounded-2xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.98] hover:bg-blue-50/80"
-                                    style={{ color: '#133E87' }}
+                                    className="w-full py-4 bg-white border-2 border-[var(--border-color)] hover:border-[var(--bg-accent)] text-[var(--text-accent)] rounded-2xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.98] hover:bg-[var(--accent-sand)]/80"
                                 >
-                                    <Plus size={18} className="text-[#133E87]" /> Add Input
+                                    <Plus size={18} className="text-[var(--text-accent)]" /> Add Input
                                 </button>
                                 
                                 {showDropdown && (
@@ -793,8 +792,8 @@ export default function CreateQuizTopic() {
 
                             {/* Ingested sources list */}
                             {inputs.length === 0 ? (
-                                <div className="py-12 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-[var(--bg-primary)]/40 space-y-2">
-                                    <Database size={32} className="text-[var(--text-secondary)] opacity-60" />
+                                <div className="py-12 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-white space-y-2 shadow-xs">
+                                    <Database size={32} className="text-[var(--text-accent)] opacity-80" />
                                     <p className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Docket is empty</p>
                                     <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Upload curriculum guides or record audio lecture</p>
                                 </div>
@@ -915,7 +914,7 @@ export default function CreateQuizTopic() {
                                         ? recordingPaused
                                             ? 'bg-amber-50 border-amber-500 shadow-xl shadow-amber-500/20 scale-100'
                                             : 'bg-emerald-50 border-emerald-500 shadow-xl shadow-emerald-500/20 scale-105'
-                                        : 'bg-white border-[#133E87] hover:border-[var(--bg-accent)] active:scale-95'
+                                        : 'bg-white border-[var(--bg-accent)] hover:scale-105 active:scale-95 shadow-md shadow-[var(--bg-accent)]/20'
                                 }`}
                             >
                                 <Mic 
@@ -925,11 +924,11 @@ export default function CreateQuizTopic() {
                                             ? recordingPaused 
                                                 ? 'text-amber-500 scale-105' 
                                                 : 'text-emerald-500 scale-110' 
-                                            : 'text-[#133E87]'
+                                            : 'text-[var(--text-accent)]'
                                     }`} 
                                     style={{ 
-                                        color: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : '#133E87', 
-                                        stroke: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : '#133E87', 
+                                        color: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : 'var(--text-accent)', 
+                                        stroke: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : 'var(--text-accent)', 
                                         transform: recording ? 'translateY(-4px)' : 'none' 
                                     }}
                                 />
@@ -991,7 +990,7 @@ export default function CreateQuizTopic() {
                                     <button
                                         type="button"
                                         onClick={stopRecording}
-                                        className="px-5 py-2.5 bg-[#133E87] hover:bg-[#0e2e65] !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-[#133E87]/40 border border-[#133E87]"
+                                        className="px-5 py-2.5 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md border border-[var(--bg-accent)]"
                                         style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                     >
                                         <StopCircle size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
@@ -1020,15 +1019,15 @@ export default function CreateQuizTopic() {
                 </div>
 
                 {/* BOTTOM EXECUTION FOOTER */}
-                <div className="w-full bg-white border-t-2 border-[#9cbcd8] p-5 flex items-center justify-center shrink-0 shadow-lg">
+                <div className="w-full bg-white border-t-2 border-[var(--border-color)] p-5 flex items-center justify-center shrink-0 shadow-lg">
                     <button
                         type="button"
                         disabled={inputs.length === 0 || analyzing || submitting}
                         onClick={handleStartWizard}
                         className={`w-full max-w-4xl py-4.5 px-8 font-black text-sm sm:text-base uppercase tracking-[0.15em] rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 border-2 ${
                             inputs.length === 0 || analyzing || submitting
-                                ? 'bg-[#133E87]/80 text-white border-[#133E87] opacity-80 cursor-not-allowed'
-                                : 'bg-[#133E87] hover:bg-[#0e2e65] text-white border-[#133E87] cursor-pointer active:scale-[0.99] shadow-[#133E87]/30'
+                                ? 'bg-[var(--bg-saffron)]/80 text-white border-[var(--bg-saffron)] opacity-80 cursor-not-allowed'
+                                : 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] cursor-pointer active:scale-[0.99] shadow-[var(--bg-saffron)]/30'
                         }`}
                         style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                     >
@@ -1044,16 +1043,16 @@ export default function CreateQuizTopic() {
                 </div>
             </div>
 
-            {/* TEXT PROMPT MODAL POPUP — Premium Light Theme */}
+            {/* TEXT PROMPT MODAL POPUP — Premium Theme */}
             {showTextModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md select-none">
-                    <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/50 border-2 border-[#9cbcd8] rounded-[2.5rem] p-6 sm:p-8 w-full max-w-lg space-y-6 shadow-2xl relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-white via-slate-50 to-[var(--accent-sand)]/50 border-2 border-[var(--border-color)] rounded-[2.5rem] p-6 sm:p-8 w-full max-w-lg space-y-6 shadow-2xl relative overflow-hidden">
                         
                         {/* Modal Top Header Bar */}
                         <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shadow-xs">
-                                    <FileText size={22} className="text-[#133E87]" />
+                                <div className="w-11 h-11 rounded-2xl bg-[var(--accent-sand)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-accent)] shadow-xs">
+                                    <FileText size={22} className="text-[var(--text-accent)]" />
                                 </div>
                                 <div>
                                     <h3 className="text-base sm:text-lg font-black text-[#0f172a] uppercase italic tracking-tight" style={{ color: '#0f172a' }}>
@@ -1090,7 +1089,7 @@ export default function CreateQuizTopic() {
                                         : 'Paste curriculum guides, textbook chapters, formula sheets, or syllabus points here...'
                                 }
                                 rows={6}
-                                className="w-full p-4 bg-white border-2 border-slate-200 focus:border-[#133E87] focus:ring-4 focus:ring-blue-100 rounded-2xl text-xs sm:text-sm font-bold text-[#0f172a] placeholder:text-slate-400 outline-none resize-none shadow-inner transition-all leading-relaxed"
+                                className="w-full p-4 bg-white border-2 border-slate-200 focus:border-[var(--bg-accent)] focus:ring-4 focus:ring-[var(--border-color)]/50 rounded-2xl text-xs sm:text-sm font-bold text-[#0f172a] placeholder:text-slate-400 outline-none resize-none shadow-inner transition-all leading-relaxed"
                                 style={{ color: '#0f172a' }}
                                 autoFocus
                             />
@@ -1110,7 +1109,7 @@ export default function CreateQuizTopic() {
                                 type="button"
                                 onClick={handleAddTextInput}
                                 disabled={!textInputContent.trim()}
-                                className="px-8 py-3 bg-[#133E87] hover:bg-[#0e2e65] disabled:opacity-50 disabled:cursor-not-allowed !text-white text-white-force rounded-2xl text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                                className="px-8 py-3 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] disabled:opacity-50 disabled:cursor-not-allowed !text-white text-white-force rounded-2xl text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
                                 style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                             >
                                 <Plus size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
@@ -1268,9 +1267,9 @@ export default function CreateQuizTopic() {
                                             </div>
                                         </div>
 
-                                        <div className="bg-blue-600/10 border border-blue-500/20 p-4 rounded-xl flex items-center gap-2.5">
-                                            <Sparkles size={16} className="text-blue-400 shrink-0" />
-                                            <p className="text-[10px] font-black uppercase text-blue-400 tracking-wider">
+                                        <div className="bg-[var(--accent-sand)] border border-[var(--border-color)] p-4 rounded-xl flex items-center gap-2.5">
+                                            <Sparkles size={16} className="text-[var(--text-accent)] shrink-0" />
+                                            <p className="text-[10px] font-black uppercase text-[var(--text-accent)] tracking-wider">
                                                 ✨ AI Recommended Layout calculated by token-density analysis
                                             </p>
                                         </div>
@@ -1286,7 +1285,7 @@ export default function CreateQuizTopic() {
                                             <button
                                                 type="button"
                                                 onClick={() => setWizardStep(3)}
-                                                className="px-6 py-2.5 bg-blue-600 border border-blue-500 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all shadow-md"
+                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] border border-[var(--bg-saffron)] text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all shadow-md"
                                             >
                                                 Accept Layout
                                             </button>
@@ -1299,7 +1298,7 @@ export default function CreateQuizTopic() {
                                               {/* CONCEPTS_AND_DEFINITIONS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
-                                                      <span className="text-blue-400">Theory</span>
+                                                      <span className="text-[var(--text-accent)]">Theory</span>
                                                       <span className="text-white">{ratios.CONCEPTS_AND_DEFINITIONS}%</span>
                                                   </div>
                                                   <input
@@ -1308,7 +1307,7 @@ export default function CreateQuizTopic() {
                                                       max="100"
                                                       value={ratios.CONCEPTS_AND_DEFINITIONS}
                                                       onChange={(e) => handleSliderChange('CONCEPTS_AND_DEFINITIONS', e.target.value)}
-                                                      className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                      className="w-full accent-[var(--bg-accent)] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                   />
                                               </div>
 
@@ -1391,7 +1390,7 @@ export default function CreateQuizTopic() {
                                             <button
                                                 type="button"
                                                 onClick={() => setWizardStep(3)}
-                                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all"
+                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all"
                                             >
                                                 Continue to Step 3
                                             </button>
@@ -1412,7 +1411,7 @@ export default function CreateQuizTopic() {
                                                 <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-all space-y-1.5">
                                                     <div className="flex justify-between font-black uppercase text-[10px]">
                                                         <span className="text-white truncate max-w-[200px]">{concept.concept_tag}</span>
-                                                        <span className={`${currentWeight > 0 ? 'text-blue-400' : 'text-red-500'}`}>
+                                                        <span className={`${currentWeight > 0 ? 'text-[var(--text-accent)]' : 'text-red-500'}`}>
                                                             {currentWeight > 0 ? `Stress: ${currentWeight.toFixed(1)}` : 'DISABLED'}
                                                         </span>
                                                     </div>
@@ -1423,7 +1422,7 @@ export default function CreateQuizTopic() {
                                                         step="0.1"
                                                         value={currentWeight}
                                                         onChange={(e) => handleTopicWeightChange(concept.concept_tag, e.target.value)}
-                                                        className="w-full accent-blue-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                                                        className="w-full accent-[var(--bg-accent)] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                                                     />
                                                 </div>
                                             );

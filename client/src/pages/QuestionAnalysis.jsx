@@ -115,8 +115,11 @@ export default function QuestionAnalysis() {
         { name: 'Skipped', value: analytics.skippedCount }
     ];
 
-    const qIdx = parseInt(questionIndex);
-    const optionColors = ['#FFF7CD', '#FDC3A1', '#FB9B8F', '#F57799'];
+    const qIdx = parseInt(questionIndex) || 0;
+    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
+    const optionColors = isSaffronTheme 
+        ? ['#9A3412', '#FED7AA', '#D96B27', '#FF8C00'] 
+        : ['#0B192C', '#38BDF8', '#1D4ED8', '#BAE6FD'];
 
     // Filters for lists
     const filteredCorrect = studentInsights.correct.filter(name =>
