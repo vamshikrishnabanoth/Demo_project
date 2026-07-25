@@ -24,12 +24,26 @@ import GlobalSearch from './GlobalSearch';
 import { uiTerminology } from '../utils/uiTerminology';
 
 export default function DashboardLayout({ children, role }) {
-    const { logout, user } = useContext(AuthContext);
+    const { logout, user, theme, setTheme } = useContext(AuthContext);
     const location  = useLocation();
     const navigate  = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
     // Breakpoint shifted to 1024px (lg) to provide spacious vertical nav for tablets
     const isSmallScreen = useMediaQuery('(max-width: 1023px)');
+
+    const toggleTheme = () => {
+        const nextTheme = theme === 'india' ? 'celestial' : 'india';
+        setTheme(nextTheme);
+        toast(nextTheme === 'india' ? '🇮🇳 Tricolor Horizon Theme Active' : '🌌 Celestial Theme Active', {
+            icon: nextTheme === 'india' ? '🇮🇳' : '🌌',
+            style: {
+                borderRadius: '1rem',
+                background: '#0f172a',
+                color: '#ffffff',
+                fontWeight: 'bold'
+            }
+        });
+    };
     
     // Student Broadcast State
     const [messagesOpen, setMessagesOpen] = useState(false);
@@ -161,7 +175,7 @@ export default function DashboardLayout({ children, role }) {
                                                 aria-current={active ? 'page' : undefined}
                                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest premium-transition border ${
                                                     active
-                                                        ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-white shadow-[0_0_20px_var(--bg-accent-glow)]'
+                                                        ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
                                                         : 'bg-transparent border-transparent text-[var(--text-secondary)] hover:bg-white/5 hover:text-[var(--text-primary)]'
                                                 }`}
                                             >
@@ -176,6 +190,34 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3">
+                            {/* Theme Toggle Button */}
+                            <button
+                                onClick={toggleTheme}
+                                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-sm border ${
+                                    theme === 'india'
+                                        ? 'bg-gradient-to-r from-[#D96B27]/10 via-white to-[#1C8574]/10 border-[#D96B27]/40 text-[#D96B27]'
+                                        : 'bg-white/80 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)]'
+                                }`}
+                                title={theme === 'india' ? "Switch to Celestial Blue Theme" : "Switch to Saffron Dawn Theme"}
+                                aria-label="Toggle Theme"
+                            >
+                                {theme === 'india' ? (
+                                    <>
+                                        <span className="flex items-center justify-center w-5 h-5 rounded-full overflow-hidden border border-[#D96B27] shadow-xs shrink-0">
+                                            <span className="w-full h-full bg-gradient-to-b from-[#D96B27] via-white to-[#1C8574] block" />
+                                        </span>
+                                        <span className="text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#133E87] text-white text-[10px] font-black shrink-0">
+                                            🌌
+                                        </span>
+                                        <span className="text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
+                                    </>
+                                )}
+                            </button>
+
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
 
@@ -184,11 +226,14 @@ export default function DashboardLayout({ children, role }) {
                                     <UserProfileCard user={user} role={role} />
                                     <button
                                         onClick={handleLogout}
-                                        className="p-3 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-400/10 rounded-2xl premium-transition border border-transparent hover:border-red-400/20"
+                                        className="Btn"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
-                                        <LogOut size={20} aria-hidden="true" />
+                                        <div className="sign">
+                                            <LogOut size={17} color="white" aria-hidden="true" />
+                                        </div>
+                                        <div className="text">Logout</div>
                                     </button>
                                 </div>
                             )}
@@ -259,7 +304,7 @@ export default function DashboardLayout({ children, role }) {
                                 </div>
                                 <button 
                                     onClick={() => setMobileOpen(false)}
-                                    className="p-2 text-white/30 hover:text-white transition-colors"
+                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                                 >
                                     <X size={24} />
                                 </button>
@@ -277,8 +322,8 @@ export default function DashboardLayout({ children, role }) {
                                             onClick={() => setMobileOpen(false)}
                                             className={`flex items-center gap-4 px-6 py-5 rounded-[1.5rem] text-sm font-black uppercase tracking-[0.15em] premium-transition border ${
                                                 active
-                                                    ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-white shadow-[0_0_20px_var(--bg-accent-glow)]'
-                                                    : 'bg-white/5 border-white/5 text-white/40 hover:text-white'
+                                                    ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
+                                                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                                             }`}
                                         >
                                             <Icon size={20} />
@@ -293,25 +338,31 @@ export default function DashboardLayout({ children, role }) {
                             {/* Drawer Footer — Profile & Logout Integrated */}
                             <div className="mt-auto pt-6 border-t border-white/5 space-y-4 flex-shrink-0">
                                 <div className="px-2">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-3">Active Session</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3">Active Session</p>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/20 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/30">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20">
                                             <User size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-white truncate w-32">{user?.username || 'Pilot'}</p>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-50">{role}</p>
+                                            <p className="text-sm font-bold text-[var(--text-primary)] truncate w-32">{user?.username || 'Pilot'}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-70">{role}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-2xl bg-red-500/10 text-red-500 text-sm font-black uppercase tracking-widest hover:bg-red-500/20 transition-all border border-red-500/20"
-                                >
-                                    <LogOut size={20} />
-                                    Log Out
-                                </button>
+                                <div className="flex justify-center pt-2">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="Btn"
+                                        aria-label="Log out"
+                                        title="Log out"
+                                    >
+                                        <div className="sign">
+                                            <LogOut size={17} color="white" aria-hidden="true" />
+                                        </div>
+                                        <div className="text">Logout</div>
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </>
@@ -339,23 +390,23 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[#0b0f19] border-l border-white/10 z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-hidden"
+                            className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-hidden"
                             role="dialog"
                             aria-label="Student Announcement Inbox"
                         >
-                            <div className="flex items-center justify-between pb-6 border-b border-white/10 flex-shrink-0">
+                            <div className="flex items-center justify-between pb-6 border-b border-[var(--border-color)] flex-shrink-0">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-[var(--table-row-hover)] border border-[var(--border-color)] rounded-xl text-[var(--text-accent)]">
+                                    <div className="p-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl text-[var(--text-accent)]">
                                         <MessageSquare size={20} />
                                     </div>
                                     <div>
-                                        <span className="font-black text-lg uppercase italic tracking-tighter text-white">Inbox</span>
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">Secure Quiz Credentials</p>
+                                        <span className="font-black text-lg uppercase italic tracking-tighter text-[var(--text-primary)]">Inbox</span>
+                                        <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-widest mt-0.5">Secure Quiz Credentials</p>
                                     </div>
                                 </div>
                                 <button 
                                     onClick={() => setMessagesOpen(false)}
-                                    className="p-2 text-slate-400 hover:text-white transition-colors"
+                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                                 >
                                     <X size={20} />
                                 </button>
@@ -364,21 +415,21 @@ export default function DashboardLayout({ children, role }) {
                             {/* Message Feed */}
                             <div className="flex-1 overflow-y-auto py-6 space-y-6 custom-scrollbar pr-1">
                                 {/* Segmented Tab Controls for Read / Unread */}
-                                <div className="grid grid-cols-2 p-1 bg-white/5 rounded-2xl border border-white/5 mb-6">
+                                <div className="grid grid-cols-2 p-1 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] mb-6">
                                     <button
                                         onClick={() => setInboxTab('unread')}
-                                        className={`py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${inboxTab === 'unread' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-slate-400 hover:text-white'}`}
+                                        className={`py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${inboxTab === 'unread' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                     >
                                         Unread
                                         {unreadCount > 0 && (
-                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${inboxTab === 'unread' ? 'bg-black/50 text-[var(--text-accent)]' : 'bg-[var(--table-row-hover)] text-[var(--text-accent)]'}`}>
+                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${inboxTab === 'unread' ? 'bg-black/30 text-white' : 'bg-[var(--border-color)] text-[var(--text-accent)]'}`}>
                                                 {unreadCount}
                                             </span>
                                         )}
                                     </button>
                                     <button
                                         onClick={() => setInboxTab('read')}
-                                        className={`py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${inboxTab === 'read' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-slate-400 hover:text-white'}`}
+                                        className={`py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${inboxTab === 'read' ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                     >
                                         Read
                                     </button>
@@ -386,12 +437,12 @@ export default function DashboardLayout({ children, role }) {
 
                                 {/* Already Read count header for Read Tab */}
                                 {inboxTab === 'read' && (broadcasts.length - unreadCount > 0) && (
-                                    <div className="px-5 py-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400">
+                                    <div className="px-5 py-4 rounded-2xl bg-[var(--bg-primary)] border border-[var(--border-color)] flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--text-secondary)]">
                                         <span className="flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                             Archive Status
                                         </span>
-                                        <span className="text-white/60">
+                                        <span className="text-[var(--text-primary)]">
                                             {broadcasts.length - unreadCount} Read Announcements
                                         </span>
                                     </div>
@@ -434,7 +485,7 @@ export default function DashboardLayout({ children, role }) {
                                                         }
                                                     }
                                                 }}
-                                                className={`p-5 rounded-[1.8rem] border premium-transition relative overflow-hidden ${isUnread ? 'cursor-pointer bg-gradient-to-r from-[var(--table-row-hover)] to-[var(--glass-bg)] border-[var(--border-color)] shadow-lg shadow-[var(--bg-accent-glow)]' : 'cursor-default bg-white/[0.01] border-white/5 opacity-80'}`}
+                                                className={`p-5 rounded-[1.8rem] border premium-transition relative overflow-hidden ${isUnread ? 'cursor-pointer bg-[var(--bg-secondary)] border-[var(--bg-accent)]/40 shadow-md shadow-[var(--bg-accent-glow)]' : 'cursor-default bg-[var(--bg-primary)] border-[var(--border-color)] opacity-80'}`}
                                             >
                                                 {/* Unread circle */}
                                                 {isUnread && (
@@ -443,15 +494,15 @@ export default function DashboardLayout({ children, role }) {
 
                                                 <div className="space-y-3">
                                                     <div>
-                                                        <h4 className={`text-sm font-black italic uppercase tracking-wide truncate ${isUnread ? 'text-[var(--text-accent)]' : 'text-white'}`}>
+                                                        <h4 className={`text-sm font-black italic uppercase tracking-wide truncate ${isUnread ? 'text-[var(--text-accent)]' : 'text-[var(--text-primary)]'}`}>
                                                             {b.title}
                                                         </h4>
-                                                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                                                        <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider mt-0.5">
                                                             Received: {new Date(b.createdAt).toLocaleDateString()}
                                                         </p>
                                                     </div>
 
-                                                    <p className="text-xs text-slate-300 font-medium whitespace-pre-wrap leading-relaxed">
+                                                    <p className="text-xs text-[var(--text-secondary)] font-medium whitespace-pre-wrap leading-relaxed">
                                                         {b.message}
                                                     </p>
 
@@ -486,7 +537,7 @@ export default function DashboardLayout({ children, role }) {
                                                                         });
                                                                     }
                                                                 }}
-                                                                className="w-full py-2.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-xl font-black italic uppercase text-[10px] tracking-widest transition-all active:scale-95 shadow-md flex items-center justify-center gap-1.5 hover:opacity-90"
+                                                                className="btn-join-quiz-anim w-full py-2.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-xl font-black italic uppercase text-[10px] tracking-widest transition-all active:scale-95 shadow-md flex items-center justify-center gap-1.5 hover:opacity-90"
                                                             >
                                                                 {uiTerminology.deployToArena.toUpperCase()} (PIN: {b.pin})
                                                             </button>
@@ -498,11 +549,11 @@ export default function DashboardLayout({ children, role }) {
                                     })
                                 ) : (
                                     <div className="text-center py-16 space-y-3">
-                                        <MessageSquare size={36} className="text-slate-700 mx-auto" />
-                                        <h4 className="font-black text-slate-500 uppercase tracking-wider italic text-sm">
+                                        <MessageSquare size={36} className="text-[var(--text-secondary)] mx-auto opacity-40" />
+                                        <h4 className="font-black text-[var(--text-secondary)] uppercase tracking-wider italic text-sm">
                                             No {inboxTab} Messages
                                         </h4>
-                                        <p className="text-xs text-slate-600 font-bold">
+                                        <p className="text-xs text-[var(--text-secondary)]/70 font-bold">
                                             {inboxTab === 'unread' 
                                                 ? "You've read all received announcements!" 
                                                 : "You haven't read any announcements yet."}

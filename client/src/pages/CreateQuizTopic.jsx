@@ -710,55 +710,59 @@ export default function CreateQuizTopic() {
             <div className="flex flex-col min-h-[calc(100vh-6.5rem)] w-full">
                 
                 {/* Header branding */}
-                <div className="p-6 pb-2 border-b border-white/5 bg-slate-950/20">
-                    <h1 className="text-3xl font-black text-white tracking-tight italic uppercase">
-                        Kahoot <span className="text-[var(--bg-accent)]">AI Studio</span>
+                <div className="p-6 pb-2 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+                    <h1 className="text-3xl font-black text-[var(--text-primary)] tracking-tight italic uppercase">
+                        Kahoot <span className="text-[var(--text-accent)]">AI Studio</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] mt-1 font-bold uppercase tracking-wider text-[10px] italic">
+                    <p className="text-[var(--text-secondary)] mt-1 font-bold uppercase tracking-wider text-xs italic">
                         Transform course material into gamified learning assessments.
                     </p>
                 </div>
 
                 {pollError && (
-                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 font-bold text-xs uppercase tracking-wider">
+                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 font-bold text-xs uppercase tracking-wider">
                         ⚠ {pollError}
                     </div>
                 )}
 
                 {/* UPPER SPLIT SCREEN WORKSPACE */}
-                <div className="flex flex-col lg:flex-row flex-grow w-full bg-slate-950/10">
+                <div className="flex flex-col lg:flex-row flex-grow w-full bg-[var(--bg-primary)] gap-4 p-4 lg:p-6">
                     
-                    {/* LEFT PANEL: Ingestion Sidebar (25% or fixed width) */}
-                    <div className="w-full lg:w-80 bg-slate-900/30 backdrop-blur-md border-r border-white/10 p-6 flex flex-col justify-between shrink-0 space-y-6">
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                                <h2 className="text-sm font-black text-white uppercase italic">Active Sources</h2>
-                                <span className="bg-white/10 text-white px-2 py-0.5 rounded-full text-[9px] font-black uppercase">
-                                    {inputs.length} Sources
+                    {/* LEFT PANEL: Active Sources / Ingestion Container */}
+                    <div className="w-full lg:w-1/2 xl:w-[520px] bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between shrink-0 space-y-5 shadow-lg">
+                        <div className="space-y-5">
+                            <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                                <div className="flex items-center gap-2.5">
+                                    <span className="px-2.5 py-1 bg-blue-50 text-[#133E87] border border-blue-200 rounded-lg text-[9px] font-black uppercase tracking-wider">Step 1</span>
+                                    <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic tracking-wide">Active Sources</h2>
+                                </div>
+                                <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)] shadow-xs">
+                                    {inputs.length} {inputs.length === 1 ? 'Source' : 'Sources'}
                                 </span>
                             </div>
 
-                            {/* Dropdown Add Input Selection */}
+                            {/* Dropdown trigger button */}
                             <div className="relative">
-                                <button
+                                <button 
                                     type="button"
-                                    onClick={() => setShowDropdown(!showDropdown)}
-                                    className="w-full py-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white rounded-xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2 transition-all"
+                                    onClick={() => setShowDropdown(prev => !prev)}
+                                    className="w-full py-4 bg-white border-2 border-[#133E87] !text-[#133E87] rounded-2xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.98] hover:bg-blue-50/80"
+                                    style={{ color: '#133E87' }}
                                 >
-                                    <Plus size={16} /> Add Input
+                                    <Plus size={18} className="text-[#133E87]" /> Add Input
                                 </button>
                                 
                                 {showDropdown && (
-                                    <div className="absolute left-0 right-0 mt-2 bg-slate-900 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-20">
+                                    <div className="absolute left-0 right-0 mt-2 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl z-20">
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 setShowDropdown(false);
                                                 fileInputRef.current.click();
                                             }}
-                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
+                                            className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 border-b border-[var(--border-color)]/50"
                                         >
-                                            <FileText size={14} className="text-blue-400" /> Upload Document
+                                            <FileText size={16} className="text-[var(--text-accent)]" /> Upload Document (.pdf, .docx, .pptx)
                                         </button>
 
                                         <button
@@ -769,9 +773,9 @@ export default function CreateQuizTopic() {
                                                 setTextInputContent('');
                                                 setShowTextModal(true);
                                             }}
-                                            className="w-full px-4 py-3 text-left text-xs font-black text-white hover:bg-white/5 uppercase transition-all flex items-center gap-2.5"
+                                            className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3"
                                         >
-                                            <Plus size={14} className="text-emerald-400" /> Enter Topic Context
+                                            <Plus size={16} className="text-emerald-600" /> Enter Topic Context
                                         </button>
                                     </div>
                                 )}
@@ -787,45 +791,48 @@ export default function CreateQuizTopic() {
                                 accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
                             />
 
-                            {/* Ingested sources itemizer */}
+                            {/* Ingested sources list */}
                             {inputs.length === 0 ? (
-                                <div className="py-10 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-black/10">
-                                    <Database size={24} className="text-slate-500 mb-2" />
-                                    <p className="text-[10px] font-black text-slate-400 uppercase">Docket is empty</p>
-                                    <p className="text-[8px] text-slate-500 uppercase mt-0.5">Upload curriculum guides or record audio lecture</p>
+                                <div className="py-12 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-[var(--bg-primary)]/40 space-y-2">
+                                    <Database size={32} className="text-[var(--text-secondary)] opacity-60" />
+                                    <p className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Docket is empty</p>
+                                    <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Upload curriculum guides or record audio lecture</p>
                                 </div>
                             ) : (
-                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                <div className="space-y-3 max-h-[45vh] overflow-y-auto premium-scrollbar pr-1">
                                     {inputs.map((inp) => (
-                                        <div key={inp.id} className="flex flex-col p-3 bg-white/5 rounded-xl border border-white/5 hover:border-[var(--bg-accent)] transition-all gap-2 animate-in fade-in slide-in-from-bottom duration-300">
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2 truncate">
-                                                    <FileText size={14} className="text-[var(--bg-accent)] shrink-0" />
-                                                    <div className="truncate">
-                                                        <p className="text-[10px] font-black text-white uppercase truncate">{inp.source_name}</p>
-                                                        <p className="text-[8px] font-bold text-slate-500 uppercase">{inp.type}</p>
+                                        <div key={inp.id} className="p-4 bg-white rounded-2xl border-2 border-[var(--border-color)] shadow-sm space-y-3 hover:border-[var(--bg-accent)]/50 transition-all">
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                    <div className="p-2.5 bg-[var(--bg-accent)]/10 rounded-xl text-[var(--text-accent)] shrink-0">
+                                                        {inp.type === 'pdf' ? <FileText size={18} /> : inp.type === 'audio' ? <Mic size={18} /> : <FileCode size={18} />}
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] truncate">{inp.source_name}</p>
+                                                        <p className="text-[9px] font-extrabold text-[var(--text-secondary)] uppercase tracking-wider">{inp.type}</p>
                                                     </div>
                                                 </div>
                                                 <button 
                                                     type="button" 
                                                     onClick={() => handleRemoveInput(inp.id)}
-                                                    className="text-red-500 hover:text-red-400 p-1 hover:bg-white/5 rounded-full transition-all"
+                                                    className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all shrink-0"
+                                                    title="Remove input"
                                                 >
-                                                    <Trash2 size={14} />
+                                                    <Trash2 size={16} />
                                                 </button>
                                             </div>
 
                                             {inp.fetchingMetadata && (
-                                                <div className="text-[8px] font-black text-purple-400 uppercase animate-pulse mt-1 pt-1 border-t border-white/5">
+                                                <div className="text-[10px] font-black text-[var(--text-accent)] uppercase animate-pulse pt-2 border-t border-[var(--border-color)]/60">
                                                     ⚡ Reading document page length...
                                                 </div>
                                             )}
 
-                                            {/* Page range scoping selectors inside the card */}
+                                            {/* Page range scoping selectors with clear, spacious input boxes */}
                                             {inp.file && !['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image', 'handwritten_scan'].includes(inp.type) && !inp.source_name.toLowerCase().includes('scan') && !inp.source_name.toLowerCase().includes('handwritten') && !inp.source_name.toLowerCase().includes('handwriting') && (
-                                                <div className="flex items-center gap-3 mt-1 pt-2 border-t border-white/5">
-                                                     <div className="flex items-center gap-1">
-                                                         <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]/60 bg-slate-50 p-2.5 rounded-xl">
+                                                     <div className="flex items-center gap-2">
+                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">
                                                              Start {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
                                                          </span>
                                                          <input 
@@ -842,11 +849,11 @@ export default function CreateQuizTopic() {
                                                                  setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, startPage: val } : item));
                                                                  setAnalyzedData(null);
                                                              }}
-                                                             className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center focus:border-[var(--bg-accent)] focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                                                          />
                                                      </div>
-                                                     <div className="flex items-center gap-1">
-                                                         <span className="text-[8px] font-black text-slate-400 uppercase">
+                                                     <div className="flex items-center gap-2">
+                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">
                                                              End {(inp.type === 'pptx' || inp.type === 'ppt') ? 'Slide' : 'Page'}:
                                                          </span>
                                                          <input 
@@ -854,90 +861,98 @@ export default function CreateQuizTopic() {
                                                              min="1"
                                                              max={inp.maxPages || undefined}
                                                              placeholder="All"
-                                                             value={inp.endPage === '' || inp.endPage == null ? '' : inp.endPage} 
+                                                             value={inp.endPage || ''} 
                                                              onChange={(e) => {
                                                                  const rawVal = e.target.value;
-                                                                 if (rawVal === '') {
-                                                                     setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: '' } : item));
-                                                                 } else {
-                                                                     let val = Math.max(1, parseInt(rawVal) || 1);
+                                                                 let val = rawVal === '' ? undefined : parseInt(rawVal);
+                                                                 if (val !== undefined) {
+                                                                     val = Math.max(1, val);
                                                                      if (inp.maxPages && val > inp.maxPages) {
                                                                          val = inp.maxPages;
                                                                      }
-                                                                     setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
                                                                  }
+                                                                 setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
                                                                  setAnalyzedData(null);
                                                              }}
-                                                             className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-white text-[9px] font-bold" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center focus:border-[var(--bg-accent)] focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                                                          />
                                                      </div>
-                                                 </div>
-                                             )}
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
-
-                        {/* Status tracker */}
-                        <div className="pt-4 border-t border-white/15">
-                            <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-slate-400">
-                                <span className={`w-2 h-2 rounded-full ${inputs.length > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
-                                {inputs.length > 0 ? `${inputs.length} active syllabus source(s)` : 'No active sources'}
-                            </div>
-                        </div>
                     </div>
 
-                    {/* CENTER STAGE: Premium audio recorder & speech workspace */}
-                    <div className="flex-grow p-12 flex flex-col items-center justify-center relative min-h-[450px]">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--bg-accent-glow)] rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
+                    {/* RIGHT PANEL: Voice Recording Container */}
+                    <div className="flex-1 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-6 lg:p-10 flex flex-col items-center justify-center text-center relative min-h-[300px] shadow-lg">
+                        <div className="absolute top-4 right-5">
+                            <span className="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-[9px] font-black uppercase tracking-wider">Step 2 • Voice AI Context</span>
+                        </div>
 
+                        {/* Transcribing overlay */}
                         {transcribing && (
-                            <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center text-center p-6 z-30">
-                                <div className="relative w-24 h-24 mb-4 flex items-center justify-center">
-                                    <div className="absolute inset-0 border-4 border-t-[var(--bg-accent)] border-white/5 rounded-full animate-spin"></div>
-                                    <Mic size={36} className="text-[var(--bg-accent)] animate-pulse" />
+                            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-[var(--bg-primary)]/90 backdrop-blur-sm rounded-3xl">
+                                <div className="relative w-16 h-16 flex items-center justify-center">
+                                    <div className="absolute inset-0 border-4 border-t-[var(--bg-accent)] border-[var(--border-color)] rounded-full animate-spin"></div>
+                                    <Mic size={28} className="text-[var(--bg-accent)] animate-pulse" />
                                 </div>
-                                <p className="text-sm font-black text-white uppercase italic tracking-wider animate-pulse">⚡ Transcribing Lecture Audio...</p>
-                                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1.5 font-mono">Whisper is analyzing speech patterns locally on your machine</p>
+                                <p className="text-sm font-black text-[var(--text-primary)] uppercase italic tracking-wider animate-pulse">⚡ Transcribing Lecture Audio...</p>
+                                <p className="text-[10px] text-[var(--text-secondary)] uppercase font-black tracking-widest mt-1.5 font-mono">Whisper is analyzing speech patterns locally on your machine</p>
                             </div>
                         )}
 
-                        <div className="flex flex-col items-center justify-center text-center space-y-6 max-w-lg">
+                        <div className="flex flex-col items-center justify-center text-center space-y-5 max-w-md w-full">
                             {/* Pulsing Mic Circle Button */}
                             <button
                                 type="button"
                                 onClick={recording ? stopRecording : startRecording}
                                 disabled={analyzing || submitting}
-                                className={`w-48 h-48 rounded-full flex flex-col items-center justify-center transition-all duration-700 relative group border ${
+                                className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center transition-all duration-300 relative group border-4 shadow-md ${
                                     recording
-                                        ? 'bg-red-500/10 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.3)] animate-pulse'
-                                        : 'bg-white/5 border-white/10 hover:border-[var(--bg-accent)] hover:bg-white/10 shadow-[0_0_30px_rgba(255,255,255,0.02)]'
+                                        ? recordingPaused
+                                            ? 'bg-amber-50 border-amber-500 shadow-xl shadow-amber-500/20 scale-100'
+                                            : 'bg-emerald-50 border-emerald-500 shadow-xl shadow-emerald-500/20 scale-105'
+                                        : 'bg-white border-[#133E87] hover:border-[var(--bg-accent)] active:scale-95'
                                 }`}
                             >
                                 <Mic 
-                                    size={64} 
-                                    className={`transition-all duration-500 ${
-                                        recording ? 'text-red-500 scale-110' : 'text-slate-300 group-hover:text-[var(--text-accent)]'
+                                    size={38} 
+                                    className={`transition-all duration-300 ${
+                                        recording 
+                                            ? recordingPaused 
+                                                ? 'text-amber-500 scale-105' 
+                                                : 'text-emerald-500 scale-110' 
+                                            : 'text-[#133E87]'
                                     }`} 
-                                    style={{ transform: recording ? 'translateY(-12px)' : 'none' }}
+                                    style={{ 
+                                        color: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : '#133E87', 
+                                        stroke: recording ? (recordingPaused ? '#f59e0b' : '#10b981') : '#133E87', 
+                                        transform: recording ? 'translateY(-4px)' : 'none' 
+                                    }}
                                 />
                                 {recording && (
-                                    <span className="absolute bottom-4 text-[10px] font-black text-red-500 uppercase tracking-widest flex flex-col items-center gap-0.5">
+                                    <span className={`absolute bottom-2.5 text-[8px] font-black uppercase tracking-widest flex flex-col items-center gap-0.5 ${
+                                        recordingPaused ? 'text-amber-600' : 'text-emerald-600'
+                                    }`}>
                                         <span className="animate-pulse">{recordingPaused ? 'PAUSED' : 'RECORDING'}</span>
-                                        <span className="text-[12px] text-white font-mono">{formatTime(recordingDuration)}</span>
+                                        <span className="text-[10px] text-slate-800 font-mono font-bold">{formatTime(recordingDuration)}</span>
                                     </span>
                                 )}
                             </button>
                             
                             {/* Waveform Animation Visualizer */}
                             {recording && (
-                                <div className="flex items-center gap-1.5 h-10 justify-center py-2">
+                                <div className="flex items-center gap-1.5 h-8 justify-center py-1">
                                     {[...Array(12)].map((_, i) => (
                                         <div 
                                             key={i} 
-                                            className={`w-1.5 bg-red-500 rounded-full transition-all duration-300 ${
-                                                recordingPaused ? 'h-2 animate-none' : 'h-10 animate-pulse'
+                                            className={`w-1.5 rounded-full transition-all duration-300 ${
+                                                recordingPaused 
+                                                    ? 'bg-amber-500 h-2 animate-none' 
+                                                    : 'bg-emerald-500 h-8 animate-pulse'
                                             }`}
                                             style={{ 
                                                 animationDelay: `${i * 100}ms`,
@@ -950,106 +965,156 @@ export default function CreateQuizTopic() {
 
                             {/* Voice tactile controllers */}
                             {recording ? (
-                                <div className="flex items-center gap-4 pt-2">
+                                <div className="flex items-center gap-3 pt-1 flex-wrap justify-center">
                                     {recordingPaused ? (
                                         <button
                                             type="button"
                                             onClick={resumeRecording}
-                                            className="px-5 py-2 bg-green-600/20 border border-green-500/30 text-green-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-green-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-emerald-600/30 border border-emerald-500"
+                                            style={{ backgroundColor: '#059669', color: '#ffffff' }}
                                         >
-                                            <PlayCircle size={14} /> Resume
+                                            <PlayCircle size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                            <span className="!text-white font-black" style={{ color: '#ffffff' }}>RESUME</span>
                                         </button>
                                     ) : (
                                         <button
                                             type="button"
                                             onClick={pauseRecording}
-                                            className="px-5 py-2 bg-amber-600/20 border border-amber-500/30 text-amber-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-amber-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                            className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-amber-500/30 border border-amber-400"
+                                            style={{ backgroundColor: '#f59e0b', color: '#ffffff' }}
                                         >
-                                            <PauseCircle size={14} /> Pause
+                                            <PauseCircle size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                            <span className="!text-white font-black" style={{ color: '#ffffff' }}>PAUSE</span>
                                         </button>
                                     )}
                                     
                                     <button
                                         type="button"
                                         onClick={stopRecording}
-                                        className="px-5 py-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-blue-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                        className="px-5 py-2.5 bg-[#133E87] hover:bg-[#0e2e65] !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-[#133E87]/40 border border-[#133E87]"
+                                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                     >
-                                        <StopCircle size={14} /> Stop & Sync
+                                        <StopCircle size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                        <span className="!text-white font-black" style={{ color: '#ffffff' }}>STOP & SYNC</span>
                                     </button>
 
                                     <button
                                         type="button"
                                         onClick={cancelRecording}
-                                        className="px-5 py-2 bg-red-600/20 border border-red-500/30 text-red-400 rounded-full text-xs font-black uppercase tracking-wider hover:bg-red-600/30 active:scale-95 transition-all flex items-center gap-2"
+                                        className="px-5 py-2.5 bg-red-600 hover:bg-red-700 !text-white text-white-force rounded-full text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md shadow-red-600/30 border border-red-500"
+                                        style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
                                     >
-                                        <Trash2 size={14} /> Cancel
+                                        <Trash2 size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                        <span className="!text-white font-black" style={{ color: '#ffffff' }}>CANCEL</span>
                                     </button>
                                 </div>
                             ) : (
-                                <div className="space-y-1.5">
-                                    <p className="text-sm font-black text-white uppercase italic tracking-wide">Tap microphone to record syllabus explanation</p>
-                                    <p className="text-[10px] text-slate-400/60 uppercase font-black tracking-widest">Supports voice lectures or live mic inputs</p>
+                                <div className="space-y-1">
+                                    <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] uppercase italic tracking-wide">Tap microphone to record syllabus explanation</p>
+                                    <p className="text-[9px] text-[var(--text-secondary)] uppercase font-black tracking-widest">Supports voice lectures or live mic inputs</p>
                                 </div>
                             )}
                         </div>
                     </div>
+
                 </div>
 
                 {/* BOTTOM EXECUTION FOOTER */}
-                <div className="w-full bg-slate-900/50 backdrop-blur-lg border-t border-white/10 p-5 flex items-center justify-center shrink-0">
+                <div className="w-full bg-white border-t-2 border-[#9cbcd8] p-5 flex items-center justify-center shrink-0 shadow-lg">
                     <button
                         type="button"
                         disabled={inputs.length === 0 || analyzing || submitting}
                         onClick={handleStartWizard}
-                        className="w-full max-w-4xl py-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black text-lg italic uppercase tracking-wider rounded-2xl shadow-xl shadow-yellow-500/10 hover:scale-[1.01] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 btn-cinematic"
+                        className={`w-full max-w-4xl py-4.5 px-8 font-black text-sm sm:text-base uppercase tracking-[0.15em] rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 border-2 ${
+                            inputs.length === 0 || analyzing || submitting
+                                ? 'bg-[#133E87]/80 text-white border-[#133E87] opacity-80 cursor-not-allowed'
+                                : 'bg-[#133E87] hover:bg-[#0e2e65] text-white border-[#133E87] cursor-pointer active:scale-[0.99] shadow-[#133E87]/30'
+                        }`}
+                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                     >
-                        {analyzing ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
-                        {analyzing ? 'ANALYZING CURRICULUM...' : 'GENERATE HYBRID QUIZ'}
+                        {analyzing ? (
+                            <Loader2 className="animate-spin text-white" size={20} />
+                        ) : (
+                            <Sparkles size={20} className="text-amber-300 animate-pulse" />
+                        )}
+                        <span className="!text-white font-black uppercase tracking-widest text-base" style={{ color: '#ffffff' }}>
+                            {analyzing ? 'ANALYZING CURRICULUM...' : 'GENERATE'}
+                        </span>
                     </button>
                 </div>
             </div>
 
-            {/* TEXT PROMPT MODAL POPUP */}
+            {/* TEXT PROMPT MODAL POPUP — Premium Light Theme */}
             {showTextModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="bg-slate-900 border border-white/10 rounded-[2rem] p-6 w-full max-w-md space-y-4 shadow-2xl relative">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                            <h3 className="text-sm font-black text-white uppercase italic">
-                                {textModalType === 'description' ? 'Add Topic Description' : 'Enter Curriculum Context'}
-                            </h3>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md select-none">
+                    <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/50 border-2 border-[#9cbcd8] rounded-[2.5rem] p-6 sm:p-8 w-full max-w-lg space-y-6 shadow-2xl relative overflow-hidden">
+                        
+                        {/* Modal Top Header Bar */}
+                        <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shadow-xs">
+                                    <FileText size={22} className="text-[#133E87]" />
+                                </div>
+                                <div>
+                                    <h3 className="text-base sm:text-lg font-black text-[#0f172a] uppercase italic tracking-tight" style={{ color: '#0f172a' }}>
+                                        {textModalType === 'description' ? 'Add Topic Description' : 'Enter Curriculum Context'}
+                                    </h3>
+                                    <p className="text-[11px] font-bold text-[#334155]" style={{ color: '#334155' }}>
+                                        Provide text prompts or course topics for AI synthesis
+                                    </p>
+                                </div>
+                            </div>
                             <button 
                                 type="button" 
                                 onClick={() => setShowTextModal(false)}
-                                className="text-slate-400 hover:text-white"
+                                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#334155] transition-all cursor-pointer"
                             >
-                                <X size={16} />
+                                <X size={18} className="text-[#334155]" />
                             </button>
                         </div>
-                        <textarea
-                            value={textInputContent}
-                            onChange={(e) => setTextInputContent(e.target.value)}
-                            placeholder={
-                                textModalType === 'description' 
-                                    ? 'Enter a brief summary or description of the syllabus topic...' 
-                                    : 'Paste curriculum guides, textbook chapters, or syllabus points here...'
-                            }
-                            rows={6}
-                            className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[var(--bg-accent)] resize-none"
-                        />
-                        <div className="flex justify-end gap-2 pt-2">
+
+                        {/* Input Textarea Container */}
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-black uppercase tracking-wider text-[#0f172a]" style={{ color: '#0f172a' }}>
+                                    Topic Content / Syllabus Text
+                                </label>
+                                <span className="text-[10px] text-slate-400 font-bold">{textInputContent.length} chars</span>
+                            </div>
+                            <textarea
+                                value={textInputContent}
+                                onChange={(e) => setTextInputContent(e.target.value)}
+                                placeholder={
+                                    textModalType === 'description' 
+                                        ? 'Enter a detailed summary or description of the syllabus topic...' 
+                                        : 'Paste curriculum guides, textbook chapters, formula sheets, or syllabus points here...'
+                                }
+                                rows={6}
+                                className="w-full p-4 bg-white border-2 border-slate-200 focus:border-[#133E87] focus:ring-4 focus:ring-blue-100 rounded-2xl text-xs sm:text-sm font-bold text-[#0f172a] placeholder:text-slate-400 outline-none resize-none shadow-inner transition-all leading-relaxed"
+                                style={{ color: '#0f172a' }}
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Modal Bottom Action Controls */}
+                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200/80">
                             <button
                                 type="button"
                                 onClick={() => setShowTextModal(false)}
-                                className="px-4 py-2 border border-white/10 text-white rounded-lg text-[10px] font-black uppercase hover:bg-white/5 transition-all"
+                                className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-[#334155] border border-slate-300 rounded-2xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
+                                style={{ color: '#334155' }}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="button"
                                 onClick={handleAddTextInput}
-                                className="px-4 py-2 bg-[var(--bg-accent)] text-white rounded-lg text-[10px] font-black uppercase hover:bg-[var(--bg-accent-hover)] transition-all"
+                                disabled={!textInputContent.trim()}
+                                className="px-8 py-3 bg-[#133E87] hover:bg-[#0e2e65] disabled:opacity-50 disabled:cursor-not-allowed !text-white text-white-force rounded-2xl text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                                style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                             >
-                                Add Input
+                                <Plus size={16} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                <span className="!text-white font-black" style={{ color: '#ffffff' }}>Add Input Source</span>
                             </button>
                         </div>
                     </div>
@@ -1214,14 +1279,14 @@ export default function CreateQuizTopic() {
                                             <button
                                                 type="button"
                                                 onClick={() => setRatiosModified(true)}
-                                                className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
+                                                className="px-6 py-2.5 bg-slate-700 border border-slate-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-slate-600 transition-all"
                                             >
                                                 Modify Layout
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setWizardStep(3)}
-                                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all"
+                                                className="px-6 py-2.5 bg-blue-600 border border-blue-500 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-blue-500 transition-all shadow-md"
                                             >
                                                 Accept Layout
                                             </button>
@@ -1318,7 +1383,8 @@ export default function CreateQuizTopic() {
                                             <button
                                                 type="button"
                                                 onClick={() => setRatiosModified(false)}
-                                                className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
+                                                className="px-6 py-2.5 bg-white border-2 border-slate-400 !text-[#0f172a] rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-slate-100 transition-all"
+                                                style={{ color: '#0f172a' }}
                                             >
                                                 Back to AI Recs
                                             </button>
@@ -1371,7 +1437,8 @@ export default function CreateQuizTopic() {
                                     <button
                                         type="button"
                                         onClick={() => setWizardStep(2)}
-                                        className="px-6 py-2.5 border border-white/10 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-white/5 transition-all"
+                                        className="px-6 py-2.5 bg-white border-2 border-slate-400 !text-[#0f172a] rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-slate-100 transition-all"
+                                        style={{ color: '#0f172a' }}
                                     >
                                         Back
                                     </button>

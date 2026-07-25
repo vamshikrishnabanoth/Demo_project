@@ -121,46 +121,40 @@ function App() {
         <AuthProvider>
             <Toaster
                 position="top-right"
+                containerStyle={{ top: 20, right: 20 }}
                 toastOptions={{
-                    duration: 4000,
+                    duration: 2400,
                     style: {
                         background: 'rgba(15, 23, 42, 0.95)',
-                        backdropFilter: 'blur(12px)',
+                        backdropFilter: 'blur(16px)',
                         color: '#ffffff',
-                        borderRadius: '24px',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        fontSize: '16px',
-                        fontWeight: '700',
-                        padding: '18px 28px',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 255, 255, 0.02)',
-                        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                        letterSpacing: '-0.01em',
-                        maxWidth: '480px',
-                        minWidth: '350px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
+                        borderRadius: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        padding: '14px 20px',
+                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 255, 255, 0.03)',
+                        fontFamily: 'var(--app-font, system-ui, sans-serif)',
+                        maxWidth: '440px',
                     },
                     success: {
                         style: {
                             border: '1px solid rgba(16, 185, 129, 0.35)',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.2)',
-                            background: 'linear-gradient(to right, rgba(16, 185, 129, 0.05), rgba(15, 23, 42, 0.95))',
+                            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.15)',
                         },
                         iconTheme: {
                             primary: '#10b981',
-                            secondary: '#090d16',
+                            secondary: '#0f172a',
                         }
                     },
                     error: {
                         style: {
                             border: '1px solid rgba(244, 63, 94, 0.35)',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.2)',
-                            background: 'linear-gradient(to right, rgba(244, 63, 94, 0.05), rgba(15, 23, 42, 0.95))',
+                            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.15)',
                         },
                         iconTheme: {
                             primary: '#f43f5e',
-                            secondary: '#090d16',
+                            secondary: '#0f172a',
                         }
                     }
                 }}

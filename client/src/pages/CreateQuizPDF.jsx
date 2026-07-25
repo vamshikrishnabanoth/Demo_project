@@ -544,8 +544,20 @@ export default function CreateQuizPDF() {
                                             </div>
                                         ) : (
                                             <>
-                                                <div className="bg-white/5 p-6 rounded-[1.5rem] text-[var(--text-secondary)] shadow-inner group-hover/upload:text-[var(--bg-accent)] transition-colors">
-                                                    <Upload size={48} />
+                                                <div className="download-button mt-4">
+                                                    <div className="docs">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                                                            <polyline points="14 2 14 8 20 8" />
+                                                        </svg>
+                                                        Upload Document
+                                                    </div>
+                                                    <div className="download">
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                            <polyline points="7 10 12 15 17 10" />
+                                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                                        </svg>
+                                                    </div>
                                                 </div>
                                                 <div className="text-center">
                                                     <p className="text-[var(--text-primary)] font-black text-2xl italic tracking-tighter">DROP MATERIAL HERE</p>
@@ -688,10 +700,23 @@ export default function CreateQuizPDF() {
                         <button
                             type="submit"
                             disabled={isLoading || !file}
-                            className="group flex items-center gap-6 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-20 py-8 rounded-[2.5rem] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-2xl shadow-[var(--bg-accent-glow)] font-black text-3xl italic uppercase tracking-tighter active:scale-95 border-b-8 border-[var(--bg-accent-hover)] btn-cinematic"
+                            className="button-fly disabled:opacity-40 disabled:pointer-events-none"
                         >
-                            {isLoading ? <Loader2 className="animate-spin" size={32} /> : <CheckCircle size={32} />}
-                            {isLoading ? 'PARSING MATERIAL...' : 'ANALYZE DOCUMENT'}
+                            <div className="svg-wrapper">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    width="24"
+                                    height="24"
+                                >
+                                    <path fill="none" d="M0 0h24v24H0z"></path>
+                                    <path
+                                        fill="currentColor"
+                                        d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <span>{isLoading ? 'PARSING MATERIAL...' : 'POST & PUBLISH QUIZ'}</span>
                         </button>
                     </div>
                 </form>

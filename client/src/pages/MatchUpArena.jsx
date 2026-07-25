@@ -354,14 +354,14 @@ export default function MatchUpArena() {
                 <div className="flex items-center gap-4">
                     <button 
                         onClick={() => setMuted(!muted)}
-                        className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 text-slate-400 hover:text-white"
+                        className="p-2.5 rounded-xl bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] transition-all border border-[var(--bg-accent)] text-white shadow-md"
                         title={muted ? 'Unmute game sound' : 'Mute game sound'}
                     >
                         {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                     </button>
                     <button 
                         onClick={() => navigate('/student-dashboard')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 font-bold uppercase tracking-wider text-xs italic text-slate-300 hover:text-white"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 transition-all border border-red-700 font-bold uppercase tracking-wider text-xs italic text-white shadow-md"
                     >
                         <Home size={14} /> Exit
                     </button>

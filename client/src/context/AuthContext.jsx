@@ -8,19 +8,20 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser]       = useState(null);
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
-    const [theme, setThemeState] = useState(() => localStorage.getItem('app-theme') || 'celestial');
-    const [font, setFontState]   = useState(() => localStorage.getItem('app-font-key') || 'segoe');
+    // Dynamic theme setup with localStorage persistence
+    const [theme, setThemeState] = useState(() => {
+        return localStorage.getItem('app-theme') || 'india';
+    });
 
-    // ── Apply theme & font to DOM ────────────────────────────────────────────
+    const setTheme = (newTheme) => {
+        setThemeState(newTheme);
+        localStorage.setItem('app-theme', newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+    };
+
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('app-theme', theme);
     }, [theme]);
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-font', font);
-        localStorage.setItem('app-font-key', font);
-    }, [font]);
 
     // ── Restore session on mount ─────────────────────────────────────────────
     const checkUser = useCallback(async () => {
@@ -138,15 +139,12 @@ export const AuthProvider = ({ children }) => {
         }, 100);
     }, [user]);
 
-    const setTheme = useCallback((t) => setThemeState(t), []);
-    const setFont  = useCallback((f) => setFontState(f), []);
-
     return (
         <AuthContext.Provider value={{
             user, loading, authError, retryAuth,
             login, register, logout, setRole,
             theme, setTheme,
-            font, setFont,
+            font: 'inter',
         }}>
             {children}
         </AuthContext.Provider>

@@ -35,7 +35,7 @@ export const UserProfileCard = ({ user, role }) => {
     const getRoleIcon = () => {
         switch (role?.toLowerCase()) {
             case 'admin': return <ShieldCheck size={18} strokeWidth={2.5} />;
-            case 'teacher': return <UserCheck size={18} strokeWidth={2.5} />;
+            case 'teacher': return <UserCheck size={18} strokeWidth={2.5} className="pl-0.5" />;
             case 'student': return <GraduationCap size={18} strokeWidth={2.5} />;
             default: return <User size={18} strokeWidth={2.5} />;
         }

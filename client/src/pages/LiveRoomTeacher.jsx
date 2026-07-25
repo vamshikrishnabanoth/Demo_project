@@ -7,6 +7,7 @@ import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError, showSuccess } from '../utils/alerts';
 import toast from 'react-hot-toast';
+import throttle from '../utils/throttle';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
@@ -62,39 +63,25 @@ export default function LiveRoomTeacher() {
 
         fetchQuiz();
 
-        socket.on('participants_update', (participantsList = []) => {
+        const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
-
             const students = participantsList.filter(
-                p =>
-                    p.role?.toLowerCase() !== 'teacher' &&
-                    p.isOnline !== false
+                p => p.role?.toLowerCase() !== 'teacher' && p.isOnline !== false
             );
-
             setParticipants([...students]);
-        });
+        }, 300);
 
-        socket.on('progress_history', (history) => {
-            setStudentProgress(history);
-        });
-
-        socket.on('quiz_started', () => {
-            setQuiz(prev => prev ? { ...prev, status: 'started' } : null);
-        });
-
-        socket.on('student_progress_update', ({ studentId, username, questionIndex, isCorrect }) => {
+        const handleProgressUpdate = throttle(({ studentId, username, questionIndex, isCorrect }) => {
             setStudentProgress(prev => {
                 const newState = { ...prev };
                 const qIdx = parseInt(questionIndex);
                 const progressEntry = { answered: true, isCorrect };
-                // Store under UUID (studentId) so p._id lookup works
                 if (studentId) {
                     newState[studentId] = {
                         ...(newState[studentId] || {}),
                         [qIdx]: progressEntry
                     };
                 }
-                // Also store under username as fallback key
                 if (username) {
                     newState[username] = {
                         ...(newState[username] || {}),
@@ -103,7 +90,16 @@ export default function LiveRoomTeacher() {
                 }
                 return newState;
             });
+        }, 250);
+
+        socket.on('participants_update', handleParticipantsUpdate);
+        socket.on('progress_history', (history) => {
+            setStudentProgress(history);
         });
+        socket.on('quiz_started', () => {
+            setQuiz(prev => prev ? { ...prev, status: 'started' } : null);
+        });
+        socket.on('student_progress_update', handleProgressUpdate);
 
         socket.on('change_question', ({ questionIndex }) => {
             setCurrentQuestion(parseInt(questionIndex));
@@ -638,9 +634,14 @@ if (socket.connected) {
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                className="bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-4 py-2 rounded-lg font-bold uppercase tracking-tight text-sm hover:bg-[var(--bg-accent-hover)] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                                className="button disabled:opacity-50 disabled:pointer-events-none"
                             >
-                                Next <ChevronRight size={16} />
+                                <span>Next</span>
+                                <svg viewBox="0 0 13 10">
+                                    <polygon points="0.5 0 6.5 5 0.5 10"></polygon>
+                                    <polygon points="4.5 0 10.5 5 4.5 10"></polygon>
+                                    <polygon points="8.5 0 13 5 8.5 10"></polygon>
+                                </svg>
                             </button>
                         </div>
 

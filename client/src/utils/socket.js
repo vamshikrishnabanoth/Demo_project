@@ -13,13 +13,14 @@ const socket = io(SOCKET_URL, {
         });
     },
 
-    // polling first, then upgrade to websocket — required for Render.com deployments
-    transports: ['polling', 'websocket'],
+    // websocket first, fallback to polling if blocked by proxy
+    transports: ['websocket', 'polling'],
 
     reconnection: true,
-    reconnectionAttempts: Infinity,
+    reconnectionAttempts: 20,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
+    randomizationFactor: 0.5, // adds jitter to prevent 500+ clients reconnecting simultaneously
 
     timeout: 20000,
 

@@ -1,20 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const ShimmerSkeleton = ({ className }) => (
-    <div className={`relative overflow-hidden bg-white/5 rounded-2xl ${className}`}>
-        <motion.div
-            animate={{ 
-                x: ['-100%', '200%'] 
-            }}
-            transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                ease: "linear" 
-            }}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-        />
-    </div>
+export const ShimmerSkeleton = ({ className = '' }) => (
+    <div className={`shimmer-block rounded-2xl ${className}`} />
 );
 
 export const CardSkeleton = () => (

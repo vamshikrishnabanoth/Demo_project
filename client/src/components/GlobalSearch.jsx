@@ -229,7 +229,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     onKeyDown={handleKeyDown}
                                 >
                             {/* Input Field wrapper */}
-                            <div className="flex items-center gap-4 px-6 h-16 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/45 relative select-none rounded-t-3xl shrink-0">
+                            <div className="flex items-center gap-4 px-6 h-16 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] relative select-none rounded-t-3xl shrink-0">
                                 <Search size={20} className="text-[var(--text-accent)] shrink-0 opacity-80" />
                                 <input 
                                     ref={inputRef}
@@ -237,7 +237,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     placeholder="Search by title, student, subject, topic, faculty..."
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    className="flex-1 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)]/30 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
+                                    className="flex-1 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
                                     aria-autocomplete="list"
                                     aria-controls="search-results-listbox"
                                 />
@@ -248,7 +248,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     {query && !loading && (
                                         <button 
                                             onClick={() => setQuery('')}
-                                            className="p-1.5 hover:bg-[var(--bg-primary)] rounded-lg transition-colors text-[var(--text-secondary)]/50 hover:text-[var(--text-primary)] shrink-0 flex items-center justify-center"
+                                            className="p-1.5 hover:bg-[var(--bg-primary)] rounded-lg transition-colors text-[var(--text-secondary)] shrink-0 flex items-center justify-center"
                                             title="Clear search"
                                         >
                                             <X size={16} />
@@ -256,7 +256,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     )}
                                     <button 
                                         onClick={() => setIsOpen(false)}
-                                        className="text-[10px] font-black uppercase text-[var(--text-secondary)]/40 tracking-wider bg-[var(--bg-secondary)] border border-[var(--border-color)] px-2.5 py-1 rounded-lg select-none shadow-sm hover:border-[var(--text-accent)]/30 hover:text-[var(--text-primary)] transition-all cursor-pointer active:scale-95 hover:bg-[var(--bg-primary)]/80"
+                                        className="text-[10px] font-black uppercase text-[var(--text-primary)] tracking-wider bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg select-none shadow-sm hover:border-[var(--text-accent)] transition-all cursor-pointer active:scale-95"
                                         title="Close search"
                                     >
                                         ESC

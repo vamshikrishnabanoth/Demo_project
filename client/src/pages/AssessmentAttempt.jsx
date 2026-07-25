@@ -318,7 +318,7 @@ export default function AssessmentAttempt() {
         <DashboardLayout role="student">
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <Loader2 size={48} className="animate-spin text-[var(--text-accent)] mb-4" />
-                <p className="text-white/30 font-bold uppercase tracking-widest text-xs">Entering Arena...</p>
+                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs">Entering Arena...</p>
             </div>
         </DashboardLayout>
     );
@@ -326,9 +326,9 @@ export default function AssessmentAttempt() {
     if (error || !quiz) return (
         <DashboardLayout role="student">
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <AlertCircle size={48} className="text-red-400 mb-4" />
-                <p className="text-red-400 font-bold">{error || 'Quiz not found.'}</p>
-                <button onClick={() => navigate('/assessments')} className="mt-6 bg-white/5 border border-white/10 px-6 py-3 rounded-xl text-white font-black text-xs uppercase tracking-widest btn-press">
+                <AlertCircle size={48} className="text-red-500 mb-4" />
+                <p className="text-red-600 font-bold">{error || 'Quiz not found.'}</p>
+                <button onClick={() => navigate('/assessments')} className="mt-6 bg-[var(--bg-primary)] border border-[var(--border-color)] px-6 py-3 rounded-xl text-[var(--text-primary)] font-black text-xs uppercase tracking-widest btn-press">
                     Exit Arena
                 </button>
             </div>
@@ -369,7 +369,7 @@ export default function AssessmentAttempt() {
                             const res = await showConfirm('Abandon Challenge?', 'All active attempt progress will be lost. Are you sure?');
                             if (res.isConfirmed) navigate('/assessments');
                         }}
-                        className="flex items-center gap-2 text-white/30 hover:text-white font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
+                        className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
                     >
                         <ArrowLeft size={14} /> Abandon Challenge
                     </button>
@@ -378,22 +378,22 @@ export default function AssessmentAttempt() {
                             const res = await showConfirm('Go to Dashboard?', 'Attempt progress will not be saved. Return to home dashboard?');
                             if (res.isConfirmed) navigate('/student-dashboard');
                         }}
-                        className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
+                        className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-[var(--bg-accent-hover)] font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
                     >
                         <Home size={14} /> Go to Home
                     </button>
                 </div>
 
                 {/* Progress Details Bar */}
-                <div className="bg-[#0f172a] rounded-[2rem] border border-white/5 p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="bg-[var(--bg-secondary)] rounded-[2rem] border border-[var(--border-color)] p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-xl text-center">
-                            <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Locked</p>
-                            <p className="text-lg font-black text-white">{finalizedCount} / {quiz.questions.length}</p>
+                            <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Locked</p>
+                            <p className="text-lg font-black text-[var(--text-primary)]">{finalizedCount} / {quiz.questions.length}</p>
                         </div>
                         <div className="bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-xl text-center">
-                            <p className="text-[9px] font-black text-yellow-400 uppercase tracking-widest">Skipped</p>
-                            <p className="text-lg font-black text-white">{skippedCount}</p>
+                            <p className="text-[9px] font-black text-yellow-600 uppercase tracking-widest">Skipped</p>
+                            <p className="text-lg font-black text-[var(--text-primary)]">{skippedCount}</p>
                         </div>
                     </div>
 
@@ -406,7 +406,7 @@ export default function AssessmentAttempt() {
                 <TimerBar duration={timerDuration} onTimeUp={handleTimeUp} active={!submitting} key={timerKey} />
 
                 {/* Navigation Dots Map */}
-                <div className="flex items-center justify-center gap-2 flex-wrap mb-8 bg-white/[0.02] border border-white/5 rounded-[2rem] p-6">
+                <div className="flex items-center justify-center gap-2 flex-wrap mb-8 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2rem] p-6">
                     {quiz.questions.map((_, idx) => {
                         const ans = answers[idx];
                         const isCurrent = idx === currentIdx;
@@ -421,7 +421,7 @@ export default function AssessmentAttempt() {
                         let dotClass = "w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border transition-all ";
                         
                         if (isCurrent) {
-                            dotClass += "bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] ring-2 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[#0f172a] scale-110";
+                            dotClass += "bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] ring-2 ring-[var(--bg-accent)] ring-offset-2 ring-offset-[var(--bg-secondary)] scale-110";
                         } else if (isFinalized) {
                             dotClass += "bg-green-500/10 border-green-500/30 text-green-400 cursor-not-allowed opacity-60";
                         } else if (quiz.isAssessment && ans && ans.selectedOption) {
@@ -429,9 +429,9 @@ export default function AssessmentAttempt() {
                         } else if (isSkipped) {
                             dotClass += "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 cursor-pointer";
                         } else if (!isReachable) {
-                            dotClass += "bg-white/5 border-white/5 text-white/20 cursor-not-allowed opacity-40";
+                            dotClass += "bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] cursor-not-allowed opacity-40";
                         } else {
-                            dotClass += "bg-white/10 border-white/10 text-white hover:bg-white/20 cursor-pointer";
+                            dotClass += "bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-primary)] hover:bg-[var(--bg-primary)] cursor-pointer";
                         }
 
                         const handleClick = () => {
@@ -484,14 +484,14 @@ export default function AssessmentAttempt() {
                         initial={{ x: 20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: -20, opacity: 0 }}
-                        className="bg-white/[0.03] border border-white/10 rounded-[2.5rem] p-8 md:p-12 mb-8 shadow-2xl relative"
+                        className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-8 md:p-12 mb-8 shadow-lg relative"
                     >
                         <div className="flex items-start gap-5 mb-10">
                             <div className="w-12 h-12 bg-[var(--bg-accent)] rounded-2xl flex items-center justify-center text-white font-black text-xl italic shrink-0 shadow-lg">
                                 {currentIdx + 1}
                             </div>
                             <div>
-                                <p className="text-white/40 font-bold uppercase tracking-widest text-[9px] mb-1">Active Question</p>
+                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[9px] mb-1">Active Question</p>
                                 <AdaptiveQuestionContainer questionText={currentQ.questionText} />
                             </div>
                         </div>
@@ -499,14 +499,14 @@ export default function AssessmentAttempt() {
                         {/* Options Group or Text Input for Fill-in-the-blank */}
                         {(!currentQ.options || currentQ.options.length <= 1) ? (
                             <div className="space-y-4 mb-8">
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Your Answer Below</label>
+                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Type Your Answer Below</label>
                                 <input
                                     type="text"
                                     value={selected || ''}
                                     onChange={(e) => handleSelect(e.target.value)}
                                     disabled={isQuestionFinalized}
                                     placeholder="Enter short answer..."
-                                    className="w-full p-6 bg-white/5 border-2 border-white/10 rounded-2xl focus:bg-white/10 focus:border-[var(--bg-accent)] transition-all font-bold text-lg text-white placeholder-slate-700 outline-none"
+                                    className="w-full p-6 bg-white border-2 border-[var(--border-color)] rounded-2xl focus:bg-[var(--bg-primary)] focus:border-[var(--bg-accent)] transition-all font-bold text-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 outline-none input-cinematic"
                                 />
                             </div>
                         ) : (
@@ -520,14 +520,14 @@ export default function AssessmentAttempt() {
                                             onClick={() => handleSelect(opt)}
                                             disabled={isFinalizedOption}
                                             className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative overflow-hidden btn-press
-                                                ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-white' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] text-white/80'}
+                                                ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-[var(--text-primary)]' : 'border-[var(--border-color)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] text-[var(--text-primary)]'}
                                                 ${isFinalizedOption ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         >
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-md
-                                                ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-white/10 text-white/60'}`}>
+                                                ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)]'}`}>
                                                 {LETTERS[oi]}
                                             </div>
-                                            <span className="font-bold text-lg flex-1">{opt}</span>
+                                            <span className="font-bold text-base flex-1 text-[var(--text-primary)]">{opt}</span>
                                         </motion.button>
                                     );
                                 })}
@@ -542,7 +542,7 @@ export default function AssessmentAttempt() {
                                         type="button"
                                         onClick={handlePrevious}
                                         disabled={submitting || currentIdx === 0}
-                                        className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-40"
+                                        className="w-full sm:w-auto bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[var(--bg-primary)] transition-all disabled:opacity-40"
                                     >
                                         Previous Question
                                     </button>
@@ -551,7 +551,7 @@ export default function AssessmentAttempt() {
                                             type="button"
                                             onClick={handleSkip}
                                             disabled={submitting}
-                                            className="flex-1 sm:flex-none bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+                                            className="flex-1 sm:flex-none bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[var(--bg-primary)] transition-all"
                                         >
                                             Skip Question
                                         </button>
@@ -559,9 +559,14 @@ export default function AssessmentAttempt() {
                                             type="button"
                                             onClick={handleNext}
                                             disabled={submitting || currentIdx === quiz.questions.length - 1}
-                                            className="flex-1 sm:flex-none bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-102 transition-all flex items-center justify-center gap-2 border-b-4 border-orange-700 disabled:opacity-40"
+                                            className="button flex-1 sm:flex-none disabled:opacity-40 disabled:pointer-events-none"
                                         >
-                                            Next Question <ChevronRight size={16} />
+                                            <span>Next Question</span>
+                                            <svg viewBox="0 0 13 10">
+                                                <polygon points="0.5 0 6.5 5 0.5 10"></polygon>
+                                                <polygon points="4.5 0 10.5 5 4.5 10"></polygon>
+                                                <polygon points="8.5 0 13 5 8.5 10"></polygon>
+                                            </svg>
                                         </button>
                                     </div>
                                 </>
@@ -571,7 +576,7 @@ export default function AssessmentAttempt() {
                                         type="button"
                                         onClick={handleSkip}
                                         disabled={submitting || isQuestionFinalized}
-                                        className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                        className="w-full sm:w-auto bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[var(--bg-primary)] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         Skip & Proceed
                                     </button>
@@ -590,9 +595,9 @@ export default function AssessmentAttempt() {
                 </AnimatePresence>
 
                 {/* Final Submission Card */}
-                <div className="bg-gradient-to-r from-indigo-900/50 to-[var(--bg-accent)]/20 border border-white/10 rounded-[2.5rem] p-8 text-center shadow-2xl">
-                    <h3 className="text-xl font-black italic uppercase text-white mb-2">Conclude Attempt</h3>
-                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-6">You can finalize and submit your responses at any point.</p>
+                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-8 text-center shadow-lg">
+                    <h3 className="text-xl font-black italic uppercase text-[var(--text-primary)] mb-2">Conclude Attempt</h3>
+                    <p className="text-[var(--text-secondary)] text-xs font-bold uppercase tracking-widest mb-6">You can finalize and submit your responses at any point.</p>
                     <button
                         onClick={handleManualSubmitAttempt}
                         disabled={submitting}

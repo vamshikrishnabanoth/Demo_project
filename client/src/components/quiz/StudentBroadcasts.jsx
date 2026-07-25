@@ -258,7 +258,7 @@ export default function StudentBroadcasts({ onDirectJoin }) {
                                             e.stopPropagation();
                                             if (onDirectJoin) onDirectJoin(b.pin);
                                         }}
-                                        className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 py-3.5 rounded-2xl font-black italic uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 flex items-center justify-center gap-2 shadow-xl shadow-amber-400/5 group/btn"
+                                        className="btn-join-quiz-anim w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 py-3.5 rounded-2xl font-black italic uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 flex items-center justify-center gap-2 shadow-xl shadow-amber-400/5 group/btn"
                                     >
                                         <Sparkles size={12} className="animate-pulse" />
                                         {uiTerminology.deployToArena.toUpperCase()}

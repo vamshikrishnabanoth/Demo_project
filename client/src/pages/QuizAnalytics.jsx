@@ -11,22 +11,41 @@ import {
     Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home
 } from 'lucide-react';
 
-const COLORS = ['#0ea5e9', '#3b82f6', '#0284c7', '#38bdf8', '#2563eb'];
+const BLUE_SHADES = [
+    '#133E87', // Deep Navy
+    '#2563EB', // Royal Indigo Blue
+    '#0284C7', // Ocean Blue
+    '#0ea5e9', // Bright Sky Blue
+    '#1d4ed8', // Vivid Blue
+    '#0284c7', // Deep Azure
+    '#3b82f6', // Sapphire Blue
+    '#0369A1', // Midnight Azure
+    '#1e40af', // Dark Cobalt
+    '#38bdf8', // Light Cyan Blue
+];
+const COLORS = BLUE_SHADES;
 const PIE_COLORS = ['#10b981', '#ef4444'];
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
-                <p className="font-bold text-white text-sm tracking-wide">{label}</p>
-                <div className="border-t border-white/10 my-2.5"></div>
-                {payload.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2.5 text-sm">
-                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-                        <span className="text-slate-300 font-medium">{entry.name}:</span>
-                        <span className="font-black text-white">{entry.value}</span>
-                    </div>
-                ))}
+            <div className="bg-white border-2 border-[#9cbcd8] p-4 rounded-2xl shadow-xl backdrop-blur-md" style={{ color: '#0f172a' }}>
+                <p className="font-black text-[#0f172a] text-sm tracking-wide mb-1" style={{ color: '#0f172a' }}>{label || 'Metric'}</p>
+                <div className="border-t border-slate-200 my-2"></div>
+                {payload.map((entry, index) => {
+                    // Resolve exact bin fill color for tooltip bullet & value indicator
+                    const binColor = entry.payload?.fill || entry.fill || entry.color || '#133E87';
+                    return (
+                        <div key={index} className="flex items-center gap-2.5 text-xs py-1" style={{ color: '#0f172a' }}>
+                            <div 
+                                className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs border border-white" 
+                                style={{ backgroundColor: binColor }} 
+                            />
+                            <span className="text-[#334155] font-bold" style={{ color: '#334155' }}>{entry.name}:</span>
+                            <span className="font-black text-sm" style={{ color: binColor }}>{entry.value}</span>
+                        </div>
+                    );
+                })}
             </div>
         );
     }
@@ -229,7 +248,7 @@ export default function QuizAnalytics() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-white/10 pb-8">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <button onClick={() => navigate('/my-quizzes')} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest">
+                            <button onClick={() => navigate('/my-quizzes')} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" style={{ color: '#0f172a' }}>
                                 <ChevronLeft size={16} /> Back to Library
                             </button>
                             <span className="text-slate-400/30">|</span>
@@ -246,11 +265,11 @@ export default function QuizAnalytics() {
                     </div>
 
                     <div className="flex gap-4">
-                        <button onClick={() => handleExport('PDF')} className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all active:scale-95 flex items-center gap-2 shadow-lg text-sm">
-                            <Download size={16} /> PDF
+                        <button onClick={() => handleExport('PDF')} className="bg-white border-2 border-[var(--border-color)] !text-[#0f172a] hover:bg-slate-100 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all active:scale-95 flex items-center gap-2 shadow-md text-sm" style={{ color: '#0f172a' }}>
+                            <Download size={16} className="text-[#0f172a]" /> <span style={{ color: '#0f172a' }}>PDF</span>
                         </button>
-                        <button onClick={() => handleExport('CSV')} className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-indigo-500/20 text-sm">
-                            <FileText size={16} /> CSV
+                        <button onClick={() => handleExport('CSV')} className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] !text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all active:scale-95 flex items-center gap-2 shadow-md text-sm border border-[var(--bg-accent)]" style={{ color: '#ffffff' }}>
+                            <FileText size={16} className="text-white" /> <span style={{ color: '#ffffff' }}>CSV</span>
                         </button>
                     </div>
                 </div>
@@ -258,18 +277,18 @@ export default function QuizAnalytics() {
                 {/* KPI Overview Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-400', bg: 'bg-teal-400/10' },
-                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
-                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-400', bg: 'bg-purple-400/10' },
+                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 border border-blue-200' },
+                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
+                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
+                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
                     ].map((kpi, idx) => (
-                        <div key={idx} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 hover:bg-white/10 transition-all group">
-                            <div className={`p-4 rounded-2xl ${kpi.bg} ${kpi.color} group-hover:scale-110 transition-transform`}>
+                        <div key={idx} className="bg-white border-2 border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#133E87] transition-all duration-300 group">
+                            <div className={`p-4 rounded-2xl ${kpi.bg} ${kpi.color} group-hover:scale-105 transition-transform`}>
                                 <kpi.icon size={28} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{kpi.title}</p>
-                                <p className="text-3xl font-black text-white italic">{kpi.value}</p>
+                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-wider mb-1" style={{ color: '#334155' }}>{kpi.title}</p>
+                                <p className="text-3xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{kpi.value}</p>
                             </div>
                         </div>
                     ))}
@@ -279,22 +298,24 @@ export default function QuizAnalytics() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     {/* Score Distribution */}
-                    <div className="lg:col-span-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
+                    <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                         <div className="flex items-center gap-3 mb-8">
-                            <Activity className="text-indigo-400" size={24} />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Score Distribution</h3>
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
+                                <Activity size={22} />
+                            </div>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Score Distribution</h3>
                         </div>
                         <div className="w-full overflow-x-auto premium-scrollbar">
                             <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={analytics.scoreDistribution} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                                        <XAxis dataKey="range" stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                    <BarChart data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                                        <XAxis dataKey="range" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                         <Bar dataKey="count" name="Count of Students" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                             {analytics.scoreDistribution.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
                                             ))}
                                         </Bar>
                                     </BarChart>
@@ -304,15 +325,17 @@ export default function QuizAnalytics() {
                     </div>
 
                     {/* Participation Rate */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex flex-col">
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex flex-col shadow-sm">
                         <div className="flex items-center gap-3 mb-4">
-                            <Users className="text-teal-400" size={24} />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Participation</h3>
+                            <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
+                                <Users size={22} />
+                            </div>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Participation</h3>
                         </div>
                         <div className="flex-1 flex items-center justify-center relative min-h-[250px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie data={pieData} innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
+                                <PieChart style={{ outline: 'none' }}>
+                                    <Pie data={pieData} innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none" style={{ outline: 'none' }}>
                                         {pieData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                                         ))}
@@ -321,20 +344,20 @@ export default function QuizAnalytics() {
                                 </PieChart>
                             </ResponsiveContainer>
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-4xl font-black text-white italic">
+                                <span className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>
                                     {analytics.participationRate.totalEligible > 0 ? Math.round((analytics.participationRate.attempted / analytics.participationRate.totalEligible) * 100) : 100}%
                                 </span>
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Rate</span>
+                                <span className="text-[10px] font-black text-[#334155] uppercase tracking-widest" style={{ color: '#334155' }}>Rate</span>
                             </div>
                         </div>
                         <div className="flex justify-center gap-6 mt-4">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Attempted</span>
+                                <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Attempted</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Missed</span>
+                                <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Missed</span>
                             </div>
                         </div>
                     </div>
@@ -343,22 +366,24 @@ export default function QuizAnalytics() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Section Performance */}
-                    <div className="lg:col-span-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
+                    <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <Award className="text-yellow-400" size={24} />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Section Mastery</h3>
+                            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                                <Award size={22} />
+                            </div>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Section Mastery</h3>
                         </div>
                         <div className="w-full overflow-x-auto premium-scrollbar pb-2">
                             <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={radarData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                                        <XAxis dataKey="subject" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <YAxis domain={[0, 100]} stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                    <BarChart data={(radarData || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                                        <XAxis dataKey="subject" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                                        <YAxis domain={[0, 100]} stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                         <Bar dataKey="A" name="Avg Score (%)" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                             {radarData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
                                             ))}
                                         </Bar>
                                     </BarChart>
@@ -367,51 +392,127 @@ export default function QuizAnalytics() {
                         </div>
                     </div>
 
-                    {/* Top Students */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
-                        <div className="flex items-center justify-between mb-8">
+                    {/* Top Students / Leaderboard */}
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-lg relative overflow-hidden">
+                        {/* Decorative glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+                        <div className="flex items-center justify-between mb-8 relative z-10">
                             <div className="flex items-center gap-3">
-                                <Trophy className="text-yellow-500" size={24} />
-                                <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Top Performers (Leaderboard)</h3>
+                                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shadow-sm">
+                                    <Trophy size={26} className="text-amber-500" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
+                                        TOP PERFORMERS <span className="text-[#133E87]">(LEADERBOARD)</span>
+                                    </h3>
+                                    <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
+                                        Ranked by score, accuracy & time taken
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                        <div className="space-y-4">
-                            {analytics.topStudents.length > 0 ? analytics.topStudents.map((student, idx) => (
-                                <div key={idx} className="flex items-center justify-between bg-[var(--bg-primary)] border border-white/5 p-4 rounded-2xl hover:bg-[var(--bg-secondary)] transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`min-w-[2.5rem] px-2.5 h-10 rounded-full flex items-center justify-center font-black italic text-lg ${idx === 0 ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50' : idx === 1 ? 'bg-slate-300/20 text-slate-300 border border-slate-300/50' : idx === 2 ? 'bg-amber-600/20 text-amber-600 border border-amber-600/50' : 'bg-[var(--bg-secondary)] text-slate-400'}`}>
-                                            #{student.rank}
+
+                        <div className="space-y-4 relative z-10">
+                            {analytics.topStudents && analytics.topStudents.length > 0 ? analytics.topStudents.map((student, idx) => {
+                                const isFirst = idx === 0;
+                                const isSecond = idx === 1;
+                                const isThird = idx === 2;
+
+                                return (
+                                    <div 
+                                        key={idx} 
+                                        className={`flex items-center justify-between p-5 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md border-2 ${
+                                            isFirst 
+                                                ? 'bg-gradient-to-r from-amber-500/10 via-yellow-400/5 to-amber-500/10 border-amber-400/60 ring-2 ring-amber-400/20' 
+                                                : isSecond 
+                                                ? 'bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 border-slate-300' 
+                                                : isThird 
+                                                ? 'bg-gradient-to-r from-amber-950/5 via-orange-500/5 to-amber-900/5 border-amber-600/40' 
+                                                : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                                        }`}
+                                    >
+                                        {/* Left: Rank badge & Student Info */}
+                                        <div className="flex items-center gap-4">
+                                            {/* Rank Badge */}
+                                            <div 
+                                                className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black italic text-lg shadow-md shrink-0 ${
+                                                    isFirst 
+                                                        ? 'bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 text-slate-950 ring-2 ring-amber-400/50' 
+                                                        : isSecond 
+                                                        ? 'bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 text-slate-900 ring-2 ring-slate-300/50' 
+                                                        : isThird 
+                                                        ? 'bg-gradient-to-br from-amber-600 via-orange-600 to-amber-700 text-white ring-2 ring-amber-600/50' 
+                                                        : 'bg-white border-2 border-slate-300 text-slate-700'
+                                                }`}
+                                            >
+                                                #{student.rank}
+                                            </div>
+
+                                            <div>
+                                                <p className="font-black text-[#0f172a] text-base uppercase tracking-tight" style={{ color: '#0f172a' }}>
+                                                    {student.username}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 border border-slate-300 text-[11px] font-bold text-[#334155]" style={{ color: '#334155' }}>
+                                                        <Clock size={12} className="text-[#334155]" /> 
+                                                        {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-white uppercase">{student.username}</p>
-                                            <p className="text-xs text-slate-500 font-bold tracking-widest uppercase flex items-center gap-1">
-                                                <Clock size={12} /> {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
-                                            </p>
+
+                                        {/* Right: Score & Accuracy Badge */}
+                                        <div className="text-right flex flex-col items-end gap-1">
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-2xl font-black text-[#133E87] italic" style={{ color: '#133E87' }}>
+                                                    {student.score}
+                                                </span>
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                    PTS
+                                                </span>
+                                            </div>
+                                            <span 
+                                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-xs ${
+                                                    student.accuracy >= 80 
+                                                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800' 
+                                                        : student.accuracy >= 50 
+                                                        ? 'bg-blue-500/15 border-blue-500/40 text-blue-800' 
+                                                        : 'bg-amber-500/15 border-amber-500/40 text-amber-800'
+                                                }`}
+                                            >
+                                                ACCURACY: <span className="font-black">{student.accuracy}%</span>
+                                            </span>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xl font-black text-[var(--text-accent)] italic">{student.score}</p>
-                                        <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase">Accuracy: {student.accuracy}%</p>
-                                    </div>
+                                );
+                            }) : (
+                                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 text-[#334155] font-black uppercase tracking-widest text-xs italic" style={{ color: '#334155' }}>
+                                    No attempts recorded yet
                                 </div>
-                            )) : (
-                                <div className="text-center py-10 text-slate-500 font-bold uppercase tracking-widest italic">No attempts yet</div>
                             )}
                         </div>
                     </div>
                 </div>
 
                 {/* Question Performance Chart */}
-                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
+                <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                     <div className="flex items-center gap-3 mb-8">
-                        <Activity className="text-teal-400" size={24} />
-                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Question-Wise Performance</h3>
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
+                            <Activity size={22} />
+                        </div>
+                        <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question-Wise Performance</h3>
                     </div>
                     <div className="w-full overflow-x-auto premium-scrollbar">
                         <div style={{ minWidth: `${Math.max(600, analytics.questionPerformance.length * 60)}px`, height: '300px' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart 
-                                    data={analytics.questionPerformance.map(q => ({ name: `Q${q.questionIndex + 1}`, index: q.questionIndex, correct: q.correct }))} 
+                                    data={(analytics.questionPerformance || []).map((q, idx) => ({ 
+                                        name: `Q${q.questionIndex + 1}`, 
+                                        index: q.questionIndex, 
+                                        correct: q.correct,
+                                        fill: BLUE_SHADES[idx % BLUE_SHADES.length] 
+                                    }))} 
                                     margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
                                     onClick={(state) => {
                                         if (state && state.activePayload && state.activePayload.length) {
@@ -420,10 +521,10 @@ export default function QuizAnalytics() {
                                     }}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                                     <XAxis 
                                         dataKey="name" 
-                                        stroke="#64748b" 
+                                        stroke="#334155" 
                                         tickLine={false} 
                                         axisLine={false} 
                                         tick={(props) => {
@@ -442,8 +543,8 @@ export default function QuizAnalytics() {
                                                         x={x} 
                                                         y={y + 15} 
                                                         textAnchor="middle" 
-                                                        fill="#64748b" 
-                                                        className="font-bold hover:fill-[var(--text-accent)] transition-colors hover:underline"
+                                                        fill="#334155" 
+                                                        className="font-bold hover:fill-[#133E87] transition-colors hover:underline"
                                                         style={{ fontSize: '12px', fontWeight: 700 }}
                                                     >
                                                         {payload.value}
@@ -452,70 +553,77 @@ export default function QuizAnalytics() {
                                             );
                                         }}
                                     />
-                                    <YAxis stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                    <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                                     <Bar dataKey="correct" name="Correct Answers" radius={[8, 8, 0, 0]} maxBarSize={50}>
                                         {analytics.questionPerformance.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            <Cell key={`cell-${index}`} fill={BLUE_SHADES[index % BLUE_SHADES.length]} />
                                         ))}
                                     </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
-                    <p className="text-center text-xs text-slate-500 font-bold uppercase tracking-widest mt-4">Click a bar to view detailed deep analysis</p>
+                    <p className="text-center text-xs text-[#334155] font-bold uppercase tracking-widest mt-4" style={{ color: '#334155' }}>Click a bar to view detailed deep analysis</p>
                 </div>
 
                 {/* Question Performance List */}
-                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
+                <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <AlertCircle className="text-rose-400" size={24} />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Question Insights</h3>
+                            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+                                <AlertCircle size={22} />
+                            </div>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question Insights</h3>
                         </div>
                     </div>
                     
                     <div className="overflow-x-auto premium-scrollbar pb-3 scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
                         <table className="w-full text-left border-collapse table-fixed min-w-[800px]">
                             <thead>
-                                <tr className="border-b border-[var(--border-color)]">
-                                    <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[80px]">Q.No</th>
-                                    <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest min-w-[400px] max-w-[900px] w-auto">Question Text</th>
-                                    <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[130px]">Difficulty</th>
-                                    <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-center w-[130px]">Accuracy</th>
-                                    <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-right w-[130px]">Action</th>
+                                <tr className="border-b-2 border-slate-200">
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[80px]" style={{ color: '#334155' }}>Q.No</th>
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest min-w-[400px] max-w-[900px] w-auto" style={{ color: '#334155' }}>Question Text</th>
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px]" style={{ color: '#334155' }}>Difficulty</th>
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-center w-[130px]" style={{ color: '#334155' }}>Accuracy</th>
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-right w-[130px]" style={{ color: '#334155' }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {analytics.questionPerformance.map((q, idx) => (
-                                    <tr key={idx} className="border-b border-white/5 premium-table-row group">
-                                        <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic">#{idx + 1}</td>
-                                        <td className="p-4 text-sm text-[var(--text-primary)] opacity-90 font-medium">
+                                    <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
+                                        <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
+                                        <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
                                             <div className="max-h-[100px] overflow-y-auto premium-scrollbar pr-2 break-words overflow-wrap-anywhere whitespace-normal leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
                                                 {q.questionText}
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest ${q.difficulty === 'Easy' ? 'bg-green-500/10 text-green-400' : q.difficulty === 'Hard' ? 'bg-rose-500/10 text-rose-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                                            <span className={`text-[10px] font-black px-3 py-1 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
+                                                q.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
+                                                q.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
+                                                'bg-amber-100 border-amber-400 text-amber-800'
+                                            }`}>
                                                 {q.difficulty}
                                             </span>
                                         </td>
                                         <td className="p-4 text-center">
                                             <div className="flex flex-col items-center gap-1">
-                                                <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-green-400' : q.accuracy < 40 ? 'text-rose-400' : 'text-yellow-400'}`}>
+                                                <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-emerald-700' : q.accuracy < 40 ? 'text-rose-700' : 'text-amber-700'}`}>
                                                     {q.accuracy}%
                                                 </span>
-                                                <div className="w-20 h-1.5 bg-black/40 rounded-full overflow-hidden">
-                                                    <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-green-400' : q.accuracy < 40 ? 'bg-rose-400' : 'bg-yellow-400'}`} style={{ width: `${q.accuracy}%` }}></div>
+                                                <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                                                    <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-emerald-600' : q.accuracy < 40 ? 'bg-rose-600' : 'bg-amber-500'}`} style={{ width: `${q.accuracy}%` }}></div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-4 text-right">
                                             <Link 
                                                 to={`/analytics/question/${id}/${idx}`}
-                                                className="inline-flex items-center gap-1 bg-[var(--bg-primary)] hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)] text-[var(--text-secondary)] px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 border border-[var(--border-color)]"
+                                                className="inline-flex items-center gap-1.5 bg-[#133E87] hover:bg-[#0d2d65] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[#133E87] text-white-force"
+                                                style={{ color: '#ffffff' }}
                                             >
-                                                Analyze <ArrowRight size={12} />
+                                                <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
                                             </Link>
                                         </td>
                                     </tr>
@@ -527,26 +635,28 @@ export default function QuizAnalytics() {
 
                 {/* Tactical Memory Map Leaderboard */}
                 {analytics.leaderboard && analytics.leaderboard.length > 0 && (
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem]">
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                             <div className="flex items-center gap-3">
-                                <Users className="text-[var(--text-accent)]" size={24} />
-                                <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Tactical Memory Map</h3>
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                                    <Users size={22} />
+                                </div>
+                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Tactical Memory Map</h3>
                             </div>
                             
                             {/* Legend */}
-                            <div className="flex flex-wrap items-center gap-4 bg-white/[0.02] border border-white/5 rounded-2xl px-4 py-2 text-xs">
-                                <span className="font-bold text-white/40 uppercase tracking-widest text-[9px]">Legend:</span>
-                                <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                                    <span className="w-5 h-5 rounded bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-[10px]">✓</span>
+                            <div className="flex flex-wrap items-center gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-5 py-2.5 text-xs shadow-xs">
+                                <span className="font-black text-[#334155] uppercase tracking-widest text-[10px]" style={{ color: '#334155' }}>LEGEND:</span>
+                                <div className="flex items-center gap-2 text-emerald-800 font-black">
+                                    <span className="w-6 h-6 rounded-lg bg-emerald-100 border-2 border-emerald-400 text-emerald-700 flex items-center justify-center text-xs font-black shadow-xs">✓</span>
                                     Correct
                                 </div>
-                                <div className="flex items-center gap-1.5 text-rose-400 font-bold">
-                                    <span className="w-5 h-5 rounded bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-[10px]">✗</span>
+                                <div className="flex items-center gap-2 text-rose-800 font-black">
+                                    <span className="w-6 h-6 rounded-lg bg-rose-100 border-2 border-rose-400 text-rose-700 flex items-center justify-center text-xs font-black shadow-xs">✗</span>
                                     Incorrect
                                 </div>
-                                <div className="flex items-center gap-1.5 text-white/40 font-bold">
-                                    <span className="w-5 h-5 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px]">-</span>
+                                <div className="flex items-center gap-2 text-[#334155] font-black" style={{ color: '#334155' }}>
+                                    <span className="w-6 h-6 rounded-lg bg-slate-100 border-2 border-slate-300 text-slate-500 flex items-center justify-center text-xs font-black">-</span>
                                     Skipped
                                 </div>
                             </div>
@@ -555,37 +665,39 @@ export default function QuizAnalytics() {
                         <div className="overflow-x-auto premium-scrollbar pb-3">
                             <table className="w-full text-left border-collapse min-w-[800px]">
                                 <thead>
-                                    <tr className="border-b border-[var(--border-color)]">
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[80px] text-center">Rank</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest w-[200px]">Student</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest">Question Markings</th>
-                                        <th className="p-4 text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest text-center w-[120px]">Current Score</th>
+                                    <tr className="border-b-2 border-slate-200">
+                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[80px] text-center" style={{ color: '#334155' }}>Rank</th>
+                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[200px]" style={{ color: '#334155' }}>Student</th>
+                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest" style={{ color: '#334155' }}>Question Markings</th>
+                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-center w-[120px]" style={{ color: '#334155' }}>Current Score</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {analytics.leaderboard.map((student, idx) => (
-                                        <tr key={idx} className="border-b border-white/5 premium-table-row group">
-                                            <td className="p-4 text-sm font-black text-[var(--text-secondary)] opacity-80 italic text-center tracking-normal"><span className="inline-block px-2 py-0.5">#{student.rank}</span></td>
+                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
+                                            <td className="p-4 text-sm font-black text-[#0f172a] italic text-center tracking-normal" style={{ color: '#0f172a' }}>
+                                                <span className="inline-block px-3 py-1 rounded-lg bg-slate-100 border border-slate-300">#{student.rank}</span>
+                                            </td>
                                             <td className="p-4 text-left">
-                                                <p className="font-black text-white uppercase text-sm">{student.username}</p>
-                                                <p className="text-[10px] text-[var(--text-secondary)] opacity-50 font-mono mt-0.5">{student.id}</p>
+                                                <p className="font-black text-[#0f172a] uppercase text-sm" style={{ color: '#0f172a' }}>{student.username}</p>
+                                                <p className="text-[10px] text-[#334155] font-mono mt-0.5" style={{ color: '#334155' }}>{student.id}</p>
                                             </td>
                                             <td className="p-4">
-                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                <div className="flex items-center gap-2 flex-wrap">
                                                     {analytics.questionPerformance.map((q, qIdx) => {
                                                         const studentAns = (student.answers || []).find(a => a.questionText === q.questionText);
                                                         const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
                                                         const isCorrect = studentAns?.isCorrect === true;
 
-                                                        let dotClass = 'bg-white/5 border-white/10 text-white/30';
+                                                        let dotClass = 'bg-slate-100 border-2 border-slate-300 text-slate-400';
                                                         let iconText = '-';
 
                                                         if (isAnswered) {
                                                             if (isCorrect) {
-                                                                dotClass = 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400';
+                                                                dotClass = 'bg-emerald-100 border-2 border-emerald-400 text-emerald-700 font-black shadow-xs';
                                                                 iconText = '✓';
                                                             } else {
-                                                                dotClass = 'bg-rose-500/20 border-rose-500/40 text-rose-400';
+                                                                dotClass = 'bg-rose-100 border-2 border-rose-400 text-rose-700 font-black shadow-xs';
                                                                 iconText = '✗';
                                                             }
                                                         }
@@ -594,7 +706,7 @@ export default function QuizAnalytics() {
                                                             <div
                                                                 key={qIdx}
                                                                 title={`Q${qIdx + 1}: ${isAnswered ? (isCorrect ? 'Correct' : 'Incorrect') : 'Skipped/Not Attempted'}`}
-                                                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black border transition-all ${dotClass}`}
+                                                                className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black transition-all transform hover:scale-110 ${dotClass}`}
                                                             >
                                                                 {iconText}
                                                             </div>
@@ -603,7 +715,7 @@ export default function QuizAnalytics() {
                                                 </div>
                                             </td>
                                             <td className="p-4 text-center">
-                                                <span className="text-lg font-black italic text-[var(--text-accent)]">{student.score}</span>
+                                                <span className="text-xl font-black italic text-[#133E87]" style={{ color: '#133E87' }}>{student.score}</span>
                                             </td>
                                         </tr>
                                     ))}

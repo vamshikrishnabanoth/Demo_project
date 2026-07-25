@@ -63,17 +63,18 @@ const AssessmentsHistory = () => {
         <DashboardLayout role="student">
             <div className="max-w-6xl mx-auto py-8">
                 
-                {/* Cinematic Header Banner (Enterprise Aesthetic) */}
+                {/* Cinematic Header Banner */}
                 <motion.div 
-                    initial={{ opacity: 0, y: -40 }}
+                    initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="relative overflow-hidden bg-gradient-to-br from-[#0a0a0b] via-[var(--bg-secondary)] to-[#050506] rounded-[3.5rem] border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.8)] mb-12"
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative overflow-hidden bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-primary)] to-[var(--bg-secondary)] rounded-[2.5rem] border border-[var(--border-color)] shadow-lg mb-10"
                 >
-                    {/* Atmospheric Lighting */}
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--bg-accent)]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/4" />
-                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/4" />
+                    {/* Accent glow blobs */}
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--bg-accent)]/8 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-56 h-56 bg-blue-500/5 blur-[60px] rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
                     
-                    <div className="relative z-10 px-10 py-10 sm:px-14 sm:py-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                    <div className="relative z-10 px-8 py-10 sm:px-12 sm:py-12 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                         <div className="space-y-4">
                             <motion.div 
                                 initial={{ x: -20, opacity: 0 }}
@@ -81,92 +82,100 @@ const AssessmentsHistory = () => {
                                 transition={{ delay: 0.2 }}
                                 className="flex items-center gap-3"
                             >
-                                <div className="h-[2px] w-10 bg-[var(--bg-accent)] rounded-full shadow-[0_0_10px_var(--bg-accent-glow)]" />
+                                <div className="h-[2px] w-10 bg-[var(--bg-accent)] rounded-full" />
                                 <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-[0.6em] italic">Session Analytics</p>
                             </motion.div>
                             
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white italic uppercase tracking-tighter leading-[0.95]">
+                            <h1 className="text-4xl sm:text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-[0.95]">
                                 Quiz History <br />
-                                <span className="text-[var(--text-accent)] drop-shadow-[0_0_30px_var(--bg-accent-glow)]">& Yields</span>
+                                <span className="text-[var(--text-accent)]">&amp; Yields</span>
                             </h1>
                             
-                            <p className="text-sm font-medium text-white/50 max-w-xl leading-relaxed">
+                            <p className="text-sm font-medium text-[var(--text-secondary)] max-w-xl leading-relaxed">
                                 A comprehensive repository of your tactical evolution and performance yields. Every session analyzed for your academic progression.
                             </p>
                         </div>
-                        {/* Animated Kinetic Icon with Magnetic Shimmer */}
-                        <motion.div 
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8, type: "spring" }}
-                            className="relative flex items-center justify-center lg:pr-6"
-                        >
-                            <motion.div 
-                                animate={{ 
-                                    rotateX: [0, 10, -10, 0],
-                                    rotateY: [0, -15, 15, 0],
-                                    y: [-5, 5, -5]
-                                }}
-                                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                                className="w-24 h-24 sm:w-32 sm:h-32 rounded-[2rem] bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center relative backdrop-blur-3xl overflow-hidden group shadow-[0_0_40px_rgba(215,172,40,0.15)]"
-                                style={{ perspective: "1000px" }}
+
+                        {/* Interactive Hero Icon Container — Represents Quiz History & Yields */}
+                        <div className="relative flex items-center justify-center lg:pr-6 shrink-0 select-none">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                whileHover="hover"
+                                whileTap="tap"
+                                className="relative flex items-center justify-center group cursor-pointer"
                             >
-                                {/* Neural Light Sweep */}
+                                {/* Outer Pulsing Ambient Glow (Ignites on Hover) */}
                                 <motion.div 
-                                    animate={{ 
-                                        left: ["-100%", "200%"] 
+                                    variants={{
+                                        hover: { scale: 1.25, opacity: 0.8 },
+                                        initial: { scale: 1, opacity: 0 }
                                     }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-                                    className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45"
+                                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                    className="absolute inset-0 rounded-[2.5rem] bg-[var(--bg-accent)]/20 blur-xl pointer-events-none"
                                 />
-                                <motion.div 
-                                    animate={{ 
-                                        scale: [1, 1.1, 1],
-                                        filter: ["drop-shadow(0 0 10px rgba(215, 172, 40, 0.4))", "drop-shadow(0 0 30px rgba(215, 172, 40, 0.7))", "drop-shadow(0 0 10px rgba(215, 172, 40, 0.4))"]
+
+                                {/* Glowing Border Pulse */}
+                                <motion.div
+                                    variants={{
+                                        hover: { scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] },
                                     }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                    className="text-[var(--text-accent)] relative z-10"
+                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                    className="absolute -inset-1 rounded-[2.4rem] bg-[var(--bg-accent)] opacity-0 group-hover:opacity-100 blur-xs transition-opacity duration-300 pointer-events-none"
+                                />
+
+                                {/* Main Glass Card Container */}
+                                <motion.div
+                                    variants={{
+                                        initial: { y: 0, scale: 1 },
+                                        hover: { y: -8, scale: 1.06 },
+                                        tap: { scale: 0.95 }
+                                    }}
+                                    transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+                                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2.2rem] bg-white border-2 border-[var(--border-color)] group-hover:border-[var(--bg-accent)] flex items-center justify-center relative shadow-xl group-hover:shadow-[0_20px_40px_var(--bg-accent-glow)] transition-colors duration-300 z-10 overflow-hidden"
                                 >
-                                    <Clock size={48} strokeWidth={1.5} />
+                                    {/* Ambient Reflection */}
+                                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/90 to-transparent pointer-events-none" />
+
+                                    {/* Primary History Icon — Elastic Counter-Clockwise Rewind Spin on Hover */}
+                                    <motion.div
+                                        variants={{
+                                            initial: { rotate: 0, scale: 1 },
+                                            hover: { rotate: -360, scale: 1.15 }
+                                        }}
+                                        transition={{ duration: 0.75, ease: [0.34, 1.56, 0.64, 1] }}
+                                        className="text-[#133E87] group-hover:text-[#2563EB] relative z-10 flex items-center justify-center transition-colors duration-300"
+                                    >
+                                        <History size={52} strokeWidth={2.25} className="drop-shadow-md" />
+                                    </motion.div>
                                 </motion.div>
-                                
-                                {/* Orbital Ring */}
-                                <motion.div 
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 border border-[var(--bg-accent)]/20 rounded-[3rem] border-dashed"
-                                />
                             </motion.div>
-                        </motion.div>
+                        </div>
                     </div>
                 </motion.div>
-                {/* Tactical Controls Row */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6 px-4">
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                        <div className="relative flex-1 md:w-96">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-[var(--text-accent)] drop-shadow-[0_0_10px_rgba(255,183,0,0.5)]" size={20} />
-                            <input 
-                                type="text"
-                                placeholder="Query the repositories..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-[var(--bg-secondary)] backdrop-blur-xl border-2 border-white/10 rounded-[1.5rem] py-4 pl-16 pr-8 text-white text-base font-black placeholder:text-white/60 focus:outline-none focus:border-[var(--text-accent)] focus:bg-white/10 transition-all shadow-2xl"
-                            />
-                        </div>
+                {/* Controls Row */}
+                <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4 px-1">
+                    <div className="relative flex-1 w-full md:max-w-sm">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-accent)]" size={18} />
+                        <input 
+                            type="text"
+                            placeholder="Search quizzes or topics..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-[#ffffff] border-2 border-[#9cbcd8] rounded-2xl py-3.5 pl-12 pr-5 text-[#0f172a] text-sm font-bold placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
+                        />
                     </div>
-                    <div className="flex gap-4 w-full md:w-auto">
-                        <div className="relative w-full md:w-56">
-                            <Filter className="absolute left-6 top-1/2 -translate-y-1/2 text-[var(--text-accent)]" size={16} />
-                            <select 
-                                value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className="w-full bg-[var(--bg-secondary)] backdrop-blur-xl border-2 border-white/10 rounded-[1.5rem] py-4 pl-14 pr-8 text-white font-black text-[10px] uppercase tracking-[0.2em] focus:outline-none focus:border-[var(--text-accent)] transition-all appearance-none cursor-pointer shadow-2xl"
-                            >
-                                <option value="all" className="bg-[var(--bg-secondary)]">All Status</option>
-                                <option value="completed" className="bg-[var(--bg-secondary)]">Completed</option>
-                                <option value="missed" className="bg-[var(--bg-secondary)]">Missed</option>
-                            </select>
-                        </div>
+                    <div className="relative w-full md:w-48">
+                        <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-accent)]" size={15} />
+                        <select 
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl py-3.5 pl-11 pr-5 text-[var(--text-primary)] font-black text-[11px] uppercase tracking-wider focus:outline-none focus:border-[var(--bg-accent)] transition-all appearance-none cursor-pointer shadow-sm"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="missed">Missed</option>
+                        </select>
                     </div>
                 </div>
                 {/* Imperial Row List */}
@@ -180,11 +189,13 @@ const AssessmentsHistory = () => {
                                 <motion.div
                                     key={item.id || `hist-${index}`}
                                     layout
-                                    initial={{ opacity: 0, x: -30 }}
+                                    initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    transition={{ delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                                    className={`glass-panel rounded-[2.5rem] ${isFirst ? 'border-[var(--text-accent)] shadow-[0_0_50px_rgba(215,172,40,0.15)]' : 'border-white/5'} transition-all group relative overflow-hidden`}
+                                    exit={{ opacity: 0, scale: 0.97 }}
+                                    transition={{ delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                                    className={`bg-[var(--bg-secondary)] rounded-3xl border transition-all group relative overflow-hidden shadow-sm hover:shadow-md ${
+                                        isFirst ? 'border-[var(--text-accent)] shadow-[0_0_20px_rgba(215,172,40,0.12)]' : 'border-[var(--border-color)] hover:border-[var(--bg-accent)]/40'
+                                    }`}
                                 >
                                     {isFirst && <div className="rank-shine-overlay" />}
                                     
@@ -192,17 +203,17 @@ const AssessmentsHistory = () => {
                                         {/* Top Section */}
                                         <div className="flex flex-col lg:flex-row justify-between gap-8 mb-8">
                                             <div className="space-y-3">
-                                                <h3 className="text-xl md:text-2xl font-black text-white italic uppercase tracking-tighter group-hover:text-[var(--text-accent)] transition-colors leading-tight">
+                                                <h3 className="text-xl md:text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter group-hover:text-[var(--text-accent)] transition-colors leading-tight">
                                                     {item.title}
                                                 </h3>
-                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] opacity-80">
+                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)]">
                                                     <div className="flex items-center gap-2">
                                                         <User size={14} className="text-[var(--text-accent)]" />
-                                                        Conducted by: <span className="text-white">{item.conductedBy}</span>
+                                                        Conducted by: <span className="text-[var(--text-primary)]">{item.conductedBy}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <Book size={14} className="text-[var(--text-accent)]" />
-                                                        Subject: <span className="text-white">{item.subject}</span>
+                                                        Subject: <span className="text-[var(--text-primary)]">{item.subject}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -213,14 +224,14 @@ const AssessmentsHistory = () => {
                                                     { label: 'Ended Time', val: formatTime(item.completedAt) }
                                                 ].map((t, i) => (
                                                     <div key={i}>
-                                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-1">{t.label}</p>
-                                                        <p className="text-sm font-black text-white italic">{t.val}</p>
+                                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-1">{t.label}</p>
+                                                        <p className="text-sm font-black text-[var(--text-primary)] italic">{t.val}</p>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                         {/* Score & Action System */}
-                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-white/5 pt-6">
+                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[var(--border-color)] pt-5">
                                             <div className="flex flex-wrap items-center gap-3">
                                                 {item.isAttempted ? (
                                                     <>
@@ -247,19 +258,20 @@ const AssessmentsHistory = () => {
                                                     <>
                                                         <button 
                                                             onClick={() => navigate(`/report/${item.id}`)}
-                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all btn-press"
+                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] font-black text-[10px] uppercase tracking-[0.2em] hover:border-[var(--bg-accent)] transition-all"
                                                         >
                                                             <Activity size={16} className="text-[var(--text-accent)]" aria-hidden="true" /> View Report
                                                         </button>
                                                         <button 
-                                                            onClick={() => navigate(`/report/${item.id}`, { state: { showAnalytics: true } })}
-                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all btn-press shadow-lg shadow-[var(--bg-accent-glow)]"
-                                                        >
-                                                            <Activity size={16} aria-hidden="true" /> View Analytics
-                                                        </button>
+                                                    onClick={() => navigate(`/report/${item.id}`, { state: { showAnalytics: true } })}
+                                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--bg-accent)] !text-white font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-md"
+                                                    style={{ color: '#ffffff' }}
+                                                >
+                                                    <Activity size={16} aria-hidden="true" /> View Analytics
+                                                </button>
                                                     </>
                                                 ) : (
-                                                    <button className="w-full sm:w-auto px-8 py-3 rounded-xl bg-white/5 text-white/20 font-black text-[10px] uppercase tracking-widest border border-white/5 cursor-not-allowed">
+                                                    <button className="w-full sm:w-auto px-8 py-2.5 rounded-xl bg-[var(--bg-primary)] text-[var(--text-secondary)] font-black text-[10px] uppercase tracking-widest border border-[var(--border-color)] cursor-not-allowed opacity-60">
                                                         Locked
                                                     </button>
                                                 )}
@@ -276,11 +288,11 @@ const AssessmentsHistory = () => {
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-center py-40 glass-panel rounded-[3rem] border border-white/5"
+                        className="text-center py-32 bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] shadow-sm"
                     >
-                        <Trophy size={100} className="mx-auto text-white/5 mb-8" />
-                        <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">The Archives are Empty</h3>
-                        <p className="text-[var(--text-secondary)] opacity-70 font-black uppercase tracking-[0.3em] text-[10px]">
+                        <Trophy size={80} className="mx-auto text-[var(--border-color)] mb-6" />
+                        <h3 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter mb-3">The Archives are Empty</h3>
+                        <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px]">
                             No assessment records found.
                         </p>
                     </motion.div>

@@ -18,7 +18,7 @@ export const PremiumButton = ({
     primary: 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg active:shadow-inner',
     secondary: 'bg-white/5 text-white border border-white/10 hover:bg-white/10',
     danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20',
-    ghost: 'bg-transparent text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+    ghost: 'bg-white text-[var(--text-primary)] border-2 border-[var(--border-color)] hover:border-[var(--bg-accent)] hover:bg-slate-50'
   };
 
   return (
@@ -45,6 +45,7 @@ export const PremiumButton = ({
 /**
  * PremiumInput
  * A specialized input with zero-jitter focus states and premium typography.
+ * Updated: label + icon colors corrected for light-theme contrast (WCAG AA).
  */
 export const PremiumInput = ({ 
   label, 
@@ -59,15 +60,15 @@ export const PremiumInput = ({
   ...props 
 }) => {
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-2 w-full">
       {label && (
-        <label className="block text-[10px] font-black text-white/20 uppercase tracking-[0.3em] ml-4">
+        <label className="block text-xs font-bold text-[var(--text-primary)] ml-1">
           {label}
         </label>
       )}
       <div className="relative group">
         {Icon && (
-          <div className={`absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none transition-colors ${value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/40'} group-focus-within:text-[var(--text-accent)]`}>
+          <div className={`absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors ${value ? 'text-[var(--text-accent)]' : 'text-[var(--text-secondary)]'} group-focus-within:text-[var(--text-accent)]`}>
             <Icon size={18} />
           </div>
         )}
@@ -77,26 +78,27 @@ export const PremiumInput = ({
           onChange={onChange}
           placeholder={placeholder}
           className={`
-            w-full bg-white/[0.03] border border-white/5 rounded-2xl py-5 
-            ${Icon ? 'pl-14' : 'pl-6'} ${EndIcon ? 'pr-14' : 'pr-6'} 
-            text-white font-black tracking-wide focus:outline-none 
-            focus:border-[var(--bg-accent)]/50 focus:bg-white/[0.08] 
-            premium-transition input-no-jitter ${className}
+            w-full bg-white border border-[var(--border-color)] rounded-2xl py-4
+            ${Icon ? 'pl-12' : 'pl-5'} ${EndIcon ? 'pr-12' : 'pr-5'} 
+            text-[var(--text-primary)] font-semibold tracking-wide focus:outline-none 
+            focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)]
+            placeholder:text-[var(--text-secondary)]/60
+            premium-transition input-cinematic ${className}
           `}
           {...props}
         />
         {EndIcon && (
-          <div className="absolute inset-y-0 right-0 pr-6 flex items-center">
+          <div className="absolute inset-y-0 right-0 pr-5 flex items-center">
             {onEndIconClick ? (
               <button
                 type="button"
                 onClick={onEndIconClick}
-                className={`transition-all active:scale-90 ${value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/60 hover:text-white'}`}
+                className={`eye-toggle transition-all active:scale-90 ${value ? 'text-[var(--text-accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
               >
-                <EndIcon size={18} className="drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
+                <EndIcon size={18} />
               </button>
             ) : (
-              <div className={value ? 'text-[var(--text-accent)] opacity-100' : 'text-white/60'}>
+              <div className={value ? 'text-[var(--text-accent)]' : 'text-[var(--text-secondary)]'}>
                 <EndIcon size={18} />
               </div>
             )}
@@ -110,17 +112,18 @@ export const PremiumInput = ({
 /**
  * GlassCard
  * A cinematic container with backdrop blur, depth-borders, and ambient lighting.
+ * Updated: border changed from near-invisible white/5 to themed border-color for light-bg contrast.
  */
 export const GlassCard = ({ children, className = '', hover = true }) => {
   return (
     <motion.div
       whileHover={hover ? { y: -5, transition: { duration: 0.25 } } : {}}
       className={`
-        glass-panel p-8 sm:p-12 rounded-[3rem] border border-white/5 
+        glass-panel p-8 sm:p-12 rounded-[3rem] border border-[var(--border-color)]
         relative overflow-hidden group premium-transition ${className}
       `}
     >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-white/10 transition-colors" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-[var(--bg-accent)]/10 transition-colors" />
       <div className="relative z-10">{children}</div>
     </motion.div>
   );

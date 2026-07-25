@@ -1,10 +1,33 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle, Brain, Zap, Target, Trophy, Sparkles, BookOpen, ArrowRight, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
 import { PremiumButton, PremiumInput, GlassCard } from '../components/ui/Primitives';
+
+/* ── Floating background icon ────────────────────────────────────────────── */
+const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
+    <motion.div
+        className="floating-icon text-[#0d2d65]"
+        style={{ top, left, fontSize: size, color: '#0d2d65' }}
+        initial={{ opacity: 0.75, y: 20 }}
+        animate={{
+            opacity: [0.7, 0.85, 0.95, 0.85, 0.7],
+            y: [0, -30, -15, -40, 0],
+            x: [0, 10, -5, 8, 0],
+            rotate: [0, 8, -5, 10, 0],
+        }}
+        transition={{
+            duration: duration || 12,
+            repeat: Infinity,
+            delay: delay || 0,
+            ease: 'easeInOut',
+        }}
+    >
+        <Icon size={size} strokeWidth={2.4} style={{ color: '#0d2d65', stroke: '#0d2d65' }} />
+    </motion.div>
+);
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,15 +37,30 @@ export default function Login() {
     const [isColdStart, setIsColdStart] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
     const coldStartTimer = useRef(null);
+    const typingTimer = useRef(null);
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
     const { username, email, password } = formData;
 
+    // Floating icons configuration — memoized so they don't re-render
+    const floatingIcons = useMemo(() => [
+        { Icon: Brain,    size: 36, top: '8%',  left: '8%',  delay: 0,   duration: 14 },
+        { Icon: Zap,      size: 28, top: '15%', left: '85%', delay: 2,   duration: 11 },
+        { Icon: Target,   size: 32, top: '70%', left: '10%', delay: 1.5, duration: 16 },
+        { Icon: Trophy,   size: 30, top: '75%', left: '88%', delay: 3,   duration: 13 },
+        { Icon: Sparkles, size: 24, top: '40%', left: '5%',  delay: 4,   duration: 15 },
+        { Icon: BookOpen, size: 26, top: '45%', left: '92%', delay: 2.5, duration: 12 },
+    ], []);
+
     // Cleanup cold-start timer on unmount
     useEffect(() => {
-        return () => { if (coldStartTimer.current) clearTimeout(coldStartTimer.current); };
+        return () => {
+            if (coldStartTimer.current) clearTimeout(coldStartTimer.current);
+            if (typingTimer.current) clearTimeout(typingTimer.current);
+        };
     }, []);
 
     // ── Wake up Render server the moment the login page loads ─────────────────
@@ -47,6 +85,11 @@ export default function Login() {
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (errorMsg) setErrorMsg('');
+
+        // Typing glow effect
+        setIsTyping(true);
+        clearTimeout(typingTimer.current);
+        typingTimer.current = setTimeout(() => setIsTyping(false), 1500);
     };
 
     const onSubmit = async e => {
@@ -94,31 +137,36 @@ export default function Login() {
         <div className="min-h-screen bg-[var(--bg-primary)] relative overflow-y-auto py-12 sm:py-20 flex flex-col items-center justify-start">
             <CinematicBackground />
             
-            <div className="w-full max-w-md px-6 relative z-10 space-y-12 my-auto">
+            {/* Floating Academic Icons */}
+            {floatingIcons.map((icon, i) => (
+                <FloatingIcon key={i} {...icon} />
+            ))}
+
+            <div className="w-full max-w-md px-6 relative z-10 space-y-10 my-auto">
                 
                 {/* Branding Hierarchy */}
                 <motion.div 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col items-center"
+                    className="flex flex-col items-center text-center"
                 >
-                    <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl mb-6 border border-white/20 p-3">
-                        <img 
-                            src="/logo.png" 
-                            alt="KMIT Logo" 
-                            className="w-full h-full object-contain" 
-                            loading="eager"
-                            decoding="async"
-                        />
-                    </div>
-                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_15px_var(--bg-accent-glow)]">
+                    <motion.div
+                        whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                        className="bg-white p-4 rounded-3xl shadow-lg mb-5 border border-[var(--border-color)] flex items-center justify-center w-20 h-20"
+                    >
+                        <GraduationCap size={44} className="text-[var(--text-primary)] stroke-[2.2]" />
+                    </motion.div>
+                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-[var(--text-primary)]">
                         KMIT <span className="text-[var(--text-accent)]">KAHOOT</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[9px] mt-2 opacity-70">Academic Assessment Hub</p>
+                    <p className="text-[var(--text-secondary)] font-bold text-sm tracking-wide mt-1">
+                        academic assessment hub
+                    </p>
                 </motion.div>
 
-                {/* Authentication Card */}
-                <GlassCard className="!p-8 sm:!p-10 shadow-2xl relative">
+                {/* Authentication Card — with typing glow */}
+                <GlassCard className={`!p-8 sm:!p-10 shadow-xl relative rounded-[2.5rem] bg-white border border-[var(--border-color)] ${isTyping ? 'is-typing' : ''}`}>
                     <AnimatePresence mode="wait">
                         <motion.div 
                             key={isLogin ? 'signin' : 'signup'}
@@ -126,19 +174,19 @@ export default function Login() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: isLogin ? 10 : -10 }}
                             transition={{ duration: 0.2 }}
-                            className="space-y-8"
+                            className="space-y-6"
                         >
-                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
-                                {isLogin ? <LogIn className="text-[var(--text-accent)]" /> : <UserPlus className="text-[var(--text-accent)]" />}
-                                {isLogin ? 'Sign In' : 'Create Account'}
+                            <h2 className="text-xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2.5">
+                                {isLogin ? <LogIn className="text-[var(--text-primary)]" size={20} /> : <UserPlus className="text-[var(--text-primary)]" size={20} />}
+                                {isLogin ? 'sign in' : 'create account'}
                             </h2>
 
-                            <form onSubmit={onSubmit} className="space-y-6">
+                            <form onSubmit={onSubmit} className="space-y-5">
                                 {!isLogin && (
                                     <PremiumInput
                                         label="Username"
                                         name="username"
-                                        placeholder="Username"
+                                        placeholder="Enter your username"
                                         value={username}
                                         onChange={onChange}
                                         icon={User}
@@ -147,9 +195,9 @@ export default function Login() {
                                 )}
 
                                 <PremiumInput
-                                    label="Roll Number / Email"
+                                    label="roll number / email"
                                     name="email"
-                                    placeholder="Enter your email"
+                                    placeholder="teacher1"
                                     value={email}
                                     onChange={onChange}
                                     icon={Mail}
@@ -157,7 +205,7 @@ export default function Login() {
                                 />
 
                                 <PremiumInput
-                                    label="Password"
+                                    label="password"
                                     name="password"
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="••••••••"
@@ -173,40 +221,70 @@ export default function Login() {
                                     <motion.div 
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
-                                        className="bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest p-4 rounded-xl flex items-center gap-3"
+                                        className="bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-bold p-4 rounded-xl flex items-center gap-3"
                                     >
                                         <XCircle size={16} /> {errorMsg}
                                     </motion.div>
                                 )}
 
-                                <PremiumButton
+                                <motion.button
+                                    whileHover={{ scale: 1.02, y: -1 }}
+                                    whileTap={{ scale: 0.98 }}
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full py-5"
-                                    icon={isSubmitting ? Loader2 : (submitStatus === 'success' ? CheckCircle2 : LogIn)}
+                                    className="relative w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wider shadow-lg transition-all duration-300 overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                    style={{
+                                        background: 'var(--bg-accent)',
+                                        color: 'var(--text-on-accent)'
+                                    }}
                                 >
-                                    {isSubmitting 
-                                        ? (isColdStart ? 'WAKING UP SERVER...' : 'VERIFYING...') 
-                                        : (isLogin ? 'SIGN IN' : 'INITIALIZE')}
-                                </PremiumButton>
+                                    {/* Subtle Theme Shimmer Sweep Animation */}
+                                    <motion.div 
+                                        animate={{ x: ['-100%', '200%'] }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none"
+                                    />
+
+                                    {/* Button Content */}
+                                    <div className="relative z-10 flex items-center justify-center gap-3 text-white">
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 size={18} className="animate-spin text-white" />
+                                                <span className="text-white font-bold" style={{ color: '#ffffff' }}>
+                                                    {isColdStart ? 'waking up server...' : 'verifying credentials...'}
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="text-white font-bold" style={{ color: '#ffffff' }}>
+                                                    {isLogin ? 'sign in' : 'create account'}
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                </motion.button>
 
                                 {isColdStart && isSubmitting && (
                                     <motion.p
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="text-[9px] font-black uppercase tracking-widest text-amber-400/80 text-center"
+                                        className="text-xs font-bold text-amber-700 text-center"
                                     >
                                         Free-tier server is booting up — this can take up to 60 seconds
                                     </motion.p>
                                 )}
                             </form>
 
-                            <div className="pt-6 border-t border-white/5 text-center">
+                            <div className="pt-5 border-t border-slate-200 text-center">
                                 <button 
                                     onClick={() => setIsLogin(!isLogin)}
-                                    className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] hover:text-[var(--text-accent)] transition-all"
+                                    className="text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all"
                                 >
-                                    {isLogin ? "Need new clearance? Sign up" : "Existing identity? Sign in"}
+                                    {isLogin ? (
+                                        <>don't have an account? <span className="text-[var(--text-primary)] font-extrabold">sign up</span></>
+                                    ) : (
+                                        <>already have an account? <span className="text-[var(--text-primary)] font-extrabold">sign in</span></>
+                                    )}
                                 </button>
                             </div>
                         </motion.div>
@@ -214,7 +292,7 @@ export default function Login() {
                 </GlassCard>
 
                 {/* Infrastructure Tag */}
-                <p className="text-center text-[9px] font-black uppercase tracking-[0.6em] text-white/50 italic">
+                <p className="text-center text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--text-secondary)]/70 italic">
                     Academic Management Infrastructure v1.0
                 </p>
             </div>

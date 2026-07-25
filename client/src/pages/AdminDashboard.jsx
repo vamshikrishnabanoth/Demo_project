@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
 import socket from '../utils/socket';
-import axios from 'axios';
 import {
     Users, Shield, Ban, Activity, LayoutDashboard,
     Plus, Trash2, Edit3, Search, RefreshCw, UserCheck, 
@@ -18,18 +17,54 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 const ROLE_META = {
-    admin:   { label: 'ADMIN',   color: 'text-red-400',   bg: 'bg-red-400/10',   border: 'border-red-400/30',   icon: ShieldCheck },
-    teacher: { label: 'TEACHER', color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/30', icon: UserCheck },
-    student: { label: 'STUDENT', color: 'text-sky-400',   bg: 'bg-sky-400/10',   border: 'border-sky-400/30',   icon: GraduationCap },
-    none:    { label: 'NONE',    color: 'text-slate-400', bg: 'bg-slate-400/10', border: 'border-slate-400/30', icon: Users },
+    admin:   { 
+        label: 'ADMIN',   
+        color: 'text-blue-900',   
+        bg: 'bg-blue-100',   
+        border: 'border-blue-300',   
+        icon: ShieldCheck,
+        avatarBg: 'bg-blue-600',
+        avatarColor: 'text-white',
+        avatarBorder: 'border-blue-700'
+    },
+    teacher: { 
+        label: 'TEACHER', 
+        color: 'text-amber-950', 
+        bg: 'bg-amber-100', 
+        border: 'border-amber-300', 
+        icon: UserCheck,
+        avatarBg: 'bg-amber-500',
+        avatarColor: 'text-white',
+        avatarBorder: 'border-amber-600'
+    },
+    student: { 
+        label: 'STUDENT', 
+        color: 'text-emerald-950',   
+        bg: 'bg-emerald-100',   
+        border: 'border-emerald-300',   
+        icon: GraduationCap,
+        avatarBg: 'bg-emerald-600',
+        avatarColor: 'text-white',
+        avatarBorder: 'border-emerald-700'
+    },
+    none:    { 
+        label: 'NONE',    
+        color: 'text-slate-800', 
+        bg: 'bg-slate-200', 
+        border: 'border-slate-300', 
+        icon: Users,
+        avatarBg: 'bg-slate-700',
+        avatarColor: 'text-white',
+        avatarBorder: 'border-slate-800'
+    },
 };
 
 const RoleBadge = ({ role }) => {
     const meta = ROLE_META[role] || ROLE_META.none;
     const Icon = meta.icon;
     return (
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${meta.color} ${meta.bg} border ${meta.border} shadow-sm`}>
-            <Icon size={12} /> {meta.label}
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider ${meta.color} ${meta.bg} border-2 ${meta.border} shadow-xs`}>
+            <Icon size={14} strokeWidth={2.5} /> {meta.label}
         </span>
     );
 };
@@ -237,7 +272,7 @@ export default function AdminDashboard() {
                 };
 
                 // Post directly to the local Python AI RAG server
-                const res = await axios.post('http://localhost:8000/admin/ingest', payload);
+                const res = await api.post('http://localhost:8000/admin/ingest', payload);
                 toast.success(res.data.message || `Ingested "${sourceName}" successfully!`, { id: toastId });
                 
                 setSourceName('');
@@ -260,53 +295,54 @@ export default function AdminDashboard() {
         <DashboardLayout role="admin">
             <div className="space-y-12 pb-20 max-w-[100rem] mx-auto">
                 
-                {/* Global Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Global Compact Stats Grid */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {[
-                        { label: 'Total Entities', value: stats.total, icon: Users, color: 'text-white' },
-                        { label: 'Active Teachers', value: stats.teachers, icon: UserCheck, color: 'text-amber-400' },
-                        { label: 'Active Students', value: stats.students, icon: GraduationCap, color: 'text-sky-400' },
-                        { label: 'System Admins', value: stats.admins, icon: Shield, color: 'text-red-400' },
+                        { label: 'Total Entities', value: stats.total, icon: Users, color: 'text-[#133E87]', bg: 'bg-blue-50 border border-blue-200' },
+                        { label: 'Active Teachers', value: stats.teachers, icon: UserCheck, color: 'text-amber-700', bg: 'bg-amber-50 border border-amber-200' },
+                        { label: 'Active Students', value: stats.students, icon: GraduationCap, color: 'text-sky-700', bg: 'bg-sky-50 border border-sky-200' },
+                        { label: 'System Admins', value: stats.admins, icon: Shield, color: 'text-red-700', bg: 'bg-red-50 border border-red-200' },
                     ].map((s, i) => (
-                        <GlassCard key={i} className="!p-8">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`p-3 bg-white/5 rounded-2xl ${s.color}`}>
-                                    <s.icon size={24} />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Operational</span>
+                        <div key={i} className="bg-white border-2 border-[var(--border-color)] p-4 sm:p-5 rounded-2xl shadow-xs hover:shadow-md hover:border-[#133E87] transition-all duration-300 flex items-center justify-between gap-3">
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-wider text-[#334155]" style={{ color: '#334155' }}>{s.label}</p>
+                                <h3 className="text-2xl sm:text-3xl font-black text-[#0f172a] italic tracking-tight mt-0.5" style={{ color: '#0f172a' }}>{s.value}</h3>
                             </div>
-                            <h3 className="text-4xl font-black text-white italic tracking-tighter">{s.value}</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">{s.label}</p>
-                        </GlassCard>
+                            <div className={`p-2.5 rounded-xl ${s.bg} ${s.color} shrink-0`}>
+                                <s.icon size={20} />
+                            </div>
+                        </div>
                     ))}
                 </div>
 
-                {/* Tab Selector buttons */}
-                <div className="flex gap-4 border-b border-white/5 pb-4">
-                    <button
-                        onClick={() => setActiveTab('users')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-wider text-xs transition-all ${
-                            activeTab === 'users' ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'
-                        }`}
-                    >
-                        <Users size={16} /> User Directory
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('knowledge')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-wider text-xs transition-all ${
-                            activeTab === 'knowledge' ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'
-                        }`}
-                    >
-                        <Database size={16} /> AI Knowledge Hub
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('operations')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-wider text-xs transition-all ${
-                            activeTab === 'operations' ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'
-                        }`}
-                    >
-                        <Rocket size={16} /> Academic Operations
-                    </button>
+                {/* Tab Selector Buttons with Crisp Borders & Defined Background Colors */}
+                <div className="flex gap-3 sm:gap-4 flex-wrap pb-2">
+                    {[
+                        { id: 'users', label: 'User Directory', icon: Users },
+                        { id: 'knowledge', label: 'AI Knowledge Hub', icon: Database },
+                        { id: 'operations', label: 'Academic Operations', icon: Rocket },
+                    ].map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        const Icon = tab.icon;
+                        return (
+                            <button
+                                key={tab.id}
+                                type="button"
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-black uppercase tracking-wider text-xs sm:text-sm border-2 transition-all duration-200 cursor-pointer shadow-sm active:scale-95 ${
+                                    isActive
+                                        ? 'bg-[#133E87] hover:bg-[#0e2e65] text-white border-[#133E87] shadow-md shadow-[#133E87]/20 !text-white text-white-force'
+                                        : 'bg-white/90 hover:bg-white text-[#0f172a] hover:text-[#133E87] border-[#9cbcd8] hover:border-[#133E87]'
+                                }`}
+                                style={isActive ? { backgroundColor: '#133E87', color: '#ffffff', borderColor: '#133E87' } : { backgroundColor: '#ffffff', color: '#0f172a', borderColor: '#9cbcd8' }}
+                            >
+                                <Icon size={18} className={isActive ? '!text-white' : 'text-[#133E87]'} style={isActive ? { color: '#ffffff', stroke: '#ffffff' } : { color: '#133E87' }} />
+                                <span className={isActive ? '!text-white font-black' : 'font-black text-[#0f172a]'} style={isActive ? { color: '#ffffff' } : { color: '#0f172a' }}>
+                                    {tab.label}
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {/* Tab: Users */}
@@ -376,22 +412,22 @@ export default function AdminDashboard() {
                                                 >
                                                     <td className="py-6 px-4">
                                                         <div className="flex items-center gap-4">
-                                                            <div className={`w-12 h-12 rounded-2xl ${ROLE_META[u.role]?.bg || 'bg-white/5'} flex items-center justify-center ${ROLE_META[u.role]?.color || 'text-white/20'} border ${ROLE_META[u.role]?.border || 'border-white/10'} shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                                                                {React.createElement(ROLE_META[u.role]?.icon || Users, { size: 24 })}
+                                                            <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 text-[#334155] flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-colors duration-200">
+                                                                {React.createElement(ROLE_META[u.role]?.icon || Users, { size: 18, strokeWidth: 2, className: 'text-[#334155]' })}
                                                             </div>
                                                             <div>
                                                                 <div className="flex items-center gap-2">
-                                                                    <p className={`font-bold tracking-tight ${u.isSuspended ? 'text-white/40' : 'text-white'}`}>{u.username}</p>
+                                                                    <p className={`font-bold tracking-tight text-sm ${u.isSuspended ? 'text-slate-400 line-through' : 'text-[#0f172a]'}`} style={{ color: u.isSuspended ? '#94a3b8' : '#0f172a' }}>{u.username}</p>
                                                                     {u.isSuspended && (
-                                                                        <span className="text-[8px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-widest border border-red-500/30">
+                                                                        <span className="text-[9px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md font-black uppercase tracking-widest border border-rose-300">
                                                                             Suspended
                                                                         </span>
                                                                     )}
                                                                 </div>
                                                                 <div className="flex flex-col gap-0.5">
-                                                                    <p className="text-xs text-white/50 font-medium">{u.email}</p>
+                                                                    <p className="text-xs text-[#334155] font-medium" style={{ color: '#334155' }}>{u.email}</p>
                                                                     {u.role === 'student' && (u.studentBranch || u.section) && (
-                                                                        <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest opacity-60">
+                                                                        <p className="text-[10px] text-[#133E87] font-black uppercase tracking-widest" style={{ color: '#133E87' }}>
                                                                             {u.studentBranch || '—'} / {u.section || '—'} {u.year ? `/ YEAR ${u.year}` : ''}
                                                                         </p>
                                                                     )}
@@ -400,40 +436,59 @@ export default function AdminDashboard() {
                                                         </div>
                                                     </td>
                                                     <td className="py-6 px-4">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className={`w-2 h-2 rounded-full ${u.isOnline ? 'bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-white/10'}`} />
-                                                            <span className={`text-[10px] font-black uppercase tracking-widest ${u.isOnline ? 'text-green-500' : 'text-white/40'}`}>
-                                                                {u.isOnline ? 'Active' : 'Offline'}
+                                                        {u.isSuspended ? (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-xs">
+                                                                <span className="w-2 h-2 rounded-full bg-rose-600" /> Suspended
                                                             </span>
-                                                        </div>
+                                                        ) : u.isOnline ? (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-xs">
+                                                                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> Active
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-300 shadow-xs">
+                                                                <span className="w-2 h-2 rounded-full bg-slate-400" /> Offline
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="py-6 px-4 text-center">
                                                         <RoleBadge role={u.role} />
                                                     </td>
                                                     <td className="py-6 px-4 text-right">
-                                                        <div className="flex items-center justify-end gap-3">
+                                                        <div className="flex items-center justify-end gap-2.5">
+                                                            {/* Edit Action Button — Warm Amber */}
                                                             <button 
                                                                 onClick={() => setModal({ isNew: false, user: u })}
-                                                                className="p-3 text-indigo-400 bg-indigo-400/5 hover:bg-indigo-400/10 border border-indigo-400/20 hover:border-indigo-400/40 rounded-xl transition-all shadow-sm active:scale-90"
+                                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-amber-50 hover:bg-amber-500 text-amber-700 hover:text-white border-2 border-amber-300 hover:border-amber-500 transition-all duration-200 shadow-xs active:scale-95 cursor-pointer group"
                                                                 title="Edit Entity"
+                                                                aria-label="Edit User"
                                                             >
-                                                                <Edit3 size={18} />
+                                                                <Edit3 size={18} strokeWidth={2.25} className="transition-transform group-hover:scale-110" />
                                                             </button>
+
+                                                            {/* Suspend / Reinstate Action Button — Rose or Emerald */}
                                                             <button 
                                                                 onClick={() => handleSuspend(u)}
                                                                 disabled={u.id === currentUser?.id}
-                                                                className={`p-3 rounded-xl transition-all border shadow-sm active:scale-90 disabled:opacity-30 ${u.isSuspended ? 'text-red-500 bg-red-500/10 border-red-500/30' : 'text-amber-500 bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40'}`}
+                                                                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 border-2 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group ${
+                                                                    u.isSuspended 
+                                                                        ? 'bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border-emerald-300 hover:border-emerald-500' 
+                                                                        : 'bg-rose-50 hover:bg-rose-500 text-rose-700 hover:text-white border-rose-300 hover:border-rose-500'
+                                                                }`}
                                                                 title={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
+                                                                aria-label={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
                                                             >
-                                                                <Ban size={18} />
+                                                                <Ban size={18} strokeWidth={2.25} className="transition-transform group-hover:rotate-12 group-hover:scale-110" />
                                                             </button>
+
+                                                            {/* Delete Action Button — Crimson Red */}
                                                             <button 
                                                                 onClick={() => handleDelete(u)}
                                                                 disabled={u.id === currentUser?.id}
-                                                                className="p-3 text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 rounded-xl transition-all shadow-sm active:scale-90 disabled:opacity-30"
+                                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border-2 border-red-300 hover:border-red-600 transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group"
                                                                 title="Purge Identity"
+                                                                aria-label="Delete User"
                                                             >
-                                                                <Trash2 size={18} />
+                                                                <Trash2 size={18} strokeWidth={2.25} className="transition-transform group-hover:scale-110" />
                                                             </button>
                                                         </div>
                                                     </td>
@@ -442,6 +497,7 @@ export default function AdminDashboard() {
                                         </AnimatePresence>
                                     </tbody>
                                 </table>
+
                                 {loading && (
                                     <div className="py-20 flex flex-col items-center justify-center gap-4 text-white/20">
                                         <Loader2 className="animate-spin" size={40} />
@@ -501,10 +557,17 @@ export default function AdminDashboard() {
                                     <button
                                         type="submit"
                                         disabled={ingesting || !selectedFile || !sourceName.trim()}
-                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50 hover:bg-blue-700 transition-all shadow-lg"
+                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[#133E87] hover:bg-[#0e2e65] disabled:cursor-not-allowed !text-white text-white-force font-black py-4 rounded-2xl text-xs uppercase tracking-widest transition-all shadow-lg cursor-pointer opacity-100"
+                                        style={{ backgroundColor: '#133E87', color: '#ffffff', opacity: 1 }}
                                     >
-                                        {ingesting ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                                        {ingesting ? 'INGESTING...' : 'INGEST INTO DB'}
+                                        {ingesting ? (
+                                            <Loader2 className="animate-spin !text-white" size={18} style={{ color: '#ffffff' }} />
+                                        ) : (
+                                            <Sparkles size={18} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                        )}
+                                        <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
+                                            {ingesting ? 'INGESTING...' : 'INGEST INTO DB'}
+                                        </span>
                                     </button>
                                 </form>
                             </GlassCard>
@@ -570,51 +633,71 @@ export default function AdminDashboard() {
 
                             <button
                                 onClick={handlePromoteSeniors}
-                                className="w-full mt-6 flex items-center justify-center gap-2 bg-red-600 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg active:scale-95 border-b-4 border-red-800"
+                                className="w-full mt-6 flex items-center justify-center gap-2.5 bg-red-600 hover:bg-red-700 hover:scale-[1.01] hover:-translate-y-0.5 active:translate-y-0.5 active:scale-95 !text-white text-white-force font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-widest transition-all duration-200 shadow-md hover:shadow-xl hover:shadow-red-600/40 border-b-4 border-red-800 hover:border-red-900 cursor-pointer group"
+                                style={{ color: '#ffffff' }}
                             >
-                                <Rocket size={16} /> Execute Year Level Promotion
+                                <Rocket size={18} className="!text-white group-hover:scale-115 group-hover:-rotate-12 transition-transform duration-200" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
+                                    EXECUTE YEAR LEVEL PROMOTION
+                                </span>
                             </button>
                         </GlassCard>
 
-                        {/* CSV Roster batch import */}
-                        <GlassCard className="space-y-6">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-purple-600/10 text-purple-400 rounded-2xl">
-                                    <FileSpreadsheet size={24} />
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-black text-white italic uppercase tracking-wider">Roster Batch CSV Import</h2>
-                                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Register student entities in bulk</p>
-                                </div>
-                            </div>
-
-                            <form onSubmit={handleCsvImportSubmit} className="space-y-4 pt-2">
-                                <div>
-                                    <label className="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">CSV Format Template (No Headers, comma separated):</label>
-                                    <div className="bg-black/30 p-3 rounded-lg font-mono text-[10px] text-slate-400 select-all">
-                                        username,email,password,studentBranch,section,year
+                        {/* CSV Roster batch import — Vibrant Purple Theme Container */}
+                        <div className="bg-gradient-to-br from-white via-purple-50/30 to-purple-100/40 border-2 border-purple-300 rounded-[2.5rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3.5 bg-purple-100 border border-purple-300 text-purple-700 rounded-2xl shadow-xs">
+                                        <FileSpreadsheet size={24} className="text-purple-700" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-black text-[#0f172a] italic uppercase tracking-wider" style={{ color: '#0f172a' }}>
+                                            Roster Batch CSV Import
+                                        </h2>
+                                        <p className="text-purple-700 text-[10px] font-black uppercase tracking-widest mt-0.5" style={{ color: '#7c3aed' }}>
+                                            Register student entities in bulk
+                                        </p>
                                     </div>
                                 </div>
 
-                                <textarea
-                                    rows="6"
-                                    placeholder="kmit_student1,student1@kmit.in,Password123,CSE,A,1&#10;kmit_student2,student2@kmit.in,Password123,IT,B,1"
-                                    value={csvText}
-                                    onChange={(e) => setCsvText(e.target.value)}
-                                    required
-                                    className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white font-mono text-xs placeholder:text-slate-700 outline-none focus:border-purple-500 transition-all"
-                                />
+                                <form onSubmit={handleCsvImportSubmit} className="space-y-4 pt-1">
+                                    <div>
+                                        <label className="block text-[10px] font-black text-[#334155] uppercase tracking-widest mb-1.5" style={{ color: '#334155' }}>
+                                            CSV Format Template (No Headers, comma separated):
+                                        </label>
+                                        <div className="bg-purple-50 border border-purple-200 p-3.5 rounded-xl font-mono text-xs text-purple-900 font-bold select-all shadow-xs">
+                                            username,email,password,studentBranch,section,year
+                                        </div>
+                                    </div>
 
-                                <button
-                                    type="submit"
-                                    disabled={importing || !csvText.trim()}
-                                    className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest disabled:opacity-50 hover:bg-purple-700 transition-all shadow-lg"
-                                >
-                                    {importing ? <Loader2 className="animate-spin" size={16} /> : <FileSpreadsheet size={16} />}
-                                    {importing ? 'IMPORTING ROSTER...' : 'BATCH IMPORT STUDENTS'}
-                                </button>
-                            </form>
-                        </GlassCard>
+                                    <textarea
+                                        rows="6"
+                                        placeholder="kmit_student1,student1@kmit.in,Password123,CSE,A,1&#10;kmit_student2,student2@kmit.in,Password123,IT,B,1"
+                                        value={csvText}
+                                        onChange={(e) => setCsvText(e.target.value)}
+                                        required
+                                        className="w-full p-4 bg-white border-2 border-purple-200 focus:border-purple-600 focus:ring-4 focus:ring-purple-100 rounded-2xl text-purple-950 font-mono text-xs font-bold placeholder:text-purple-300 outline-none transition-all shadow-inner leading-relaxed"
+                                        style={{ color: '#2e1065' }}
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        disabled={importing || !csvText.trim()}
+                                        className="w-full flex items-center justify-center gap-2.5 bg-purple-600 hover:bg-purple-700 hover:scale-[1.01] hover:-translate-y-0.5 active:translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 !text-white text-white-force font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-widest transition-all duration-200 shadow-md hover:shadow-xl hover:shadow-purple-600/40 border-b-4 border-purple-900 hover:border-purple-950 cursor-pointer group"
+                                        style={{ color: '#ffffff' }}
+                                    >
+                                        {importing ? (
+                                            <Loader2 className="animate-spin !text-white" size={18} style={{ color: '#ffffff' }} />
+                                        ) : (
+                                            <FileSpreadsheet size={18} className="!text-white group-hover:scale-115 group-hover:rotate-6 transition-transform duration-200" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                        )}
+                                        <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
+                                            {importing ? 'IMPORTING ROSTER...' : 'BATCH IMPORT STUDENTS'}
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 )}
 

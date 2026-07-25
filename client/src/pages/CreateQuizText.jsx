@@ -544,24 +544,37 @@ export default function CreateQuizText() {
                                     <button
                                         type="button"
                                         onClick={addQuestion}
-                                        className="w-full flex items-center justify-center gap-4 p-10 rounded-[3rem] border-4 border-dashed border-white/5 text-white/20 hover:border-[var(--bg-accent)]/50 hover:text-[var(--text-accent)] transition-all group bg-white/[0.01]"
+                                        className="w-full flex items-center justify-center gap-4 p-8 rounded-[2.5rem] border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] hover:bg-white transition-all group shadow-sm"
                                     >
-                                        <Plus size={28} className="group-hover:scale-125 transition-transform" />
-                                        <span className="font-black text-xl uppercase tracking-widest italic">Add New Data Point</span>
+                                        <Plus size={24} className="text-[var(--text-accent)] group-hover:scale-125 transition-transform" />
+                                        <span className="font-black text-lg uppercase tracking-widest italic">Add New Data Point</span>
                                     </button>
                                 </div>
 
                                 {/* Final Execution */}
                                 <div className="flex justify-center pt-12 border-t border-white/5">
-                                    <PremiumButton
+                                    <button
                                         type="button"
                                         onClick={handleFinalizeClick}
                                         disabled={loading}
-                                        className="px-20 py-8 text-2xl italic"
-                                        icon={loading ? Loader2 : CheckCircle}
+                                        className="button-fly disabled:opacity-40 disabled:pointer-events-none"
                                     >
-                                        {loading ? 'PUBLISHING...' : 'FINALIZE QUIZZ'}
-                                    </PremiumButton>
+                                        <div className="svg-wrapper">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                width="24"
+                                                height="24"
+                                            >
+                                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                                ></path>
+                                            </svg>
+                                        </div>
+                                        <span>{loading ? 'PUBLISHING...' : 'POST & PUBLISH QUIZ'}</span>
+                                    </button>
                                 </div>
                             </form>
                         </motion.div>

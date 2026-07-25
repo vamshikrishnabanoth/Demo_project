@@ -12,6 +12,7 @@ import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
 import { showError, showSuccess } from '../utils/alerts';
 import useExamProctoring from '../hooks/useExamProctoring';
+import throttle from '../utils/throttle';
 
 
 export default function AttemptQuiz() {
@@ -293,14 +294,14 @@ export default function AttemptQuiz() {
             setSpeedFeedback({ isFast, message });
         });
 
-        socket.on('participants_update', (participantsList) => {
+        const handleParticipantsUpdate = throttle((participantsList) => {
             const studentParticipants = (participantsList || []).filter(
                 p => p.role?.toLowerCase() !== 'teacher' && p.isOnline !== false
             );
             setTotalStudents(studentParticipants.length);
-        });
+        }, 400);
 
-        socket.on('student_progress_update', ({ studentId, questionIndex, answered }) => {
+        const handleProgressUpdate = throttle(({ studentId, questionIndex, answered }) => {
             if (parseInt(questionIndex) === currentQuestionRef.current && answered) {
                 setAnsweredStudentsSet(prev => {
                     const next = new Set(prev);
@@ -308,7 +309,10 @@ export default function AttemptQuiz() {
                     return next;
                 });
             }
-        });
+        }, 250);
+
+        socket.on('participants_update', handleParticipantsUpdate);
+        socket.on('student_progress_update', handleProgressUpdate);
 
         socket.on('lobby_summary_update', ({ lobbySummary }) => {
             console.log('Received lobby summary update:', lobbySummary);
@@ -1280,7 +1284,7 @@ export default function AttemptQuiz() {
 
                         {/* Live mode: after submitting show Next Question button */}
                         {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
-                            <div className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white/30 font-black italic uppercase tracking-widest text-[10px]">
+                            <div className="px-8 py-4 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-2xl text-[var(--text-primary)] font-black italic uppercase tracking-widest text-[11px] shadow-sm">
                                 Awaiting Tactical Commands...
                             </div>
                         ) : isLastQuestion ? (
@@ -1308,13 +1312,14 @@ export default function AttemptQuiz() {
                                     <button
                                         onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
                                         disabled={currentQuestion === 0}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] text-white/40 hover:text-white disabled:opacity-10 transition-all"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] bg-white border-2 border-[var(--border-color)] !text-[#0f172a] hover:border-[var(--bg-accent)] disabled:opacity-30 transition-all shadow-sm"
+                                        style={{ color: '#0f172a' }}
                                     >
-                                        <ChevronLeft size={20} /> Previous
+                                        <ChevronLeft size={20} className="text-[#0f172a]" /> Previous
                                     </button>
                                     <button
                                         onClick={() => setCurrentQuestion(prev => prev + 1)}
-                                        className="flex items-center gap-2 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-white hover:bg-white/10 transition-all"
+                                        className="flex items-center gap-2 px-8 py-4 bg-[var(--bg-accent)] border border-[var(--bg-accent)] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-[var(--bg-accent-hover)] transition-all shadow-md"
                                     >
                                         Advance <ChevronRight size={20} />
                                     </button>
@@ -1429,12 +1434,22 @@ export default function AttemptQuiz() {
 
                             <button
                                 onClick={handleContinueToNext}
-                                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                className="button w-full justify-center"
                             >
                                 {currentQuestion < quiz.questions.length - 1 ? (
-                                    <>Continue to Next Question <ChevronRight size={20} /></>
+                                    <>
+                                        <span>Continue to Next Question</span>
+                                        <svg viewBox="0 0 13 10">
+                                            <polygon points="0.5 0 6.5 5 0.5 10"></polygon>
+                                            <polygon points="4.5 0 10.5 5 4.5 10"></polygon>
+                                            <polygon points="8.5 0 13 5 8.5 10"></polygon>
+                                        </svg>
+                                    </>
                                 ) : (
-                                    <>View Final Results <Trophy size={20} /></>
+                                    <>
+                                        <span>View Final Results</span>
+                                        <Trophy size={20} />
+                                    </>
                                 )}
                             </button>
                         </div>

@@ -1,67 +1,95 @@
-import axios from 'axios';
-
-// Hardcoded production URL - change this if your backend URL changes
+// High-performance Native Fetch API wrapper (replaces Axios dependency completely)
 const PRODUCTION_API_URL = 'https://quiz-backend-qgro.onrender.com/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
     (import.meta.env.PROD ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    // Render free-tier cold starts can take 50-60s. 120s gives plenty of headroom.
-    timeout: 120000,
-    // SECURITY: Enable cookie-based credentials for secure token transport
-    withCredentials: true,
-});
+async function request(endpoint, options = {}, retryCount = 0) {
+    const token = localStorage.getItem('token');
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
 
-// ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────
-// Attach token from localStorage on every outgoing request
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['x-auth-token'] = token;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+    };
 
-// ─── RESPONSE INTERCEPTOR ─────────────────────────────────────────────────────
-// Centralized 401 handling — auto-logout if token expires
-// Also auto-retries on timeout/network errors (Render cold-start recovery)
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const config = error.config;
-
-        // Auto-retry on timeout or network errors (cold-start handling)
-        const isRetryable = error.code === 'ECONNABORTED' || 
-                            error.code === 'ERR_NETWORK' || 
-                            !error.response;
-
-        if (isRetryable && config && !config._retryCount) {
-            config._retryCount = 0;
-        }
-
-        if (isRetryable && config && config._retryCount < 2) {
-            config._retryCount += 1;
-            console.log(`[API] Retry attempt ${config._retryCount} for ${config.url} (server may be waking up)...`);
-            // Wait 3 seconds before retrying to give Render time to spin up
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            return api(config);
-        }
-
-        if (error.response?.status === 401) {
-            // Token expired or invalid — clean up and redirect
-            localStorage.removeItem('token');
-            // Only redirect if not already on login page
-            if (!window.location.pathname.includes('/login')) {
-                window.location.href = '/login';
-            }
-        }
-        return Promise.reject(error);
+    if (token) {
+        headers['x-auth-token'] = token;
     }
-);
+
+    const fetchOptions = {
+        method: options.method || 'GET',
+        headers,
+        credentials: 'include',
+        ...options,
+    };
+
+    if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+        fetchOptions.body = JSON.stringify(options.body);
+    } else if (options.body) {
+        fetchOptions.body = options.body;
+    }
+
+    // Support AbortSignal timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 120000);
+    fetchOptions.signal = options.signal || controller.signal;
+
+    try {
+        const response = await fetch(url, fetchOptions);
+        clearTimeout(timeoutId);
+
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = await response.text();
+        }
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                    window.location.href = '/login';
+                }
+            }
+            const err = new Error(data?.message || `HTTP Error ${response.status}`);
+            err.response = { status: response.status, data };
+            throw err;
+        }
+
+        return { data, status: response.status, headers: response.headers };
+    } catch (error) {
+        clearTimeout(timeoutId);
+        
+        const isRetryable = error.name === 'AbortError' || error.message === 'Failed to fetch' || !error.response;
+        
+        if (isRetryable && retryCount < 2) {
+            const delay = Math.floor(2000 * Math.pow(1.5, retryCount) + Math.random() * 1500);
+            console.log(`[API] Retry attempt ${retryCount + 1} for ${endpoint} after ${delay}ms...`);
+            await new Promise(r => setTimeout(r, delay));
+            return request(endpoint, options, retryCount + 1);
+        }
+
+        if (!error.response) {
+            error.response = { status: 0, data: { message: error.message } };
+        }
+        throw error;
+    }
+}
+
+const api = {
+    get: (url, config = {}) => request(url, { ...config, method: 'GET' }),
+    post: (url, body, config = {}) => request(url, { ...config, method: 'POST', body }),
+    put: (url, body, config = {}) => request(url, { ...config, method: 'PUT', body }),
+    patch: (url, body, config = {}) => request(url, { ...config, method: 'PATCH', body }),
+    delete: (url, config = {}) => request(url, { ...config, method: 'DELETE' }),
+    create: () => api,
+    interceptors: {
+        request: { use: () => {} },
+        response: { use: () => {} },
+    }
+};
 
 export default api;

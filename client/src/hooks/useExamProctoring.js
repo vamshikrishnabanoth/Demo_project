@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import socket from '../utils/socket';
 import toast from 'react-hot-toast';
-import Swal from 'sweetalert2';
 import { showError } from '../utils/alerts';
 
 /**
@@ -57,12 +56,10 @@ export default function useExamProctoring({
             if (blocked) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (!Swal.isVisible()) {
-                    showError(
-                        'Security Alert',
-                        'Developer tools are disabled during examinations!'
-                    );
-                }
+                showError(
+                    'Security Alert',
+                    'Developer tools are disabled during examinations!'
+                );
                 // Emit alert
                 if (quizId && userId) {
                     socket.emit('student_cheated_alert', {
@@ -97,12 +94,10 @@ export default function useExamProctoring({
                 if (now - lastWarned < 10000) return;
                 lastWarned = now;
 
-                if (!Swal.isVisible()) {
-                    showError(
-                        'Security Alert',
-                        'Unusual window size detected! DevTools may be open. This activity is being monitored.'
-                    );
-                }
+                showError(
+                    'Security Alert',
+                    'Unusual window size detected! DevTools may be open. This activity is being monitored.'
+                );
                 if (quizId && userId) {
                     socket.emit('student_cheated_alert', {
                         quizId,
@@ -132,22 +127,18 @@ export default function useExamProctoring({
 
         const blockClipboard = (e) => {
             e.preventDefault();
-            if (!Swal.isVisible()) {
-                showError(
-                    'Security Alert',
-                    'Copy/Paste/Cut is disabled during examinations!'
-                );
-            }
+            showError(
+                'Security Alert',
+                'Copy/Paste/Cut is disabled during examinations!'
+            );
         };
 
         const blockContextMenu = (e) => {
             e.preventDefault();
-            if (!Swal.isVisible()) {
-                showError(
-                    'Security Alert',
-                    'Right-click is disabled during examinations!'
-                );
-            }
+            showError(
+                'Security Alert',
+                'Right-click is disabled during examinations!'
+            );
         };
 
         document.addEventListener('copy', blockClipboard);

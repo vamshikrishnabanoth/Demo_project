@@ -4,18 +4,9 @@ import { motion } from 'framer-motion';
 function SkeletonBlock({ width = '100%', height = 20, className = '' }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl ${className}`}
-      style={{ width, height, background: 'rgba(255,255,255,0.05)' }}
-    >
-      <motion.div
-        className="absolute inset-0 -skew-x-12"
-        style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%)',
-        }}
-        animate={{ x: ['-200%', '200%'] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-      />
-    </div>
+      className={`shimmer-block rounded-xl ${className}`}
+      style={{ width, height }}
+    />
   );
 }
 

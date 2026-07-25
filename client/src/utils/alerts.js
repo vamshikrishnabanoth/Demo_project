@@ -1,173 +1,198 @@
-import Swal from 'sweetalert2';
+import React from 'react';
+import toast from 'react-hot-toast';
+import { CheckCircle2, AlertCircle, HelpCircle, X, Info } from 'lucide-react';
 
-// Standardized Elite Alert Configuration
-export const royalAlert = Swal.mixin({
-    background: 'transparent',
-    color: 'var(--text-primary)',
-    padding: '2.5rem',
-    customClass: {
-        popup: 'royal-swal-popup',
-        title: 'royal-swal-title',
-        htmlContainer: 'royal-swal-text',
-        confirmButton: 'royal-swal-button royal-swal-confirm',
-        cancelButton: 'royal-swal-button royal-swal-cancel',
-    },
-    showClass: {
-        popup: 'arena-in'
-    },
-    hideClass: {
-        popup: 'arena-out'
-    },
-    buttonsStyling: false,
-});
+/**
+ * Professional, High-Contrast White-Text Alert System for ProjectK.
+ * Enforces 100% crisp pure white text (#ffffff) across all toast notifications & confirm popups.
+ */
 
-// Theme-driven CSS injection for SweetAlert2
-export const injectSwalStyles = () => {
-    const style = document.createElement('style');
-    style.id = 'royal-swal-styles'; // Used for idempotency check
-    style.innerHTML = `
-        @keyframes arenaIn {
-            from {
-                opacity: 0;
-                transform: scale(0.85) translateY(20px);
-                filter: blur(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                filter: blur(0);
-            }
-        }
-        @keyframes arenaOut {
-            from {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                filter: blur(0);
-            }
-            to {
-                opacity: 0;
-                transform: scale(1.05) translateY(-20px);
-                filter: blur(20px);
-            }
-        }
-        .arena-in {
-            animation: arenaIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
-        }
-        .arena-out {
-            animation: arenaOut 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
-        }
-        .royal-swal-popup {
-            border-radius: 2.5rem !important;
-            border: 1.5px solid var(--bg-accent) !important;
-            box-shadow: 0 0 30px var(--bg-accent-glow), 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
-            font-family: var(--app-font) !important;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            position: relative;
-            overflow: hidden;
-        }
-        .royal-swal-popup::before {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -20%;
-            width: 80%;
-            height: 80%;
-            background: radial-gradient(circle, var(--bg-accent) 0%, transparent 70%);
-            opacity: 0.08;
-            pointer-events: none;
-            filter: blur(40px);
-        }
-        .royal-swal-title {
-            font-weight: 900 !important;
-            text-transform: uppercase !important;
-            font-style: italic !important;
-            letter-spacing: -0.025em !important;
-            color: var(--text-primary) !important;
-        }
-        .royal-swal-text {
-            font-weight: 600 !important;
-            color: var(--text-secondary) !important;
-        }
-        .royal-swal-button {
-            padding: 1.25rem 2.5rem !important;
-            border-radius: 1.5rem !important;
-            font-weight: 900 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.1em !important;
-            font-size: 0.75rem !important;
-            margin: 0.5rem !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            cursor: pointer !important;
-            border: none !important;
-        }
-        .royal-swal-confirm {
-            background-color: var(--bg-accent) !important;
-            color: var(--text-on-accent) !important;
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4) !important;
-        }
-        .royal-swal-confirm:hover {
-            transform: scale(1.05) !important;
-            background-color: var(--bg-accent-hover) !important;
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.6) !important;
-        }
-        .royal-swal-cancel {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            color: var(--text-primary) !important;
-            border: 1px solid var(--border-color) !important;
-        }
-        .royal-swal-cancel:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            transform: scale(1.05) !important;
-        }
-        .swal2-icon {
-            border-width: 4px !important;
-            border-color: var(--bg-accent) !important;
-        }
-        .swal2-icon.swal2-success { border-color: var(--success-bg) !important; }
-        .swal2-icon.swal2-error { border-color: var(--error-bg) !important; }
-        .swal2-icon.swal2-success [class^='swal2-success-line'] { background-color: var(--success-bg) !important; }
-        .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success-bg, #22c55e) !important; opacity: 0.2; }
-        .swal2-icon.swal2-error [class^='swal2-x-mark-line'] { background-color: var(--error-bg) !important; }
-    `;
-    document.head.appendChild(style);
+export const showSuccess = (title, text, duration = 2400) => {
+    const mainTitle = text ? title : (title || 'Success');
+    const messageText = text ? text : '';
+
+    return toast.custom((t) => (
+        React.createElement('div', {
+            className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-slate-900/98 backdrop-blur-2xl border border-emerald-500/40 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(16,185,129,0.25)] rounded-2xl p-4 flex items-start gap-3.5 text-white pointer-events-auto transition-all`,
+            style: { color: '#ffffff' }
+        }, [
+            React.createElement('div', {
+                key: 'icon',
+                className: 'p-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 mt-0.5'
+            }, React.createElement(CheckCircle2, { size: 20, className: 'stroke-[2.5]' })),
+            React.createElement('div', {
+                key: 'body',
+                className: 'flex-1 min-w-0'
+            }, [
+                React.createElement('h4', {
+                    key: 'title',
+                    className: 'text-sm font-extrabold tracking-wide leading-snug',
+                    style: { color: '#ffffff' }
+                }, mainTitle),
+                messageText ? React.createElement('p', {
+                    key: 'desc',
+                    className: 'text-xs font-semibold mt-0.5 leading-relaxed',
+                    style: { color: '#f1f5f9' }
+                }, messageText) : null
+            ]),
+            React.createElement('button', {
+                key: 'close',
+                onClick: () => toast.dismiss(t.id),
+                className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
+                style: { color: '#ffffff' }
+            }, React.createElement(X, { size: 16 }))
+        ])
+    ), { duration, position: 'top-right' });
 };
 
-// Auto-inject styles (idempotent — won't duplicate on HMR or re-imports)
-if (typeof document !== 'undefined' && !document.getElementById('royal-swal-styles')) {
-    injectSwalStyles();
-}
+export const showError = (title, text, duration = 3800) => {
+    const mainTitle = text ? title : (title || 'Error');
+    const messageText = text ? text : '';
 
-export const showSuccess = (title, text, timer = 2000) => {
-    return royalAlert.fire({
-        title,
-        text,
-        icon: 'success',
-        iconColor: 'var(--success-bg)',
-        showConfirmButton: false,
-        timer,
-        timerProgressBar: true,
-    });
+    return toast.custom((t) => (
+        React.createElement('div', {
+            className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-slate-900/98 backdrop-blur-2xl border border-rose-500/40 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(244,63,94,0.25)] rounded-2xl p-4 flex items-start gap-3.5 text-white pointer-events-auto transition-all`,
+            style: { color: '#ffffff' }
+        }, [
+            React.createElement('div', {
+                key: 'icon',
+                className: 'p-2 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 shrink-0 mt-0.5'
+            }, React.createElement(AlertCircle, { size: 20, className: 'stroke-[2.5]' })),
+            React.createElement('div', {
+                key: 'body',
+                className: 'flex-1 min-w-0'
+            }, [
+                React.createElement('h4', {
+                    key: 'title',
+                    className: 'text-sm font-extrabold tracking-wide leading-snug',
+                    style: { color: '#ffffff' }
+                }, mainTitle),
+                messageText ? React.createElement('p', {
+                    key: 'desc',
+                    className: 'text-xs font-semibold mt-0.5 leading-relaxed',
+                    style: { color: '#f1f5f9' }
+                }, messageText) : null
+            ]),
+            React.createElement('button', {
+                key: 'close',
+                onClick: () => toast.dismiss(t.id),
+                className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
+                style: { color: '#ffffff' }
+            }, React.createElement(X, { size: 16 }))
+        ])
+    ), { duration, position: 'top-right' });
 };
 
-export const showError = (title, text) => {
-    return royalAlert.fire({
-        title,
-        text,
-        icon: 'error',
-        iconColor: 'var(--error-bg)',
-    });
+export const showInfo = (title, text, duration = 2400) => {
+    const mainTitle = text ? title : (title || 'Notice');
+    const messageText = text ? text : '';
+
+    return toast.custom((t) => (
+        React.createElement('div', {
+            className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-slate-900/98 backdrop-blur-2xl border border-blue-500/40 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(59,130,246,0.25)] rounded-2xl p-4 flex items-start gap-3.5 text-white pointer-events-auto transition-all`,
+            style: { color: '#ffffff' }
+        }, [
+            React.createElement('div', {
+                key: 'icon',
+                className: 'p-2 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30 shrink-0 mt-0.5'
+            }, React.createElement(Info, { size: 20, className: 'stroke-[2.5]' })),
+            React.createElement('div', {
+                key: 'body',
+                className: 'flex-1 min-w-0'
+            }, [
+                React.createElement('h4', {
+                    key: 'title',
+                    className: 'text-sm font-extrabold tracking-wide leading-snug',
+                    style: { color: '#ffffff' }
+                }, mainTitle),
+                messageText ? React.createElement('p', {
+                    key: 'desc',
+                    className: 'text-xs font-semibold mt-0.5 leading-relaxed',
+                    style: { color: '#f1f5f9' }
+                }, messageText) : null
+            ]),
+            React.createElement('button', {
+                key: 'close',
+                onClick: () => toast.dismiss(t.id),
+                className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
+                style: { color: '#ffffff' }
+            }, React.createElement(X, { size: 16 }))
+        ])
+    ), { duration, position: 'top-right' });
 };
 
 export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
-    return royalAlert.fire({
-        title,
-        text,
-        icon: 'question',
-        iconColor: 'var(--bg-accent)',
-        showCancelButton: true,
-        confirmButtonText: confirmText,
-        cancelButtonText: 'Cancel'
+    return new Promise((resolve) => {
+        toast.custom((t) => (
+            React.createElement('div', {
+                className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[var(--bg-secondary)] backdrop-blur-2xl border-2 border-[var(--border-color)] shadow-[0_25px_60px_rgba(0,0,0,0.25)] rounded-3xl p-6 pointer-events-auto transition-all space-y-5`,
+                style: { color: 'var(--text-primary)' }
+            }, [
+                React.createElement('div', {
+                    key: 'header',
+                    className: 'flex items-start gap-4'
+                }, [
+                    React.createElement('div', {
+                        key: 'icon',
+                        className: 'p-3.5 rounded-2xl bg-[var(--bg-accent)]/15 text-[var(--text-accent)] border border-[var(--border-color)] shrink-0'
+                    }, React.createElement(HelpCircle, { size: 26, className: 'stroke-[2.5]' })),
+                    React.createElement('div', {
+                        key: 'content',
+                        className: 'flex-1 min-w-0 pt-0.5'
+                    }, [
+                        React.createElement('h3', {
+                            key: 'h3',
+                            className: 'text-lg font-black tracking-wide leading-tight text-[var(--text-primary)]',
+                            style: { color: 'var(--text-primary)' }
+                        }, title),
+                        text ? React.createElement('p', {
+                            key: 'p',
+                            className: 'text-sm font-semibold mt-1.5 leading-relaxed text-[var(--text-secondary)]',
+                            style: { color: 'var(--text-secondary)' }
+                        }, text) : null
+                    ])
+                ]),
+                React.createElement('div', {
+                    key: 'actions',
+                    className: 'flex items-center justify-end gap-3 pt-3.5 border-t border-[var(--border-color)]'
+                }, [
+                    React.createElement('button', {
+                        key: 'cancel',
+                        onClick: () => {
+                            toast.dismiss(t.id);
+                            resolve({ isConfirmed: false });
+                        },
+                        className: 'px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 transition-all cursor-pointer shadow-xs',
+                        style: { color: '#334155' }
+                    }, 'Cancel'),
+                    React.createElement('button', {
+                        key: 'confirm',
+                        onClick: () => {
+                            toast.dismiss(t.id);
+                            resolve({ isConfirmed: true });
+                        },
+                        className: 'px-6 py-2.5 rounded-xl text-xs font-black bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg hover:opacity-90 transition-all transform active:scale-95 cursor-pointer btn-cinematic',
+                        style: { color: '#ffffff' }
+                    }, confirmText)
+                ])
+            ])
+        ), { duration: Infinity, position: 'top-center' });
     });
+};
+
+export const royalAlert = {
+    fire: ({ title, text, icon }) => {
+        if (icon === 'success') return showSuccess(title, text);
+        if (icon === 'error') return showError(title, text);
+        if (icon === 'question') return showConfirm(title, text);
+        return showInfo(title, text);
+    }
+};
+
+export default {
+    showSuccess,
+    showError,
+    showInfo,
+    showConfirm,
+    royalAlert
 };

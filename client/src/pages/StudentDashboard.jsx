@@ -5,7 +5,7 @@ import {
     Trophy, Play, Users, Star, ArrowRight, Target, Sparkles, 
     Zap, Rocket, Globe, Brain, Cpu, MessageSquare, Clock, BarChart3, 
     ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2,
-    Hash, Gauge, Database, Sliders, Book
+    Hash, Gauge, Database, Sliders, Book, FileCheck
 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
@@ -394,37 +394,37 @@ export default function StudentDashboard() {
                         >
                             <Trophy size={40} className="relative z-10" />
                         </motion.div>
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-tight">
                             STUDENT <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">GAME ARENA</span>
                         </h1>
-                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px] max-w-md mx-auto opacity-60">
+                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px] max-w-md mx-auto">
                             Attempt quizzes via Code or Launch cognitive AI games
                         </p>
                     </div>
 
                     {/* Gamification Quick Stats Banner */}
-                    <div className="flex justify-center items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-2xl mx-auto shadow-lg backdrop-blur-md flex-wrap">
+                    <div className="flex justify-center items-center gap-4 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-4 max-w-2xl mx-auto shadow-lg backdrop-blur-md flex-wrap">
                         <div className="flex items-center gap-2">
-                            <Star className="text-yellow-400" size={22} fill="currentColor" />
+                            <Star className="text-yellow-600" size={22} fill="currentColor" />
                             <div className="text-left">
                                 <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
-                                <p className="text-lg font-black text-white italic leading-none">{xp} <span className="text-xs text-yellow-400">XP</span></p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{xp} <span className="text-xs text-yellow-600">XP</span></p>
                             </div>
                         </div>
-                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="h-8 w-px bg-[var(--border-color)]"></div>
                         <div className="flex items-center gap-2">
-                            <Rocket className="text-orange-500" size={22} fill="currentColor" />
+                            <Rocket className="text-orange-600" size={22} fill="currentColor" />
                             <div className="text-left">
                                 <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
-                                <p className="text-lg font-black text-white italic leading-none">{streak} <span className="text-xs text-orange-500">DAYS</span></p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{streak} <span className="text-xs text-orange-600">DAYS</span></p>
                             </div>
                         </div>
-                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="h-8 w-px bg-[var(--border-color)]"></div>
                         <div className="flex items-center gap-2">
-                            <Trophy className="text-amber-300" size={22} fill="currentColor" />
+                            <Trophy className="text-amber-600" size={22} fill="currentColor" />
                             <div className="text-left">
                                 <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
-                                <p className="text-lg font-black text-white italic leading-none">{highestStreak} <span className="text-xs text-amber-300">DAYS</span></p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{highestStreak} <span className="text-xs text-amber-600">DAYS</span></p>
                             </div>
                         </div>
                     </div>
@@ -450,19 +450,19 @@ export default function StudentDashboard() {
                             <div className="max-w-2xl mx-auto px-2 space-y-1.5">
                                 <div className="flex justify-between items-center">
                                     <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
-                                        Next: <span className="text-yellow-400">{nextReward.name}</span>
+                                        Next: <span className="text-amber-700 font-extrabold">{nextReward.name}</span>
                                     </p>
-                                    <p className="text-[9px] font-black text-white">
+                                    <p className="text-[9px] font-black text-[var(--text-primary)]">
                                         {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
-                                        <span className="text-yellow-400 ml-2">— {xpLeft.toLocaleString()} XP to go</span>
+                                        <span className="text-amber-700 font-extrabold ml-2">— {xpLeft.toLocaleString()} XP to go</span>
                                     </p>
                                 </div>
-                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-[var(--border-color)]/50 h-2 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${progress}%` }}
                                         transition={{ duration: 1, ease: 'easeOut' }}
-                                        className="h-full bg-gradient-to-r from-yellow-500 to-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+                                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
                                     />
                                 </div>
                             </div>
@@ -475,9 +475,10 @@ export default function StudentDashboard() {
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
                                 activeTab === 'link'
-                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
+                            style={activeTab === 'link' ? { color: '#ffffff' } : {}}
                         >
                             Join Quiz
                         </button>
@@ -485,9 +486,10 @@ export default function StudentDashboard() {
                             onClick={() => { if (!isLoading) setActiveTab('arena'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
                                 activeTab === 'arena'
-                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
+                            style={activeTab === 'arena' ? { color: '#ffffff' } : {}}
                         >
                             Game Arena
                         </button>
@@ -495,9 +497,10 @@ export default function StudentDashboard() {
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 ${
                                 activeTab === 'gamification'
-                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
+                            style={activeTab === 'gamification' ? { color: '#ffffff' } : {}}
                         >
                             <Trophy size={16} /> Missions & Perks
                         </button>
@@ -517,7 +520,7 @@ export default function StudentDashboard() {
                                 <div className="relative">
                                     <motion.div 
                                         animate={controls}
-                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-8 px-6 bg-white/[0.02] backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] group"
+                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-8 px-6 bg-[var(--bg-secondary)] rounded-[2.5rem] border-2 border-[var(--border-color)] shadow-lg group"
                                         onClick={() => inputRef.current?.focus()}
                                     >
                                         <input
@@ -546,8 +549,8 @@ export default function StudentDashboard() {
                                                     initial={false}
                                                     animate={{
                                                         scale: isActive ? 1.08 : 1,
-                                                        borderColor: isActive ? 'var(--bg-accent)' : isFilled ? 'var(--bg-accent)' : 'rgba(255,255,255,0.1)',
-                                                        backgroundColor: isActive ? 'rgba(255,255,255,0.05)' : isFilled ? 'rgba(255,255,255,0.02)' : 'transparent',
+                                                        borderColor: isActive ? 'var(--bg-accent)' : isFilled ? 'var(--bg-accent)' : 'var(--border-color)',
+                                                        backgroundColor: isActive ? 'rgba(19,62,135,0.06)' : isFilled ? 'rgba(19,62,135,0.04)' : 'white',
                                                         boxShadow: isActive ? '0 0 25px var(--bg-accent-glow)' : 'none'
                                                     }}
                                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -560,7 +563,7 @@ export default function StudentDashboard() {
                                                                 initial={{ opacity: 0, scale: 2, y: 10 }}
                                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                                                                className="text-xl md:text-3xl font-black text-white italic tracking-tighter z-10"
+                                                                className="text-xl md:text-3xl font-black text-[var(--text-primary)] italic tracking-tighter z-10"
                                                             >
                                                                 {joinCode[i]}
                                                             </motion.span>
@@ -594,18 +597,26 @@ export default function StudentDashboard() {
                                 <button
                                     onClick={() => handleJoin()}
                                     disabled={joinCode.length !== maxChars || isSubmitting}
-                                    className={`w-full h-16 rounded-2xl font-black text-lg italic uppercase tracking-[0.2em] flex items-center justify-center gap-4 transition-all duration-500 btn-cinematic btn-glow
-                                        ${joinCode.length === maxChars && !isSubmitting
-                                            ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_20px_40px_var(--bg-accent-glow)]' 
-                                            : 'bg-white/[0.03] text-white/10 border border-white/5 cursor-not-allowed'}`}
+                                    className={`w-full h-16 rounded-2xl font-black text-lg italic uppercase tracking-[0.2em] flex items-center justify-center text-center transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                        joinCode.length === maxChars && !isSubmitting
+                                            ? 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-[0_0_25px_var(--bg-accent-glow)]' 
+                                            : 'opacity-85 cursor-not-allowed'
+                                    }`}
+                                    style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                 >
                                     {isSubmitting ? (
-                                        <Zap className="animate-spin" size={20} />
+                                        <div className="flex items-center justify-center gap-3 text-white">
+                                            <Zap className="animate-spin text-white" size={22} />
+                                            <span className="text-white font-black">CONNECTING TO ARENA...</span>
+                                        </div>
                                     ) : (
-                                        <>
-                                            <Sparkles size={20} className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
-                                            {uiTerminology.deployToArena.toUpperCase()}
-                                        </>
+                                        <div className="flex items-center justify-center gap-3 text-center w-full text-white">
+                                            <Sparkles size={22} className={`text-white ${joinCode.length === maxChars ? 'animate-pulse' : ''}`} />
+                                            <span className="text-white font-black tracking-[0.2em]">
+                                                ATTEMPT QUIZ
+                                            </span>
+                                            <ArrowRight size={20} className="text-white" />
+                                        </div>
                                     )}
                                 </button>
                             </motion.div>
@@ -622,11 +633,11 @@ export default function StudentDashboard() {
                                     
                                     {/* Column 1: Document Uploader */}
                                     <div className="lg:col-span-2 space-y-6">
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 Step 1: Upload Study Material
                                             </label>
-                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)]/50 transition-all bg-white/5 group/upload">
+                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)] transition-all bg-[var(--bg-primary)] group/upload">
                                                 <input
                                                     type="file"
                                                     accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.txt"
@@ -637,15 +648,17 @@ export default function StudentDashboard() {
                                                 <div className="p-8 flex flex-col items-center gap-4 text-center">
                                                     {file ? (
                                                         <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-300">
-                                                            <div className="bg-[var(--bg-accent)] p-4 rounded-xl text-[var(--text-on-accent)] shadow-[0_5px_20px_var(--bg-accent-glow)]">
-                                                                <FilePlus size={32} />
+                                                            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shadow-xs">
+                                                                <FileCheck size={28} className="text-[#133E87]" />
                                                             </div>
-                                                            <p className="font-black text-sm text-[var(--text-primary)] italic max-w-[180px] truncate">{file.name}</p>
-                                                            <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[9px]">Material Locked In</p>
+                                                            <p className="font-black text-sm text-[#0f172a] italic max-w-[200px] truncate" style={{ color: '#0f172a' }}>{file.name}</p>
+                                                            <div className="px-3 py-1 rounded-full bg-blue-50 border border-blue-200">
+                                                                <p className="text-[9px] font-black text-[#133E87] uppercase tracking-widest" style={{ color: '#133E87' }}>Material Locked In</p>
+                                                            </div>
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <div className="bg-white/5 p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
+                                                            <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
                                                                 <Upload size={32} />
                                                             </div>
                                                             <div>
@@ -657,7 +670,7 @@ export default function StudentDashboard() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 OR YouTube Video Links (Max 2)
                                             </label>
@@ -668,7 +681,7 @@ export default function StudentDashboard() {
                                                             type="text"
                                                             value={url}
                                                             onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
-                                                            className="flex-1 p-4 bg-white/5 border border-white/10 rounded-xl focus:bg-white/10 focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
+                                                            className="flex-1 p-4 bg-white border border-[var(--border-color)] rounded-xl focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 outline-none"
                                                             placeholder="https://youtube.com/watch?v=..."
                                                             disabled={submitting}
                                                         />
@@ -690,7 +703,7 @@ export default function StudentDashboard() {
 
                                     {/* Column 2: Choose Game Mode */}
                                     <div className="lg:col-span-3 space-y-6">
-                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel">
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 shadow-sm">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 Step 2: Select Game Arena
                                             </label>
@@ -701,8 +714,8 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('cyber-quest')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'cyber-quest'
-                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/5 shadow-[0_0_20px_rgba(0,240,255,0.15)]'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10'
+                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/8 shadow-md'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-[var(--bg-accent)]/50'
                                                     }`}
                                                 >
                                                     <div className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] w-12 h-12 rounded-xl flex items-center justify-center">
@@ -710,10 +723,10 @@ export default function StudentDashboard() {
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-white uppercase italic text-sm tracking-wide">Cyber Quest</h3>
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Cyber Quest</h3>
                                                             <span className="text-[var(--text-accent)] font-bold text-[8px] uppercase tracking-widest border border-[var(--text-accent)]/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Progress through 10 cyberpunk difficulty tiers. Use 50:50, Shield, and Skip lifelines to win.
                                                         </p>
                                                     </div>
@@ -724,8 +737,8 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('sprint-arena')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'sprint-arena'
-                                                            ? 'border-pink-500 bg-pink-500/5 shadow-[0_0_20px_rgba(219,39,119,0.15)] opacity-100'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
+                                                            ? 'border-pink-500 bg-pink-500/5 shadow-md opacity-100'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-pink-400/50 opacity-80'
                                                     }`}
                                                 >
                                                     <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -733,10 +746,10 @@ export default function StudentDashboard() {
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Sprint Arena</h3>
-                                                            <span className="text-pink-400 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Sprint Arena</h3>
+                                                            <span className="text-pink-500 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
                                                         </p>
                                                     </div>
@@ -747,8 +760,8 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('match-up')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'match-up'
-                                                            ? 'border-purple-500 bg-purple-500/5 shadow-[0_0_20px_rgba(168,85,247,0.15)] opacity-100'
-                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
+                                                            ? 'border-purple-500 bg-purple-500/5 shadow-md opacity-100'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-purple-400/50 opacity-80'
                                                     }`}
                                                 >
                                                     <div className="bg-purple-600/10 text-purple-400 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -756,10 +769,10 @@ export default function StudentDashboard() {
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Match-Up Match</h3>
-                                                            <span className="text-purple-400 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Match-Up Match</h3>
+                                                            <span className="text-purple-500 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Visual cognitive card-matching memory board. Solve vocabulary and concepts in record times.
                                                         </p>
                                                     </div>
@@ -775,21 +788,22 @@ export default function StudentDashboard() {
                                     <button
                                         onClick={handleLaunchGame}
                                         disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
-                                        className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center gap-4 transition-all duration-300 border btn-cinematic
-                                            ${(file || videoUrls.some(u => u.trim())) && !submitting
-                                                ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_15px_30px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                                : 'bg-white/5 text-white/10 border-white/5 cursor-not-allowed'
-                                            }`}
+                                        className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center justify-center gap-4 transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                            (!file && videoUrls.every(u => !u.trim())) || submitting
+                                                ? 'opacity-85 cursor-pointer'
+                                                : 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+                                        }`}
+                                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                     >
                                         {submitting ? (
                                             <>
-                                                <Loader2 size={24} className="animate-spin" />
-                                                ANALYZING MATERIAL...
+                                                <Loader2 size={24} className="animate-spin text-white" />
+                                                <span className="text-white font-black">ANALYZING MATERIAL...</span>
                                             </>
                                         ) : (
                                             <>
-                                                <Play size={24} fill="currentColor" />
-                                                LAUNCH GAME MODE
+                                                <Play size={24} fill="#ffffff" className="text-white" />
+                                                <span className="text-white font-black">LAUNCH GAME MODE</span>
                                             </>
                                         )}
                                     </button>
@@ -806,27 +820,27 @@ export default function StudentDashboard() {
                             >
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {/* Daily Missions */}
-                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
                                         <div className="flex items-center gap-3 mb-2">
                                             <Target className="text-pink-500" size={28} />
-                                            <h2 className="text-2xl font-black text-white italic uppercase">Daily Missions</h2>
+                                            <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Daily Missions</h2>
                                         </div>
                                         
                                         {dailyMissions.map((m, idx) => (
-                                            <div key={m.id} className={`p-4 rounded-2xl border flex flex-col gap-2 relative overflow-hidden ${m.current >= m.target ? 'border-green-500/50 bg-green-500/10' : 'border-white/10 bg-white/5'}`}>
+                                            <div key={m.id} className={`p-4 rounded-2xl border flex flex-col gap-2 relative overflow-hidden ${m.current >= m.target ? 'border-green-500/40 bg-green-500/8' : 'border-[var(--border-color)] bg-[var(--bg-primary)]'}`}>
                                                 <div className="flex justify-between items-center">
                                                     <div>
-                                                        <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                                                        <h3 className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
                                                             {m.title}
                                                             {m.required && <span className="bg-pink-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Main (Streak +1)</span>}
                                                             {!m.required && <span className="bg-blue-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
                                                         </h3>
                                                     </div>
-                                                    <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-400' : 'text-slate-400'}`}>
+                                                    <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-600' : 'text-[var(--text-secondary)]'}`}>
                                                         {m.current} / {m.target}
                                                     </span>
                                                 </div>
-                                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                                <div className="w-full bg-[var(--border-color)] h-2 rounded-full overflow-hidden">
                                                     <div 
                                                         className={`h-full ${m.current >= m.target ? 'bg-green-500' : 'bg-[var(--bg-accent)]'} transition-all duration-500`}
                                                         style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
@@ -837,10 +851,10 @@ export default function StudentDashboard() {
                                     </div>
 
                                     {/* Rewards Store */}
-                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <Trophy className="text-yellow-400" size={28} />
-                                            <h2 className="text-2xl font-black text-white italic uppercase">Rewards Store</h2>
+                                            <Trophy className="text-yellow-600" size={28} />
+                                            <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
                                         </div>
 
                                         {/* Perk Store */}
@@ -866,14 +880,14 @@ export default function StudentDashboard() {
                                                 const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
                                                 const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
                                                 return (
-                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-white/5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/30 opacity-70' : 'border-white/10'}`}>
+                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-[var(--bg-primary)] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/40 opacity-70' : 'border-[var(--border-color)]'}`}>
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-xl bg-white/5 border ${perk.border} ${perk.color}`}>
+                                                        <div className={`p-3 rounded-xl bg-[var(--bg-secondary)] border ${perk.border} ${perk.color}`}>
                                                             <perk.icon size={24} />
                                                         </div>
                                                         <div>
-                                                            <h3 className="font-bold text-white text-sm">{perk.name}</h3>
-                                                            <p className="text-slate-400 text-[10px] mt-0.5">{perk.desc}</p>
+                                                            <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
+                                                            <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
                                                             {perk.monthlyLimit && (
                                                                 <p className="text-pink-400 text-[9px] font-black uppercase tracking-wider mt-1">
                                                                     ⚠️ Only {perk.monthlyLimit} redeemable this month • {redemptionsThisMonth}/{perk.monthlyLimit} used
@@ -890,8 +904,8 @@ export default function StudentDashboard() {
                                                         disabled={!canAfford || redeeming}
                                                         className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
                                                             canAfford
-                                                                ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent)]/80' 
-                                                                : 'bg-white/10 text-slate-400 cursor-not-allowed'
+                                                                ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent)]/90 shadow-md' 
+                                                                : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed'
                                                         }`}
                                                     >
                                                         {isStreakLocked ? 'Locked' : limitReached ? 'Max Limit' : 'Redeem'}

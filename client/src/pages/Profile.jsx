@@ -11,24 +11,8 @@ import {
 import { motion } from 'framer-motion';
 
 export default function Profile() {
-    const { user, theme, setTheme, font, setFont } = useContext(AuthContext);
+    const { user, theme, setTheme } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    const themes = [
-        { id: 'celestial', name: 'Obsidian Aureate', color: '#D7AC28' },
-        { id: 'imperial', name: 'Amethyst Aurora', color: '#B371E0' },
-        { id: 'drakor', name: 'Drakor', color: '#C0192A' },
-    ];
-
-    const fonts = [
-        { id: 'segoe', name: 'Segoe UI', css: 'font-sans' },
-        { id: 'helvetica', name: 'Helvetica', css: 'font-sans' },
-        { id: 'arial', name: 'Arial', css: 'font-sans' },
-        { id: 'verdana', name: 'Verdana', css: 'font-sans' },
-        { id: 'georgia', name: 'Georgia', css: 'font-serif' },
-        { id: 'times', name: 'Times New Roman', css: 'font-serif' },
-        { id: 'courier', name: 'Courier New', css: 'font-mono' },
-    ];
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -94,10 +78,11 @@ export default function Profile() {
                 {/* Back */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="group flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/5 rounded-full text-white/40 hover:text-[var(--text-accent)] hover:border-[var(--text-accent)]/30 hover:bg-white/[0.05] font-black text-[10px] uppercase tracking-[0.3em] transition-all btn-press w-fit"
+                    className="group flex items-center gap-3 px-6 py-3 bg-white border-2 border-[#0f172a] rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all btn-press w-fit shadow-md hover:border-[var(--bg-accent)]"
+                    style={{ color: '#0f172a' }}
                 >
-                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-                    BACK TO SYSTEM
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform text-[#0f172a]" style={{ color: '#0f172a' }} /> 
+                    <span className="text-[#0f172a] font-black" style={{ color: '#0f172a' }}>BACK TO SYSTEM</span>
                 </button>
 
                 {/* Profile Header */}
@@ -105,15 +90,15 @@ export default function Profile() {
                     <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--bg-accent)]/5 rounded-full blur-[100px] pointer-events-none" />
 
                     {/* Avatar */}
-                    <div className="w-28 h-28 rounded-[1.5rem] bg-[var(--bg-accent)] flex items-center justify-center shadow-2xl shadow-[var(--bg-accent)]/30 shrink-0 relative z-10">
+                    <div className="w-28 h-28 rounded-[2rem] bg-[var(--bg-accent)] flex items-center justify-center shadow-2xl shadow-[var(--bg-accent)]/30 shrink-0 relative z-10 overflow-hidden">
                         {role === 'teacher' ? (
-                            <UserCheck size={52} className="text-white" strokeWidth={1.5} />
+                            <UserCheck size={52} className="text-white pl-1" strokeWidth={1.75} />
                         ) : role === 'student' ? (
-                            <GraduationCap size={52} className="text-white" strokeWidth={1.5} />
+                            <GraduationCap size={52} className="text-white" strokeWidth={1.75} />
                         ) : role === 'admin' ? (
-                            <ShieldCheck size={52} className="text-white" strokeWidth={1.5} />
+                            <ShieldCheck size={52} className="text-white" strokeWidth={1.75} />
                         ) : (
-                            <User size={52} className="text-white" strokeWidth={1.5} />
+                            <User size={52} className="text-white" strokeWidth={1.75} />
                         )}
                     </div>
 
@@ -163,14 +148,15 @@ export default function Profile() {
                                         onChange={e => setCurrentPassword(e.target.value)}
                                         placeholder="••••••••"
                                         required
-                                        className="w-full pl-5 pr-12 py-4 bg-white/[0.04] border-2 border-white/5 rounded-2xl focus:border-[var(--bg-accent)] focus:bg-white/[0.08] transition-all text-[var(--text-primary)] font-bold placeholder:text-white/30 outline-none"
+                                        className="w-full pl-5 pr-12 py-4 bg-white border-2 border-[var(--border-color)] rounded-2xl focus:border-[var(--bg-accent)] transition-all text-[var(--text-primary)] font-bold placeholder:text-slate-400 outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowCurrent(v => !v)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-400 transition-all"
+                                        className="eye-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-900 hover:text-black transition-all p-1"
+                                        title={showCurrent ? "Hide password" : "Show password"}
                                     >
-                                        {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showCurrent ? <EyeOff size={20} className="text-slate-900 stroke-[2.5]" /> : <Eye size={20} className="text-slate-900 stroke-[2.5]" />}
                                     </button>
                                 </div>
                             </div>
@@ -187,14 +173,15 @@ export default function Profile() {
                                         onChange={e => setNewPassword(e.target.value)}
                                         placeholder="Min. 6 characters"
                                         required
-                                        className="w-full pl-5 pr-12 py-4 bg-white/[0.04] border-2 border-white/5 rounded-2xl focus:border-[var(--bg-accent)] focus:bg-white/[0.08] transition-all text-[var(--text-primary)] font-bold placeholder:text-white/30 outline-none"
+                                        className="w-full pl-5 pr-12 py-4 bg-white border-2 border-[var(--border-color)] rounded-2xl focus:border-[var(--bg-accent)] transition-all text-[var(--text-primary)] font-bold placeholder:text-slate-400 outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowNew(v => !v)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-400 transition-all"
+                                        className="eye-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-900 hover:text-black transition-all p-1"
+                                        title={showNew ? "Hide password" : "Show password"}
                                     >
-                                        {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showNew ? <EyeOff size={20} className="text-slate-900 stroke-[2.5]" /> : <Eye size={20} className="text-slate-900 stroke-[2.5]" />}
                                     </button>
                                 </div>
                             </div>
@@ -211,19 +198,20 @@ export default function Profile() {
                                         onChange={e => setConfirmPassword(e.target.value)}
                                         placeholder="Repeat new password"
                                         required
-                                        className={`w-full pl-5 pr-12 py-4 bg-white/[0.04] border-2 rounded-2xl transition-all text-[var(--text-primary)] font-bold placeholder:text-white/30 outline-none
+                                        className={`w-full pl-5 pr-12 py-4 bg-white border-2 rounded-2xl transition-all text-[var(--text-primary)] font-bold placeholder:text-slate-400 outline-none
                                             ${confirmPassword && newPassword
                                                 ? confirmPassword === newPassword
-                                                    ? 'border-green-500/60 focus:border-green-500'
-                                                    : 'border-red-500/60 focus:border-red-500'
-                                                : 'border-white/5 focus:border-[var(--bg-accent)]'}`}
+                                                    ? 'border-green-500 focus:border-green-600'
+                                                    : 'border-red-500 focus:border-red-600'
+                                                : 'border-[var(--border-color)] focus:border-[var(--bg-accent)]'}`}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirm(v => !v)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-400 transition-all"
+                                        className="eye-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-900 hover:text-black transition-all p-1"
+                                        title={showConfirm ? "Hide password" : "Show password"}
                                     >
-                                        {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showConfirm ? <EyeOff size={20} className="text-slate-900 stroke-[2.5]" /> : <Eye size={20} className="text-slate-900 stroke-[2.5]" />}
                                     </button>
                                 </div>
                                 {confirmPassword && newPassword && confirmPassword !== newPassword && (
@@ -251,10 +239,11 @@ export default function Profile() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[var(--bg-accent)]/20 mt-2"
+                                className="w-full flex items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] !text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[var(--bg-accent)]/20 mt-2"
+                                style={{ color: '#ffffff' }}
                             >
                                 {loading ? (
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex items-center gap-2" style={{ color: '#ffffff' }}>
                                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         Updating...
                                     </span>
@@ -299,108 +288,94 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    {/* ── UI Preferences ───────────────────────────── */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-10 lg:col-span-2 shadow-xl">
-                        <div className="mb-10">
-                            <h3 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tight">Interface <span className="text-[var(--text-accent)]">Customization</span></h3>
-                            <p className="text-[var(--text-secondary)] text-sm mt-1">Personalize your experience with custom themes and typography</p>
+                </div>
+
+                {/* ── Appearance & Theme Customization ───────────────────── */}
+                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-10 space-y-6 shadow-md">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-orange-500/10 rounded-xl">
+                            <Palette size={20} className="text-orange-500" />
                         </div>
-                        <div className="flex flex-col lg:flex-row gap-16">
+                        <div>
+                            <p className="font-black text-[var(--text-primary)] uppercase tracking-tight italic">Appearance & Theme</p>
+                            <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">Select Application Visual Palette</p>
+                        </div>
+                    </div>
 
-                            {/* Theme Selection */}
-                            <div className="flex-1 space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-amber-500/10 rounded-xl">
-                                        <Palette size={20} className="text-amber-400" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        {/* 🇮🇳 Saffron Dawn Theme Card */}
+                        <div
+                            onClick={() => setTheme('india')}
+                            className={`group relative p-6 rounded-3xl border-2 transition-all cursor-pointer overflow-hidden ${
+                                theme === 'india'
+                                    ? 'border-[#D96B27] bg-[#D96B27]/5 shadow-xl shadow-[#D96B27]/10 scale-[1.01]'
+                                    : 'border-[var(--border-color)] bg-white hover:border-[#D96B27]/50'
+                            }`}
+                        >
+                            <div className="h-2.5 w-full bg-gradient-to-r from-[#D96B27] via-[#E65A1C] via-white to-[#1C8574] rounded-full mb-4 shadow-sm" />
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">
+                                            Saffron Dawn <span className="text-xs text-[#D96B27] font-bold tracking-normal">(Heritage Palette)</span>
+                                        </h3>
                                     </div>
-                                    <div>
-                                        <p className="font-black text-[var(--text-primary)] uppercase tracking-tight italic">Theme</p>
-                                        <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">Selection</p>
-                                    </div>
+                                    <p className="text-xs font-semibold text-slate-600 mt-2 leading-relaxed">
+                                        Warm Saffron-Orange hero accents, crisp black typography, porcelain surfaces, and fresh mint-emerald highlights.
+                                    </p>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {themes.map((t) => (
-                                        <button
-                                            key={t.id}
-                                            onClick={() => setTheme(t.id)}
-                                            className={`group relative h-32 rounded-[2rem] border-2 transition-all overflow-hidden flex flex-col items-center justify-center p-6 btn-press
-                                                ${theme === t.id 
-                                                    ? 'border-[var(--text-accent)] bg-white/[0.05] shadow-2xl shadow-[var(--text-accent)]/20' 
-                                                    : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/10'}`}
-                                        >
-                                            {/* Accent Glow Backdrop */}
-                                            <div 
-                                                className={`absolute inset-0 opacity-10 transition-opacity group-hover:opacity-20 pointer-events-none ${theme === t.id ? 'opacity-30' : ''}`}
-                                                style={{ background: `radial-gradient(circle at 50% 50%, ${t.color}, transparent 80%)` }}
-                                            />
-                                            
-                                            {/* Stylized Icon Container */}
-                                            <div 
-                                                className="relative z-10 w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-xl group-hover:scale-110 transition-transform"
-                                                style={{ backgroundColor: `${t.color}20`, border: `1px solid ${t.color}40` }}
-                                            >
-                                                <Palette size={28} style={{ color: t.color }} />
-                                            </div>
-                                            
-                                            <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.2em] text-white text-center">
-                                                {t.name}
-                                            </span>
+                                {theme === 'india' && (
+                                    <div className="p-1.5 bg-[#0D5C53] text-white rounded-full shrink-0 shadow-md">
+                                        <Check size={16} strokeWidth={3} />
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Color Palette Swatches */}
+                            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-200">
+                                <span className="w-6 h-6 rounded-full bg-[#0D5C53] shadow-sm border border-black/10" title="Deep Emerald Teal" />
+                                <span className="w-6 h-6 rounded-full bg-white shadow-sm border border-slate-300" title="Crisp Porcelain White" />
+                                <span className="w-6 h-6 rounded-full bg-[#D96B27] shadow-sm border border-black/10" title="Warm Saffron Orange" />
+                                <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-[#0D5C53]">Active Preset</span>
+                            </div>
+                        </div>
 
-                                            {theme === t.id && (
-                                                <motion.div 
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    className="absolute top-4 right-4 bg-[var(--bg-accent)] text-white p-1.5 rounded-full shadow-lg"
-                                                >
-                                                    <Check size={12} />
-                                                </motion.div>
-                                            )}
-                                        </button>
-                                    ))}
+                        {/* 🌌 Celestial Blue Theme Card */}
+                        <div
+                            onClick={() => setTheme('celestial')}
+                            className={`group relative p-6 rounded-3xl border-2 transition-all cursor-pointer overflow-hidden ${
+                                theme === 'celestial'
+                                    ? 'border-[#133E87] bg-blue-500/5 shadow-xl shadow-blue-500/10 scale-[1.01]'
+                                    : 'border-[var(--border-color)] bg-white hover:border-blue-400/50'
+                            }`}
+                        >
+                            <div className="h-2.5 w-full bg-gradient-to-r from-[#133E87] via-[#2563EB] to-[#DDE8F3] rounded-full mb-4 shadow-sm" />
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-2xl">🌌</span>
+                                        <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">
+                                            Celestial Theme <span className="text-xs text-blue-600 font-bold tracking-normal">(Classic Blue)</span>
+                                        </h3>
+                                    </div>
+                                    <p className="text-xs font-semibold text-slate-600 mt-2 leading-relaxed">
+                                        Deep rich blue primary accent with soft powder blue pages and crisp slate typography.
+                                    </p>
                                 </div>
+                                {theme === 'celestial' && (
+                                    <div className="p-1.5 bg-[#133E87] text-white rounded-full shrink-0 shadow-md">
+                                        <Check size={16} strokeWidth={3} />
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Font Selection */}
-                            <div className="flex-1 space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-blue-500/10 rounded-xl">
-                                        <Type size={20} className="text-blue-400" />
-                                    </div>
-                                    <div>
-                                        <p className="font-black text-[var(--text-primary)] uppercase tracking-tight italic">Typography</p>
-                                        <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">Font Style</p>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {fonts.map((f) => (
-                                        <button
-                                            key={f.id}
-                                            onClick={() => setFont(f.id)}
-                                            className={`p-6 rounded-[1.5rem] border-2 transition-all text-left relative flex flex-col group h-32
-                                                ${font === f.id ? 'border-[var(--text-accent)] bg-[var(--text-accent)]/10 shadow-xl shadow-[var(--text-accent)]/10' : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.04] hover:border-white/10'}`}
-                                        >
-                                            <div className="min-w-0 flex flex-col h-full justify-between">
-                                                <p className="text-[10px] font-black text-[var(--text-primary)] uppercase tracking-widest italic">{f.name}</p>
-                                                <p 
-                                                    className="text-2xl text-[var(--text-secondary)] font-medium"
-                                                    style={{ fontFamily: `var(--font-${f.id}, var(--app-font))` }}
-                                                >
-                                                    Aa123
-                                                </p>
-                                            </div>
-                                            
-                                            {font === f.id ? (
-                                                <div className="absolute top-3 right-3 w-7 h-7 bg-[var(--bg-accent)] text-white rounded-full flex items-center justify-center shadow-lg animate-in zoom-in duration-300">
-                                                    <Check size={14} strokeWidth={4} />
-                                                </div>
-                                            ) : (
-                                                <div className="absolute top-3 right-3 w-7 h-7 bg-white/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Type size={14} className="text-[var(--text-secondary)]" />
-                                                </div>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
+                            {/* Color Palette Swatches */}
+                            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-200">
+                                <span className="w-6 h-6 rounded-full bg-[#133E87] shadow-sm border border-black/10" title="Deep Blue" />
+                                <span className="w-6 h-6 rounded-full bg-[#2563EB] shadow-sm border border-black/10" title="Royal Blue" />
+                                <span className="w-6 h-6 rounded-full bg-[#DDE8F3] shadow-sm border border-slate-300" title="Powder Blue" />
+                                <span className="w-6 h-6 rounded-full bg-[#0F172A] shadow-sm border border-black/10" title="Slate Black" />
+                                <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-[#133E87]">Classic</span>
                             </div>
                         </div>
                     </div>

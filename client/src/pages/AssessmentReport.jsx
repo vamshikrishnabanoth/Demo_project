@@ -7,7 +7,7 @@ import {
 import { 
     Trophy, Clock, Target, AlertCircle, ArrowLeft, 
     CheckCircle2, XCircle, Brain, 
-    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X, Home
+    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X, Home, Code
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
@@ -24,6 +24,7 @@ const AssessmentReport = () => {
     const [loading, setLoading] = useState(true);
     const [selectedReview, setSelectedReview] = useState(null);
     const [showDetailed, setShowDetailed] = useState(false);
+    const [isDashHovered, setIsDashHovered] = useState(false);
     const [showAnalytics, setShowAnalytics] = useState(() => {
         return location.state?.showAnalytics ?? false;
     });
@@ -71,24 +72,40 @@ const AssessmentReport = () => {
     ];
     const COLORS = ['#10b981', '#f43f5e'];
 
+    const BLUE_SHADES = [
+        '#133E87', // Deep Navy
+        '#2563EB', // Royal Indigo Blue
+        '#0284C7', // Ocean Blue
+        '#0ea5e9', // Bright Sky Blue
+        '#1d4ed8', // Vivid Blue
+        '#0284c7', // Deep Azure
+        '#3b82f6', // Sapphire Blue
+        '#0369A1', // Midnight Azure
+        '#1e40af', // Dark Cobalt
+        '#38bdf8', // Light Cyan Blue
+    ];
+
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
-                    <p className="font-bold text-white text-sm tracking-wide">{label || 'Metric'}</p>
-                    <div className="border-t border-white/10 my-2.5"></div>
-                    {payload.map((entry, index) => (
-                        <div key={index} className="flex items-center gap-2.5 text-sm">
-                            <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color || '#22d3ee' }} />
-                            <span className="text-slate-300 font-medium">{entry.name === 'time' ? 'Time Spent' : entry.name || 'Value'}:</span>
-                            <span className="font-black text-white ml-1">
-                                {entry.value}
-                                <span className="text-[10px] ml-1 opacity-50 not-italic font-bold uppercase">
-                                    {entry.name === 'time' ? 'Seconds' : 'Units'}
+                <div className="bg-white border-2 border-[#9cbcd8] p-4 rounded-2xl shadow-xl backdrop-blur-md" style={{ color: '#0f172a' }}>
+                    <p className="font-black text-[#0f172a] text-sm tracking-wide mb-1" style={{ color: '#0f172a' }}>{label || 'Metric'}</p>
+                    <div className="border-t border-slate-200 my-2"></div>
+                    {payload.map((entry, index) => {
+                        const binColor = entry.payload?.fill || entry.fill || entry.color || '#133E87';
+                        return (
+                            <div key={index} className="flex items-center gap-2.5 text-xs py-1" style={{ color: '#0f172a' }}>
+                                <div className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs border border-white" style={{ backgroundColor: binColor }} />
+                                <span className="text-[#334155] font-bold" style={{ color: '#334155' }}>{entry.name === 'time' ? 'Time Spent' : entry.name || 'Value'}:</span>
+                                <span className="font-black text-sm ml-1" style={{ color: binColor }}>
+                                    {entry.value}
+                                    <span className="text-[10px] ml-1 opacity-75 not-italic font-bold uppercase text-[#334155]" style={{ color: '#334155' }}>
+                                        {entry.name === 'time' ? 'Sec' : ''}
+                                    </span>
                                 </span>
-                            </span>
-                        </div>
-                    ))}
+                            </div>
+                        );
+                    })}
                 </div>
             );
         }
@@ -109,42 +126,47 @@ const AssessmentReport = () => {
                     {!showAnalytics ? (
                         <motion.div
                             key="rank-card"
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ duration: 0.4 }}
-                            className="max-w-xl mx-auto text-center py-16 px-6 font-inter relative"
+                            className="max-w-lg mx-auto text-center py-10 px-4 font-inter relative select-none"
                         >
-                            {/* Decorative background glows */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-[var(--bg-accent)]/10 rounded-full blur-[100px] pointer-events-none -z-10" />
+                            {/* Ambient background glow */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-[#133E87]/10 rounded-full blur-[90px] pointer-events-none -z-10" />
                             
+                            {/* Theme-Matching Hero Trophy Icon Container */}
                             <motion.div
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-28 h-28 bg-white/5 border border-white/10 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl relative"
+                                animate={{ y: [0, -8, 0] }}
+                                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-white via-[#f0f6ff] to-[#dbeafe] border-2 border-[#9cbcd8] rounded-[2.2rem] flex items-center justify-center mx-auto mb-6 shadow-xl relative group cursor-pointer"
                             >
                                 <motion.div 
-                                    animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                    className="absolute inset-0 bg-[var(--bg-accent)] rounded-[2.5rem] blur-xl"
+                                    animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.6, 0.3] }}
+                                    transition={{ duration: 2.5, repeat: Infinity }}
+                                    className="absolute inset-0 bg-[#133E87]/20 rounded-[2.2rem] blur-md pointer-events-none"
                                 />
-                                <Trophy className="text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" size={56} />
+                                <Trophy className="text-amber-500 fill-amber-400 drop-shadow-md relative z-10" size={52} />
+                                <Sparkles className="absolute top-2 right-2 text-amber-400 z-10" size={16} fill="currentColor" />
                             </motion.div>
 
-                            <p className="text-[10px] font-black tracking-[0.4em] text-[var(--text-accent)] uppercase mb-3">Assessment Concluded</p>
-                            <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-8 leading-none max-w-md mx-auto">
+                            <p className="text-[10px] font-black tracking-[0.4em] text-[#133E87] uppercase mb-2" style={{ color: '#133E87' }}>Assessment Concluded</p>
+                            <h2 className="text-2xl sm:text-4xl font-black italic tracking-tight text-[#0f172a] uppercase mb-6 leading-tight max-w-md mx-auto" style={{ color: '#0f172a' }}>
                                 {quizTitle}
                             </h2>
 
-                            <div className="bg-[var(--bg-secondary)] border border-white/5 rounded-[3rem] p-10 backdrop-blur-md shadow-2xl mb-10 space-y-6 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 rounded-full blur-2xl -mr-16 -mt-16"></div>
+                            {/* Premium Rank Card */}
+                            <div className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 sm:p-10 shadow-xl mb-8 space-y-6 relative overflow-hidden">
+                                {/* Subtle Top Background Accent Ribbon */}
+                                <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-[var(--bg-accent)] to-[var(--text-accent)]"></div>
                                 
                                 <div className="space-y-2">
-                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Final Standing</p>
+                                    <div className="inline-block px-4 py-1 rounded-full bg-[var(--bg-accent)]/10 border border-[var(--border-color)] mb-2">
+                                        <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.3em]">Final Standing</p>
+                                    </div>
                                     <div className="flex flex-col items-center justify-center gap-1 w-full max-w-full overflow-hidden">
-                                        <span className="text-2xl md:text-3xl font-black italic text-white/60 uppercase tracking-wider">RANK</span>
-                                        <div className="drop-shadow-[0_0_30px_var(--bg-accent-glow)] py-2 w-full max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin text-center">
-                                            <span className={`inline-block px-6 py-2 font-black italic tracking-normal bg-gradient-to-r from-yellow-400 via-[var(--text-accent)] to-cyan-400 bg-clip-text text-transparent leading-normal ${
+                                        <div className="drop-shadow-xs py-1 w-full max-w-full text-center">
+                                            <span className={`inline-block px-4 font-black italic tracking-tight bg-gradient-to-r from-[var(--text-primary)] to-[var(--text-accent)] bg-clip-text text-transparent leading-none ${
                                                 `#${rank}`.length > 6 ? 'text-3xl md:text-4xl' :
                                                 `#${rank}`.length > 5 ? 'text-4xl md:text-5xl' :
                                                 `#${rank}`.length > 4 ? 'text-5xl md:text-6xl' :
@@ -154,40 +176,58 @@ const AssessmentReport = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    <p className="text-xs font-bold text-white/50 uppercase tracking-widest pt-2">
+                                    <p className="text-xs font-extrabold text-[#4B5563] uppercase tracking-widest pt-1" style={{ color: '#4B5563' }}>
                                         Out of {totalParticipants} {totalParticipants === 1 ? 'Candidate' : 'Candidates'}
                                     </p>
                                 </div>
 
-                                <div className="w-full h-px bg-white/5 my-6" />
+                                <div className="w-full h-px bg-slate-200 my-4" />
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/[0.02] border border-white/5 p-4.5 rounded-2xl">
-                                        <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1.5">Tactical Yield</p>
-                                        <p className="text-xl font-black italic text-white">{score} <span className="text-[10px] font-bold text-white/40">/ {totalQuestions * 10} Pts</span></p>
+                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-200 p-4 rounded-2xl text-left">
+                                        <p className="text-[9px] font-black text-[#133E87] uppercase tracking-widest mb-1" style={{ color: '#133E87' }}>Tactical Yield</p>
+                                        <p className="text-xl font-black italic text-[#0f172a]" style={{ color: '#0f172a' }}>{score} <span className="text-[10px] font-bold text-[#4B5563]">/ {totalQuestions * 10} Pts</span></p>
                                     </div>
-                                    <div className="bg-white/[0.02] border border-white/5 p-4.5 rounded-2xl">
-                                        <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1.5">Net Accuracy</p>
-                                        <p className="text-xl font-black italic text-emerald-400">{accuracy}%</p>
+                                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200 p-4 rounded-2xl text-left">
+                                        <p className="text-[9px] font-black text-emerald-800 uppercase tracking-widest mb-1">Net Accuracy</p>
+                                        <p className="text-xl font-black italic text-emerald-700">{accuracy}%</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                                 <motion.button
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
                                     onClick={() => setShowAnalytics(true)}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-gradient-to-r from-[var(--bg-accent)] to-amber-500 text-[var(--text-on-accent)] font-black text-xs uppercase tracking-widest hover:shadow-2xl hover:shadow-[var(--bg-accent)]/20 transition-all border-b-4 border-amber-700 btn-press"
+                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#133E87] hover:bg-[#0e2e65] text-white font-black text-xs uppercase tracking-widest transition-all shadow-md border border-[#133E87] cursor-pointer"
+                                    style={{ backgroundColor: '#133E87', color: '#ffffff' }}
                                 >
-                                    Analytics <TrendingUp size={14} />
+                                    <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analytics</span> 
+                                    <TrendingUp size={16} className="text-white" />
                                 </motion.button>
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.04 }}
+                                    whileTap={{ scale: 0.96 }}
+                                    onMouseEnter={() => setIsDashHovered(true)}
+                                    onMouseLeave={() => setIsDashHovered(false)}
                                     onClick={() => navigate('/student-dashboard')}
-                                    className="flex-1 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95 btn-press"
+                                    className="flex-1 flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-lg"
+                                    style={{
+                                        backgroundColor: isDashHovered ? '#133E87' : '#EFF6FF',
+                                        borderColor: isDashHovered ? '#133E87' : '#BFDBFE',
+                                        color: isDashHovered ? '#ffffff' : '#133E87'
+                                    }}
                                 >
-                                    Dashboard
-                                </button>
+                                    <Home size={18} style={{ color: isDashHovered ? '#ffffff' : '#133E87' }} className="transition-colors duration-200" />
+                                    <span 
+                                        className="font-black text-xs uppercase tracking-widest transition-colors duration-200"
+                                        style={{ color: isDashHovered ? '#ffffff' : '#133E87' }}
+                                    >
+                                        Dashboard
+                                    </span>
+                                </motion.button>
                             </div>
                         </motion.div>
                     ) : (
@@ -204,10 +244,11 @@ const AssessmentReport = () => {
                                     <div className="flex flex-wrap items-center gap-4">
                                         <button 
                                             onClick={() => navigate('/history')}
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all group btn-press"
+                                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all group btn-press shadow-sm"
+                                            style={{ color: '#0f172a' }}
                                         >
                                             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Back to History</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#0f172a' }}>Back to History</span>
                                         </button>
                                         <button 
                                             onClick={() => navigate('/student-dashboard')}
@@ -235,40 +276,37 @@ const AssessmentReport = () => {
                                 </div>
                             </div>
 
-                            {/* Key Metrics Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12 px-4">
+                            {/* Key Metrics Grid — Compact & Space-Efficient */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8 px-4">
                                 {[
-                                    { label: 'Tactical Rank', value: `#${rank}`, subValue: `of ${totalParticipants}`, icon: Trophy, color: 'text-yellow-400', glow: 'shadow-yellow-400/10' },
-                                    { label: 'Total Score', value: `${score}`, subValue: `of ${totalQuestions * 10}`, icon: Sparkles, color: 'text-orange-400', glow: 'shadow-orange-400/10' },
-                                    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-emerald-400', glow: 'shadow-emerald-400/10' },
-                                    { label: 'Time Spent', value: `${totalTimeTaken}s`, icon: Clock, color: 'text-blue-400', glow: 'shadow-blue-400/10' },
-                                    { label: 'Avg Speed', value: `${avgTime}s/q`, icon: TrendingUp, color: 'text-purple-400', glow: 'shadow-purple-400/10' }
+                                    { label: 'Tactical Rank', value: `#${rank}`, subValue: `of ${totalParticipants}`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
+                                    { label: 'Total Score', value: `${score}`, subValue: `of ${totalQuestions * 10}`, icon: Sparkles, color: 'text-orange-600', bg: 'bg-orange-50 border border-orange-200' },
+                                    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-emerald-600', bg: 'bg-emerald-50 border border-emerald-200' },
+                                    { label: 'Time Spent', value: `${totalTimeTaken}s`, icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50 border border-blue-200' },
+                                    { label: 'Avg Speed', value: `${avgTime}s/q`, icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' }
                                 ].map((stat, i) => (
                                     <motion.div 
                                         key={i}
-                                        initial={{ y: 20, opacity: 0 }}
+                                        initial={{ y: 15, opacity: 0 }}
                                         animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: i * 0.05 }}
-                                        whileHover={{ y: -5, scale: 1.02 }}
-                                        className={`glass-panel p-8 rounded-[2.5rem] border border-white/10 hover:border-white/20 transition-all group ${stat.glow} shadow-2xl`}
+                                        transition={{ delay: i * 0.04 }}
+                                        className="bg-white border-2 border-[#9cbcd8] p-4 sm:p-5 rounded-2xl shadow-xs hover:shadow-md hover:border-[#133E87] transition-all duration-200 group flex flex-col justify-between min-h-[105px]"
                                     >
-                                        <div className="flex justify-between items-start mb-6">
-                                            <div className={`w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform duration-500`}>
-                                                <stat.icon size={28} aria-hidden="true" />
+                                        <div className="flex items-center justify-between gap-2 mb-2">
+                                            <span className="text-[10px] font-black text-[#334155] uppercase tracking-wider truncate" style={{ color: '#334155' }}>
+                                                {stat.label}
+                                            </span>
+                                            <div className={`w-8 h-8 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform`}>
+                                                <stat.icon size={16} aria-hidden="true" />
                                             </div>
-                                            <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--text-accent)] italic border-b border-[var(--bg-accent)]/30 pb-1">Tracker_{i+1}</div>
                                         </div>
-                                        <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
-                                        <div className="flex flex-col gap-0.5 max-w-full overflow-x-auto whitespace-nowrap scrollbar-thin">
-                                            <h3 className={`inline-block px-3 py-1 font-black text-white italic tracking-normal leading-normal ${
-                                                stat.value.length > 7 ? 'text-xl sm:text-2xl' :
-                                                stat.value.length > 5 ? 'text-2xl sm:text-3xl' :
-                                                'text-3xl sm:text-4xl'
-                                            }`}>
+
+                                        <div className="flex items-baseline gap-1.5 flex-wrap">
+                                            <h3 className="font-black text-2xl text-[#0f172a] italic tracking-tight" style={{ color: '#0f172a' }}>
                                                 {stat.value}
                                             </h3>
                                             {stat.subValue && (
-                                                <span className="text-[10px] sm:text-xs font-bold text-white/40 uppercase tracking-wider not-italic mt-1 shrink-0">
+                                                <span className="text-[10px] font-extrabold text-[#4B5563] uppercase tracking-wide" style={{ color: '#4B5563' }}>
                                                     {stat.subValue}
                                                 </span>
                                             )}
@@ -283,10 +321,12 @@ const AssessmentReport = () => {
                                 <motion.div 
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="glass-panel !rounded-[2.5rem] p-8 h-[400px] flex flex-col"
+                                    className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 h-[400px] flex flex-col shadow-sm"
                                 >
-                                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                        <Target className="text-emerald-400" size={20} />
+                                    <h3 className="text-xl font-black text-[#0f172a] mb-6 flex items-center gap-3 uppercase italic tracking-tight" style={{ color: '#0f172a' }}>
+                                        <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+                                            <Target size={20} />
+                                        </div>
                                         Accuracy Distribution
                                     </h3>
                                     <div className="flex-1">
@@ -311,10 +351,10 @@ const AssessmentReport = () => {
                                         </ResponsiveContainer>
                                     </div>
                                     <div className="flex justify-center gap-8 mt-4">
-                                        <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-                                            <div className="w-3 h-3 rounded-full bg-emerald-400" /> Correct
+                                        <div className="flex items-center gap-2 text-xs font-bold text-[#334155]" style={{ color: '#334155' }}>
+                                            <div className="w-3 h-3 rounded-full bg-emerald-500" /> Correct
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-[#334155]" style={{ color: '#334155' }}>
                                             <div className="w-3 h-3 rounded-full bg-rose-500" /> Incorrect
                                         </div>
                                     </div>
@@ -324,25 +364,27 @@ const AssessmentReport = () => {
                                 <motion.div 
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="glass-panel !rounded-[2.5rem] p-8 h-[400px] flex flex-col"
+                                    className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 h-[400px] flex flex-col shadow-sm"
                                 >
-                                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                        <Clock className="text-blue-400" size={20} />
+                                    <h3 className="text-xl font-black text-[#0f172a] mb-6 flex items-center gap-3 uppercase italic tracking-tight" style={{ color: '#0f172a' }}>
+                                        <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                                            <Clock size={20} />
+                                        </div>
                                         Time Spent per Question (Seconds)
                                     </h3>
                                     <div className="flex-1">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={timeData}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={10} fontWeight="900" tickLine={false} axisLine={false} />
-                                                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} fontWeight="900" tickLine={false} axisLine={false} />
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                                                <XAxis dataKey="name" stroke="#334155" fontSize={11} fontWeight="800" tick={{ fill: '#334155' }} tickLine={false} axisLine={false} />
+                                                <YAxis stroke="#334155" fontSize={11} fontWeight="800" tick={{ fill: '#334155' }} tickLine={false} axisLine={false} />
                                                 <Tooltip 
-                                                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                                    cursor={{ fill: 'rgba(19,62,135,0.06)' }}
                                                     content={<CustomTooltip />}
                                                 />
-                                                <Bar dataKey="time" radius={[8, 8, 0, 0]}>
+                                                <Bar dataKey="time" radius={[8, 8, 0, 0]} maxBarSize={45}>
                                                     {timeData.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill="#22d3ee" fillOpacity={0.8} />
+                                                        <Cell key={`cell-${index}`} fill="#133E87" />
                                                     ))}
                                                 </Bar>
                                             </BarChart>
@@ -355,87 +397,147 @@ const AssessmentReport = () => {
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="glass-panel overflow-hidden"
+                                className="bg-white border-2 border-[#9cbcd8] rounded-[2.5rem] shadow-sm overflow-hidden"
                             >
-                                <div className="p-6 border-b border-[var(--glass-border)] flex items-center justify-between">
-                                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                        <HelpCircle className="text-[var(--text-accent)]" size={20} />
-                                        Question Wise Analysis
-                                    </h3>
+                                {/* Table Card Header */}
+                                <div className="p-6 sm:p-8 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87]">
+                                            <HelpCircle size={22} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tight" style={{ color: '#0f172a' }}>
+                                                Question Wise <span className="text-[#133E87]">Analysis</span>
+                                            </h3>
+                                            <p className="text-[10px] font-black text-[#334155] uppercase tracking-widest" style={{ color: '#334155' }}>
+                                                Directive Breakdown & Output Verification
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                {/* Table Container */}
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-white/[0.03] border-b border-white/10">
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Rank</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Question Directive</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Your Input</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Correct Target</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-center">Status</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic">Latency</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-white uppercase tracking-[0.3em] italic text-right">{uiTerminology.arenaReview}</th>
+                                            <tr className="bg-slate-100/70 border-b border-slate-200">
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest w-14 text-center">Rank</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest min-w-[240px] max-w-sm">Question Directive</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest min-w-[200px] max-w-xs">Your Input</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest min-w-[200px] max-w-xs">Correct Target</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest text-center w-32">Status</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest w-20">Latency</th>
+                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest text-right w-24">{uiTerminology.arenaReview}</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-[var(--glass-border)]">
-                                            {answers.map((ans, idx) => (
-                                                <tr key={idx} className="hover:bg-white/[0.03] transition-all border-b border-white/[0.02] group">
-                                                <td className="px-8 py-8 text-[var(--text-secondary)] font-mono text-xs opacity-50">{idx + 1}</td>
-                                                <td className="px-8 py-8">
-                                                    <p className="text-white font-black italic uppercase tracking-tight text-sm line-clamp-2 max-w-md group-hover:text-[var(--text-accent)] transition-colors">
-                                                        {ans.questionText}
-                                                    </p>
-                                                </td>
-                                                <td className="px-8 py-8">
-                                                    {(!ans.selectedOption || ans.selectedOption.trim() === '') ? (
-                                                        <div className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                                            Skipped
-                                                        </div>
-                                                    ) : (
-                                                        <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest inline-block ${ans.isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-                                                            {ans.selectedOption}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="px-8 py-8">
-                                                    <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-emerald-400 font-black text-[10px] uppercase tracking-widest inline-block">
-                                                        {ans.correctOption}
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-8">
-                                                    <div className="flex justify-center">
-                                                        {ans.isCorrect ? (
-                                                            <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-tighter bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
-                                                                <CheckCircle2 size={12} /> Correct
+                                        <tbody className="divide-y divide-slate-200">
+                                            {answers.map((ans, idx) => {
+                                                const isCodeInput = (ans.selectedOption && (ans.selectedOption.includes('{') || ans.selectedOption.includes(';') || ans.selectedOption.includes('```')));
+                                                const isCodeTarget = (ans.correctOption && (ans.correctOption.includes('{') || ans.correctOption.includes(';') || ans.correctOption.includes('```')));
+
+                                                return (
+                                                    <tr key={idx} className="hover:bg-blue-50/40 transition-colors border-b border-slate-100 group">
+                                                        {/* Rank */}
+                                                        <td className="px-6 py-5 text-[#4B5563] font-mono text-xs font-bold text-center align-top pt-6">
+                                                            {idx + 1}
+                                                        </td>
+
+                                                        {/* Question Directive */}
+                                                        <td className="px-6 py-5 align-top">
+                                                            <div className="max-w-md">
+                                                                <p className="text-[#0f172a] font-bold text-sm leading-snug break-words group-hover:text-[#133E87] transition-colors" style={{ color: '#0f172a' }}>
+                                                                    {ans.questionText}
+                                                                </p>
                                                             </div>
-                                                        ) : (!ans.selectedOption || ans.selectedOption.trim() === '') ? (
-                                                            <div className="flex items-center gap-2 text-yellow-400 text-[10px] font-black uppercase tracking-tighter bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20">
-                                                                <AlertCircle size={12} /> Skipped
+                                                        </td>
+
+                                                        {/* Your Input */}
+                                                        <td className="px-6 py-5 align-top">
+                                                            <div className="max-w-xs">
+                                                                {(!ans.selectedOption || ans.selectedOption.trim() === '') ? (
+                                                                    <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                                                                        <AlertCircle size={14} className="shrink-0" />
+                                                                        <span>Skipped</span>
+                                                                    </div>
+                                                                ) : isCodeInput ? (
+                                                                    <div className="bg-[#0f172a] text-[#f8fafc] border border-slate-700 rounded-xl p-3 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-36 whitespace-pre-wrap break-all shadow-xs">
+                                                                        <div className="flex items-center justify-between text-[9px] font-sans text-slate-400 border-b border-slate-800 pb-1 mb-1.5 uppercase font-bold">
+                                                                            <span>Code Input</span>
+                                                                            <Code size={12} />
+                                                                        </div>
+                                                                        <code>{ans.selectedOption.replace(/```[a-z]*/g, '').trim()}</code>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className={`p-3 rounded-2xl text-xs font-bold leading-relaxed break-words border ${
+                                                                        ans.isCorrect 
+                                                                            ? 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]' 
+                                                                            : 'bg-[#FEF2F2] text-[#991B1B] border-[#FCA5A5]'
+                                                                    }`}>
+                                                                        {ans.selectedOption}
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                        ) : (
-                                                            <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-tighter bg-rose-400/10 px-3 py-1 rounded-full border border-rose-400/20">
-                                                                <XCircle size={12} /> Wrong
+                                                        </td>
+
+                                                        {/* Correct Target */}
+                                                        <td className="px-6 py-5 align-top">
+                                                            <div className="max-w-xs">
+                                                                {isCodeTarget ? (
+                                                                    <div className="bg-[#0f172a] text-[#f8fafc] border border-slate-700 rounded-xl p-3 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-36 whitespace-pre-wrap break-all shadow-xs">
+                                                                        <div className="flex items-center justify-between text-[9px] font-sans text-slate-400 border-b border-slate-800 pb-1 mb-1.5 uppercase font-bold">
+                                                                            <span>Target Code</span>
+                                                                            <Code size={12} />
+                                                                        </div>
+                                                                        <code>{ans.correctOption.replace(/```[a-z]*/g, '').trim()}</code>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="p-3 rounded-2xl bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE] text-xs font-bold leading-relaxed break-words">
+                                                                        {ans.correctOption}
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-8 text-white font-mono text-xs font-black italic">
-                                                    {ans.timeTaken}s
-                                                </td>
-                                                <td className="px-8 py-8 text-right">
-                                                    <div className="flex justify-end">
-                                                            <motion.button
-                                                                whileHover={{ scale: 1.1, rotate: 5 }}
-                                                                whileTap={{ scale: 0.9 }}
-                                                                onClick={() => setSelectedReview(ans)}
-                                                                className="p-3 rounded-2xl transition-all border bg-[var(--bg-accent)] text-[var(--text-on-accent)] border-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]"
-                                                                title={`View Full ${uiTerminology.arenaInsights}`}
-                                                            >
-                                                                <Brain size={20} />
-                                                            </motion.button>
-                                                    </div>
-                                                </td>
-                                                </tr>
-                                            ))}
+                                                        </td>
+
+                                                        {/* Status */}
+                                                        <td className="px-6 py-5 text-center align-top pt-6">
+                                                            <div className="flex justify-center">
+                                                                {ans.isCorrect ? (
+                                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#065F46] bg-[#ECFDF5] border border-[#A7F3D0]">
+                                                                        <CheckCircle2 size={14} className="shrink-0" /> Correct
+                                                                    </span>
+                                                                ) : (!ans.selectedOption || ans.selectedOption.trim() === '') ? (
+                                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#92400E] bg-[#FFFBEB] border border-[#FDE68A]">
+                                                                        <AlertCircle size={14} className="shrink-0" /> Skipped
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#991B1B] bg-[#FEF2F2] border border-[#FCA5A5]">
+                                                                        <XCircle size={14} className="shrink-0" /> Wrong
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+
+                                                        {/* Latency */}
+                                                        <td className="px-6 py-5 text-[#334155] font-mono text-xs font-bold align-top pt-6">
+                                                            {ans.timeTaken}s
+                                                        </td>
+
+                                                        {/* Action / Arena Review */}
+                                                        <td className="px-6 py-5 text-right align-top pt-5">
+                                                            <div className="flex justify-end">
+                                                                <button
+                                                                    onClick={() => setSelectedReview(ans)}
+                                                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#133E87] hover:bg-[#0e2e65] text-white shadow-xs transition-all duration-200 active:scale-95 cursor-pointer"
+                                                                    title={`View Full ${uiTerminology.arenaInsights}`}
+                                                                    aria-label="View Insights"
+                                                                >
+                                                                    <Brain size={18} strokeWidth={2.25} />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
                                         </tbody>
                                     </table>
                                 </div>
@@ -485,95 +587,97 @@ const AssessmentReport = () => {
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                className="relative w-full max-w-2xl bg-[var(--bg-secondary)] rounded-[3rem] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
+                                className="relative w-full max-w-2xl bg-white rounded-[3rem] border-2 border-[#9cbcd8] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
                             >
-                                <div className="absolute top-6 right-6 z-[110]">
+                                {/* Sticky Top Header Bar — Keeps Close (X) button fixed and prevents scroll overlapping */}
+                                <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md px-8 sm:px-10 py-6 border-b border-slate-200 flex items-center justify-between rounded-t-[3rem] shrink-0">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-[#133E87] flex items-center justify-center text-white shadow-md">
+                                            <Brain size={24} className="text-white" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl sm:text-2xl font-black text-[#0f172a] italic uppercase tracking-tight" style={{ color: '#0f172a' }}>Arena <span className="text-[#133E87]">Insights</span></h2>
+                                            <p className="text-[9px] sm:text-[10px] font-black text-[#334155] uppercase tracking-[0.3em]" style={{ color: '#334155' }}>Deep Pedagogical Analysis</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Close Button — Pinned safely in Header Bar */}
                                     <button 
                                         onClick={() => {
                                             setSelectedReview(null);
                                             setShowDetailed(false);
                                         }}
-                                        className="p-3 rounded-2xl bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all backdrop-blur-md border border-white/5"
+                                        className="p-3 rounded-2xl bg-slate-100 text-[#0f172a] hover:bg-slate-200 active:scale-95 transition-all border border-slate-300 shadow-xs cursor-pointer"
                                         aria-label="Close review"
                                     >
                                         <X size={20} />
                                     </button>
                                 </div>
 
-                                <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-14">
-                                    <div className="flex items-center gap-4 mb-10">
-                                        <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]">
-                                            <Brain size={28} />
-                                        </div>
+                                {/* Scrollable Content Body */}
+                                <div className="flex-1 overflow-y-auto no-scrollbar p-8 sm:p-10">
+                                    <div className="space-y-8">
                                         <div>
-                                            <h2 className="text-2xl font-black text-white italic uppercase tracking-tight">Arena <span className="text-[var(--text-accent)]">Insights</span></h2>
-                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Deep Pedagogical Analysis</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-10">
-                                        <div>
-                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
-                                            <p className="text-xl font-bold text-white leading-relaxed">{details.questionText}</p>
+                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-[0.2em] mb-4" style={{ color: '#133E87' }}>Question Directive</p>
+                                            <p className="text-xl font-bold text-[#0f172a] leading-relaxed" style={{ color: '#0f172a' }}>{details.questionText}</p>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Your Input</p>
-                                                <p className={`text-sm font-black italic uppercase ${details.isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200">
+                                                <p className="text-[10px] font-black text-[#334155] uppercase tracking-[0.2em] mb-3" style={{ color: '#334155' }}>Your Input</p>
+                                                <p className={`text-sm font-black italic uppercase ${details.isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
                                                     {details.selectedOption || 'No Input Detected'}
                                                 </p>
                                             </div>
-                                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
-                                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Correct Target</p>
-                                                <p className="text-sm font-black italic uppercase text-emerald-400">
+                                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200">
+                                                <p className="text-[10px] font-black text-[#334155] uppercase tracking-[0.2em] mb-3" style={{ color: '#334155' }}>Correct Target</p>
+                                                <p className="text-sm font-black italic uppercase text-emerald-700">
                                                     {details.correctOption}
                                                 </p>
                                             </div>
                                         </div>
 
                                         <div className="relative">
-                                            <div className="absolute -top-4 -left-4 w-12 h-12 bg-[var(--bg-accent)]/10 blur-2xl rounded-full" />
-                                            <div className="relative p-8 rounded-[2rem] bg-[var(--bg-accent)]/5 border border-[var(--bg-accent)]/20">
+                                            <div className="relative p-8 rounded-[2rem] bg-blue-50/50 border-2 border-blue-200">
                                                 <div className="flex items-center justify-between mb-4">
-                                                    <Sparkles size={20} className="text-[var(--text-accent)]" />
+                                                    <Sparkles size={20} className="text-[#133E87]" />
                                                     <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
                                                         details.confidence === 'High' 
-                                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                                                        : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                                                        ? 'bg-emerald-100 text-emerald-800 border-emerald-400' 
+                                                        : 'bg-amber-100 text-amber-800 border-amber-400'
                                                     }`}>
                                                         Confidence: {details.confidence}
                                                     </div>
                                                 </div>
                                                 
                                                 {!showDetailed ? (
-                                                    <div className="text-lg text-white/90 font-medium leading-relaxed whitespace-pre-wrap italic">
+                                                    <div className="text-lg text-[#0f172a] font-bold leading-relaxed whitespace-pre-wrap italic" style={{ color: '#0f172a' }}>
                                                         {details.explanation}
                                                     </div>
                                                 ) : (
-                                                    <div className="space-y-6 text-white/90">
+                                                    <div className="space-y-6 text-[#0f172a]">
                                                         <div>
-                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Question Directive</p>
-                                                            <p className="text-base font-bold leading-relaxed">{details.questionText}</p>
+                                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-widest mb-1.5" style={{ color: '#133E87' }}>Question Directive</p>
+                                                            <p className="text-base font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.questionText}</p>
                                                         </div>
-                                                        <div className="pt-4 border-t border-white/5">
-                                                            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1.5">Correct Target</p>
-                                                            <p className="text-sm font-medium leading-relaxed">{details.correctOption}</p>
+                                                        <div className="pt-4 border-t border-slate-200">
+                                                            <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest mb-1.5">Correct Target</p>
+                                                            <p className="text-sm font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.correctOption}</p>
                                                         </div>
-                                                        <div className="pt-4 border-t border-white/5">
-                                                            <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Why Correct</p>
-                                                            <p className="text-sm font-medium opacity-80 leading-relaxed italic">{details.whyCorrect}</p>
+                                                        <div className="pt-4 border-t border-slate-200">
+                                                            <p className="text-[10px] font-black text-[#133E87] uppercase tracking-widest mb-1.5" style={{ color: '#133E87' }}>Why Correct</p>
+                                                            <p className="text-sm font-bold leading-relaxed text-[#0f172a] italic" style={{ color: '#0f172a' }}>{details.whyCorrect}</p>
                                                         </div>
                                                         {details.whyOthersIncorrect && (
-                                                            <div className="pt-4 border-t border-white/5">
-                                                                <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1.5">Why Other Options are Incorrect</p>
-                                                                <p className="text-sm font-medium opacity-80 leading-relaxed">{details.whyOthersIncorrect}</p>
+                                                            <div className="pt-4 border-t border-slate-200">
+                                                                <p className="text-[10px] font-black text-rose-700 uppercase tracking-widest mb-1.5">Why Other Options are Incorrect</p>
+                                                                <p className="text-sm font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.whyOthersIncorrect}</p>
                                                             </div>
                                                         )}
                                                         {details.takeaway && (
-                                                            <div className="pt-4 border-t border-white/5">
-                                                                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1.5">Learning Takeaway</p>
-                                                                <p className="text-sm font-medium opacity-80 leading-relaxed italic">{details.takeaway}</p>
+                                                            <div className="pt-4 border-t border-slate-200">
+                                                                <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-1.5">Learning Takeaway</p>
+                                                                <p className="text-sm font-bold leading-relaxed text-[#0f172a] italic" style={{ color: '#0f172a' }}>{details.takeaway}</p>
                                                             </div>
                                                         )}
                                                     </div>
@@ -586,13 +690,12 @@ const AssessmentReport = () => {
                                         {details.confidence !== 'Low' && (
                                             <button 
                                                 onClick={() => setShowDetailed(!showDetailed)}
-                                                className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all btn-press ${
-                                                    showDetailed 
-                                                    ? 'bg-white/10 text-white border border-white/20' 
-                                                    : 'bg-[var(--bg-accent)]/20 text-[var(--text-accent)] border border-[var(--bg-accent)]/30 hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)]'
-                                                }`}
+                                                className="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all !text-white bg-[#133E87] hover:bg-[#0e2e65] active:scale-95 shadow-md border border-[#133E87]"
+                                                style={{ backgroundColor: '#133E87', color: '#ffffff' }}
                                             >
-                                                {showDetailed ? 'Standard Response' : 'Detailed Analysis'}
+                                                <span className="!text-white font-black" style={{ color: '#ffffff' }}>
+                                                    {showDetailed ? 'Standard Response' : 'Detailed Analysis'}
+                                                </span>
                                             </button>
                                         )}
                                         <button 
@@ -600,9 +703,10 @@ const AssessmentReport = () => {
                                                 setSelectedReview(null);
                                                 setShowDetailed(false);
                                             }}
-                                            className="px-8 py-4 rounded-2xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest btn-cinematic shadow-lg shadow-rose-500/20"
+                                            className="px-8 py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white-force !text-white font-black text-xs uppercase tracking-widest shadow-md border border-rose-600"
+                                            style={{ color: '#ffffff' }}
                                         >
-                                            Close Analysis
+                                            <span className="!text-white font-black" style={{ color: '#ffffff' }}>Close Analysis</span>
                                         </button>
                                     </div>
                                 </div>

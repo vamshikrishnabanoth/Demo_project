@@ -18,14 +18,14 @@ const PIE_COLORS = ['#10b981', '#f43f5e', '#64748b'];
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a]/95 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
-                <p className="font-bold text-white text-sm tracking-wide">{label}</p>
-                <div className="border-t border-white/10 my-2.5"></div>
+            <div className="bg-white border-2 border-[var(--border-color)] p-4 rounded-2xl shadow-2xl backdrop-blur-xl ring-1 ring-black/5" style={{ color: '#0f172a' }}>
+                <p className="font-black text-[#0f172a] text-sm tracking-wide" style={{ color: '#0f172a' }}>{label || 'Metric'}</p>
+                <div className="border-t border-[var(--border-color)] my-2"></div>
                 {payload.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2.5 text-sm">
-                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-                        <span className="text-slate-300 font-medium">{entry.name}:</span>
-                        <span className="font-black text-white">{entry.value}</span>
+                    <div key={index} className="flex items-center gap-2.5 text-xs py-0.5" style={{ color: '#0f172a' }}>
+                        <div className="w-3 h-3 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: entry.color || entry.fill || '#133E87' }} />
+                        <span className="text-[#334155] font-bold" style={{ color: '#334155' }}>{entry.name}:</span>
+                        <span className="font-black text-[#0f172a] text-sm" style={{ color: '#0f172a' }}>{entry.value}</span>
                     </div>
                 ))}
             </div>
@@ -162,7 +162,7 @@ export default function QuestionAnalysis() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-[var(--border-color)] pb-8">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <button onClick={() => navigate(`/analytics/quiz/${quizId}`)} className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white transition-colors text-sm font-bold uppercase tracking-widest">
+                            <button onClick={() => navigate(`/analytics/quiz/${quizId}`)} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" style={{ color: '#0f172a' }}>
                                 <ChevronLeft size={16} /> Back to Analytics
                             </button>
                             <span className="text-[var(--text-secondary)]/30">|</span>
@@ -200,7 +200,11 @@ export default function QuestionAnalysis() {
                     </div>
                     
                     <div className="flex flex-wrap items-center gap-4 mb-6">
-                        <span className={`text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest ${question.difficulty === 'Easy' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : question.difficulty === 'Hard' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
+                        <span className={`text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
+                            question.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
+                            question.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
+                            'bg-amber-100 border-amber-400 text-amber-800'
+                        }`}>
                             {question.difficulty || 'Medium'}
                         </span>
                         <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)]">

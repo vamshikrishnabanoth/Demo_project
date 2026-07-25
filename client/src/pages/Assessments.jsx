@@ -172,49 +172,49 @@ export default function Assessments() {
                 </div>
 
                 {/* Search & Filters Controls */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 bg-white/5 border border-white/10 p-6 rounded-[2rem] glass-panel">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 bg-white border border-[#9cbcd8] p-6 rounded-[2rem] shadow-sm">
                     {/* Search */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Search</label>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Search</label>
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0f172a]" size={16} />
                             <input
                                 type="text"
-                                placeholder="Search quizzes..."
+                                placeholder="SEARCH QUIZZES..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full bg-[var(--bg-secondary)] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-xs font-bold text-white placeholder-white/40 focus:outline-none focus:border-[var(--bg-accent)] transition-all"
+                                className="w-full bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl py-3 pl-10 pr-4 text-xs font-bold text-[#0f172a] placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-xs"
                             />
                         </div>
                     </div>
 
                     {/* Difficulty */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Difficulty</label>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Difficulty</label>
                         <select
                             value={filterDifficulty}
                             onChange={(e) => setFilterDifficulty(e.target.value)}
-                            className="bg-[var(--bg-secondary)] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none"
+                            className="bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl px-4 py-3 text-xs font-bold text-[#0f172a] outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none shadow-xs"
                         >
-                            <option value="All" className="bg-slate-900 text-white">ALL DIFFICULTIES</option>
-                            <option value="Easy" className="bg-slate-900 text-white">EASY</option>
-                            <option value="Medium" className="bg-slate-900 text-white">MEDIUM</option>
-                            <option value="Thinkable" className="bg-slate-900 text-white">THINKABLE</option>
-                            <option value="Hard" className="bg-slate-900 text-white">HARD</option>
+                            <option value="All" className="bg-white text-[#0f172a]">ALL DIFFICULTIES</option>
+                            <option value="Easy" className="bg-white text-[#0f172a]">EASY</option>
+                            <option value="Medium" className="bg-white text-[#0f172a]">MEDIUM</option>
+                            <option value="Thinkable" className="bg-white text-[#0f172a]">THINKABLE</option>
+                            <option value="Hard" className="bg-white text-[#0f172a]">HARD</option>
                         </select>
                     </div>
 
                     {/* Status */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</label>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Status</label>
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="bg-[var(--bg-secondary)] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none"
+                            className="bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl px-4 py-3 text-xs font-bold text-[#0f172a] outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none shadow-xs"
                         >
-                            <option value="All" className="bg-slate-900 text-white">ALL STATUSES</option>
-                            <option value="Attempted" className="bg-slate-900 text-white">ATTEMPTED</option>
-                            <option value="Unattempted" className="bg-slate-900 text-white">UNATTEMPTED</option>
+                            <option value="All" className="bg-white text-[#0f172a]">ALL STATUSES</option>
+                            <option value="Attempted" className="bg-white text-[#0f172a]">ATTEMPTED</option>
+                            <option value="Unattempted" className="bg-white text-[#0f172a]">UNATTEMPTED</option>
                         </select>
                     </div>
                 </div>
