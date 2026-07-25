@@ -72,33 +72,11 @@ const AssessmentReport = () => {
     ];
     const COLORS = ['#10b981', '#f43f5e'];
 
-    // Theme 1: Blue Shades Only (Extreme High Contrast — Dark/Light Alternating)
-    const BLUE_SHADES = [
-        '#0B192C', // 1. Deep Midnight Navy (Very Dark)
-        '#38BDF8', // 2. Vivid Electric Cyan (Very Light & Bright)
-        '#1D4ED8', // 3. Royal Cobalt Blue (Rich Medium Dark)
-        '#BAE6FD', // 4. Ice Cyan Blue (Pastel Extra Light)
-        '#0369A1', // 5. Deep Ocean Azure (Medium Dark)
-        '#2563EB', // 6. Bright Electric Indigo (Vivid Medium)
-        '#0C4A6E', // 7. Dark Abyss Steel Navy (Dark)
-        '#60A5FA', // 8. Soft Sky Powder Blue (Light)
-        '#1E3A8A', // 9. Deep Ink Cobalt (Very Dark)
-        '#06B6D4'  // 10. Bright Turquoise Cyan (Vivid Light)
-    ];
+    // Theme 1: 2 Alternating Vibrant Blue Colors (Vivid Royal Indigo & Light Sky Cyan)
+    const BLUE_SHADES = ['#2563EB', '#38BDF8'];
 
-    // Theme 2: Orange Shades Only (Extreme High Contrast — Dark/Light Alternating)
-    const SAFFRON_SHADES = [
-        '#9A3412', // 1. Deep Terracotta Rust (Very Dark)
-        '#FED7AA', // 2. Soft Warm Apricot (Very Light)
-        '#D96B27', // 3. Warm Heritage Saffron (Medium Dark)
-        '#FFEDD5', // 4. Cream Peach Saffron (Pastel Extra Light)
-        '#C2410C', // 5. Deep Burnt Orange (Dark)
-        '#FF8C00', // 6. Vivid Dark Orange (Bright Medium)
-        '#7C2D12', // 7. Dark Mahogany Rust (Extra Dark)
-        '#FB923C', // 8. Warm Sunset Amber (Light)
-        '#B8571B', // 9. Rich Crimson Saffron (Dark Medium)
-        '#F59E0B'  // 10. Bright Golden Amber (Vivid Light)
-    ];
+    // Theme 2: 2 Alternating Orange Colors (Warm Saffron & Vivid Bright Orange)
+    const SAFFRON_SHADES = ['#D96B27', '#FF8C00'];
 
     const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
     const GRAPH_SHADES = isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;

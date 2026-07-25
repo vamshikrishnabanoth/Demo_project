@@ -118,8 +118,8 @@ export default function QuestionAnalysis() {
     const qIdx = parseInt(questionIndex) || 0;
     const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
     const optionColors = isSaffronTheme 
-        ? ['#9A3412', '#FED7AA', '#D96B27', '#FF8C00'] 
-        : ['#0B192C', '#38BDF8', '#1D4ED8', '#BAE6FD'];
+        ? ['#D96B27', '#FF8C00', '#D96B27', '#FF8C00'] 
+        : ['#2563EB', '#38BDF8', '#2563EB', '#38BDF8'];
 
     // Filters for lists
     const filteredCorrect = studentInsights.correct.filter(name =>
