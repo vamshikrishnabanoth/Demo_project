@@ -50,6 +50,23 @@ export default function LiveRoomTeacher() {
                 };
                 localStorage.setItem(`live_quiz_session_teacher_${joinCode}`, JSON.stringify(sessionData));
 
+                // Fetch persistent suspicious activity logs from DB
+                try {
+                    const logsRes = await api.get(`/quiz/${quizRes.data.id}/suspicious-activities`);
+                    if (Array.isArray(logsRes.data) && logsRes.data.length > 0) {
+                        const formattedLogs = logsRes.data.map(log => ({
+                            name: log.studentName || log.student?.name || log.student?.username || 'Student',
+                            rollNumber: log.studentRollNumber || log.student?.username || 'N/A',
+                            action: log.action,
+                            timestamp: log.timestamp ? new Date(log.timestamp) : new Date(),
+                            details: log.details
+                        }));
+                        setCheatAlerts(formattedLogs);
+                    }
+                } catch (logErr) {
+                    console.warn('Could not load persistent suspicious activities:', logErr);
+                }
+
                 // Emit join_room — works whether socket is already connected or just connecting
                 socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'teacher' } });
             } catch (err) {
@@ -426,18 +443,22 @@ if (socket.connected) {
         });
     }, [participants, leaderboard]);
 
+    const [searchCheatQuery, setSearchCheatQuery] = useState('');
+
     const groupedCheatAlerts = useMemo(() => {
         const groups = {};
         cheatAlerts.forEach(alert => {
-            const rollNo = alert.rollNumber || alert.username || 'N/A';
+            const rollNo = alert.rollNumber || alert.username || alert.studentRollNumber || 'N/A';
             const action = alert.action || 'unknown';
             const key = `${rollNo}-${action}`;
+            const details = alert.details || {};
             
             if (!groups[key]) {
                 groups[key] = {
-                    name: alert.name || 'Student',
+                    name: alert.name || alert.studentName || 'Student',
                     rollNumber: rollNo,
                     action: action,
+                    details: details,
                     latestTime: alert.timestamp ? new Date(alert.timestamp) : new Date(),
                     count: 1
                 };
@@ -446,11 +467,19 @@ if (socket.connected) {
                 const alertTime = alert.timestamp ? new Date(alert.timestamp) : new Date();
                 if (alertTime > groups[key].latestTime) {
                     groups[key].latestTime = alertTime;
+                    groups[key].details = details;
                 }
             }
         });
-        return Object.values(groups).sort((a, b) => b.latestTime - a.latestTime);
-    }, [cheatAlerts]);
+        const list = Object.values(groups).sort((a, b) => b.latestTime - a.latestTime);
+        if (!searchCheatQuery.trim()) return list;
+        const query = searchCheatQuery.toLowerCase();
+        return list.filter(item => 
+            item.name.toLowerCase().includes(query) || 
+            item.rollNumber.toLowerCase().includes(query) ||
+            item.action.toLowerCase().includes(query)
+        );
+    }, [cheatAlerts, searchCheatQuery]);
 
     // Pagination
     const totalPages = Math.max(1, Math.ceil(allStudents.length / studentsPerPage));
@@ -715,51 +744,91 @@ if (socket.connected) {
 
                 {/* Live Proctoring & Security Dashboard */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-500">
-                    <div className="bg-red-500/5 border-b border-red-100 px-8 py-5 flex items-center justify-between">
+                    <div className="bg-red-500/5 border-b border-red-100 px-8 py-5 flex items-center justify-between flex-wrap gap-4">
                         <div>
                             <h2 className="text-xl font-black text-red-600 italic uppercase tracking-tighter flex items-center gap-2">
-                                <ShieldAlert size={22} className={cheatAlerts.length > 0 ? "animate-pulse" : ""} />
-                                Live Proctoring & <span className="text-red-700">Security Dashboard</span>
+                                <ShieldAlert size={22} className={cheatAlerts.length > 0 ? "animate-pulse text-red-500" : ""} />
+                                Live Proctoring & <span className="text-red-700">Suspicious Activity Log Table</span>
                             </h2>
-                            <p className="text-red-500/60 text-[10px] font-black uppercase tracking-widest mt-1">
-                                Real-time student cheating alert feed
+                            <p className="text-red-500/70 text-[10px] font-black uppercase tracking-widest mt-1">
+                                Real-time cheating alerts & persistent database audit history
                             </p>
                         </div>
-                        <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
-                            cheatAlerts.length > 0 ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500'
-                        }`}>
-                            {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Alert' : 'Alerts'} ({groupedCheatAlerts.length} Grouped)
+
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search Roll No or Student..."
+                                    value={searchCheatQuery}
+                                    onChange={(e) => setSearchCheatQuery(e.target.value)}
+                                    className="px-4 py-1.5 text-xs rounded-xl border border-red-200 bg-white font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 w-52"
+                                />
+                            </div>
+                            <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
+                                cheatAlerts.length > 0 ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500'
+                            }`}>
+                                {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Event' : 'Events'} ({groupedCheatAlerts.length} Students)
+                            </div>
                         </div>
                     </div>
                     
                     <div className="p-8">
                         {groupedCheatAlerts.length > 0 ? (
-                            <div className="max-h-[320px] overflow-y-auto pr-2">
+                            <div className="max-h-[380px] overflow-y-auto pr-2">
                                 <table className="w-full text-left border-collapse">
                                     <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
                                         <tr className="bg-slate-50 border-b border-slate-100">
                                             <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Student Name</th>
                                             <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Roll Number</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Cheating Event</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Occurrence Time</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Count</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Suspicious Activity Type</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Details</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Timestamp</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Violations</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {groupedCheatAlerts.map((record, index) => {
-                                            const timeStr = record.latestTime.toLocaleTimeString();
-                                            let eventName = record.action?.replace(/_/g, ' ');
+                                            const timeStr = record.latestTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                                            const dateStr = record.latestTime.toLocaleDateString();
                                             
-                                            if (record.action === 'devtools_shortcut') {
-                                                eventName = 'DevTools Shortcut Block';
+                                            let eventName = record.action?.replace(/_/g, ' ');
+                                            let badgeStyle = 'bg-red-50 border-red-100 text-red-600';
+                                            let icon = <AlertTriangle size={12} />;
+
+                                            if (record.action === 'tab_switch') {
+                                                eventName = 'Tab Switch Detected';
+                                                badgeStyle = 'bg-red-100 border-red-200 text-red-700';
+                                            } else if (record.action === 'inactivity') {
+                                                eventName = '30s Tab Inactivity';
+                                                badgeStyle = 'bg-amber-50 border-amber-200 text-amber-700';
+                                                icon = <Clock size={12} />;
+                                            } else if (record.action === 'window_blur') {
+                                                eventName = 'Window Focus Loss';
+                                                badgeStyle = 'bg-orange-50 border-orange-200 text-orange-700';
+                                            } else if (record.action === 'devtools_shortcut') {
+                                                eventName = 'DevTools Shortcut Intercepted';
+                                                badgeStyle = 'bg-purple-50 border-purple-200 text-purple-700';
                                             } else if (record.action === 'devtools_resize') {
-                                                eventName = 'Window Resize Heuristic';
+                                                eventName = 'DevTools Window Resize';
+                                                badgeStyle = 'bg-purple-50 border-purple-200 text-purple-700';
+                                            } else if (record.action === 'screenshot_attempt') {
+                                                eventName = 'Screenshot / Capture Attempt';
+                                                badgeStyle = 'bg-rose-100 border-rose-200 text-rose-800';
+                                            } else if (record.action === 'multi_monitor_detected') {
+                                                eventName = 'Secondary Monitor Detected';
+                                                badgeStyle = 'bg-blue-50 border-blue-200 text-blue-700';
                                             } else if (record.action === 'clipboard_block' || record.action === 'clipboard') {
                                                 eventName = 'Clipboard Copy/Paste Block';
                                             } else if (record.action === 'context_block' || record.action === 'contextmenu') {
                                                 eventName = 'Right Click Block';
                                             }
-                                            
+
+                                            const detailStr = record.details?.key ? `Key: ${record.details.key}` :
+                                                             record.details?.idleDurationSeconds ? `Idle: ${record.details.idleDurationSeconds}s` :
+                                                             record.details?.blurDurationSeconds ? `Blurred: ${record.details.blurDurationSeconds}s` :
+                                                             record.details?.switchCount ? `Switch #${record.details.switchCount}` : 'Monitored activity';
+
                                             return (
                                                 <tr key={index} className="hover:bg-slate-50/50 transition-colors">
                                                     <td className="px-6 py-4">
@@ -769,15 +838,18 @@ if (socket.connected) {
                                                         {record.rollNumber}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-50 border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-wider">
-                                                            <AlertTriangle size={12} /> {eventName}
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border text-[10px] font-black uppercase tracking-wider ${badgeStyle}`}>
+                                                            {icon} {eventName}
                                                         </span>
                                                     </td>
+                                                    <td className="px-6 py-4 text-xs text-slate-500 font-medium">
+                                                        {detailStr}
+                                                    </td>
                                                     <td className="px-6 py-4 text-xs text-slate-400 font-mono">
-                                                        {timeStr}
+                                                        {dateStr} {timeStr}
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
-                                                        <span className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full bg-red-500 text-white font-black text-xs shadow-md shadow-red-500/10">
+                                                        <span className="inline-flex items-center justify-center min-w-[2rem] h-7 px-2 rounded-full bg-red-600 text-white font-black text-xs shadow-md shadow-red-500/20">
                                                             {record.count}
                                                         </span>
                                                     </td>
@@ -798,6 +870,42 @@ if (socket.connected) {
                         )}
                     </div>
                 </div>
+
+                {/* Floating Live Security Feed Container (Notifications List) */}
+                {cheatAlerts.length > 0 && (
+                    <div className="fixed bottom-6 right-6 z-50 w-96 bg-slate-900/95 backdrop-blur-xl border border-red-500/30 rounded-3xl shadow-2xl shadow-black/60 overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
+                        <div className="bg-red-600/90 px-5 py-3 flex items-center justify-between text-white">
+                            <div className="flex items-center gap-2">
+                                <ShieldAlert size={18} className="animate-pulse" />
+                                <span className="text-xs font-black uppercase tracking-wider">Live Security Feed ({cheatAlerts.length})</span>
+                            </div>
+                            <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">Real-time Stream</span>
+                        </div>
+                        <div className="p-4 max-h-60 overflow-y-auto space-y-2.5">
+                            {cheatAlerts.slice(0, 8).map((alert, i) => {
+                                const roll = alert.rollNumber || alert.username || alert.studentRollNumber || 'Student';
+                                const name = alert.name || alert.studentName || 'Student';
+                                const act = alert.action?.replace(/_/g, ' ') || 'suspicious activity';
+                                const timeStr = alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+
+                                return (
+                                    <div key={i} className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-start gap-3 text-xs">
+                                        <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0 animate-ping"></div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between font-bold text-white">
+                                                <span className="truncate">{name} ({roll})</span>
+                                                <span className="text-[10px] text-slate-400 font-mono">{timeStr}</span>
+                                            </div>
+                                            <p className="text-[11px] text-red-300 font-medium capitalize mt-0.5">
+                                                Triggered: {act}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Student Progress — Full Width Table with Dots */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">

@@ -121,9 +121,15 @@ export const showInfo = (title, text, duration = 2400) => {
     ), { duration, position: 'top-right' });
 };
 
+let activeConfirmId = null;
+
 export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
+    if (activeConfirmId) {
+        toast.dismiss(activeConfirmId);
+        activeConfirmId = null;
+    }
     return new Promise((resolve) => {
-        toast.custom((t) => (
+        const id = toast.custom((t) => (
             React.createElement('div', {
                 className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[var(--bg-secondary)] backdrop-blur-2xl border-2 border-[var(--border-color)] shadow-[0_25px_60px_rgba(0,0,0,0.25)] rounded-3xl p-6 pointer-events-auto transition-all space-y-5`,
                 style: { color: 'var(--text-primary)' }
@@ -160,6 +166,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                         key: 'cancel',
                         onClick: () => {
                             toast.dismiss(t.id);
+                            if (activeConfirmId === t.id) activeConfirmId = null;
                             resolve({ isConfirmed: false });
                         },
                         className: 'px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 transition-all cursor-pointer shadow-xs',
@@ -169,6 +176,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                         key: 'confirm',
                         onClick: () => {
                             toast.dismiss(t.id);
+                            if (activeConfirmId === t.id) activeConfirmId = null;
                             resolve({ isConfirmed: true });
                         },
                         className: 'px-6 py-2.5 rounded-xl text-xs font-black bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg hover:opacity-90 transition-all transform active:scale-95 cursor-pointer btn-cinematic',
@@ -177,6 +185,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                 ])
             ])
         ), { duration: Infinity, position: 'top-center' });
+        activeConfirmId = id;
     });
 };
 

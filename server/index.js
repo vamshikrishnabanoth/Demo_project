@@ -818,7 +818,7 @@ io.to(quizId).emit(
         });
     });
 
-    socket.on('student_cheated_alert', (payload) => {
+    socket.on('student_cheated_alert', async (payload) => {
         const { quizId, studentId, action, timestamp } = payload;
         // SECURITY CHECK: Verify student identity matches socket.user payload
         if (!socket.user || socket.user.id !== studentId) {
@@ -832,6 +832,23 @@ io.to(quizId).emit(
             rollNumber: socket.user.username || 'N/A',
             timestamp: timestamp || new Date()
         };
+
+        // Persist to CheatingLog database table
+        try {
+            await prisma.cheatingLog.create({
+                data: {
+                    quizId,
+                    studentId,
+                    action: action || 'suspicious_activity',
+                    details: payload,
+                    studentName: socket.user.name || socket.user.username || 'Student',
+                    studentRollNumber: socket.user.username || 'N/A',
+                    timestamp: new Date(warningPayload.timestamp)
+                }
+            });
+        } catch (dbErr) {
+            console.error('[Exam Security Alert] Failed to persist CheatingLog:', dbErr);
+        }
 
         // Save in roomState
         const state = roomState.get(quizId);

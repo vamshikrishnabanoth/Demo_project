@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
 
 module.exports = async function (req, res, next) {
-    // Get token from header
-    const token = req.header('x-auth-token');
+    // Get token from HttpOnly cookie or header
+    const token = req.cookies?.token || req.header('x-auth-token');
 
     // Check if not token
     if (!token) {

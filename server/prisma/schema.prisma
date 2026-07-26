@@ -52,6 +52,7 @@ model User {
   quizzes          Quiz[]
   results          Result[]
   broadcastsSent   Broadcast[]
+  cheatingLogs     CheatingLog[]
 }
 
 model Quiz {
@@ -96,6 +97,7 @@ model Quiz {
   version          Int      @default(1)      // payload version counter (increments on each publish)
   results          Result[]
   broadcasts       Broadcast[]
+  cheatingLogs     CheatingLog[]
 }
 
 model Result {
@@ -168,5 +170,22 @@ model QuizSession {
   joinCode         String?  @unique
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
+}
+
+model CheatingLog {
+  id                String   @id @default(uuid())
+  quizId            String
+  studentId         String
+  action            String
+  details           Json?
+  studentName       String?
+  studentRollNumber String?
+  timestamp         DateTime @default(now())
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quiz    Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([studentId])
 }
 

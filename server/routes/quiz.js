@@ -278,6 +278,10 @@ router.get('/result/:quizId', auth, quizController.getLatestResult);
 // @desc    Securely edit a quiz schedule if permitted
 router.patch('/:id/schedule', auth, quizController.updateSchedule);
 
+// @route   GET api/quiz/:id/suspicious-activities
+// @desc    Get all persistent cheating logs / suspicious activities for a quiz
+router.get('/:id/suspicious-activities', auth, quizController.getSuspiciousActivities);
+
 // @route   GET api/quiz/:id/schedule-status
 // @desc    Get the current scheduling lock status
 router.get('/:id/schedule-status', auth, quizController.getScheduleStatus);

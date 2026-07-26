@@ -5,15 +5,16 @@ import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, 
 import { motion, AnimatePresence } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
 import { PremiumButton, PremiumInput, GlassCard } from '../components/ui/Primitives';
+import toast from 'react-hot-toast';
 
 /* ── Floating background icon ────────────────────────────────────────────── */
 const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
     <motion.div
-        className="floating-icon text-[#0d2d65]"
-        style={{ top, left, fontSize: size, color: '#0d2d65' }}
+        className="floating-icon text-[var(--text-accent)] opacity-40"
+        style={{ top, left, fontSize: size }}
         initial={{ opacity: 0.75, y: 20 }}
         animate={{
-            opacity: [0.7, 0.85, 0.95, 0.85, 0.7],
+            opacity: [0.3, 0.5, 0.75, 0.5, 0.3],
             y: [0, -30, -15, -40, 0],
             x: [0, 10, -5, 8, 0],
             rotate: [0, 8, -5, 10, 0],
@@ -25,13 +26,13 @@ const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
             ease: 'easeInOut',
         }}
     >
-        <Icon size={size} strokeWidth={2.4} style={{ color: '#0d2d65', stroke: '#0d2d65' }} />
+        <Icon size={size} strokeWidth={2.4} />
     </motion.div>
 );
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
-    const { login, register } = useContext(AuthContext);
+    const { login, register, theme, setTheme } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isColdStart, setIsColdStart] = useState(false);
@@ -133,16 +134,60 @@ export default function Login() {
         }
     };
 
+    const toggleTheme = () => {
+        const nextTheme = theme === 'india' ? 'celestial' : 'india';
+        setTheme(nextTheme);
+        toast(nextTheme === 'india' ? '🇮🇳 Tricolor Horizon Theme Active' : '🌌 Celestial Theme Active', {
+            icon: nextTheme === 'india' ? '🇮🇳' : '🌌',
+            style: {
+                borderRadius: '1rem',
+                background: '#0f172a',
+                color: '#ffffff',
+                fontWeight: 'bold'
+            }
+        });
+    };
+
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] relative overflow-y-auto py-12 sm:py-20 flex flex-col items-center justify-start">
+        <div className="min-h-[100dvh] bg-[var(--bg-primary)] relative overflow-y-auto py-8 sm:py-16 px-4 flex flex-col items-center justify-center">
             <CinematicBackground />
             
+            {/* Theme Change Option — Top Right Header (Matches Home Dashboard Layout) */}
+            <div className="fixed sm:absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+                <button
+                    onClick={toggleTheme}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-md border cursor-pointer ${
+                        theme === 'india'
+                            ? 'bg-gradient-to-r from-[#D96B27]/10 via-white to-[#1C8574]/10 border-[#D96B27]/40 text-[#D96B27] hover:bg-white shadow-[#D96B27]/10'
+                            : 'bg-white/80 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)]'
+                    }`}
+                    title={theme === 'india' ? "Switch to Celestial Blue Theme" : "Switch to Saffron Dawn Theme"}
+                    aria-label="Toggle Theme"
+                >
+                    {theme === 'india' ? (
+                        <>
+                            <span className="flex items-center justify-center w-5 h-5 rounded-full overflow-hidden border border-[#D96B27] shadow-xs shrink-0">
+                                <span className="w-full h-full bg-gradient-to-b from-[#D96B27] via-white to-[#1C8574] block" />
+                            </span>
+                            <span className="text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#133E87] text-white text-[10px] font-black shrink-0">
+                                🌌
+                            </span>
+                            <span className="text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
+                        </>
+                    )}
+                </button>
+            </div>
+
             {/* Floating Academic Icons */}
             {floatingIcons.map((icon, i) => (
                 <FloatingIcon key={i} {...icon} />
             ))}
 
-            <div className="w-full max-w-md px-6 relative z-10 space-y-10 my-auto">
+            <div className="w-full max-w-[440px] px-3 sm:px-4 relative z-10 space-y-6 sm:space-y-7 my-auto">
                 
                 {/* Branding Hierarchy */}
                 <motion.div 
@@ -151,22 +196,28 @@ export default function Login() {
                     className="flex flex-col items-center text-center"
                 >
                     <motion.div
-                        whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
+                        whileHover={{ scale: 1.04 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        className="bg-white p-4 rounded-3xl shadow-lg mb-5 border border-[var(--border-color)] flex items-center justify-center w-20 h-20"
+                        className="bg-white/95 backdrop-blur-md px-5 sm:px-6 py-2.5 rounded-2xl shadow-md border border-[var(--border-color)]/80 flex items-center justify-center h-13 sm:h-14 w-auto mb-3.5"
                     >
-                        <GraduationCap size={44} className="text-[var(--text-primary)] stroke-[2.2]" />
+                        <img 
+                            src="/logo.png" 
+                            alt="KMIT Logo" 
+                            className="h-full w-auto max-h-9 sm:max-h-10 object-contain" 
+                            loading="eager"
+                            decoding="async"
+                        />
                     </motion.div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-[var(--text-primary)]">
+                    <h1 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tighter text-[var(--text-primary)]">
                         KMIT <span className="text-[var(--text-accent)]">KAHOOT</span>
                     </h1>
-                    <p className="text-[var(--text-secondary)] font-bold text-sm tracking-wide mt-1">
+                    <p className="text-[var(--text-secondary)] font-bold text-xs tracking-wide mt-0.5">
                         academic assessment hub
                     </p>
                 </motion.div>
 
-                {/* Authentication Card — with typing glow */}
-                <GlassCard className={`!p-8 sm:!p-10 shadow-xl relative rounded-[2.5rem] bg-white border border-[var(--border-color)] ${isTyping ? 'is-typing' : ''}`}>
+                {/* Authentication Card — Professional Executive Standard */}
+                <GlassCard className={`!p-6 sm:!p-9 shadow-2xl relative rounded-3xl bg-white/95 backdrop-blur-xl border border-[var(--border-color)]/80 ${isTyping ? 'is-typing' : ''}`}>
                     <AnimatePresence mode="wait">
                         <motion.div 
                             key={isLogin ? 'signin' : 'signup'}
@@ -174,14 +225,24 @@ export default function Login() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: isLogin ? 10 : -10 }}
                             transition={{ duration: 0.2 }}
-                            className="space-y-6"
+                            className="space-y-5 sm:space-y-6"
                         >
-                            <h2 className="text-xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2.5">
-                                {isLogin ? <LogIn className="text-[var(--text-primary)]" size={20} /> : <UserPlus className="text-[var(--text-primary)]" size={20} />}
-                                {isLogin ? 'sign in' : 'create account'}
-                            </h2>
+                            {/* Card Header with Icon & Subtitle */}
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 rounded-xl bg-[var(--bg-accent)]/10 text-[var(--text-accent)] shrink-0 border border-[var(--border-color)]/40">
+                                    {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
+                                </div>
+                                <div>
+                                    <h2 className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
+                                        {isLogin ? 'Sign In' : 'Create Account'}
+                                    </h2>
+                                    <p className="text-xs text-[var(--text-secondary)] font-medium">
+                                        {isLogin ? 'Enter your credentials to access hub' : 'Register your institutional profile'}
+                                    </p>
+                                </div>
+                            </div>
 
-                            <form onSubmit={onSubmit} className="space-y-5">
+                            <form onSubmit={onSubmit} className="space-y-4">
                                 {!isLogin && (
                                     <PremiumInput
                                         label="Username"
@@ -221,18 +282,18 @@ export default function Login() {
                                     <motion.div 
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
-                                        className="bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-bold p-4 rounded-xl flex items-center gap-3"
+                                        className="bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-bold p-3.5 rounded-xl flex items-center gap-2.5"
                                     >
-                                        <XCircle size={16} /> {errorMsg}
+                                        <XCircle size={16} className="shrink-0" /> {errorMsg}
                                     </motion.div>
                                 )}
 
                                 <motion.button
-                                    whileHover={{ scale: 1.02, y: -1 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    whileHover={{ scale: 1.01, y: -1 }}
+                                    whileTap={{ scale: 0.99 }}
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="relative w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wider shadow-lg transition-all duration-300 overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                    className="relative w-full py-3.5 rounded-2xl text-white font-extrabold text-sm tracking-wider shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
                                     style={{
                                         background: 'var(--bg-accent)',
                                         color: 'var(--text-on-accent)'
@@ -246,7 +307,7 @@ export default function Login() {
                                     />
 
                                     {/* Button Content */}
-                                    <div className="relative z-10 flex items-center justify-center gap-3 text-white">
+                                    <div className="relative z-10 flex items-center justify-center gap-2.5 text-white">
                                         {isSubmitting ? (
                                             <>
                                                 <Loader2 size={18} className="animate-spin text-white" />
@@ -275,10 +336,10 @@ export default function Login() {
                                 )}
                             </form>
 
-                            <div className="pt-5 border-t border-slate-200 text-center">
+                            <div className="pt-4 border-t border-slate-100 text-center">
                                 <button 
                                     onClick={() => setIsLogin(!isLogin)}
-                                    className="text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all"
+                                    className="text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all cursor-pointer"
                                 >
                                     {isLogin ? (
                                         <>don't have an account? <span className="text-[var(--text-primary)] font-extrabold">sign up</span></>
@@ -292,7 +353,7 @@ export default function Login() {
                 </GlassCard>
 
                 {/* Infrastructure Tag */}
-                <p className="text-center text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--text-secondary)]/70 italic">
+                <p className="text-center text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[var(--text-secondary)]/70 italic">
                     Academic Management Infrastructure v1.0
                 </p>
             </div>

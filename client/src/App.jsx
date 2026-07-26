@@ -15,6 +15,8 @@ import {
     SlideUpTransition,
 } from './components/PageTransition';
 
+import DevToolsGuard from './components/DevToolsGuard';
+
 const NotFound = lazyWithSuspense(() => import('./pages/NotFound'));
 
 // ─── Lazy-loaded pages ────────────────────────────────────────────────────────
@@ -119,6 +121,7 @@ function AnimatedRoutes() {
 function App() {
     return (
         <AuthProvider>
+            <DevToolsGuard />
             <Toaster
                 position="top-right"
                 containerStyle={{ top: 20, right: 20 }}

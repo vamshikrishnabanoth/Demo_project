@@ -240,6 +240,12 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             { expiresIn: '12h' },
             (err, token) => {
                 if (err) throw err;
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: 12 * 60 * 60 * 1000
+                });
                 res.json({ 
                     token, 
                     user: { 
@@ -556,6 +562,7 @@ router.post('/logout', auth, async (req, res) => {
             ip: req.ip || 'unknown',
         });
 
+        res.clearCookie('token');
         res.json({ msg: 'Logged out successfully.' });
     } catch (err) {
         console.error('Logout error:', err);

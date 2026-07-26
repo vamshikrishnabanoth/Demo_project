@@ -2974,3 +2974,29 @@ exports.taskCompleteCallback = async (req, res) => {
     
     res.json({ msg: 'Callback processed successfully' });
 };
+
+exports.getSuspiciousActivities = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cheatingLogs = await prisma.cheatingLog.findMany({
+            where: { quizId: id },
+            orderBy: { timestamp: 'desc' },
+            include: {
+                student: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        studentBranch: true,
+                        section: true,
+                        year: true
+                    }
+                }
+            }
+        });
+        res.json(cheatingLogs);
+    } catch (err) {
+        console.error('Error fetching suspicious activities:', err);
+        res.status(500).json({ msg: 'Server error fetching suspicious activities' });
+    }
+};
