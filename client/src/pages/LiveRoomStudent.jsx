@@ -2,12 +2,13 @@ import { useState, useEffect, useContext, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
-import socket from '../utils/socket';
+import socket, { ensureSocketConnected } from '../utils/socket';
 import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { ShieldCheck, Users, Trophy, Crown, Flame } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const playPopSound = () => {
     try {
@@ -89,10 +90,11 @@ export default function LiveRoomStudent() {
                     _id: studentId || user.id
                 };
                 localStorage.setItem(`live_quiz_session_student_${quizRes.data.id}`, JSON.stringify(sessionData));
+                ensureSocketConnected();
                 socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'student', _id: studentId || user.id } });
 
             } catch (err) {
-                console.error(err);
+                console.error('[LiveRoomStudent] Error initializing quiz join:', err);
                 navigate('/student-dashboard');
             } finally {
                 setTimeout(() => setLoading(false), 800); // Small delay for smooth transition
@@ -106,12 +108,16 @@ export default function LiveRoomStudent() {
     useEffect(() => {
         if (!quiz) return;
 
+        ensureSocketConnected();
+
         const handleQuizStarted = () => {
+            console.log('[LiveRoomStudent] Quiz started event received from server. Navigating to arena...');
             navigate(`/quiz/attempt/${quiz.id}`);
         };
 
         const handleConnect = () => {
             if (user) {
+                console.log('[LiveRoomStudent] Socket connected. Emitting join_room / reconnectUser...');
                 const sessionStr = localStorage.getItem(`live_quiz_session_student_${quiz.id}`);
                 if (sessionStr) {
                     try {
@@ -127,21 +133,27 @@ export default function LiveRoomStudent() {
         };
 
         const handleParticipantsUpdate = (participantsList = []) => {
-            console.log('Student participants_update:', participantsList);
+            console.log('[LiveRoomStudent] participants_update:', participantsList);
             setParticipants(participantsList);
         };
 
         const handleLobbySummaryUpdate = ({ lobbySummary }) => {
-            console.log('Student received lobby study summary update:', lobbySummary);
+            console.log('[LiveRoomStudent] received lobby study summary update:', lobbySummary);
             setLobbySummary(lobbySummary);
+        };
+
+        const handleErrorAlert = (data) => {
+            console.error('[LiveRoomStudent] Socket Error Alert:', data);
+            toast.error(data?.msg || 'Socket connection issue');
         };
 
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
         socket.on('participants_update', handleParticipantsUpdate);
         socket.on('lobby_summary_update', handleLobbySummaryUpdate);
+        socket.on('error_alert', handleErrorAlert);
         socket.on('restoreState', (state) => {
-            console.log('Student restoreState:', state);
+            console.log('[LiveRoomStudent] restoreState:', state);
             if (state && state.participants) {
                 setParticipants(state.participants);
             }
@@ -152,7 +164,6 @@ export default function LiveRoomStudent() {
         });
 
         // If socket is already connected when this effect runs, re-join immediately.
-        // The 'connect' event won't fire again for an existing live connection.
         if (socket.connected) {
             handleConnect();
         }
@@ -164,6 +175,7 @@ export default function LiveRoomStudent() {
             socket.off('restoreState');
             socket.off('participants_update', handleParticipantsUpdate);
             socket.off('lobby_summary_update', handleLobbySummaryUpdate);
+            socket.off('error_alert', handleErrorAlert);
         };
     }, [quiz, user, navigate]);
 
@@ -186,9 +198,9 @@ export default function LiveRoomStudent() {
     return () => clearInterval(heartbeatId);
 }, [quiz, user]);
 
-    // Filter online students
+    // Filter online students (case-insensitive role check)
     const onlineStudents = useMemo(() => {
-        return participants.filter(p => p.role === 'student' && p.isOnline);
+        return participants.filter(p => p.role?.toLowerCase() === 'student' && p.isOnline !== false);
     }, [participants]);
 
     const actualCount = onlineStudents.length;
@@ -245,50 +257,50 @@ export default function LiveRoomStudent() {
                     className="bg-[var(--bg-secondary)] rounded-[3rem] shadow-2xl border border-[var(--border-color)] overflow-hidden"
                 >
                     {/* Hero Header */}
-                    <div className="bg-gradient-to-br from-indigo-900 via-[var(--bg-secondary)] to-[var(--bg-primary)] p-16 text-center relative overflow-hidden border-b border-[var(--border-color)]">
+                    <div className="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-8 sm:p-14 text-center relative overflow-hidden border-b border-[var(--border-color)]">
                         {/* Decorative animated rings */}
                         <motion.div 
                             animate={{ rotate: 360 }}
                             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                            className="absolute -top-20 -right-20 w-80 h-80 border-2 border-[var(--bg-accent)]/10 rounded-full"
+                            className="absolute -top-20 -right-20 w-80 h-80 border-2 border-white/10 rounded-full"
                         />
                         <motion.div 
                             animate={{ rotate: -360 }}
                             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                            className="absolute -bottom-20 -left-20 w-60 h-60 border border-[var(--bg-accent)]/10 rounded-full"
+                            className="absolute -bottom-20 -left-20 w-60 h-60 border border-white/10 rounded-full"
                         />
 
                         <motion.div
                             initial={{ y: -20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            className="relative z-10 space-y-8"
+                            className="relative z-10 space-y-6"
                         >
                             <div 
-                                className="p-4.5 rounded-[1.8rem] border-2 inline-block shadow-2xl mb-4 backdrop-blur-md transition-all duration-500 hover:scale-105 active:scale-95"
+                                className="p-4 rounded-2xl border-2 inline-block shadow-2xl mb-2 backdrop-blur-md transition-all duration-500 hover:scale-105"
                                 style={{
-                                    borderColor: 'var(--border-color)',
-                                    boxShadow: '0 0 35px var(--bg-accent-glow)',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                                    color: 'var(--text-accent)'
+                                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    boxShadow: '0 0 35px rgba(99, 102, 241, 0.4)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                    color: '#ffffff'
                                 }}
                             >
-                                <ThemeIcon size={48} className="animate-pulse" />
+                                <ThemeIcon size={44} className="animate-pulse text-amber-300" />
                             </div>
                             
                             <div className="space-y-4">
                                 <motion.div 
                                     animate={{ 
-                                        backgroundColor: ["var(--table-row-hover)", "var(--bg-accent-glow)", "var(--table-row-hover)"]
+                                        backgroundColor: ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.25)", "rgba(255,255,255,0.1)"]
                                     }}
                                     transition={{ duration: 2, repeat: Infinity }}
-                                    className="inline-block px-6 py-2 rounded-full text-xs font-black uppercase tracking-[0.3em] border border-[var(--bg-accent)]/30 text-[var(--text-accent)]"
+                                    className="inline-block px-5 py-2 rounded-full text-xs font-black uppercase tracking-[0.25em] border border-white/30 text-amber-300"
                                 >
-                                    ● Quiz is Ready
+                                    ● Quiz Arena Active
                                 </motion.div>
-                                <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-[var(--text-primary)] uppercase italic leading-tight max-w-2xl mx-auto">
+                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase italic leading-tight max-w-2xl mx-auto drop-shadow-md">
                                     {quiz?.title ? quiz.title.replace(/&quot;/gi, '"').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&#39;/g, "'") : ''}
                                 </h1>
-                                <p className="text-[var(--text-secondary)] max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
+                                <p className="text-slate-200 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
                                     You're in the waiting room. The quiz will start once your teacher begins the session.
                                 </p>
                             </div>

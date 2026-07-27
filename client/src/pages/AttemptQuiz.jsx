@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import socket from '../utils/socket';
+import socket, { ensureSocketConnected } from '../utils/socket';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
@@ -251,6 +251,7 @@ export default function AttemptQuiz() {
 
         const handleConnect = () => {
             setIsOnline(true);
+            ensureSocketConnected();
             // Use refs so we always read current values even if fetchQuiz resolved after mount
             const currentQuiz = quizRef.current;
             const currentUser = authUserRef.current;
@@ -284,6 +285,7 @@ export default function AttemptQuiz() {
         };
 
         socket.on('connect', handleConnect);
+        ensureSocketConnected();
         if (socket.connected) {
             handleConnect();
         }
@@ -662,13 +664,14 @@ export default function AttemptQuiz() {
     // This is needed because authUser may load async from context AFTER fetchQuiz runs.
     useEffect(() => {
         if (!authUser || !quiz) return;
+        ensureSocketConnected();
         const sessionData = {
             quizId: id,
             username: authUser.username,
             role: 'student',
             _id: authUser.id
         };
-        const hasSession = localStorage.getItem(`live_quiz_session_student_${id}`);
+        const hasSession = !!localStorage.getItem(`live_quiz_session_student_${id}`);
         if (quiz.isLive) {
             localStorage.setItem(`live_quiz_session_student_${id}`, JSON.stringify(sessionData));
         }

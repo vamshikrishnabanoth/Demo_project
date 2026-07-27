@@ -78,6 +78,11 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (!user || !socket) return;
 
+        if (!socket.connected) {
+            console.log('[AuthContext] User active but socket disconnected. Initiating socket connection...');
+            socket.connect();
+        }
+
         socket.emit('identify', user.id);
 
         const handleConnect = () => socket.emit('identify', user.id);

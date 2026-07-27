@@ -339,10 +339,16 @@ io.on('connection', async (socket) => {
 
 
     socket.on('join_room', ({ quizId, user }) => {
-        // SECURITY CHECK: Verify user identity matches socket.user payload
-        if (!socket.user || socket.user.username !== user.username) {
-            console.warn(`[Security Alert] join_room spoofing blocked for socket ${socket.id} (username: ${user.username})`);
-            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        // SECURITY CHECK: Verify user identity matches socket.user payload safely
+        if (!socket.user) {
+            console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted join_room`);
+            return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
+        }
+
+        const clientUsername = user?.username ? user.username.toString().trim() : socket.user.username;
+        if (clientUsername.toLowerCase() !== socket.user.username.toLowerCase()) {
+            console.warn(`[Security Alert] join_room username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${socket.user.username})`);
+            return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
         socket.join(quizId);
@@ -454,10 +460,16 @@ io.to(quizId).emit(
     });
 
     socket.on('reconnectUser', ({ quizId, user }) => {
-        // SECURITY CHECK: Verify identity matches socket.user payload
-        if (!socket.user || socket.user.username !== user.username) {
-            console.warn(`[Security Alert] reconnectUser spoofing blocked for socket ${socket.id} (username: ${user.username})`);
-            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
+        // SECURITY CHECK: Verify identity matches socket.user payload safely
+        if (!socket.user) {
+            console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted reconnectUser`);
+            return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
+        }
+
+        const clientUsername = user?.username ? user.username.toString().trim() : socket.user.username;
+        if (clientUsername.toLowerCase() !== socket.user.username.toLowerCase()) {
+            console.warn(`[Security Alert] reconnectUser username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${socket.user.username})`);
+            return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
         socket.join(quizId);
