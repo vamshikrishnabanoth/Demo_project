@@ -17,6 +17,12 @@ async function request(endpoint, options = {}, retryCount = 0) {
         headers['x-auth-token'] = token;
     }
 
+    // CRITICAL: When sending FormData, delete Content-Type so fetch() automatically sets boundary
+    if (options.body instanceof FormData || (headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data'))) {
+        delete headers['Content-Type'];
+        delete headers['content-type'];
+    }
+
     const fetchOptions = {
         method: options.method || 'GET',
         headers,
