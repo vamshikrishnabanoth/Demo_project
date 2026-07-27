@@ -285,10 +285,10 @@ export default function LiveRoomStudent() {
                                 >
                                     ● Quiz is Ready
                                 </motion.div>
-                                <h1 className="text-6xl font-black tracking-tighter text-[var(--text-primary)] uppercase italic leading-none">
-                                    {quiz?.title}
+                                <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-[var(--text-primary)] uppercase italic leading-tight max-w-2xl mx-auto">
+                                    {quiz?.title ? quiz.title.replace(/&quot;/gi, '"').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&#39;/g, "'") : ''}
                                 </h1>
-                                <p className="text-[var(--text-secondary)] max-w-lg mx-auto font-bold text-lg leading-relaxed">
+                                <p className="text-[var(--text-secondary)] max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
                                     You're in the waiting room. The quiz will start once your teacher begins the session.
                                 </p>
                             </div>
@@ -296,7 +296,7 @@ export default function LiveRoomStudent() {
                     </div>
 
                     {/* Content Body */}
-                    <div className="p-16 space-y-16">
+                    <div className="p-8 sm:p-14 space-y-12">
                         <LiveQuizWaitAnimation
                             variant="waiting-room"
                             readyCount={readyCount}
@@ -309,9 +309,9 @@ export default function LiveRoomStudent() {
                             <motion.div 
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="bg-[var(--glass-bg)] p-8 rounded-[2rem] border border-[var(--border-color)] text-left space-y-4 shadow-xl"
+                                className="bg-[var(--bg-secondary)] p-8 rounded-[2rem] border-2 border-[var(--border-color)] text-left space-y-4 shadow-xl"
                             >
-                                <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+                                <div className="flex items-center gap-3 border-b border-[var(--border-color)] pb-3">
                                     <Crown className="text-[var(--text-accent)] animate-pulse" size={24} />
                                     <h3 className="text-lg font-black text-[var(--text-primary)] uppercase tracking-wide italic">Pre-Game RAG Study Guide</h3>
                                 </div>
@@ -321,30 +321,30 @@ export default function LiveRoomStudent() {
                             </motion.div>
                         )}
 
-                        {/* Feature Grid */}
+                        {/* Feature Grid with Interactive High-Contrast Badges */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <motion.div 
-                                whileHover={{ scale: 1.02 }}
-                                className="bg-[var(--glass-bg)] p-8 rounded-[2rem] border border-[var(--border-color)] flex items-center gap-6 text-left"
+                                whileHover={{ scale: 1.03, translateY: -2 }}
+                                className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex items-center gap-6 text-left shadow-md hover:border-[var(--bg-accent)] transition-all cursor-pointer group"
                             >
-                                <div className="bg-green-500/10 p-4 rounded-2xl text-green-400">
+                                <div className="bg-emerald-500/10 p-4 rounded-2xl text-emerald-600 border border-emerald-500/20 group-hover:scale-110 transition-transform">
                                     <ShieldCheck size={32} />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Security</p>
-                                    <p className="text-xl font-black text-[var(--text-primary)] uppercase italic">Verified</p>
+                                    <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Security</p>
+                                    <p className="text-xl font-black text-emerald-600 uppercase italic">Verified</p>
                                 </div>
                             </motion.div>
                             
                             <motion.div 
-                                whileHover={{ scale: 1.02 }}
-                                className="bg-[var(--glass-bg)] p-8 rounded-[2rem] border border-[var(--border-color)] flex items-center gap-6 text-left"
+                                whileHover={{ scale: 1.03, translateY: -2 }}
+                                className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex items-center gap-6 text-left shadow-md hover:border-[var(--bg-accent)] transition-all cursor-pointer group"
                             >
-                                <div className="bg-[var(--bg-accent)]/10 p-4 rounded-2xl text-[var(--text-accent)]">
+                                <div className="bg-[var(--bg-accent)]/10 p-4 rounded-2xl text-[var(--text-accent)] border border-[var(--bg-accent)]/20 group-hover:scale-110 transition-transform">
                                     <Users size={32} />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Status</p>
+                                    <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Status</p>
                                     <p className="text-xl font-black text-[var(--text-primary)] uppercase italic">{displayCount} Joined</p>
                                 </div>
                             </motion.div>

@@ -1122,25 +1122,25 @@ export default function CreateQuizTopic() {
 
             {/* SEQUENTIAL WIZARD DIALOGUE OVERLAY */}
             {showWizard && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 w-full max-w-xl space-y-6 text-left relative overflow-hidden shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+                    <div className="bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 w-full max-w-xl space-y-6 text-left relative overflow-hidden shadow-2xl" style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.25), 0 0 0 1px var(--border-color)' }}>
                         
                         {/* Header step progress */}
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
                             <div>
-                                <h3 className="text-xl font-black text-white uppercase italic">
+                                <h3 className="text-xl font-black text-[var(--text-primary)] uppercase italic">
                                     {wizardStep === 1 && 'Step 1: General Constraints'}
                                     {wizardStep === 2 && 'Step 2: AI Formats & Styles'}
                                     {wizardStep === 3 && 'Step 3: Topic Stress Matrix'}
                                 </h3>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                                <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider mt-1">
                                     Wizard Progress: Step {wizardStep} of 3
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setShowWizard(false)}
-                                className="p-2 bg-white/5 hover:bg-red-500/10 rounded-full text-slate-400 hover:text-red-500 transition-all"
+                                className="p-2 bg-[var(--bg-primary)]/50 hover:bg-red-500/10 rounded-full text-[var(--text-secondary)] hover:text-red-500 transition-all"
                             >
                                 <X size={18} />
                             </button>
@@ -1151,41 +1151,42 @@ export default function CreateQuizTopic() {
                             <div className="space-y-6">
                                 <div className="space-y-4">
                                     {/* Question Count */}
-                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
+                                    <div className="bg-[var(--bg-primary)]/60 p-5 rounded-2xl border border-[var(--border-color)] flex items-center gap-4">
                                         <div className="bg-[var(--bg-accent)] w-12 h-12 rounded-xl flex items-center justify-center text-[var(--text-on-accent)]">
                                             <Hash size={24} />
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Question Count</p>
+                                            <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Question Count</p>
                                             <input
                                                 type="number"
                                                 min="1"
                                                 max="20"
                                                 value={questionCount}
                                                 onChange={(e) => { const v = parseInt(e.target.value); setQuestionCount(isNaN(v) ? '' : v); }}
-                                                className="bg-transparent border-none text-xl font-black text-white italic outline-none w-full"
+                                                className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full"
                                                 disabled={isLoading}
                                             />
                                         </div>
                                     </div>
 
                                     {/* Difficulty */}
-                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center gap-4">
-                                        <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white">
+                                    <div className="bg-[var(--bg-primary)]/60 p-5 rounded-2xl border border-[var(--border-color)] flex items-center gap-4">
+                                        <div className="bg-[var(--bg-accent)] w-12 h-12 rounded-xl flex items-center justify-center text-[var(--text-on-accent)]">
                                             <Gauge size={24} />
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Difficulty</p>
+                                            <p className="text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Difficulty</p>
                                             <select
                                                 value={difficulty}
                                                 onChange={(e) => setDifficulty(e.target.value)}
-                                                className="bg-transparent border-none text-xl font-black text-white italic outline-none w-full appearance-none cursor-pointer text-white bg-slate-900"
+                                                className="bg-transparent border-none text-xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
+                                                style={{ backgroundColor: 'transparent' }}
                                                 disabled={isLoading}
                                             >
-                                                <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
-                                                <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
-                                                <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
-                                                <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
+                                                <option value="Easy" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>Easy</option>
+                                                <option value="Medium" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>Medium</option>
+                                                <option value="Thinkable" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>Thinkable</option>
+                                                <option value="Hard" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>Hard</option>
                                             </select>
                                         </div>
                                     </div>
@@ -1210,58 +1211,58 @@ export default function CreateQuizTopic() {
                                     <div className="space-y-6">
                                         <div className="grid grid-cols-2 gap-4">
                                             {/* CONCEPTS_AND_DEFINITIONS */}
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                            <div className="bg-[var(--bg-primary)]/60 p-4 rounded-xl border border-[var(--border-color)] flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
                                                     checked={ratios.CONCEPTS_AND_DEFINITIONS > 0}
                                                     readOnly
-                                                    className="w-4 h-4 rounded border-white/10 text-blue-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                    className="w-4 h-4 rounded border-[var(--border-color)] text-blue-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Theory</span>
+                                                <span className="text-xs font-black uppercase text-[var(--text-primary)]">Theory</span>
                                             </div>
 
                                             {/* COMPARISONS_AND_TRADEOFFS */}
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                            <div className="bg-[var(--bg-primary)]/60 p-4 rounded-xl border border-[var(--border-color)] flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
                                                     checked={ratios.COMPARISONS_AND_TRADEOFFS > 0}
                                                     readOnly
-                                                    className="w-4 h-4 rounded border-white/10 text-purple-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                    className="w-4 h-4 rounded border-[var(--border-color)] text-purple-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Analytical Reasoning</span>
+                                                <span className="text-xs font-black uppercase text-[var(--text-primary)]">Analytical Reasoning</span>
                                             </div>
 
                                             {/* FORMULAS_AND_CALCULATIONS */}
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                            <div className="bg-[var(--bg-primary)]/60 p-4 rounded-xl border border-[var(--border-color)] flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
                                                     checked={ratios.FORMULAS_AND_CALCULATIONS > 0}
                                                     readOnly
-                                                    className="w-4 h-4 rounded border-white/10 text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                    className="w-4 h-4 rounded border-[var(--border-color)] text-amber-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Numerical Design</span>
+                                                <span className="text-xs font-black uppercase text-[var(--text-primary)]">Numerical Design</span>
                                             </div>
 
                                             {/* CASE_STUDIES_AND_SCENARIOS */}
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3">
+                                            <div className="bg-[var(--bg-primary)]/60 p-4 rounded-xl border border-[var(--border-color)] flex items-center gap-3">
                                                 <input 
                                                     type="checkbox"
                                                     checked={ratios.CASE_STUDIES_AND_SCENARIOS > 0}
                                                     readOnly
-                                                    className="w-4 h-4 rounded border-white/10 text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                    className="w-4 h-4 rounded border-[var(--border-color)] text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">Real-World Application</span>
+                                                <span className="text-xs font-black uppercase text-[var(--text-primary)]">Real-World Application</span>
                                             </div>
 
                                             {/* PRACTICAL_AND_LAB_TASKS */}
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center gap-3 col-span-2 justify-center">
+                                            <div className="bg-[var(--bg-primary)]/60 p-4 rounded-xl border border-[var(--border-color)] flex items-center gap-3 col-span-2 justify-center">
                                                 <input 
                                                     type="checkbox"
                                                     checked={ratios.PRACTICAL_AND_LAB_TASKS > 0}
                                                     readOnly
-                                                    className="w-4 h-4 rounded border-white/10 text-rose-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
+                                                    className="w-4 h-4 rounded border-[var(--border-color)] text-rose-500 focus:ring-0 focus:ring-offset-0 bg-transparent shrink-0"
                                                 />
-                                                <span className="text-xs font-black uppercase text-white">
+                                                <span className="text-xs font-black uppercase text-[var(--text-primary)]">
                                                     {isNonComputational ? "Design Optimization & Lab Tracing" : "Implementation & Synthesis"}
                                                 </span>
                                             </div>
@@ -1274,18 +1275,19 @@ export default function CreateQuizTopic() {
                                             </p>
                                         </div>
 
-                                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                        <div className="flex items-center justify-between pt-4 border-t border-[var(--border-color)]">
                                             <button
                                                 type="button"
                                                 onClick={() => setRatiosModified(true)}
-                                                className="px-6 py-2.5 bg-slate-700 border border-slate-600 text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-slate-600 transition-all"
+                                                className="px-6 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-primary)]/80 transition-all"
                                             >
                                                 Modify Layout
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setWizardStep(3)}
-                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] border border-[var(--bg-saffron)] text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all shadow-md"
+                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] border border-[var(--bg-saffron)] !text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all shadow-md"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Accept Layout
                                             </button>
@@ -1293,13 +1295,13 @@ export default function CreateQuizTopic() {
                                     </div>
                                 ) : (
                                      <div className="space-y-4">
-                                         <p className="text-xs font-black text-white uppercase italic">Customize Format Ratios</p>
+                                         <p className="text-xs font-black text-[var(--text-primary)] uppercase italic">Customize Format Ratios</p>
                                          <div className="space-y-4">
                                               {/* CONCEPTS_AND_DEFINITIONS */}
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-[var(--text-accent)]">Theory</span>
-                                                      <span className="text-white">{ratios.CONCEPTS_AND_DEFINITIONS}%</span>
+                                                      <span className="text-[var(--text-primary)]">{ratios.CONCEPTS_AND_DEFINITIONS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
@@ -1315,7 +1317,7 @@ export default function CreateQuizTopic() {
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-purple-400">Analytical Reasoning</span>
-                                                      <span className="text-white">{ratios.COMPARISONS_AND_TRADEOFFS}%</span>
+                                                      <span className="text-[var(--text-primary)]">{ratios.COMPARISONS_AND_TRADEOFFS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
@@ -1331,7 +1333,7 @@ export default function CreateQuizTopic() {
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-amber-400">Numerical Design</span>
-                                                      <span className="text-white">{ratios.FORMULAS_AND_CALCULATIONS}%</span>
+                                                      <span className="text-[var(--text-primary)]">{ratios.FORMULAS_AND_CALCULATIONS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
@@ -1347,7 +1349,7 @@ export default function CreateQuizTopic() {
                                               <div className="space-y-1">
                                                   <div className="flex justify-between font-black uppercase text-[10px] italic">
                                                       <span className="text-emerald-400">Real-World Application</span>
-                                                      <span className="text-white">{ratios.CASE_STUDIES_AND_SCENARIOS}%</span>
+                                                      <span className="text-[var(--text-primary)]">{ratios.CASE_STUDIES_AND_SCENARIOS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
@@ -1365,7 +1367,7 @@ export default function CreateQuizTopic() {
                                                       <span className="text-rose-400">
                                                           {isNonComputational ? "Design Optimization & Lab Tracing" : "Implementation & Synthesis"}
                                                       </span>
-                                                      <span className="text-white">{ratios.PRACTICAL_AND_LAB_TASKS}%</span>
+                                                      <span className="text-[var(--text-primary)]">{ratios.PRACTICAL_AND_LAB_TASKS}%</span>
                                                   </div>
                                                   <input
                                                       type="range"
@@ -1378,7 +1380,7 @@ export default function CreateQuizTopic() {
                                               </div>
                                           </div>
 
-                                        <div className="flex justify-between pt-6 border-t border-white/10">
+                                        <div className="flex justify-between pt-6 border-t border-[var(--border-color)]">
                                             <button
                                                 type="button"
                                                 onClick={() => setRatiosModified(false)}
@@ -1390,7 +1392,8 @@ export default function CreateQuizTopic() {
                                             <button
                                                 type="button"
                                                 onClick={() => setWizardStep(3)}
-                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all"
+                                                className="px-6 py-2.5 bg-[var(--bg-saffron)] !text-white rounded-xl font-black uppercase text-[10px] tracking-wider hover:bg-[var(--bg-saffron-hover)] transition-all"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Continue to Step 3
                                             </button>
@@ -1408,9 +1411,9 @@ export default function CreateQuizTopic() {
                                         analyzedData.concepts.map((concept, idx) => {
                                             const currentWeight = topicWeights[concept.concept_tag] ?? concept.weight_score;
                                             return (
-                                                <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-all space-y-1.5">
+                                                <div key={idx} className="p-3 bg-[var(--bg-primary)]/60 rounded-xl border border-[var(--border-color)] hover:border-[var(--bg-accent)]/40 transition-all space-y-1.5">
                                                     <div className="flex justify-between font-black uppercase text-[10px]">
-                                                        <span className="text-white truncate max-w-[200px]">{concept.concept_tag}</span>
+                                                        <span className="text-[var(--text-primary)] truncate max-w-[200px]">{concept.concept_tag}</span>
                                                         <span className={`${currentWeight > 0 ? 'text-[var(--text-accent)]' : 'text-red-500'}`}>
                                                             {currentWeight > 0 ? `Stress: ${currentWeight.toFixed(1)}` : 'DISABLED'}
                                                         </span>
@@ -1432,7 +1435,7 @@ export default function CreateQuizTopic() {
                                     )}
                                 </div>
 
-                                <div className="flex justify-between pt-4 border-t border-white/10">
+                                <div className="flex justify-between pt-4 border-t border-[var(--border-color)]">
                                     <button
                                         type="button"
                                         onClick={() => setWizardStep(2)}
@@ -1444,7 +1447,8 @@ export default function CreateQuizTopic() {
                                     <button
                                         type="button"
                                         onClick={(e) => { setShowWizard(false); handleSubmit(e); }}
-                                        className="px-6 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase text-[10px] tracking-wider hover:scale-105 transition-all"
+                                        className="px-8 py-3 bg-[var(--bg-accent)] border border-[var(--bg-accent)] !text-white rounded-2xl font-black uppercase text-xs tracking-wider hover:scale-105 hover:bg-[var(--bg-accent-hover)] active:scale-95 transition-all shadow-lg shadow-[var(--bg-accent)]/25 flex items-center justify-center gap-2"
+                                        style={{ color: '#ffffff' }}
                                     >
                                         Confirm & Launch Quiz Room
                                     </button>

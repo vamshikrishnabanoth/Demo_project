@@ -451,12 +451,20 @@ export default function AttemptQuiz() {
     }, [currentQuestion, quiz, isReviewMode, result, id]);
 
     // Anti-Cheat & Exam Integrity Controls — Centralised via useExamProctoring hook
-    // Covers: strict fullscreen, tab-switch counting (auto-submit at limit),
-    // DevTools shortcut blocking, window-resize heuristic, copy/paste/cut/contextmenu blocking.
-    const { tabSwitchCount } = useExamProctoring({
-        enabled: quiz?.isLive || quiz?.isActive, // Enable for both live and async
-        quizId: quiz?.id,
+    const handleAutoSubmit = useCallback((reason) => {
+        toast.error(`Exam Auto-Submitted: ${reason}. Navigating to report...`, { duration: 4000 });
+        handleSubmit();
+        setTimeout(() => {
+            navigate(`/report/${id}`);
+        }, 1000);
+    }, [id, handleSubmit, navigate]);
+
+    const { isFullscreen, requestFullscreenMode } = useExamProctoring({
+        enabled: !loading && !submitting && !result && !!quiz,
+        quizId: quiz?.id || id,
         userId: authUser?.id || authUser?._id,
+        maxTabSwitches: 2,
+        onAutoSubmit: handleAutoSubmit
     });
 
     // Timer Initialization (Split from focus logic)

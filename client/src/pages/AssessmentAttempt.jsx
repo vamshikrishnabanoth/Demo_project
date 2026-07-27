@@ -66,11 +66,21 @@ export default function AssessmentAttempt() {
     // Auth context for proctoring userId
     const { user: authUser } = useContext(AuthContext);
 
-    // Exam Integrity — strict fullscreen, tab-switch limit, DevTools blocking, resize heuristic
-    useExamProctoring({
+    // Exam Integrity — strict fullscreen, tab-switch limit (max 2), focus loss monitoring, resize heuristic
+    const handleAutoSubmit = useCallback((reason) => {
+        toast.error(`Exam Auto-Submitted: ${reason}. Navigating to report...`, { duration: 4000 });
+        handleSubmit();
+        setTimeout(() => {
+            navigate(`/report/${id}`);
+        }, 1000);
+    }, [id, handleSubmit, navigate]);
+
+    const { isFullscreen, requestFullscreenMode } = useExamProctoring({
         enabled: !loading && !submitting && !!quiz,
         quizId: id,
         userId: authUser?.id,
+        maxTabSwitches: 2,
+        onAutoSubmit: handleAutoSubmit
     });
 
     useEffect(() => {

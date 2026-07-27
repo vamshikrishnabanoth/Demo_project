@@ -448,36 +448,39 @@ if (socket.connected) {
     const groupedCheatAlerts = useMemo(() => {
         const groups = {};
         cheatAlerts.forEach(alert => {
-            const rollNo = alert.rollNumber || alert.username || alert.studentRollNumber || 'N/A';
+            const studentKey = alert.studentId || alert.rollNumber || alert.username || alert.studentRollNumber || 'N/A';
+            const rollNo = alert.rollNumber || alert.username || alert.studentRollNumber || alert.studentId || 'N/A';
+            const name = alert.name || alert.studentName || alert.username || 'Student';
             const action = alert.action || 'unknown';
-            const key = `${rollNo}-${action}`;
             const details = alert.details || {};
-            
-            if (!groups[key]) {
-                groups[key] = {
-                    name: alert.name || alert.studentName || 'Student',
+            const alertTime = alert.timestamp ? new Date(alert.timestamp) : new Date();
+
+            if (!groups[studentKey]) {
+                groups[studentKey] = {
+                    name,
                     rollNumber: rollNo,
-                    action: action,
-                    details: details,
-                    latestTime: alert.timestamp ? new Date(alert.timestamp) : new Date(),
-                    count: 1
+                    actionsMap: { [action]: 1 },
+                    details,
+                    latestTime: alertTime,
+                    totalCount: 1
                 };
             } else {
-                groups[key].count += 1;
-                const alertTime = alert.timestamp ? new Date(alert.timestamp) : new Date();
-                if (alertTime > groups[key].latestTime) {
-                    groups[key].latestTime = alertTime;
-                    groups[key].details = details;
+                groups[studentKey].totalCount += 1;
+                groups[studentKey].actionsMap[action] = (groups[studentKey].actionsMap[action] || 0) + 1;
+                if (alertTime > groups[studentKey].latestTime) {
+                    groups[studentKey].latestTime = alertTime;
+                    groups[studentKey].details = details;
                 }
             }
         });
+
         const list = Object.values(groups).sort((a, b) => b.latestTime - a.latestTime);
         if (!searchCheatQuery.trim()) return list;
         const query = searchCheatQuery.toLowerCase();
         return list.filter(item => 
             item.name.toLowerCase().includes(query) || 
             item.rollNumber.toLowerCase().includes(query) ||
-            item.action.toLowerCase().includes(query)
+            Object.keys(item.actionsMap).some(act => act.toLowerCase().includes(query))
         );
     }, [cheatAlerts, searchCheatQuery]);
 
@@ -551,23 +554,23 @@ if (socket.connected) {
                             <div className="inline-block px-6 py-2 bg-[var(--bg-accent)]/10 rounded-full border border-[var(--bg-accent)]/30">
                                 <span className="text-[var(--text-accent)] font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
                             </div>
-                            <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter text-balance">Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
+                            <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter text-balance" style={{ color: 'var(--text-primary)' }}>Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
                             <div className="flex flex-col items-center gap-4">
-                                <p className="text-white/50 font-bold uppercase tracking-widest text-lg">Join Code</p>
-                                <div onClick={copyCode} className="bg-white/5 border-2 border-[var(--bg-accent)]/20 hover:bg-[var(--bg-accent)]/10 hover:border-[var(--bg-accent)]/50 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
-                                    <p className="text-5xl sm:text-7xl font-black tracking-[0.2em] sm:tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-4 sm:decoration-8 underline-offset-[16px] break-all">{joinCode}</p>
+                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-lg">Join Code</p>
+                                <div onClick={copyCode} className="bg-[var(--bg-primary)]/50 border-2 border-[var(--bg-accent)]/20 hover:bg-[var(--bg-accent)]/10 hover:border-[var(--bg-accent)]/50 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
+                                    <p className="text-5xl sm:text-7xl font-black tracking-[0.2em] sm:tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-4 sm:decoration-8 underline-offset-[16px] break-all" style={{ color: 'var(--text-primary)' }}>{joinCode}</p>
                                 </div>
                             </div>
-                            <div className="pt-10 flex flex-col items-center gap-6">
+                            <div className="pt-8 flex flex-col items-center gap-6">
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-col sm:flex-row items-center gap-6 sm:gap-8 bg-[var(--bg-accent)] text-[var(--text-on-accent)] px-10 sm:px-20 py-5 sm:py-8 rounded-[2.5rem] sm:rounded-[3rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/30 font-black text-2xl sm:text-4xl italic uppercase tracking-tighter active:scale-95 border-b-[6px] sm:border-b-[10px] border-[var(--bg-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed btn-glow"
+                                    className="group flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-gradient-to-r from-[var(--bg-accent)] via-[var(--bg-saffron)] to-[var(--bg-accent-hover)] text-white px-10 sm:px-16 py-5 sm:py-7 rounded-[2.5rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/40 font-black text-2xl sm:text-3xl italic uppercase tracking-tighter active:scale-95 border-2 border-white/30 border-b-[6px] border-b-black/30 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    <Play size={32} className="sm:w-[48px] sm:h-[48px] group-hover:translate-x-2 transition-transform" fill="currentColor" />
-                                    START GAME
+                                    <Play size={36} className="group-hover:translate-x-2 transition-transform text-white fill-white" />
+                                    <span>START GAME</span>
                                 </button>
-                                <p className="text-white/40 font-bold uppercase tracking-widest text-sm">{participants.length} Students Joined</p>
+                                <p className="text-[var(--text-secondary)] font-black uppercase tracking-widest text-sm">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>
                             </div>
                         </div>
                         {/* Background Decorations */}
@@ -596,7 +599,7 @@ if (socket.connected) {
                                 ))}
                                 {participants.length === 0 && (
                                     <div className="col-span-full py-12 text-center bg-[var(--bg-secondary)] rounded-2xl border-2 border-dashed border-[var(--border-color)]">
-                                        <p className="text-white/30 font-medium italic">No students joined yet...</p>
+                                        <p className="text-[var(--text-secondary)] font-medium italic">No students joined yet...</p>
                                     </div>
                                 )}
                             </div>
@@ -647,19 +650,19 @@ if (socket.connected) {
                 )}
 
                 {/* Session Controls — Compact Row */}
-                <div className="bg-[#0f172a] rounded-[2rem] p-6 shadow-2xl border-b-[6px] border-slate-800">
+                <div className="bg-[var(--bg-accent)] rounded-[2rem] p-6 shadow-2xl border-b-[6px] border-[var(--bg-accent-hover)]">
                     <div className="flex flex-col md:flex-row items-center gap-4">
                         {/* Question Navigation */}
-                        <div className="flex items-center gap-3 bg-slate-800/50 rounded-xl px-5 py-3">
+                        <div className="flex items-center gap-3 bg-white/15 rounded-xl px-5 py-3">
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg font-bold uppercase tracking-tight text-xs transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg font-bold uppercase tracking-tight text-xs transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                                 title="Revisit skipped questions only"
                             >
                                 <ChevronLeft size={14} /> Back
                             </button>
-                            <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Q{currentQuestion + 1}/{quiz?.questions?.length || 0}</p>
+                            <p className="text-white/70 text-xs font-black uppercase tracking-widest">Q{currentQuestion + 1}/{quiz?.questions?.length || 0}</p>
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
@@ -676,7 +679,7 @@ if (socket.connected) {
 
                         <button
                             onClick={handleIncreaseTime}
-                            className="bg-[var(--bg-accent)] text-white px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:scale-[1.02] transition shadow-lg shadow-[var(--bg-accent)]/20 active:scale-95 flex items-center gap-2 text-sm border-b-2 border-orange-700"
+                            className="bg-white/20 text-white px-6 py-3 rounded-xl font-black italic uppercase tracking-tighter hover:bg-white/30 hover:scale-[1.02] transition shadow-lg active:scale-95 flex items-center gap-2 text-sm border-b-2 border-white/10"
                         >
                             <Clock size={18} /> +30 SEC
                         </button>
@@ -700,8 +703,8 @@ if (socket.connected) {
                         )}
 
                         {/* Participants Count */}
-                        <div className="flex items-center gap-2 bg-white/5 px-4 py-3 rounded-xl border border-white/10">
-                            <Users size={16} className="text-[var(--text-accent)]" />
+                        <div className="flex items-center gap-2 bg-white/15 px-4 py-3 rounded-xl border border-white/20">
+                            <Users size={16} className="text-white/80" />
                             <span className="text-xs font-black uppercase tracking-widest text-white">{participants.length} Online</span>
                         </div>
                     </div>
@@ -711,7 +714,7 @@ if (socket.connected) {
                 {quiz?.questions?.[currentQuestion] && (
                     <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-8 shadow-2xl shadow-slate-100/80 relative overflow-hidden">
                         <div className="flex items-center gap-2 mb-6">
-                            <span className="px-4 py-1.5 bg-[#0f172a] text-white rounded-full text-xs font-black uppercase tracking-wider italic">
+                            <span className="px-4 py-1.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-full text-xs font-black uppercase tracking-wider italic">
                                 Active Question Preview
                             </span>
                             <span className="text-slate-300 font-bold tracking-widest uppercase text-xs">
@@ -743,14 +746,14 @@ if (socket.connected) {
                 )}
 
                 {/* Live Proctoring & Security Dashboard */}
-                <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-500">
-                    <div className="bg-red-500/5 border-b border-red-100 px-8 py-5 flex items-center justify-between flex-wrap gap-4">
+                <div className="bg-white rounded-[2.5rem] shadow-2xl border-2 border-[var(--border-color)] overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+                    <div className="bg-gradient-to-r from-[var(--bg-accent)] via-[var(--bg-saffron)] to-[var(--bg-accent-hover)] px-8 py-6 flex items-center justify-between flex-wrap gap-4 text-white shadow-md">
                         <div>
-                            <h2 className="text-xl font-black text-red-600 italic uppercase tracking-tighter flex items-center gap-2">
-                                <ShieldAlert size={22} className={cheatAlerts.length > 0 ? "animate-pulse text-red-500" : ""} />
-                                Live Proctoring & <span className="text-red-700">Suspicious Activity Log Table</span>
+                            <h2 className="text-xl font-black italic uppercase tracking-tighter flex items-center gap-2.5 text-white">
+                                <ShieldAlert size={24} className={cheatAlerts.length > 0 ? "animate-pulse text-yellow-300" : ""} />
+                                Live Proctoring & <span className="text-amber-200">Suspicious Activity Log Table</span>
                             </h2>
-                            <p className="text-red-500/70 text-[10px] font-black uppercase tracking-widest mt-1">
+                            <p className="text-white/80 text-[10px] font-black uppercase tracking-widest mt-1">
                                 Real-time cheating alerts & persistent database audit history
                             </p>
                         </div>
@@ -762,95 +765,89 @@ if (socket.connected) {
                                     placeholder="Search Roll No or Student..."
                                     value={searchCheatQuery}
                                     onChange={(e) => setSearchCheatQuery(e.target.value)}
-                                    className="px-4 py-1.5 text-xs rounded-xl border border-red-200 bg-white font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 w-52"
+                                    className="px-4 py-2 text-xs rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:bg-white focus:text-slate-800 transition-all w-60 font-bold"
                                 />
                             </div>
-                            <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
-                                cheatAlerts.length > 0 ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500'
+                            <div className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-lg transition-all duration-300 ${
+                                cheatAlerts.length > 0 ? 'bg-red-600 text-white animate-pulse' : 'bg-white/20 text-white'
                             }`}>
-                                {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Event' : 'Events'} ({groupedCheatAlerts.length} Students)
+                                {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Event' : 'Events'} ({groupedCheatAlerts.length} {groupedCheatAlerts.length === 1 ? 'Student' : 'Students'})
                             </div>
                         </div>
                     </div>
                     
-                    <div className="p-8">
+                    <div className="p-6 sm:p-8">
                         {groupedCheatAlerts.length > 0 ? (
-                            <div className="max-h-[380px] overflow-y-auto pr-2">
+                            <div className="max-h-[420px] overflow-y-auto pr-2">
                                 <table className="w-full text-left border-collapse">
-                                    <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
-                                        <tr className="bg-slate-50 border-b border-slate-100">
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Student Name</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Roll Number</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Suspicious Activity Type</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Details</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Timestamp</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Violations</th>
+                                    <thead className="sticky top-0 bg-white z-10 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+                                        <tr className="bg-[var(--bg-primary)]/40 border-b-2 border-[var(--border-color)]">
+                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Student Name</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Roll Number</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Recorded Activities</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Latest Timestamp</th>
+                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest text-center">Total Violations</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {groupedCheatAlerts.map((record, index) => {
                                             const timeStr = record.latestTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                                             const dateStr = record.latestTime.toLocaleDateString();
-                                            
-                                            let eventName = record.action?.replace(/_/g, ' ');
-                                            let badgeStyle = 'bg-red-50 border-red-100 text-red-600';
-                                            let icon = <AlertTriangle size={12} />;
-
-                                            if (record.action === 'tab_switch') {
-                                                eventName = 'Tab Switch Detected';
-                                                badgeStyle = 'bg-red-100 border-red-200 text-red-700';
-                                            } else if (record.action === 'inactivity') {
-                                                eventName = '30s Tab Inactivity';
-                                                badgeStyle = 'bg-amber-50 border-amber-200 text-amber-700';
-                                                icon = <Clock size={12} />;
-                                            } else if (record.action === 'window_blur') {
-                                                eventName = 'Window Focus Loss';
-                                                badgeStyle = 'bg-orange-50 border-orange-200 text-orange-700';
-                                            } else if (record.action === 'devtools_shortcut') {
-                                                eventName = 'DevTools Shortcut Intercepted';
-                                                badgeStyle = 'bg-purple-50 border-purple-200 text-purple-700';
-                                            } else if (record.action === 'devtools_resize') {
-                                                eventName = 'DevTools Window Resize';
-                                                badgeStyle = 'bg-purple-50 border-purple-200 text-purple-700';
-                                            } else if (record.action === 'screenshot_attempt') {
-                                                eventName = 'Screenshot / Capture Attempt';
-                                                badgeStyle = 'bg-rose-100 border-rose-200 text-rose-800';
-                                            } else if (record.action === 'multi_monitor_detected') {
-                                                eventName = 'Secondary Monitor Detected';
-                                                badgeStyle = 'bg-blue-50 border-blue-200 text-blue-700';
-                                            } else if (record.action === 'clipboard_block' || record.action === 'clipboard') {
-                                                eventName = 'Clipboard Copy/Paste Block';
-                                            } else if (record.action === 'context_block' || record.action === 'contextmenu') {
-                                                eventName = 'Right Click Block';
-                                            }
-
-                                            const detailStr = record.details?.key ? `Key: ${record.details.key}` :
-                                                             record.details?.idleDurationSeconds ? `Idle: ${record.details.idleDurationSeconds}s` :
-                                                             record.details?.blurDurationSeconds ? `Blurred: ${record.details.blurDurationSeconds}s` :
-                                                             record.details?.switchCount ? `Switch #${record.details.switchCount}` : 'Monitored activity';
 
                                             return (
-                                                <tr key={index} className="hover:bg-slate-50/50 transition-colors">
+                                                <tr key={index} className="hover:bg-[var(--bg-primary)]/20 transition-colors">
                                                     <td className="px-6 py-4">
-                                                        <span className="font-bold text-slate-800 text-sm">{record.name}</span>
+                                                        <span className="font-bold text-[var(--text-primary)] text-sm">{record.name}</span>
                                                     </td>
-                                                    <td className="px-6 py-4 font-mono text-xs text-slate-500 font-bold">
+                                                    <td className="px-6 py-4 font-mono text-xs text-[var(--text-secondary)] font-bold">
                                                         {record.rollNumber}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border text-[10px] font-black uppercase tracking-wider ${badgeStyle}`}>
-                                                            {icon} {eventName}
-                                                        </span>
+                                                        <div className="flex flex-wrap gap-1.5">
+                                                            {Object.entries(record.actionsMap).map(([act, count], actIdx) => {
+                                                                let label = act.replace(/_/g, ' ').toUpperCase();
+                                                                let style = 'bg-orange-500 text-white';
+                                                                let icon = <AlertTriangle size={11} />;
+
+                                                                if (act === 'tab_switch') {
+                                                                    label = `TAB SWITCH (${count})`;
+                                                                    style = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
+                                                                } else if (act === 'window_blur' || act === 'window_blur_30s') {
+                                                                    label = `FOCUS LOSS (${count})`;
+                                                                    style = 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white';
+                                                                    icon = <Clock size={11} />;
+                                                                } else if (act === 'split_screen_detected') {
+                                                                    label = `SPLIT SCREEN / RESIZE (${count})`;
+                                                                    style = 'bg-gradient-to-r from-rose-600 to-red-700 text-white animate-pulse';
+                                                                } else if (act === 'auto_submit_terminated' || act === 'window_blur_60s_terminated') {
+                                                                    label = `AUTO-SUBMITTED (TERMINATED)`;
+                                                                    style = 'bg-red-700 text-white font-black animate-pulse ring-2 ring-red-400';
+                                                                    icon = <ShieldAlert size={11} />;
+                                                                } else if (act === 'devtools_shortcut' || act === 'devtools_resize') {
+                                                                    label = `DEVTOOLS (${count})`;
+                                                                    style = 'bg-gradient-to-r from-purple-600 to-indigo-700 text-white';
+                                                                } else if (act === 'screenshot_attempt') {
+                                                                    label = `SCREENSHOT (${count})`;
+                                                                    style = 'bg-rose-600 text-white';
+                                                                } else if (act === 'multi_monitor_detected') {
+                                                                    label = `MULTI-MONITOR (${count})`;
+                                                                    style = 'bg-blue-600 text-white';
+                                                                }
+
+                                                                return (
+                                                                    <span key={actIdx} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black tracking-wider uppercase shadow-sm ${style}`}>
+                                                                        {icon} {label}
+                                                                    </span>
+                                                                );
+                                                            })}
+                                                        </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-xs text-slate-500 font-medium">
-                                                        {detailStr}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-xs text-slate-400 font-mono">
+                                                    <td className="px-6 py-4 text-xs text-[var(--text-secondary)] font-mono">
                                                         {dateStr} {timeStr}
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
-                                                        <span className="inline-flex items-center justify-center min-w-[2rem] h-7 px-2 rounded-full bg-red-600 text-white font-black text-xs shadow-md shadow-red-500/20">
-                                                            {record.count}
+                                                        <span className="inline-flex items-center justify-center min-w-[2.25rem] h-8 px-3 rounded-full bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs shadow-md shadow-red-500/30">
+                                                            {record.totalCount}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -860,62 +857,26 @@ if (socket.connected) {
                                 </table>
                             </div>
                         ) : (
-                            <div className="py-10 text-center flex flex-col items-center justify-center">
-                                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 mb-4 border border-emerald-100">
-                                    <ShieldCheck size={28} className="animate-pulse" />
+                            <div className="py-12 text-center flex flex-col items-center justify-center">
+                                <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 mb-4 border border-emerald-500/20 shadow-inner">
+                                    <ShieldCheck size={32} className="animate-pulse" />
                                 </div>
-                                <h4 className="text-sm font-black text-slate-700 uppercase tracking-widest mb-1">Secure Environment</h4>
-                                <p className="text-slate-400 font-bold text-xs">No integrity violations detected from active participants.</p>
+                                <h4 className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest mb-1">Secure Environment</h4>
+                                <p className="text-[var(--text-secondary)] font-bold text-xs">No integrity violations detected from active participants.</p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Floating Live Security Feed Container (Notifications List) */}
-                {cheatAlerts.length > 0 && (
-                    <div className="fixed bottom-6 right-6 z-50 w-96 bg-slate-900/95 backdrop-blur-xl border border-red-500/30 rounded-3xl shadow-2xl shadow-black/60 overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
-                        <div className="bg-red-600/90 px-5 py-3 flex items-center justify-between text-white">
-                            <div className="flex items-center gap-2">
-                                <ShieldAlert size={18} className="animate-pulse" />
-                                <span className="text-xs font-black uppercase tracking-wider">Live Security Feed ({cheatAlerts.length})</span>
-                            </div>
-                            <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">Real-time Stream</span>
-                        </div>
-                        <div className="p-4 max-h-60 overflow-y-auto space-y-2.5">
-                            {cheatAlerts.slice(0, 8).map((alert, i) => {
-                                const roll = alert.rollNumber || alert.username || alert.studentRollNumber || 'Student';
-                                const name = alert.name || alert.studentName || 'Student';
-                                const act = alert.action?.replace(/_/g, ' ') || 'suspicious activity';
-                                const timeStr = alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-
-                                return (
-                                    <div key={i} className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-start gap-3 text-xs">
-                                        <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0 animate-ping"></div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between font-bold text-white">
-                                                <span className="truncate">{name} ({roll})</span>
-                                                <span className="text-[10px] text-slate-400 font-mono">{timeStr}</span>
-                                            </div>
-                                            <p className="text-[11px] text-red-300 font-medium capitalize mt-0.5">
-                                                Triggered: {act}
-                                            </p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-
                 {/* Student Progress — Full Width Table with Dots */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-[#0f172a] px-8 py-5 flex items-center justify-between">
+                    <div className="bg-[var(--bg-accent)] px-8 py-5 flex items-center justify-between">
                         <div>
                             <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">
-                                Live <span className="text-[var(--text-accent)]">Student Tracker</span>
+                                Live <span className="text-white/80">Student Tracker</span>
                             </h2>
-                            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">
+                            <p className="text-white/50 text-[10px] font-black uppercase tracking-widest mt-1">
                                 {allStudents.length} Total · {participants.length} Connected · Page {currentPage}/{totalPages}
                             </p>
                         </div>
@@ -923,15 +884,15 @@ if (socket.connected) {
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1.5">
                                 <div className="w-4 h-4 rounded-md bg-green-500"></div>
-                                <span className="text-[10px] font-bold text-slate-400">Correct</span>
+                                <span className="text-[10px] font-bold text-white/70">Correct</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <div className="w-4 h-4 rounded-md bg-red-500"></div>
-                                <span className="text-[10px] font-bold text-slate-400">Wrong</span>
+                                <span className="text-[10px] font-bold text-white/70">Wrong</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <div className="w-4 h-4 rounded-md bg-gray-200 border border-gray-300"></div>
-                                <span className="text-[10px] font-bold text-slate-400">Not Attempted</span>
+                                <span className="text-[10px] font-bold text-white/70">Not Attempted</span>
                             </div>
                         </div>
                     </div>

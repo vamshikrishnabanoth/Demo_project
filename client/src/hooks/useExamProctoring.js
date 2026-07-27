@@ -4,58 +4,114 @@ import toast from 'react-hot-toast';
 import { showError } from '../utils/alerts';
 
 /**
- * useExamProctoring — Centralised exam-integrity hook.
+ * useExamProctoring — Centralised Exam Security & Proctoring Hook.
  *
- * Features:
- *  1. Strict fullscreen mode (request on mount, re-request on exit)
- *  2. Tab-switch counter with auto-submit when limit exceeded
- *  3. DevTools keyboard shortcut blocking (F12, Ctrl+Shift+I/J/C, Ctrl+U)
- *  4. Window size-change heuristic (outerHeight − innerHeight > threshold)
- *  5. Copy / Paste / Cut / ContextMenu blocking
- *
- * @param {Object}   opts
- * @param {boolean}  opts.enabled        – Activate proctoring (false during review/result/loading)
- * @param {string}   opts.quizId         – Current quiz ID (for socket events)
- * @param {string}   opts.userId         – Current user ID (for socket events)
- * @param {number}  [opts.maxTabSwitches=2] – Auto-submit after this many tab switches
- * @param {Function} opts.onAutoSubmit   – Callback invoked when tab-switch limit is reached
- *
- * @returns {{ tabSwitchCount: number, isFullscreen: boolean }}
+ * Requirements Met:
+ *  1. Strict Fullscreen Enforcement (quiz available only in fullscreen mode)
+ *  2. 1-Pixel Screen Reduction & Split-Screen Detection (monitored & logged)
+ *  3. Tab-switch limit: max 2 switches → auto-submits & terminates student to report page
+ *  4. Continuous Focus Loss: 30s warning, 60s (1 min) auto-submits & terminates student to report page
+ *  5. DevTools & Screenshot shortcut blocking
+ *  6. Copy/Paste/Cut/ContextMenu blocking
  */
 export default function useExamProctoring({
     enabled = false,
     quizId = '',
     userId = '',
+    maxTabSwitches = 2,
+    onAutoSubmit = null,
 } = {}) {
     const [tabSwitchCount, setTabSwitchCount] = useState(0);
-    const [inactivityCount, setInactivityCount] = useState(0);
-    const [blurCount, setBlurCount] = useState(0);
-    const [isFullscreen, setIsFullscreen] = useState(false);
-    const lastActivityTimeRef = useRef(Date.now());
-    const blurStartTimeRef = useRef(null);
+    const [isFullscreen, setIsFullscreen] = useState(true);
+    const [isSplitScreen, setIsSplitScreen] = useState(false);
+    const [lostFocusSeconds, setLostFocusSeconds] = useState(0);
+    const [isTerminated, setIsTerminated] = useState(false);
 
-    // Reset state when proctoring is toggled off/on
-    useEffect(() => {
-        if (!enabled) {
-            setTabSwitchCount(0);
-            setInactivityCount(0);
-            setBlurCount(0);
+    const autoSubmittedRef = useRef(false);
+
+    // Trigger auto-submit once & terminate student session
+    const triggerAutoSubmit = useCallback((reason) => {
+        if (autoSubmittedRef.current) return;
+        autoSubmittedRef.current = true;
+        setIsTerminated(true);
+
+        if (quizId && userId) {
+            socket.emit('student_cheated_alert', {
+                quizId,
+                studentId: userId,
+                action: 'auto_submit_terminated',
+                reason,
+                timestamp: new Date(),
+            });
         }
-    }, [enabled]);
 
-    // ─── 1. Tab-Switch Integrity Monitoring ───────────────────────────────────
+        if (typeof onAutoSubmit === 'function') {
+            onAutoSubmit(reason);
+        }
+    }, [quizId, userId, onAutoSubmit]);
+
+    // ─── 1. Fullscreen Mode & 1-Pixel Screen Reduction / Split Screen Detection ───
+    const requestFullscreenMode = useCallback(async () => {
+        try {
+            if (!document.fullscreenElement) {
+                await document.documentElement.requestFullscreen();
+                setIsFullscreen(true);
+            }
+        } catch (e) {
+            console.warn('Fullscreen request failed:', e);
+        }
+    }, []);
+
     useEffect(() => {
-        if (!enabled) return;
+        if (!enabled || isTerminated) return;
+
+        // Automatically request fullscreen on mount
+        requestFullscreenMode();
+
+        const checkScreenIntegrity = () => {
+            const inFS = !!document.fullscreenElement;
+            setIsFullscreen(inFS);
+
+            // Detect if screen width or height is reduced by even 1 pixel
+            const widthDiff = window.screen.availWidth - window.innerWidth;
+            const heightDiff = window.screen.availHeight - window.innerHeight;
+            const splitDetected = !inFS || widthDiff > 15 || heightDiff > 35;
+
+            setIsSplitScreen(splitDetected);
+
+            if (splitDetected && quizId && userId) {
+                socket.emit('student_cheated_alert', {
+                    quizId,
+                    studentId: userId,
+                    action: 'split_screen_detected',
+                    details: {
+                        widthDiff: Math.max(0, widthDiff),
+                        heightDiff: Math.max(0, heightDiff),
+                        isFullscreen: inFS,
+                    },
+                    timestamp: new Date(),
+                });
+            }
+        };
+
+        checkScreenIntegrity();
+        window.addEventListener('resize', checkScreenIntegrity);
+        document.addEventListener('fullscreenchange', checkScreenIntegrity);
+
+        return () => {
+            window.removeEventListener('resize', checkScreenIntegrity);
+            document.removeEventListener('fullscreenchange', checkScreenIntegrity);
+        };
+    }, [enabled, isTerminated, requestFullscreenMode, quizId, userId]);
+
+    // ─── 2. Tab Switch Integrity Monitoring (Max 2 Switches) ──────────────────
+    useEffect(() => {
+        if (!enabled || isTerminated) return;
 
         const handleVisibilityChange = () => {
             if (document.hidden) {
                 setTabSwitchCount((prevCount) => {
                     const newCount = prevCount + 1;
-                    toast.error(`⚠️ Integrity Warning: Tab switch detected! (Violation #${newCount})`, {
-                        duration: 4000,
-                        id: 'tab-switch-warning',
-                        style: { background: '#7f1d1d', color: '#ffffff', fontWeight: 'bold' }
-                    });
 
                     if (quizId && userId) {
                         socket.emit('student_cheated_alert', {
@@ -66,6 +122,22 @@ export default function useExamProctoring({
                             timestamp: new Date(),
                         });
                     }
+
+                    if (newCount >= maxTabSwitches) {
+                        toast.error(`🚨 Tab switch limit reached (${newCount}/${maxTabSwitches})! Auto-submitting & terminating exam...`, {
+                            duration: 5000,
+                            id: 'tab-switch-terminate',
+                            style: { background: '#7f1d1d', color: '#ffffff', fontWeight: 'bold' }
+                        });
+                        triggerAutoSubmit(`Tab switch limit reached (${newCount}/${maxTabSwitches})`);
+                    } else {
+                        toast.error(`⚠️ Integrity Warning: Tab switch detected! (${newCount}/${maxTabSwitches}). Switching tabs 1 more time will terminate your exam!`, {
+                            duration: 5000,
+                            id: 'tab-switch-warning',
+                            style: { background: '#991b1b', color: '#ffffff', fontWeight: 'bold' }
+                        });
+                    }
+
                     return newCount;
                 });
             }
@@ -73,104 +145,106 @@ export default function useExamProctoring({
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [enabled, quizId, userId]);
+    }, [enabled, isTerminated, maxTabSwitches, quizId, userId, triggerAutoSubmit]);
 
-    // ─── 2. Tab Inactivity & Idle Time Monitoring ────────────────────────────
+    // ─── 3. Consecutive 1-Minute Focus Loss (30s Warning, 60s Auto-Submit) ───
     useEffect(() => {
-        if (!enabled) return;
+        if (!enabled || isTerminated) return;
 
-        const resetActivity = () => {
-            lastActivityTimeRef.current = Date.now();
-        };
+        let intervalId = null;
 
-        const activityEvents = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'];
-        activityEvents.forEach(evt => window.addEventListener(evt, resetActivity, { passive: true }));
+        const startFocusTimer = () => {
+            if (!intervalId) {
+                intervalId = setInterval(() => {
+                    setLostFocusSeconds((prevSec) => {
+                        const newSec = prevSec + 1;
 
-        const IDLE_THRESHOLD_MS = 30000; // 30 seconds of total inactivity
-        let lastInactivityWarned = 0;
+                        // 30-Second Warning
+                        if (newSec === 30) {
+                            toast.error(`⚠️ FOCUS WARNING: Exam lost focus for 30s! Auto-submitting in 30s if focus is not restored!`, {
+                                duration: 8000,
+                                id: 'focus-30s-warning',
+                                style: { background: '#b45309', color: '#ffffff', fontWeight: 'bold' }
+                            });
 
-        const inactivityInterval = setInterval(() => {
-            const idleTimeMs = Date.now() - lastActivityTimeRef.current;
-            const now = Date.now();
+                            if (quizId && userId) {
+                                socket.emit('student_cheated_alert', {
+                                    quizId,
+                                    studentId: userId,
+                                    action: 'window_blur_30s',
+                                    timestamp: new Date(),
+                                });
+                            }
+                        }
 
-            if (idleTimeMs >= IDLE_THRESHOLD_MS && (now - lastInactivityWarned > 25000)) {
-                lastInactivityWarned = now;
-                setInactivityCount(prev => {
-                    const next = prev + 1;
-                    toast.error(`⏱️ Inactivity Warning: No user interaction for 30s! (Recorded #${next})`, {
-                        duration: 5000,
-                        id: 'inactivity-warning',
-                        style: { background: '#854d0e', color: '#ffffff', fontWeight: 'bold' }
+                        // 60-Second (1 Minute Consecutively) -> Auto Submit
+                        if (newSec >= 60) {
+                            toast.error(`🚨 Focus lost for 1 minute consecutively! Auto-submitting & terminating exam...`, {
+                                duration: 5000,
+                                id: 'focus-60s-terminate',
+                                style: { background: '#7f1d1d', color: '#ffffff', fontWeight: 'bold' }
+                            });
+
+                            if (quizId && userId) {
+                                socket.emit('student_cheated_alert', {
+                                    quizId,
+                                    studentId: userId,
+                                    action: 'window_blur_60s_terminated',
+                                    timestamp: new Date(),
+                                });
+                            }
+
+                            triggerAutoSubmit('Lost focus for 1 minute consecutively');
+                        }
+
+                        return newSec;
                     });
-
-                    if (quizId && userId) {
-                        socket.emit('student_cheated_alert', {
-                            quizId,
-                            studentId: userId,
-                            action: 'inactivity',
-                            idleDurationSeconds: Math.floor(idleTimeMs / 1000),
-                            count: next,
-                            timestamp: new Date(),
-                        });
-                    }
-                    return next;
-                });
+                }, 1000);
             }
-        }, 5000);
-
-        return () => {
-            activityEvents.forEach(evt => window.removeEventListener(evt, resetActivity));
-            clearInterval(inactivityInterval);
         };
-    }, [enabled, quizId, userId]);
 
-    // ─── 3. Window Focus Loss / Blur Monitoring ──────────────────────────────
-    useEffect(() => {
-        if (!enabled) return;
+        const stopFocusTimer = () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            setLostFocusSeconds(0);
+        };
 
         const handleBlur = () => {
-            blurStartTimeRef.current = Date.now();
-            setBlurCount(prev => {
-                const next = prev + 1;
-                toast.error('⚠️ Focus Loss Warning: Exam window lost focus!', {
-                    duration: 3500,
-                    id: 'focus-blur-warning',
-                    style: { background: '#991b1b', color: '#ffffff', fontWeight: 'bold' }
+            startFocusTimer();
+            if (quizId && userId) {
+                socket.emit('student_cheated_alert', {
+                    quizId,
+                    studentId: userId,
+                    action: 'window_blur',
+                    timestamp: new Date(),
                 });
-                return next;
-            });
+            }
         };
 
         const handleFocus = () => {
-            if (blurStartTimeRef.current) {
-                const blurDurationMs = Date.now() - blurStartTimeRef.current;
-                const blurSec = Math.round(blurDurationMs / 1000);
-                blurStartTimeRef.current = null;
-
-                if (blurSec >= 2 && quizId && userId) {
-                    socket.emit('student_cheated_alert', {
-                        quizId,
-                        studentId: userId,
-                        action: 'window_blur',
-                        blurDurationSeconds: blurSec,
-                        timestamp: new Date(),
-                    });
-                }
-            }
+            stopFocusTimer();
         };
 
         window.addEventListener('blur', handleBlur);
         window.addEventListener('focus', handleFocus);
 
+        // Check initial state
+        if (!document.hasFocus() || document.hidden) {
+            startFocusTimer();
+        }
+
         return () => {
             window.removeEventListener('blur', handleBlur);
             window.removeEventListener('focus', handleFocus);
+            stopFocusTimer();
         };
-    }, [enabled, quizId, userId]);
+    }, [enabled, isTerminated, quizId, userId, triggerAutoSubmit]);
 
     // ─── 4. DevTools & Screenshot Shortcut Interception ──────────────────────
     useEffect(() => {
-        if (!enabled) return;
+        if (!enabled || isTerminated) return;
 
         const handleKeyDown = (e) => {
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -187,7 +261,7 @@ export default function useExamProctoring({
                 e.stopPropagation();
 
                 const action = isPrintScreen || isScreenshotCombo ? 'screenshot_attempt' : 'devtools_shortcut';
-                const label = isPrintScreen || isScreenshotCombo ? 'Screenshot / capture attempts are prohibited!' : 'Developer tools are disabled during examinations!';
+                const label = isPrintScreen || isScreenshotCombo ? 'Screenshot captures are prohibited!' : 'Developer tools are disabled during examinations!';
 
                 showError('Security Violation', label);
 
@@ -205,39 +279,11 @@ export default function useExamProctoring({
 
         document.addEventListener('keydown', handleKeyDown, true);
         return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }, [enabled, quizId, userId]);
+    }, [enabled, isTerminated, quizId, userId]);
 
-    // ─── 5. Multi-Display / Display Extension Guard ─────────────────────────
+    // ─── 5. Clipboard & Context Menu Blocking ────────────────────────────────
     useEffect(() => {
-        if (!enabled) return;
-
-        const checkDisplays = () => {
-            if ('screen' in window && 'isExtended' in window.screen && window.screen.isExtended) {
-                toast.error('🖥️ Multi-Display Alert: Secondary monitor detected! Extended displays are monitored.', {
-                    duration: 6000,
-                    id: 'multi-display-warning',
-                    style: { background: '#451a03', color: '#ffffff', fontWeight: 'bold' }
-                });
-
-                if (quizId && userId) {
-                    socket.emit('student_cheated_alert', {
-                        quizId,
-                        studentId: userId,
-                        action: 'multi_monitor_detected',
-                        timestamp: new Date(),
-                    });
-                }
-            }
-        };
-
-        checkDisplays();
-        window.addEventListener('resize', checkDisplays);
-        return () => window.removeEventListener('resize', checkDisplays);
-    }, [enabled, quizId, userId]);
-
-    // ─── 6. Copy / Paste / Cut / Context Menu Blocking ──────────────────────
-    useEffect(() => {
-        if (!enabled) return;
+        if (!enabled || isTerminated) return;
 
         const blockClipboard = (e) => {
             e.preventDefault();
@@ -260,13 +306,15 @@ export default function useExamProctoring({
             document.removeEventListener('cut', blockClipboard);
             document.removeEventListener('contextmenu', blockContextMenu);
         };
-    }, [enabled]);
+    }, [enabled, isTerminated]);
 
     return {
         tabSwitchCount,
-        inactivityCount,
-        blurCount,
-        totalViolations: tabSwitchCount + inactivityCount + blurCount,
-        isFullscreen
+        isFullscreen,
+        isSplitScreen,
+        lostFocusSeconds,
+        isTerminated,
+        requestFullscreenMode
     };
 }
+

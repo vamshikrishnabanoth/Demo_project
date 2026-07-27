@@ -72,11 +72,15 @@ const AssessmentReport = () => {
     ];
     const COLORS = ['#10b981', '#f43f5e'];
 
-    // Theme 1: 2 Alternating Vibrant Blue Colors (Vivid Royal Indigo & Light Sky Cyan)
-    const BLUE_SHADES = ['#2563EB', '#38BDF8'];
+    // Theme 1: Monochromatic Shades derived from Celestial Blue
+    const BLUE_SHADES = [
+        '#133E87', '#1d4ed8', '#2563eb', '#0284c7', '#3b82f6', '#0369a1', '#1e40af', '#0e7490', '#38bdf8', '#172554'
+    ];
 
-    // Theme 2: 2 Alternating Orange Colors (Warm Saffron & Vivid Bright Orange)
-    const SAFFRON_SHADES = ['#D96B27', '#FF8C00'];
+    // Theme 2: Monochromatic Shades derived from Tiranga Saffron
+    const SAFFRON_SHADES = [
+        '#D96B27', '#ea580c', '#f97316', '#c2410c', '#b84c12', '#fb923c', '#9a3412', '#d97706', '#ff8c00', '#7c2d12'
+    ];
 
     const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
     const GRAPH_SHADES = isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
@@ -129,18 +133,18 @@ const AssessmentReport = () => {
                             className="max-w-lg mx-auto text-center py-10 px-4 font-inter relative select-none"
                         >
                             {/* Ambient background glow */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-[#133E87]/10 rounded-full blur-[90px] pointer-events-none -z-10" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-[var(--bg-accent)]/10 rounded-full blur-[90px] pointer-events-none -z-10" />
                             
                             {/* Theme-Matching Hero Trophy Icon Container */}
                             <motion.div
                                 animate={{ y: [0, -8, 0] }}
                                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-white via-[#f0f6ff] to-[#dbeafe] border-2 border-[#9cbcd8] rounded-[2.2rem] flex items-center justify-center mx-auto mb-6 shadow-xl relative group cursor-pointer"
+                                className="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-primary)] to-[var(--bg-primary)] border-2 border-[var(--border-color)] rounded-[2.2rem] flex items-center justify-center mx-auto mb-6 shadow-xl relative group cursor-pointer"
                             >
                                 <motion.div 
                                     animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.6, 0.3] }}
                                     transition={{ duration: 2.5, repeat: Infinity }}
-                                    className="absolute inset-0 bg-[#133E87]/20 rounded-[2.2rem] blur-md pointer-events-none"
+                                    className="absolute inset-0 bg-[var(--bg-accent)]/20 rounded-[2.2rem] blur-md pointer-events-none"
                                 />
                                 <Trophy className="text-amber-500 fill-amber-400 drop-shadow-md relative z-10" size={52} />
                                 <Sparkles className="absolute top-2 right-2 text-amber-400 z-10" size={16} fill="currentColor" />
@@ -180,7 +184,7 @@ const AssessmentReport = () => {
                                 <div className="w-full h-px bg-slate-200 my-4" />
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gradient-to-br from-[var(--accent-sand)] to-amber-50/50 border border-[var(--border-color)] p-4 rounded-2xl text-left">
+                                    <div className="bg-gradient-to-br from-[var(--accent-sand)] to-[var(--accent-sand-hover)]/50 border border-[var(--border-color)] p-4 rounded-2xl text-left">
                                         <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1">Tactical Yield</p>
                                         <p className="text-xl font-black italic text-[#0f172a]" style={{ color: '#0f172a' }}>{score} <span className="text-[10px] font-bold text-[#4B5563]">/ {totalQuestions * 10} Pts</span></p>
                                     </div>

@@ -11,11 +11,15 @@ import {
     Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home
 } from 'lucide-react';
 
-// Theme 1: 2 Alternating Vibrant Blue Colors (Vivid Royal Indigo & Light Sky Cyan)
-const BLUE_SHADES = ['#2563EB', '#38BDF8'];
+// Theme 1: Monochromatic Shades derived from Celestial Blue
+const BLUE_SHADES = [
+    '#133E87', '#1d4ed8', '#2563eb', '#0284c7', '#3b82f6', '#0369a1', '#1e40af', '#0e7490', '#38bdf8', '#172554'
+];
 
-// Theme 2: 2 Alternating Orange Colors (Warm Saffron & Vivid Bright Orange)
-const SAFFRON_SHADES = ['#D96B27', '#FF8C00'];
+// Theme 2: Monochromatic Shades derived from Tiranga Saffron
+const SAFFRON_SHADES = [
+    '#D96B27', '#ea580c', '#f97316', '#c2410c', '#b84c12', '#fb923c', '#9a3412', '#d97706', '#ff8c00', '#7c2d12'
+];
 
 const getThemePalette = () => {
     const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';

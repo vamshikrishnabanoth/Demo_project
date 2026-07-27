@@ -381,9 +381,11 @@ export default function CreateQuizText() {
                                     <GlassCard className="flex flex-col justify-center gap-3">
                                         <div className="flex items-center justify-between cursor-pointer group select-none" onClick={() => setIsAssessment(!isAssessment)}>
                                             <div className="space-y-1">
-                                                <span className="block font-black text-[9px] text-white/30 uppercase tracking-[0.2em]">Assignment Mode</span>
-                                                <span className="block font-black text-xs text-white uppercase tracking-tight italic">Assignment Mode</span>
-                                                <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider block">
+                                                <span className="block font-black text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em]">Assignment Mode</span>
+                                                <span className="block font-black text-sm text-[var(--text-primary)] uppercase tracking-tight italic">
+                                                    {isAssessment ? 'Assessment Exam' : 'Live Interactive Quiz'}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">
                                                     {isAssessment ? 'Self-paced homework task' : 'Manual Time, Team Link Rooms'}
                                                 </span>
                                             </div>
@@ -394,8 +396,8 @@ export default function CreateQuizText() {
                                                     checked={isAssessment} 
                                                     onChange={(e) => setIsAssessment(e.target.checked)} 
                                                 />
-                                                <div className="w-12 h-6 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6"></div>
+                                                <div className="w-12 h-6 bg-slate-300 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-slate-400"></div>
+                                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6 shadow-sm"></div>
                                             </div>
                                         </div>
                                     </GlassCard>
@@ -404,33 +406,33 @@ export default function CreateQuizText() {
                                     <GlassCard className="flex flex-col justify-center gap-4">
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Timer Mode</label>
-                                                <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black italic text-sm uppercase tracking-tighter">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-3">Timer Mode</label>
+                                                <div className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic text-sm uppercase tracking-tighter shadow-sm">
                                                     {isAssessment ? 'Time Per Question' : 'Total Quiz Time'}
                                                 </div>
                                             </div>
                                             {isAssessment ? (
                                                 <div className="animate-in slide-in-from-top-2 duration-200">
-                                                    <label className="block text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Seconds Per Screen</label>
+                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-2">Seconds Per Screen</label>
                                                     <input
                                                         type="number"
                                                         min="5"
                                                         max="300"
                                                         value={timerPerQuestion}
                                                         onChange={(e) => { const v = parseInt(e.target.value); setTimerPerQuestion(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-5 text-white font-black italic outline-none focus:border-[var(--bg-accent)]/50 transition-all"
+                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
                                                     />
                                                 </div>
                                             ) : (
                                                 <div className="animate-in slide-in-from-top-2 duration-200">
-                                                    <label className="block text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Total Minutes</label>
+                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-2">Total Minutes</label>
                                                     <input
                                                         type="number"
                                                         min="1"
                                                         max="300"
                                                         value={duration}
                                                         onChange={(e) => { const v = parseInt(e.target.value); setDuration(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-5 text-white font-black italic outline-none focus:border-[var(--bg-accent)]/50 transition-all"
+                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
                                                     />
                                                 </div>
                                             )}
@@ -444,14 +446,14 @@ export default function CreateQuizText() {
                                         <GlassCard className="flex flex-col justify-center gap-4">
                                             <div>
                                                 <div className="flex items-center justify-between mb-3">
-                                                    <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest">Scheduled Start</label>
+                                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Scheduled Start</label>
                                                     <label className="flex items-center gap-2 cursor-pointer group">
                                                         <div className="relative w-8 h-4">
                                                             <input type="checkbox" className="sr-only peer" checked={startNow} onChange={(e) => setStartNow(e.target.checked)} />
-                                                            <div className="w-8 h-4 bg-white/10 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-white/10"></div>
-                                                            <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                                                            <div className="w-8 h-4 bg-slate-300 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-slate-400"></div>
+                                                            <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4 shadow-sm"></div>
                                                         </div>
-                                                        <span className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
+                                                        <span className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-wider">Start Now</span>
                                                     </label>
                                                 </div>
                                                 
@@ -460,15 +462,15 @@ export default function CreateQuizText() {
                                                         type="datetime-local"
                                                         value={startTime}
                                                         onChange={(e) => setStartTime(e.target.value)}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3.5 px-5 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
                                                     />
                                                 ) : (
-                                                    <div className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 flex items-center justify-center opacity-70">
-                                                        <span className="text-xs font-black text-[var(--text-accent)] italic uppercase tracking-wider">Active Immediately</span>
+                                                    <div className="w-full bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl py-3.5 px-5 flex items-center justify-center">
+                                                        <span className="text-xs font-black text-emerald-600 italic uppercase tracking-wider">Active Immediately</span>
                                                     </div>
                                                 )}
                                                 
-                                                <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">
+                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-2 block">
                                                     {startNow ? 'Opens immediately for students' : 'Optional: Leave blank for instant access'}
                                                 </span>
                                             </div>
@@ -476,14 +478,14 @@ export default function CreateQuizText() {
 
                                         <GlassCard className="flex flex-col justify-center gap-4">
                                             <div>
-                                                <label className="block text-[10px] font-black text-white/40 uppercase tracking-widest mb-3">Expiration End</label>
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-3">Expiration End</label>
                                                 <input
                                                     type="datetime-local"
                                                     value={endTime}
                                                     onChange={(e) => setEndTime(e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-white font-black outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all text-xs"
+                                                    className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3.5 px-5 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
                                                 />
-                                                <span className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
+                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
                                             </div>
                                         </GlassCard>
                                     </div>
@@ -491,15 +493,15 @@ export default function CreateQuizText() {
 
                                 {/* ── Final Validation Warning (from backend validator) ── */}
                                 {isGeneratedSource && finalValidation && !finalValidation.passed && (
-                                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
-                                        <div className="flex items-center gap-2">
-                                            <AlertTriangle size={16} className="text-amber-400" />
-                                            <p className="text-sm font-black text-amber-400 uppercase tracking-wider">Review Required Before Publish</p>
+                                    <div className="rounded-3xl border-2 border-amber-500/30 bg-amber-500/10 p-6 space-y-3 shadow-md">
+                                        <div className="flex items-center gap-2.5">
+                                            <AlertTriangle size={20} className="text-amber-600 animate-pulse" />
+                                            <p className="text-sm font-black text-amber-700 uppercase tracking-wider">Review Required Before Publish</p>
                                         </div>
-                                        <p className="text-xs text-white/50 font-bold uppercase tracking-wider">The final validator found issues. You may still publish — these are recommendations.</p>
+                                        <p className="text-xs text-amber-900/80 font-bold uppercase tracking-wider">The final validator found issues. You may still publish — these are recommendations.</p>
                                         <ul className="space-y-1">
                                             {finalValidation.issues.map((issue, i) => (
-                                                <li key={i} className="text-xs text-amber-300/70 font-bold flex items-start gap-2">
+                                                <li key={i} className="text-xs text-amber-900 font-bold flex items-start gap-2">
                                                     <span className="flex-shrink-0 mt-0.5">⚠</span>
                                                     <span>{issue}</span>
                                                 </li>
@@ -557,8 +559,9 @@ export default function CreateQuizText() {
                                         type="button"
                                         onClick={handleFinalizeClick}
                                         disabled={loading}
-                                        className="button-fly disabled:opacity-40 disabled:pointer-events-none"
+                                        className={`button-fly button-fly-reversed ${loading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
                                     >
+                                        {!loading && <span>POST & PUBLISH QUIZ</span>}
                                         <div className="svg-wrapper">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -573,7 +576,6 @@ export default function CreateQuizText() {
                                                 ></path>
                                             </svg>
                                         </div>
-                                        <span>{loading ? 'PUBLISHING...' : 'POST & PUBLISH QUIZ'}</span>
                                     </button>
                                 </div>
                             </form>

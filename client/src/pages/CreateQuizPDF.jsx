@@ -700,8 +700,9 @@ export default function CreateQuizPDF() {
                         <button
                             type="submit"
                             disabled={isLoading || !file}
-                            className="button-fly disabled:opacity-40 disabled:pointer-events-none"
+                            className={`button-fly button-fly-reversed ${isLoading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
                         >
+                            {!isLoading && <span>POST & PUBLISH QUIZ</span>}
                             <div className="svg-wrapper">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -716,7 +717,6 @@ export default function CreateQuizPDF() {
                                     ></path>
                                 </svg>
                             </div>
-                            <span>{isLoading ? 'PARSING MATERIAL...' : 'POST & PUBLISH QUIZ'}</span>
                         </button>
                     </div>
                 </form>
