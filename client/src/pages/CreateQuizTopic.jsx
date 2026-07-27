@@ -4,7 +4,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
     Book, Hash, Gauge, Sparkles, Loader2, Database, Sliders, 
-    FileText, Plus, Trash2, Mic, Play, Square, CheckCircle, 
+    FileText, FileCode, Plus, Trash2, Mic, Play, Square, CheckCircle, 
     Award, Check, AlertCircle, HelpCircle, X, ChevronRight,
     PauseCircle, PlayCircle, StopCircle, Trash, CheckSquare
 } from 'lucide-react';
