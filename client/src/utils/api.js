@@ -23,11 +23,13 @@ async function request(endpoint, options = {}, retryCount = 0) {
         delete headers['content-type'];
     }
 
+    const { headers: customHeaders, timeout: customTimeout, ...restOptions } = options;
+
     const fetchOptions = {
         method: options.method || 'GET',
-        headers,
         credentials: 'include',
-        ...options,
+        ...restOptions,
+        headers,
     };
 
     if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
