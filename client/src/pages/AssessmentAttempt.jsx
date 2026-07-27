@@ -4,7 +4,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import {
     ChevronRight, CheckCircle, XCircle, Trophy, HelpCircle,
-    Loader2, AlertCircle, ArrowLeft, Timer, Home, Send, Lock
+    Loader2, AlertCircle, ArrowLeft, Timer, Home, Send, Lock, ShieldAlert, Maximize
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showConfirm } from '../utils/alerts';
@@ -618,6 +618,40 @@ export default function AssessmentAttempt() {
                     </button>
                 </div>
             </div>
+
+            {/* Strict Fullscreen Enforcement Modal Overlay */}
+            {!isFullscreen && !loading && !submitting && (
+                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 text-white text-center animate-in fade-in duration-300">
+                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[3rem] p-8 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mx-auto border border-red-500/30">
+                            <ShieldAlert size={44} className="animate-pulse" />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <h2 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-white">
+                                Fullscreen Mode Required
+                            </h2>
+                            <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wider">
+                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode only.
+                            </p>
+                        </div>
+
+                        <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-xs font-bold text-red-300 text-left space-y-2">
+                            <p className="flex items-center gap-2"><span>⚠️</span> Exiting fullscreen mode records an integrity alert.</p>
+                            <p className="flex items-center gap-2"><span>⚠️</span> Switching tabs 2 times auto-submits exam.</p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={requestFullscreenMode}
+                            className="w-full bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm uppercase tracking-widest py-5 px-8 rounded-2xl shadow-xl shadow-red-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer border-2 border-white/20"
+                        >
+                            <Maximize size={22} />
+                            <span>Enter Fullscreen Mode</span>
+                        </button>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }
