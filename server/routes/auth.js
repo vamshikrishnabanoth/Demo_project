@@ -199,8 +199,8 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             });
         }
 
-        // --- RULE 5: Prevent Duplicate Logins for Students ---
-        if (user.role === 'student' && user.isOnline && process.env.DISABLE_LIMITS !== 'true') {
+        // --- RULE 5: Prevent Duplicate Logins for Students, Teachers & Admins ---
+        if (user.isOnline && process.env.DISABLE_LIMITS !== 'true') {
             return res.status(403).json({
                 msg: 'This account is already logged in on another device or tab.'
             });

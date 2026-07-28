@@ -64,12 +64,18 @@ export default function DashboardLayout({ children, role }) {
     };
 
     React.useEffect(() => {
-        if (role !== 'student' || !user?.id) return;
+        if (!user?.id) return;
         
-        fetchBroadcasts();
+        // Fetch student-specific broadcasts
+        if (role === 'student') {
+            fetchBroadcasts();
+        }
+        
+        // Identify the user's socket connection to set isOnline in the database
         socket.emit('identify', user.id);
 
         const handleNewBroadcast = (broadcast) => {
+            if (role !== 'student') return;
             toast.success(`📢 New Announcement: ${broadcast.title}`, {
                 style: {
                     background: '#161618',
