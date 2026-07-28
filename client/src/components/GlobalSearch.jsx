@@ -161,13 +161,16 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                 /* Premium Full-Width Dashboard Search Trigger */
                 <div 
                     onClick={() => setIsOpen(true)}
-                    className="w-full max-w-none px-6 h-14 bg-[var(--bg-secondary)]/45 border border-[var(--border-color)] hover:border-[var(--text-accent)]/30 rounded-[1.25rem] cursor-pointer flex items-center justify-between transition-all duration-300 hover:scale-[1.005] hover:bg-[var(--bg-secondary)]/70 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] group relative z-20 select-none"
+                    className="w-full max-w-none px-4 sm:px-6 h-12 sm:h-14 bg-[var(--bg-secondary)]/45 border border-[var(--border-color)] hover:border-[var(--text-accent)]/30 rounded-2xl sm:rounded-[1.25rem] cursor-pointer flex items-center justify-between transition-all duration-300 hover:scale-[1.005] hover:bg-[var(--bg-secondary)]/70 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] group relative z-20 select-none"
                 >
-                    <div className="flex items-center gap-4">
-                        <Search size={18} className="text-[var(--text-secondary)]/45 group-hover:text-[var(--text-accent)] transition-colors" />
-                        <span className="text-sm font-semibold text-[var(--text-secondary)]/50 group-hover:text-[var(--text-primary)] transition-colors">Search by title, student, subject, topic, questions...</span>
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1 pr-2">
+                        <Search size={18} className="text-[var(--text-secondary)]/45 group-hover:text-[var(--text-accent)] transition-colors shrink-0" />
+                        <span className="text-xs sm:text-sm font-semibold text-[var(--text-secondary)]/50 group-hover:text-[var(--text-primary)] transition-colors truncate">
+                            <span className="inline sm:hidden">Search quizzes, topics...</span>
+                            <span className="hidden sm:inline">Search by title, student, subject, topic, questions...</span>
+                        </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2 shrink-0">
                         <kbd className="bg-[var(--bg-primary)]/80 border border-[var(--border-color)] px-2.5 py-1 rounded-lg text-[9px] font-black text-[var(--text-secondary)]/40 uppercase shadow-sm tracking-wider group-hover:border-[var(--text-accent)]/30 transition-all">Ctrl K</kbd>
                     </div>
                 </div>

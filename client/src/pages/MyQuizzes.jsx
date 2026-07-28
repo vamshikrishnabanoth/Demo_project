@@ -227,29 +227,32 @@ export default function MyQuizzes() {
                             </div>
                         )}
 
-                        <div className="grid grid-cols-1 gap-8">
+                        <div className="grid grid-cols-1 gap-6 sm:gap-8">
                             {filteredQuizzes.map((quiz) => (
-                                <div key={quiz.id} className="bg-[var(--bg-secondary)] rounded-[3rem] border border-[var(--border-color)] p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-10 hover:border-[var(--bg-accent)] transition-all group relative overflow-hidden shadow-xl">
-                                    <div className="flex flex-col sm:flex-row items-start gap-8 z-10">
-                                        {/* Individual Checkbox Selection */}
-                                        <button
-                                            onClick={() => toggleQuizSelection(quiz.id)}
-                                            className="flex items-center justify-center cursor-pointer shrink-0 self-center focus:outline-none transition-transform active:scale-90 mr-2"
-                                            aria-label={selectedQuizIds.includes(quiz.id) ? "Deselect quiz" : "Select quiz"}
-                                        >
-                                            <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all duration-200 ${selectedQuizIds.includes(quiz.id) ? 'bg-[var(--bg-accent)] border-[var(--bg-accent)] text-white scale-110 shadow-md' : 'bg-white border-[var(--border-color)] hover:border-[var(--bg-accent)]'}`}>
-                                                <Check size={18} className={selectedQuizIds.includes(quiz.id) ? 'opacity-100 text-white font-black' : 'opacity-0'} />
-                                            </div>
-                                        </button>
+                                <div key={quiz.id} className="bg-[var(--bg-secondary)] rounded-3xl sm:rounded-[3rem] border border-[var(--border-color)] p-5 sm:p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 hover:border-[var(--bg-accent)] transition-all group relative overflow-hidden shadow-xl">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 z-10 w-full min-w-0">
+                                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start shrink-0">
+                                            {/* Individual Checkbox Selection */}
+                                            <button
+                                                onClick={() => toggleQuizSelection(quiz.id)}
+                                                className="flex items-center justify-center cursor-pointer shrink-0 focus:outline-none transition-transform active:scale-90"
+                                                aria-label={selectedQuizIds.includes(quiz.id) ? "Deselect quiz" : "Select quiz"}
+                                            >
+                                                <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all duration-200 ${selectedQuizIds.includes(quiz.id) ? 'bg-[var(--bg-accent)] border-[var(--bg-accent)] text-white scale-110 shadow-md' : 'bg-white border-[var(--border-color)] hover:border-[var(--bg-accent)]'}`}>
+                                                    <Check size={18} className={selectedQuizIds.includes(quiz.id) ? 'opacity-100 text-white font-black' : 'opacity-0'} />
+                                                </div>
+                                            </button>
 
-                                        <div className={`p-8 rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-xl ${quiz.isActive ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-accent)]/15 text-[var(--text-accent)] border border-[var(--border-color)]'}`}>
-                                            <FileText size={40} />
+                                            <div className={`p-4 sm:p-8 rounded-2xl sm:rounded-[2.5rem] transition-all group-hover:scale-110 shrink-0 shadow-xl ${quiz.isActive ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-accent)]/15 text-[var(--text-accent)] border border-[var(--border-color)]'}`}>
+                                                <FileText className="w-7 h-7 sm:w-10 sm:h-10" />
+                                            </div>
                                         </div>
-                                        <div className="space-y-4 min-w-0 flex-1">
-                                            <div className="space-y-1 min-w-0">
-                                                <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap min-w-0">
-                                                    <div className="max-w-[220px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] overflow-x-auto premium-scrollbar py-1 shrink-0">
-                                                        <h3 className="text-2xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors whitespace-nowrap" title={cleanQuizTitle(quiz.title)}>
+
+                                        <div className="space-y-3 min-w-0 flex-1 w-full">
+                                            <div className="space-y-1 min-w-0 w-full">
+                                                <div className="flex items-center gap-3 flex-wrap min-w-0 w-full">
+                                                    <div className="w-full min-w-0 py-1">
+                                                        <h3 className="text-xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-snug break-words transition-colors" title={cleanQuizTitle(quiz.title)}>
                                                             {cleanQuizTitle(quiz.title)}
                                                         </h3>
                                                     </div>
@@ -263,14 +266,14 @@ export default function MyQuizzes() {
                                                 <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs italic">{quiz.topic || 'General Knowledge'}</p>
                                             </div>
 
-                                            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-                                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] italic bg-white px-4 py-2 rounded-xl border border-[var(--border-color)]">
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-x-8 sm:gap-y-4">
+                                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--text-secondary)] italic bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-[var(--border-color)]">
                                                     <Calendar size={14} className="text-[var(--text-accent)]" /> {new Date(quiz.createdAt).toLocaleDateString()}
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] italic bg-white px-4 py-2 rounded-xl border border-[var(--border-color)]">
+                                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[var(--text-secondary)] italic bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-[var(--border-color)]">
                                                     <HelpCircle size={14} className="text-[var(--text-accent)]" /> {quiz.questions?.length || 0} Questions
                                                 </div>
-                                                <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[0.2em] italic ${quiz.isActive ? 'text-green-700 border-green-500/30 bg-green-500/10' : 'text-slate-700 border-[var(--border-color)] bg-white'}`}>
+                                                <div className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] italic ${quiz.isActive ? 'text-green-700 border-green-500/30 bg-green-500/10' : 'text-slate-700 border-[var(--border-color)] bg-white'}`}>
                                                     <div className={`w-2 h-2 rounded-full ${quiz.isActive ? 'bg-green-600 animate-pulse' : 'bg-slate-500'}`}></div>
                                                     {quiz.isActive ? (quiz.isLive ? 'LIVE' : 'ASSESSMENT') : 'OFFLINE'}
                                                 </div>

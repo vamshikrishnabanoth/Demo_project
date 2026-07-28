@@ -132,7 +132,7 @@ export default function DashboardLayout({ children, role }) {
         role === 'admin'   ? '/admin-dashboard'   : '/student-dashboard';
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative">
+        <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative">
             <CinematicBackground />
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
@@ -196,10 +196,10 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3">
-                            {/* Theme Toggle Button */}
+                            {/* Theme Toggle Button (Icon only on mobile to prevent overlapping logo text) */}
                             <button
                                 onClick={toggleTheme}
-                                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-sm border ${
+                                className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-sm border ${
                                     theme === 'india'
                                         ? 'bg-gradient-to-r from-[#D96B27]/10 via-white to-[#1C8574]/10 border-[#D96B27]/40 text-[#D96B27]'
                                         : 'bg-white/80 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)]'
@@ -212,14 +212,14 @@ export default function DashboardLayout({ children, role }) {
                                         <span className="flex items-center justify-center w-5 h-5 rounded-full overflow-hidden border border-[#D96B27] shadow-xs shrink-0">
                                             <span className="w-full h-full bg-gradient-to-b from-[#D96B27] via-white to-[#1C8574] block" />
                                         </span>
-                                        <span className="text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
+                                        <span className="hidden sm:inline-block text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
                                     </>
                                 ) : (
                                     <>
                                         <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#133E87] text-white text-[10px] font-black shrink-0">
                                             🌌
                                         </span>
-                                        <span className="text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
+                                        <span className="hidden sm:inline-block text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
                                     </>
                                 )}
                             </button>
@@ -271,7 +271,7 @@ export default function DashboardLayout({ children, role }) {
                         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
                     }}
                 >
-                    <div className="w-full max-w-[900px] mx-auto px-6">
+                    <div className="w-full max-w-[900px] mx-auto px-4 sm:px-6">
                         <GlobalSearch variant="dashboard" />
                     </div>
                 </div>
@@ -298,26 +298,26 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-[280px] bg-[var(--bg-secondary)] border-l border-white/10 z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-y-auto"
+                            className="fixed top-0 right-0 h-dvh w-[300px] max-w-[85vw] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-y-auto"
                             role="navigation"
                         >
-                            <div className="flex items-center justify-between mb-8 flex-shrink-0">
+                            <div className="flex items-center justify-between mb-6 flex-shrink-0">
                                 <div className="flex items-center gap-3">
                                     <div className="bg-white p-1 rounded-lg shadow-lg">
                                         <img src="/logo.png" alt="" className="h-6 w-auto" />
                                     </div>
-                                    <span className="font-black text-sm uppercase italic tracking-tighter text-[var(--text-accent)]">Menu</span>
+                                    <span className="font-black text-sm uppercase italic tracking-tighter text-[var(--text-accent)]">Navigation</span>
                                 </div>
                                 <button 
                                     onClick={() => setMobileOpen(false)}
-                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5"
                                 >
                                     <X size={24} />
                                 </button>
                             </div>
 
                             {/* Navigation List — Vertical Stack */}
-                            <nav className="space-y-4 mb-8" aria-label="Mobile navigation">
+                            <nav className="space-y-3 mb-6" aria-label="Mobile navigation">
                                 {links.map((link) => {
                                     const Icon = link.icon;
                                     const active = isActive(link.path);
@@ -326,49 +326,56 @@ export default function DashboardLayout({ children, role }) {
                                             key={link.path}
                                             to={link.path}
                                             onClick={() => setMobileOpen(false)}
-                                            className={`flex items-center gap-4 px-6 py-5 rounded-[1.5rem] text-sm font-black uppercase tracking-[0.15em] premium-transition border ${
+                                            className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
                                                 active
-                                                    ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
+                                                    ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
                                                     : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                                             }`}
                                         >
-                                            <Icon size={20} />
+                                            <Icon size={18} />
                                             {link.name}
                                         </Link>
                                     );
                                 })}
 
-
+                                {/* Mobile Vertical Theme Switcher Option */}
+                                <button
+                                    onClick={toggleTheme}
+                                    className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all"
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <span className="text-base">{theme === 'india' ? '🇮🇳' : '🌌'}</span>
+                                        <span>Theme</span>
+                                    </span>
+                                    <span className="text-[10px] font-black text-[var(--text-accent)] italic">
+                                        {theme === 'india' ? 'SAFFRON' : 'CELESTIAL'}
+                                    </span>
+                                </button>
                             </nav>
 
                             {/* Drawer Footer — Profile & Logout Integrated */}
-                            <div className="mt-auto pt-6 border-t border-white/5 space-y-4 flex-shrink-0">
-                                <div className="px-2">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3">Active Session</p>
+                            <div className="mt-auto pt-6 border-t border-[var(--border-color)] space-y-5 flex-shrink-0">
+                                <div className="px-1">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-2">Active Session</p>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0">
                                             <User size={20} />
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-[var(--text-primary)] truncate w-32">{user?.username || 'Pilot'}</p>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-70">{role}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user?.username || 'Pilot'}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-80">{role}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center pt-2">
-                                    <button
-                                        onClick={handleLogout}
-                                        className="Btn"
-                                        aria-label="Log out"
-                                        title="Log out"
-                                    >
-                                        <div className="sign">
-                                            <LogOut size={17} color="white" aria-hidden="true" />
-                                        </div>
-                                        <div className="text">Logout</div>
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full py-3.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm"
+                                    aria-label="Log out"
+                                >
+                                    <LogOut size={18} />
+                                    <span>Log Out</span>
+                                </button>
                             </div>
                         </motion.div>
                     </>
