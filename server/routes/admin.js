@@ -17,30 +17,79 @@ const adminOnly = async (req, res, next) => {
     }
 };
 
-// GET all users
+// GET paginated users (with search and role filter)
 router.get('/users', auth, adminOnly, async (req, res) => {
     try {
-        const users = await prisma.user.findMany({
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                role: true,
-                isOnline: true,
-                isSuspended: true,
-                suspensionReason: true,
-                studentBranch: true,
-                section: true,
-                createdAt: true,
-                updatedAt: true,
-                lastLogin: true
-            },
-            orderBy: { createdAt: 'desc' }
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const search = (req.query.search || '').trim();
+        const role = (req.query.role || '').trim();
+
+        // If client explicitly requests all without pagination (e.g. legacy export)
+        const isUnpaginated = req.query.all === 'true';
+
+        const whereClause = {};
+        if (role && role !== 'all') {
+            whereClause.role = role;
+        }
+        if (search) {
+            whereClause.OR = [
+                { username: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+                { studentBranch: { contains: search, mode: 'insensitive' } },
+                { section: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+
+        const selectFields = {
+            id: true,
+            username: true,
+            email: true,
+            role: true,
+            isOnline: true,
+            isSuspended: true,
+            suspensionReason: true,
+            studentBranch: true,
+            section: true,
+            createdAt: true,
+            updatedAt: true,
+            lastLogin: true
+        };
+
+        if (isUnpaginated) {
+            const users = await prisma.user.findMany({
+                where: whereClause,
+                select: selectFields,
+                orderBy: { createdAt: 'desc' }
+            });
+            return res.json(users);
+        }
+
+        const skip = (page - 1) * limit;
+
+        const [users, totalCount] = await Promise.all([
+            prisma.user.findMany({
+                where: whereClause,
+                select: selectFields,
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.user.count({ where: whereClause })
+        ]);
+
+        const totalPages = Math.ceil(totalCount / limit) || 1;
+
+        res.json({
+            users,
+            totalCount,
+            totalPages,
+            currentPage: page,
+            limit
         });
-        res.json(users);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Server error' });
+        console.error('Error fetching admin users:', err.message);
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

@@ -81,8 +81,15 @@ export default function AdminDashboard() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [modal, setModal] = useState(null);
+
+    // Pagination states
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const limit = 20;
 
     // Textbook management states
     const [ingestedDocs, setIngestedDocs] = useState([]);
@@ -94,6 +101,15 @@ export default function AdminDashboard() {
     const [csvText, setCsvText] = useState('');
     const [importing, setImporting] = useState(false);
 
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1); // Reset to page 1 on new search query
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
     const fetchStats = useCallback(async () => {
         try { const res = await api.get('/admin/stats'); setStats(res.data); }
         catch (err) { console.error('Stats fetch failed', err); }
@@ -101,10 +117,32 @@ export default function AdminDashboard() {
 
     const fetchUsers = useCallback(async () => {
         setLoading(true);
-        try { const res = await api.get('/admin/users'); setUsers(res.data); }
-        catch (err) { console.error('Users fetch failed', err); }
-        finally { setLoading(false); }
-    }, []);
+        try {
+            const res = await api.get('/admin/users', {
+                params: {
+                    page,
+                    limit,
+                    search: debouncedSearch,
+                    role: roleFilter
+                }
+            });
+
+            if (res.data && Array.isArray(res.data.users)) {
+                setUsers(res.data.users);
+                setTotalPages(res.data.totalPages || 1);
+                setTotalCount(res.data.totalCount || 0);
+            } else if (Array.isArray(res.data)) {
+                // Fallback for unpaginated format
+                setUsers(res.data);
+                setTotalPages(1);
+                setTotalCount(res.data.length);
+            }
+        } catch (err) {
+            console.error('Users fetch failed', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [page, limit, debouncedSearch, roleFilter]);
 
     const fetchIngestedDocs = useCallback(async () => {
         try {
@@ -126,14 +164,6 @@ export default function AdminDashboard() {
         socket.on('user_status_change', handleStatusChange);
         return () => socket.off('user_status_change', handleStatusChange);
     }, []);
-
-    const filteredUsers = useMemo(() => {
-        return users.filter(u => {
-            const matchesSearch = u.username.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
-            const matchesRole = roleFilter === 'all' || u.role === roleFilter;
-            return matchesSearch && matchesRole;
-        });
-    }, [users, search, roleFilter]);
 
     const handleSave = (savedUser, action) => {
         if (action === 'created') setUsers(prev => [savedUser, ...prev]);
@@ -401,7 +431,7 @@ export default function AdminDashboard() {
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         <AnimatePresence>
-                                            {filteredUsers.map((u) => (
+                                            {users.map((u) => (
                                                 <motion.tr 
                                                     key={u.id}
                                                     layout
@@ -504,12 +534,40 @@ export default function AdminDashboard() {
                                         <span className="text-xs font-black uppercase tracking-[0.3em]">Downloading Identities...</span>
                                     </div>
                                 )}
-                                {!loading && filteredUsers.length === 0 && (
+                                {!loading && users.length === 0 && (
                                     <div className="py-20 text-center text-white/20 font-black uppercase tracking-widest text-xs">
                                         No entities found in database
                                     </div>
                                 )}
                             </div>
+
+                            {/* Pagination Controls Footer */}
+                            {!loading && totalPages > 0 && (
+                                <div className="flex items-center justify-between border-t border-white/5 pt-6 px-4 flex-wrap gap-4">
+                                    <p className="text-xs text-[#334155] font-black uppercase tracking-wider" style={{ color: '#334155' }}>
+                                        Showing Page <span className="text-[var(--text-accent)]">{page}</span> of <span className="text-[var(--text-accent)]">{totalPages}</span> ({totalCount} Total Entities)
+                                    </p>
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                                            disabled={page <= 1}
+                                            className="px-5 py-2.5 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-wider border border-white/10 hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                                        >
+                                            &larr; Previous
+                                        </button>
+                                        <span className="px-4 py-2 bg-[var(--bg-accent)] text-white text-xs font-black rounded-xl">
+                                            {page} / {totalPages}
+                                        </span>
+                                        <button
+                                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={page >= totalPages}
+                                            className="px-5 py-2.5 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-wider border border-white/10 hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                                        >
+                                            Next &rarr;
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </GlassCard>
                 )}
