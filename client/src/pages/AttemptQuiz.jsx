@@ -991,7 +991,45 @@ export default function AttemptQuiz() {
     }
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
+        <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col relative">
+            {/* Strict Fullscreen Mode Overlay */}
+            {!isFullscreen && !result && !loading && !submitting && !isReviewMode && !isTerminated && (
+                <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[99998] flex flex-col items-center justify-center p-6 text-center text-white">
+                    <div className="w-20 h-20 bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl flex items-center justify-center text-amber-400 mb-6 shadow-2xl animate-pulse">
+                        <Maximize size={44} />
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-amber-400 mb-2">Fullscreen Mode Required</h2>
+                    <p className="text-xs sm:text-sm font-bold text-slate-300 max-w-md mb-8 leading-relaxed">
+                        This live examination requires mandatory Fullscreen mode. Exiting fullscreen is recorded as a security violation.
+                    </p>
+                    <button
+                        onClick={requestFullscreenMode}
+                        className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black italic uppercase text-xs tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all cursor-pointer"
+                    >
+                        Resume Fullscreen Exam
+                    </button>
+                </div>
+            )}
+
+            {/* Session Terminated / Disqualified Overlay */}
+            {isTerminated && (
+                <div className="fixed inset-0 bg-slate-950/98 backdrop-blur-2xl z-[99999] flex flex-col items-center justify-center p-6 text-center text-white">
+                    <div className="w-20 h-20 bg-red-500/10 border-2 border-red-500/30 rounded-3xl flex items-center justify-center text-red-500 mb-6 shadow-2xl animate-bounce">
+                        <ShieldAlert size={44} />
+                    </div>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tight text-red-500 mb-2">Examination Terminated</h2>
+                    <p className="text-xs sm:text-sm font-bold text-slate-300 max-w-md mb-8 leading-relaxed">
+                        Your exam session was automatically submitted and terminated due to exceeding security rules (Tab switches, DevTools, or focus loss).
+                    </p>
+                    <button
+                        onClick={() => navigate('/history')}
+                        className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black italic uppercase text-xs tracking-wider rounded-2xl shadow-xl transition-all active:scale-95"
+                    >
+                        Return to Dashboard
+                    </button>
+                </div>
+            )}
+
             {/* Offline Banner */}
             {!isOnline && (
                 <div className="fixed top-0 left-0 right-0 z-[var(--z-tooltip)] bg-orange-500 text-white px-6 py-3 flex items-center justify-center gap-3 font-bold text-sm shadow-lg">

@@ -170,8 +170,29 @@ exports.getQuizAnalytics = async (req, res) => {
 
         const topStudents = leaderboard.slice(0, 5);
 
-        // 5. Participation
+        // 5. Participation & Security Cheating Logs
         const allStudentsInDb = await prisma.user.count({ where: { role: 'student' } });
+
+        const cheatingLogs = await prisma.cheatingLog.findMany({
+            where: { quizId: quizId },
+            include: {
+                student: {
+                    select: { username: true, name: true, email: true, section: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        const formattedCheatingLogs = cheatingLogs.map(log => ({
+            id: log.id,
+            quizId: log.quizId,
+            studentId: log.studentId,
+            studentName: log.student?.name || log.studentName || log.student?.username || 'Student',
+            studentRollNumber: log.student?.username || log.studentRollNumber || 'N/A',
+            action: log.action,
+            details: log.details,
+            createdAt: log.createdAt || log.timestamp
+        }));
 
         res.json({
             quizTitle: quiz.title,
@@ -185,7 +206,8 @@ exports.getQuizAnalytics = async (req, res) => {
             sectionPerformance,
             participationRate: { attempted: totalParticipants, totalEligible: allStudentsInDb },
             topStudents,
-            leaderboard
+            leaderboard,
+            cheatingLogs: formattedCheatingLogs
         });
 
     } catch (err) {

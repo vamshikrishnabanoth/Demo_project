@@ -22,6 +22,7 @@ export default function useExamProctoring({
     onAutoSubmit = null,
 } = {}) {
     const [tabSwitchCount, setTabSwitchCount] = useState(0);
+    const [violationsCount, setViolationsCount] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(true);
     const [isSplitScreen, setIsSplitScreen] = useState(false);
     const [lostFocusSeconds, setLostFocusSeconds] = useState(0);
@@ -29,11 +30,16 @@ export default function useExamProctoring({
 
     const autoSubmittedRef = useRef(false);
 
-    // Trigger auto-submit once & terminate student session
+    // Trigger auto-submit once & terminate student session silently
     const triggerAutoSubmit = useCallback((reason) => {
         if (autoSubmittedRef.current) return;
         autoSubmittedRef.current = true;
         setIsTerminated(true);
+
+        // Exit fullscreen on termination/completion
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
 
         if (quizId && userId) {
             socket.emit('student_cheated_alert', {
@@ -50,7 +56,26 @@ export default function useExamProctoring({
         }
     }, [quizId, userId, onAutoSubmit]);
 
-    // ─── 1. Fullscreen Mode & 1-Pixel Screen Reduction / Split Screen Detection ───
+    const recordViolation = useCallback((action, details = {}) => {
+        setViolationsCount((prev) => {
+            const next = prev + 1;
+            if (quizId && userId) {
+                socket.emit('student_cheated_alert', {
+                    quizId,
+                    studentId: userId,
+                    action,
+                    details,
+                    timestamp: new Date(),
+                });
+            }
+            if (next >= 4 && !autoSubmittedRef.current) {
+                triggerAutoSubmit('Multiple security violations threshold exceeded');
+            }
+            return next;
+        });
+    }, [quizId, userId, triggerAutoSubmit]);
+
+    // ─── 1. Fullscreen Mode & Screen Integrity Detection ───
     const requestFullscreenMode = useCallback(async () => {
         try {
             if (!document.fullscreenElement) {
@@ -72,10 +97,14 @@ export default function useExamProctoring({
             const inFS = !!document.fullscreenElement;
             setIsFullscreen(inFS);
 
-            // Detect if screen width or height is reduced by even 1 pixel
+            if (!inFS && !autoSubmittedRef.current) {
+                recordViolation('exited_fullscreen');
+            }
+
+            // Detect split-screen / dimension anomalies
             const widthDiff = window.screen.availWidth - window.innerWidth;
             const heightDiff = window.screen.availHeight - window.innerHeight;
-            const splitDetected = !inFS || widthDiff > 15 || heightDiff > 35;
+            const splitDetected = !inFS || widthDiff > 25 || heightDiff > 45;
 
             setIsSplitScreen(splitDetected);
 
@@ -102,9 +131,9 @@ export default function useExamProctoring({
             window.removeEventListener('resize', checkScreenIntegrity);
             document.removeEventListener('fullscreenchange', checkScreenIntegrity);
         };
-    }, [enabled, isTerminated, requestFullscreenMode, quizId, userId]);
+    }, [enabled, isTerminated, requestFullscreenMode, quizId, userId, recordViolation]);
 
-    // ─── 2. Tab Switch Integrity Monitoring (Max 2 Switches) ──────────────────
+    // ─── 2. Tab Switch Integrity Monitoring (Max 2 Switches) ───
     useEffect(() => {
         if (!enabled || isTerminated) return;
 
@@ -124,18 +153,7 @@ export default function useExamProctoring({
                     }
 
                     if (newCount >= maxTabSwitches) {
-                        toast.error(`🚨 Tab switch limit reached (${newCount}/${maxTabSwitches})! Auto-submitting & terminating exam...`, {
-                            duration: 5000,
-                            id: 'tab-switch-terminate',
-                            style: { background: '#7f1d1d', color: '#ffffff', fontWeight: 'bold' }
-                        });
                         triggerAutoSubmit(`Tab switch limit reached (${newCount}/${maxTabSwitches})`);
-                    } else {
-                        toast.error(`⚠️ Integrity Warning: Tab switch detected! (${newCount}/${maxTabSwitches}). Switching tabs 1 more time will terminate your exam!`, {
-                            duration: 5000,
-                            id: 'tab-switch-warning',
-                            style: { background: '#991b1b', color: '#ffffff', fontWeight: 'bold' }
-                        });
                     }
 
                     return newCount;
@@ -147,7 +165,7 @@ export default function useExamProctoring({
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
     }, [enabled, isTerminated, maxTabSwitches, quizId, userId, triggerAutoSubmit]);
 
-    // ─── 3. Consecutive 1-Minute Focus Loss (30s Warning, 60s Auto-Submit) ───
+    // ─── 3. Consecutive Focus Loss (30s Alert to Server, 60s Auto-Submit) ───
     useEffect(() => {
         if (!enabled || isTerminated) return;
 
@@ -159,32 +177,16 @@ export default function useExamProctoring({
                     setLostFocusSeconds((prevSec) => {
                         const newSec = prevSec + 1;
 
-                        // 30-Second Warning
-                        if (newSec === 30) {
-                            toast.error(`⚠️ FOCUS WARNING: Exam lost focus for 30s! Auto-submitting in 30s if focus is not restored!`, {
-                                duration: 8000,
-                                id: 'focus-30s-warning',
-                                style: { background: '#b45309', color: '#ffffff', fontWeight: 'bold' }
+                        if (newSec === 30 && quizId && userId) {
+                            socket.emit('student_cheated_alert', {
+                                quizId,
+                                studentId: userId,
+                                action: 'window_blur_30s',
+                                timestamp: new Date(),
                             });
-
-                            if (quizId && userId) {
-                                socket.emit('student_cheated_alert', {
-                                    quizId,
-                                    studentId: userId,
-                                    action: 'window_blur_30s',
-                                    timestamp: new Date(),
-                                });
-                            }
                         }
 
-                        // 60-Second (1 Minute Consecutively) -> Auto Submit
                         if (newSec >= 60) {
-                            toast.error(`🚨 Focus lost for 1 minute consecutively! Auto-submitting & terminating exam...`, {
-                                duration: 5000,
-                                id: 'focus-60s-terminate',
-                                style: { background: '#7f1d1d', color: '#ffffff', fontWeight: 'bold' }
-                            });
-
                             if (quizId && userId) {
                                 socket.emit('student_cheated_alert', {
                                     quizId,
@@ -193,7 +195,6 @@ export default function useExamProctoring({
                                     timestamp: new Date(),
                                 });
                             }
-
                             triggerAutoSubmit('Lost focus for 1 minute consecutively');
                         }
 
@@ -230,7 +231,6 @@ export default function useExamProctoring({
         window.addEventListener('blur', handleBlur);
         window.addEventListener('focus', handleFocus);
 
-        // Check initial state
         if (!document.hasFocus() || document.hidden) {
             startFocusTimer();
         }
@@ -242,7 +242,7 @@ export default function useExamProctoring({
         };
     }, [enabled, isTerminated, quizId, userId, triggerAutoSubmit]);
 
-    // ─── 4. DevTools & Screenshot Shortcut Interception ──────────────────────
+    // ─── 4. DevTools & Screenshot Shortcut Interception (Silent) ──────────────────────
     useEffect(() => {
         if (!enabled || isTerminated) return;
 
@@ -260,39 +260,32 @@ export default function useExamProctoring({
                 e.preventDefault();
                 e.stopPropagation();
 
+                // Clear clipboard to prevent screenshot leak
+                try {
+                    navigator.clipboard?.writeText('');
+                } catch (_) {}
+
                 const action = isPrintScreen || isScreenshotCombo ? 'screenshot_attempt' : 'devtools_shortcut';
-                const label = isPrintScreen || isScreenshotCombo ? 'Screenshot captures are prohibited!' : 'Developer tools are disabled during examinations!';
-
-                showError('Security Violation', label);
-
-                if (quizId && userId) {
-                    socket.emit('student_cheated_alert', {
-                        quizId,
-                        studentId: userId,
-                        action,
-                        key: e.key,
-                        timestamp: new Date(),
-                    });
-                }
+                recordViolation(action, { key: e.key });
             }
         };
 
         document.addEventListener('keydown', handleKeyDown, true);
         return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }, [enabled, isTerminated, quizId, userId]);
+    }, [enabled, isTerminated, recordViolation]);
 
-    // ─── 5. Clipboard & Context Menu Blocking ────────────────────────────────
+    // ─── 5. Clipboard & Context Menu Blocking (Silent) ────────────────────────────────
     useEffect(() => {
         if (!enabled || isTerminated) return;
 
         const blockClipboard = (e) => {
             e.preventDefault();
-            showError('Security Alert', 'Copy/Paste/Cut is disabled during examinations!');
+            recordViolation('clipboard_action', { type: e.type });
         };
 
         const blockContextMenu = (e) => {
             e.preventDefault();
-            showError('Security Alert', 'Right-click is disabled during examinations!');
+            recordViolation('context_menu', {});
         };
 
         document.addEventListener('copy', blockClipboard);
@@ -306,10 +299,11 @@ export default function useExamProctoring({
             document.removeEventListener('cut', blockClipboard);
             document.removeEventListener('contextmenu', blockContextMenu);
         };
-    }, [enabled, isTerminated]);
+    }, [enabled, isTerminated, recordViolation]);
 
     return {
         tabSwitchCount,
+        violationsCount,
         isFullscreen,
         isSplitScreen,
         lostFocusSeconds,

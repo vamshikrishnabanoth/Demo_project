@@ -1,43 +1,43 @@
 import { useEffect } from 'react';
-import toast from 'react-hot-toast';
+import socket from '../utils/socket';
 
 /**
- * DevToolsGuard — Global Security Shield
+ * DevToolsGuard — Global Security Shield (Silent Protection)
  * 
  * Prevents unauthorized access to DevTools and source inspection:
- * 1. Blocks right-click context menu globally
- * 2. Blocks F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C keyboard shortcuts
- * 3. Monitors window resize heuristics associated with detached/docked DevTools
+ * 1. Silently blocks right-click context menu globally
+ * 2. Silently blocks F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C keyboard shortcuts
+ * 3. Silently monitors window resize heuristics for DevTools opening and emits cheating alert to server without popups
  */
 export default function DevToolsGuard() {
     useEffect(() => {
-        let lastWarnTime = 0;
+        let lastReportTime = 0;
 
-        const showSecurityWarning = (msg) => {
+        const reportDevToolsEvent = (action, details = {}) => {
             const now = Date.now();
-            if (now - lastWarnTime > 3000) {
-                lastWarnTime = now;
-                toast.error(`🔒 ${msg}`, {
-                    duration: 3000,
-                    id: 'devtools-security-warning',
-                    style: {
-                        borderRadius: '1rem',
-                        background: '#0f172a',
-                        color: '#ffffff',
-                        fontWeight: 'bold',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
+            if (now - lastReportTime > 4000) {
+                lastReportTime = now;
+                // Emit silent cheat alert to socket if connected
+                if (socket && socket.connected) {
+                    try {
+                        socket.emit('student_cheated_alert', {
+                            action,
+                            details,
+                            timestamp: new Date()
+                        });
+                    } catch (e) {
+                        // ignore socket errors silently
                     }
-                });
+                }
             }
         };
 
-        // 1. Block Context Menu (Right Click)
+        // 1. Block Context Menu (Right Click) silently (No Toast Popups)
         const handleContextMenu = (e) => {
             e.preventDefault();
-            showSecurityWarning('Right-click inspect is disabled for application security.');
         };
 
-        // 2. Block Keyboard Shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U, etc.)
+        // 2. Block Keyboard Shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U, etc.) silently
         const handleKeyDown = (e) => {
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
             const metaKey = isMac ? e.metaKey : e.ctrlKey;
@@ -55,28 +55,28 @@ export default function DevToolsGuard() {
             if (isF12 || isInspectShortcut || isViewSourceShortcut || isShiftF10) {
                 e.preventDefault();
                 e.stopPropagation();
-                showSecurityWarning('Developer tools shortcuts are disabled for application security.');
+                reportDevToolsEvent('devtools_shortcut', { key: e.key });
                 return false;
             }
         };
 
-        // 3. DevTools Open Detection via Dimension Heuristics
+        // 3. DevTools Open Detection via Dimension Heuristics (Silent)
         const checkDevToolsResize = () => {
             const THRESHOLD = 180;
             const widthDiff = window.outerWidth - window.innerWidth;
             const heightDiff = window.outerHeight - window.innerHeight;
 
             if (widthDiff > THRESHOLD || heightDiff > THRESHOLD) {
-                showSecurityWarning('Developer tools panel detected. Activity is monitored.');
+                reportDevToolsEvent('devtools_panel_opened', { widthDiff, heightDiff });
             }
         };
 
-        // Attach listeners with capture phase to prevent bypasses
+        // Attach listeners with capture phase
         document.addEventListener('contextmenu', handleContextMenu, true);
         window.addEventListener('keydown', handleKeyDown, true);
         window.addEventListener('resize', checkDevToolsResize);
 
-        const checkInterval = setInterval(checkDevToolsResize, 2000);
+        const checkInterval = setInterval(checkDevToolsResize, 2500);
 
         return () => {
             document.removeEventListener('contextmenu', handleContextMenu, true);

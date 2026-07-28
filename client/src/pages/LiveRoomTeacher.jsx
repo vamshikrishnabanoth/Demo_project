@@ -824,12 +824,18 @@ if (socket.connected) {
                                                                     label = `AUTO-SUBMITTED (TERMINATED)`;
                                                                     style = 'bg-red-700 text-white font-black animate-pulse ring-2 ring-red-400';
                                                                     icon = <ShieldAlert size={11} />;
-                                                                } else if (act === 'devtools_shortcut' || act === 'devtools_resize') {
-                                                                    label = `DEVTOOLS (${count})`;
-                                                                    style = 'bg-gradient-to-r from-purple-600 to-indigo-700 text-white';
+                                                                } else if (act === 'devtools_shortcut' || act === 'devtools_resize' || act === 'devtools_panel_opened') {
+                                                                    label = `DEVTOOLS OPENED (${count})`;
+                                                                    style = 'bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-black animate-pulse';
+                                                                } else if (act === 'exited_fullscreen') {
+                                                                    label = `EXITED FULLSCREEN (${count})`;
+                                                                    style = 'bg-gradient-to-r from-amber-600 to-orange-700 text-white';
                                                                 } else if (act === 'screenshot_attempt') {
                                                                     label = `SCREENSHOT (${count})`;
                                                                     style = 'bg-rose-600 text-white';
+                                                                } else if (act === 'context_menu' || act === 'clipboard_action') {
+                                                                    label = `COPY/PASTE/INSPECT (${count})`;
+                                                                    style = 'bg-slate-700 text-white';
                                                                 } else if (act === 'multi_monitor_detected') {
                                                                     label = `MULTI-MONITOR (${count})`;
                                                                     style = 'bg-blue-600 text-white';

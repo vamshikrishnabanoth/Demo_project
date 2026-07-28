@@ -318,6 +318,53 @@ export default function LiveRoomStudent() {
                                 ? `${readyCount} students ready... ${joiningCount} more joining!`
                                 : `${readyCount} ${readyCount === 1 ? 'student' : 'students'} ready!`}
                         />
+                        {/* Exam Security Settings Card (No popups during exam; rules displayed in lobby) */}
+                        <motion.div 
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-slate-900 border-2 border-slate-700/60 p-6 sm:p-8 rounded-[2.5rem] text-left text-white shadow-xl space-y-4"
+                        >
+                            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
+                                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-400">
+                                    <ShieldCheck size={28} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black uppercase tracking-wider italic text-amber-400">
+                                        Proctored Examination Security Rules
+                                    </h3>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                                        Automated Real-Time Telemetry & Environment Integrity
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-200 pt-1">
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">🚫</span>
+                                    <span>Right-Click & Inspect Disabled</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">📸</span>
+                                    <span>Screenshots & Recording Blocked</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">📋</span>
+                                    <span>Ctrl+C & Ctrl+V Copy/Paste Disabled</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">🖥️</span>
+                                    <span>Mandatory Fullscreen Mode Only</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">🔀</span>
+                                    <span>No Tab Switching / Split Screen</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
+                                    <span className="text-amber-400 text-base shrink-0">🔒</span>
+                                    <span>DevTools Monitoring Active</span>
+                                </div>
+                            </div>
+                        </motion.div>
+
                         {lobbySummary && (
                             <motion.div 
                                 initial={{ opacity: 0, y: 15 }}
