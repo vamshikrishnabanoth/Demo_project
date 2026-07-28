@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import useApiQuery from '../hooks/useApiQuery';
 import { ListSkeleton } from '../components/ui/ShimmerSkeleton';
 import DashboardLayout from '../components/DashboardLayout';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 const AssessmentsHistory = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
@@ -204,7 +205,7 @@ const AssessmentsHistory = () => {
                                         <div className="flex flex-col lg:flex-row justify-between gap-8 mb-8">
                                             <div className="space-y-3">
                                                 <h3 className="text-xl md:text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter group-hover:text-[var(--text-accent)] transition-colors leading-tight">
-                                                    {item.title}
+                                                    {cleanQuizTitle(item.title)}
                                                 </h3>
                                                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)]">
                                                     <div className="flex items-center gap-2">
@@ -255,21 +256,13 @@ const AssessmentsHistory = () => {
                                             </div>
                                             <div className="flex items-center gap-3 w-full sm:w-auto">
                                                 {item.isAttempted ? (
-                                                    <>
-                                                        <button 
-                                                            onClick={() => navigate(`/report/${item.id}`)}
-                                                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] font-black text-[10px] uppercase tracking-[0.2em] hover:border-[var(--bg-accent)] transition-all"
-                                                        >
-                                                            <Activity size={16} className="text-[var(--text-accent)]" aria-hidden="true" /> View Report
-                                                        </button>
-                                                        <button 
-                                                    onClick={() => navigate(`/report/${item.id}`, { state: { showAnalytics: true } })}
-                                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--bg-accent)] !text-white font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-md"
-                                                    style={{ color: '#ffffff' }}
-                                                >
-                                                    <Activity size={16} aria-hidden="true" /> View Analytics
-                                                </button>
-                                                    </>
+                                                    <button 
+                                                        onClick={() => navigate(`/analytics/quiz/${item.id}`)}
+                                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--bg-accent)] !text-white font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-md"
+                                                        style={{ color: '#ffffff' }}
+                                                    >
+                                                        <Activity size={16} aria-hidden="true" /> View Analytics
+                                                    </button>
                                                 ) : (
                                                     <button className="w-full sm:w-auto px-8 py-2.5 rounded-xl bg-[var(--bg-primary)] text-[var(--text-secondary)] font-black text-[10px] uppercase tracking-widest border border-[var(--border-color)] cursor-not-allowed opacity-60">
                                                         Locked

@@ -4,6 +4,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError } from '../utils/alerts';
 import toast from 'react-hot-toast';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
     FileText,
     CheckCircle,
@@ -248,8 +249,8 @@ export default function MyQuizzes() {
                                             <div className="space-y-1 min-w-0">
                                                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap min-w-0">
                                                     <div className="max-w-[220px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] overflow-x-auto premium-scrollbar py-1 shrink-0">
-                                                        <h3 className="text-2xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors whitespace-nowrap" title={quiz.title}>
-                                                            {quiz.title}
+                                                        <h3 className="text-2xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-none transition-colors whitespace-nowrap" title={cleanQuizTitle(quiz.title)}>
+                                                            {cleanQuizTitle(quiz.title)}
                                                         </h3>
                                                     </div>
                                                     {/* Lock badge for published (immutable) quizzes */}

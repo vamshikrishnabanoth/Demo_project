@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize } from 'lucide-react';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
@@ -155,9 +156,9 @@ export default function AttemptQuiz() {
 
         socket.on('quiz_ended', async () => {
             // Results are already saved via socket events during the quiz.
-            // Navigate to report page after a small delay to allow server finalization.
+            // Navigate to analytics page after a small delay to allow server finalization.
             setTimeout(() => {
-                navigate(`/report/${id}`);
+                navigate(`/analytics/quiz/${id}`);
             }, 1500);
         });
 
@@ -245,7 +246,7 @@ export default function AttemptQuiz() {
                  targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
                  setTimeLeft(state.remainingTime);
             } else if (state.quizStatus === 'finished') {
-                 navigate(`/report/${id}`);
+                 navigate(`/analytics/quiz/${id}`);
             }
         });
 
@@ -428,8 +429,8 @@ export default function AttemptQuiz() {
                 setTimeLeft(newDuration);
             }
         } else {
-            // Last question - navigate to final report
-            navigate(`/report/${id}`);
+            // Last question - navigate to analytics
+            navigate(`/analytics/quiz/${id}`);
         }
     };
 
@@ -454,10 +455,10 @@ export default function AttemptQuiz() {
 
     // Anti-Cheat & Exam Integrity Controls — Centralised via useExamProctoring hook
     const handleAutoSubmit = useCallback((reason) => {
-        toast.error(`Exam Auto-Submitted: ${reason}. Navigating to report...`, { duration: 4000 });
+        toast.error(`Exam Auto-Submitted: ${reason}. Navigating to analytics...`, { duration: 4000 });
         handleSubmit();
         setTimeout(() => {
-            navigate(`/report/${id}`);
+            navigate(`/analytics/quiz/${id}`);
         }, 1000);
     }, [id, handleSubmit, navigate]);
 
@@ -790,8 +791,8 @@ export default function AttemptQuiz() {
             if (status === 400 && msg === 'Quiz already attempted') {
                 window.location.reload();
             } else if (status === 403 && msg.includes('already submitted')) {
-                // Quiz doesn't allow re-attempts; navigate to latest result
-                navigate(`/report/${id}`);
+                // Quiz doesn't allow re-attempts; navigate to latest analytics
+                navigate(`/analytics/quiz/${id}`);
             } else {
                 showError('Submission Failed', msg || 'Submission failed. Please check your connection.');
             }
@@ -947,7 +948,7 @@ export default function AttemptQuiz() {
 
                     <div className="space-y-3">
                         <button
-                            onClick={() => navigate(`/report/${id}`, { state: { showAnalytics: true } })}
+                            onClick={() => navigate(`/analytics/quiz/${id}`)}
                             className="w-full bg-[var(--bg-accent)] text-[var(--text-on-accent)] py-4 rounded-xl font-black italic uppercase tracking-wider hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
                         >
                             <TrendingUp size={20} /> View Detailed Analytics
@@ -1007,7 +1008,7 @@ export default function AttemptQuiz() {
                         <ChevronLeft size={24} />
                     </button>
                     <div>
-                        <h2 className="font-bold text-white uppercase tracking-tight italic">{quiz.title}</h2>
+                        <h2 className="font-bold text-white uppercase tracking-tight italic">{cleanQuizTitle(quiz.title)}</h2>
                         <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">{currentQuestion + 1} of {quiz.questions.length} Questions {isReviewMode && '• Review Mode'}</p>
                     </div>
                 </div>
@@ -1583,7 +1584,7 @@ export default function AttemptQuiz() {
                     timeTaken={questionTimes[currentQuestion] || null}
                     onComplete={() => {
                         localStorage.removeItem(`quiz_answers_${id}`);
-                        navigate(`/report/${id}`);
+                        navigate(`/analytics/quiz/${id}`);
                     }}
                 />
             )}

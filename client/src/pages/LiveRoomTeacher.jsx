@@ -8,6 +8,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError, showSuccess } from '../utils/alerts';
 import toast from 'react-hot-toast';
 import throttle from '../utils/throttle';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
@@ -625,7 +626,7 @@ if (socket.connected) {
                                 <span className="text-slate-300 font-bold tracking-widest uppercase text-xs">REMAINING TIME</span>
                             </div>
                             <h1 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter truncate">
-                                {quiz?.title || 'Active Session'}
+                                {cleanQuizTitle(quiz?.title) || 'Active Session'}
                             </h1>
                         </div>
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-accent)]/5 rounded-full -mr-16 -mt-16"></div>

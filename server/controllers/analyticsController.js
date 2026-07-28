@@ -36,9 +36,18 @@ exports.getQuizAnalytics = async (req, res) => {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        // Only creator or admin can view analytics
+        // Authorization check: creator, admin, or student who has attempted/participated in the quiz
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
-             return res.status(403).json({ msg: 'Not authorized' });
+            if (req.user.role === 'student') {
+                const hasAttempted = await prisma.result.findFirst({
+                    where: { quizId: quizId, studentId: req.user.id }
+                });
+                if (!hasAttempted && !quiz.isPublic) {
+                    return res.status(403).json({ msg: 'Not authorized to view analytics for this quiz' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Not authorized' });
+            }
         }
 
         const normalizedQuestions = normalizeQuestions(quiz.questions);

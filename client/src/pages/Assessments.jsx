@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
 import { ListSkeleton, ShimmerSkeleton } from '../components/ui/ShimmerSkeleton';
 import { royalAlert, showError } from '../utils/alerts';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 
 // CountUp — requestAnimationFrame instead of setInterval
 const CountUp = ({ end, duration = 1 }) => {
@@ -296,7 +297,7 @@ export default function Assessments() {
                                                 </div>
                                                 <div>
                                                     <div className="flex flex-wrap items-center gap-3 mb-1">
-                                                        <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors">{quiz.title}</h3>
+                                                        <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors">{cleanQuizTitle(quiz.title)}</h3>
                                                         {quiz.isLocked && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 animate-pulse">
                                                                 SCHEDULED
@@ -363,26 +364,16 @@ export default function Assessments() {
                                                 </button>
                                             ) : (
                                                 <div className="flex items-center gap-3">
-                                                    {/* RESULT — only when student has at least one attempt */}
+                                                    {/* ANALYTICS — only when student has at least one attempt */}
                                                     {quiz.isAttempted && (
-                                                        <>
-                                                            <button
-                                                                onClick={() => navigate(`/report/${quiz.id}`)}
-                                                                className="bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 border border-blue-500/30 px-4 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-blue-500/5"
-                                                                title="View your latest result"
-                                                            >
-                                                                <BarChart2 size={14} aria-hidden="true" />
-                                                                Result
-                                                            </button>
-                                                            <button
-                                                                onClick={() => navigate(`/report/${quiz.id}`, { state: { showAnalytics: true } })}
-                                                                className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 px-4 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-cyan-500/5"
-                                                                title="View detailed analytics directly"
-                                                            >
-                                                                <BarChart2 size={14} aria-hidden="true" />
-                                                                Analytics
-                                                            </button>
-                                                        </>
+                                                        <button
+                                                            onClick={() => navigate(`/analytics/quiz/${quiz.id}`)}
+                                                            className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 px-5 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-cyan-500/5"
+                                                            title="View detailed analytics"
+                                                        >
+                                                            <BarChart2 size={14} aria-hidden="true" />
+                                                            Analytics
+                                                        </button>
                                                     )}
                                                     {/* START — always available for unlimited practice */}
                                                     <button

@@ -9,6 +9,7 @@ import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { ShieldCheck, Users, Trophy, Crown, Flame } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 
 const playPopSound = () => {
     try {
@@ -298,7 +299,7 @@ export default function LiveRoomStudent() {
                                     ● Quiz Arena Active
                                 </motion.div>
                                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase italic leading-tight max-w-2xl mx-auto drop-shadow-md">
-                                    {quiz?.title ? quiz.title.replace(/&quot;/gi, '"').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&#39;/g, "'") : ''}
+                                    {cleanQuizTitle(quiz?.title)}
                                 </h1>
                                 <p className="text-slate-200 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
                                     You're in the waiting room. The quiz will start once your teacher begins the session.

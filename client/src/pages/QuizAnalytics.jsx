@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import toast from 'react-hot-toast';
+import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
@@ -258,7 +259,7 @@ export default function QuizAnalytics() {
                             </button>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter text-balance">
-                            {analytics.quizTitle}
+                            {cleanQuizTitle(analytics.quizTitle)}
                         </h1>
                         <p className="text-indigo-400 font-bold mt-2 uppercase tracking-widest text-sm italic">
                             Analytics Dashboard

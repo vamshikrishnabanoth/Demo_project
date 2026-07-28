@@ -85,8 +85,8 @@ function AnimatedRoutes() {
                     <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
                     <Route path="/my-quizzes"        element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
                     <Route path="/live-room-teacher/:joinCode" element={<FadeTransition><ProtectedRoute roles={['teacher']}><LiveRoomTeacher /></ProtectedRoute></FadeTransition>} />
-                    <Route path="/analytics/quiz/:id" element={<PageTransition><ProtectedRoute roles={['teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></PageTransition>} />
-                    <Route path="/analytics/question/:quizId/:questionIndex" element={<SlideUpTransition><ProtectedRoute roles={['teacher', 'admin']}><QuestionAnalysis /></ProtectedRoute></SlideUpTransition>} />
+                    <Route path="/analytics/quiz/:id" element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></PageTransition>} />
+                    <Route path="/analytics/question/:quizId/:questionIndex" element={<SlideUpTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuestionAnalysis /></ProtectedRoute></SlideUpTransition>} />
 
                     {/* Student pages */}
                     <Route path="/student-dashboard"  element={<PageTransition><ProtectedRoute roles={['student']}><StudentDashboard /></ProtectedRoute></PageTransition>} />
@@ -94,7 +94,7 @@ function AnimatedRoutes() {
                     <Route path="/quiz/attempt/:id"    element={<FadeTransition><ProtectedRoute roles={['student']}><QuizAttemptSelector /></ProtectedRoute></FadeTransition>} />
                     <Route path="/quiz/review/:id"     element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReview /></ProtectedRoute></SlideUpTransition>} />
                     <Route path="/history"            element={<PageTransition><ProtectedRoute roles={['student']}><AssessmentsHistory /></ProtectedRoute></PageTransition>} />
-                    <Route path="/report/:id"         element={<SlideUpTransition><ProtectedRoute roles={['student']}><AssessmentReport /></ProtectedRoute></SlideUpTransition>} />
+                    <Route path="/report/:id"         element={<SlideUpTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></SlideUpTransition>} />
                     <Route path="/live-room-student/:joinCode" element={<FadeTransition><ProtectedRoute roles={['student']}><LiveRoomStudent /></ProtectedRoute></FadeTransition>} />
                     <Route path="/cyber-quest"        element={<FadeTransition><ProtectedRoute roles={['student']}><CyberQuest /></ProtectedRoute></FadeTransition>} />
                     <Route path="/sprint-arena"       element={<FadeTransition><ProtectedRoute roles={['student']}><SprintArena /></ProtectedRoute></FadeTransition>} />
