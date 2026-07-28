@@ -137,15 +137,6 @@ export default function Login() {
     const toggleTheme = () => {
         const nextTheme = theme === 'india' ? 'celestial' : 'india';
         setTheme(nextTheme);
-        toast(nextTheme === 'india' ? '🇮🇳 Tricolor Horizon Theme Active' : '🌌 Celestial Theme Active', {
-            icon: nextTheme === 'india' ? '🇮🇳' : '🌌',
-            style: {
-                borderRadius: '1rem',
-                background: '#0f172a',
-                color: '#ffffff',
-                fontWeight: 'bold'
-            }
-        });
     };
 
     return (
