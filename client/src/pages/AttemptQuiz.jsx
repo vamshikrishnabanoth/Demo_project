@@ -462,7 +462,7 @@ export default function AttemptQuiz() {
         }, 1000);
     }, [id, submitQuiz, navigate]);
 
-    const { isFullscreen, requestFullscreenMode } = useExamProctoring({
+    const { isFullscreen, requestFullscreenMode, isTerminated } = useExamProctoring({
         enabled: !loading && !submitting && !result && !!quiz,
         quizId: quiz?.id || id,
         userId: authUser?.id || authUser?._id,

@@ -75,8 +75,8 @@ export default function AssessmentAttempt() {
         }, 1000);
     }, [id, handleFinalSubmit, navigate]);
 
-    const { isFullscreen, requestFullscreenMode } = useExamProctoring({
-        enabled: !loading && !submitting && !!quiz,
+    const { isFullscreen, requestFullscreenMode, isTerminated } = useExamProctoring({
+        enabled: !loading && !submitting && !isTerminated && !!quiz,
         quizId: id,
         userId: authUser?.id,
         maxTabSwitches: 2,
