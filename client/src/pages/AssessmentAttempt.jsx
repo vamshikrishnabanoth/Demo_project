@@ -69,11 +69,11 @@ export default function AssessmentAttempt() {
     // Exam Integrity — strict fullscreen, tab-switch limit (max 2), focus loss monitoring, resize heuristic
     const handleAutoSubmit = useCallback((reason) => {
         toast.error(`Exam Auto-Submitted: ${reason}. Navigating to report...`, { duration: 4000 });
-        handleSubmit();
+        handleFinalSubmit();
         setTimeout(() => {
             navigate(`/report/${id}`);
         }, 1000);
-    }, [id, handleSubmit, navigate]);
+    }, [id, handleFinalSubmit, navigate]);
 
     const { isFullscreen, requestFullscreenMode } = useExamProctoring({
         enabled: !loading && !submitting && !!quiz,

@@ -456,11 +456,11 @@ export default function AttemptQuiz() {
     // Anti-Cheat & Exam Integrity Controls — Centralised via useExamProctoring hook
     const handleAutoSubmit = useCallback((reason) => {
         toast.error(`Exam Auto-Submitted: ${reason}. Navigating to analytics...`, { duration: 4000 });
-        handleSubmit();
+        submitQuiz();
         setTimeout(() => {
             navigate(`/analytics/quiz/${id}`);
         }, 1000);
-    }, [id, handleSubmit, navigate]);
+    }, [id, submitQuiz, navigate]);
 
     const { isFullscreen, requestFullscreenMode } = useExamProctoring({
         enabled: !loading && !submitting && !result && !!quiz,

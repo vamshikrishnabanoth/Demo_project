@@ -201,17 +201,6 @@ export default function CreateQuizText() {
         }
     }, [questions, agentReport, title, location.state]);
 
-    // ─── FINALIZE (directly publishes) ─────────────────────────────────────────
-    const handleFinalizeClick = (e) => {
-        e.preventDefault();
-        // Validation Layer first
-        if (!title.trim()) return toast.error('Enter a command title');
-        const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
-        if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete`);
-        // Directly publish — no confirmation modal
-        handleSubmit();
-    };
-
     // ─── ACTUAL SUBMISSION (called from modal confirm) ────────────────────────
     const handleSubmit = async () => {
         setLoading(true);
@@ -275,6 +264,17 @@ export default function CreateQuizText() {
         } finally {
             setLoading(false);
         }
+    };
+
+    // ─── FINALIZE (directly publishes) ─────────────────────────────────────────
+    const handleFinalizeClick = (e) => {
+        e.preventDefault();
+        // Validation Layer first
+        if (!title.trim()) return toast.error('Enter a command title');
+        const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
+        if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete`);
+        // Directly publish — no confirmation modal
+        handleSubmit();
     };
 
     return (
