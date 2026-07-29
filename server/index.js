@@ -151,8 +151,9 @@ app.use('/api/', speedLimiter);
 // 4. Cookie Parser (for secure cookie-based token transport)
 app.use(cookieParser(process.env.COOKIE_SECRET || process.env.JWT_SECRET));
 
-// 5. Body Parser with limit
-app.use(express.json({ limit: '10kb' })); 
+// 5. Body Parser with limit (supports large generated quiz payloads up to 50MB)
+app.use(express.json({ limit: '50mb' })); 
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // 6. Input Sanitization (PostgreSQL-appropriate — strips null bytes, control chars, prototype pollution)
 app.use(sanitizeInput);

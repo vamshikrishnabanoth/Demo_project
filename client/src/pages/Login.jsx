@@ -119,9 +119,9 @@ export default function Login() {
             const data = err.response?.data;
             let message = 'Access Denied';
 
-            // Timeout / network error — Render cold start likely failed
-            if (err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK' || !err.response) {
-                message = 'Server is starting up. Please wait a moment and try again.';
+            // Timeout / network error — Render cold start likely failed or timed out
+            if (err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK' || err.name === 'AbortError' || !err.response) {
+                message = 'Server cold-start timed out. Please refresh the page or click Sign In again!';
             } else if (data?.msg) {
                 message = data.msg;
             } else if (data?.errors?.length) {
