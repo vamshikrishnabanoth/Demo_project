@@ -105,19 +105,6 @@ export const AuthProvider = ({ children }) => {
         return userData;
     }, []);
 
-    const register = useCallback(async (username, email, password) => {
-        const res = await api.post('/auth/register-public', { username, email, password });
-        localStorage.setItem('token', res.data.token);
-        const userData = res.data.user ?? (await api.get('/auth/me')).data;
-        setUser(userData);
-        // Reconnect socket so it picks up the new auth token
-        if (socket.connected) {
-            socket.disconnect();
-        }
-        ensureSocketConnected();
-        return userData;
-    }, []);
-
     const setRole = useCallback(async (role) => {
         const res = await api.post('/auth/set-role', { role });
         setUser(prev => ({ ...prev, role: res.data.role }));
@@ -144,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{
             user, loading, authError, retryAuth,
-            login, register, logout, setRole,
+            login, logout, setRole,
             theme, setTheme,
             font: 'inter',
         }}>

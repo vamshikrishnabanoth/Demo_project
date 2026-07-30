@@ -1,11 +1,10 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle, Brain, Zap, Target, Trophy, Sparkles, BookOpen, ArrowRight, GraduationCap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LogIn, Mail, Lock, Eye, EyeOff, Loader2, XCircle, Brain, Zap, Target, Trophy, Sparkles, BookOpen } from 'lucide-react';
+import { motion } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
-import { PremiumButton, PremiumInput, GlassCard } from '../components/ui/Primitives';
-import toast from 'react-hot-toast';
+import { PremiumInput, GlassCard } from '../components/ui/Primitives';
 
 /* ── Floating background icon ────────────────────────────────────────────── */
 const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
@@ -31,20 +30,19 @@ const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
 );
 
 export default function Login() {
-    const [isLogin, setIsLogin] = useState(true);
-    const { login, register, theme, setTheme } = useContext(AuthContext);
+    const { login, theme, setTheme } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isColdStart, setIsColdStart] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null);
+    const [, setSubmitStatus] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const coldStartTimer = useRef(null);
     const typingTimer = useRef(null);
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-    const { username, email, password } = formData;
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const { email, password } = formData;
 
     // Floating icons configuration — memoized so they don't re-render
     const floatingIcons = useMemo(() => [
@@ -103,11 +101,7 @@ export default function Login() {
         coldStartTimer.current = setTimeout(() => setIsColdStart(true), 5000);
 
         try {
-            if (isLogin) {
-                await login(email, password);
-            } else {
-                await register(username, email, password);
-            }
+            await login(email, password);
             clearTimeout(coldStartTimer.current);
             setSubmitStatus('success');
             setTimeout(() => navigate('/'), 800);
@@ -208,138 +202,104 @@ export default function Login() {
 
                 {/* Authentication Card — Professional Executive Standard */}
                 <GlassCard className={`!p-6 sm:!p-9 shadow-2xl relative rounded-3xl bg-white/95 backdrop-blur-xl border border-[var(--border-color)]/80 ${isTyping ? 'is-typing' : ''}`}>
-                    <AnimatePresence mode="wait">
-                        <motion.div 
-                            key={isLogin ? 'signin' : 'signup'}
-                            initial={{ opacity: 0, x: isLogin ? -10 : 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: isLogin ? 10 : -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="space-y-5 sm:space-y-6"
-                        >
-                            {/* Card Header with Icon & Subtitle */}
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 rounded-xl bg-[var(--bg-accent)]/10 text-[var(--text-accent)] shrink-0 border border-[var(--border-color)]/40">
-                                    {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                </div>
-                                <div>
-                                    <h2 className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
-                                        {isLogin ? 'Sign In' : 'Create Account'}
-                                    </h2>
-                                    <p className="text-xs text-[var(--text-secondary)] font-medium">
-                                        {isLogin ? 'Enter your credentials to access hub' : 'Register your institutional profile'}
-                                    </p>
-                                </div>
+                    <div className="space-y-5 sm:space-y-6">
+                        {/* Card Header with Icon & Subtitle */}
+                        <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl bg-[var(--bg-accent)]/10 text-[var(--text-accent)] shrink-0 border border-[var(--border-color)]/40">
+                                <LogIn size={20} />
                             </div>
+                            <div>
+                                <h2 className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
+                                    Sign In
+                                </h2>
+                                <p className="text-xs text-[var(--text-secondary)] font-medium">
+                                    Enter your credentials to access hub
+                                </p>
+                            </div>
+                        </div>
 
-                            <form onSubmit={onSubmit} className="space-y-4">
-                                {!isLogin && (
-                                    <PremiumInput
-                                        label="Username"
-                                        name="username"
-                                        placeholder="Enter your username"
-                                        value={username}
-                                        onChange={onChange}
-                                        icon={User}
-                                        required
-                                    />
-                                )}
+                        <form onSubmit={onSubmit} className="space-y-4">
+                            <PremiumInput
+                                label="roll number / email"
+                                name="email"
+                                placeholder="teacher1"
+                                value={email}
+                                onChange={onChange}
+                                icon={Mail}
+                                required
+                            />
 
-                                <PremiumInput
-                                    label="roll number / email"
-                                    name="email"
-                                    placeholder="teacher1"
-                                    value={email}
-                                    onChange={onChange}
-                                    icon={Mail}
-                                    required
+                            <PremiumInput
+                                label="password"
+                                name="password"
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={onChange}
+                                icon={Lock}
+                                endIcon={showPassword ? EyeOff : Eye}
+                                onEndIconClick={() => setShowPassword(!showPassword)}
+                                required
+                            />
+
+                            {errorMsg && (
+                                <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    className="bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-bold p-3.5 rounded-xl flex items-center gap-2.5"
+                                >
+                                    <XCircle size={16} className="shrink-0" /> {errorMsg}
+                                </motion.div>
+                            )}
+
+                            <motion.button
+                                whileHover={{ scale: 1.01, y: -1 }}
+                                whileTap={{ scale: 0.99 }}
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="relative w-full py-3.5 rounded-2xl text-white font-extrabold text-sm tracking-wider shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
+                                style={{
+                                    background: 'var(--bg-accent)',
+                                    color: 'var(--text-on-accent)'
+                                }}
+                            >
+                                {/* Subtle Theme Shimmer Sweep Animation */}
+                                <motion.div 
+                                    animate={{ x: ['-100%', '200%'] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none"
                                 />
 
-                                <PremiumInput
-                                    label="password"
-                                    name="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={onChange}
-                                    icon={Lock}
-                                    endIcon={showPassword ? EyeOff : Eye}
-                                    onEndIconClick={() => setShowPassword(!showPassword)}
-                                    required
-                                />
-
-                                {errorMsg && (
-                                    <motion.div 
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        className="bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-bold p-3.5 rounded-xl flex items-center gap-2.5"
-                                    >
-                                        <XCircle size={16} className="shrink-0" /> {errorMsg}
-                                    </motion.div>
-                                )}
-
-                                <motion.button
-                                    whileHover={{ scale: 1.01, y: -1 }}
-                                    whileTap={{ scale: 0.99 }}
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="relative w-full py-3.5 rounded-2xl text-white font-extrabold text-sm tracking-wider shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
-                                    style={{
-                                        background: 'var(--bg-accent)',
-                                        color: 'var(--text-on-accent)'
-                                    }}
-                                >
-                                    {/* Subtle Theme Shimmer Sweep Animation */}
-                                    <motion.div 
-                                        animate={{ x: ['-100%', '200%'] }}
-                                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none"
-                                    />
-
-                                    {/* Button Content */}
-                                    <div className="relative z-10 flex items-center justify-center gap-2.5 text-white">
-                                        {isSubmitting ? (
-                                            <>
-                                                <Loader2 size={18} className="animate-spin text-white" />
-                                                <span className="text-white font-bold" style={{ color: '#ffffff' }}>
-                                                    {isColdStart ? 'waking up server...' : 'verifying credentials...'}
-                                                </span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span className="text-white font-bold" style={{ color: '#ffffff' }}>
-                                                    {isLogin ? 'sign in' : 'create account'}
-                                                </span>
-                                            </>
-                                        )}
-                                    </div>
-                                </motion.button>
-
-                                {isColdStart && isSubmitting && (
-                                    <motion.p
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="text-xs font-bold text-amber-700 text-center"
-                                    >
-                                        Free-tier server is booting up — this can take up to 60 seconds
-                                    </motion.p>
-                                )}
-                            </form>
-
-                            <div className="pt-4 border-t border-slate-100 text-center">
-                                <button 
-                                    onClick={() => setIsLogin(!isLogin)}
-                                    className="text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-all cursor-pointer"
-                                >
-                                    {isLogin ? (
-                                        <>don't have an account? <span className="text-[var(--text-primary)] font-extrabold">sign up</span></>
+                                {/* Button Content */}
+                                <div className="relative z-10 flex items-center justify-center gap-2.5 text-white">
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 size={18} className="animate-spin text-white" />
+                                            <span className="text-white font-bold" style={{ color: '#ffffff' }}>
+                                                {isColdStart ? 'waking up server...' : 'verifying credentials...'}
+                                            </span>
+                                        </>
                                     ) : (
-                                        <>already have an account? <span className="text-[var(--text-primary)] font-extrabold">sign in</span></>
+                                        <>
+                                            <span className="text-white font-bold" style={{ color: '#ffffff' }}>
+                                                sign in
+                                            </span>
+                                        </>
                                     )}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
+                                </div>
+                            </motion.button>
+
+                            {isColdStart && isSubmitting && (
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="text-xs font-bold text-amber-700 text-center"
+                                >
+                                    Free-tier server is booting up — this can take up to 60 seconds
+                                </motion.p>
+                            )}
+                        </form>
+                    </div>
                 </GlassCard>
 
                 {/* Infrastructure Tag */}
