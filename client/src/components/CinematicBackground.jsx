@@ -13,9 +13,14 @@ const CinematicBackground = () => {
       aria-hidden="true"
       style={{
         position: 'fixed',
-        inset: '-10%',
-        width: '120%',
-        height: '120%',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        minWidth: '100vw',
+        minHeight: '100vh',
         zIndex: 0,
         pointerEvents: 'none',
         overflow: 'hidden',
