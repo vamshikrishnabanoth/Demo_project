@@ -47,6 +47,12 @@ async function request(endpoint, options = {}, retryCount = 0) {
         const response = await fetch(url, fetchOptions);
         clearTimeout(timeoutId);
 
+        // Automatically capture sliding refreshed token if issued by authMiddleware
+        const refreshedToken = response.headers.get('x-refreshed-token') || response.headers.get('X-Refreshed-Token');
+        if (refreshedToken) {
+            localStorage.setItem('token', refreshedToken);
+        }
+
         let data;
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {

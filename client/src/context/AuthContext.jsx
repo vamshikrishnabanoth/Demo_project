@@ -123,9 +123,6 @@ export const AuthProvider = ({ children }) => {
         }
         localStorage.removeItem('token');
         setUser(null);
-        setTimeout(() => {
-            if (socket) socket.connect();
-        }, 100);
     }, [user]);
 
     return (
