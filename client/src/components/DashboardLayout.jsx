@@ -87,6 +87,21 @@ export default function DashboardLayout({ children, role }) {
         };
     }, [role, user]);
 
+    // Prevent body scrolling and touch drag while mobile drawer is open
+    React.useEffect(() => {
+        if (mobileOpen || messagesOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.touchAction = 'none';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
+        };
+    }, [mobileOpen, messagesOpen]);
+
     const handleLogout = async () => {
         setMobileOpen(false);
         const result = await showConfirm('Log Out?', 'Are you sure you want to log out?');
@@ -289,84 +304,91 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-dvh w-[300px] max-w-[85vw] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-y-auto"
+                            className="fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-hidden select-none"
                             role="navigation"
                         >
-                            <div className="flex items-center justify-between mb-6 flex-shrink-0">
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-white p-1 rounded-lg shadow-lg">
-                                        <img src="/logo.png" alt="" className="h-6 w-auto" />
-                                    </div>
-                                    <span className="font-black text-sm uppercase italic tracking-tighter text-[var(--text-accent)]">Navigation</span>
-                                </div>
-                                <button 
-                                    onClick={() => setMobileOpen(false)}
-                                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
-
-                            {/* Navigation List — Vertical Stack */}
-                            <nav className="space-y-3 mb-6" aria-label="Mobile navigation">
-                                {links.map((link) => {
-                                    const Icon = link.icon;
-                                    const active = isActive(link.path);
-                                    return (
-                                        <Link
-                                            key={link.path}
-                                            to={link.path}
+                            {/* Drawer Content Wrapper — Justify Space-Between */}
+                            <div className="flex-1 flex flex-col justify-between min-h-0">
+                                {/* Top Header + Menu Items */}
+                                <div className="flex flex-col min-h-0 flex-shrink-0">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-6 flex-shrink-0">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-white p-1 rounded-lg shadow-lg">
+                                                <img src="/logo.png" alt="" className="h-6 w-auto" />
+                                            </div>
+                                            <span className="font-black text-sm uppercase italic tracking-tighter text-[var(--text-accent)]">Navigation</span>
+                                        </div>
+                                        <button 
                                             onClick={() => setMobileOpen(false)}
-                                            className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
-                                                active
-                                                    ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
-                                                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-                                            }`}
+                                            className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5"
                                         >
-                                            <Icon size={18} />
-                                            {link.name}
-                                        </Link>
-                                    );
-                                })}
-
-                                {/* Mobile Vertical Theme Switcher Option */}
-                                <button
-                                    onClick={toggleTheme}
-                                    className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all"
-                                >
-                                    <span className="flex items-center gap-3">
-                                        <span className="text-base">{theme === 'india' ? '🇮🇳' : '🌌'}</span>
-                                        <span>Theme</span>
-                                    </span>
-                                    <span className="text-[10px] font-black text-[var(--text-accent)] italic">
-                                        {theme === 'india' ? 'SAFFRON' : 'CELESTIAL'}
-                                    </span>
-                                </button>
-                            </nav>
-
-                            {/* Drawer Footer — Profile & Logout Integrated */}
-                            <div className="mt-auto pt-6 border-t border-[var(--border-color)] space-y-5 flex-shrink-0">
-                                <div className="px-1">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-2">Active Session</p>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0">
-                                            <User size={20} />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user?.username || 'Pilot'}</p>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-80">{role}</p>
-                                        </div>
+                                            <X size={24} />
+                                        </button>
                                     </div>
+
+                                    {/* Navigation List — Vertical Stack (Scrolls only if content overflows) */}
+                                    <nav className="space-y-3 overflow-y-auto max-h-[calc(100dvh-280px)] premium-scrollbar pr-1 flex-shrink-0" aria-label="Mobile navigation">
+                                        {links.map((link) => {
+                                            const Icon = link.icon;
+                                            const active = isActive(link.path);
+                                            return (
+                                                <Link
+                                                    key={link.path}
+                                                    to={link.path}
+                                                    onClick={() => setMobileOpen(false)}
+                                                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
+                                                        active
+                                                            ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
+                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+                                                    }`}
+                                                >
+                                                    <Icon size={18} />
+                                                    {link.name}
+                                                </Link>
+                                            );
+                                        })}
+
+                                        {/* Mobile Vertical Theme Switcher Option */}
+                                        <button
+                                            onClick={toggleTheme}
+                                            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all"
+                                        >
+                                            <span className="flex items-center gap-3">
+                                                <span className="text-base">{theme === 'india' ? '🇮🇳' : '🌌'}</span>
+                                                <span>Theme</span>
+                                            </span>
+                                            <span className="text-[10px] font-black text-[var(--text-accent)] italic">
+                                                {theme === 'india' ? 'SAFFRON' : 'CELESTIAL'}
+                                            </span>
+                                        </button>
+                                    </nav>
                                 </div>
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full py-3.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm"
-                                    aria-label="Log out"
-                                >
-                                    <LogOut size={18} />
-                                    <span>Log Out</span>
-                                </button>
+                                {/* Drawer Footer — Active Session & Logout Pinned to Bottom */}
+                                <div className="mt-auto pt-6 border-t border-[var(--border-color)] space-y-4 flex-shrink-0">
+                                    <div className="px-1">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-2">Active Session</p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0">
+                                                <User size={20} />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user?.username || 'Pilot'}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-80">{role}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full py-3.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm"
+                                        aria-label="Log out"
+                                    >
+                                        <LogOut size={18} />
+                                        <span>Log Out</span>
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </>
