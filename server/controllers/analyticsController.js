@@ -50,11 +50,42 @@ exports.getQuizAnalytics = async (req, res) => {
             }
         }
 
-        const normalizedQuestions = normalizeQuestions(quiz.questions);
-        const results = await prisma.result.findMany({
-            where: { quizId: quizId, status: 'completed' },
-            include: { student: { select: { username: true, email: true, section: true, studentBranch: true } } }
-        });
+        // Query with 4-second hard timeout for graceful degradation
+        const fetchAnalyticsData = async () => {
+            const normalizedQuestions = normalizeQuestions(quiz.questions);
+            const results = await prisma.result.findMany({
+                where: { quizId: quizId, status: 'completed' },
+                include: { student: { select: { username: true, email: true, section: true, studentBranch: true } } }
+            });
+            return { normalizedQuestions, results };
+        };
+
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('ANALYTICS_TIMEOUT')), 4000)
+        );
+
+        let normalizedQuestions, results;
+        try {
+            const data = await Promise.race([fetchAnalyticsData(), timeoutPromise]);
+            normalizedQuestions = data.normalizedQuestions;
+            results = data.results;
+        } catch (timeoutErr) {
+            console.warn(`[ANALYTICS_DEGRADATION] Quiz ${quizId} analytics query timed out/failed. Serving fallback payload.`);
+            return res.json({
+                degraded: true,
+                quizTitle: quiz.title || 'Live Quiz',
+                topic: quiz.topic || '',
+                totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+                totalParticipants: 0,
+                averageScore: 0,
+                highestScore: 0,
+                scoreDistribution: { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 },
+                questionPerformance: [],
+                sectionPerformance: [],
+                participationRate: { attempted: 0, totalEligible: 0 },
+                leaderboard: []
+            });
+        }
 
         const totalParticipants = results.length;
         if (totalParticipants === 0) {

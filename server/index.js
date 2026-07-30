@@ -177,6 +177,27 @@ if (!fs.existsSync(uploadDir)) {
 // Middleware
 
 // Routes
+const errorMiddleware = require('./middleware/errorMiddleware');
+
+// Health Check Endpoint (Monitors DB and system status)
+app.get('/api/health', async (req, res) => {
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        res.json({
+            status: 'healthy',
+            uptime: process.uptime(),
+            timestamp: new Date().toISOString(),
+            memoryUsage: process.memoryUsage()
+        });
+    } catch (err) {
+        res.status(503).json({
+            status: 'degraded',
+            error: 'Database ping failed',
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/quiz', require('./routes/quiz'));
 app.use('/api/admin', require('./routes/admin'));
@@ -186,6 +207,18 @@ app.use('/api/students', require('./routes/students'));
 app.use('/api/broadcast', require('./routes/broadcast'));
 app.use('/api/developer', require('./routes/developer'));
 app.use('/api/knowledge', require('./routes/knowledge'));
+
+// Global Express Error Middleware Isolation
+app.use(errorMiddleware);
+
+// Unhandled Rejection & Uncaught Exception Process Guards
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('[UNHANDLED_REJECTION_GUARD]', { reason, promise });
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('[UNCAUGHT_EXCEPTION_GUARD]', err);
+});
 
 
 // Socket.io Setup - Secure CORS

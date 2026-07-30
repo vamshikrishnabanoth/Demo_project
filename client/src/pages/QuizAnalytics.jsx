@@ -295,15 +295,15 @@ export default function QuizAnalytics() {
         );
     }
 
-    // Prepare data
+    // Prepare data safely with fallback defaults
     const pieData = [
-        { name: 'Attempted', value: analytics.participationRate.attempted },
-        { name: 'Not Attempted', value: Math.max(0, analytics.participationRate.totalEligible - analytics.participationRate.attempted) }
+        { name: 'Attempted', value: analytics?.participationRate?.attempted || 0 },
+        { name: 'Not Attempted', value: Math.max(0, (analytics?.participationRate?.totalEligible || 0) - (analytics?.participationRate?.attempted || 0)) }
     ];
 
-    const radarData = analytics.sectionPerformance.length > 0 
+    const radarData = (analytics?.sectionPerformance && analytics.sectionPerformance.length > 0) 
         ? analytics.sectionPerformance.map(s => ({ subject: s.section, A: s.averagePercentage, fullMark: 100 }))
-        : [{ subject: 'General', A: analytics.averageScore, fullMark: 100 }];
+        : [{ subject: 'General', A: analytics?.averageScore || 0, fullMark: 100 }];
 
     return (
         <DashboardLayout role={userRole}>
