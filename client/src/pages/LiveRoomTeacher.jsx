@@ -634,9 +634,9 @@ if (socket.connected) {
                     </div>
 
                     {/* Join Code Hub */}
-                    <div onClick={copyCode} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-8 text-white shadow-2xl flex flex-col items-center justify-center min-w-[280px] cursor-pointer group hover:border-[var(--bg-accent)]/50 transition-all active:scale-95 border-b-[8px]">
+                    <div onClick={copyCode} className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-6 sm:p-8 text-white shadow-2xl flex flex-col items-center justify-center w-full sm:w-auto min-w-0 sm:min-w-[240px] cursor-pointer group hover:border-[var(--bg-accent)]/50 transition-all active:scale-95 border-b-[8px]">
                         <p className="text-[var(--text-accent)]/60 text-[10px] font-black uppercase tracking-[0.4em] mb-2">ACCESS CODE</p>
-                        <p className="text-6xl font-black tracking-[0.1em] italic text-[var(--text-accent)] group-hover:scale-110 transition-transform">{joinCode}</p>
+                        <p className="text-4xl sm:text-6xl font-black tracking-[0.1em] italic text-[var(--text-accent)] group-hover:scale-110 transition-transform">{joinCode}</p>
                         <p className="mt-4 flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-widest opacity-60">
                             <Copy size={12} /> CLICK TO SYNC
                         </p>

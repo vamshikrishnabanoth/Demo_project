@@ -440,8 +440,7 @@ export default function QuizAnalytics() {
                     </div>
 
                     {/* Top Students / Leaderboard */}
-                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-lg relative overflow-hidden">
-                        {/* Decorative glow */}
+                    <div className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-4 sm:p-8 shadow-sm overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
                         <div className="flex items-center justify-between mb-8 relative z-10">
@@ -709,8 +708,8 @@ export default function QuizAnalytics() {
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto premium-scrollbar pb-3">
-                            <table className="w-full text-left border-collapse min-w-[800px]">
+                        <div className="w-full overflow-x-auto max-w-full premium-scrollbar">
+                            <table className="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
                                     <tr className="border-b-2 border-slate-200">
                                         <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[80px] text-center" style={{ color: '#334155' }}>Rank</th>

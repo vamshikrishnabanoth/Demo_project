@@ -788,7 +788,7 @@ export default function StudentDashboard() {
                                     <button
                                         onClick={handleLaunchGame}
                                         disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
-                                        className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center justify-center gap-4 transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                        className={`w-full sm:w-auto px-6 sm:px-16 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-xl italic uppercase tracking-wider sm:tracking-[0.25em] flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
                                             (!file && videoUrls.every(u => !u.trim())) || submitting
                                                 ? 'opacity-85 cursor-pointer'
                                                 : 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer'

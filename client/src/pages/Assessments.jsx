@@ -173,7 +173,7 @@ export default function Assessments() {
                 </div>
 
                 {/* Search & Filters Controls */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 bg-white border border-[#9cbcd8] p-6 rounded-[2rem] shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 bg-white border border-[#9cbcd8] p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] shadow-sm">
                     {/* Search */}
                     <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Search</label>

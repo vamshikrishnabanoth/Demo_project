@@ -390,8 +390,8 @@ export default function AdminDashboard() {
                             </div>
                             
                             <div className="flex items-center gap-3">
-                                <PremiumButton variant="secondary" icon={RefreshCw} onClick={fetchUsers} className="!px-6">Sync</PremiumButton>
-                                <PremiumButton variant="primary" icon={Plus} onClick={() => setModal({ isNew: true })}>Provision</PremiumButton>
+                                <PremiumButton variant="primary" icon={RefreshCw} onClick={fetchUsers} className="!px-6 !text-white bg-[var(--bg-accent)]">Sync</PremiumButton>
+                                <PremiumButton variant="primary" icon={Plus} onClick={() => setModal({ isNew: true })} className="!text-white">Provision</PremiumButton>
                             </div>
                         </div>
 
