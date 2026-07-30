@@ -59,6 +59,11 @@
   --bg-accent-glow: rgba(37, 99, 235, 0.2);
   --table-row-hover: rgba(43, 91, 132, 0.05);
 
+  /* Theme 1 (Blue / Celestial): Action Button Palette */
+  --btn-edit: #2563EB;
+  --btn-suspend: #F59E0B;
+  --btn-delete: #EF4444;
+
   --body-bg-color: #DDE8F3;
   --body-bg-image: 
     radial-gradient(at 0% 0%, rgba(19, 62, 135, 0.12) 0px, transparent 55%),
@@ -152,6 +157,11 @@
   --success-bg: #0F7547;
   --bg-accent-glow: rgba(217, 107, 39, 0.22);
   --table-row-hover: rgba(217, 107, 39, 0.04);
+
+  /* Theme 2 (Orange / India): Action Button Palette */
+  --btn-edit: #F97316;
+  --btn-suspend: #EAB308;
+  --btn-delete: #DC2626;
 
   --body-bg-color: #FAF9F6;
   --body-bg-image: 

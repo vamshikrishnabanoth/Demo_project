@@ -9,21 +9,21 @@ import { ShieldCheck, UserCheck, GraduationCap, User } from 'lucide-react';
  */
 export const StatusBadge = ({ label = 'Live', color = 'emerald' }) => {
     const colorClasses = {
-        emerald: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-bold',
-        amber: 'bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400 font-bold',
-        red: 'bg-red-500/15 border-red-500/40 text-red-600 dark:text-red-400 font-bold',
+        emerald: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 font-bold',
+        amber: 'bg-amber-500/15 border-amber-500/40 text-amber-700 font-bold',
+        red: 'bg-red-500/15 border-red-500/40 text-red-700 font-bold',
     };
 
     const dotClasses = {
-        emerald: 'bg-emerald-500 shadow-[0_0_8px_#10b981]',
-        amber: 'bg-amber-500 shadow-[0_0_8px_#f59e0b]',
-        red: 'bg-red-500 shadow-[0_0_8px_#ef4444]',
+        emerald: 'bg-[#10b981] shadow-[0_0_10px_#10b981]',
+        amber: 'bg-[#f59e0b] shadow-[0_0_10px_#f59e0b]',
+        red: 'bg-[#ef4444] shadow-[0_0_10px_#ef4444]',
     };
 
     return (
         <div className={`hidden lg:flex items-center gap-2 px-3.5 py-1.5 border rounded-full ${colorClasses[color] || colorClasses.emerald}`}>
-            <div className={`w-2 h-2 rounded-full animate-pulse shrink-0 ${dotClasses[color] || dotClasses.emerald}`} />
-            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700">{label}</span>
+            <div className={`w-2.5 h-2.5 rounded-full animate-pulse shrink-0 ${dotClasses[color] || dotClasses.emerald}`} />
+            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800">{label}</span>
         </div>
     );
 };

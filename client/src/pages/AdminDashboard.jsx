@@ -485,36 +485,50 @@ export default function AdminDashboard() {
                                                     </td>
                                                     <td className="py-6 px-4 text-right">
                                                         <div className="flex items-center justify-end gap-2.5">
-                                                            {/* Edit Action Button — Warm Amber */}
+                                                            {/* Edit Action Button */}
                                                             <button 
                                                                 onClick={() => setModal({ isNew: false, user: u })}
-                                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-amber-50 hover:bg-amber-500 text-amber-700 hover:text-white border-2 border-amber-300 hover:border-amber-500 transition-all duration-200 shadow-xs active:scale-95 cursor-pointer group"
+                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 cursor-pointer group hover:scale-105"
+                                                                style={{
+                                                                    color: 'var(--btn-edit)',
+                                                                    borderColor: 'var(--btn-edit)',
+                                                                    borderWidth: '2px',
+                                                                    backgroundColor: 'transparent'
+                                                                }}
                                                                 title="Edit Entity"
                                                                 aria-label="Edit User"
                                                             >
                                                                 <Edit3 size={18} strokeWidth={2.25} className="transition-transform group-hover:scale-110" />
                                                             </button>
 
-                                                            {/* Suspend / Reinstate Action Button — Rose or Emerald */}
+                                                            {/* Suspend / Reinstate Action Button */}
                                                             <button 
                                                                 onClick={() => handleSuspend(u)}
                                                                 disabled={u.id === currentUser?.id}
-                                                                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 border-2 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group ${
-                                                                    u.isSuspended 
-                                                                        ? 'bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border-emerald-300 hover:border-emerald-500' 
-                                                                        : 'bg-rose-50 hover:bg-rose-500 text-rose-700 hover:text-white border-rose-300 hover:border-rose-500'
-                                                                }`}
+                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group hover:scale-105"
+                                                                style={{
+                                                                    color: u.isSuspended ? '#10b981' : 'var(--btn-suspend)',
+                                                                    borderColor: u.isSuspended ? '#10b981' : 'var(--btn-suspend)',
+                                                                    borderWidth: '2px',
+                                                                    backgroundColor: 'transparent'
+                                                                }}
                                                                 title={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
                                                                 aria-label={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
                                                             >
                                                                 <Ban size={18} strokeWidth={2.25} className="transition-transform group-hover:rotate-12 group-hover:scale-110" />
                                                             </button>
 
-                                                            {/* Delete Action Button — Crimson Red */}
+                                                            {/* Delete Action Button */}
                                                             <button 
                                                                 onClick={() => handleDelete(u)}
                                                                 disabled={u.id === currentUser?.id}
-                                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border-2 border-red-300 hover:border-red-600 transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group"
+                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group hover:scale-105"
+                                                                style={{
+                                                                    color: 'var(--btn-delete)',
+                                                                    borderColor: 'var(--btn-delete)',
+                                                                    borderWidth: '2px',
+                                                                    backgroundColor: 'transparent'
+                                                                }}
                                                                 title="Purge Identity"
                                                                 aria-label="Delete User"
                                                             >
