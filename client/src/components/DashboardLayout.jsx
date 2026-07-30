@@ -117,15 +117,18 @@ export default function DashboardLayout({ children, role }) {
     const teacherLinks = [
         { name: 'Home',       path: '/teacher-dashboard', icon: LayoutDashboard },
         { name: 'My Quizzes', path: '/my-quizzes',        icon: BookOpen },
+        { name: 'Profile',    path: '/profile',           icon: User },
     ];
     const studentLinks = [
         { name: 'Home',        path: '/student-dashboard', icon: LayoutDashboard },
         { name: 'Assessments', path: '/assessments',       icon: BookOpen },
         { name: 'History',     path: '/history',           icon: History },
+        { name: 'Profile',     path: '/profile',           icon: User },
     ];
     const adminLinks = [
         { name: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
         { name: 'Users',     path: '/admin/users',     icon: User },
+        { name: 'Profile',   path: '/profile',         icon: User },
     ];
 
     const links =
@@ -308,9 +311,9 @@ export default function DashboardLayout({ children, role }) {
                             role="navigation"
                         >
                             {/* Drawer Content Wrapper — Justify Space-Between */}
-                            <div className="flex-1 flex flex-col justify-between min-h-0">
+                            <div className="flex-1 flex flex-col justify-between min-h-0 overflow-hidden">
                                 {/* Top Header + Menu Items */}
-                                <div className="flex flex-col min-h-0 flex-shrink-0">
+                                <div className="flex flex-col min-h-0">
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-6 flex-shrink-0">
                                         <div className="flex items-center gap-3">
@@ -327,8 +330,8 @@ export default function DashboardLayout({ children, role }) {
                                         </button>
                                     </div>
 
-                                    {/* Navigation List — Vertical Stack (Scrolls only if content overflows) */}
-                                    <nav className="space-y-3 overflow-y-auto max-h-[calc(100dvh-280px)] premium-scrollbar pr-1 flex-shrink-0" aria-label="Mobile navigation">
+                                    {/* Navigation List — Vertical Stack */}
+                                    <nav className="space-y-3" aria-label="Mobile navigation">
                                         {links.map((link) => {
                                             const Icon = link.icon;
                                             const active = isActive(link.path);
@@ -369,15 +372,19 @@ export default function DashboardLayout({ children, role }) {
                                 <div className="mt-auto pt-6 border-t border-[var(--border-color)] space-y-4 flex-shrink-0">
                                     <div className="px-1">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-2">Active Session</p>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0">
+                                        <Link 
+                                            to="/profile" 
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[var(--bg-primary)] border border-transparent hover:border-[var(--border-color)] transition-all group cursor-pointer"
+                                        >
+                                            <div className="w-10 h-10 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0 group-hover:scale-105 transition-transform">
                                                 <User size={20} />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-bold text-[var(--text-primary)] truncate">{user?.username || 'Pilot'}</p>
+                                                <p className="text-sm font-bold text-[var(--text-primary)] truncate group-hover:text-[var(--text-accent)] transition-colors">{user?.username || 'Pilot'}</p>
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-80">{role}</p>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </div>
 
                                     <button
