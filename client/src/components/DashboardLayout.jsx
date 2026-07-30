@@ -90,15 +90,21 @@ export default function DashboardLayout({ children, role }) {
     // Prevent body scrolling and touch drag while mobile drawer is open
     React.useEffect(() => {
         if (mobileOpen || messagesOpen) {
+            document.body.classList.add('sidebar-open');
             document.body.style.overflow = 'hidden';
             document.body.style.touchAction = 'none';
+            document.body.style.height = '100dvh';
         } else {
+            document.body.classList.remove('sidebar-open');
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
+            document.body.style.height = '';
         }
         return () => {
+            document.body.classList.remove('sidebar-open');
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
+            document.body.style.height = '';
         };
     }, [mobileOpen, messagesOpen]);
 
@@ -307,7 +313,7 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-hidden select-none"
+                            className="mobile-sidebar-drawer fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-6 overflow-y-auto overscroll-contain select-none"
                             role="navigation"
                         >
                             {/* Drawer Content Wrapper — Justify Space-Between */}
