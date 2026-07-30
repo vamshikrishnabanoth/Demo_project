@@ -13,6 +13,11 @@ import { showError } from '../utils/alerts';
  *  4. Continuous Focus Loss: 30s warning, 60s (1 min) auto-submits & terminates student to report page
  *  5. DevTools & Screenshot shortcut blocking
  *  6. Copy/Paste/Cut/ContextMenu blocking
+ *
+ * CRITICAL GUARDS:
+ *  - Never log violations on initial mount / before fullscreen is first confirmed
+ *  - Only log split-screen after user has been confirmed in fullscreen at least once
+ *  - Only log fullscreen exit after user was previously IN fullscreen (not on load)
  */
 export default function useExamProctoring({
     enabled = false,
@@ -29,6 +34,15 @@ export default function useExamProctoring({
     const [isTerminated, setIsTerminated] = useState(false);
 
     const autoSubmittedRef = useRef(false);
+
+    // ── Guard Refs ────────────────────────────────────────────────────────────
+    // hasEnteredFullscreen: true only after the student has been CONFIRMED in fullscreen at least once.
+    // Prevents false positives on initial page load where browser is not in fullscreen yet.
+    const hasEnteredFullscreenRef = useRef(false);
+
+    // isInitialCheckRef: true during the very first checkScreenIntegrity call on mount.
+    // We skip violation logging on the very first check (the "baseline" check).
+    const isInitialCheckRef = useRef(true);
 
     // Trigger auto-submit once & terminate student session silently
     const triggerAutoSubmit = useCallback((reason) => {
@@ -81,6 +95,7 @@ export default function useExamProctoring({
             if (!document.fullscreenElement) {
                 await document.documentElement.requestFullscreen();
                 setIsFullscreen(true);
+                hasEnteredFullscreenRef.current = true;
             }
         } catch (e) {
             console.warn('Fullscreen request failed:', e);
@@ -90,25 +105,46 @@ export default function useExamProctoring({
     useEffect(() => {
         if (!enabled || isTerminated) return;
 
-        // Automatically request fullscreen on mount
+        // Request fullscreen on mount — only triggers when enabled (quiz started, not during lobby)
         requestFullscreenMode();
+
+        // Reset the initial check guard for this mount
+        isInitialCheckRef.current = true;
 
         const checkScreenIntegrity = () => {
             const inFS = !!document.fullscreenElement;
             setIsFullscreen(inFS);
 
-            if (!inFS && !autoSubmittedRef.current) {
-                recordViolation('exited_fullscreen');
+            // Track when student first enters fullscreen
+            if (inFS && !hasEnteredFullscreenRef.current) {
+                hasEnteredFullscreenRef.current = true;
             }
 
+            // ── FULLSCREEN EXIT VIOLATION ──────────────────────────────────
+            // Only log if:
+            //   a) NOT the very first check (isInitialCheckRef)
+            //   b) Student WAS previously in fullscreen (hasEnteredFullscreenRef)
+            //   c) Quiz has not been auto-submitted
+            if (!inFS && !autoSubmittedRef.current) {
+                if (!isInitialCheckRef.current && hasEnteredFullscreenRef.current) {
+                    recordViolation('exited_fullscreen');
+                }
+            }
+
+            // Clear the initial check flag after first run
+            isInitialCheckRef.current = false;
+
+            // ── SPLIT-SCREEN / RESIZE VIOLATION ───────────────────────────
             // Detect split-screen / dimension anomalies
+            // Only flag if student HAS been in fullscreen before (not on initial load)
             const widthDiff = window.screen.availWidth - window.innerWidth;
             const heightDiff = window.screen.availHeight - window.innerHeight;
-            const splitDetected = !inFS || widthDiff > 25 || heightDiff > 45;
+            // Split detected only when student left fullscreen AND window is significantly reduced
+            const splitDetected = !inFS && hasEnteredFullscreenRef.current && (widthDiff > 25 || heightDiff > 45);
 
             setIsSplitScreen(splitDetected);
 
-            if (splitDetected && quizId && userId) {
+            if (splitDetected && quizId && userId && !isInitialCheckRef.current) {
                 socket.emit('student_cheated_alert', {
                     quizId,
                     studentId: userId,
@@ -123,11 +159,17 @@ export default function useExamProctoring({
             }
         };
 
-        checkScreenIntegrity();
+        // Small delay before the initial check so requestFullscreen() can resolve first
+        // This prevents a race where checkScreenIntegrity fires before the async requestFullscreen completes
+        const initialCheckTimer = setTimeout(() => {
+            checkScreenIntegrity();
+        }, 500);
+
         window.addEventListener('resize', checkScreenIntegrity);
         document.addEventListener('fullscreenchange', checkScreenIntegrity);
 
         return () => {
+            clearTimeout(initialCheckTimer);
             window.removeEventListener('resize', checkScreenIntegrity);
             document.removeEventListener('fullscreenchange', checkScreenIntegrity);
         };
@@ -139,6 +181,7 @@ export default function useExamProctoring({
 
         const handleVisibilityChange = () => {
             if (document.hidden) {
+                // Only record tab switches after quiz has started (hasEnteredFullscreen = true for live)
                 setTabSwitchCount((prevCount) => {
                     const newCount = prevCount + 1;
 
@@ -231,6 +274,8 @@ export default function useExamProctoring({
         window.addEventListener('blur', handleBlur);
         window.addEventListener('focus', handleFocus);
 
+        // Only start focus timer if window is ALREADY not focused when effect runs
+        // (and only after quiz is active, which is guaranteed by `enabled` gate)
         if (!document.hasFocus() || document.hidden) {
             startFocusTimer();
         }
@@ -311,4 +356,3 @@ export default function useExamProctoring({
         requestFullscreenMode
     };
 }
-

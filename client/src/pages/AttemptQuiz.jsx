@@ -154,6 +154,14 @@ export default function AttemptQuiz() {
             setTimeLeft(prev => prev + additionalSeconds);
         });
 
+        // When teacher starts the quiz, update the quiz status in local state so
+        // the proctoring gate (quiz.status === 'started') becomes true and
+        // fullscreen is requested at the correct moment.
+        socket.on('quiz_started', () => {
+            console.log('[AttemptQuiz] quiz_started event received — activating proctoring gate.');
+            setQuiz(prev => prev ? { ...prev, status: 'started' } : prev);
+        });
+
         socket.on('quiz_ended', async () => {
             // Results are already saved via socket events during the quiz.
             // Navigate to analytics page after a small delay to allow server finalization.
@@ -267,8 +275,8 @@ export default function AttemptQuiz() {
                             quizId: id,
                             user: {
                                 username: currentUser.username,
-                                role: 'student',
-                                _id: currentUser.id
+                                role: currentUser.role || 'student',
+                                _id: currentUser.id || currentUser._id
                             }
                         });
                     }
@@ -277,15 +285,28 @@ export default function AttemptQuiz() {
                         quizId: id,
                         user: {
                             username: currentUser.username,
-                            role: 'student',
-                            _id: currentUser.id
+                            role: currentUser.role || 'student',
+                            _id: currentUser.id || currentUser._id
                         }
                     });
                 }
             }
         };
 
+        const handleErrorAlert = (data) => {
+            console.error('[AttemptQuiz] Socket error_alert:', data);
+            toast.error(data?.msg || 'Live connection error.');
+            setWaitingForState(false);
+        };
+
+        const handleConnectError = (err) => {
+            console.error('[AttemptQuiz] Socket connect_error:', err);
+            setWaitingForState(false);
+        };
+
         socket.on('connect', handleConnect);
+        socket.on('error_alert', handleErrorAlert);
+        socket.on('connect_error', handleConnectError);
         ensureSocketConnected();
         if (socket.connected) {
             handleConnect();
@@ -324,12 +345,15 @@ export default function AttemptQuiz() {
 
         return () => {
             socket.off('quiz_ended');
+            socket.off('quiz_started');
             socket.off('timer_update');
             socket.off('sync_timer');
             socket.off('change_question');
             socket.off('restoreState');
             socket.off('connect', handleConnect);
             socket.off('disconnect');
+            socket.off('error_alert', handleErrorAlert);
+            socket.off('connect_error', handleConnectError);
             socket.off('answer_feedback');
             socket.off('participants_update');
             socket.off('student_progress_update');
@@ -462,8 +486,17 @@ export default function AttemptQuiz() {
         }, 1000);
     }, [id, submitQuiz, navigate]);
 
+    // Determine if proctoring should be active:
+    // - For LIVE quizzes: only when quiz status is 'started' AND not waiting for state sync
+    //   (prevents fullscreen prompt and false violations in the lobby/waiting room)
+    // - For SELF-PACED quizzes: when quiz is loaded and not in review/result mode
+    const isProctoringActive = !loading && !submitting && !result && !!quiz &&
+        (quiz.isLive
+            ? quiz.status === 'started' && !waitingForState
+            : true);
+
     const { isFullscreen, requestFullscreenMode, isTerminated } = useExamProctoring({
-        enabled: !loading && !submitting && !result && !!quiz,
+        enabled: isProctoringActive,
         quizId: quiz?.id || id,
         userId: authUser?.id || authUser?._id,
         maxTabSwitches: 2,

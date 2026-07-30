@@ -65,6 +65,38 @@
     radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
     radial-gradient(at 50% 100%, rgba(168, 197, 226, 0.25) 0px, transparent 50%);
 
+  --text-on-dark: #ffffff;
+  
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+
+  --shadow-sm: var(--card-shadow-sm, 0 2px 8px -1px rgba(0, 0, 0, 0.06));
+  --shadow-md: var(--card-shadow-md, 0 8px 24px -4px rgba(0, 0, 0, 0.1));
+  --shadow-lg: var(--card-shadow-lg, 0 16px 40px -8px rgba(0, 0, 0, 0.15));
+  --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 24px var(--bg-accent-glow);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
   --z-negative: -1;
   --z-base: 1;
   --z-card: 10;
@@ -129,9 +161,20 @@
 }
 
 /* ─── GLOBAL FOCUS OUTLINE & RING OVERRIDES ─────────────────────────────── */
-*:focus,
+/* WCAG 2.2 SC 2.4.11: Never globally suppress focus outlines.
+   We only remove the browser default ring and replace it with our
+   design-system ring via the theme-scoped rules below.
+   Elements outside a themed container get the universal fallback ring. */
+*:focus {
+  outline: none; /* Removes default browser ring only — replaced below */
+}
+
+/* Universal fallback: any focusable element without a theme-scoped override
+   still gets a clearly visible ring (satisfies WCAG 2.2) */
 *:focus-visible {
-  outline: none !important;
+  outline: 2px solid var(--bg-accent, #133E87);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(19, 62, 135, 0.2);
 }
 
 [data-theme="india"] input:focus,
@@ -321,7 +364,7 @@ html {
   transition: all 450ms cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(19, 62, 135, 0.3);
+  box-shadow: 0 4px 14px var(--bg-accent-glow, rgba(19, 62, 135, 0.3));
 }
 
 .sparkle-btn .sparkle,
@@ -335,10 +378,11 @@ html {
 .sparkle-btn .text,
 .btn-sparkle .text {
   font-weight: 700;
-  color: #CBDCEB;
+  color: #ffffff;
   transition: all 450ms ease-in-out;
 }
 
+/* Default (Celestial) sparkle hover — blue gradient */
 .sparkle-btn:hover:not(:disabled),
 .btn-sparkle:hover:not(:disabled) {
   background: linear-gradient(0deg, #2563EB, #133E87) !important;
@@ -347,6 +391,18 @@ html {
     inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
     0px 0px 0px 4px rgba(255, 255, 255, 0.2),
     0px 0px 80px 0px #2563eb !important;
+  transform: translateY(-2px);
+}
+
+/* India theme sparkle hover — saffron gradient */
+[data-theme="india"] .sparkle-btn:hover:not(:disabled),
+[data-theme="india"] .btn-sparkle:hover:not(:disabled) {
+  background: linear-gradient(0deg, #C1581E, #D96B27) !important;
+  box-shadow:
+    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 4px rgba(217, 107, 39, 0.2),
+    0px 0px 80px 0px #D96B27 !important;
   transform: translateY(-2px);
 }
 
@@ -499,61 +555,29 @@ header.dashboard-header:hover {
 }
 
 /* ─── CONTRAST & VISIBILITY REACTION RULES ──── */
-body, h1, h2, h3, h4, h5, h6, p, span, label, input, select, textarea {
-  color: #0f172a;
+/* Use design system tokens rather than brute-force color overrides */
+body {
+  color: var(--text-primary);
 }
 
-/* Force dark text ONLY on light backgrounds, not inside buttons or dark badges */
-*:not(button):not(button *):not(.Btn):not(.Btn *):not(.button-fly):not(.button-fly *):not(.btn-cinematic):not(.badge-sand):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-navy-"]):not(.bg-slate-900):not(.bg-slate-800) > .text-white,
-h1.text-white:not(button *), 
-h2.text-white:not(button *), 
-h3.text-white:not(button *), 
-h4.text-white:not(button *), 
-p.text-white:not(button *), 
-span.text-white:not(button *):not(.sign *) {
-  color: #0f172a !important;
-}
-
-*:not(button):not(button *) > .text-white\/40,
-*:not(button):not(button *) > .text-white\/50,
-*:not(button):not(button *) > .text-white\/60,
-*:not(button):not(button *) > .text-white\/70,
-*:not(button):not(button *) > .text-white\/80 {
-  color: #334155 !important;
-}
-
-.text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700 {
-  color: #334155 !important;
-}
-
-/* Clean White Section Cards with Powder Blue Border */
-.bg-white\/5, .bg-white\/10, .bg-white\/\[0\.01\], .bg-white\/\[0\.03\], .bg-white {
-  background-color: #ffffff !important;
-  border-color: #9cbcd8 !important;
-  box-shadow: 0 4px 12px -2px rgba(30, 41, 59, 0.06) !important;
-}
-
-/* Dropdown Select Boxes & Standalone Inputs */
+/* Ensure inputs and selects fit theme standard */
 select, 
 .input-cinematic select,
-select.bg-slate-900,
-select.bg-slate-800,
-select.text-white,
 form input[type="text"]:not(.bg-transparent),
 form input[type="password"]:not(.bg-transparent),
 form input[type="email"]:not(.bg-transparent),
 .input-cinematic {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border: 1.5px solid #9cbcd8 !important;
-  font-weight: 700;
+  background-color: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #0f172a);
+  border: 1.5px solid var(--border-color, #9cbcd8);
+  font-weight: 600;
 }
 
 select option,
 select option.text-white,
 select option.bg-slate-900 {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
+  background-color: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #0f172a);
   font-weight: 600;
 }
 
@@ -2045,6 +2069,173 @@ input.global-search-input:focus,
   box-shadow: none !important;
 }
 
+/* ─── PREMIUM SPINNER RING ─────────────────────────────────────────────── */
+/* Used across analytics, quiz, and broadcasting pages during loading states */
+@keyframes spinnerRotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
+.premium-spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--bg-accent);
+  animation: spinnerRotate 1.1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.premium-spinner-ring:nth-child(2) {
+  width: 75%;
+  height: 75%;
+  top: 12.5%;
+  left: 12.5%;
+  border-top-color: var(--neural-sub, #2b5b84);
+  animation-duration: 0.85s;
+  animation-direction: reverse;
+}
+
+.premium-spinner-ring:nth-child(3) {
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  left: 25%;
+  border-top-color: var(--neural-neutral, #334155);
+  animation-duration: 0.65s;
+}
+
+/* ─── INDIA THEME — ADDITIONAL OVERRIDES FOR TEAL/INDIGO/EMERALD CLASSES ─ */
+/* These Tailwind colors appear in analytics backgrounds, quiz pages, etc.  */
+/* and must be overridden to use saffron/emerald for India theme consistency  */
+
+[data-theme="india"] .bg-teal-500\/10,
+[data-theme="india"] .bg-teal-400\/10,
+[data-theme="india"] .bg-teal-300\/10,
+[data-theme="india"] [class*="bg-teal-"] {
+  background-color: rgba(15, 117, 71, 0.08) !important;
+}
+
+[data-theme="india"] .text-teal-500,
+[data-theme="india"] .text-teal-600,
+[data-theme="india"] .text-teal-700,
+[data-theme="india"] [class*="text-teal-"] {
+  color: #0F7547 !important;
+}
+
+[data-theme="india"] .border-teal-500,
+[data-theme="india"] .border-teal-400,
+[data-theme="india"] [class*="border-teal-"] {
+  border-color: rgba(15, 117, 71, 0.3) !important;
+}
+
+[data-theme="india"] .bg-purple-500\/10,
+[data-theme="india"] .bg-purple-400\/10,
+[data-theme="india"] [class*="bg-purple-"]:not(.bg-white) {
+  background-color: rgba(217, 107, 39, 0.08) !important;
+}
+
+[data-theme="india"] .text-purple-500,
+[data-theme="india"] .text-purple-600,
+[data-theme="india"] [class*="text-purple-"] {
+  color: #D96B27 !important;
+}
+
+[data-theme="india"] .bg-emerald-500\/10,
+[data-theme="india"] .bg-emerald-400\/10,
+[data-theme="india"] [class*="bg-emerald-"]:not(.bg-white) {
+  background-color: rgba(15, 117, 71, 0.08) !important;
+}
+
+[data-theme="india"] .text-emerald-500,
+[data-theme="india"] .text-emerald-600,
+[data-theme="india"] [class*="text-emerald-"] {
+  color: #0F7547 !important;
+}
+
+/* Override border-white/10 and border-white/20 for India theme header separators */
+[data-theme="india"] .border-white\/10 {
+  border-color: rgba(217, 107, 39, 0.12) !important;
+}
+
+[data-theme="india"] .border-white\/20 {
+  border-color: rgba(217, 107, 39, 0.2) !important;
+}
+
+/* ─── CELESTIAL THEME — Additional consistency overrides ──────────────── */
+[data-theme="celestial"] .border-white\/10 {
+  border-color: rgba(19, 62, 135, 0.10) !important;
+}
+
+[data-theme="celestial"] .border-white\/20 {
+  border-color: rgba(19, 62, 135, 0.15) !important;
+}
+
+/* ─── PRODUCTION MICRO-ANIMATIONS & ACCESSIBILITY ──────────────────────── */
+@keyframes entranceSlide {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+}
+
+.animate-entrance-slide {
+  animation: entranceSlide var(--motion-medium, 250ms) var(--ease-premium, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
+}
+
+.animate-pop-in {
+  animation: popIn var(--motion-medium, 250ms) var(--ease-premium, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+.card-hover-effect {
+  transition: transform var(--transition-normal, 250ms ease), box-shadow var(--transition-normal, 250ms ease), border-color var(--transition-normal, 250ms ease);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Accessibility: Min Touch Target sizing (≥ 44px) */
+.touch-target-min {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 

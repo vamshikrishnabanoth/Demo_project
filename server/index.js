@@ -31,6 +31,7 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
+const { gradeAnswer } = require('./utils/grading');
 const { exec } = require('child_process');
 
 const app = express();
@@ -210,6 +211,20 @@ app.set('io', io);
 const userSockets = new Map(); // Keep this globally declared and track sockets below
 app.set('userSockets', userSockets);
 
+// Per-socket rate limiter for high-frequency events (prevents DoS via event spam)
+// Key: `${socketId}:${eventName}`, Value: timestamp of last emit
+const socketRateLimit = new Map();
+
+// Helper: returns true if this socket+event is within rate limit window
+const isSocketRateLimited = (socketId, eventName, windowMs = 500) => {
+    const key = `${socketId}:${eventName}`;
+    const now = Date.now();
+    const last = socketRateLimit.get(key) || 0;
+    if (now - last < windowMs) return true; // still within cooldown
+    socketRateLimit.set(key, now);
+    return false;
+};
+
 // JWT Socket Authentication Middleware
 const jwt = require('jsonwebtoken');
 io.use(async (socket, next) => {
@@ -288,7 +303,12 @@ io.on('connection', async (socket) => {
                 where: { id: userId },
                 data: { isOnline: true }
             });
-            io.emit('user_status_change', { userId, isOnline: true });
+            // Scoped broadcast: only to rooms this user participates in (not all connected sockets)
+            for (const [quizId, participants] of roomParticipants.entries()) {
+                if (participants.some(p => (p._id || p.id) === userId)) {
+                    io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+                }
+            }
         } catch (err) {
             console.error('Error updating online status on connect:', err);
         }
@@ -314,7 +334,13 @@ io.on('connection', async (socket) => {
                 where: { id: userId },
                 data: { isOnline: true }
             });
-            io.emit('user_status_change', { userId, isOnline: true });
+            });
+            // Scoped broadcast: only to rooms this user participates in
+            for (const [quizId, participants] of roomParticipants.entries()) {
+                if (participants.some(p => (p._id || p.id) === userId)) {
+                    io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+                }
+            }
         } catch (err) {
             console.error('Error updating online status:', err);
         }
@@ -331,7 +357,12 @@ io.on('connection', async (socket) => {
                 data: { isOnline: false }
             });
             userSockets.delete(userId);
-            io.emit('user_status_change', { userId, isOnline: false });
+            // Scoped broadcast: only to rooms this user participates in
+            for (const [quizId, participants] of roomParticipants.entries()) {
+                if (participants.some(p => (p._id || p.id) === userId)) {
+                    io.to(quizId).emit('user_status_change', { userId, isOnline: false });
+                }
+            }
             console.log(`User ${userId} logged out securely and marked offline`);
         } catch (err) {
             console.error('Error on logout status update:', err);
@@ -346,9 +377,11 @@ io.on('connection', async (socket) => {
             return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
         }
 
-        const clientUsername = user?.username ? user.username.toString().trim() : socket.user.username;
-        if (clientUsername.toLowerCase() !== socket.user.username.toLowerCase()) {
-            console.warn(`[Security Alert] join_room username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${socket.user.username})`);
+        const clientUsername = (user?.username || socket.user.username || '').toString().trim();
+        const verifiedUsername = (socket.user.username || '').toString().trim();
+
+        if (clientUsername.toLowerCase() !== verifiedUsername.toLowerCase()) {
+            console.warn(`[Security Alert] join_room username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${verifiedUsername})`);
             return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
@@ -367,14 +400,14 @@ io.on('connection', async (socket) => {
         });
 
         // Track this socket's association for disconnect cleanup
-        socketToUser.set(socket.id, { quizId, username: socket.user.username });
+        socketToUser.set(socket.id, { quizId, username: verifiedUsername });
 
         if (!roomParticipants.has(quizId)) {
             roomParticipants.set(quizId, []);
         }
 
         const participants = roomParticipants.get(quizId);
-        const existingIdx = participants.findIndex(p => p.username === socket.user.username);
+        const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
         // Reconstruct secure user properties from JWT context
         const secureUser = {
@@ -467,21 +500,23 @@ io.to(quizId).emit(
             return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
         }
 
-        const clientUsername = user?.username ? user.username.toString().trim() : socket.user.username;
-        if (clientUsername.toLowerCase() !== socket.user.username.toLowerCase()) {
-            console.warn(`[Security Alert] reconnectUser username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${socket.user.username})`);
+        const clientUsername = (user?.username || socket.user.username || '').toString().trim();
+        const verifiedUsername = (socket.user.username || '').toString().trim();
+
+        if (clientUsername.toLowerCase() !== verifiedUsername.toLowerCase()) {
+            console.warn(`[Security Alert] reconnectUser username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${verifiedUsername})`);
             return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
         socket.join(quizId);
-        socketToUser.set(socket.id, { quizId, username: socket.user.username });
+        socketToUser.set(socket.id, { quizId, username: verifiedUsername });
 
         if (!roomParticipants.has(quizId)) {
             roomParticipants.set(quizId, []);
         }
 
         const participants = roomParticipants.get(quizId);
-        const existingIdx = participants.findIndex(p => p.username === socket.user.username);
+        const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
         const secureUser = {
             _id: socket.user.id,
@@ -914,6 +949,11 @@ io.to(quizId).emit(
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
 
+        // RATE LIMIT: prevent answer-spam DoS (500ms per-socket cooldown)
+        if (isSocketRateLimited(socket.id, 'submit_question_answer', 500)) {
+            return; // Silent drop — legitimate clients debounce on submit, won't hit this
+        }
+
         // Ensure questionIndex is an integer
         questionIndex = parseInt(questionIndex);
         console.log(`Secure Student ${studentId} submitted answer for question ${questionIndex}`);
@@ -974,24 +1014,8 @@ io.to(quizId).emit(
             if (quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
 
-                // Extra robust normalization
-                const studentAnswer = (answer || "").toString().trim().toLowerCase();
-                const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
-
-                let isCorrect = studentAnswer === correctAnswer;
-
-                // Fallback for AI-generated labels (A, B, C...) or indices (0, 1, 2...)
-                if (!isCorrect && question.options) {
-                    const labels = ['a', 'b', 'c', 'd', 'e'];
-                    const labelIdx = labels.indexOf(correctAnswer);
-                    if (labelIdx !== -1 && question.options[labelIdx]) {
-                        isCorrect = studentAnswer === question.options[labelIdx].toString().trim().toLowerCase();
-                    } else if (correctAnswer !== '' && !isNaN(correctAnswer) && question.options[parseInt(correctAnswer)]) {
-                        isCorrect = studentAnswer === question.options[parseInt(correctAnswer)].toString().trim().toLowerCase();
-                    }
-                }
-
-                const points = isCorrect ? (question.points || 10) : 0;
+                // Use shared grading utility (eliminates duplicated grading logic)
+                const { isCorrect, points } = gradeAnswer(answer, question);
 
                 const existingAnswerIndex = result.answers.findIndex(
                     a => a.questionText === question.questionText
@@ -1111,31 +1135,38 @@ io.to(quizId).emit(
                     isCorrect
                 });
 
-                // Leaderboard calculation with speed tie-breaker
-                const allResults = await prisma.result.findMany({
-                    where: { quizId: quizId },
-                    include: { student: { select: { username: true } } }
+                // ── IN-MEMORY LEADERBOARD UPDATE (eliminates N+1 DB query per answer) ──
+                // Only update the one student who just submitted — no DB query needed.
+                const currentState = roomState.get(quizId) || {};
+                const inMemLeaderboard = [...(currentState.leaderboard || [])];
+                const studentName = result.student?.username || 'Unknown';
+                const existingEntryIdx = inMemLeaderboard.findIndex(e => e.studentId === studentId);
+
+                const updatedEntry = {
+                    studentId,
+                    username: studentName,
+                    currentScore: updatedScore,
+                    totalTimeTaken: updatedTime,
+                    lastAnsweredAt: new Date(),
+                    answeredQuestions: updatedAnswers.length,
+                };
+
+                if (existingEntryIdx >= 0) {
+                    inMemLeaderboard[existingEntryIdx] = updatedEntry;
+                } else {
+                    inMemLeaderboard.push(updatedEntry);
+                }
+
+                // Sort in-memory: score DESC → time ASC → timestamp ASC
+                inMemLeaderboard.sort((a, b) => {
+                    if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                    if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
+                    return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                 });
+                const leaderboard = inMemLeaderboard.map((item, index) => ({ ...item, rank: index + 1 }));
 
-                const leaderboard = allResults
-                    .map(r => ({
-                        studentId: r.studentId,
-                        username: r.student?.username || 'Unknown',
-                        currentScore: r.score,
-                        totalTimeTaken: r.totalTimeTaken || 0,
-                        lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
-                        answeredQuestions: r.answers.length
-                    }))
-                    .sort((a, b) => {
-                        if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
-                        if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
-                        return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
-                    })
-                    .map((item, index) => ({ ...item, rank: index + 1 }));
-
-                // Track leaderboard in state
-                const updatedState = roomState.get(quizId) || {};
-                roomState.set(quizId, { ...updatedState, leaderboard });
+                // Persist updated leaderboard back to roomState
+                roomState.set(quizId, { ...currentState, leaderboard });
 
                 io.to(quizId).emit('question_leaderboard', {
                     questionIndex,
@@ -1160,23 +1191,9 @@ io.to(quizId).emit(
 
             if (quiz && result && quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
-                const studentAnswer = (answer || "").toString().trim().toLowerCase();
-                const correctAnswer = (question.correctAnswer || "").toString().trim().toLowerCase();
 
-                let isCorrect = studentAnswer === correctAnswer;
-
-                // Fallback for AI-generated labels (A, B, C...) or indices (0, 1, 2...)
-                if (!isCorrect && question.options) {
-                    const labels = ['a', 'b', 'c', 'd', 'e'];
-                    const labelIdx = labels.indexOf(correctAnswer);
-                    if (labelIdx !== -1 && question.options[labelIdx]) {
-                        isCorrect = studentAnswer === question.options[labelIdx].toString().trim().toLowerCase();
-                    } else if (correctAnswer !== '' && !isNaN(correctAnswer) && question.options[parseInt(correctAnswer)]) {
-                        isCorrect = studentAnswer === question.options[parseInt(correctAnswer)].toString().trim().toLowerCase();
-                    }
-                }
-
-                const points = isCorrect ? (question.points || 10) : 0;
+                // Use shared grading utility (eliminates duplicated grading logic)
+                const { isCorrect, points } = gradeAnswer(answer, question);
 
                 // Update result with new answer
                 const updatedAnswers = [...result.answers, {
@@ -1286,6 +1303,13 @@ participants[idx].socketId = null;
             }
         }
     }
+
+    // Clean up rate limiter entries for this socket ID
+    for (const key of socketRateLimit.keys()) {
+        if (key.startsWith(`${socket.id}:`)) {
+            socketRateLimit.delete(key);
+        }
+    }
 });
 });
 
@@ -1330,10 +1354,14 @@ app.use((err, req, res, _next) => {
 
     // Generic error — mask internals in production
     const statusCode = err.statusCode || err.status || 500;
+    const isProduction = process.env.NODE_ENV === 'production';
     res.status(statusCode).json({
-        msg: err.message || 'Internal server error',
-        stack: err.stack,
+        msg: isProduction && statusCode === 500
+            ? 'Internal server error'
+            : (err.message || 'Internal server error'),
         requestId: req.requestId,
+        // Stack and details only exposed in development
+        ...(isProduction ? {} : { stack: err.stack, detail: err.message }),
     });
 });
 
@@ -1428,22 +1456,28 @@ server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
-    // Run database schema push asynchronously after the server binds to the port.
-    // This allows Render container health checks to pass instantly.
-    setImmediate(() => {
-        try {
-            console.log('🔄 Ensuring database schema is up-to-date (asynchronous check)...');
-            exec('npx prisma db push --accept-data-loss', (error, stdout, stderr) => {
-                if (error) {
-                    console.error('❌ Failed to update database schema:', error.message);
-                    return;
-                }
-                console.log('✅ Database schema update complete!');
-                if (stdout) console.log(`[Prisma DB Push Out]: ${stdout}`);
-                if (stderr) console.error(`[Prisma DB Push Err]: ${stderr}`);
-            });
-        } catch (err) {
-            console.error('❌ Failed to initiate database schema update:', err.message);
-        }
-    });
+    // SAFE: Only run auto-migration in development.
+    // In production, migrations MUST be run via CI/CD pipeline using:
+    //   npx prisma migrate deploy
+    // NEVER use `prisma db push --accept-data-loss` in production — it can silently drop columns.
+    if (process.env.NODE_ENV !== 'production') {
+        setImmediate(() => {
+            try {
+                console.log('🔄 [Dev] Ensuring database schema is up-to-date...');
+                exec('npx prisma migrate deploy', (error, stdout, stderr) => {
+                    if (error) {
+                        console.error('❌ [Dev] Failed to apply migrations:', error.message);
+                        return;
+                    }
+                    console.log('✅ [Dev] Migration complete!');
+                    if (stdout) console.log(`[Prisma Migrate]: ${stdout}`);
+                    if (stderr) console.error(`[Prisma Migrate Err]: ${stderr}`);
+                });
+            } catch (err) {
+                console.error('❌ [Dev] Failed to initiate migration:', err.message);
+            }
+        });
+    } else {
+        console.log('🟢 [Production] Skipping auto-migration. Run `npx prisma migrate deploy` in CI/CD.');
+    }
 });

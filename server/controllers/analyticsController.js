@@ -180,7 +180,7 @@ exports.getQuizAnalytics = async (req, res) => {
                     select: { username: true, name: true, email: true, section: true }
                 }
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { timestamp: 'desc' }
         });
 
         const formattedCheatingLogs = cheatingLogs.map(log => ({
@@ -191,7 +191,7 @@ exports.getQuizAnalytics = async (req, res) => {
             studentRollNumber: log.student?.username || log.studentRollNumber || 'N/A',
             action: log.action,
             details: log.details,
-            createdAt: log.createdAt || log.timestamp
+            createdAt: log.timestamp  // CheatingLog uses `timestamp` field (no createdAt in schema)
         }));
 
         res.json({

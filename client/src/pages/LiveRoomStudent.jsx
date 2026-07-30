@@ -119,6 +119,7 @@ export default function LiveRoomStudent() {
         const handleConnect = () => {
             if (user) {
                 console.log('[LiveRoomStudent] Socket connected. Emitting join_room / reconnectUser...');
+                ensureSocketConnected();
                 const sessionStr = localStorage.getItem(`live_quiz_session_student_${quiz.id}`);
                 if (sessionStr) {
                     try {
@@ -148,11 +149,17 @@ export default function LiveRoomStudent() {
             toast.error(data?.msg || 'Socket connection issue');
         };
 
+        const handleConnectError = (err) => {
+            console.error('[LiveRoomStudent] Socket Connect Error:', err);
+            toast.error('Unable to connect to live room. Retrying...');
+        };
+
         socket.on('quiz_started', handleQuizStarted);
         socket.on('connect', handleConnect);
         socket.on('participants_update', handleParticipantsUpdate);
         socket.on('lobby_summary_update', handleLobbySummaryUpdate);
         socket.on('error_alert', handleErrorAlert);
+        socket.on('connect_error', handleConnectError);
         socket.on('restoreState', (state) => {
             console.log('[LiveRoomStudent] restoreState:', state);
             if (state && state.participants) {
@@ -167,6 +174,8 @@ export default function LiveRoomStudent() {
         // If socket is already connected when this effect runs, re-join immediately.
         if (socket.connected) {
             handleConnect();
+        } else {
+            ensureSocketConnected();
         }
 
         return () => {
@@ -177,6 +186,7 @@ export default function LiveRoomStudent() {
             socket.off('participants_update', handleParticipantsUpdate);
             socket.off('lobby_summary_update', handleLobbySummaryUpdate);
             socket.off('error_alert', handleErrorAlert);
+            socket.off('connect_error', handleConnectError);
         };
     }, [quiz, user, navigate]);
 

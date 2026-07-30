@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
 import api from '../utils/api';
-import socket from '../utils/socket';
+import socket, { ensureSocketConnected } from '../utils/socket';
 import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError, showSuccess } from '../utils/alerts';
@@ -69,7 +69,8 @@ export default function LiveRoomTeacher() {
                 }
 
                 // Emit join_room — works whether socket is already connected or just connecting
-                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'teacher' } });
+                ensureSocketConnected();
+                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: user.role || 'teacher' } });
             } catch (err) {
                 console.error(err);
                 showError('Error', 'Error loading quiz');

@@ -65,15 +65,14 @@ export default function Login() {
     }, []);
 
     // ── Wake up Render server the moment the login page loads ─────────────────
-    // This silently pings the backend so it starts booting before the user
-    // even finishes typing their credentials (free-tier cold-start mitigation)
+    // Silently pings the /health endpoint so the backend boots before the user
+    // even finishes typing credentials (free-tier cold-start mitigation).
     useEffect(() => {
         const wakeUp = async () => {
             try {
-                const BACKEND = import.meta.env.VITE_API_URL || 'https://quiz-backend-qgro.onrender.com/api';
-                await fetch(`${BACKEND}/auth/me`, {
+                const BACKEND = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://quiz-backend-qgro.onrender.com';
+                await fetch(`${BACKEND}/health`, {
                     method: 'GET',
-                    headers: { 'x-auth-token': 'ping' },
                     signal: AbortSignal.timeout(90000),
                 });
             } catch {

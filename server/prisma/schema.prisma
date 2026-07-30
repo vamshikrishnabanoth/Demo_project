@@ -98,6 +98,12 @@ model Quiz {
   results          Result[]
   broadcasts       Broadcast[]
   cheatingLogs     CheatingLog[]
+
+  @@index([createdById])                 // teacher's quiz list queries
+  @@index([status])                      // scheduler filter
+  @@index([startTime])                   // scheduler start filter
+  @@index([isActive])                    // scheduler end filter
+  @@index([isLive, status])              // live quiz queries
 }
 
 model Result {
@@ -116,6 +122,9 @@ model Result {
   lastAnsweredAt DateTime  @default(now())
 
   @@unique([quizId, studentId])
+  @@index([quizId])      // analytics queries filter by quizId
+  @@index([studentId])   // student history queries filter by studentId
+  @@index([status])      // filter completed vs in-progress
 }
 
 model Broadcast {
@@ -135,6 +144,10 @@ model Broadcast {
   isPinned         Boolean  @default(false)
   scheduledFor     DateTime?
   deliveryStatus   String   @default("delivered") // 'delivered', 'scheduled', 'expired'
+
+  @@index([quizId])         // list broadcasts for a quiz
+  @@index([senderId])       // list broadcasts sent by a teacher
+  @@index([deliveryStatus]) // filter scheduled/delivered broadcasts
 }
 
 model DocumentChunk {

@@ -20,7 +20,7 @@ const socket = io(SOCKET_URL, {
     reconnectionAttempts: 20,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    randomizationFactor: 0.5, // adds jitter to prevent 500+ clients reconnecting simultaneously
+    randomizationFactor: 0.5,
 
     timeout: 20000,
 
@@ -52,14 +52,15 @@ export const ensureSocketConnected = () => {
     if (!socket.connected && token) {
         console.log('[SOCKET] Ensuring active connection with existing token...');
         socket.connect();
+    } else if (!token) {
+        console.warn('[SOCKET] Cannot connect socket: No authentication token found.');
     }
     return socket;
 };
 
 // Only auto-connect if a token already exists (returning user / page refresh)
-if (localStorage.getItem('token')) {
+if (typeof window !== 'undefined' && localStorage.getItem('token')) {
     socket.connect();
 }
 
 export default socket;
-

@@ -1,16 +1,25 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
-} from 'recharts';
-import {
-    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home
+    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2
 } from 'lucide-react';
+
+// Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
+const ScoreDistributionChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.ScoreDistributionChart })));
+const AccuracyPieChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.AccuracyPieChart })));
+const MasteryRadarChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.MasteryRadarChart })));
+
+const ChartFallback = () => (
+    <div className="w-full h-[280px] flex flex-col items-center justify-center gap-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+        <Loader2 className="animate-spin text-[var(--text-accent)]" size={24} />
+        <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Loading Chart Module...</span>
+    </div>
+);
 
 // Theme 1: Monochromatic Shades derived from Celestial Blue
 const BLUE_SHADES = [
@@ -57,21 +66,29 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function QuizAnalytics() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
+
+    const fetchAnalytics = async () => {
+        setLoading(true);
+        setFetchError(null);
+        try {
+            const res = await api.get(`/analytics/quiz/${id}`);
+            setAnalytics(res.data);
+        } catch (err) {
+            console.error('Analytics fetch error:', err);
+            const status = err?.response?.status;
+            const msg = err?.response?.data?.msg || err?.response?.data?.error || 'Failed to load analytics';
+            setFetchError({ status, msg });
+            toast.error(status === 403 ? 'You are not authorized to view these analytics.' : 'Failed to load analytics. Please retry.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchAnalytics = async () => {
-            try {
-                const res = await api.get(`/analytics/quiz/${id}`);
-                setAnalytics(res.data);
-            } catch (err) {
-                console.error(err);
-                toast.error('Failed to load analytics.');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchAnalytics();
     }, [id]);
 
@@ -213,9 +230,11 @@ export default function QuizAnalytics() {
         }
     };
 
+    const userRole = user?.role || 'teacher';
+
     if (loading) {
         return (
-            <DashboardLayout role="teacher">
+            <DashboardLayout role={userRole}>
                 <div className="flex items-center justify-center min-h-[60vh]">
                     <div className="relative w-16 h-16">
                         <div className="premium-spinner-ring"></div>
@@ -227,7 +246,54 @@ export default function QuizAnalytics() {
         );
     }
 
-    if (!analytics) return <DashboardLayout role="teacher"><div className="text-white text-center mt-20">Analytics not found.</div></DashboardLayout>;
+    // Error state — show proper UI with retry button instead of blank screen
+    if (fetchError || !analytics) {
+        const isUnauthorized = fetchError?.status === 403;
+        return (
+            <DashboardLayout role={userRole}>
+                <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'var(--glass-bg)', border: '1px solid var(--border-color)' }}>
+                        <AlertCircle size={32} style={{ color: isUnauthorized ? 'var(--bg-accent)' : '#ef4444' }} />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black mb-2" style={{ color: 'var(--text-primary)' }}>
+                            {isUnauthorized ? 'Access Restricted' : 'Analytics Unavailable'}
+                        </h2>
+                        <p className="text-sm font-medium max-w-sm mx-auto" style={{ color: 'var(--text-secondary)' }}>
+                            {isUnauthorized
+                                ? 'You are not authorized to view analytics for this quiz.'
+                                : fetchError?.msg || 'Analytics data could not be loaded. The quiz may still be in progress or results have not been finalized yet.'}
+                        </p>
+                    </div>
+                    <div className="flex gap-3 flex-wrap justify-center">
+                        {!isUnauthorized && (
+                            <button
+                                onClick={fetchAnalytics}
+                                className="px-6 py-3 rounded-xl font-bold text-sm transition-all"
+                                style={{ background: 'var(--bg-accent)', color: '#fff' }}
+                            >
+                                Retry
+                            </button>
+                        )}
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="px-6 py-3 rounded-xl font-bold text-sm transition-all"
+                            style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                        >
+                            Go Back
+                        </button>
+                        <button
+                            onClick={() => navigate(userRole === 'teacher' ? '/teacher-dashboard' : '/student-dashboard')}
+                            className="px-6 py-3 rounded-xl font-bold text-sm transition-all"
+                            style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                        >
+                            Dashboard
+                        </button>
+                    </div>
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     // Prepare data
     const pieData = [
@@ -240,11 +306,11 @@ export default function QuizAnalytics() {
         : [{ subject: 'General', A: analytics.averageScore, fullMark: 100 }];
 
     return (
-        <DashboardLayout role="teacher">
+        <DashboardLayout role={userRole}>
             <div className="space-y-12 pb-20 relative">
-                {/* Background effects */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+                {/* Background effects — theme-aware */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'var(--aurora-glow-1)' }}></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'var(--aurora-glow-2)' }}></div>
 
                 {/* Header */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-white/10 pb-8">
@@ -309,19 +375,12 @@ export default function QuizAnalytics() {
                         </div>
                         <div className="w-full overflow-x-auto premium-scrollbar">
                             <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                                        <XAxis dataKey="range" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
-                                        <Bar dataKey="count" name="Count of Students" radius={[8, 8, 0, 0]} maxBarSize={50}>
-                                            {analytics.scoreDistribution.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                <Suspense fallback={<ChartFallback />}>
+                                    <ScoreDistributionChart 
+                                        data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                        tooltip={<CustomTooltip />} 
+                                    />
+                                </Suspense>
                             </div>
                         </div>
                     </div>
@@ -335,16 +394,9 @@ export default function QuizAnalytics() {
                             <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Participation</h3>
                         </div>
                         <div className="flex-1 flex items-center justify-center relative min-h-[250px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart style={{ outline: 'none' }}>
-                                    <Pie data={pieData} innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none" style={{ outline: 'none' }}>
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip content={<CustomTooltip />} />
-                                </PieChart>
-                            </ResponsiveContainer>
+                            <Suspense fallback={<ChartFallback />}>
+                                <AccuracyPieChart data={pieData} colors={PIE_COLORS} />
+                            </Suspense>
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                 <span className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>
                                     {analytics.participationRate.totalEligible > 0 ? Math.round((analytics.participationRate.attempted / analytics.participationRate.totalEligible) * 100) : 100}%
@@ -377,19 +429,12 @@ export default function QuizAnalytics() {
                         </div>
                         <div className="w-full overflow-x-auto premium-scrollbar pb-2">
                             <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={(radarData || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                                        <XAxis dataKey="subject" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <YAxis domain={[0, 100]} stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
-                                        <Bar dataKey="A" name="Avg Score (%)" radius={[8, 8, 0, 0]} maxBarSize={50}>
-                                            {radarData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                <Suspense fallback={<ChartFallback />}>
+                                    <ScoreDistributionChart 
+                                        data={(radarData || []).map((entry, idx) => ({ ...entry, range: entry.subject, count: entry.A, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                        tooltip={<CustomTooltip />} 
+                                    />
+                                </Suspense>
                             </div>
                         </div>
                     </div>

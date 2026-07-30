@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
-import socket from '../utils/socket';
+import socket, { ensureSocketConnected } from '../utils/socket';
 
 const AuthContext = createContext(null);
 
@@ -76,12 +76,9 @@ export const AuthProvider = ({ children }) => {
 
     // ── Socket: identify user & re-identify on reconnect ────────────────────
     useEffect(() => {
-        if (!user || !socket) return;
+        if (!user) return;
 
-        if (!socket.connected) {
-            console.log('[AuthContext] User active but socket disconnected. Initiating socket connection...');
-            socket.connect();
-        }
+        ensureSocketConnected();
 
         socket.emit('identify', user.id);
 
@@ -100,11 +97,11 @@ export const AuthProvider = ({ children }) => {
         // Fall back to /me if user data not included in login response
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
-        // Reconnect socket so it picks up the new auth token via the dynamic auth callback
+        // Reconnect socket so it picks up the new auth token via dynamic auth callback
         if (socket.connected) {
             socket.disconnect();
         }
-        socket.connect();
+        ensureSocketConnected();
         return userData;
     }, []);
 
@@ -117,7 +114,7 @@ export const AuthProvider = ({ children }) => {
         if (socket.connected) {
             socket.disconnect();
         }
-        socket.connect();
+        ensureSocketConnected();
         return userData;
     }, []);
 
