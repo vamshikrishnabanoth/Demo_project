@@ -226,15 +226,26 @@ export default function DashboardLayout({ children, role }) {
                                 </div>
                             )}
 
-                            {/* Premium Side Drawer Toggle */}
+                            {/* Premium Side Drawer Toggle & Mobile Logout */}
                             {isSmallScreen && (
-                                <button
-                                    onClick={() => setMobileOpen(true)}
-                                    className="p-3 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-2xl transition-all border border-slate-300 active:scale-95 shadow-sm"
-                                    aria-label="Open navigation menu"
-                                >
-                                    <Menu size={24} aria-hidden="true" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-1.5 px-3.5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
+                                        aria-label="Log out"
+                                        title="Log out"
+                                    >
+                                        <LogOut size={16} />
+                                        <span>Logout</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setMobileOpen(true)}
+                                        className="p-2.5 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer"
+                                        aria-label="Open navigation menu"
+                                    >
+                                        <Menu size={22} aria-hidden="true" />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -348,11 +359,11 @@ export default function DashboardLayout({ children, role }) {
 
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full py-3.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm"
+                                        className="w-full py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white border border-red-700 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-md cursor-pointer"
                                         aria-label="Log out"
                                     >
                                         <LogOut size={18} />
-                                        <span>Log Out</span>
+                                        <span>Logout</span>
                                     </button>
                                 </div>
                             </div>
