@@ -5,11 +5,26 @@ import { CheckCircle2, AlertCircle, HelpCircle, X, Info } from 'lucide-react';
 /**
  * Professional, High-Contrast White-Text Alert System for ProjectK.
  * Enforces 100% crisp pure white text (#ffffff) across all toast notifications & confirm popups.
+ *
+ * FIX (2024): Added deduplication via stable IDs so the same message never stacks.
+ * Calling showError/showSuccess/showInfo with the same message replaces the existing toast
+ * instead of creating a new one — prevents visual "pausing" and pile-up.
  */
 
+// ─── Dismiss all currently visible toasts (useful on page unmount) ────────────
+export const dismissAllToasts = () => toast.dismiss();
+
+// ─── Stable ID helpers ────────────────────────────────────────────────────────
+// Build a short deterministic string from the message so duplicate calls
+// update/replace the existing toast rather than stacking new ones.
+const stableId = (prefix, title) =>
+    `${prefix}-${String(title || '').slice(0, 40).replace(/\s+/g, '-').toLowerCase()}`;
+
+// ─── showSuccess ──────────────────────────────────────────────────────────────
 export const showSuccess = (title, text, duration = 2400) => {
     const mainTitle = text ? title : (title || 'Success');
     const messageText = text ? text : '';
+    const id = stableId('ok', mainTitle);
 
     return toast.custom((t) => (
         React.createElement('div', {
@@ -42,12 +57,14 @@ export const showSuccess = (title, text, duration = 2400) => {
                 style: { color: '#ffffff' }
             }, React.createElement(X, { size: 16 }))
         ])
-    ), { duration, position: 'top-right' });
+    ), { duration, id, position: 'top-right' });
 };
 
+// ─── showError ────────────────────────────────────────────────────────────────
 export const showError = (title, text, duration = 3800) => {
     const mainTitle = text ? title : (title || 'Error');
     const messageText = text ? text : '';
+    const id = stableId('err', mainTitle);
 
     return toast.custom((t) => (
         React.createElement('div', {
@@ -80,12 +97,14 @@ export const showError = (title, text, duration = 3800) => {
                 style: { color: '#ffffff' }
             }, React.createElement(X, { size: 16 }))
         ])
-    ), { duration, position: 'top-right' });
+    ), { duration, id, position: 'top-right' });
 };
 
+// ─── showInfo ─────────────────────────────────────────────────────────────────
 export const showInfo = (title, text, duration = 2400) => {
     const mainTitle = text ? title : (title || 'Notice');
     const messageText = text ? text : '';
+    const id = stableId('info', mainTitle);
 
     return toast.custom((t) => (
         React.createElement('div', {
@@ -118,10 +137,14 @@ export const showInfo = (title, text, duration = 2400) => {
                 style: { color: '#ffffff' }
             }, React.createElement(X, { size: 16 }))
         ])
-    ), { duration, position: 'top-right' });
+    ), { duration, id, position: 'top-right' });
 };
 
+// ─── showConfirm ──────────────────────────────────────────────────────────────
+// Uses a long but FINITE duration (30s) instead of Infinity so it never freezes.
+// Only one confirm dialog can be open at a time.
 let activeConfirmId = null;
+const CONFIRM_DURATION = 30_000; // 30 seconds — long enough for user to decide
 
 export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
     if (activeConfirmId) {
@@ -129,6 +152,13 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
         activeConfirmId = null;
     }
     return new Promise((resolve) => {
+        let resolved = false;
+        const safeResolve = (val) => {
+            if (resolved) return;
+            resolved = true;
+            resolve(val);
+        };
+
         const id = toast.custom((t) => (
             React.createElement('div', {
                 className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[var(--bg-secondary)] backdrop-blur-2xl border-2 border-[var(--border-color)] shadow-[0_25px_60px_rgba(0,0,0,0.25)] rounded-3xl p-6 pointer-events-auto transition-all space-y-5`,
@@ -167,7 +197,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                         onClick: () => {
                             toast.dismiss(t.id);
                             if (activeConfirmId === t.id) activeConfirmId = null;
-                            resolve({ isConfirmed: false });
+                            safeResolve({ isConfirmed: false });
                         },
                         className: 'px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 transition-all cursor-pointer shadow-xs',
                         style: { color: '#334155' }
@@ -177,15 +207,22 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                         onClick: () => {
                             toast.dismiss(t.id);
                             if (activeConfirmId === t.id) activeConfirmId = null;
-                            resolve({ isConfirmed: true });
+                            safeResolve({ isConfirmed: true });
                         },
                         className: 'px-6 py-2.5 rounded-xl text-xs font-black bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg hover:opacity-90 transition-all transform active:scale-95 cursor-pointer btn-cinematic',
                         style: { color: '#ffffff' }
                     }, confirmText)
                 ])
             ])
-        ), { duration: Infinity, position: 'top-center' });
+        ), { duration: CONFIRM_DURATION, id: 'confirm-dialog', position: 'top-center' });
+
         activeConfirmId = id;
+
+        // Auto-resolve as cancelled if the toast times out without user interaction
+        setTimeout(() => {
+            if (activeConfirmId === id) activeConfirmId = null;
+            safeResolve({ isConfirmed: false });
+        }, CONFIRM_DURATION);
     });
 };
 
@@ -203,5 +240,6 @@ export default {
     showError,
     showInfo,
     showConfirm,
+    dismissAllToasts,
     royalAlert
 };

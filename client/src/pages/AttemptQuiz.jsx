@@ -76,6 +76,13 @@ export default function AttemptQuiz() {
         };
     }, []);
 
+    // Dismiss all toasts on unmount so quiz-page toasts don't freeze on the next page
+    useEffect(() => {
+        return () => {
+            toast.dismiss();
+        };
+    }, []);
+
     useEffect(() => {
         let timer;
         if (!isOnline) {

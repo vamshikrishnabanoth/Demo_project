@@ -1,7 +1,7 @@
-import { Suspense, useContext } from 'react';
+import { Suspense, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import AuthContext from './context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -56,6 +56,17 @@ const Home = () => {
     return <Navigate to={homes[user.role] ?? '/login'} replace />;
 };
 
+// ─── Toast Cleanup on Navigation ─────────────────────────────────────────────
+// Dismisses ALL toasts whenever the route changes.
+// This prevents toasts from quiz/form pages from persisting/freezing on the next page.
+function NavigationToastCleaner() {
+    const location = useLocation();
+    useEffect(() => {
+        toast.dismiss();
+    }, [location.pathname]);
+    return null;
+}
+
 // ─── Animated Routes ──────────────────────────────────────────────────────────
 // KEY CHANGE: mode="sync" instead of mode="wait"
 //   "wait" = old page must FULLY EXIT before new page starts entering
@@ -67,6 +78,8 @@ function AnimatedRoutes() {
 
     return (
         <>
+            {/* Dismiss all toasts on every route change to prevent stuck/frozen toasts */}
+            <NavigationToastCleaner />
             {/* Top progress bar — gives instant feedback before JS even starts rendering */}
             <NavigationProgress />
 
@@ -124,6 +137,8 @@ function App() {
             <DevToolsGuard />
             <Toaster
                 position="top-right"
+                reverseOrder={false}
+                gutter={8}
                 containerStyle={{ top: 20, right: 20 }}
                 toastOptions={{
                     duration: 2400,
