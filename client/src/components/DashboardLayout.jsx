@@ -186,7 +186,7 @@ export default function DashboardLayout({ children, role }) {
                             {/* Desktop navigation links — only on large screens */}
                             {!isSmallScreen && (
                                 <nav className="flex space-x-2" aria-label="Main navigation">
-                                    {links.map((link) => {
+                                    {links.filter(link => link.path !== '/profile').map((link) => {
                                         const Icon  = link.icon;
                                         const active = isActive(link.path);
                                         return (

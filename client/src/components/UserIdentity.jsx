@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, UserCheck, GraduationCap, User } from 'lucide-react';
 
@@ -29,8 +29,8 @@ export const StatusBadge = ({ label = 'Live', color = 'emerald' }) => {
 };
 
 export const UserProfileCard = ({ user, role }) => {
-    const location = window.location.pathname;
-    const isProfilePage = location === '/profile';
+    const location = useLocation();
+    const isProfilePage = location.pathname === '/profile';
     
     const getRoleIcon = () => {
         switch (role?.toLowerCase()) {
