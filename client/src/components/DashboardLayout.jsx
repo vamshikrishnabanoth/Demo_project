@@ -173,8 +173,8 @@ export default function DashboardLayout({ children, role }) {
                                         decoding="async"
                                     />
                                 </motion.div>
-                                <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tighter italic">
-                                    KMIT <span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">KAHOOT</span>
+                                <h1 className="text-lg sm:text-2xl font-black text-[var(--text-primary)] tracking-tighter italic shrink-0">
+                                    <span className="hidden xs:inline">KMIT </span><span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">KAHOOT</span>
                                 </h1>
                             </Link>
 
@@ -205,7 +205,7 @@ export default function DashboardLayout({ children, role }) {
                         </div>
 
                         {/* Right actions */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 shrink-0">
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
 
@@ -226,24 +226,24 @@ export default function DashboardLayout({ children, role }) {
                                 </div>
                             )}
 
-                            {/* Premium Side Drawer Toggle & Mobile Logout */}
+                            {/* Mobile Logout & Side Drawer Toggle */}
                             {isSmallScreen && (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 shrink-0">
                                     <button
                                         onClick={handleLogout}
-                                        className="flex items-center gap-1.5 px-3.5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
+                                        className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
-                                        <LogOut size={16} />
+                                        <LogOut size={15} />
                                         <span>Logout</span>
                                     </button>
                                     <button
                                         onClick={() => setMobileOpen(true)}
-                                        className="p-2.5 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer"
+                                        className="p-2 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer shrink-0"
                                         aria-label="Open navigation menu"
                                     >
-                                        <Menu size={22} aria-hidden="true" />
+                                        <Menu size={20} aria-hidden="true" />
                                     </button>
                                 </div>
                             )}

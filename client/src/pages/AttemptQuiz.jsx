@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize, Crown } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize, Crown, LogOut } from 'lucide-react';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
@@ -19,7 +19,16 @@ import throttle from '../utils/throttle';
 export default function AttemptQuiz() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user: authUser } = useContext(AuthContext);
+    const { user: authUser, logout } = useContext(AuthContext);
+    
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (e) {
+            navigate('/login');
+        }
+    };
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -1281,6 +1290,15 @@ export default function AttemptQuiz() {
                             />
                         ))}
                     </div>
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-2"
+                        aria-label="Log out"
+                        title="Log out"
+                    >
+                        <LogOut size={15} />
+                        <span>Logout</span>
+                    </button>
                 </div>
             </header>
 
