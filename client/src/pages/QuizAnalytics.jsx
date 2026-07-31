@@ -68,6 +68,7 @@ export default function QuizAnalytics() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    const isStudent = user?.role === 'student';
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
@@ -363,184 +364,186 @@ export default function QuizAnalytics() {
                     ))}
                 </div>
 
-                {/* Main Charts Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    {/* Score Distribution */}
-                    <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
-                                <Activity size={22} />
-                            </div>
-                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Score Distribution</h3>
-                        </div>
-                        <div className="w-full overflow-x-auto premium-scrollbar">
-                            <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
-                                <Suspense fallback={<ChartFallback />}>
-                                    <ScoreDistributionChart 
-                                        data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} 
-                                        tooltip={<CustomTooltip />} 
-                                    />
-                                </Suspense>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Participation Rate */}
-                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex flex-col shadow-sm">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
-                                <Users size={22} />
-                            </div>
-                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Participation</h3>
-                        </div>
-                        <div className="flex-1 flex items-center justify-center relative min-h-[250px]">
-                            <Suspense fallback={<ChartFallback />}>
-                                <AccuracyPieChart data={pieData} colors={PIE_COLORS} />
-                            </Suspense>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>
-                                    {analytics.participationRate.totalEligible > 0 ? Math.round((analytics.participationRate.attempted / analytics.participationRate.totalEligible) * 100) : 100}%
-                                </span>
-                                <span className="text-[10px] font-black text-[#334155] uppercase tracking-widest" style={{ color: '#334155' }}>Rate</span>
-                            </div>
-                        </div>
-                        <div className="flex justify-center gap-6 mt-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
-                                <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Attempted</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
-                                <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Missed</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Section Performance */}
-                    <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-                                <Award size={22} />
-                            </div>
-                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Section Mastery</h3>
-                        </div>
-                        <div className="w-full overflow-x-auto premium-scrollbar pb-2">
-                            <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
-                                <Suspense fallback={<ChartFallback />}>
-                                    <ScoreDistributionChart 
-                                        data={(radarData || []).map((entry, idx) => ({ ...entry, range: entry.subject, count: entry.A, fill: getThemePalette()[idx % getThemePalette().length] }))} 
-                                        tooltip={<CustomTooltip />} 
-                                    />
-                                </Suspense>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Top Students / Leaderboard */}
-                    <div className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-4 sm:p-8 shadow-sm overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
-                        <div className="flex items-center justify-between mb-8 relative z-10">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shadow-sm">
-                                    <Trophy size={26} className="text-amber-500" />
+                {/* Main Charts Area — Hidden for Students */}
+                {!isStudent && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Score Distribution */}
+                        <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
+                            <div className="flex items-center gap-3 mb-8">
+                                <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
+                                    <Activity size={22} />
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
-                                        TOP PERFORMERS <span className="text-[var(--text-accent)]">(LEADERBOARD)</span>
-                                    </h3>
-                                    <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
-                                        Ranked by score, accuracy & time taken
-                                    </p>
+                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Score Distribution</h3>
+                            </div>
+                            <div className="w-full overflow-x-auto premium-scrollbar">
+                                <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
+                                    <Suspense fallback={<ChartFallback />}>
+                                        <ScoreDistributionChart 
+                                            data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                            tooltip={<CustomTooltip />} 
+                                        />
+                                    </Suspense>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="space-y-4 relative z-10">
-                            {analytics.topStudents && analytics.topStudents.length > 0 ? analytics.topStudents.map((student, idx) => {
-                                const isFirst = idx === 0;
-                                const isSecond = idx === 1;
-                                const isThird = idx === 2;
+                        {/* Participation Rate */}
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex flex-col shadow-sm">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
+                                    <Users size={22} />
+                                </div>
+                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Participation</h3>
+                            </div>
+                            <div className="flex-1 flex items-center justify-center relative min-h-[250px]">
+                                <Suspense fallback={<ChartFallback />}>
+                                    <AccuracyPieChart data={pieData} colors={PIE_COLORS} />
+                                </Suspense>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>
+                                        {analytics.participationRate.totalEligible > 0 ? Math.round((analytics.participationRate.attempted / analytics.participationRate.totalEligible) * 100) : 100}%
+                                    </span>
+                                    <span className="text-[10px] font-black text-[#334155] uppercase tracking-widest" style={{ color: '#334155' }}>Rate</span>
+                                </div>
+                            </div>
+                            <div className="flex justify-center gap-6 mt-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
+                                    <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Attempted</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
+                                    <span className="text-xs font-bold text-[#334155] uppercase tracking-wider" style={{ color: '#334155' }}>Missed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
-                                return (
-                                    <div 
-                                        key={idx} 
-                                        className={`flex items-center justify-between p-5 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md border-2 ${
-                                            isFirst 
-                                                ? 'bg-gradient-to-r from-amber-500/10 via-yellow-400/5 to-amber-500/10 border-amber-400/60 ring-2 ring-amber-400/20' 
-                                                : isSecond 
-                                                ? 'bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 border-slate-300' 
-                                                : isThird 
-                                                ? 'bg-gradient-to-r from-amber-950/5 via-orange-500/5 to-amber-900/5 border-amber-600/40' 
-                                                : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-                                        }`}
-                                    >
-                                        {/* Left: Rank badge & Student Info */}
-                                        <div className="flex items-center gap-4">
-                                            {/* Rank Badge */}
-                                            <div 
-                                                className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black italic text-lg shadow-md shrink-0 ${
-                                                    isFirst 
-                                                        ? 'bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 text-slate-950 ring-2 ring-amber-400/50' 
-                                                        : isSecond 
-                                                        ? 'bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 text-slate-900 ring-2 ring-slate-300/50' 
-                                                        : isThird 
-                                                        ? 'bg-gradient-to-br from-amber-600 via-orange-600 to-amber-700 text-white ring-2 ring-amber-600/50' 
-                                                        : 'bg-white border-2 border-slate-300 text-slate-700'
-                                                }`}
-                                            >
-                                                #{student.rank}
-                                            </div>
+                {!isStudent && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Section Performance */}
+                        <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                                    <Award size={22} />
+                                </div>
+                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Section Mastery</h3>
+                            </div>
+                            <div className="w-full overflow-x-auto premium-scrollbar pb-2">
+                                <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
+                                    <Suspense fallback={<ChartFallback />}>
+                                        <ScoreDistributionChart 
+                                            data={(radarData || []).map((entry, idx) => ({ ...entry, range: entry.subject, count: entry.A, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                            tooltip={<CustomTooltip />} 
+                                        />
+                                    </Suspense>
+                                </div>
+                            </div>
+                        </div>
 
-                                            <div>
-                                                <p className="font-black text-[#0f172a] text-base uppercase tracking-tight" style={{ color: '#0f172a' }}>
-                                                    {student.username}
-                                                </p>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 border border-slate-300 text-[11px] font-bold text-[#334155]" style={{ color: '#334155' }}>
-                                                        <Clock size={12} className="text-[#334155]" /> 
-                                                        {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
-                                                    </span>
+                        {/* Top Students / Leaderboard */}
+                        <div className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-4 sm:p-8 shadow-sm overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+                            <div className="flex items-center justify-between mb-8 relative z-10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shadow-sm">
+                                        <Trophy size={26} className="text-amber-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
+                                            TOP PERFORMERS <span className="text-[var(--text-accent)]">(LEADERBOARD)</span>
+                                        </h3>
+                                        <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
+                                            Ranked by score, accuracy & time taken
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                {analytics.topStudents && analytics.topStudents.length > 0 ? analytics.topStudents.map((student, idx) => {
+                                    const isFirst = idx === 0;
+                                    const isSecond = idx === 1;
+                                    const isThird = idx === 2;
+
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            className={`flex items-center justify-between p-5 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md border-2 ${
+                                                isFirst 
+                                                    ? 'bg-gradient-to-r from-amber-500/10 via-yellow-400/5 to-amber-500/10 border-amber-400/60 ring-2 ring-amber-400/20' 
+                                                    : isSecond 
+                                                    ? 'bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 border-slate-300' 
+                                                    : isThird 
+                                                    ? 'bg-gradient-to-r from-amber-950/5 via-orange-500/5 to-amber-900/5 border-amber-600/40' 
+                                                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                                            }`}
+                                        >
+                                            {/* Left: Rank badge & Student Info */}
+                                            <div className="flex items-center gap-4">
+                                                {/* Rank Badge */}
+                                                <div 
+                                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black italic text-lg shadow-md shrink-0 ${
+                                                        isFirst 
+                                                            ? 'bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 text-slate-950 ring-2 ring-amber-400/50' 
+                                                            : isSecond 
+                                                            ? 'bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 text-slate-900 ring-2 ring-slate-300/50' 
+                                                            : isThird 
+                                                            ? 'bg-gradient-to-br from-amber-600 via-orange-600 to-amber-700 text-white ring-2 ring-amber-600/50' 
+                                                            : 'bg-white border-2 border-slate-300 text-slate-700'
+                                                    }`}
+                                                >
+                                                    #{student.rank}
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-black text-[#0f172a] text-base uppercase tracking-tight" style={{ color: '#0f172a' }}>
+                                                        {student.username}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 border border-slate-300 text-[11px] font-bold text-[#334155]" style={{ color: '#334155' }}>
+                                                            <Clock size={12} className="text-[#334155]" /> 
+                                                            {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {/* Right: Score & Accuracy Badge */}
-                                        <div className="text-right flex flex-col items-end gap-1">
-                                            <div className="flex items-baseline gap-1">
-                                                <span className="text-2xl font-black text-[var(--text-accent)] italic">
-                                                    {student.score}
-                                                </span>
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                    PTS
+                                            {/* Right: Score & Accuracy Badge */}
+                                            <div className="text-right flex flex-col items-end gap-1">
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-2xl font-black text-[var(--text-accent)] italic">
+                                                        {student.score}
+                                                    </span>
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                        PTS
+                                                    </span>
+                                                </div>
+                                                <span 
+                                                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-xs ${
+                                                        student.accuracy >= 80 
+                                                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800' 
+                                                            : student.accuracy >= 50 
+                                                            ? 'bg-[var(--accent-sand)] border-[var(--border-color)] text-[var(--text-accent)]' 
+                                                            : 'bg-amber-500/15 border-amber-500/40 text-amber-800'
+                                                    }`}
+                                                >
+                                                    ACCURACY: <span className="font-black">{student.accuracy}%</span>
                                                 </span>
                                             </div>
-                                            <span 
-                                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-xs ${
-                                                    student.accuracy >= 80 
-                                                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800' 
-                                                        : student.accuracy >= 50 
-                                                        ? 'bg-[var(--accent-sand)] border-[var(--border-color)] text-[var(--text-accent)]' 
-                                                        : 'bg-amber-500/15 border-amber-500/40 text-amber-800'
-                                                }`}
-                                            >
-                                                ACCURACY: <span className="font-black">{student.accuracy}%</span>
-                                            </span>
                                         </div>
+                                    );
+                                }) : (
+                                    <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 text-[#334155] font-black uppercase tracking-widest text-xs italic" style={{ color: '#334155' }}>
+                                        No attempts recorded yet
                                     </div>
-                                );
-                            }) : (
-                                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 text-[#334155] font-black uppercase tracking-widest text-xs italic" style={{ color: '#334155' }}>
-                                    No attempts recorded yet
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Question Performance Chart */}
                 <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
@@ -636,8 +639,8 @@ export default function QuizAnalytics() {
                     </div>
                 </div>
 
-                {/* Tactical Memory Map Leaderboard */}
-                {analytics.leaderboard && analytics.leaderboard.length > 0 && (
+                {/* Tactical Memory Map Leaderboard — Hidden for Students */}
+                {!isStudent && analytics.leaderboard && analytics.leaderboard.length > 0 && (
                     <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                             <div className="flex items-center gap-3">
@@ -728,96 +731,98 @@ export default function QuizAnalytics() {
                     </div>
                 )}
 
-                {/* Security Alerts & Cheating Audit Log Table */}
-                <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-lg space-y-6">
-                    <div className="flex items-center justify-between flex-wrap gap-4 border-b border-slate-200 pb-5">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-600 shadow-sm">
-                                <ShieldAlert size={26} />
+                {/* Security Alerts & Cheating Audit Log Table — Hidden for Students */}
+                {!isStudent && (
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-lg space-y-6">
+                        <div className="flex items-center justify-between flex-wrap gap-4 border-b border-slate-200 pb-5">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-600 shadow-sm">
+                                    <ShieldAlert size={26} />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
+                                        Security Alerts & <span className="text-red-600">Cheating Audit Logs</span>
+                                    </h3>
+                                    <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
+                                        Automated security telemetry & incident tracking table
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>
-                                    Security Alerts & <span className="text-red-600">Cheating Audit Logs</span>
-                                </h3>
-                                <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
-                                    Automated security telemetry & incident tracking table
-                                </p>
+
+                            <div className="px-4 py-2 rounded-full bg-red-600/10 border border-red-500/20 text-red-700 text-xs font-black uppercase tracking-wider">
+                                {(analytics.cheatingLogs || []).length} Recorded Incident{analytics.cheatingLogs?.length === 1 ? '' : 's'}
                             </div>
                         </div>
 
-                        <div className="px-4 py-2 rounded-full bg-red-600/10 border border-red-500/20 text-red-700 text-xs font-black uppercase tracking-wider">
-                            {(analytics.cheatingLogs || []).length} Recorded Incident{analytics.cheatingLogs?.length === 1 ? '' : 's'}
-                        </div>
+                        {analytics.cheatingLogs && analytics.cheatingLogs.length > 0 ? (
+                            <div className="overflow-x-auto premium-scrollbar pb-3">
+                                <table className="w-full text-left border-collapse min-w-[700px]">
+                                    <thead>
+                                        <tr className="border-b-2 border-slate-200">
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Student Name</th>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Roll Number</th>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Recorded Security Violation</th>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-right">Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {analytics.cheatingLogs.map((log, idx) => {
+                                            let actLabel = (log.action || 'SECURITY_VIOLATION').replace(/_/g, ' ').toUpperCase();
+                                            let badgeStyle = 'bg-red-600 text-white';
+
+                                            if (log.action === 'devtools_panel_opened' || log.action === 'devtools_shortcut') {
+                                                actLabel = 'DEVTOOLS OPENED';
+                                                badgeStyle = 'bg-purple-700 text-white font-black';
+                                            } else if (log.action === 'exited_fullscreen') {
+                                                actLabel = 'EXITED FULLSCREEN';
+                                                badgeStyle = 'bg-amber-600 text-white';
+                                            } else if (log.action === 'tab_switch') {
+                                                actLabel = 'TAB SWITCH';
+                                                badgeStyle = 'bg-orange-600 text-white';
+                                            } else if (log.action === 'auto_submit_terminated') {
+                                                actLabel = 'AUTO-SUBMITTED (TERMINATED)';
+                                                badgeStyle = 'bg-red-700 text-white font-black animate-pulse';
+                                            } else if (log.action === 'screenshot_attempt') {
+                                                actLabel = 'SCREENSHOT ATTEMPT';
+                                                badgeStyle = 'bg-rose-600 text-white';
+                                            } else if (log.action === 'context_menu' || log.action === 'clipboard_action') {
+                                                actLabel = 'COPY / PASTE / INSPECT';
+                                                badgeStyle = 'bg-slate-700 text-white';
+                                            }
+
+                                            return (
+                                                <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                                    <td className="p-4 font-bold text-[#0f172a] text-sm" style={{ color: '#0f172a' }}>
+                                                        {log.studentName}
+                                                    </td>
+                                                    <td className="p-4 font-mono text-xs font-bold text-[#334155]" style={{ color: '#334155' }}>
+                                                        {log.studentRollNumber}
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xs ${badgeStyle}`}>
+                                                            <ShieldAlert size={12} /> {actLabel}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 text-right font-mono text-xs text-[#334155]" style={{ color: '#334155' }}>
+                                                        {new Date(log.createdAt).toLocaleString()}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="py-12 text-center flex flex-col items-center justify-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                                <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 mb-3 border border-emerald-500/20">
+                                    <ShieldCheck size={28} />
+                                </div>
+                                <h4 className="text-sm font-black text-[#0f172a] uppercase tracking-widest mb-1" style={{ color: '#0f172a' }}>No Security Violations Logged</h4>
+                                <p className="text-xs text-[#334155] font-bold" style={{ color: '#334155' }}>Zero integrity incidents were recorded for this assessment.</p>
+                            </div>
+                        )}
                     </div>
-
-                    {analytics.cheatingLogs && analytics.cheatingLogs.length > 0 ? (
-                        <div className="overflow-x-auto premium-scrollbar pb-3">
-                            <table className="w-full text-left border-collapse min-w-[700px]">
-                                <thead>
-                                    <tr className="border-b-2 border-slate-200">
-                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Student Name</th>
-                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Roll Number</th>
-                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest">Recorded Security Violation</th>
-                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-right">Timestamp</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {analytics.cheatingLogs.map((log, idx) => {
-                                        let actLabel = (log.action || 'SECURITY_VIOLATION').replace(/_/g, ' ').toUpperCase();
-                                        let badgeStyle = 'bg-red-600 text-white';
-
-                                        if (log.action === 'devtools_panel_opened' || log.action === 'devtools_shortcut') {
-                                            actLabel = 'DEVTOOLS OPENED';
-                                            badgeStyle = 'bg-purple-700 text-white font-black';
-                                        } else if (log.action === 'exited_fullscreen') {
-                                            actLabel = 'EXITED FULLSCREEN';
-                                            badgeStyle = 'bg-amber-600 text-white';
-                                        } else if (log.action === 'tab_switch') {
-                                            actLabel = 'TAB SWITCH';
-                                            badgeStyle = 'bg-orange-600 text-white';
-                                        } else if (log.action === 'auto_submit_terminated') {
-                                            actLabel = 'AUTO-SUBMITTED (TERMINATED)';
-                                            badgeStyle = 'bg-red-700 text-white font-black animate-pulse';
-                                        } else if (log.action === 'screenshot_attempt') {
-                                            actLabel = 'SCREENSHOT ATTEMPT';
-                                            badgeStyle = 'bg-rose-600 text-white';
-                                        } else if (log.action === 'context_menu' || log.action === 'clipboard_action') {
-                                            actLabel = 'COPY / PASTE / INSPECT';
-                                            badgeStyle = 'bg-slate-700 text-white';
-                                        }
-
-                                        return (
-                                            <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-                                                <td className="p-4 font-bold text-[#0f172a] text-sm" style={{ color: '#0f172a' }}>
-                                                    {log.studentName}
-                                                </td>
-                                                <td className="p-4 font-mono text-xs font-bold text-[#334155]" style={{ color: '#334155' }}>
-                                                    {log.studentRollNumber}
-                                                </td>
-                                                <td className="p-4">
-                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xs ${badgeStyle}`}>
-                                                        <ShieldAlert size={12} /> {actLabel}
-                                                    </span>
-                                                </td>
-                                                <td className="p-4 text-right font-mono text-xs text-[#334155]" style={{ color: '#334155' }}>
-                                                    {new Date(log.createdAt).toLocaleString()}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="py-12 text-center flex flex-col items-center justify-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                            <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 mb-3 border border-emerald-500/20">
-                                <ShieldCheck size={28} />
-                            </div>
-                            <h4 className="text-sm font-black text-[#0f172a] uppercase tracking-widest mb-1" style={{ color: '#0f172a' }}>No Security Violations Logged</h4>
-                            <p className="text-xs text-[#334155] font-bold" style={{ color: '#334155' }}>Zero integrity incidents were recorded for this assessment.</p>
-                        </div>
-                    )}
-                </div>
+                )}
 
             </div>
         </DashboardLayout>
