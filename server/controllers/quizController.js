@@ -2848,7 +2848,7 @@ exports.analyzeSources = async (req, res) => {
                 return res.status(400).json({ msg: 'Content too short or unextractable for analysis.' });
             }
 
-            const prompt = `You are an elite academic analyzer. Analyze the textbook/lecture context below.
+            const prompt = `You are an elite academic analyzer. Analyze the textbook/lecture context below and respond strictly with a valid JSON object.
 
 Context:
 ${aggregatedText.substring(0, 6000)}
@@ -2863,10 +2863,10 @@ Tasks:
 Return ONLY a clean JSON object conforming strictly to this format:
 {
   "relevancy_verdict": "pass",
-  "relevancy_reason": "...",
-  "lobby_summary": "- Key concept 1...\\n- Key concept 2...",
+  "relevancy_reason": "Academic discussion of networking protocols.",
+  "lobby_summary": "• Key concept 1\\n• Key concept 2\\n• Key concept 3",
   "ai_flashcards": [
-    {"question": "...", "answer": "..."}
+    {"question": "What is TCP?", "answer": "A connection-oriented transport protocol."}
   ],
   "ai_recommendation": {
     "theory": 0.4,
@@ -2875,17 +2875,35 @@ Return ONLY a clean JSON object conforming strictly to this format:
     "scenario": 0.1
   },
   "concepts": [
-    {"concept_tag": "...", "weight_score": 0.85}
+    {"concept_tag": "Connection-oriented vs connectionless", "weight_score": 0.9}
   ]
 }`;
 
-            const chatCompletion = await groq.chat.completions.create({
-                messages: [{ role: 'user', content: prompt }],
-                model: 'llama-3.1-8b-instant',
-                response_format: { type: "json_object" }
-            });
+            let rawContent = '';
+            try {
+                const chatCompletion = await groq.chat.completions.create({
+                    messages: [
+                        { role: 'system', content: 'You are a JSON generator. Respond strictly with valid JSON.' },
+                        { role: 'user', content: prompt }
+                    ],
+                    model: 'llama-3.1-8b-instant',
+                    response_format: { type: "json_object" }
+                });
+                rawContent = chatCompletion.choices[0].message.content;
+            } catch (apiErr) {
+                console.warn('Groq strict response_format failed, trying fallback extraction:', apiErr.message);
+                const fallbackCompletion = await groq.chat.completions.create({
+                    messages: [
+                        { role: 'system', content: 'You are an academic analyzer. Respond ONLY with a valid raw JSON object.' },
+                        { role: 'user', content: prompt }
+                    ],
+                    model: 'llama-3.1-8b-instant'
+                });
+                rawContent = fallbackCompletion.choices[0].message.content;
+            }
 
-            const data = JSON.parse(chatCompletion.choices[0].message.content);
+            const cleanJson = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const data = JSON.parse(cleanJson);
             if (data.relevancy_verdict === 'fail') {
                 return res.status(422).json({
                     status: 'validation_error',
