@@ -1,4 +1,4 @@
-const prisma = require('../lib/prisma');
+vconst prisma = require('../lib/prisma');
 
 // Helper: Safe answers parsing
 const getAnswersArray = (answers) => {
@@ -14,10 +14,12 @@ const getAnswersArray = (answers) => {
 
 // Helper: Normalize questions
 const normalizeQuestions = (questions) => {
+    if (!questions) return [];
     if (!Array.isArray(questions)) {
         try { questions = JSON.parse(questions); } catch (_) { return []; }
     }
-    return questions.map((q) => {
+    if (!Array.isArray(questions)) return [];
+    return questions.filter(Boolean).map((q) => {
         let options = q.options;
         if (!Array.isArray(options)) {
             if (options && typeof options === 'object') {
@@ -154,7 +156,7 @@ exports.getQuizAnalytics = async (req, res) => {
 
             results.forEach(r => {
                 const answersArray = getAnswersArray(r.answers);
-                const ans = answersArray.find(a => a.questionText === q.questionText);
+                const ans = answersArray.find(a => a && a.questionText === q.questionText);
                 if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                     skipped++;
                 } else {
@@ -309,7 +311,7 @@ exports.getQuestionAnalysis = async (req, res) => {
 
         results.forEach(r => {
             const answersArray = getAnswersArray(r.answers);
-            const ans = answersArray.find(a => a.questionText === question.questionText);
+            const ans = answersArray.find(a => a && a.questionText === question.questionText);
             const studentName = r.student?.username || 'Unknown';
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
@@ -395,7 +397,7 @@ exports.getQuestionAIReview = async (req, res) => {
 
         results.forEach(r => {
             const answersArray = getAnswersArray(r.answers);
-            const ans = answersArray.find(a => a.questionText === question.questionText);
+            const ans = answersArray.find(a => a && a.questionText === question.questionText);
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
             } else {
