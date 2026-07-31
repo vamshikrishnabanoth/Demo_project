@@ -222,15 +222,14 @@ export default function QuestionAnalysis() {
                         <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border" style={{ backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' }}>
                             {question.points || 10} Points
                         </span>
-                        {!isStudent && (
-                            <button 
-                                onClick={handleGetAIReview} 
-                                disabled={loadingAi}
-                                className="ml-auto flex items-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border-2 border-purple-200 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
-                            >
-                                {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
-                            </button>
-                        )}
+                        <button 
+                            onClick={handleGetAIReview} 
+                            disabled={loadingAi}
+                            className="ml-auto flex items-center gap-2 bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-300 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50 shadow-xs cursor-pointer"
+                        >
+                            <Sparkles size={14} className="text-purple-700" />
+                            {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
+                        </button>
                     </div>
 
                     <h2 className="text-2xl md:text-3xl font-black leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance" style={{ color: '#0f172a' }}>
