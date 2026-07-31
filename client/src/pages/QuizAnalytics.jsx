@@ -319,11 +319,18 @@ export default function QuizAnalytics() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-white/10 pb-8">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <button onClick={() => navigate('/my-quizzes')} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" style={{ color: '#0f172a' }}>
-                                <ChevronLeft size={16} /> Back to Library
+                            <button 
+                                onClick={() => navigate(isStudent ? '/assessments' : '/my-quizzes')} 
+                                className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" 
+                                style={{ color: '#0f172a' }}
+                            >
+                                <ChevronLeft size={16} /> {isStudent ? 'Back to Assessments' : 'Back to Library'}
                             </button>
                             <span className="text-slate-400/30">|</span>
-                            <button onClick={() => navigate('/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press">
+                            <button 
+                                onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} 
+                                className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press"
+                            >
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>
@@ -347,12 +354,23 @@ export default function QuizAnalytics() {
 
                 {/* KPI Overview Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
+                    {(isStudent ? [
+                        { 
+                            title: 'Your Score', 
+                            value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A', 
+                            icon: Award, 
+                            color: 'text-emerald-700', 
+                            bg: 'bg-emerald-100 border border-emerald-300 ring-2 ring-emerald-400/20' 
+                        },
+                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
+                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
+                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
+                    ] : [
                         { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
                         { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
                         { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
                         { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
-                    ].map((kpi, idx) => (
+                    ]).map((kpi, idx) => (
                         <div key={idx} className="bg-white border-2 border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[var(--bg-accent)] transition-all duration-300 group">
                             <div className={`p-4 rounded-2xl ${kpi.bg} ${kpi.color} group-hover:scale-105 transition-transform`}>
                                 <kpi.icon size={28} />
