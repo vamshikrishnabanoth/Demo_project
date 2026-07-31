@@ -6,7 +6,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
-    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck
+    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck, CheckCircle2, XCircle, MinusCircle
 } from 'lucide-react';
 
 // Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
@@ -546,8 +546,8 @@ export default function QuizAnalytics() {
                     </div>
                 )}
 
-                {/* Time Spent per Question Graph */}
-                {(() => {
+                {/* Time Spent per Question Graph — Hidden for Students */}
+                {!isStudent && (() => {
                     const studentAnswers = analytics?.studentAttempt?.answers || [];
                     const timeSpentData = (analytics?.questionPerformance || []).map((q, idx) => {
                         const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
@@ -606,33 +606,35 @@ export default function QuizAnalytics() {
                     );
                 })()}
 
-                {/* Question Performance Chart */}
-                <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
-                            <Activity size={22} />
+                {/* Question Performance Chart — Hidden for Students */}
+                {!isStudent && (
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-600">
+                                <Activity size={22} />
+                            </div>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question-Wise Performance</h3>
                         </div>
-                        <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question-Wise Performance</h3>
-                    </div>
-                    <div className="w-full overflow-x-auto premium-scrollbar">
-                        <div style={{ minWidth: `${Math.max(600, (analytics.questionPerformance || []).length * 60)}px`, height: '300px' }}>
-                            <Suspense fallback={<ChartFallback />}>
-                                <QuestionPerformanceChart 
-                                    data={(analytics.questionPerformance || []).map((q, idx) => ({ 
-                                        name: `Q${q.questionIndex + 1}`, 
-                                        index: q.questionIndex, 
-                                        correct: q.correct,
-                                        fill: getThemePalette()[idx % getThemePalette().length] 
-                                    }))}
-                                    themePalette={getThemePalette()}
-                                    onQuestionClick={(qIndex) => navigate(`/analytics/question/${id}/${qIndex}`)}
-                                    CustomTooltip={CustomTooltip}
-                                />
-                            </Suspense>
+                        <div className="w-full overflow-x-auto premium-scrollbar">
+                            <div style={{ minWidth: `${Math.max(600, (analytics.questionPerformance || []).length * 60)}px`, height: '300px' }}>
+                                <Suspense fallback={<ChartFallback />}>
+                                    <QuestionPerformanceChart 
+                                        data={(analytics.questionPerformance || []).map((q, idx) => ({ 
+                                            name: `Q${q.questionIndex + 1}`, 
+                                            index: q.questionIndex, 
+                                            correct: q.correct,
+                                            fill: getThemePalette()[idx % getThemePalette().length] 
+                                        }))}
+                                        themePalette={getThemePalette()}
+                                        onQuestionClick={(qIndex) => navigate(`/analytics/question/${id}/${qIndex}`)}
+                                        CustomTooltip={CustomTooltip}
+                                    />
+                                </Suspense>
+                            </div>
                         </div>
+                        <p className="text-center text-xs text-[#334155] font-bold uppercase tracking-widest mt-4" style={{ color: '#334155' }}>Click a bar to view detailed deep analysis</p>
                     </div>
-                    <p className="text-center text-xs text-[#334155] font-bold uppercase tracking-widest mt-4" style={{ color: '#334155' }}>Click a bar to view detailed deep analysis</p>
-                </div>
+                )}
 
                 {/* Question Performance List */}
                 <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
@@ -650,51 +652,97 @@ export default function QuizAnalytics() {
                             <thead>
                                 <tr className="border-b-2 border-slate-200">
                                     <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[80px]" style={{ color: '#334155' }}>Q.No</th>
-                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest min-w-[400px] max-w-[900px] w-auto" style={{ color: '#334155' }}>Question Text</th>
-                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px]" style={{ color: '#334155' }}>Difficulty</th>
-                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-center w-[130px]" style={{ color: '#334155' }}>Accuracy</th>
+                                    <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest min-w-[350px] max-w-[900px] w-auto" style={{ color: '#334155' }}>Question Text</th>
+                                    {isStudent ? (
+                                        <>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px] text-center" style={{ color: '#334155' }}>Time Taken</th>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[140px] text-center" style={{ color: '#334155' }}>Result</th>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px]" style={{ color: '#334155' }}>Difficulty</th>
+                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-center w-[130px]" style={{ color: '#334155' }}>Accuracy</th>
+                                        </>
+                                    )}
                                     <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest text-right w-[130px]" style={{ color: '#334155' }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {analytics.questionPerformance.map((q, idx) => (
-                                    <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
-                                        <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
-                                        <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
-                                            <div className="max-h-[100px] overflow-y-auto premium-scrollbar pr-2 break-words overflow-wrap-anywhere whitespace-normal leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
-                                                {q.questionText}
-                                            </div>
-                                        </td>
-                                        <td className="p-4">
-                                            <span className={`text-[10px] font-black px-3 py-1 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
-                                                q.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
-                                                q.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
-                                                'bg-amber-100 border-amber-400 text-amber-800'
-                                            }`}>
-                                                {q.difficulty}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <div className="flex flex-col items-center gap-1">
-                                                <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-emerald-700' : q.accuracy < 40 ? 'text-rose-700' : 'text-amber-700'}`}>
-                                                    {q.accuracy}%
-                                                </span>
-                                                <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
-                                                    <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-emerald-600' : q.accuracy < 40 ? 'bg-rose-600' : 'bg-amber-500'}`} style={{ width: `${q.accuracy}%` }}></div>
+                                {analytics.questionPerformance.map((q, idx) => {
+                                    const studentAnswers = analytics?.studentAttempt?.answers || [];
+                                    const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
+                                    const studentTime = studentAns ? `${studentAns.timeTaken || 0}s` : '0s';
+                                    const isCorrect = studentAns ? studentAns.isCorrect : null;
+                                    const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
+
+                                    return (
+                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
+                                            <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
+                                            <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
+                                                <div className="max-h-[100px] overflow-y-auto premium-scrollbar pr-2 break-words overflow-wrap-anywhere whitespace-normal leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
+                                                    {q.questionText}
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <Link 
-                                                to={`/analytics/question/${id}/${idx}`}
-                                                className="inline-flex items-center gap-1.5 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[var(--bg-saffron)] text-white-force"
-                                                style={{ color: '#ffffff' }}
-                                            >
-                                                <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                            {isStudent ? (
+                                                <>
+                                                    <td className="p-4 text-center">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-slate-100 border border-slate-300 text-slate-800 shadow-xs">
+                                                            <Clock size={12} className="text-slate-500" /> {studentTime}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 text-center">
+                                                        {isAnswered ? (
+                                                            isCorrect ? (
+                                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100 border border-emerald-400 text-emerald-800 shadow-xs">
+                                                                    <CheckCircle2 size={12} /> Correct
+                                                                </span>
+                                                            ) : (
+                                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-rose-100 border border-rose-400 text-rose-800 shadow-xs">
+                                                                    <XCircle size={12} /> Incorrect
+                                                                </span>
+                                                            )
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-100 border border-slate-300 text-slate-600 shadow-xs">
+                                                                <MinusCircle size={12} /> Skipped
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td className="p-4">
+                                                        <span className={`text-[10px] font-black px-3 py-1 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
+                                                            q.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
+                                                            q.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
+                                                            'bg-amber-100 border-amber-400 text-amber-800'
+                                                        }`}>
+                                                            {q.difficulty}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 text-center">
+                                                        <div className="flex flex-col items-center gap-1">
+                                                            <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-emerald-700' : q.accuracy < 40 ? 'text-rose-700' : 'text-amber-700'}`}>
+                                                                {q.accuracy}%
+                                                            </span>
+                                                            <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                                                                <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-emerald-600' : q.accuracy < 40 ? 'bg-rose-600' : 'bg-amber-500'}`} style={{ width: `${q.accuracy}%` }}></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            )}
+                                            <td className="p-4 text-right">
+                                                <Link 
+                                                    to={`/analytics/question/${id}/${idx}`}
+                                                    className="inline-flex items-center gap-1.5 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[var(--bg-saffron)] text-white-force"
+                                                    style={{ color: '#ffffff' }}
+                                                >
+                                                    <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
