@@ -169,18 +169,18 @@ export default function MyQuizzes() {
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-hero-fluid font-black text-[var(--text-primary)] italic uppercase tracking-tighter">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
-                        <p className="text-[var(--text-secondary)] font-bold mt-4 uppercase tracking-widest text-xs sm:text-sm italic text-balance">Manage your knowledge assets</p>
+                        <h1 className="text-hero-fluid font-black text-[var(--text-primary)] italic tracking-tight">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
+                        <p className="text-[var(--text-secondary)] font-bold mt-2 text-xs sm:text-sm text-balance">Manage your knowledge assets</p>
                     </div>
 
                     <div className="relative w-full md:w-80 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] group-focus-within:text-[var(--text-accent)] transition-colors" size={20} />
                         <input
                             type="text"
-                            placeholder="SEARCH LIBRARY..."
+                            placeholder="Search library..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-6 text-[var(--text-primary)] font-black italic placeholder:text-[var(--text-secondary)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent)]/20 focus:border-[var(--bg-accent)] transition-all uppercase tracking-tighter"
+                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-6 text-[var(--text-primary)] font-black italic placeholder:text-[var(--text-secondary)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent)]/20 focus:border-[var(--bg-accent)] transition-all tracking-tight"
                         />
                     </div>
                 </div>
@@ -252,7 +252,7 @@ export default function MyQuizzes() {
                                             <div className="space-y-1 min-w-0 w-full">
                                                 <div className="flex items-center gap-3 flex-wrap min-w-0 w-full">
                                                     <div className="w-full min-w-0 py-1">
-                                                        <h3 className="text-xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tighter uppercase italic leading-snug break-words transition-colors" title={cleanQuizTitle(quiz.title)}>
+                                                        <h3 className="text-xl sm:text-3xl font-black text-[var(--text-accent)] tracking-tight italic leading-snug break-words transition-colors" title={cleanQuizTitle(quiz.title)}>
                                                             {cleanQuizTitle(quiz.title)}
                                                         </h3>
                                                     </div>

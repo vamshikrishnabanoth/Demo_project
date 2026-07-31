@@ -394,11 +394,11 @@ export default function StudentDashboard() {
                         >
                             <Trophy size={40} className="relative z-10" />
                         </motion.div>
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-tight">
-                            STUDENT <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">GAME ARENA</span>
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-primary)] italic tracking-tight leading-tight">
+                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Game Arena</span>
                         </h1>
-                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px] max-w-md mx-auto">
-                            Attempt quizzes via Code or Launch cognitive AI games
+                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
+                            Attempt quizzes via code or launch cognitive AI games
                         </p>
                     </div>
 

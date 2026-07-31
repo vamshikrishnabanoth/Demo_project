@@ -81,10 +81,10 @@ export default function TeacherDashboard() {
                             </span>
                             <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider hidden sm:inline">v2.4 Production Engine</span>
                         </div>
-                        <h1 className="text-3xl sm:text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tight">
-                            EDUCATOR <span className="text-[var(--text-accent)]">COMMAND CENTRAL</span>
+                        <h1 className="text-3xl sm:text-5xl font-black text-[var(--text-primary)] italic tracking-tight">
+                            Educator <span className="text-[var(--text-accent)]">Command Central</span>
                         </h1>
-                        <p className="text-xs sm:text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider max-w-2xl">
+                        <p className="text-xs sm:text-sm font-bold text-[var(--text-secondary)] tracking-wider max-w-2xl">
                             Next-generation AI assessment generator, telemetry analytics, and interactive live quiz engine.
                         </p>
                     </div>
@@ -117,9 +117,9 @@ export default function TeacherDashboard() {
                     {statsError ? (
                         <div className="bg-red-500/10 border-2 border-red-500/30 rounded-3xl p-8 text-center space-y-4 shadow-sm">
                             <AlertCircle className="text-red-500 mx-auto" size={36} />
-                            <h3 className="text-lg font-black text-[var(--text-primary)] italic uppercase">Sync Disrupted</h3>
-                            <p className="text-red-600 text-xs font-black uppercase tracking-wider">Reconnect to central database to restore real-time yields</p>
-                            <button onClick={handleRefresh} className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-black uppercase text-xs tracking-wider">Retry Sync</button>
+                            <h3 className="text-lg font-black text-[var(--text-primary)] italic">Sync Disrupted</h3>
+                            <p className="text-red-600 text-xs font-black tracking-wider">Reconnect to central database to restore real-time yields</p>
+                            <button onClick={handleRefresh} className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-black text-xs tracking-wider">Retry Sync</button>
                         </div>
                     ) : loading ? (
                         <SkeletonStat />
@@ -128,7 +128,7 @@ export default function TeacherDashboard() {
                             {statCards.map((stat, i) => (
                                 <div key={i} className="bg-white border-2 border-[var(--border-color)] rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-[var(--bg-accent)]/60 transition-all duration-300 group relative overflow-hidden">
                                     <div className="flex items-center justify-between mb-4">
-                                        <span className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-wider">{stat.label}</span>
+                                        <span className="text-xs font-black text-[var(--text-secondary)] tracking-wider">{stat.label}</span>
                                         <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
                                             <stat.icon size={22} />
                                         </div>
@@ -170,8 +170,8 @@ export default function TeacherDashboard() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-2xl sm:text-3xl font-black text-[#0f172a] italic uppercase tracking-tight" style={{ color: '#0f172a' }}>
-                                    UNIVERSAL <span className="text-[var(--text-accent)]">AI QUIZ CREATOR</span>
+                                <h3 className="text-2xl sm:text-3xl font-black text-[#0f172a] italic tracking-tight" style={{ color: '#0f172a' }}>
+                                    Universal <span className="text-[var(--text-accent)]">AI Quiz Creator</span>
                                 </h3>
                                 <p className="text-sm font-bold text-[#334155] leading-relaxed" style={{ color: '#334155' }}>
                                     Generate comprehensive assessments from any input format — Syllabus Topics, PDF Documents, Raw Text Prompts, Voice Recordings, or Video Content.
@@ -198,12 +198,10 @@ export default function TeacherDashboard() {
                         <Link
                             to="/create-quiz/topic"
                             className="bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white-force teacher-launch-btn flex items-center gap-3 px-8 py-5 rounded-2xl active:scale-95 shadow-lg hover:shadow-xl transition-all shrink-0 cursor-pointer group"
-                            style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
+                            style={{ color: '#ffffff' }}
                         >
-                            <span className="font-black text-xs uppercase tracking-widest text-white-force" style={{ color: '#ffffff' }}>
-                                LAUNCH AI STUDIO
-                            </span>
-                            <ArrowRight size={18} className="text-white-force group-hover:translate-x-1.5 transition-transform duration-200" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                            <span className="font-black text-sm tracking-wider uppercase" style={{ color: '#ffffff' }}>Create Quiz Now</span>
+                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform !text-white" style={{ color: '#ffffff' }} />
                         </Link>
                     </div>
                 </div>
