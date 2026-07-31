@@ -229,8 +229,8 @@ export default function AdaptiveQuestionContainer({ questionText }) {
                         return (
                             <p 
                                 key={idx} 
-                                className="text-xl md:text-2xl font-black italic uppercase tracking-tight leading-snug break-words whitespace-pre-wrap select-text mb-2"
-                                style={{ fontFamily: 'var(--app-font), sans-serif' }}
+                                className="text-xl md:text-2xl font-black italic uppercase tracking-tight leading-snug break-words whitespace-pre-wrap select-text mb-2 text-[#0f172a]"
+                                style={{ fontFamily: 'var(--app-font), sans-serif', color: '#0f172a' }}
                             >
                                 {segment.content}
                             </p>
