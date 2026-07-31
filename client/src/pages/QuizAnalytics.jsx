@@ -6,7 +6,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
-    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck, CheckCircle2, XCircle, MinusCircle
+    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck, CheckCircle2, XCircle, MinusCircle, LayoutList
 } from 'lucide-react';
 
 // Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
@@ -662,8 +662,8 @@ export default function QuizAnalytics() {
                 <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
-                                <AlertCircle size={22} />
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
+                                <LayoutList size={22} />
                             </div>
                             <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question Insights</h3>
                         </div>

@@ -244,9 +244,7 @@ const AssessmentsHistory = () => {
                                                                 Rank #{item.rank}
                                                             </div>
                                                         )}
-                                                        <div className="bg-[#B371E0]/20 border border-[#B371E0]/30 px-4 py-1.5 rounded-lg text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
-                                                            <Brain size={12} className="text-[#B371E0]" /> AI Available
-                                                        </div>
+
                                                     </>
                                                 ) : (
                                                     <div className="bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-lg text-rose-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
