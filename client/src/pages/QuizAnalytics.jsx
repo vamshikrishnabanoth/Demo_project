@@ -13,6 +13,7 @@ import {
 const ScoreDistributionChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.ScoreDistributionChart })));
 const AccuracyPieChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.AccuracyPieChart })));
 const MasteryRadarChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.MasteryRadarChart })));
+const QuestionPerformanceChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.QuestionPerformanceChart })));
 
 const ChartFallback = () => (
     <div className="w-full h-[280px] flex flex-col items-center justify-center gap-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
@@ -550,64 +551,20 @@ export default function QuizAnalytics() {
                         <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question-Wise Performance</h3>
                     </div>
                     <div className="w-full overflow-x-auto premium-scrollbar">
-                        <div style={{ minWidth: `${Math.max(600, analytics.questionPerformance.length * 60)}px`, height: '300px' }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart 
+                        <div style={{ minWidth: `${Math.max(600, (analytics.questionPerformance || []).length * 60)}px`, height: '300px' }}>
+                            <Suspense fallback={<ChartFallback />}>
+                                <QuestionPerformanceChart 
                                     data={(analytics.questionPerformance || []).map((q, idx) => ({ 
                                         name: `Q${q.questionIndex + 1}`, 
                                         index: q.questionIndex, 
                                         correct: q.correct,
                                         fill: getThemePalette()[idx % getThemePalette().length] 
-                                    }))} 
-                                    margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-                                    onClick={(state) => {
-                                        if (state && state.activePayload && state.activePayload.length) {
-                                            navigate(`/analytics/question/${id}/${state.activePayload[0].payload.index}`);
-                                        }
-                                    }}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                                    <XAxis 
-                                        dataKey="name" 
-                                        stroke="#334155" 
-                                        tickLine={false} 
-                                        axisLine={false} 
-                                        tick={(props) => {
-                                            const { x, y, payload } = props;
-                                            if (!payload) return null;
-                                            const qNum = parseInt(payload.value.replace('Q', ''), 10) - 1;
-                                            return (
-                                                <g 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        navigate(`/analytics/question/${id}/${qNum}`);
-                                                    }}
-                                                    style={{ cursor: 'pointer' }}
-                                                >
-                                                    <text 
-                                                        x={x} 
-                                                        y={y + 15} 
-                                                        textAnchor="middle" 
-                                                        fill="#334155" 
-                                                        className="font-bold hover:fill-[var(--text-accent)] transition-colors hover:underline"
-                                                        style={{ fontSize: '12px', fontWeight: 700 }}
-                                                    >
-                                                        {payload.value}
-                                                    </text>
-                                                </g>
-                                            );
-                                        }}
-                                    />
-                                    <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
-                                    <Bar dataKey="correct" name="Correct Answers" radius={[8, 8, 0, 0]} maxBarSize={50}>
-                                        {analytics.questionPerformance.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={getThemePalette()[index % getThemePalette().length]} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                                    }))}
+                                    themePalette={getThemePalette()}
+                                    onQuestionClick={(qIndex) => navigate(`/analytics/question/${id}/${qIndex}`)}
+                                    CustomTooltip={CustomTooltip}
+                                />
+                            </Suspense>
                         </div>
                     </div>
                     <p className="text-center text-xs text-[#334155] font-bold uppercase tracking-widest mt-4" style={{ color: '#334155' }}>Click a bar to view detailed deep analysis</p>

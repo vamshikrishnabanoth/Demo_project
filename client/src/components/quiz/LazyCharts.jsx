@@ -46,3 +46,60 @@ export function MasteryRadarChart({ data }) {
         </ResponsiveContainer>
     );
 }
+
+export function QuestionPerformanceChart({ data, themePalette, onQuestionClick, CustomTooltip }) {
+    return (
+        <ResponsiveContainer width="100%" height="100%">
+            <BarChart 
+                data={data} 
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+                onClick={(state) => {
+                    if (state && state.activePayload && state.activePayload.length) {
+                        onQuestionClick(state.activePayload[0].payload.index);
+                    }
+                }}
+                style={{ cursor: 'pointer' }}
+            >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <XAxis 
+                    dataKey="name" 
+                    stroke="#334155" 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tick={(props) => {
+                        const { x, y, payload } = props;
+                        if (!payload) return null;
+                        const qNum = parseInt(payload.value.replace('Q', ''), 10) - 1;
+                        return (
+                            <g 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onQuestionClick(qNum);
+                                }}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <text 
+                                    x={x} 
+                                    y={y + 15} 
+                                    textAnchor="middle" 
+                                    fill="#334155" 
+                                    className="font-bold hover:fill-[var(--text-accent)] transition-colors hover:underline"
+                                    style={{ fontSize: '12px', fontWeight: 700 }}
+                                >
+                                    {payload.value}
+                                </text>
+                            </g>
+                        );
+                    }}
+                />
+                <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
+                <Tooltip content={CustomTooltip ? <CustomTooltip /> : undefined} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
+                <Bar dataKey="correct" name="Correct Answers" radius={[8, 8, 0, 0]} maxBarSize={50}>
+                    {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={themePalette[index % themePalette.length]} />
+                    ))}
+                </Bar>
+            </BarChart>
+        </ResponsiveContainer>
+    );
+}
