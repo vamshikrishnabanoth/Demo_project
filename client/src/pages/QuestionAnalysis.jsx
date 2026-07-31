@@ -37,7 +37,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function QuestionAnalysis() {
     const { quizId, questionIndex } = useParams();
     const navigate = useNavigate();
-    const { theme } = useContext(AuthContext);
+    const { user, theme } = useContext(AuthContext);
+    const currentRole = user?.role || 'student';
     
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -93,7 +94,7 @@ export default function QuestionAnalysis() {
 
     if (loading) {
         return (
-            <DashboardLayout role="teacher">
+            <DashboardLayout role={currentRole}>
                 <div className="flex items-center justify-center min-h-[60vh]">
                     <div className="relative w-16 h-16">
                         <div className="premium-spinner-ring"></div>
@@ -105,7 +106,7 @@ export default function QuestionAnalysis() {
         );
     }
 
-    if (!data) return <DashboardLayout role="teacher"><div className="text-white text-center mt-20">Analysis not found.</div></DashboardLayout>;
+    if (!data) return <DashboardLayout role={currentRole}><div className="text-white text-center mt-20">Analysis not found.</div></DashboardLayout>;
 
     const { question, analytics, studentInsights } = data;
 
@@ -156,7 +157,7 @@ export default function QuestionAnalysis() {
     });
 
     return (
-        <DashboardLayout role="teacher">
+        <DashboardLayout role={currentRole}>
             <div className="space-y-12 pb-20 relative">
                 {/* Background effects */}
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-rose-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>

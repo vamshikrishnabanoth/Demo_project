@@ -14,6 +14,7 @@ const ScoreDistributionChart = lazy(() => import('../components/quiz/LazyCharts'
 const AccuracyPieChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.AccuracyPieChart })));
 const MasteryRadarChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.MasteryRadarChart })));
 const QuestionPerformanceChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.QuestionPerformanceChart })));
+const TimeSpentChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.TimeSpentChart })));
 
 const ChartFallback = () => (
     <div className="w-full h-[280px] flex flex-col items-center justify-center gap-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
@@ -544,6 +545,66 @@ export default function QuizAnalytics() {
                         </div>
                     </div>
                 )}
+
+                {/* Time Spent per Question Graph */}
+                {(() => {
+                    const studentAnswers = analytics?.studentAttempt?.answers || [];
+                    const timeSpentData = (analytics?.questionPerformance || []).map((q, idx) => {
+                        const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
+                        const timeSpent = studentAns ? (studentAns.timeTaken || 0) : (q.avgTimeSpent || 0);
+                        const isCorrect = studentAns ? studentAns.isCorrect : null;
+                        const status = studentAns ? (studentAns.selectedOption ? (studentAns.isCorrect ? 'Correct' : 'Incorrect') : 'Skipped') : 'Average Time';
+                        return {
+                            name: `Q${idx + 1}`,
+                            index: idx,
+                            timeSpent,
+                            isCorrect,
+                            status
+                        };
+                    });
+
+                    return (
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600">
+                                        <Clock size={22} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Time Spent per Question</h3>
+                                        <p className="text-xs text-[#334155] font-bold" style={{ color: '#334155' }}>
+                                            Time distribution across questions (click any question number or point to analyze)
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Legend */}
+                                <div className="flex flex-wrap items-center gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-4 py-2 text-xs">
+                                    <div className="flex items-center gap-1.5 font-black text-emerald-700">
+                                        <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" /> Correct
+                                    </div>
+                                    <div className="flex items-center gap-1.5 font-black text-rose-700">
+                                        <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" /> Incorrect
+                                    </div>
+                                    <div className="flex items-center gap-1.5 font-black text-slate-600">
+                                        <span className="w-3 h-3 rounded-full bg-slate-500 inline-block" /> Skipped / Avg
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="w-full overflow-x-auto premium-scrollbar">
+                                <div style={{ minWidth: `${Math.max(600, (timeSpentData || []).length * 60)}px`, height: '300px' }}>
+                                    <Suspense fallback={<ChartFallback />}>
+                                        <TimeSpentChart
+                                            data={timeSpentData}
+                                            onQuestionClick={(qIndex) => navigate(`/analytics/question/${id}/${qIndex}`)}
+                                        />
+                                    </Suspense>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })()}
 
                 {/* Question Performance Chart */}
                 <div className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">

@@ -247,6 +247,19 @@ exports.getQuizAnalytics = async (req, res) => {
             console.error('Error fetching cheating logs, falling back to empty list:', cheatingErr);
         }
 
+        let studentAttempt = null;
+        if (req.user && req.user.id) {
+            const studentResult = results.find(r => r.studentId === req.user.id);
+            if (studentResult) {
+                studentAttempt = {
+                    id: studentResult.id,
+                    score: studentResult.score,
+                    totalTimeTaken: studentResult.totalTimeTaken,
+                    answers: getAnswersArray(studentResult.answers)
+                };
+            }
+        }
+
         res.json({
             quizTitle: quiz.title,
             topic: quiz.topic,
@@ -260,7 +273,8 @@ exports.getQuizAnalytics = async (req, res) => {
             participationRate: { attempted: totalParticipants, totalEligible: allStudentsInDb },
             topStudents,
             leaderboard,
-            cheatingLogs: formattedCheatingLogs
+            cheatingLogs: formattedCheatingLogs,
+            studentAttempt
         });
 
     } catch (err) {
@@ -282,7 +296,17 @@ exports.getQuestionAnalysis = async (req, res) => {
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
         
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
-             return res.status(403).json({ msg: 'Not authorized' });
+            if (req.user.role === 'student') {
+                const hasAttempted = await prisma.result.findFirst({
+                    where: { quizId: quizId, studentId: req.user.id }
+                });
+                const isPublicQuiz = quiz.isPublic || quiz.accessType === 'public';
+                if (!hasAttempted && !isPublicQuiz) {
+                    return res.status(403).json({ msg: 'Not authorized to view question analysis' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Not authorized' });
+            }
         }
 
         const normalizedQuestions = normalizeQuestions(quiz.questions);
@@ -376,7 +400,17 @@ exports.getQuestionAIReview = async (req, res) => {
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
         
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
-             return res.status(403).json({ msg: 'Not authorized' });
+            if (req.user.role === 'student') {
+                const hasAttempted = await prisma.result.findFirst({
+                    where: { quizId: quizId, studentId: req.user.id }
+                });
+                const isPublicQuiz = quiz.isPublic || quiz.accessType === 'public';
+                if (!hasAttempted && !isPublicQuiz) {
+                    return res.status(403).json({ msg: 'Not authorized to view question review' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Not authorized' });
+            }
         }
 
         const normalizedQuestions = normalizeQuestions(quiz.questions);
