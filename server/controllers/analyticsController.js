@@ -1,4 +1,4 @@
-vconst prisma = require('../lib/prisma');
+const prisma = require('../lib/prisma');
 
 // Helper: Safe answers parsing
 const getAnswersArray = (answers) => {
