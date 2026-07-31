@@ -1,15 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
-export default function WaitingRoomLoader({ message = 'Joining Arena...', showCoins = false }) {
-  const dots = Array.from({ length: 8 });
+export default function WaitingRoomLoader({ message = 'Joining Arena...' }) {
   const textLetters = Array.from(message);
 
   const textContainer = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.03, delayChildren: 0.05 * i },
+      transition: { staggerChildren: 0.04, delayChildren: 0.05 * i },
     }),
   };
 
@@ -17,215 +17,69 @@ export default function WaitingRoomLoader({ message = 'Joining Arena...', showCo
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', damping: 12, stiffness: 200 },
+      transition: { type: 'spring', damping: 14, stiffness: 220 },
     },
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 0, y: 12 },
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[var(--bg-primary)] overflow-hidden">
-      {/* Dynamic Cybernetic Ambient Backdrops */}
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white overflow-hidden select-none">
+      {/* Background Soft Glow */}
       <motion.div
         animate={{ 
-          scale: [1, 1.4, 1], 
-          opacity: [0.2, 0.45, 0.2],
-          rotate: [0, 180, 360]
+          scale: [1, 1.2, 1], 
+          opacity: [0.15, 0.35, 0.15]
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute w-[600px] h-[600px] rounded-full pointer-events-none -z-10"
-        style={{ 
-          background: 'radial-gradient(circle, var(--bg-accent-glow) 0%, transparent 60%)',
-          filter: 'blur(50px)'
-        }}
-      />
-      <motion.div
-        animate={{ 
-          scale: [1.2, 0.9, 1.2], 
-          opacity: [0.15, 0.3, 0.15] 
-        }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute w-[800px] h-[800px] rounded-full pointer-events-none -z-10"
-        style={{ 
-          background: 'radial-gradient(circle, var(--bg-accent-glow) 0%, transparent 75%)',
-          filter: 'blur(80px)'
-        }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute w-[450px] h-[450px] rounded-full pointer-events-none bg-[var(--bg-accent)]/15 blur-3xl"
       />
 
-      {/* Cyber Portal Wrapper */}
-      <div className="relative flex items-center justify-center w-72 h-72">
-        {/* Holographic Concentric Rings */}
-        {[1, 2, 3].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full border-2 border-dashed"
-            style={{ 
-              borderColor: i === 1 ? 'var(--bg-accent)' : 'rgba(255,255,255,0.05)',
-              width: i * 85, 
-              height: i * 85,
-              opacity: 0.8 / i
-            }}
-            animate={{ 
-              rotate: i % 2 === 0 ? 360 : -360,
-              scale: [1, 1.05, 1]
-            }}
-            transition={{ 
-              rotate: { duration: 8 + i * 4, repeat: Infinity, ease: 'linear' },
-              scale: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }
-            }}
-          />
-        ))}
-
-        {/* Orbiting Quantum Data Nodes */}
-        {dots.map((_, i) => {
-          return (
-            <motion.div
-              key={i}
-              className="absolute w-2.5 h-2.5 rounded-full"
-              style={{ 
-                background: i % 2 === 0 ? 'var(--bg-accent)' : 'var(--text-primary)',
-                boxShadow: '0 0 15px var(--bg-accent-glow)' 
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 5 + i * 0.5, repeat: Infinity, ease: 'linear' }}
-              transformTemplate={({ rotate }) =>
-                `rotate(${rotate}) translateX(${95 + (i % 2) * 15}px) rotate(-${rotate})`
-              }
-            />
-          );
-        })}
-
-        {/* Dynamic Continuous Coins Particle Burst Animation */}
-        {showCoins && (
-            <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
-                {Array.from({ length: 16 }).map((_, idx) => {
-                    const angle = (idx * 360) / 16;
-                    const rad = (angle * Math.PI) / 180;
-                    const size = 8 + (idx % 3) * 4;
-                    const distance = 90 + (idx % 2) * 50;
-                    const x = Math.cos(rad) * distance;
-                    const y = Math.sin(rad) * distance;
-                    const delay = (idx % 4) * 0.4;
-                    const particleColors = [
-                        'var(--bg-accent)',
-                        '#f59e0b',
-                        '#ef4444',
-                        '#8b5cf6',
-                        '#10b981'
-                    ];
-                    const glowColors = [
-                        'var(--bg-accent-glow)',
-                        'rgba(245, 158, 11, 0.6)',
-                        'rgba(239, 68, 68, 0.5)',
-                        'rgba(139, 92, 246, 0.5)',
-                        'rgba(16, 185, 129, 0.5)'
-                    ];
-                    
-                    return (
-                        <motion.div
-                            key={idx}
-                            className="absolute left-1/2 top-1/2 rounded-full"
-                            style={{
-                                width: size,
-                                height: size,
-                                backgroundColor: particleColors[idx % particleColors.length],
-                                boxShadow: `0 0 ${size * 2}px ${glowColors[idx % glowColors.length]}, 0 0 ${size}px ${glowColors[idx % glowColors.length]}`,
-                                x: -size / 2,
-                                y: -size / 2,
-                            }}
-                            animate={{
-                                x: [0, x],
-                                y: [0, y],
-                                opacity: [0, 1, 0],
-                                scale: [0.5, 1.4, 0.2]
-                            }}
-                            transition={{
-                                duration: 2.2,
-                                repeat: Infinity,
-                                ease: "easeOut",
-                                delay: delay
-                            }}
-                        />
-                    );
-                })}
-            </div>
-        )}
-
-        {/* Center Quantum Core (Premium Glassmorphic Shield) */}
+      {/* Main Loader Core */}
+      <div className="relative flex items-center justify-center w-48 h-48">
+        {/* Smooth outer pulsing ring */}
         <motion.div
-          animate={{ 
-            scale: [0.95, 1.05, 0.95],
-            boxShadow: [
-              '0 0 30px var(--bg-accent-glow), inset 0 0 20px rgba(255,255,255,0.1)',
-              '0 0 60px var(--bg-accent-glow), inset 0 0 30px rgba(255,255,255,0.2)',
-              '0 0 30px var(--bg-accent-glow), inset 0 0 20px rgba(255,255,255,0.1)'
-            ]
-          }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative z-10 w-24 h-24 rounded-[2rem] flex items-center justify-center border border-white/10"
-          style={{ 
-            background: 'linear-gradient(135deg, var(--bg-accent-glow), rgba(255,255,255,0.03))',
-            backdropFilter: 'blur(12px)'
-          }}
-        >
-          <svg className="w-9 h-9 text-white drop-shadow-[0_2px_10px_var(--bg-accent-glow)] animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-        </motion.div>
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--bg-accent)]/40"
+        />
 
-        {/* High-frequency Laser connection lines */}
-        {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-          <motion.div
-            key={i}
-            className="absolute h-px origin-left"
-            style={{
-              width: 90,
-              background: 'linear-gradient(to right, var(--bg-accent), transparent)',
-              rotate: angle,
-              left: '50%',
-              top: '50%',
-              opacity: 0.15
-            }}
-            animate={{ 
-              opacity: [0.05, 0.4, 0.05],
-              scaleX: [0.8, 1.2, 0.8]
-            }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3, ease: 'easeInOut' }}
-          />
-        ))}
+        {/* Inner spinning accent arc */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-3 rounded-full border-4 border-transparent border-t-[var(--bg-accent)] border-r-[var(--bg-accent)]"
+        />
+
+        {/* Center Card Icon */}
+        <div className="relative z-10 w-20 h-20 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center shadow-lg border-2 border-white text-white">
+          <Sparkles size={36} className="animate-pulse" />
+        </div>
       </div>
 
-      {/* Modern Status Info Panel */}
+      {/* Animated Text Title */}
       <motion.div
         variants={textContainer}
         initial="hidden"
         animate="visible"
-        className="mt-12 text-center space-y-3"
+        className="mt-8 text-center space-y-3"
       >
-        <div className="flex flex-wrap justify-center font-black text-white italic uppercase tracking-[0.25em] text-lg sm:text-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+        <div className="flex flex-wrap justify-center font-black text-[#111111] italic uppercase tracking-[0.2em] text-xl sm:text-2xl">
           {textLetters.map((letter, index) => (
             <motion.span key={index} variants={childLetter}>
               {letter === " " ? "\u00A0" : letter}
             </motion.span>
           ))}
         </div>
-
-        {/* Connected state chips */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8 }}
-          className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full w-fit mx-auto backdrop-blur-md"
-        >
+        <div className="flex items-center justify-center gap-2.5 bg-slate-100 border border-slate-200 px-5 py-2 rounded-full w-fit mx-auto shadow-xs">
           <span className="flex h-2.5 w-2.5 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </span>
-          <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">
-            Telemetry Link • Live Room Active
+          <span className="text-[10px] font-black text-[#555555] uppercase tracking-[0.2em]">
+            Connecting to Arena Session
           </span>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );
 }
-

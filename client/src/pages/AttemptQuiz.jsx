@@ -165,20 +165,18 @@ export default function AttemptQuiz() {
         });
 
         socket.on('quiz_ended', async () => {
-            console.log('[AttemptQuiz] quiz_ended event received. Fetching final rank card...');
-            setTimeout(async () => {
-                setLoadingRankResult(true);
-                try {
-                    const res = await api.get(`/quiz/result/${id}`);
-                    setResult(res.data);
-                    setFinalRankResult(res.data);
-                } catch (err) {
-                    console.error('Error fetching final result:', err);
-                    navigate(`/analytics/quiz/${id}`);
-                } finally {
-                    setLoadingRankResult(false);
-                }
-            }, 1500);
+            console.log('[AttemptQuiz] quiz_ended event received. Fetching final rank card immediately...');
+            setLoadingRankResult(true);
+            try {
+                const res = await api.get(`/quiz/result/${id}`);
+                setResult(res.data);
+                setFinalRankResult(res.data);
+            } catch (err) {
+                console.error('Error fetching final result:', err);
+                navigate(`/analytics/quiz/${id}`);
+            } finally {
+                setLoadingRankResult(false);
+            }
         });
 
         socket.on('sync_timer', ({ timeLeft }) => {

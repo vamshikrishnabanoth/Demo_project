@@ -73,13 +73,13 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
     const showWarning = elapsed > 120; // > 2 minutes
 
     return (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#E6F0FA] overflow-hidden select-none">
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white overflow-hidden select-none">
 
             {/* Ambient Background Glow */}
             <motion.div
-                animate={{ opacity: [0.15, 0.35, 0.15] }}
+                animate={{ opacity: [0.15, 0.3, 0.15] }}
                 transition={{ duration: 3.5, repeat: Infinity }}
-                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,#133E87_0%,transparent_65%)] opacity-15"
+                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,var(--bg-accent)_0%,transparent_65%)] opacity-10"
             />
 
             {/* Differentiated Animation & Stage Container Card */}
@@ -87,7 +87,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative max-w-md w-full mx-4 bg-white/90 backdrop-blur-md border-2 border-[#9cbcd8] rounded-[2.5rem] p-8 sm:p-10 shadow-xl flex flex-col items-center justify-center text-center overflow-hidden"
+                className="relative max-w-md w-full mx-4 bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 sm:p-10 shadow-xl flex flex-col items-center justify-center text-center overflow-hidden"
             >
                 {/* Neural Network Visualization */}
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 mb-2">
@@ -97,7 +97,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                                 key={i}
                                 x1={NODES[a].x} y1={NODES[a].y}
                                 x2={NODES[b].x} y2={NODES[b].y}
-                                stroke="#133E87" strokeWidth="0.8"
+                                stroke="var(--bg-accent)" strokeWidth="0.8"
                                 animate={{ opacity: [0.2, 0.85, 0.2] }}
                                 transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.25 }}
                             />
@@ -107,7 +107,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                                 key={`p-${i}`}
                                 cx={NODES[a].x}
                                 cy={NODES[a].y}
-                                r={1.8} fill="#133E87"
+                                r={1.8} fill="var(--bg-accent)"
                                 initial={{ cx: NODES[a].x, cy: NODES[a].y }}
                                 animate={{
                                     cx: [NODES[a].x, NODES[b].x, NODES[a].x],
@@ -121,14 +121,14 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                             <g key={i}>
                                 <motion.circle
                                     cx={node.x} cy={node.y}
-                                    fill="none" stroke="#133E87" strokeWidth="0.8"
+                                    fill="none" stroke="var(--bg-accent)" strokeWidth="0.8"
                                     initial={{ r: i === 0 ? 5 : 3 }}
                                     animate={{ r: [i === 0 ? 5 : 3, i === 0 ? 6.5 : 4, i === 0 ? 5 : 3], opacity: [0.5, 1, 0.5] }}
                                     transition={{ duration: 2, repeat: Infinity, delay: i * 0.25 }}
                                 />
                                 <motion.circle
                                     cx={node.x} cy={node.y} r={i === 0 ? 2.5 : 1.4}
-                                    fill="#133E87"
+                                    fill="var(--bg-accent)"
                                     animate={{ opacity: [0.6, 1, 0.6] }}
                                     transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
                                 />
@@ -148,14 +148,14 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                         className="space-y-1.5 px-2 max-w-xs"
                     >
                         <div className="flex items-center justify-center gap-2">
-                            <span className="text-xl font-black text-[#133E87]">
+                            <span className="text-xl font-black text-[var(--bg-accent)]">
                                 {stageList[resolvedStage].icon}
                             </span>
-                            <h2 className="text-lg sm:text-xl font-black uppercase italic tracking-tight text-[#0f172a]" style={{ color: '#0f172a' }}>
+                            <h2 className="text-lg sm:text-xl font-black uppercase italic tracking-tight text-[#111111]">
                                 {stageList[resolvedStage].label}
                             </h2>
                         </div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#334155] leading-relaxed" style={{ color: '#334155' }}>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#555555] leading-relaxed">
                             {stageList[resolvedStage].sub}
                         </p>
                     </motion.div>
@@ -171,7 +171,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                                 opacity: i <= resolvedStage ? 1  : 0.35,
                             }}
                             transition={{ duration: 0.3 }}
-                            className={`h-2 rounded-full ${i <= resolvedStage ? 'bg-[#133E87]' : 'bg-slate-300'}`}
+                            className={`h-2 rounded-full ${i <= resolvedStage ? 'bg-[var(--bg-accent)]' : 'bg-slate-300'}`}
                         />
                     ))}
                 </div>
@@ -179,16 +179,16 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 {/* Progress Bar */}
                 <div className="w-full max-w-xs h-2 bg-slate-100 border border-slate-300 rounded-full overflow-hidden shadow-inner my-2">
                     <motion.div
-                        className="h-full bg-[var(--bg-saffron)] rounded-full"
+                        className="h-full bg-[var(--bg-accent)] rounded-full"
                         animate={{ width: `${pct}%` }}
                         transition={{ duration: 0.5, ease: 'easeInOut' }}
                     />
                 </div>
 
                 {/* Stage Badge */}
-                <div className="mt-2 px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
-                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
-                        Agent Pipeline · Stage {resolvedStage + 1} of {stageList.length}
+                <div className="mt-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-300">
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#555555]">
+                        AI Pipeline · Stage {resolvedStage + 1} of {stageList.length}
                     </p>
                 </div>
 

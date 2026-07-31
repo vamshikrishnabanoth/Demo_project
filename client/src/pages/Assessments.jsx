@@ -165,10 +165,10 @@ export default function Assessments() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
-                        <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter mb-4">
+                        <h1 className="text-hero-fluid font-black text-[#111111] italic uppercase tracking-tighter mb-4">
                             Assessment <span className="text-[var(--text-accent)]">Arena</span>
                         </h1>
-                        <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">Select a tactical trial to initiate your progression</p>
+                        <p className="text-[#555555] font-bold uppercase tracking-widest text-[10px]">Select a tactical trial to initiate your progression</p>
                     </div>
                 </div>
 
@@ -228,14 +228,14 @@ export default function Assessments() {
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: i * 0.1 }}
-                            className="glass-panel group relative p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300 shadow-2xl"
+                            className="bg-white border-2 border-[var(--border-color)] group relative p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300 shadow-md"
                         >
-                            <div className={`w-14 h-14 rounded-2xl bg-white/[0.03] flex items-center justify-center ${stat.color}`}>
+                            <div className={`w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center ${stat.color}`}>
                                 <stat.icon size={28} aria-hidden="true" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
-                                <p className="text-3xl font-black text-white italic">
+                                <p className="text-[10px] font-black text-[#555555] uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+                                <p className="text-3xl font-black text-[#111111] italic">
                                     <CountUp end={stat.value} />
                                     {stat.suffix}
                                 </p>
@@ -264,13 +264,13 @@ export default function Assessments() {
                                         animate={{ y: 0, opacity: 1 }}
                                         exit={{ scale: 0.95, opacity: 0 }}
                                         transition={{ delay: i * 0.08 }}
-                                        className={`group glass-panel rounded-[2rem] p-6 sm:p-8 transition-all duration-300 ${
+                                        className={`group bg-white border-2 border-[var(--border-color)] rounded-[2rem] p-6 sm:p-8 transition-all duration-300 shadow-sm hover:shadow-md ${
                                             quiz.isLocked 
-                                                ? 'border-indigo-500/20 bg-indigo-950/5' 
+                                                ? 'border-indigo-500/30 bg-indigo-50/20' 
                                                 : quiz.isExpired 
-                                                ? 'opacity-60 border-red-500/10 bg-red-950/5'
+                                                ? 'opacity-75 border-red-500/20 bg-red-50/20'
                                                 : quiz.isAttempted
-                                                ? 'border-emerald-500/20 bg-emerald-950/5'
+                                                ? 'border-emerald-500/30 bg-emerald-50/20'
                                                 : ''
                                         }`}
                                     >
@@ -278,11 +278,11 @@ export default function Assessments() {
                                             <div className="flex items-center gap-5">
                                                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${
                                                     quiz.isLocked
-                                                        ? 'bg-indigo-500/10 text-indigo-400'
+                                                        ? 'bg-indigo-500/10 text-indigo-600'
                                                         : quiz.isExpired
-                                                        ? 'bg-red-500/10 text-red-400'
+                                                        ? 'bg-red-500/10 text-red-600'
                                                         : quiz.isAttempted
-                                                        ? 'bg-emerald-500/10 text-emerald-400'
+                                                        ? 'bg-emerald-500/10 text-emerald-600'
                                                         : 'bg-[var(--bg-accent)]/10 text-[var(--text-accent)]'
                                                 }`}>
                                                     {quiz.isLocked ? (
@@ -297,24 +297,24 @@ export default function Assessments() {
                                                 </div>
                                                 <div>
                                                     <div className="flex flex-wrap items-center gap-3 mb-1">
-                                                        <h3 className="text-lg font-black text-white group-hover:text-[var(--text-accent)] transition-colors">{cleanQuizTitle(quiz.title)}</h3>
+                                                        <h3 className="text-lg font-black text-[#111111] group-hover:text-[var(--text-accent)] transition-colors">{cleanQuizTitle(quiz.title)}</h3>
                                                         {quiz.isLocked && (
-                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 animate-pulse">
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-700 animate-pulse">
                                                                 SCHEDULED
                                                             </span>
                                                         )}
                                                         {quiz.isExpired && (
-                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-red-500/10 border border-red-500/20 text-red-700">
                                                                 EXPIRED
                                                             </span>
                                                         )}
                                                         {quiz.wasLiveCompleted && (
-                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700">
                                                                 LIVE COMPLETED
                                                             </span>
                                                         )}
                                                         {quiz.isAttempted && !quiz.wasLiveCompleted && (
-                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700">
                                                                 COMPLETED
                                                             </span>
                                                         )}
@@ -322,23 +322,23 @@ export default function Assessments() {
                                                     
                                                     {/* Timing and metadata indicators */}
                                                     <div className="flex flex-col gap-1.5">
-                                                        <div className="flex items-center gap-4 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                                                        <div className="flex items-center gap-4 text-[#555555] text-[10px] font-bold uppercase tracking-widest">
                                                             <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.totalQuestions || 0} Min</span>
                                                             <span className="flex items-center gap-1.5"><Filter size={12} aria-hidden="true" /> {quiz.difficulty || 'Normal'}</span>
                                                             <span className="flex items-center gap-1.5"><Trophy size={12} aria-hidden="true" /> {(quiz.totalQuestions || 0) * 10} Pts</span>
                                                         </div>
                                                         {quiz.isLocked && startStr && (
-                                                            <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                            <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider flex items-center gap-1">
                                                                 <Calendar size={12} /> Starts: {startStr}
                                                             </span>
                                                         )}
                                                         {quiz.isExpired && endStr && (
-                                                            <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                            <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider flex items-center gap-1">
                                                                 <Calendar size={12} /> Ended: {endStr}
                                                             </span>
                                                         )}
                                                         {quiz.isAttempted && (
-                                                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1">
                                                                 <Trophy size={12} /> Score Obtained: {quiz.score}%
                                                             </span>
                                                         )}
@@ -349,7 +349,7 @@ export default function Assessments() {
                                             {quiz.isLocked ? (
                                                 <button
                                                     disabled
-                                                    className="bg-white/5 border border-white/10 text-white/20 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
+                                                    className="bg-slate-100 border border-slate-300 text-slate-400 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
                                                 >
                                                     Locked
                                                     <Lock size={14} aria-hidden="true" />
@@ -357,7 +357,7 @@ export default function Assessments() {
                                             ) : quiz.isExpired && !quiz.isAssessment ? (
                                                 <button
                                                     disabled
-                                                    className="bg-white/5 border border-white/5 text-white/10 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
+                                                    className="bg-slate-100 border border-slate-300 text-slate-400 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
                                                 >
                                                     Expired
                                                     <AlertCircle size={14} aria-hidden="true" />
@@ -368,7 +368,7 @@ export default function Assessments() {
                                                     {quiz.isAttempted && (
                                                         <button
                                                             onClick={() => navigate(`/analytics/quiz/${quiz.id}`)}
-                                                            className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 px-5 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-cyan-500/5"
+                                                            className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-300 px-5 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-sm"
                                                             title="View detailed analytics"
                                                         >
                                                             <BarChart2 size={14} aria-hidden="true" />
@@ -378,7 +378,7 @@ export default function Assessments() {
                                                     {/* START — always available for unlimited practice */}
                                                     <button
                                                         onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
-                                                        className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-[var(--text-on-accent)] px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-lg shadow-[var(--bg-accent)]/10"
+                                                        className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md"
                                                         title={quiz.isAttempted ? 'Practice again' : (quiz.isExpired ? 'Practice' : 'Start assessment')}
                                                     >
                                                         <Play size={14} fill="currentColor" aria-hidden="true" />
@@ -397,16 +397,16 @@ export default function Assessments() {
                                 animate={{ scale: 1, opacity: 1 }}
                                 className="flex flex-col items-center justify-center py-24 text-center"
                             >
-                                <div className="w-32 h-32 bg-white/[0.02] border-2 border-white/20 rounded-full flex items-center justify-center mb-8 relative">
-                                    <Search size={48} className="text-white/40" aria-hidden="true" />
+                                <div className="w-32 h-32 bg-slate-100 border-2 border-slate-300 rounded-full flex items-center justify-center mb-8 relative">
+                                    <Search size={48} className="text-slate-400" aria-hidden="true" />
                                     <motion.div 
                                         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                                         transition={{ duration: 3, repeat: Infinity }}
                                         className="absolute inset-0 bg-[var(--bg-accent)]/5 rounded-full"
                                     />
                                 </div>
-                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tight mb-2">No Challenges Found</h3>
-                                <p className="text-white/30 font-bold uppercase tracking-widest text-xs">The arena is currently quiet. Check back later!</p>
+                                <h3 className="text-2xl font-black text-[#111111] italic uppercase tracking-tight mb-2">No Challenges Found</h3>
+                                <p className="text-[#555555] font-bold uppercase tracking-widest text-xs">The arena is currently quiet. Check back later!</p>
                             </motion.div>
                         )}
                     </AnimatePresence>

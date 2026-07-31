@@ -304,7 +304,7 @@ if (socket.connected) {
         );
         if (result.isConfirmed) {
             socket.emit('end_quiz', quiz.id);
-            navigate('/teacher-dashboard');
+            navigate(`/analytics/quiz/${quiz.id}`);
         }
     };
 
