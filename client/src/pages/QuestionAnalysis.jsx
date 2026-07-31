@@ -188,7 +188,7 @@ export default function QuestionAnalysis() {
                         <button 
                             disabled={qIdx <= 0}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx - 1}`)}
-                            className="bg-[#0f172a] hover:bg-[#1e293b] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            className="bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
                             style={{ color: '#ffffff' }}
                         >
                             <ChevronLeft size={16} /> Prev
@@ -196,7 +196,7 @@ export default function QuestionAnalysis() {
                         <button 
                             disabled={qIdx >= totalQuestions - 1}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx + 1}`)}
-                            className="bg-[#0f172a] hover:bg-[#1e293b] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            className="bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
                             style={{ color: '#ffffff' }}
                         >
                             Next <ChevronRight size={16} />
