@@ -230,8 +230,8 @@ export default function DashboardLayout({ children, role }) {
                             {isSmallScreen && (
                                 <button
                                     onClick={() => setMobileOpen(true)}
-                                    className="p-3 bg-white/5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-2xl premium-transition border border-white/5 active:scale-95"
-                                    aria-label="Open side menu"
+                                    className="p-3 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-2xl transition-all border border-slate-300 active:scale-95 shadow-sm"
+                                    aria-label="Open navigation menu"
                                 >
                                     <Menu size={24} aria-hidden="true" />
                                 </button>
@@ -324,20 +324,6 @@ export default function DashboardLayout({ children, role }) {
                                                 </Link>
                                             );
                                         })}
-
-                                        {/* Mobile Vertical Theme Switcher Option */}
-                                        <button
-                                            onClick={toggleTheme}
-                                            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all"
-                                        >
-                                            <span className="flex items-center gap-3">
-                                                <span className="text-base">{theme === 'india' ? '🇮🇳' : '🌌'}</span>
-                                                <span>Theme</span>
-                                            </span>
-                                            <span className="text-[10px] font-black text-[var(--text-accent)] italic">
-                                                {theme === 'india' ? 'SAFFRON' : 'CELESTIAL'}
-                                            </span>
-                                        </button>
                                     </nav>
                                 </div>
 
