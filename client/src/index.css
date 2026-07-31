@@ -1,39 +1,38 @@
 @import "tailwindcss";
 
-:root,
-[data-theme="celestial"] {
-  /* Celestial Blue Theme (Soft Rich Powder Blue #DDE8F3 & Deep Navy Accent #133E87) */
-  --bg-primary: #DDE8F3;
-  --bg-secondary: #ffffff;
-  --bg-accent: #133E87;
-  --bg-accent-hover: #0e2e65; 
-  
-  --bg-saffron: #133E87;
-  --bg-saffron-hover: #0e2e65;
+:root {
+  /* ─── NEUTRAL WHITE / BLACK THEME ─────────────────────────────────────── */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f8f8;
+  --bg-accent: #1a1a1a;
+  --bg-accent-hover: #333333;
 
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-accent: #133E87;
+  --bg-saffron: #1a1a1a;
+  --bg-saffron-hover: #333333;
+
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-accent: #111111;
   --text-on-accent: #ffffff;
-  
-  --border-color: #a8c5e2;
-  --glass-bg: rgba(255, 255, 255, 0.94);
-  --glass-blur: blur(14px);
-  --glass-border: #a8c5e2;
-  --glass-border-hover: #133E87;
-  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
-  
-  --accent-sand: #E8DFCA;
-  --accent-sand-hover: #d8ceb5;
-  
-  --aurora-glow-1: rgba(19, 62, 135, 0.25);
-  --aurora-glow-2: rgba(37, 99, 235, 0.15);
-  --aurora-glow-3: rgba(168, 197, 226, 0.25);
-  
-  --neural-prime: #133E87;
-  --neural-sub: #2b5b84;
-  --neural-neutral: #334155;
-  
+
+  --border-color: #dddddd;
+  --glass-bg: rgba(255, 255, 255, 0.97);
+  --glass-blur: blur(8px);
+  --glass-border: #dddddd;
+  --glass-border-hover: #aaaaaa;
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+
+  --accent-sand: #f0f0f0;
+  --accent-sand-hover: #e0e0e0;
+
+  --aurora-glow-1: rgba(0, 0, 0, 0.05);
+  --aurora-glow-2: rgba(0, 0, 0, 0.03);
+  --aurora-glow-3: rgba(0, 0, 0, 0.05);
+
+  --neural-prime: #111111;
+  --neural-sub: #444444;
+  --neural-neutral: #666666;
+
   --motion-fast: 150ms;
   --motion-medium: 250ms;
   --motion-slow: 500ms;
@@ -44,34 +43,30 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
   --hover-scale: 1.02;
-  --glow-intensity: 0.8;
-  --blur-strength: 14px;
+  --glow-intensity: 0.5;
+  --blur-strength: 8px;
   --parallax-strength: 1;
 
-  --app-font: 'Plus Jakarta Sans', 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  --app-font: 'Inter', system-ui, -apple-system, sans-serif;
 
-  --card-shadow-sm: 0 2px 8px -1px rgba(19, 62, 135, 0.06), 0 1px 4px -1px rgba(0, 0, 0, 0.04);
-  --card-shadow-md: 0 8px 24px -4px rgba(19, 62, 135, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
-  --card-shadow-lg: 0 16px 40px -8px rgba(19, 62, 135, 0.15), 0 4px 16px -4px rgba(0, 0, 0, 0.06);
+  --card-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --card-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --card-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10);
 
-  --error-bg: #ef4444;
-  --success-bg: #22c55e;
-  --bg-accent-glow: rgba(37, 99, 235, 0.2);
-  --table-row-hover: rgba(43, 91, 132, 0.05);
+  --error-bg: #dc2626;
+  --success-bg: #16a34a;
+  --bg-accent-glow: rgba(0, 0, 0, 0.08);
+  --table-row-hover: rgba(0, 0, 0, 0.03);
 
-  /* Theme 1 (Blue / Celestial): Action Button Palette */
-  --btn-edit: #2563EB;
-  --btn-suspend: #F59E0B;
-  --btn-delete: #EF4444;
+  --btn-edit: #1d4ed8;
+  --btn-suspend: #d97706;
+  --btn-delete: #dc2626;
 
-  --body-bg-color: #DDE8F3;
-  --body-bg-image: 
-    radial-gradient(at 0% 0%, rgba(19, 62, 135, 0.12) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(168, 197, 226, 0.25) 0px, transparent 50%);
+  --body-bg-color: #ffffff;
+  --body-bg-image: none;
 
   --text-on-dark: #ffffff;
-  
+
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
@@ -86,11 +81,11 @@
   --font-2xl: 1.5rem;
   --font-3xl: 1.875rem;
 
-  --shadow-sm: var(--card-shadow-sm, 0 2px 8px -1px rgba(0, 0, 0, 0.06));
-  --shadow-md: var(--card-shadow-md, 0 8px 24px -4px rgba(0, 0, 0, 0.1));
-  --shadow-lg: var(--card-shadow-lg, 0 16px 40px -8px rgba(0, 0, 0, 0.15));
-  --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 24px var(--bg-accent-glow);
+  --shadow-sm: var(--card-shadow-sm);
+  --shadow-md: var(--card-shadow-md);
+  --shadow-lg: var(--card-shadow-lg);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.14);
+  --shadow-glow: 0 0 16px rgba(0, 0, 0, 0.08);
 
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -114,102 +109,17 @@
   --z-tooltip: 4000;
 }
 
-/* ─── TIRANGA HORIZON THEME [Prominent Warm Saffron #D96B27, Crisp White, Ashoka Emerald Green #0F7547] ─ */
-[data-theme="india"] {
-  --bg-primary: #FAF9F6;
-  --bg-secondary: #ffffff;
-  --bg-accent: #D96B27; /* Prominent Warm Saffron Orange Accent */
-  --bg-accent-hover: #B8571B;
-  
-  --bg-saffron: #D96B27;
-  --bg-saffron-hover: #B8571B;
-  --bg-emerald: #0F7547;
-  --bg-emerald-hover: #0A5734;
-
-  --text-primary: #1E293B; /* Crisp Slate Primary Text */
-  --text-secondary: #475569;
-  --text-accent: #D96B27; /* Prominent Warm Saffron Orange Text Accent */
-  --text-on-accent: #ffffff;
-  
-  --border-color: #FED7AA; /* Soft Warm Saffron Tinted Border */
-  --glass-bg: rgba(255, 255, 255, 0.96);
-  --glass-blur: blur(14px);
-  --glass-border: #FED7AA;
-  --glass-border-hover: #D96B27;
-  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
-  
-  --accent-sand: #FFF7ED; /* Warm Saffron Tint Badge Token */
-  --accent-sand-hover: #FFEDD5;
-  
-  --aurora-glow-1: rgba(217, 107, 39, 0.20); /* Dominant Warm Saffron Top-Left Glow */
-  --aurora-glow-2: rgba(15, 117, 71, 0.10); /* Subtle Ashoka Emerald Bottom-Right Glow */
-  --aurora-glow-3: rgba(255, 247, 237, 0.50);
-  
-  --neural-prime: #D96B27;
-  --neural-sub: #0F7547;
-  --neural-neutral: #475569;
-  
-  --card-shadow-sm: 0 2px 8px -1px rgba(217, 107, 39, 0.07), 0 1px 4px -1px rgba(0, 0, 0, 0.03);
-  --card-shadow-md: 0 8px 24px -4px rgba(217, 107, 39, 0.10), 0 2px 8px -2px rgba(15, 117, 71, 0.05);
-  --card-shadow-lg: 0 16px 40px -8px rgba(217, 107, 39, 0.14), 0 4px 16px -4px rgba(15, 117, 71, 0.06);
-
-  --error-bg: #ef4444;
-  --success-bg: #0F7547;
-  --bg-accent-glow: rgba(217, 107, 39, 0.22);
-  --table-row-hover: rgba(217, 107, 39, 0.04);
-
-  /* Theme 2 (Orange / India): Action Button Palette */
-  --btn-edit: #F97316;
-  --btn-suspend: #EAB308;
-  --btn-delete: #DC2626;
-
-  --body-bg-color: #FAF9F6;
-  --body-bg-image: 
-    radial-gradient(at 0% 0%, rgba(217, 107, 39, 0.16) 0px, transparent 55%),
-    radial-gradient(at 100% 100%, rgba(15, 117, 71, 0.10) 0px, transparent 55%),
-    radial-gradient(at 50% 50%, #FAF9F6 0px, transparent 100%);
-}
-
 /* ─── GLOBAL FOCUS OUTLINE & RING OVERRIDES ─────────────────────────────── */
-/* WCAG 2.2 SC 2.4.11: Never globally suppress focus outlines.
-   We only remove the browser default ring and replace it with our
-   design-system ring via the theme-scoped rules below.
-   Elements outside a themed container get the universal fallback ring. */
 *:focus {
-  outline: none; /* Removes default browser ring only — replaced below */
+  outline: none;
 }
 
-/* Universal fallback: any focusable element without a theme-scoped override
-   still gets a clearly visible ring (satisfies WCAG 2.2) */
 *:focus-visible {
-  outline: 2px solid var(--bg-accent, #133E87);
+  outline: 2px solid #111111;
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(19, 62, 135, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="india"] input:focus,
-[data-theme="india"] select:focus,
-[data-theme="india"] textarea:focus,
-[data-theme="india"] button:focus-visible,
-[data-theme="india"] [role="button"]:focus-visible,
-[data-theme="india"] a:focus-visible {
-  outline: 2px solid #D96B27 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 3px rgba(217, 107, 39, 0.25) !important;
-  border-color: #D96B27 !important;
-}
-
-[data-theme="celestial"] input:focus,
-[data-theme="celestial"] select:focus,
-[data-theme="celestial"] textarea:focus,
-[data-theme="celestial"] button:focus-visible,
-[data-theme="celestial"] [role="button"]:focus-visible,
-[data-theme="celestial"] a:focus-visible {
-  outline: 2px solid #133E87 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 3px rgba(19, 62, 135, 0.25) !important;
-  border-color: #133E87 !important;
-}
 
 /* ─── MOBILE SIDEBAR SCROLL LOCK & OVERSCROLL CONTAINMENT ──────────────── */
 html,

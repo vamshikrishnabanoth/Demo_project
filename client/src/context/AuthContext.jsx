@@ -8,20 +8,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser]       = useState(null);
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
-    // Dynamic theme setup with localStorage persistence
-    const [theme, setThemeState] = useState(() => {
-        return localStorage.getItem('app-theme') || 'india';
-    });
-
-    const setTheme = (newTheme) => {
-        setThemeState(newTheme);
-        localStorage.setItem('app-theme', newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
-    };
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-    }, [theme]);
 
     // ── Restore session on mount ─────────────────────────────────────────────
     const checkUser = useCallback(async () => {
@@ -129,7 +115,6 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             user, loading, authError, retryAuth,
             login, logout, setRole,
-            theme, setTheme,
             font: 'inter',
         }}>
             {children}

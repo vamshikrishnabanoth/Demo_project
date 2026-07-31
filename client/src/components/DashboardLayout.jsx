@@ -24,18 +24,13 @@ import GlobalSearch from './GlobalSearch';
 import { uiTerminology } from '../utils/uiTerminology';
 
 export default function DashboardLayout({ children, role }) {
-    const { logout, user, theme, setTheme } = useContext(AuthContext);
+    const { logout, user } = useContext(AuthContext);
     const location  = useLocation();
     const navigate  = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
     // Breakpoint shifted to 1024px (lg) to provide spacious vertical nav for tablets
     const isSmallScreen = useMediaQuery('(max-width: 1023px)');
 
-    const toggleTheme = () => {
-        const nextTheme = theme === 'india' ? 'celestial' : 'india';
-        setTheme(nextTheme);
-    };
-    
     // Student Broadcast State
     const [messagesOpen, setMessagesOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -211,34 +206,6 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3">
-                            {/* Theme Toggle Button (Icon only on mobile to prevent overlapping logo text) */}
-                            <button
-                                onClick={toggleTheme}
-                                className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-sm border ${
-                                    theme === 'india'
-                                        ? 'bg-gradient-to-r from-[#D96B27]/10 via-white to-[#1C8574]/10 border-[#D96B27]/40 text-[#D96B27]'
-                                        : 'bg-white/80 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)]'
-                                }`}
-                                title={theme === 'india' ? "Switch to Celestial Blue Theme" : "Switch to Saffron Dawn Theme"}
-                                aria-label="Toggle Theme"
-                            >
-                                {theme === 'india' ? (
-                                    <>
-                                        <span className="flex items-center justify-center w-5 h-5 rounded-full overflow-hidden border border-[#D96B27] shadow-xs shrink-0">
-                                            <span className="w-full h-full bg-gradient-to-b from-[#D96B27] via-white to-[#1C8574] block" />
-                                        </span>
-                                        <span className="hidden sm:inline-block text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#133E87] text-white text-[10px] font-black shrink-0">
-                                            🌌
-                                        </span>
-                                        <span className="hidden sm:inline-block text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
-                                    </>
-                                )}
-                            </button>
-
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
 

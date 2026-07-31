@@ -6,12 +6,12 @@ import api from '../utils/api';
 import {
     Lock, Eye, EyeOff, CheckCircle, AlertCircle,
     User, Mail, Shield, Activity, Calendar, Hash, ArrowLeft,
-    UserCheck, GraduationCap, ShieldCheck, Palette, Type, Check
+    UserCheck, GraduationCap, ShieldCheck
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Profile() {
-    const { user, theme, setTheme } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');

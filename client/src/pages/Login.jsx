@@ -30,7 +30,7 @@ const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
 );
 
 export default function Login() {
-    const { login, theme, setTheme } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isColdStart, setIsColdStart] = useState(false);
@@ -127,45 +127,11 @@ export default function Login() {
         }
     };
 
-    const toggleTheme = () => {
-        const nextTheme = theme === 'india' ? 'celestial' : 'india';
-        setTheme(nextTheme);
-    };
 
     return (
         <div className="min-h-[100dvh] bg-[var(--bg-primary)] relative overflow-y-auto py-8 sm:py-16 px-4 flex flex-col items-center justify-center">
             <CinematicBackground />
             
-            {/* Theme Change Option — Top Right Header (Matches Home Dashboard Layout) */}
-            <div className="fixed sm:absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
-                <button
-                    onClick={toggleTheme}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all btn-press shadow-md border cursor-pointer ${
-                        theme === 'india'
-                            ? 'bg-gradient-to-r from-[#D96B27]/10 via-white to-[#1C8574]/10 border-[#D96B27]/40 text-[#D96B27] hover:bg-white shadow-[#D96B27]/10'
-                            : 'bg-white/80 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)]'
-                    }`}
-                    title={theme === 'india' ? "Switch to Celestial Blue Theme" : "Switch to Saffron Dawn Theme"}
-                    aria-label="Toggle Theme"
-                >
-                    {theme === 'india' ? (
-                        <>
-                            <span className="flex items-center justify-center w-5 h-5 rounded-full overflow-hidden border border-[#D96B27] shadow-xs shrink-0">
-                                <span className="w-full h-full bg-gradient-to-b from-[#D96B27] via-white to-[#1C8574] block" />
-                            </span>
-                            <span className="text-[11px] font-black text-[#D96B27] italic tracking-tight">SAFFRON DAWN</span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#133E87] text-white text-[10px] font-black shrink-0">
-                                🌌
-                            </span>
-                            <span className="text-[11px] font-black text-[#133E87] italic tracking-tight">CELESTIAL</span>
-                        </>
-                    )}
-                </button>
-            </div>
-
             {/* Floating Academic Icons */}
             {floatingIcons.map((icon, i) => (
                 <FloatingIcon key={i} {...icon} />
