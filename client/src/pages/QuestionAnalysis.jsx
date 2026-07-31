@@ -206,8 +206,8 @@ export default function QuestionAnalysis() {
                 </div>
 
                 {/* Question Display */}
-                <div className="bg-white border-2 border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden shadow-sm">
-                    <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                <div className="border-2 p-8 md:p-12 rounded-[3rem] relative overflow-hidden shadow-sm" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                    <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none" style={{ color: '#0f172a' }}>
                         <Target size={150} />
                     </div>
                     
@@ -219,19 +219,21 @@ export default function QuestionAnalysis() {
                         }`}>
                             {question.difficulty || 'Medium'}
                         </span>
-                        <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest bg-slate-100 text-[#0f172a] border border-slate-300">
+                        <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border" style={{ backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' }}>
                             {question.points || 10} Points
                         </span>
-                        <button 
-                            onClick={handleGetAIReview} 
-                            disabled={loadingAi}
-                            className="ml-auto flex items-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border-2 border-purple-200 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
-                        >
-                            {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
-                        </button>
+                        {!isStudent && (
+                            <button 
+                                onClick={handleGetAIReview} 
+                                disabled={loadingAi}
+                                className="ml-auto flex items-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border-2 border-purple-200 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
+                            >
+                                {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
+                            </button>
+                        )}
                     </div>
 
-                    <h2 className="text-2xl md:text-3xl font-black text-[#0f172a] leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance" style={{ color: '#0f172a' }}>
+                    <h2 className="text-2xl md:text-3xl font-black leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance" style={{ color: '#0f172a' }}>
                         {question.questionText}
                     </h2>
 
@@ -239,44 +241,61 @@ export default function QuestionAnalysis() {
                         {question.options.map((opt, idx) => {
                             const isCorrect = opt.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
                             const isUserChoice = userAnswer?.selectedOption && opt.trim().toLowerCase() === userAnswer.selectedOption.trim().toLowerCase();
-                            const stat = analytics.optionSelection.find(o => o.option === opt.toLowerCase())?.count || 0;
+                            const stat = analytics.optionSelection?.find(o => o.option === opt.toLowerCase())?.count || 0;
                             const percentage = analytics.totalAttempts > 0 ? Math.round((stat / analytics.totalAttempts) * 100) : 0;
+
+                            // Explicit card styles
+                            let cardBg = '#f8fafc'; let cardBorder = '#cbd5e1';
+                            let labelBg = '#e2e8f0'; let labelColor = '#0f172a';
+                            let textColor = '#0f172a';
+
+                            if (isCorrect) {
+                                cardBg = '#ecfdf5'; cardBorder = '#34d399';
+                                labelBg = '#059669'; labelColor = '#ffffff';
+                                textColor = '#065f46';
+                            } else if (isUserChoice) {
+                                cardBg = '#fffbeb'; cardBorder = '#fbbf24';
+                                labelBg = '#f59e0b'; labelColor = '#ffffff';
+                                textColor = '#78350f';
+                            }
                             
                             return (
-                                <div key={idx} className={`p-6 rounded-2xl border-2 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${
-                                    isCorrect ? 'bg-emerald-50 border-emerald-400 shadow-sm' : 
-                                    isUserChoice ? 'bg-amber-50 border-amber-400 shadow-sm' : 
-                                    'bg-slate-50 border-slate-200'
-                                }`}>
-                                    <div className="flex items-start gap-4 flex-1 min-w-0">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black shrink-0 ${
-                                            isCorrect ? 'bg-emerald-600 text-white shadow-sm' : 
-                                            isUserChoice ? 'bg-amber-500 text-white shadow-sm' : 
-                                            'bg-slate-200 text-[#0f172a] border border-slate-300'
-                                        }`}>
+                                <div key={idx} className="p-5 rounded-2xl border-2 transition-all flex flex-col gap-3" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
+                                    <div className="flex items-start gap-4">
+                                        {/* Option Letter Badge */}
+                                        <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm shrink-0 shadow-sm" style={{ backgroundColor: labelBg, color: labelColor }}>
                                             {String.fromCharCode(65 + idx)}
                                         </div>
-                                        <div className="min-w-0 flex-1">
-                                            <span className={`font-bold text-sm md:text-base break-words overflow-wrap-anywhere whitespace-normal leading-relaxed block ${
-                                                isCorrect ? 'text-emerald-900 font-black' : isUserChoice ? 'text-amber-900 font-black' : 'text-[#0f172a]'
-                                            }`} style={{ color: isCorrect ? '#065f46' : isUserChoice ? '#78350f' : '#0f172a' }}>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="font-bold text-sm md:text-base break-words overflow-wrap-anywhere whitespace-normal leading-relaxed block" style={{ color: textColor }}>
                                                 {opt}
                                             </span>
-                                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                                                {isCorrect && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300">Correct Answer</span>}
-                                                {isUserChoice && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">Your Choice</span>}
+                                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                {isCorrect && (
+                                                    <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-lg" style={{ backgroundColor: '#d1fae5', color: '#065f46', border: '1px solid #6ee7b7' }}>
+                                                        <CheckCircle size={10} /> Correct Answer
+                                                    </span>
+                                                )}
+                                                {isUserChoice && (
+                                                    <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded-lg" style={{ backgroundColor: '#fef3c7', color: '#78350f', border: '1px solid #fbbf24' }}>
+                                                        Your Choice
+                                                    </span>
+                                                )}
+                                                {/* Show stats only to teachers/admins */}
+                                                {!isStudent && (
+                                                    <span className="text-[10px] font-black ml-auto" style={{ color: '#64748b' }}>
+                                                        {percentage}% &nbsp;·&nbsp; {stat} picks
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="flex flex-col items-end shrink-0 text-right justify-start pt-0.5">
-                                        <span className="font-black text-xl italic text-[#0f172a] leading-none" style={{ color: '#0f172a' }}>{percentage}%</span>
-                                        <div className="text-[10px] uppercase font-bold text-[#334155] tracking-widest mt-1" style={{ color: '#334155' }}>{stat} picks</div>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
+
 
                 {/* AI Review Section */}
                 {(loadingAi || aiReview) && (
