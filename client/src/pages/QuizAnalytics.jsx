@@ -6,7 +6,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
-    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2
+    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck
 } from 'lucide-react';
 
 // Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
