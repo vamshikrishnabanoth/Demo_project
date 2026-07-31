@@ -1,5 +1,17 @@
 const prisma = require('../lib/prisma');
 
+// Helper: Safe answers parsing
+const getAnswersArray = (answers) => {
+    if (Array.isArray(answers)) return answers;
+    if (typeof answers === 'string') {
+        try {
+            const parsed = JSON.parse(answers);
+            if (Array.isArray(parsed)) return parsed;
+        } catch (_) {}
+    }
+    return [];
+};
+
 // Helper: Normalize questions
 const normalizeQuestions = (questions) => {
     if (!Array.isArray(questions)) {
@@ -42,7 +54,8 @@ exports.getQuizAnalytics = async (req, res) => {
                 const hasAttempted = await prisma.result.findFirst({
                     where: { quizId: quizId, studentId: req.user.id }
                 });
-                if (!hasAttempted && !quiz.isPublic) {
+                const isPublicQuiz = quiz.isPublic || quiz.accessType === 'public';
+                if (!hasAttempted && !isPublicQuiz) {
                     return res.status(403).json({ msg: 'Not authorized to view analytics for this quiz' });
                 }
             } else {
@@ -100,7 +113,9 @@ exports.getQuizAnalytics = async (req, res) => {
                  questionPerformance: [],
                  sectionPerformance: [],
                  participationRate: { attempted: 0, totalEligible: 0 },
-                 topStudents: []
+                 topStudents: [],
+                 leaderboard: [],
+                 cheatingLogs: []
              });
         }
 
@@ -138,7 +153,8 @@ exports.getQuizAnalytics = async (req, res) => {
             q.options.forEach(opt => optionSelection[opt.toLowerCase()] = 0);
 
             results.forEach(r => {
-                const ans = r.answers.find(a => a.questionText === q.questionText);
+                const answersArray = getAnswersArray(r.answers);
+                const ans = answersArray.find(a => a.questionText === q.questionText);
                 if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                     skipped++;
                 } else {
@@ -196,34 +212,38 @@ exports.getQuizAnalytics = async (req, res) => {
                 score: r.score,
                 timeTaken: r.totalTimeTaken,
                 accuracy: Math.round((r.score / maxScore) * 100),
-                answers: r.answers
+                answers: getAnswersArray(r.answers)
             }));
 
         const topStudents = leaderboard.slice(0, 5);
 
-        // 5. Participation & Security Cheating Logs
         const allStudentsInDb = await prisma.user.count({ where: { role: 'student' } });
 
-        const cheatingLogs = await prisma.cheatingLog.findMany({
-            where: { quizId: quizId },
-            include: {
-                student: {
-                    select: { username: true, name: true, email: true, section: true }
-                }
-            },
-            orderBy: { timestamp: 'desc' }
-        });
+        let formattedCheatingLogs = [];
+        try {
+            const cheatingLogs = await prisma.cheatingLog.findMany({
+                where: { quizId: quizId },
+                include: {
+                    student: {
+                        select: { username: true, name: true, email: true, section: true }
+                    }
+                },
+                orderBy: { timestamp: 'desc' }
+            });
 
-        const formattedCheatingLogs = cheatingLogs.map(log => ({
-            id: log.id,
-            quizId: log.quizId,
-            studentId: log.studentId,
-            studentName: log.student?.name || log.studentName || log.student?.username || 'Student',
-            studentRollNumber: log.student?.username || log.studentRollNumber || 'N/A',
-            action: log.action,
-            details: log.details,
-            createdAt: log.timestamp  // CheatingLog uses `timestamp` field (no createdAt in schema)
-        }));
+            formattedCheatingLogs = cheatingLogs.map(log => ({
+                id: log.id,
+                quizId: log.quizId,
+                studentId: log.studentId,
+                studentName: log.student?.name || log.studentName || log.student?.username || 'Student',
+                studentRollNumber: log.student?.username || log.studentRollNumber || 'N/A',
+                action: log.action,
+                details: log.details,
+                createdAt: log.timestamp  // CheatingLog uses `timestamp` field (no createdAt in schema)
+            }));
+        } catch (cheatingErr) {
+            console.error('Error fetching cheating logs, falling back to empty list:', cheatingErr);
+        }
 
         res.json({
             quizTitle: quiz.title,
@@ -288,7 +308,8 @@ exports.getQuestionAnalysis = async (req, res) => {
         const studentInsights = { correct: [], wrong: [], skipped: [] };
 
         results.forEach(r => {
-            const ans = r.answers.find(a => a.questionText === question.questionText);
+            const answersArray = getAnswersArray(r.answers);
+            const ans = answersArray.find(a => a.questionText === question.questionText);
             const studentName = r.student?.username || 'Unknown';
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
@@ -373,7 +394,8 @@ exports.getQuestionAIReview = async (req, res) => {
         question.options.forEach(opt => optionSelection[opt.toLowerCase()] = 0);
 
         results.forEach(r => {
-            const ans = r.answers.find(a => a.questionText === question.questionText);
+            const answersArray = getAnswersArray(r.answers);
+            const ans = answersArray.find(a => a.questionText === question.questionText);
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
             } else {
