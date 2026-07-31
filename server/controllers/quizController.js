@@ -1312,8 +1312,13 @@ exports.getLatestResult = async (req, res) => {
 
         // SECURITY: If not completed, don't send questions with answers
         let questions = quiz ? (quiz.questions || []) : [];
+        if (!Array.isArray(questions)) {
+            try { questions = JSON.parse(questions); } catch (_) { questions = []; }
+        }
+        if (!Array.isArray(questions)) questions = [];
+
         if (result.status !== 'completed') {
-            questions = questions.map(q => {
+            questions = questions.filter(Boolean).map(q => {
                 // Strip every field that reveals the correct answer to students
                 const { correctAnswer, explanation, correct_option, correctOption, ...safeQuestion } = q;
                 return safeQuestion;
@@ -1434,15 +1439,16 @@ exports.getLeaderboard = async (req, res) => {
                 }
             }
 
+            const answersArray = Array.isArray(r.answers) ? r.answers : [];
             rankedResults.push({
                 studentId: r.studentId,
-                username: r.student.username,
-                isOnline: r.student.isOnline,
-                isSuspended: r.student.isSuspended,
+                username: r.student ? r.student.username : 'Unknown',
+                isOnline: r.student ? r.student.isOnline : false,
+                isSuspended: r.student ? r.student.isSuspended : false,
                 currentScore: r.score,
                 totalTimeTaken: r.totalTimeTaken || r.totalTime || 0,
-                answeredQuestions: r.answers.length,
-                answers: r.answers,
+                answeredQuestions: answersArray.length,
+                answers: answersArray,
                 rank: currentRank
             });
         }
