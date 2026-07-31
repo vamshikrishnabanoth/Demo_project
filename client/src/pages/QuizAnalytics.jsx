@@ -319,14 +319,18 @@ export default function QuizAnalytics() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-white/10 pb-8">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <button 
-                                onClick={() => navigate(isStudent ? '/assessments' : '/my-quizzes')} 
-                                className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" 
-                                style={{ color: '#0f172a' }}
-                            >
-                                <ChevronLeft size={16} /> {isStudent ? 'Back to Assessments' : 'Back to Library'}
-                            </button>
-                            <span className="text-slate-400/30">|</span>
+                            {!isStudent && (
+                                <>
+                                    <button 
+                                        onClick={() => navigate('/my-quizzes')} 
+                                        className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" 
+                                        style={{ color: '#0f172a' }}
+                                    >
+                                        <ChevronLeft size={16} /> Back to Library
+                                    </button>
+                                    <span className="text-slate-400/30">|</span>
+                                </>
+                            )}
                             <button 
                                 onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} 
                                 className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press"
