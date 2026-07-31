@@ -8,7 +8,8 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
 } from 'recharts';
 import {
-    ChevronLeft, CheckCircle, XCircle, AlertCircle, Clock, Target, Users, MinusCircle, ChevronRight, Search, Home
+    ChevronLeft, CheckCircle, XCircle, AlertCircle, Clock, Target, Users, MinusCircle, ChevronRight, Search, Home,
+    Sparkles, BookOpen, Lightbulb, TrendingUp, AlertTriangle, CheckCircle2, Info
 } from 'lucide-react';
 
 const PIE_COLORS = ['#10b981', '#f43f5e', '#64748b'];
@@ -284,15 +285,16 @@ export default function QuestionAnalysis() {
                             <Target size={150} />
                         </div>
                         
+                        {/* Header */}
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="relative w-8 h-8 flex items-center justify-center rounded-xl bg-purple-100 text-purple-700">
+                            <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-purple-100 text-purple-700">
                                 {loadingAi ? (
                                     <div className="w-4 h-4 border-2 border-purple-700 border-t-transparent rounded-full animate-spin"></div>
                                 ) : (
-                                    <span>🤖</span>
+                                    <Sparkles size={18} />
                                 )}
                             </div>
-                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>AI Pedagogical Review</h3>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question Intelligence Report</h3>
                         </div>
 
                         {loadingAi ? (
@@ -300,27 +302,93 @@ export default function QuestionAnalysis() {
                                 <div className="h-4 bg-slate-200 rounded-full w-3/4 animate-pulse"></div>
                                 <div className="h-4 bg-slate-200 rounded-full w-5/6 animate-pulse"></div>
                                 <div className="h-4 bg-slate-200 rounded-full w-2/3 animate-pulse"></div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Gemini is analyzing student pick options and diagnostic data...</p>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Analyzing question data and student responses...</p>
                             </div>
-                        ) : (
-                            <div className="prose max-w-none text-[#0f172a] font-medium text-sm md:text-base leading-relaxed space-y-4 max-h-[350px] overflow-y-auto premium-scrollbar pr-3 pb-2 break-words overflow-wrap-anywhere whitespace-normal scroll-smooth">
-                                {aiReview.split('\n').map((line, idx) => {
-                                    if (line.startsWith('### ')) {
-                                        return <h4 key={idx} className="text-lg font-bold text-purple-700 mt-6 mb-2 uppercase tracking-wide break-words overflow-wrap-anywhere whitespace-normal">{line.replace('### ', '')}</h4>;
-                                    }
-                                    if (line.startsWith('## ')) {
-                                        return <h3 key={idx} className="text-xl font-black text-[#0f172a] mt-8 mb-4 uppercase italic tracking-tight border-b border-slate-200 pb-2 break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line.replace('## ', '')}</h3>;
-                                    }
-                                    if (line.startsWith('# ')) {
-                                        return <h2 key={idx} className="text-2xl font-black text-[#0f172a] mt-8 mb-4 uppercase italic tracking-tight border-b border-slate-300 pb-2 break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line.replace('# ', '')}</h2>;
-                                    }
-                                    if (line.startsWith('**') || line.startsWith('1. **') || line.startsWith('2. **') || line.startsWith('3. **') || line.startsWith('4. **')) {
-                                        return <p key={idx} className="text-[#0f172a] mt-2 break-words overflow-wrap-anywhere whitespace-normal"><strong className="text-[#0f172a] font-black">{line}</strong></p>;
-                                    }
-                                    return <p key={idx} className="mt-1 text-[#0f172a] break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line}</p>;
-                                })}
-                            </div>
-                        )}
+                        ) : (() => {
+                            // Strip emoji characters from text
+                            const stripEmojis = (text) => text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '').trim();
+
+                            // Pick a section icon based on heading keywords
+                            const getSectionIcon = (heading) => {
+                                const h = heading.toLowerCase();
+                                if (h.includes('correct') || h.includes('answer') || h.includes('solution')) return <CheckCircle2 size={15} className="text-emerald-600" />;
+                                if (h.includes('misconception') || h.includes('error') || h.includes('mistake') || h.includes('incorrect')) return <AlertTriangle size={15} className="text-rose-500" />;
+                                if (h.includes('tip') || h.includes('recommend') || h.includes('suggest') || h.includes('improve')) return <Lightbulb size={15} className="text-amber-500" />;
+                                if (h.includes('trend') || h.includes('performance') || h.includes('statistic') || h.includes('data') || h.includes('analysis')) return <TrendingUp size={15} className="text-blue-500" />;
+                                if (h.includes('concept') || h.includes('topic') || h.includes('learn') || h.includes('skill')) return <BookOpen size={15} className="text-indigo-500" />;
+                                return <Info size={15} className="text-slate-500" />;
+                            };
+
+                            const lines = aiReview.split('\n');
+                            return (
+                                <div className="max-h-[420px] overflow-y-auto premium-scrollbar pr-3 pb-2 scroll-smooth space-y-1">
+                                    {lines.map((line, idx) => {
+                                        const clean = stripEmojis(line);
+                                        if (!clean) return <div key={idx} className="h-2" />;
+
+                                        if (clean.startsWith('# ')) {
+                                            const text = clean.replace(/^#+\s*/, '');
+                                            return (
+                                                <div key={idx} className="flex items-center gap-2 mt-6 mb-3 border-b-2 border-slate-200 pb-2">
+                                                    {getSectionIcon(text)}
+                                                    <h2 className="text-base font-black text-[#0f172a] uppercase tracking-wide" style={{ color: '#0f172a' }}>{text}</h2>
+                                                </div>
+                                            );
+                                        }
+                                        if (clean.startsWith('## ')) {
+                                            const text = clean.replace(/^#+\s*/, '');
+                                            return (
+                                                <div key={idx} className="flex items-center gap-2 mt-5 mb-2 border-b border-slate-200 pb-1.5">
+                                                    {getSectionIcon(text)}
+                                                    <h3 className="text-sm font-black text-[#0f172a] uppercase tracking-wide" style={{ color: '#0f172a' }}>{text}</h3>
+                                                </div>
+                                            );
+                                        }
+                                        if (clean.startsWith('### ')) {
+                                            const text = clean.replace(/^#+\s*/, '');
+                                            return (
+                                                <div key={idx} className="flex items-center gap-2 mt-4 mb-1">
+                                                    {getSectionIcon(text)}
+                                                    <h4 className="text-sm font-black text-purple-700 uppercase tracking-wide">{text}</h4>
+                                                </div>
+                                            );
+                                        }
+
+                                        // Bullet points
+                                        if (clean.startsWith('- ') || clean.startsWith('* ')) {
+                                            const text = clean.replace(/^[-*]\s*/, '').replace(/\*\*(.*?)\*\*/g, '$1');
+                                            return (
+                                                <div key={idx} className="flex items-start gap-2.5 py-1">
+                                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0" />
+                                                    <p className="text-sm text-[#334155] leading-relaxed" style={{ color: '#334155' }}>{text}</p>
+                                                </div>
+                                            );
+                                        }
+
+                                        // Numbered list
+                                        const numberedMatch = clean.match(/^(\d+)\.\s+(.*)/);
+                                        if (numberedMatch) {
+                                            const text = numberedMatch[2].replace(/\*\*(.*?)\*\*/g, '$1');
+                                            return (
+                                                <div key={idx} className="flex items-start gap-3 py-1">
+                                                    <span className="mt-0.5 w-5 h-5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-black flex items-center justify-center flex-shrink-0">{numberedMatch[1]}</span>
+                                                    <p className="text-sm text-[#334155] leading-relaxed" style={{ color: '#334155' }}>{text}</p>
+                                                </div>
+                                            );
+                                        }
+
+                                        // Bold lines (standalone)
+                                        if (clean.startsWith('**') && clean.endsWith('**')) {
+                                            return <p key={idx} className="text-sm font-black text-[#0f172a] mt-2" style={{ color: '#0f172a' }}>{clean.replace(/\*\*/g, '')}</p>;
+                                        }
+
+                                        // Regular paragraph
+                                        const textWithBold = clean.replace(/\*\*(.*?)\*\*/g, '$1');
+                                        return <p key={idx} className="text-sm text-[#475569] leading-relaxed" style={{ color: '#475569' }}>{textWithBold}</p>;
+                                    })}
+                                </div>
+                            );
+                        })()}
                     </div>
                 )}
 
