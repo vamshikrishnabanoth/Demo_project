@@ -167,15 +167,15 @@ export default function QuestionAnalysis() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-[var(--border-color)] pb-8">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <button onClick={() => navigate(`/analytics/quiz/${quizId}`)} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" style={{ color: '#0f172a' }}>
+                            <button onClick={() => navigate(`/analytics/quiz/${quizId}`)} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[var(--border-color)] text-[#0f172a] hover:border-[var(--bg-accent)] transition-all text-xs font-black uppercase tracking-widest rounded-xl shadow-sm" style={{ color: '#0f172a' }}>
                                 <ChevronLeft size={16} /> Back to Analytics
                             </button>
                             <span className="text-[var(--text-secondary)]/30">|</span>
-                            <button onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press">
+                            <button onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-black transition-colors text-sm font-black uppercase tracking-widest btn-press">
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter text-balance">
+                        <h1 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter text-balance" style={{ color: '#0f172a' }}>
                             Question <span className="text-[var(--text-accent)]">#{qIdx + 1}</span> Analysis
                         </h1>
                     </div>
@@ -184,14 +184,16 @@ export default function QuestionAnalysis() {
                         <button 
                             disabled={qIdx <= 0}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx - 1}`)}
-                            className="bg-[var(--bg-secondary)] hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)] disabled:opacity-30 disabled:cursor-not-allowed border border-[var(--border-color)] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm"
+                            className="bg-white hover:bg-[var(--bg-accent)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed border-2 border-[var(--border-color)] text-[#0f172a] px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            style={{ color: qIdx <= 0 ? '#94a3b8' : '#0f172a' }}
                         >
                             <ChevronLeft size={16} /> Prev
                         </button>
                         <button 
                             disabled={qIdx >= totalQuestions - 1}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx + 1}`)}
-                            className="bg-[var(--bg-secondary)] hover:bg-[var(--bg-accent)] hover:text-[var(--text-on-accent)] disabled:opacity-30 disabled:cursor-not-allowed border border-[var(--border-color)] text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm"
+                            className="bg-white hover:bg-[var(--bg-accent)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed border-2 border-[var(--border-color)] text-[#0f172a] px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            style={{ color: qIdx >= totalQuestions - 1 ? '#94a3b8' : '#0f172a' }}
                         >
                             Next <ChevronRight size={16} />
                         </button>
@@ -199,7 +201,7 @@ export default function QuestionAnalysis() {
                 </div>
 
                 {/* Question Display */}
-                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden">
+                <div className="bg-white border-2 border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden shadow-sm">
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
                         <Target size={150} />
                     </div>
@@ -212,19 +214,19 @@ export default function QuestionAnalysis() {
                         }`}>
                             {question.difficulty || 'Medium'}
                         </span>
-                        <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)]">
+                        <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest bg-slate-100 text-[#0f172a] border border-slate-300">
                             {question.points || 10} Points
                         </span>
                         <button 
                             onClick={handleGetAIReview} 
                             disabled={loadingAi}
-                            className="ml-auto flex items-center gap-2 bg-[var(--bg-primary)] hover:bg-[var(--bg-accent)] text-[var(--text-accent)] hover:text-[var(--text-on-accent)] border border-[var(--border-color)] px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
+                            className="ml-auto flex items-center gap-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border-2 border-purple-200 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
                         >
                             {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
                         </button>
                     </div>
 
-                    <h2 className="text-2xl md:text-3xl font-black text-white leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance">
+                    <h2 className="text-2xl md:text-3xl font-black text-[#0f172a] leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance" style={{ color: '#0f172a' }}>
                         {question.questionText}
                     </h2>
 
@@ -237,33 +239,33 @@ export default function QuestionAnalysis() {
                             
                             return (
                                 <div key={idx} className={`p-6 rounded-2xl border-2 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${
-                                    isCorrect ? 'bg-green-500/10 border-green-500/50 shadow-[0_0_15px_rgba(16,185,129,0.05)]' : 
-                                    isUserChoice ? 'bg-amber-500/10 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.05)]' : 
-                                    'bg-[var(--bg-primary)]/40 border-[var(--border-color)]'
+                                    isCorrect ? 'bg-emerald-50 border-emerald-400 shadow-sm' : 
+                                    isUserChoice ? 'bg-amber-50 border-amber-400 shadow-sm' : 
+                                    'bg-slate-50 border-slate-200'
                                 }`}>
                                     <div className="flex items-start gap-4 flex-1 min-w-0">
                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black shrink-0 ${
-                                            isCorrect ? 'bg-green-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 
-                                            isUserChoice ? 'bg-amber-500 text-white shadow-[0_0_10px_rgba(245,158,11,0.3)]' : 
-                                            'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/70 border border-[var(--border-color)]'
+                                            isCorrect ? 'bg-emerald-600 text-white shadow-sm' : 
+                                            isUserChoice ? 'bg-amber-500 text-white shadow-sm' : 
+                                            'bg-slate-200 text-[#0f172a] border border-slate-300'
                                         }`}>
                                             {String.fromCharCode(65 + idx)}
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <span className={`font-bold text-sm md:text-base break-words overflow-wrap-anywhere whitespace-normal leading-relaxed block ${
-                                                isCorrect ? 'text-green-400' : isUserChoice ? 'text-amber-300' : 'text-[var(--text-secondary)]'
-                                            }`}>
+                                                isCorrect ? 'text-emerald-900 font-black' : isUserChoice ? 'text-amber-900 font-black' : 'text-[#0f172a]'
+                                            }`} style={{ color: isCorrect ? '#065f46' : isUserChoice ? '#78350f' : '#0f172a' }}>
                                                 {opt}
                                             </span>
                                             <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                                                {isCorrect && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-green-500 bg-green-500/20 px-2 py-0.5 rounded-md border border-green-500/30">Correct Answer</span>}
-                                                {isUserChoice && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">Your Choice</span>}
+                                                {isCorrect && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300">Correct Answer</span>}
+                                                {isUserChoice && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">Your Choice</span>}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end shrink-0 text-right justify-start pt-0.5">
-                                        <span className="font-black text-xl italic text-white leading-none">{percentage}%</span>
-                                        <div className="text-[10px] uppercase font-bold text-[var(--text-secondary)]/50 tracking-widest mt-1">{stat} picks</div>
+                                        <span className="font-black text-xl italic text-[#0f172a] leading-none" style={{ color: '#0f172a' }}>{percentage}%</span>
+                                        <div className="text-[10px] uppercase font-bold text-[#334155] tracking-widest mt-1" style={{ color: '#334155' }}>{stat} picks</div>
                                     </div>
                                 </div>
                             );
@@ -273,45 +275,45 @@ export default function QuestionAnalysis() {
 
                 {/* AI Review Section */}
                 {(loadingAi || aiReview) && (
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden transition-all duration-500 animate-fadeIn">
+                    <div className="bg-white border-2 border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden transition-all duration-500 animate-fadeIn shadow-sm">
                         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none text-[var(--text-accent)]">
                             <Target size={150} />
                         </div>
                         
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="relative w-8 h-8 flex items-center justify-center rounded-xl bg-[var(--text-accent)]/15 text-[var(--text-accent)]">
+                            <div className="relative w-8 h-8 flex items-center justify-center rounded-xl bg-purple-100 text-purple-700">
                                 {loadingAi ? (
-                                    <div className="w-4 h-4 border-2 border-[var(--text-accent)] border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="w-4 h-4 border-2 border-purple-700 border-t-transparent rounded-full animate-spin"></div>
                                 ) : (
                                     <span>🤖</span>
                                 )}
                             </div>
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">AI Pedagogical Review</h3>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>AI Pedagogical Review</h3>
                         </div>
 
                         {loadingAi ? (
                             <div className="space-y-4 py-4">
-                                <div className="h-4 bg-white/5 rounded-full w-3/4 animate-pulse"></div>
-                                <div className="h-4 bg-white/5 rounded-full w-5/6 animate-pulse"></div>
-                                <div className="h-4 bg-white/5 rounded-full w-2/3 animate-pulse"></div>
+                                <div className="h-4 bg-slate-200 rounded-full w-3/4 animate-pulse"></div>
+                                <div className="h-4 bg-slate-200 rounded-full w-5/6 animate-pulse"></div>
+                                <div className="h-4 bg-slate-200 rounded-full w-2/3 animate-pulse"></div>
                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Gemini is analyzing student pick options and diagnostic data...</p>
                             </div>
                         ) : (
-                            <div className="prose prose-invert max-w-none text-slate-300 font-medium text-sm md:text-base leading-relaxed space-y-4 max-h-[350px] overflow-y-auto premium-scrollbar pr-3 pb-2 break-words overflow-wrap-anywhere whitespace-normal scroll-smooth">
+                            <div className="prose max-w-none text-[#0f172a] font-medium text-sm md:text-base leading-relaxed space-y-4 max-h-[350px] overflow-y-auto premium-scrollbar pr-3 pb-2 break-words overflow-wrap-anywhere whitespace-normal scroll-smooth">
                                 {aiReview.split('\n').map((line, idx) => {
                                     if (line.startsWith('### ')) {
-                                        return <h4 key={idx} className="text-lg font-bold text-[var(--text-accent)] mt-6 mb-2 uppercase tracking-wide break-words overflow-wrap-anywhere whitespace-normal">{line.replace('### ', '')}</h4>;
+                                        return <h4 key={idx} className="text-lg font-bold text-purple-700 mt-6 mb-2 uppercase tracking-wide break-words overflow-wrap-anywhere whitespace-normal">{line.replace('### ', '')}</h4>;
                                     }
                                     if (line.startsWith('## ')) {
-                                        return <h3 key={idx} className="text-xl font-black text-white mt-8 mb-4 uppercase italic tracking-tight border-b border-white/5 pb-2 break-words overflow-wrap-anywhere whitespace-normal">{line.replace('## ', '')}</h3>;
+                                        return <h3 key={idx} className="text-xl font-black text-[#0f172a] mt-8 mb-4 uppercase italic tracking-tight border-b border-slate-200 pb-2 break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line.replace('## ', '')}</h3>;
                                     }
                                     if (line.startsWith('# ')) {
-                                        return <h2 key={idx} className="text-2xl font-black text-white mt-8 mb-4 uppercase italic tracking-tight border-b border-white/10 pb-2 break-words overflow-wrap-anywhere whitespace-normal">{line.replace('# ', '')}</h2>;
+                                        return <h2 key={idx} className="text-2xl font-black text-[#0f172a] mt-8 mb-4 uppercase italic tracking-tight border-b border-slate-300 pb-2 break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line.replace('# ', '')}</h2>;
                                     }
                                     if (line.startsWith('**') || line.startsWith('1. **') || line.startsWith('2. **') || line.startsWith('3. **') || line.startsWith('4. **')) {
-                                        return <p key={idx} className="text-slate-200 mt-2 break-words overflow-wrap-anywhere whitespace-normal"><strong className="text-white">{line}</strong></p>;
+                                        return <p key={idx} className="text-[#0f172a] mt-2 break-words overflow-wrap-anywhere whitespace-normal"><strong className="text-[#0f172a] font-black">{line}</strong></p>;
                                     }
-                                    return <p key={idx} className="mt-1 break-words overflow-wrap-anywhere whitespace-normal">{line}</p>;
+                                    return <p key={idx} className="mt-1 text-[#0f172a] break-words overflow-wrap-anywhere whitespace-normal" style={{ color: '#0f172a' }}>{line}</p>;
                                 })}
                             </div>
                         )}
@@ -322,8 +324,8 @@ export default function QuestionAnalysis() {
                 <div className={`grid grid-cols-1 ${isStudent ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-8`}>
                     
                     {/* Pie Chart */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col items-center justify-center relative">
-                        <h3 className="absolute top-6 left-8 text-lg font-black text-white uppercase italic tracking-tighter">Attempt Breakdown</h3>
+                    <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col items-center justify-center relative shadow-sm">
+                        <h3 className="absolute top-6 left-8 text-lg font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Attempt Breakdown</h3>
                         
                         <div className="w-full h-[250px] mt-8">
                             <ResponsiveContainer width="100%" height="100%">
@@ -338,41 +340,41 @@ export default function QuestionAnalysis() {
                             </ResponsiveContainer>
                         </div>
                         <div className="flex flex-wrap justify-center gap-4 mt-2">
-                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#10b981]"></div><span className="text-xs font-bold text-[var(--text-secondary)] uppercase">Correct ({analytics.correctPercentage}%)</span></div>
-                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f43f5e]"></div><span className="text-xs font-bold text-[var(--text-secondary)] uppercase">Wrong ({analytics.wrongPercentage}%)</span></div>
-                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#64748b]"></div><span className="text-xs font-bold text-[var(--text-secondary)] uppercase">Skipped ({analytics.skippedPercentage}%)</span></div>
+                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#10b981]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Correct ({analytics.correctPercentage}%)</span></div>
+                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f43f5e]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Wrong ({analytics.wrongPercentage}%)</span></div>
+                            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#64748b]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Skipped ({analytics.skippedPercentage}%)</span></div>
                         </div>
                     </div>
 
                     {/* Quick Stats */}
                     <div className="flex flex-col gap-6">
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6">
-                            <div className="p-4 rounded-2xl bg-[var(--text-accent)]/10 text-[var(--text-accent)]"><Users size={32} /></div>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6 shadow-sm">
+                            <div className="p-4 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200"><Users size={32} /></div>
                             <div>
-                                <p className="text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest mb-1">Total Attempts</p>
-                                <p className="text-4xl font-black text-white italic">{analytics.totalAttempts}</p>
+                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-widest mb-1" style={{ color: '#334155' }}>Total Attempts</p>
+                                <p className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{analytics.totalAttempts}</p>
                             </div>
                         </div>
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6">
-                            <div className="p-4 rounded-2xl bg-amber-500/10 text-amber-400"><Clock size={32} /></div>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6 shadow-sm">
+                            <div className="p-4 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200"><Clock size={32} /></div>
                             <div>
-                                <p className="text-[10px] font-black text-[var(--text-secondary)] opacity-60 uppercase tracking-widest mb-1">Avg Time Spent</p>
-                                <p className="text-4xl font-black text-white italic">{analytics.avgTimeSpent}s</p>
+                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-widest mb-1" style={{ color: '#334155' }}>Avg Time Spent</p>
+                                <p className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{analytics.avgTimeSpent}s</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Option Selection Bar Chart — Hidden for Students */}
                     {!isStudent && (
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem]">
-                            <h3 className="text-lg font-black text-white uppercase italic tracking-tighter mb-6">Option Distribution</h3>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] shadow-sm">
+                            <h3 className="text-lg font-black text-[#0f172a] uppercase italic tracking-tighter mb-6" style={{ color: '#0f172a' }}>Option Distribution</h3>
                             <div className="h-[200px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: 20, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={true} vertical={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={true} vertical={false} />
                                         <XAxis type="number" hide />
-                                        <YAxis dataKey="displayLabel" type="category" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 900 }} tickLine={false} axisLine={false} width={30} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                        <YAxis dataKey="displayLabel" type="category" stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 900 }} tickLine={false} axisLine={false} width={30} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
                                         <Bar dataKey="count" radius={[0, 8, 8, 0]} barSize={20}>
                                             {chartData.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={optionColors[index % optionColors.length]} />
@@ -390,10 +392,10 @@ export default function QuestionAnalysis() {
                 {!isStudent && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Correct */}
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                                <CheckCircle className="text-green-500" size={20} />
-                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Correct ({filteredCorrect.length})</h3>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col shadow-sm">
+                            <div className="flex items-center gap-3 mb-4 border-b-2 border-slate-200 pb-4">
+                                <CheckCircle className="text-emerald-600" size={20} />
+                                <h3 className="text-sm font-black text-[#0f172a] uppercase italic tracking-widest flex-1" style={{ color: '#0f172a' }}>Correct ({filteredCorrect.length})</h3>
                             </div>
                             
                             {/* Search Input */}
@@ -403,14 +405,14 @@ export default function QuestionAnalysis() {
                                     placeholder="Search correct students..."
                                     value={searchCorrect}
                                     onChange={(e) => setSearchCorrect(e.target.value)}
-                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                    className="w-full bg-slate-50 border-2 border-slate-200 text-[#0f172a] placeholder-slate-400 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all"
                                 />
-                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                                <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                             </div>
 
                             <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
                                 {filteredCorrect.length > 0 ? filteredCorrect.map((name, i) => (
-                                    <div key={i} className="bg-green-500/5 text-green-400 font-bold px-4 py-3 rounded-xl border border-green-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                    <div key={i} className="bg-emerald-50 text-emerald-800 font-bold px-4 py-3 rounded-xl border border-emerald-200 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
                                         {name}
                                     </div>
                                 )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
@@ -418,10 +420,10 @@ export default function QuestionAnalysis() {
                         </div>
 
                         {/* Wrong */}
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                                <XCircle className="text-rose-500" size={20} />
-                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Incorrect ({filteredIncorrect.length})</h3>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col shadow-sm">
+                            <div className="flex items-center gap-3 mb-4 border-b-2 border-slate-200 pb-4">
+                                <XCircle className="text-rose-600" size={20} />
+                                <h3 className="text-sm font-black text-[#0f172a] uppercase italic tracking-widest flex-1" style={{ color: '#0f172a' }}>Incorrect ({filteredIncorrect.length})</h3>
                             </div>
 
                             {/* Search Input */}
@@ -431,14 +433,14 @@ export default function QuestionAnalysis() {
                                     placeholder="Search incorrect students..."
                                     value={searchIncorrect}
                                     onChange={(e) => setSearchIncorrect(e.target.value)}
-                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                    className="w-full bg-slate-50 border-2 border-slate-200 text-[#0f172a] placeholder-slate-400 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all"
                                 />
-                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                                <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                             </div>
 
                             <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
                                 {filteredIncorrect.length > 0 ? filteredIncorrect.map((name, i) => (
-                                    <div key={i} className="bg-rose-500/5 text-rose-400 font-bold px-4 py-3 rounded-xl border border-rose-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                    <div key={i} className="bg-rose-50 text-rose-800 font-bold px-4 py-3 rounded-xl border border-rose-200 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
                                         {name}
                                     </div>
                                 )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
@@ -446,10 +448,10 @@ export default function QuestionAnalysis() {
                         </div>
 
                         {/* Skipped */}
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                                <MinusCircle className="text-slate-400" size={20} />
-                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Skipped ({filteredSkipped.length})</h3>
+                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col shadow-sm">
+                            <div className="flex items-center gap-3 mb-4 border-b-2 border-slate-200 pb-4">
+                                <MinusCircle className="text-slate-500" size={20} />
+                                <h3 className="text-sm font-black text-[#0f172a] uppercase italic tracking-widest flex-1" style={{ color: '#0f172a' }}>Skipped ({filteredSkipped.length})</h3>
                             </div>
 
                             {/* Search Input */}
@@ -459,14 +461,14 @@ export default function QuestionAnalysis() {
                                     placeholder="Search skipped students..."
                                     value={searchSkipped}
                                     onChange={(e) => setSearchSkipped(e.target.value)}
-                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                    className="w-full bg-slate-50 border-2 border-slate-200 text-[#0f172a] placeholder-slate-400 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all"
                                 />
-                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                                <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                             </div>
 
                             <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
                                 {filteredSkipped.length > 0 ? filteredSkipped.map((name, i) => (
-                                    <div key={i} className="bg-[var(--bg-primary)]/40 text-[var(--text-secondary)] font-bold px-4 py-3 rounded-xl border border-[var(--border-color)] text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                    <div key={i} className="bg-slate-50 text-slate-800 font-bold px-4 py-3 rounded-xl border border-slate-200 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
                                         {name}
                                     </div>
                                 )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
