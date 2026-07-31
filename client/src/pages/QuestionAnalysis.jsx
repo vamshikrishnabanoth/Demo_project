@@ -39,6 +39,7 @@ export default function QuestionAnalysis() {
     const navigate = useNavigate();
     const { user, theme } = useContext(AuthContext);
     const currentRole = user?.role || 'student';
+    const isStudent = currentRole === 'student';
     
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -108,7 +109,7 @@ export default function QuestionAnalysis() {
 
     if (!data) return <DashboardLayout role={currentRole}><div className="text-white text-center mt-20">Analysis not found.</div></DashboardLayout>;
 
-    const { question, analytics, studentInsights } = data;
+    const { question, analytics, studentInsights, userAnswer } = data;
 
     const pieData = [
         { name: 'Correct', value: analytics.correctCount },
@@ -170,7 +171,7 @@ export default function QuestionAnalysis() {
                                 <ChevronLeft size={16} /> Back to Analytics
                             </button>
                             <span className="text-[var(--text-secondary)]/30">|</span>
-                            <button onClick={() => navigate('/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press">
+                            <button onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press">
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>
@@ -230,18 +231,34 @@ export default function QuestionAnalysis() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                         {question.options.map((opt, idx) => {
                             const isCorrect = opt.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+                            const isUserChoice = userAnswer?.selectedOption && opt.trim().toLowerCase() === userAnswer.selectedOption.trim().toLowerCase();
                             const stat = analytics.optionSelection.find(o => o.option === opt.toLowerCase())?.count || 0;
                             const percentage = analytics.totalAttempts > 0 ? Math.round((stat / analytics.totalAttempts) * 100) : 0;
                             
                             return (
-                                <div key={idx} className={`p-6 rounded-2xl border-2 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${isCorrect ? 'bg-green-500/10 border-green-500/50 shadow-[0_0_15px_rgba(16,185,129,0.05)]' : 'bg-[var(--bg-primary)]/40 border-[var(--border-color)]'}`}>
+                                <div key={idx} className={`p-6 rounded-2xl border-2 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${
+                                    isCorrect ? 'bg-green-500/10 border-green-500/50 shadow-[0_0_15px_rgba(16,185,129,0.05)]' : 
+                                    isUserChoice ? 'bg-amber-500/10 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.05)]' : 
+                                    'bg-[var(--bg-primary)]/40 border-[var(--border-color)]'
+                                }`}>
                                     <div className="flex items-start gap-4 flex-1 min-w-0">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black shrink-0 ${isCorrect ? 'bg-green-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/70 border border-[var(--border-color)]'}`}>
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black shrink-0 ${
+                                            isCorrect ? 'bg-green-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 
+                                            isUserChoice ? 'bg-amber-500 text-white shadow-[0_0_10px_rgba(245,158,11,0.3)]' : 
+                                            'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/70 border border-[var(--border-color)]'
+                                        }`}>
                                             {String.fromCharCode(65 + idx)}
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <span className={`font-bold text-sm md:text-base break-words overflow-wrap-anywhere whitespace-normal leading-relaxed block ${isCorrect ? 'text-green-400' : 'text-[var(--text-secondary)]'}`}>{opt}</span>
-                                            {isCorrect && <span className="mt-1.5 inline-block text-[9px] uppercase tracking-widest font-black text-green-500 bg-green-500/20 px-2 py-0.5 rounded-md">Correct Answer</span>}
+                                            <span className={`font-bold text-sm md:text-base break-words overflow-wrap-anywhere whitespace-normal leading-relaxed block ${
+                                                isCorrect ? 'text-green-400' : isUserChoice ? 'text-amber-300' : 'text-[var(--text-secondary)]'
+                                            }`}>
+                                                {opt}
+                                            </span>
+                                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                                {isCorrect && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-green-500 bg-green-500/20 px-2 py-0.5 rounded-md border border-green-500/30">Correct Answer</span>}
+                                                {isUserChoice && <span className="inline-block text-[9px] uppercase tracking-widest font-black text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">Your Choice</span>}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end shrink-0 text-right justify-start pt-0.5">
@@ -302,7 +319,7 @@ export default function QuestionAnalysis() {
                 )}
 
                 {/* Metrics */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className={`grid grid-cols-1 ${isStudent ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-8`}>
                     
                     {/* Pie Chart */}
                     <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col items-center justify-center relative">
@@ -345,114 +362,118 @@ export default function QuestionAnalysis() {
                         </div>
                     </div>
 
-                    {/* Option Selection Bar Chart */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem]">
-                        <h3 className="text-lg font-black text-white uppercase italic tracking-tighter mb-6">Option Distribution</h3>
-                        <div className="h-[200px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: 20, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={true} vertical={false} />
-                                    <XAxis type="number" hide />
-                                    <YAxis dataKey="displayLabel" type="category" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 900 }} tickLine={false} axisLine={false} width={30} />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                                    <Bar dataKey="count" radius={[0, 8, 8, 0]} barSize={20}>
-                                        {chartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={optionColors[index % optionColors.length]} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                    {/* Option Selection Bar Chart — Hidden for Students */}
+                    {!isStudent && (
+                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem]">
+                            <h3 className="text-lg font-black text-white uppercase italic tracking-tighter mb-6">Option Distribution</h3>
+                            <div className="h-[200px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: 20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={true} vertical={false} />
+                                        <XAxis type="number" hide />
+                                        <YAxis dataKey="displayLabel" type="category" stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 900 }} tickLine={false} axisLine={false} width={30} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                                        <Bar dataKey="count" radius={[0, 8, 8, 0]} barSize={20}>
+                                            {chartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={optionColors[index % optionColors.length]} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                 </div>
 
-                {/* Student Lists */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Correct */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                        <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                            <CheckCircle className="text-green-500" size={20} />
-                            <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Correct ({filteredCorrect.length})</h3>
-                        </div>
-                        
-                        {/* Search Input */}
-                        <div className="relative mb-4">
-                            <input 
-                                type="text"
-                                placeholder="Search correct students..."
-                                value={searchCorrect}
-                                onChange={(e) => setSearchCorrect(e.target.value)}
-                                className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
-                            />
-                            <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                {/* Student Lists — Hidden for Students */}
+                {!isStudent && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Correct */}
+                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
+                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
+                                <CheckCircle className="text-green-500" size={20} />
+                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Correct ({filteredCorrect.length})</h3>
+                            </div>
+                            
+                            {/* Search Input */}
+                            <div className="relative mb-4">
+                                <input 
+                                    type="text"
+                                    placeholder="Search correct students..."
+                                    value={searchCorrect}
+                                    onChange={(e) => setSearchCorrect(e.target.value)}
+                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                />
+                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                            </div>
+
+                            <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
+                                {filteredCorrect.length > 0 ? filteredCorrect.map((name, i) => (
+                                    <div key={i} className="bg-green-500/5 text-green-400 font-bold px-4 py-3 rounded-xl border border-green-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                        {name}
+                                    </div>
+                                )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
+                            </div>
                         </div>
 
-                        <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
-                            {filteredCorrect.length > 0 ? filteredCorrect.map((name, i) => (
-                                <div key={i} className="bg-green-500/5 text-green-400 font-bold px-4 py-3 rounded-xl border border-green-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
-                                    {name}
-                                </div>
-                            )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
+                        {/* Wrong */}
+                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
+                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
+                                <XCircle className="text-rose-500" size={20} />
+                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Incorrect ({filteredIncorrect.length})</h3>
+                            </div>
+
+                            {/* Search Input */}
+                            <div className="relative mb-4">
+                                <input 
+                                    type="text"
+                                    placeholder="Search incorrect students..."
+                                    value={searchIncorrect}
+                                    onChange={(e) => setSearchIncorrect(e.target.value)}
+                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                />
+                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                            </div>
+
+                            <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
+                                {filteredIncorrect.length > 0 ? filteredIncorrect.map((name, i) => (
+                                    <div key={i} className="bg-rose-500/5 text-rose-400 font-bold px-4 py-3 rounded-xl border border-rose-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                        {name}
+                                    </div>
+                                )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
+                            </div>
+                        </div>
+
+                        {/* Skipped */}
+                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
+                            <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
+                                <MinusCircle className="text-slate-400" size={20} />
+                                <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Skipped ({filteredSkipped.length})</h3>
+                            </div>
+
+                            {/* Search Input */}
+                            <div className="relative mb-4">
+                                <input 
+                                    type="text"
+                                    placeholder="Search skipped students..."
+                                    value={searchSkipped}
+                                    onChange={(e) => setSearchSkipped(e.target.value)}
+                                    className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
+                                />
+                                <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
+                            </div>
+
+                            <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
+                                {filteredSkipped.length > 0 ? filteredSkipped.map((name, i) => (
+                                    <div key={i} className="bg-[var(--bg-primary)]/40 text-[var(--text-secondary)] font-bold px-4 py-3 rounded-xl border border-[var(--border-color)] text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
+                                        {name}
+                                    </div>
+                                )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
+                            </div>
                         </div>
                     </div>
-
-                    {/* Wrong */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                        <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                            <XCircle className="text-rose-500" size={20} />
-                            <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Incorrect ({filteredIncorrect.length})</h3>
-                        </div>
-
-                        {/* Search Input */}
-                        <div className="relative mb-4">
-                            <input 
-                                type="text"
-                                placeholder="Search incorrect students..."
-                                value={searchIncorrect}
-                                onChange={(e) => setSearchIncorrect(e.target.value)}
-                                className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
-                            />
-                            <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
-                        </div>
-
-                        <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
-                            {filteredIncorrect.length > 0 ? filteredIncorrect.map((name, i) => (
-                                <div key={i} className="bg-rose-500/5 text-rose-400 font-bold px-4 py-3 rounded-xl border border-rose-500/10 text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
-                                    {name}
-                                </div>
-                            )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
-                        </div>
-                    </div>
-
-                    {/* Skipped */}
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] p-6 rounded-[2.5rem] flex flex-col">
-                        <div className="flex items-center gap-3 mb-4 border-b border-[var(--border-color)] pb-4">
-                            <MinusCircle className="text-slate-400" size={20} />
-                            <h3 className="text-sm font-black text-white uppercase italic tracking-widest flex-1">Skipped ({filteredSkipped.length})</h3>
-                        </div>
-
-                        {/* Search Input */}
-                        <div className="relative mb-4">
-                            <input 
-                                type="text"
-                                placeholder="Search skipped students..."
-                                value={searchSkipped}
-                                onChange={(e) => setSearchSkipped(e.target.value)}
-                                className="w-full bg-[var(--bg-primary)]/50 border border-[var(--border-color)] text-white placeholder-slate-500 pl-10 pr-4 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-[var(--text-accent)] transition-all"
-                            />
-                            <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
-                        </div>
-
-                        <div className="space-y-2 max-h-[250px] overflow-y-auto premium-scrollbar pr-2 flex-1">
-                            {filteredSkipped.length > 0 ? filteredSkipped.map((name, i) => (
-                                <div key={i} className="bg-[var(--bg-primary)]/40 text-[var(--text-secondary)] font-bold px-4 py-3 rounded-xl border border-[var(--border-color)] text-sm animate-fadeIn break-words overflow-wrap-anywhere whitespace-normal">
-                                    {name}
-                                </div>
-                            )) : <div className="text-slate-500 text-sm italic py-2 text-center">No students found.</div>}
-                        </div>
-                    </div>
-                </div>
+                )}
 
             </div>
         </DashboardLayout>

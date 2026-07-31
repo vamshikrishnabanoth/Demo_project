@@ -362,6 +362,24 @@ exports.getQuestionAnalysis = async (req, res) => {
         const totalAttempts = correctCount + wrongCount + skippedCount;
         const answeredCount = correctCount + wrongCount;
 
+        let userAnswer = null;
+        if (req.user) {
+            const userResult = await prisma.result.findFirst({
+                where: { quizId: quizId, studentId: req.user.id }
+            });
+            if (userResult) {
+                const answersArray = getAnswersArray(userResult.answers);
+                const ans = answersArray.find(a => a && (a.questionText === question.questionText || a.questionIndex === qIndex));
+                if (ans) {
+                    userAnswer = {
+                        selectedOption: ans.selectedOption || null,
+                        isCorrect: ans.isCorrect || false,
+                        timeTaken: ans.timeTaken || 0
+                    };
+                }
+            }
+        }
+
         res.json({
             question,
             analytics: {
@@ -375,7 +393,8 @@ exports.getQuestionAnalysis = async (req, res) => {
                 avgTimeSpent: answeredCount > 0 ? Math.round(totalTimeSpent / answeredCount) : 0,
                 optionSelection: Object.entries(optionSelection).map(([opt, count]) => ({ option: opt, count }))
             },
-            studentInsights
+            studentInsights,
+            userAnswer
         });
 
     } catch (err) {
