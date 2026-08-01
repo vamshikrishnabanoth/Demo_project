@@ -105,7 +105,7 @@ export default function QuizQuestionEditor({
                             className={`
                                 flex items-start gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto
                                 ${kahootColors[oIndex % 6]} 
-                                ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-green-500/50 border-green-500/60' : ''}
+                                ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-blue-500/50 !border-blue-600 shadow-md shadow-blue-500/20' : ''}
                             `}
                         >
                             {/* Letter Badge — always white text on solid color */}
@@ -132,7 +132,7 @@ export default function QuizQuestionEditor({
                                     name={`correct-${index}`}
                                     checked={question.correctAnswer === opt && opt !== ''}
                                     onChange={() => onUpdate(index, 'correctAnswer', opt)}
-                                    className="w-6 h-6 text-green-500 bg-white/10 border-white/20 focus:ring-green-500 cursor-pointer"
+                                    className="w-6 h-6 text-blue-600 bg-white border-slate-300 focus:ring-blue-500 cursor-pointer"
                                 />
                                 {question.options.length > 2 && (
                                     <button 

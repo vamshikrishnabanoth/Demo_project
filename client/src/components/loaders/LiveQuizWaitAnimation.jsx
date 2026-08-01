@@ -10,6 +10,68 @@ const microMessages = [
     "Next round loading..."
 ];
 
+// ─── High-Detail Vector Chess Piece Icons ─────────────────────────────────────
+const ChessKing = ({ size = 32, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M12 2v4M10 4h4" />
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <path d="M6 17l1.5-7L12 13l4.5-3L18 17" />
+        <path d="M6 20v-3" />
+        <path d="M18 20v-3" />
+    </svg>
+);
+
+const ChessQueen = ({ size = 22, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <circle cx="4" cy="7" r="1" fill="currentColor" />
+        <circle cx="9" cy="5" r="1" fill="currentColor" />
+        <circle cx="12" cy="4" r="1" fill="currentColor" />
+        <circle cx="15" cy="5" r="1" fill="currentColor" />
+        <circle cx="20" cy="7" r="1" fill="currentColor" />
+        <path d="M4 8l2 9h12l2-9-4 4-4-5-4 5-4-4z" />
+    </svg>
+);
+
+const ChessRook = ({ size = 22, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <path d="M6 17l1-8h10l1 8" />
+        <path d="M5 5v4h14V5h-3v2h-3V5h-3v2H8V5H5z" />
+    </svg>
+);
+
+const ChessBishop = ({ size = 22, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <circle cx="12" cy="4" r="1.5" fill="currentColor" />
+        <path d="M12 5.5C8 9 7 13 8 17h8c1-4 0-8-4-11.5z" />
+        <path d="M10 10l4 4" />
+    </svg>
+);
+
+const ChessKnight = ({ size = 22, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <path d="M7 17s.5-5 3-7c0 0-2-1.5-2-4 0 0 4-1 6 2l2.5 3c.5.6.5 1.5 0 2l-1.5 2h-3l.5 4H7z" />
+        <circle cx="10" cy="8" r="1" fill="currentColor" />
+    </svg>
+);
+
+const ChessPawn = ({ size = 22, className = '' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 20h14" />
+        <path d="M6 17h12" />
+        <circle cx="12" cy="7" r="3" />
+        <path d="M9 10c0 4-1.5 7-1.5 7h9S15 14 15 10" />
+    </svg>
+);
+
 function EnergyCore() {
     return (
         <div className="relative flex items-center justify-center">
@@ -34,20 +96,25 @@ function EnergyCore() {
                 className="absolute w-36 h-36 rounded-full border-2 border-dashed border-slate-400/70 pointer-events-none"
             />
 
-            {/* Core Icon Badge */}
+            {/* Core King Chess Coin */}
             <motion.div
                 animate={{ scale: [0.98, 1.04, 0.98] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-10 w-24 h-24 rounded-3xl bg-[var(--bg-accent)] flex items-center justify-center shadow-xl border-2 border-white text-white"
+                className="relative z-10 w-24 h-24 rounded-3xl bg-[var(--bg-accent)] flex flex-col items-center justify-center shadow-xl border-2 border-white text-white"
             >
-                <GraduationCap size={44} strokeWidth={2.2} className="drop-shadow-sm text-white" />
+                <ChessKing size={44} className="drop-shadow-sm text-amber-400" />
+                {/* Green circular indicator on center King coin */}
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 pointer-events-none z-30">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-white shadow-xs"></span>
+                </span>
             </motion.div>
         </div>
     );
 }
 
 function OrbitingStudentAvatars({ count = 6 }) {
-    const avatarIcons = [GraduationCap, Users, Sparkles, Award, Zap, ShieldCheck];
+    const avatarIcons = [ChessQueen, ChessRook, ChessBishop, ChessKnight, ChessPawn, ChessQueen];
     const avatars = Array.from({ length: Math.min(Math.max(3, count), 8) });
 
     return (
@@ -67,8 +134,8 @@ function OrbitingStudentAvatars({ count = 6 }) {
                         transition={{ duration: 16 + idx * 1.5, repeat: Infinity, ease: 'linear' }}
                         transformTemplate={({ rotate }) => `rotate(${rotate}) translateX(${radius}px) rotate(-${rotate})`}
                     >
-                        <IconComp size={20} strokeWidth={2.2} />
-                        {/* High-visibility green animated status beacon dot */}
+                        <IconComp size={22} />
+                        {/* Green circular indicator beacon on each orbiting chess coin */}
                         <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 pointer-events-none z-30">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
                             <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-white shadow-xs"></span>
