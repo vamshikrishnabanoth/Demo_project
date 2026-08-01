@@ -179,7 +179,6 @@ export default function AdaptiveQuestionContainer({ questionText }) {
                             : 'Theory Assessment'}
                     </span>
                 </div>
-                </div>
             </div>
 
             {/* Adaptive Question Content Area */}
