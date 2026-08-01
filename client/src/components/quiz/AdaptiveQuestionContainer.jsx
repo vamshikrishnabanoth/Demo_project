@@ -179,15 +179,13 @@ export default function AdaptiveQuestionContainer({ questionText }) {
                             : 'Theory Assessment'}
                     </span>
                 </div>
-                {isLong && <span className="text-amber-400 animate-pulse">Scrollable Scenario</span>}
+                </div>
             </div>
 
             {/* Adaptive Question Content Area */}
             <div 
-                className={`w-full transition-all duration-300 ${
-                    isLong 
-                        ? `max-h-[30vh] overflow-y-auto pr-2 rounded-2xl border border-white/5 bg-white/[0.01] p-4 ${customScrollbarClass}` 
-                        : 'h-auto overflow-visible'
+                className={`w-full transition-all duration-300 h-auto overflow-visible ${
+                    isLong ? 'pr-2 rounded-2xl border border-white/5 bg-white/[0.01] p-4' : ''
                 }`}
                 style={{ scrollBehavior: 'smooth' }}
             >
@@ -199,7 +197,7 @@ export default function AdaptiveQuestionContainer({ questionText }) {
                                 <div className="absolute top-2 right-2 px-2 py-0.5 bg-white/5 rounded text-[8px] text-white/40 uppercase tracking-widest font-black pointer-events-none">
                                     {segment.lang}
                                 </div>
-                                <pre className={`bg-black/40 border border-white/15 rounded-xl p-4 font-mono text-sm leading-relaxed overflow-x-auto ${customScrollbarClass} max-h-80 overflow-y-auto`}>
+                                <pre className={`bg-black/40 border border-white/15 rounded-xl p-4 font-mono text-sm leading-relaxed overflow-x-auto ${customScrollbarClass} h-auto`}>
                                     <code className="text-cyan-300 block select-text font-mono whitespace-pre">{segment.content.trim()}</code>
                                 </pre>
                             </div>

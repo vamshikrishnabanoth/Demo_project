@@ -519,13 +519,13 @@ export default function SprintArena() {
                                             key={idx}
                                             onClick={() => handleSelectOption(option)}
                                             disabled={feedbackType !== null}
-                                            className={`p-5 rounded-2xl border text-left font-semibold text-sm transition-all duration-300 flex items-center justify-between cursor-pointer ${cardStyle}`}
+                                            className={`p-5 rounded-2xl border text-left font-semibold text-sm transition-all duration-300 flex items-center justify-between cursor-pointer h-auto ${cardStyle}`}
                                         >
-                                            <span className="flex gap-3 items-center">
-                                                <span className="font-mono uppercase text-pink-400 font-black text-xs border border-pink-500/20 px-2 py-0.5 rounded bg-white/5">
+                                            <span className="flex gap-3 items-center min-w-0 flex-1">
+                                                <span className="font-mono uppercase text-pink-400 font-black text-xs border border-pink-500/20 px-2 py-0.5 rounded bg-white/5 shrink-0">
                                                     {['A', 'B', 'C', 'D'][idx]}
                                                 </span>
-                                                <span>{option}</span>
+                                                <span className="break-words whitespace-normal min-w-0">{option}</span>
                                             </span>
                                             {feedbackType === 'correct' && isCorrectChoice && <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />}
                                             {feedbackType === 'wrong' && isSelected && <XCircle size={16} className="text-pink-400 shrink-0" />}

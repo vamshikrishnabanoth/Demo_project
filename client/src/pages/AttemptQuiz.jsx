@@ -1323,7 +1323,7 @@ export default function AttemptQuiz() {
                 </div>
             )}
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 pb-24 relative bg-slate-50">
+            <main className="flex-1 flex flex-col items-center justify-start p-6 pb-24 relative bg-slate-50">
                 <div className="max-w-2xl w-full">
                     {isReviewMode && (
                         <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 border ${questionResult?.isCorrect
@@ -1374,7 +1374,7 @@ export default function AttemptQuiz() {
                         </div>
                     )}
 
-                    <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-xl p-8 md:p-12 mb-8 relative overflow-hidden" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                    <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-xl p-8 md:p-12 mb-8 relative overflow-visible" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
                         
                         <div className="flex items-center justify-between mb-8 flex-wrap gap-4 relative z-10">
@@ -1467,12 +1467,12 @@ export default function AttemptQuiz() {
                                                 opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
+                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
                                             <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected ? 'bg-white/20 text-[#1f2937]' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
                                                 <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
                                             </div>
-                                            <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0 flex-1" style={{ color: textColor }}>
+                                            <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
                                                 {option}
                                             </span>
 

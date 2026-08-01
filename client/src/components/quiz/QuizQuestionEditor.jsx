@@ -73,8 +73,8 @@ export default function QuizQuestionEditor({
                         <motion.div 
                             key={oIndex}
                             layout
-                            className={`
-                                flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative overflow-hidden 
+                        className={`
+                                flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto 
                                 ${kahootColors[oIndex % 6]} 
                                 ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-green-500/50 scale-[1.02] border-green-500/50' : 'border-transparent'}
                             `}
