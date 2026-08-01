@@ -282,11 +282,11 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="mobile-sidebar-drawer fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-5 pb-[calc(1.5rem+env(safe-area-inset-bottom,20px))] select-none overflow-hidden"
+                            className="mobile-sidebar-drawer fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-5 pb-[calc(env(safe-area-inset-bottom,0px)+24px)] select-none overflow-hidden"
                             role="navigation"
                         >
-                            {/* Drawer Content Wrapper */}
-                            <div className="flex-1 flex flex-col min-h-0">
+                            {/* Drawer Content Wrapper - Entire content scrollable if height is small */}
+                            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto overscroll-contain pr-1">
                                 {/* Header */}
                                 <div className="flex items-center justify-between pb-4 border-b border-[var(--border-color)] mb-4 flex-shrink-0">
                                     <div className="flex items-center gap-3">
@@ -303,8 +303,8 @@ export default function DashboardLayout({ children, role }) {
                                     </button>
                                 </div>
 
-                                {/* Navigation List — Scrollable if screen is ultra-short */}
-                                <div className="flex-1 overflow-y-auto overscroll-contain pr-1 py-1">
+                                {/* Navigation List */}
+                                <div className="flex-1 py-1">
                                     <nav className="space-y-3" aria-label="Mobile navigation">
                                         {links.map((link) => {
                                             const Icon = link.icon;
@@ -328,8 +328,8 @@ export default function DashboardLayout({ children, role }) {
                                     </nav>
                                 </div>
 
-                                {/* Drawer Footer — Active Session & Logout Pinned to Bottom */}
-                                <div className="pt-4 mt-2 border-t border-[var(--border-color)] space-y-3 flex-shrink-0">
+                                {/* Drawer Footer — Active Session & Logout Pinned inside scrollable content container */}
+                                <div className="pt-4 mt-auto border-t border-[var(--border-color)] space-y-3 flex-shrink-0">
                                     <div className="px-1">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-1">Active Session</p>
                                         <Link 
