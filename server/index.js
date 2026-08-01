@@ -528,12 +528,21 @@ io.to(realQuizId).emit(
         }
     });
 
-    socket.on('heartbeat', ({ quizId, userId, username }) => {
+    socket.on('heartbeat', async ({ quizId, userId, username }) => {
         if (!quizId) return;
         const uid = userId || socket.user?.id || socket.user?.username || username;
         if (!uid) return;
 
-        const participants = roomParticipants.get(quizId);
+        let realQuizId = quizId;
+        try {
+            const found = await prisma.quiz.findFirst({
+                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
+                select: { id: true }
+            });
+            if (found) realQuizId = found.id;
+        } catch (_) {}
+
+        const participants = roomParticipants.get(realQuizId);
         if (participants) {
             const p = participants.find(
                 part => String(part._id || part.username || part.id).toLowerCase() === String(uid).toLowerCase()
@@ -542,7 +551,7 @@ io.to(realQuizId).emit(
                 p.lastSeen = Date.now();
                 if (!p.isOnline) {
                     p.isOnline = true;
-                    io.to(quizId).emit('participants_update', participants);
+                    io.to(realQuizId).emit('participants_update', participants);
                 }
             }
         }
