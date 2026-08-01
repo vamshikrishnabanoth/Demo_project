@@ -528,18 +528,16 @@ io.to(realQuizId).emit(
         }
     });
 
-    socket.on('heartbeat', ({ quizId, userId }) => {
+    socket.on('heartbeat', ({ quizId, userId, username }) => {
         if (!quizId) return;
-        // SECURITY CHECK: Verify identity matches socket.user payload
-        if (!socket.user || socket.user.id !== userId) {
-            return;
-        }
+        const uid = userId || socket.user?.id || socket.user?.username || username;
+        if (!uid) return;
+
         const participants = roomParticipants.get(quizId);
         if (participants) {
             const p = participants.find(
-    part =>
-        String(part._id) === String(userId)
-);
+                part => String(part._id || part.username || part.id).toLowerCase() === String(uid).toLowerCase()
+            );
             if (p) {
                 p.lastSeen = Date.now();
                 if (!p.isOnline) {
