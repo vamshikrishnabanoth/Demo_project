@@ -199,7 +199,7 @@ export function StudentDetailsDrawer({ student, onClose }) {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-                className="fixed top-0 right-0 h-full h-[100vh] h-[100dvh] w-[min(100vw,450px)] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[101] shadow-2xl flex flex-col p-4 select-none overflow-hidden"
+                className="fixed top-0 right-0 h-full h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] w-[min(100vw,450px)] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[101] shadow-2xl flex flex-col p-3 sm:p-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] select-none overflow-hidden"
             >
                 {/* 1. Header (Sticky) */}
                 <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)] shrink-0">
@@ -221,52 +221,52 @@ export function StudentDetailsDrawer({ student, onClose }) {
                     </button>
                 </div>
 
-                {/* Main Content Body Layout */}
-                <div className="flex-1 flex flex-col gap-3 my-3 min-h-0 overflow-hidden">
+                {/* Main Content Body Layout (Fits exactly in viewport, no outer vertical page scroll) */}
+                <div className="flex-1 flex flex-col gap-2.5 sm:gap-3 my-2 sm:my-3 min-h-0 overflow-hidden">
                     
-                    {/* 2. Compact Student Info Card (Max ~80-90px) */}
-                    <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] p-3 rounded-xl shrink-0 space-y-1.5 shadow-2xs">
+                    {/* 2. Compact Student Info Card (Fixed Height / Shrink-0) */}
+                    <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] p-2.5 sm:p-3 rounded-xl shrink-0 space-y-1.5 shadow-2xs">
                         <div className="flex items-center justify-between">
                             <div className="min-w-0">
-                                <h4 className="text-sm font-black text-[var(--text-primary)] truncate">{student.studentName}</h4>
-                                <p className="text-[11px] font-mono font-bold text-[var(--text-accent)]">{student.rollNumber}</p>
+                                <h4 className="text-xs sm:text-sm font-black text-[var(--text-primary)] truncate">{student.studentName}</h4>
+                                <p className="text-[10px] sm:text-[11px] font-mono font-bold text-[var(--text-accent)]">{student.rollNumber}</p>
                             </div>
                             <RiskBadge level={student.riskLevel} />
                         </div>
-                        <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-[var(--border-color)] text-[var(--text-secondary)] font-bold">
+                        <div className="flex items-center justify-between text-[9px] sm:text-[10px] pt-1.5 border-t border-[var(--border-color)] text-[var(--text-secondary)] font-bold">
                             <span className="truncate max-w-[55%]">Quiz: <span className="text-[var(--text-primary)]">{student.quizName || 'Assessment'}</span></span>
                             <span>Dept: <span className="text-[var(--text-primary)]">{student.department} ({student.section})</span></span>
                         </div>
                     </div>
 
-                    {/* 3. Small Statistic Summary Cards */}
-                    <div className="grid grid-cols-2 gap-2.5 shrink-0">
-                        <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-2 rounded-xl flex items-center justify-between shadow-2xs">
-                            <span className="text-[10px] font-black uppercase text-[var(--text-secondary)]">Total Violations</span>
+                    {/* 3. Small Statistic Summary Cards (Fixed Height / Shrink-0) */}
+                    <div className="grid grid-cols-2 gap-2 sm:gap-2.5 shrink-0">
+                        <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-1.5 sm:py-2 rounded-xl flex items-center justify-between shadow-2xs">
+                            <span className="text-[9px] sm:text-[10px] font-black uppercase text-[var(--text-secondary)]">Total Violations</span>
                             <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-500 font-black text-xs border border-red-500/20">{student.totalViolations}</span>
                         </div>
-                        <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-2 rounded-xl flex items-center justify-between shadow-2xs">
-                            <span className="text-[10px] font-black uppercase text-[var(--text-secondary)]">Risk Score</span>
+                        <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-1.5 sm:py-2 rounded-xl flex items-center justify-between shadow-2xs">
+                            <span className="text-[9px] sm:text-[10px] font-black uppercase text-[var(--text-secondary)]">Risk Score</span>
                             <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 font-black text-xs border border-amber-500/20">{student.riskScore}%</span>
                         </div>
                     </div>
 
-                    {/* 4. Violation Breakdown Section (Fixed Height 220-250px with Independent Scroll) */}
-                    <div className="flex-1 min-h-[180px] max-h-[240px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl flex flex-col overflow-hidden shadow-2xs">
-                        <div className="sticky top-0 bg-[var(--bg-primary)] z-10 px-3 py-2 border-b border-[var(--border-color)] flex items-center justify-between shrink-0">
-                            <h4 className="text-[10px] font-black uppercase tracking-wider text-[var(--text-primary)]">Violation Breakdown</h4>
-                            <span className="text-[9px] text-[var(--text-secondary)] font-bold">Counts</span>
+                    {/* 4. Violation Breakdown Section (Flexible / Internal Scroll If Overflowing) */}
+                    <div className="max-h-[35%] min-h-[100px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl flex flex-col overflow-hidden shadow-2xs shrink-0">
+                        <div className="sticky top-0 bg-[var(--bg-primary)] z-10 px-3 py-1.5 sm:py-2 border-b border-[var(--border-color)] flex items-center justify-between shrink-0">
+                            <h4 className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[var(--text-primary)]">Violation Breakdown</h4>
+                            <span className="text-[8px] sm:text-[9px] text-[var(--text-secondary)] font-bold">Frequency Count</span>
                         </div>
                         <div className="flex-1 overflow-y-auto p-2 pr-2.5 overscroll-contain space-y-1 scrollbar-thin">
                             <ViolationBreakdown eventCounts={student.eventCounts} />
                         </div>
                     </div>
 
-                    {/* 5. Incident Timeline Section (Fixed Height 220-250px with Independent Scroll) */}
-                    <div className="flex-1 min-h-[180px] max-h-[240px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl flex flex-col overflow-hidden shadow-2xs">
-                        <div className="sticky top-0 bg-[var(--bg-primary)] z-10 px-3 py-2 border-b border-[var(--border-color)] flex items-center justify-between shrink-0">
-                            <h4 className="text-[10px] font-black uppercase tracking-wider text-[var(--text-primary)]">Incident Timeline</h4>
-                            <span className="text-[9px] text-[var(--text-secondary)] font-bold">Newest First</span>
+                    {/* 5. Incident Timeline Section (Occupies Remaining Dynamic Height / Internal Scroll) */}
+                    <div className="flex-1 min-h-[120px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl flex flex-col overflow-hidden shadow-2xs">
+                        <div className="sticky top-0 bg-[var(--bg-primary)] z-10 px-3 py-1.5 sm:py-2 border-b border-[var(--border-color)] flex items-center justify-between shrink-0">
+                            <h4 className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[var(--text-primary)]">Incident Timeline</h4>
+                            <span className="text-[8px] sm:text-[9px] text-[var(--text-secondary)] font-bold">Newest First</span>
                         </div>
                         <div className="flex-1 overflow-y-auto p-2 pr-2.5 overscroll-contain space-y-1 scrollbar-thin">
                             <Timeline timeline={student.timeline} />

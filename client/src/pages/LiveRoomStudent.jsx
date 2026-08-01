@@ -7,7 +7,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
-import { ShieldCheck, Users, Trophy, Crown, Flame } from 'lucide-react';
+import { ShieldCheck, Users, Trophy, Crown, Flame, Ban, CameraOff, ClipboardX, Monitor, Split, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 
@@ -349,27 +349,39 @@ export default function LiveRoomStudent() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-700 pt-1">
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">🚫</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <Ban size={18} />
+                                    </div>
                                     <span>Right-Click & Inspect Disabled</span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">📸</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <CameraOff size={18} />
+                                    </div>
                                     <span>Screenshots & Recording Blocked</span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">📋</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <ClipboardX size={18} />
+                                    </div>
                                     <span>Ctrl+C & Ctrl+V Copy/Paste Disabled</span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">🖥️</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <Monitor size={18} />
+                                    </div>
                                     <span>Mandatory Fullscreen Mode Only</span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">🔀</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <Split size={18} />
+                                    </div>
                                     <span>No Tab Switching / Split Screen</span>
                                 </div>
                                 <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                                    <span className="text-amber-600 text-base shrink-0">🔒</span>
+                                    <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-600 shrink-0">
+                                        <Lock size={18} />
+                                    </div>
                                     <span>DevTools Monitoring Active</span>
                                 </div>
                             </div>
