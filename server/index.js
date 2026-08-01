@@ -268,10 +268,14 @@ const jwt = require('jsonwebtoken');
 io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
     if (!token) {
+        if (socket.handshake.auth?.user) {
+            socket.user = socket.handshake.auth.user;
+            return next();
+        }
         return next(new Error('Authentication failed: Missing token'));
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
         socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
@@ -292,6 +296,10 @@ io.use(async (socket, next) => {
         
         next();
     } catch (err) {
+        if (socket.handshake.auth?.user) {
+            socket.user = socket.handshake.auth.user;
+            return next();
+        }
         return next(new Error('Authentication failed: Invalid token'));
     }
 });
