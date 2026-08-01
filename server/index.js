@@ -1027,38 +1027,47 @@ io.to(realQuizId).emit(
         roomState.set(quizId, { ...state, progress: currentProgress });
 
         try {
-            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+            let quiz = await getCache(`quiz:${quizId}`);
+            if (!quiz) {
+                quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+                if (quiz) await setCache(`quiz:${quizId}`, quiz, 60000);
+            }
             if (!quiz) return;
 
             // Calculate time taken for this question
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
             const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
 
-            // CRITICAL FIX: Use Postgres atomic unique query (quizId_studentId compound constraint) to eliminate race conditions
-            let result = await prisma.result.findUnique({
-                where: { quizId_studentId: { quizId, studentId } },
-                include: { student: { select: { username: true } } }
-            });
-
-            if (!result) {
+            let result = null;
+            if (!studentId.startsWith('bot_student_')) {
                 try {
-                    result = await prisma.result.create({
-                        data: {
-                            quizId: quizId,
-                            studentId: studentId,
-                            score: 0,
-                            totalTimeTaken: 0,
-                            totalQuestions: quiz.questions.length,
-                            answers: []
-                        },
-                        include: { student: { select: { username: true } } }
-                    });
-                } catch (dbErr) {
-                    // Fallback to fetch concurrently created record to resolve checks race condition
                     result = await prisma.result.findUnique({
                         where: { quizId_studentId: { quizId, studentId } },
                         include: { student: { select: { username: true } } }
                     });
+
+                    if (!result) {
+                        try {
+                            result = await prisma.result.create({
+                                data: {
+                                    quizId: quizId,
+                                    studentId: studentId,
+                                    score: 0,
+                                    totalTimeTaken: 0,
+                                    totalQuestions: quiz.questions ? (Array.isArray(quiz.questions) ? quiz.questions.length : JSON.parse(quiz.questions).length) : 0,
+                                    answers: []
+                                },
+                                include: { student: { select: { username: true } } }
+                            });
+                        } catch (dbErr) {
+                            result = await prisma.result.findUnique({
+                                where: { quizId_studentId: { quizId, studentId } },
+                                include: { student: { select: { username: true } } }
+                            });
+                        }
+                    }
+                } catch (dbLookupErr) {
+                    console.warn(`[ResultLookup] DB result lookup bypassed for ${studentId}:`, dbLookupErr.message);
                 }
             }
 
