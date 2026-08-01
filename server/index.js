@@ -1022,7 +1022,17 @@ io.to(realQuizId).emit(
         questionIndex = parseInt(questionIndex);
         console.log(`Secure Student ${studentId} submitted answer for question ${questionIndex}`);
 
-        const state = roomState.get(quizId) || {};
+        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID
+        let realQuizId = quizId;
+        try {
+            const foundQuiz = await prisma.quiz.findFirst({
+                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
+                select: { id: true }
+            });
+            if (foundQuiz) realQuizId = foundQuiz.id;
+        } catch (_) {}
+
+        const state = roomState.get(realQuizId) || {};
         const currentProgress = state.progress || {};
 
         if (!currentProgress[studentId]) currentProgress[studentId] = {};
@@ -1033,13 +1043,13 @@ io.to(realQuizId).emit(
             return;
         }
         currentProgress[studentId][questionIndex] = { answered: true, isCorrect: false, selectedOption: answer };
-        roomState.set(quizId, { ...state, progress: currentProgress });
+        roomState.set(realQuizId, { ...state, progress: currentProgress });
 
         try {
-            let quiz = await getCache(`quiz:${quizId}`);
+            let quiz = await getCache(`quiz:${realQuizId}`);
             if (!quiz) {
-                quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-                if (quiz) await setCache(`quiz:${quizId}`, quiz, 60000);
+                quiz = await prisma.quiz.findUnique({ where: { id: realQuizId } });
+                if (quiz) await setCache(`quiz:${realQuizId}`, quiz, 60000);
             }
             if (!quiz) return;
 
@@ -1216,7 +1226,7 @@ io.to(realQuizId).emit(
                 }
 
                 // Broadcast student progress to teacher with isCorrect
-                io.to(quizId).emit('student_progress_update', {
+                io.to(realQuizId).emit('student_progress_update', {
                     studentId: studentId.toString(),
                     username: result.student ? result.student.username : 'Student',
                     questionIndex,
@@ -1226,7 +1236,7 @@ io.to(realQuizId).emit(
 
                 // ── IN-MEMORY LEADERBOARD UPDATE (eliminates N+1 DB query per answer) ──
                 // Only update the one student who just submitted — no DB query needed.
-                const currentState = roomState.get(quizId) || {};
+                const currentState = roomState.get(realQuizId) || {};
                 const inMemLeaderboard = [...(currentState.leaderboard || [])];
                 const studentName = result.student?.username || 'Unknown';
                 const existingEntryIdx = inMemLeaderboard.findIndex(e => e.studentId === studentId);
@@ -1252,12 +1262,12 @@ io.to(realQuizId).emit(
                     if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
                     return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                 });
-                const leaderboard = inMemLeaderboard.map((item, index) => ({ ...item, rank: index + 1 }));
+                const leaderboard = inMemLeaderboard.map((index, idx) => ({ ...index, rank: idx + 1 }));
 
                 // Persist updated leaderboard back to roomState
-                roomState.set(quizId, { ...currentState, leaderboard });
+                roomState.set(realQuizId, { ...currentState, leaderboard });
 
-                io.to(quizId).emit('question_leaderboard', {
+                io.to(realQuizId).emit('question_leaderboard', {
                     questionIndex,
                     leaderboard
                 });
