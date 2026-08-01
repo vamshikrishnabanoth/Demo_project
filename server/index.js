@@ -434,11 +434,13 @@ io.on('connection', async (socket) => {
         let realQuizId = quizId;
         try {
             const foundQuiz = await prisma.quiz.findFirst({
-                where: { OR: [{ id: quizId }, { accessCode: quizId }] },
+                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
                 select: { id: true }
             });
             if (foundQuiz) realQuizId = foundQuiz.id;
-        } catch (_) {}
+        } catch (err) {
+            console.error('Error resolving PIN in join_room:', err);
+        }
 
         socket.join(realQuizId);
 
