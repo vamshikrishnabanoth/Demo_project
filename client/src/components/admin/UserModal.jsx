@@ -98,7 +98,7 @@ export default function UserModal({ user, onClose, onSave, isNew }) {
                     </div>
 
                     <PremiumInput
-                        label="Email Address"
+                        label="Roll Number"
                         placeholder="admin@kmit.in"
                         value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))}

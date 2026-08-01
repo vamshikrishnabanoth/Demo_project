@@ -176,19 +176,19 @@ export default function Login() {
                             </div>
                             <div>
                                 <h2 className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
-                                    Sign In
+                                    Enter Your Credentials
                                 </h2>
                                 <p className="text-xs text-[var(--text-secondary)] font-medium">
-                                    Enter your credentials to access hub
+                                    Sign in using your roll number to continue.
                                 </p>
                             </div>
                         </div>
 
                         <form onSubmit={onSubmit} className="space-y-4">
                             <PremiumInput
-                                label="roll number / email"
+                                label="Roll Number"
                                 name="email"
-                                placeholder="teacher1"
+                                placeholder="Enter your roll number"
                                 value={email}
                                 onChange={onChange}
                                 icon={Mail}

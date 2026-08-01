@@ -65,7 +65,7 @@ export default function Profile() {
     ] : [
         { icon: User, label: 'Full Name', value: user?.name || user?.username || '—' },
         { icon: Hash, label: 'Roll Number', value: user?.username || '—' },
-        { icon: Mail, label: 'Email', value: user?.email || '—' },
+        { icon: Mail, label: 'Roll Number', value: user?.email || '—' },
         { icon: Shield, label: 'Role', value: (user?.role || '—').toUpperCase() },
         { icon: Activity, label: 'Account Status', value: 'ACTIVE' },
         { icon: Calendar, label: 'Member Since', value: memberSince },

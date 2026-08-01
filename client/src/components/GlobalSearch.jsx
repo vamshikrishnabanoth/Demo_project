@@ -400,7 +400,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                                                     <div>
                                                                         <h4 className="font-black text-sm text-[var(--text-primary)]">{highlightText(user.username, query)}</h4>
                                                                         <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[10px] font-bold text-[var(--text-secondary)]/60 uppercase tracking-wider">
-                                                                            <span>Email: <strong className="text-[var(--text-primary)]/80">{highlightText(user.email, query)}</strong></span>
+                                                                            <span>Roll Number: <strong className="text-[var(--text-primary)]/80">{highlightText(user.email, query)}</strong></span>
                                                                             <span>•</span>
                                                                             <span>Branch: <strong className="text-[var(--text-primary)]/80">{highlightText(user.studentBranch, query)}</strong></span>
                                                                             <span>•</span>
