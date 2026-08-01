@@ -235,20 +235,24 @@ export default function CreateQuizText() {
         }
 
         try {
+            const sanitizedTimerPerQuestion = timerType === 'timePerQuestion' 
+                ? Math.min(300, Math.max(0, parseInt(timerPerQuestion) || 30))
+                : 30;
+
             const res = await api.post('/quiz/create', {
-                title,
+                title: title.trim(),
                 questions,
                 duration: timerType === 'totalTime' ? (parseInt(duration) || 30) : 0,
-                timerPerQuestion: timerType === 'timePerQuestion' ? (parseInt(timerPerQuestion) || 30) : 0,
-                timerType,
-                accessType,
-                startTime:  finalStartTime,
-                endTime:    finalEndTime || null,
-                isAssessment,
-                isLive:     !isAssessment,
-                assignedGroups,
-                assignedStudents,
-                autoBroadcast,
+                timerPerQuestion: sanitizedTimerPerQuestion,
+                timerType: timerType || 'timePerQuestion',
+                accessType: accessType || 'private',
+                startTime: finalStartTime || null,
+                endTime: finalEndTime || null,
+                isAssessment: Boolean(isAssessment),
+                isLive: !isAssessment,
+                assignedGroups: assignedGroups || [],
+                assignedStudents: assignedStudents || [],
+                autoBroadcast: autoBroadcast !== false,
             });
             toast.dismiss();
             toast.success('Mission Published & Data Encrypted (SHA-256)');
@@ -477,24 +481,7 @@ export default function CreateQuizText() {
                                     </div>
                                 )}
 
-                                {/* ── Final Validation Warning (from backend validator) ── */}
-                                {isGeneratedSource && finalValidation && !finalValidation.passed && (
-                                    <div className="rounded-3xl border-2 border-amber-500/30 bg-amber-500/10 p-6 space-y-3 shadow-md">
-                                        <div className="flex items-center gap-2.5">
-                                            <AlertTriangle size={20} className="text-amber-600 animate-pulse" />
-                                            <p className="text-sm font-black text-amber-700 uppercase tracking-wider">Review Required Before Publish</p>
-                                        </div>
-                                        <p className="text-xs text-amber-900/80 font-bold uppercase tracking-wider">The final validator found issues. You may still publish — these are recommendations.</p>
-                                        <ul className="space-y-1">
-                                            {finalValidation.issues.map((issue, i) => (
-                                                <li key={i} className="text-xs text-amber-900 font-bold flex items-start gap-2">
-                                                    <span className="flex-shrink-0 mt-0.5">⚠</span>
-                                                    <span>{issue}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
+
 
                                 {/* ── Agent Quality Badge (AI-generated quizzes only) ── */}
                                 {isGeneratedSource && agentReport && (

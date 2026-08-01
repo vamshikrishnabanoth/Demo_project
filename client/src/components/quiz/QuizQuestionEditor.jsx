@@ -23,6 +23,16 @@ const kahootBadgeColors = [
     '#ec4899', // pink-500
 ];
 
+// Highlight borders matching option's own color when selected
+const kahootSelectedBorders = [
+    'ring-4 ring-red-500/50 !border-red-500 shadow-md shadow-red-500/20',
+    'ring-4 ring-orange-500/50 !border-orange-500 shadow-md shadow-orange-500/20',
+    'ring-4 ring-yellow-500/50 !border-yellow-500 shadow-md shadow-yellow-500/20',
+    'ring-4 ring-green-500/50 !border-green-500 shadow-md shadow-green-500/20',
+    'ring-4 ring-purple-500/50 !border-purple-500 shadow-md shadow-purple-500/20',
+    'ring-4 ring-pink-500/50 !border-pink-500 shadow-md shadow-pink-500/20',
+];
+
 // Auto-resize textarea helper
 function AutoTextarea({ value, onChange, placeholder, style, className }) {
     const ref = useRef(null);
@@ -105,7 +115,7 @@ export default function QuizQuestionEditor({
                             className={`
                                 flex items-start gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto
                                 ${kahootColors[oIndex % 6]} 
-                                ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-blue-500/50 !border-blue-600 shadow-md shadow-blue-500/20' : ''}
+                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : ''}
                             `}
                         >
                             {/* Letter Badge — always white text on solid color */}
