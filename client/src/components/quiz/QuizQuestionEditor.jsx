@@ -79,14 +79,15 @@ export default function QuizQuestionEditor({
                                 ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-green-500/50 scale-[1.02] border-green-500/50' : 'border-transparent'}
                             `}
                         >
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black ${kahootAccents[oIndex % 6]} shrink-0 shadow-lg`}>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg ${kahootAccents[oIndex % 6]}`}>
                                 {String.fromCharCode(65 + oIndex)}
                             </div>
                             <input
                                 type="text"
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
-                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold text-[#1f2937] placeholder:text-[#1f2937]/50 py-3 text-lg"
+                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold placeholder:text-[#1f2937]/50 py-3 text-lg"
+                                style={{ color: '#1f2937' }}
                                 placeholder={`Option ${oIndex + 1}`}
                             />
                             <div className="flex items-center gap-2">

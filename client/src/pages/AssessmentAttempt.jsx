@@ -529,7 +529,7 @@ export default function AssessmentAttempt() {
                                             key={oi}
                                             onClick={() => handleSelect(opt)}
                                             disabled={isFinalizedOption}
-                                            className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative overflow-hidden btn-press
+                                            className={`flex items-center gap-5 px-6 py-5 rounded-2xl border-2 transition-all text-left relative h-auto btn-press
                                                 ${isSelected ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-[var(--text-primary)]' : 'border-[var(--border-color)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] text-[var(--text-primary)]'}
                                                 ${isFinalizedOption ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         >
@@ -537,7 +537,7 @@ export default function AssessmentAttempt() {
                                                 ${isSelected ? 'bg-[var(--bg-accent)] text-white' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)]'}`}>
                                                 {LETTERS[oi]}
                                             </div>
-                                            <span className="font-bold text-base flex-1 text-[var(--text-primary)]">{opt}</span>
+                                            <span className="font-bold text-base flex-1 min-w-0 break-words whitespace-normal" style={{ color: '#1f2937' }}>{opt}</span>
                                         </motion.button>
                                     );
                                 })}

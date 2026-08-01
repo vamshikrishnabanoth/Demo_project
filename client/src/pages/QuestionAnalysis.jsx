@@ -206,7 +206,7 @@ export default function QuestionAnalysis() {
                 </div>
 
                 {/* Question Display */}
-                <div className="border-2 p-8 md:p-12 rounded-[3rem] relative overflow-hidden shadow-sm" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                <div className="border-2 p-8 md:p-12 rounded-[3rem] relative overflow-visible shadow-sm" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none" style={{ color: '#0f172a' }}>
                         <Target size={150} />
                     </div>
@@ -259,7 +259,7 @@ export default function QuestionAnalysis() {
                             }
                             
                             return (
-                                <div key={idx} className="p-5 rounded-2xl border-2 transition-all flex flex-col gap-3" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
+                                <div key={idx} className="p-5 rounded-2xl border-2 transition-all flex flex-col gap-3 h-auto" style={{ backgroundColor: cardBg, borderColor: cardBorder }}>
                                     <div className="flex items-start gap-4">
                                         {/* Option Letter Badge */}
                                         <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm shrink-0 shadow-sm" style={{ backgroundColor: labelBg, color: labelColor }}>
