@@ -393,20 +393,4 @@ export function SecurityDashboard({ students = [] }) {
             )}
         </div>
     );
-}{6} className="p-8 text-center text-xs font-bold text-[var(--text-secondary)] italic">
-                                    No student cheating logs found matching the filter criteria.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Right Drawer */}
-            <StudentDetailsDrawer 
-                student={selectedStudent} 
-                onClose={() => setSelectedStudent(null)} 
-            />
-        </div>
-    );
 }

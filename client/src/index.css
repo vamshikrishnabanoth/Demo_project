@@ -2010,7 +2010,6 @@ input.global-search-input:focus,
   transform: none !important;
   filter: none !important;
 }
-}
 
 @keyframes publish-pulse-glow {
   0% {
