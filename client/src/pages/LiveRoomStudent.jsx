@@ -268,17 +268,17 @@ export default function LiveRoomStudent() {
                     className="bg-[var(--bg-secondary)] rounded-[3rem] shadow-2xl border border-[var(--border-color)] overflow-hidden"
                 >
                     {/* Hero Header */}
-                    <div className="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-8 sm:p-14 text-center relative overflow-hidden border-b border-[var(--border-color)]">
+                    <div className="bg-gradient-to-br from-slate-50 via-indigo-50/60 to-white text-[#0f172a] p-8 sm:p-14 text-center relative overflow-hidden border-b border-[var(--border-color)]">
                         {/* Decorative animated rings */}
                         <motion.div 
                             animate={{ rotate: 360 }}
                             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                            className="absolute -top-20 -right-20 w-80 h-80 border-2 border-white/10 rounded-full"
+                            className="absolute -top-20 -right-20 w-80 h-80 border-2 border-slate-300/30 rounded-full"
                         />
                         <motion.div 
                             animate={{ rotate: -360 }}
                             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                            className="absolute -bottom-20 -left-20 w-60 h-60 border border-white/10 rounded-full"
+                            className="absolute -bottom-20 -left-20 w-60 h-60 border border-slate-300/30 rounded-full"
                         />
 
                         <motion.div
@@ -287,31 +287,31 @@ export default function LiveRoomStudent() {
                             className="relative z-10 space-y-6"
                         >
                             <div 
-                                className="p-4 rounded-2xl border-2 inline-block shadow-2xl mb-2 backdrop-blur-md transition-all duration-500 hover:scale-105"
+                                className="p-4 rounded-2xl border-2 inline-block shadow-lg mb-2 backdrop-blur-md transition-all duration-500 hover:scale-105"
                                 style={{
-                                    borderColor: 'rgba(255, 255, 255, 0.2)',
-                                    boxShadow: '0 0 35px rgba(99, 102, 241, 0.4)',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                    color: '#ffffff'
+                                    borderColor: 'rgba(217, 119, 6, 0.3)',
+                                    boxShadow: '0 0 25px rgba(245, 158, 11, 0.2)',
+                                    backgroundColor: '#ffffff',
+                                    color: '#d97706'
                                 }}
                             >
-                                <ThemeIcon size={44} className="animate-pulse text-amber-300" />
+                                <ThemeIcon size={44} className="animate-pulse text-amber-600" />
                             </div>
                             
                             <div className="space-y-4">
                                 <motion.div 
                                     animate={{ 
-                                        backgroundColor: ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.25)", "rgba(255,255,255,0.1)"]
+                                        backgroundColor: ["rgba(245, 158, 11, 0.08)", "rgba(245, 158, 11, 0.18)", "rgba(245, 158, 11, 0.08)"]
                                     }}
                                     transition={{ duration: 2, repeat: Infinity }}
-                                    className="inline-block px-5 py-2 rounded-full text-xs font-black uppercase tracking-[0.25em] border border-white/30 text-amber-300"
+                                    className="inline-block px-5 py-2 rounded-full text-xs font-black uppercase tracking-[0.25em] border border-amber-500/40 text-amber-600"
                                 >
                                     ● Quiz Arena Active
                                 </motion.div>
-                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase italic leading-tight max-w-2xl mx-auto drop-shadow-md">
+                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#0f172a] uppercase italic leading-tight max-w-2xl mx-auto drop-shadow-xs">
                                     {cleanQuizTitle(quiz?.title)}
                                 </h1>
-                                <p className="text-slate-200 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
+                                <p className="text-slate-600 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
                                     You're in the waiting room. The quiz will start once your teacher begins the session.
                                 </p>
                             </div>
@@ -332,44 +332,44 @@ export default function LiveRoomStudent() {
                         <motion.div 
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-slate-900 border-2 border-slate-700/60 p-6 sm:p-8 rounded-[2.5rem] text-left text-white shadow-xl space-y-4"
+                            className="bg-white border-2 border-slate-200 p-6 sm:p-8 rounded-[2.5rem] text-left text-[#0f172a] shadow-lg space-y-4"
                         >
-                            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-                                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-400">
+                            <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-600">
                                     <ShieldCheck size={28} />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-black uppercase tracking-wider italic text-amber-400">
+                                    <h3 className="text-lg font-black uppercase tracking-wider italic text-amber-600">
                                         Proctored Examination Security Rules
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
                                         Automated Real-Time Telemetry & Environment Integrity
                                     </p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-200 pt-1">
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">🚫</span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-700 pt-1">
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">🚫</span>
                                     <span>Right-Click & Inspect Disabled</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">📸</span>
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">📸</span>
                                     <span>Screenshots & Recording Blocked</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">📋</span>
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">📋</span>
                                     <span>Ctrl+C & Ctrl+V Copy/Paste Disabled</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">🖥️</span>
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">🖥️</span>
                                     <span>Mandatory Fullscreen Mode Only</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">🔀</span>
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">🔀</span>
                                     <span>No Tab Switching / Split Screen</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/50">
-                                    <span className="text-amber-400 text-base shrink-0">🔒</span>
+                                <div className="flex items-center gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                    <span className="text-amber-600 text-base shrink-0">🔒</span>
                                     <span>DevTools Monitoring Active</span>
                                 </div>
                             </div>

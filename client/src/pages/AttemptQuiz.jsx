@@ -1322,7 +1322,7 @@ export default function AttemptQuiz() {
 
             {/* Strict Mode Waiting Overlay */}
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
-                <div className="fixed inset-0 z-[var(--z-overlay)] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
+                <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-[var(--text-primary)]">
                     <LiveQuizWaitAnimation
                         variant="synchronizing-answers"
                         answeredCount={answeredCount}
@@ -1446,22 +1446,22 @@ export default function AttemptQuiz() {
 
                                     if (isReviewMode) {
                                         if (isCorrect) {
-                                            containerClass = 'bg-emerald-600 border-emerald-600 ring-4 ring-emerald-400/30';
-                                            textColor = '#1f2937';
-                                            shapeFill = '#1f2937';
+                                            containerClass = 'bg-emerald-600 border-emerald-600 shadow-md text-white';
+                                            textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
                                         } else if (isSelected && !isCorrect) {
-                                            containerClass = 'bg-rose-600 border-rose-600 ring-4 ring-rose-400/30';
-                                            textColor = '#1f2937';
-                                            shapeFill = '#1f2937';
+                                            containerClass = 'bg-rose-600 border-rose-600 shadow-md text-white';
+                                            textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
                                         } else {
                                             containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-50 grayscale';
                                             textColor = '#94a3b8';
                                             shapeFill = '#94a3b8';
                                         }
                                     } else if (isSelected) {
-                                        containerClass = 'bg-[#0f172a] border-[#0f172a] shadow-xl ring-4 ring-slate-300 scale-[0.98]';
-                                        textColor = '#1f2937';
-                                        shapeFill = '#1f2937';
+                                        containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
+                                        textColor = '#0f172a';
+                                        shapeFill = '#d97706';
                                     }
 
                                     // In live mode: lock only after submit, allow free re-selection before
@@ -1480,7 +1480,7 @@ export default function AttemptQuiz() {
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                             className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected ? 'bg-white/20 text-[#1f2937]' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
                                                 <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
                                             </div>
                                             <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
@@ -1488,15 +1488,15 @@ export default function AttemptQuiz() {
                                             </span>
 
                                             {isSelected && !isReviewMode && (
-                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white text-black rounded-full px-2.5 py-1 shadow-md">
+                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500 text-white rounded-full px-2.5 py-1 shadow-md">
                                                     {isSubmittedLive ? (
                                                         <motion.div
                                                             initial={{ rotate: -90, scale: 0 }}
                                                             animate={{ rotate: 0, scale: 1 }}
                                                             transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                                                            className="flex items-center justify-center text-red-600"
+                                                            className="flex items-center justify-center text-white"
                                                         >
-                                                            <Lock size={12} className="fill-red-600/10" />
+                                                            <Lock size={12} className="fill-white/20" />
                                                         </motion.div>
                                                     ) : null}
                                                     <motion.div
@@ -1504,7 +1504,7 @@ export default function AttemptQuiz() {
                                                         animate={{ scale: 1 }}
                                                         transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
                                                     >
-                                                        <CheckCircle size={14} className="text-emerald-600" />
+                                                        <CheckCircle size={14} className="text-white" />
                                                     </motion.div>
                                                 </div>
                                             )}
