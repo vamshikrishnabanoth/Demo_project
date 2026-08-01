@@ -1,20 +1,49 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Plus, Minus, CheckCircle, Circle, Square, Triangle, Diamond } from 'lucide-react';
-import { PremiumInput, GlassCard, PremiumButton } from '../ui/Primitives';
+import { Trash2, Plus, Minus } from 'lucide-react';
+import { PremiumInput, GlassCard } from '../ui/Primitives';
 
+// Pastel card backgrounds keyed by index
 const kahootColors = [
-    'border-red-500/40 bg-red-500/10',
-    'border-blue-500/40 bg-blue-500/10',
-    'border-yellow-500/40 bg-yellow-500/10',
-    'border-green-500/40 bg-green-500/10',
-    'border-purple-500/40 bg-purple-500/10',
-    'border-pink-500/40 bg-pink-500/10',
+    'border-red-400/50 bg-red-50',
+    'border-orange-400/50 bg-orange-50',
+    'border-yellow-400/50 bg-yellow-50',
+    'border-green-400/50 bg-green-50',
+    'border-purple-400/50 bg-purple-50',
+    'border-pink-400/50 bg-pink-50',
 ];
 
-const kahootAccents = [
-    'bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'
+// Solid colors for the letter badge (hex so they always render regardless of Tailwind purge)
+const kahootBadgeColors = [
+    '#ef4444', // red-500
+    '#f97316', // orange-500
+    '#eab308', // yellow-500
+    '#22c55e', // green-500
+    '#a855f7', // purple-500
+    '#ec4899', // pink-500
 ];
+
+// Auto-resize textarea helper
+function AutoTextarea({ value, onChange, placeholder, style, className }) {
+    const ref = useRef(null);
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.style.height = 'auto';
+            ref.current.style.height = ref.current.scrollHeight + 'px';
+        }
+    }, [value]);
+    return (
+        <textarea
+            ref={ref}
+            rows={1}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className={className}
+            style={{ ...style, resize: 'none', overflow: 'hidden' }}
+        />
+    );
+}
 
 export default function QuizQuestionEditor({ 
     question, 
@@ -73,36 +102,43 @@ export default function QuizQuestionEditor({
                         <motion.div 
                             key={oIndex}
                             layout
-                        className={`
-                                flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto 
+                            className={`
+                                flex items-start gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto
                                 ${kahootColors[oIndex % 6]} 
-                                ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-green-500/50 scale-[1.02] border-green-500/50' : 'border-transparent'}
+                                ${question.correctAnswer === opt && opt !== '' ? 'ring-4 ring-green-500/50 border-green-500/60' : ''}
                             `}
                         >
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg ${kahootAccents[oIndex % 6]}`}>
+                            {/* Letter Badge — always white text on solid color */}
+                            <div
+                                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-md mt-0.5"
+                                style={{ backgroundColor: kahootBadgeColors[oIndex % 6], color: '#ffffff' }}
+                            >
                                 {String.fromCharCode(65 + oIndex)}
                             </div>
-                            <input
-                                type="text"
+
+                            {/* Auto-resizing textarea — full option text always visible */}
+                            <AutoTextarea
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
-                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold placeholder:text-[#1f2937]/50 py-3 text-lg"
-                                style={{ color: '#1f2937' }}
                                 placeholder={`Option ${oIndex + 1}`}
+                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold py-2 text-base leading-snug w-full"
+                                style={{ color: '#1f2937', minHeight: '2.5rem' }}
                             />
-                            <div className="flex items-center gap-2">
+
+                            {/* Radio + Delete */}
+                            <div className="flex items-center gap-2 shrink-0 pt-1">
                                 <input
                                     type="radio"
                                     name={`correct-${index}`}
                                     checked={question.correctAnswer === opt && opt !== ''}
                                     onChange={() => onUpdate(index, 'correctAnswer', opt)}
-                                    className="w-8 h-8 text-green-500 bg-white/10 border-white/20 focus:ring-green-500 cursor-pointer"
+                                    className="w-6 h-6 text-green-500 bg-white/10 border-white/20 focus:ring-green-500 cursor-pointer"
                                 />
                                 {question.options.length > 2 && (
                                     <button 
                                         type="button" 
                                         onClick={() => onDeleteOption(index, oIndex)} 
-                                        className="p-2 text-white/30 hover:text-red-500 transition-colors"
+                                        className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
                                     >
                                         <Minus size={16} />
                                     </button>
@@ -126,3 +162,4 @@ export default function QuizQuestionEditor({
         </GlassCard>
     );
 }
+
