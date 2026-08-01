@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 
 export default function WaitingRoomLoader({ message = 'Joining Arena...' }) {
   const textLetters = Array.from(message);
@@ -35,25 +34,8 @@ export default function WaitingRoomLoader({ message = 'Joining Arena...' }) {
       />
 
       {/* Main Loader Core */}
-      <div className="relative flex items-center justify-center w-48 h-48">
-        {/* Smooth outer pulsing ring */}
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--bg-accent)]/40"
-        />
-
-        {/* Inner spinning accent arc */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
-          className="absolute inset-3 rounded-full border-4 border-transparent border-t-[var(--bg-accent)] border-r-[var(--bg-accent)]"
-        />
-
-        {/* Center Card Icon */}
-        <div className="relative z-10 w-20 h-20 rounded-2xl bg-[var(--bg-accent)] flex items-center justify-center shadow-lg border-2 border-white text-white">
-          <Sparkles size={36} className="animate-pulse" />
-        </div>
+      <div className="relative flex items-center justify-center my-6">
+        <div className="loader"></div>
       </div>
 
       {/* Animated Text Title */}

@@ -13,27 +13,34 @@ const microMessages = [
 function EnergyCore() {
     return (
         <div className="relative flex items-center justify-center">
-            {/* Outer smooth ambient glow */}
+            {/* Outer ambient glow */}
             <motion.div
                 animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.35, 0.15] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute w-44 h-44 rounded-full bg-[var(--bg-accent)]/20 blur-2xl"
+                className="absolute w-52 h-52 rounded-full bg-[var(--bg-accent)]/15 blur-2xl pointer-events-none"
             />
 
-            {/* Pulsing ring */}
+            {/* Visible Outer Dashed Orbit Path (Diameter 220px matching 110px orbit radius) */}
             <motion.div
-                animate={{ scale: [0.95, 1.08, 0.95], rotate: [0, 180, 360] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute w-36 h-36 rounded-full border-2 border-dashed border-[var(--bg-accent)]/40"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                className="absolute w-[220px] h-[220px] rounded-full border-2 border-dashed border-slate-400/90 shadow-xs pointer-events-none"
+            />
+
+            {/* Inner Secondary Pulsing Dashed Orbit Ring */}
+            <motion.div
+                animate={{ scale: [0.95, 1.05, 0.95], rotate: [360, 0] }}
+                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute w-36 h-36 rounded-full border-2 border-dashed border-slate-400/70 pointer-events-none"
             />
 
             {/* Core Icon Badge */}
             <motion.div
                 animate={{ scale: [0.98, 1.04, 0.98] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-10 w-24 h-24 rounded-3xl bg-[var(--bg-accent)] flex items-center justify-center shadow-xl border-2 border-white/30 text-white"
+                className="relative z-10 w-24 h-24 rounded-3xl bg-[var(--bg-accent)] flex items-center justify-center shadow-xl border-2 border-white text-white"
             >
-                <GraduationCap size={44} strokeWidth={2.2} className="drop-shadow-sm" />
+                <GraduationCap size={44} strokeWidth={2.2} className="drop-shadow-sm text-white" />
             </motion.div>
         </div>
     );
@@ -55,13 +62,17 @@ function OrbitingStudentAvatars({ count = 6 }) {
                 return (
                     <motion.div
                         key={idx}
-                        className="absolute left-1/2 top-1/2 h-10 w-10 -ml-5 -mt-5 rounded-xl border-2 border-white bg-white flex items-center justify-center shadow-md text-[var(--bg-accent)]"
+                        className="absolute left-1/2 top-1/2 h-11 w-11 -ml-[22px] -mt-[22px] rounded-2xl border-2 border-slate-300 bg-white flex items-center justify-center shadow-lg text-[var(--bg-accent)] z-20"
                         animate={{ rotate: angle + 360 }}
                         transition={{ duration: 16 + idx * 1.5, repeat: Infinity, ease: 'linear' }}
                         transformTemplate={({ rotate }) => `rotate(${rotate}) translateX(${radius}px) rotate(-${rotate})`}
                     >
-                        <IconComp size={18} strokeWidth={2.2} />
-                        <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                        <IconComp size={20} strokeWidth={2.2} />
+                        {/* High-visibility green animated status beacon dot */}
+                        <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 pointer-events-none z-30">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
+                            <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-white shadow-xs"></span>
+                        </span>
                     </motion.div>
                 );
             })}
