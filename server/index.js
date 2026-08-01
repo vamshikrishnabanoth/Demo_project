@@ -1064,6 +1064,16 @@ io.to(realQuizId).emit(
                 }
             }
 
+            if (!result) {
+                result = {
+                    id: `temp_${studentId}`,
+                    score: 0,
+                    totalTimeTaken: 0,
+                    answers: [],
+                    student: { username: socket.user?.username || studentId }
+                };
+            }
+
             // Ensure numeric values to avoid NaN
             result.score = result.score || 0;
             result.totalTimeTaken = result.totalTimeTaken || 0;
@@ -1172,16 +1182,22 @@ io.to(realQuizId).emit(
                     timeTaken: qTimeTaken
                 });
 
-                await prisma.result.update({
-                    where: { id: result.id },
-                    data: {
-                        score: updatedScore,
-                        totalTimeTaken: updatedTime,
-                        answers: updatedAnswers,
-                        status: 'in-progress',
-                        lastAnsweredAt: new Date()
+                try {
+                    if (result.id && !result.id.startsWith('temp_')) {
+                        await prisma.result.update({
+                            where: { id: result.id },
+                            data: {
+                                score: updatedScore,
+                                totalTimeTaken: updatedTime,
+                                answers: updatedAnswers,
+                                status: 'in-progress',
+                                lastAnsweredAt: new Date()
+                            }
+                        });
                     }
-                });
+                } catch (dbUpdateErr) {
+                    console.warn(`[ResultUpdate] Database persistence skipped for test bot ${studentId}:`, dbUpdateErr.message);
+                }
 
                 // Broadcast student progress to teacher with isCorrect
                 io.to(quizId).emit('student_progress_update', {
