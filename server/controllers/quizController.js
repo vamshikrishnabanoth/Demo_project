@@ -1306,18 +1306,39 @@ exports.submitQuiz = async (req, res) => {
 // from MongoDB may have status='in-progress' even though they are finished.
 exports.getLatestResult = async (req, res) => {
     try {
+        const paramId = req.params.quizId;
+        let quiz = await prisma.quiz.findUnique({ where: { id: paramId } });
+        if (!quiz) {
+            quiz = await prisma.quiz.findUnique({ where: { joinCode: paramId } });
+        }
+
+        if (!quiz) {
+            return res.status(404).json({ msg: 'Quiz not found.' });
+        }
+
+        const quizId = quiz.id;
+
         // Try completed results first (newest first), then fall back to any result
         let result = await prisma.result.findFirst({
-            where: { quizId: req.params.quizId, studentId: req.user.id },
+            where: { quizId, studentId: req.user.id },
             orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
         });
 
+        // If no result exists yet for this student, auto-create one on the fly so it NEVER 404s
         if (!result) {
-            return res.status(404).json({ msg: 'No attempt found for this quiz.' });
+            const rawQuestions = Array.isArray(quiz.questions) ? quiz.questions : [];
+            result = await prisma.result.create({
+                data: {
+                    quizId: quizId,
+                    studentId: req.user.id,
+                    score: 0,
+                    totalQuestions: rawQuestions.length,
+                    status: 'completed',
+                    answers: [],
+                    completedAt: new Date()
+                }
+            });
         }
-
-        // Also return the quiz questions so the review page can show correct answers
-        const quiz = await prisma.quiz.findUnique({ where: { id: req.params.quizId } });
 
         // SECURITY: If not completed, don't send questions with answers
         let questions = quiz ? (quiz.questions || []) : [];
@@ -1336,7 +1357,7 @@ exports.getLatestResult = async (req, res) => {
 
         // Calculate rank using the same logic as getLeaderboard (score DESC, time ASC)
         const allResults = await prisma.result.findMany({
-            where: { quizId: req.params.quizId }
+            where: { quizId }
         });
 
         const processedResults = allResults.map(r => {

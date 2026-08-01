@@ -183,14 +183,15 @@ export default function AttemptQuiz() {
         socket.on('quiz_ended', async () => {
             console.log('[AttemptQuiz] quiz_ended event received. Fetching final rank card immediately...');
             setLoadingRankResult(true);
+            const targetId = quizRef.current?.id || id;
             try {
-                const res = await api.get(`/quiz/result/${id}`);
+                const res = await api.get(`/quiz/result/${targetId}`);
                 setResult(res.data);
                 setFinalRankResult(res.data);
                 setMissionComplete(false);
             } catch (err) {
                 console.error('Error fetching final result:', err);
-                navigate(`/analytics/quiz/${id}`);
+                navigate(`/analytics/quiz/${targetId}`);
             } finally {
                 setLoadingRankResult(false);
             }
@@ -281,12 +282,13 @@ export default function AttemptQuiz() {
                  setTimeLeft(state.remainingTime);
             } else if (state.quizStatus === 'finished') {
                  setLoadingRankResult(true);
-                 api.get(`/quiz/result/${id}`).then(res => {
+                 const targetId = quizRef.current?.id || id;
+                 api.get(`/quiz/result/${targetId}`).then(res => {
                      setResult(res.data);
                      setFinalRankResult(res.data);
                  }).catch(err => {
                      console.error('Error fetching final result:', err);
-                     navigate(`/analytics/quiz/${id}`);
+                     navigate(`/analytics/quiz/${targetId}`);
                  }).finally(() => {
                      setLoadingRankResult(false);
                  });

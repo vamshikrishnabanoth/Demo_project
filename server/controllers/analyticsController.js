@@ -43,12 +43,17 @@ const normalizeQuestions = (questions) => {
 
 exports.getQuizAnalytics = async (req, res) => {
     try {
-        const quizId = req.params.id;
-        const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+        const paramId = req.params.id;
+        let quiz = await prisma.quiz.findUnique({ where: { id: paramId } });
+        if (!quiz) {
+            quiz = await prisma.quiz.findUnique({ where: { joinCode: paramId } });
+        }
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
+
+        const quizId = quiz.id;
 
         // Authorization check: creator, admin, or student who has attempted/participated in the quiz
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
