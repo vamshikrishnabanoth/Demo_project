@@ -187,6 +187,7 @@ export default function AttemptQuiz() {
                 const res = await api.get(`/quiz/result/${id}`);
                 setResult(res.data);
                 setFinalRankResult(res.data);
+                setMissionComplete(false);
             } catch (err) {
                 console.error('Error fetching final result:', err);
                 navigate(`/analytics/quiz/${id}`);
@@ -666,6 +667,16 @@ export default function AttemptQuiz() {
                         const isFinishedLive = res.data.isLive && res.data.status === 'finished';
                         const allowRetake = isFinishedLive || res.data.isAssessment;
 
+                        if (isFinishedLive) {
+                            try {
+                                const resultRes = await api.get(`/quiz/result/${id}`);
+                                setResult(resultRes.data);
+                                setFinalRankResult(resultRes.data);
+                            } catch (e) {
+                                console.error('Error fetching final result on finished live quiz refresh:', e);
+                            }
+                        }
+
                         // BLOCK RE-ENTRY only for regular one-shot quizzes that are already done
                         if (prevResult.status === 'completed' && !allowRetake) {
                             console.log('[DIAGNOSTIC-QUIZ] Block re-entry condition met. Directing to review mode.');
@@ -889,6 +900,101 @@ export default function AttemptQuiz() {
         );
     }
 
+    if (finalRankResult && !isReviewMode) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)] p-4 relative overflow-hidden font-inter text-[var(--text-primary)]">
+                {/* Background flair and glow effects */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--bg-accent-glow),transparent_60%)] opacity-40 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                    className="max-w-md w-full bg-white border-2 border-[var(--border-color)] backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-10 text-center shadow-2xl space-y-8 relative z-10 text-[var(--text-primary)]"
+                >
+                    {/* Crown or Trophy based on Rank */}
+                    <div className="relative">
+                        <motion.div 
+                            animate={{ scale: [1, 1.05, 1], rotate: [0, 3, -3, 0] }}
+                            transition={{ duration: 4, repeat: Infinity }}
+                            className="w-24 h-24 bg-gradient-to-tr from-amber-400 to-amber-500 text-slate-950 rounded-[2rem] flex items-center justify-center mx-auto shadow-xl shadow-amber-400/20 relative z-10 border border-amber-300"
+                        >
+                            {finalRankResult.rank === 1 ? (
+                                <Crown size={48} className="text-slate-950" />
+                            ) : (
+                                <Trophy size={48} className="text-slate-950" />
+                            )}
+                        </motion.div>
+                        <div className="absolute inset-0 bg-yellow-400/25 rounded-full blur-2xl -z-0 scale-75 animate-pulse" />
+                    </div>
+
+                    <div className="space-y-3">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] border border-amber-500/40 text-amber-600 bg-amber-500/10"
+                        >
+                            Quiz Completed Successfully
+                        </motion.div>
+                        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight italic text-[var(--text-primary)] leading-tight">
+                            {cleanQuizTitle(finalRankResult.quizTitle || quiz?.title || 'Arena Complete')}
+                        </h1>
+                        <p className="text-[var(--text-secondary)] text-xs font-bold uppercase tracking-widest leading-relaxed">
+                            Excellent performance! Your telemetry has been recorded.
+                        </p>
+                    </div>
+
+                    {/* Rank & Score Panel */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+                            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mb-1">Your Rank</p>
+                            <p className="text-3xl sm:text-4xl font-black text-amber-600 italic">
+                                #{finalRankResult.rank} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.totalParticipants}</span>
+                            </p>
+                        </div>
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+                            <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mb-1">Score Obtained</p>
+                            <p className="text-3xl sm:text-4xl font-black text-indigo-600 italic">
+                                {finalRankResult.score} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.totalQuestions * 10}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="space-y-3 pt-2">
+                        <button
+                            onClick={() => navigate(`/analytics/quiz/${id}`)}
+                            className="w-full bg-[var(--bg-accent)] text-white font-black italic uppercase tracking-wider py-4 rounded-2xl hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-[var(--bg-accent)]/20 flex items-center justify-center gap-2.5 cursor-pointer"
+                        >
+                            <TrendingUp size={18} />
+                            <span>Analytics</span>
+                        </button>
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => setIsReviewMode(true)}
+                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 py-3 rounded-2xl font-bold hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                <CheckCircle size={16} />
+                                <span>Review Answers</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/student-dashboard')}
+                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 py-3 rounded-2xl font-bold hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                <Home size={16} />
+                                <span>Dashboard</span>
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
+
     // Mission Complete: student finished all live quiz questions — wait for quiz_ended
     if (missionComplete && quiz?.isLive) {
         return (
@@ -935,101 +1041,6 @@ export default function AttemptQuiz() {
                                 </div>
                             </div>
                             <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest mt-4">Remaining Duration</p>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
-
-    if (finalRankResult && !isReviewMode) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-4 relative overflow-hidden font-inter text-white">
-                {/* Background flair and glow effects */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15),transparent_60%)] opacity-50" />
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                    className="max-w-md w-full bg-slate-900/90 border border-slate-800/80 backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-10 text-center shadow-2xl space-y-8 relative z-10"
-                >
-                    {/* Crown or Trophy based on Rank */}
-                    <div className="relative">
-                        <motion.div 
-                            animate={{ scale: [1, 1.05, 1], rotate: [0, 3, -3, 0] }}
-                            transition={{ duration: 4, repeat: Infinity }}
-                            className="w-24 h-24 bg-gradient-to-tr from-amber-400 to-yellow-300 text-slate-950 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl relative z-10 border border-white/20"
-                        >
-                            {finalRankResult.rank === 1 ? (
-                                <Crown size={48} className="text-slate-950" />
-                            ) : (
-                                <Trophy size={48} className="text-slate-950" />
-                            )}
-                        </motion.div>
-                        <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl -z-0 scale-75 animate-pulse" />
-                    </div>
-
-                    <div className="space-y-3">
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.25em] border border-amber-500/30 text-amber-400 bg-amber-500/5"
-                        >
-                            Quiz Completed Successfully
-                        </motion.div>
-                        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight italic text-white leading-none">
-                            {cleanQuizTitle(finalRankResult.quizTitle || quiz?.title || 'Arena Complete')}
-                        </h1>
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest leading-relaxed">
-                            Excellent performance! Your telemetry has been recorded.
-                        </p>
-                    </div>
-
-                    {/* Rank & Score Panel */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-5 shadow-inner">
-                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-1">Your Rank</p>
-                            <p className="text-3xl font-black text-amber-300 italic">
-                                #{finalRankResult.rank} <span className="text-xs text-slate-400 font-semibold uppercase not-italic">/ {finalRankResult.totalParticipants}</span>
-                            </p>
-                        </div>
-                        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-5 shadow-inner">
-                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-1">Score Obtained</p>
-                            <p className="text-3xl font-black text-indigo-400 italic">
-                                {finalRankResult.score} <span className="text-xs text-slate-400 font-semibold uppercase not-italic">/ {finalRankResult.totalQuestions * 10}</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="space-y-3 pt-2">
-                        <button
-                            onClick={() => navigate(`/analytics/quiz/${id}`)}
-                            className="w-full bg-amber-500 text-slate-950 font-black italic uppercase tracking-wider py-4.5 rounded-xl hover:bg-amber-400 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-amber-500/10 flex items-center justify-center gap-2.5 border border-white/10"
-                        >
-                            <TrendingUp size={18} />
-                            <span>Analytics</span>
-                        </button>
-                        
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => setIsReviewMode(true)}
-                                className="bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/40 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                            >
-                                <CheckCircle size={16} />
-                                <span>Review Answers</span>
-                            </button>
-                            <button
-                                onClick={() => navigate('/student-dashboard')}
-                                className="bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/40 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                            >
-                                <Home size={16} />
-                                <span>Dashboard</span>
-                            </button>
                         </div>
                     </div>
                 </motion.div>
