@@ -11,7 +11,7 @@ const prisma = new PrismaClient({
                 let url = process.env.DATABASE_URL;
                 if (url && !url.includes('connection_limit=')) {
                     const separator = url.includes('?') ? '&' : '?';
-                    url = `${url}${separator}connection_limit=30&pool_timeout=10`;
+                    url = `${url}${separator}connection_limit=10&pool_timeout=10`;
                 }
                 return url;
             })()
