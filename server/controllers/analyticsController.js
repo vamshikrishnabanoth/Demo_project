@@ -227,22 +227,95 @@ exports.getQuizAnalytics = async (req, res) => {
                 where: { quizId: quizId },
                 include: {
                     student: {
-                        select: { username: true, name: true, email: true, section: true }
+                        select: { username: true, name: true, email: true, section: true, studentBranch: true }
                     }
                 },
                 orderBy: { timestamp: 'desc' }
             });
 
-            formattedCheatingLogs = cheatingLogs.map(log => ({
-                id: log.id,
-                quizId: log.quizId,
-                studentId: log.studentId,
-                studentName: log.student?.name || log.studentName || log.student?.username || 'Student',
-                studentRollNumber: log.student?.username || log.studentRollNumber || 'N/A',
-                action: log.action,
-                details: log.details,
-                createdAt: log.timestamp  // CheatingLog uses `timestamp` field (no createdAt in schema)
-            }));
+            // Group by Roll Number / Student ID on the Backend
+            const studentMap = new Map();
+
+            for (const log of cheatingLogs) {
+                const rollNumber = log.student?.username || log.studentRollNumber || log.studentId || 'UNKNOWN';
+                const studentName = log.student?.name || log.studentName || rollNumber;
+                const department = log.student?.studentBranch || 'General';
+                const section = log.student?.section || 'A';
+
+                if (!studentMap.has(rollNumber)) {
+                    studentMap.set(rollNumber, {
+                        studentId: log.studentId,
+                        studentName,
+                        rollNumber,
+                        quizName: quiz.title,
+                        department,
+                        section,
+                        totalViolations: 0,
+                        lastIncident: log.timestamp,
+                        eventCounts: {
+                            WINDOW_BLUR: 0,
+                            TAB_SWITCH: 0,
+                            FULLSCREEN_EXIT: 0,
+                            SPLIT_SCREEN: 0,
+                            COPY: 0,
+                            PASTE: 0,
+                            RIGHT_CLICK: 0,
+                            DEVTOOLS: 0,
+                            OTHER: 0
+                        },
+                        timeline: []
+                    });
+                }
+
+                const record = studentMap.get(rollNumber);
+                record.totalViolations += 1;
+
+                // Normalize Action Type
+                let actionType = 'OTHER';
+                const rawAction = (log.action || '').toLowerCase();
+                if (rawAction.includes('blur') || rawAction.includes('focus')) actionType = 'WINDOW_BLUR';
+                else if (rawAction.includes('tab')) actionType = 'TAB_SWITCH';
+                else if (rawAction.includes('fullscreen')) actionType = 'FULLSCREEN_EXIT';
+                else if (rawAction.includes('split')) actionType = 'SPLIT_SCREEN';
+                else if (rawAction.includes('copy')) actionType = 'COPY';
+                else if (rawAction.includes('paste')) actionType = 'PASTE';
+                else if (rawAction.includes('context') || rawAction.includes('click') || rawAction.includes('inspect')) actionType = 'RIGHT_CLICK';
+                else if (rawAction.includes('devtools')) actionType = 'DEVTOOLS';
+
+                if (record.eventCounts.hasOwnProperty(actionType)) {
+                    record.eventCounts[actionType] += 1;
+                } else {
+                    record.eventCounts.OTHER += 1;
+                }
+
+                // Add to Timeline (Newest first because cheatingLogs is ordered desc)
+                record.timeline.push({
+                    id: log.id,
+                    type: actionType,
+                    rawAction: log.action,
+                    time: new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    fullTimestamp: log.timestamp,
+                    details: log.details
+                });
+            }
+
+            // Calculate Risk Levels and Scores
+            formattedCheatingLogs = Array.from(studentMap.values()).map(student => {
+                const total = student.totalViolations;
+                let riskLevel = 'LOW';
+                if (total > 30) riskLevel = 'CRITICAL';
+                else if (total >= 16) riskLevel = 'HIGH';
+                else if (total >= 6) riskLevel = 'MEDIUM';
+
+                // Risk score out of 100%
+                const riskScore = Math.min(100, Math.round((total / 35) * 100));
+
+                return {
+                    ...student,
+                    riskLevel,
+                    riskScore
+                };
+            });
         } catch (cheatingErr) {
             console.error('Error fetching cheating logs, falling back to empty list:', cheatingErr);
         }
