@@ -9,6 +9,7 @@ import { showConfirm, showError, showSuccess } from '../utils/alerts';
 import toast from 'react-hot-toast';
 import throttle from '../utils/throttle';
 import { cleanQuizTitle } from '../utils/cleanTitle';
+import { SecurityDashboard } from '../components/SecurityDashboard';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
@@ -54,15 +55,8 @@ export default function LiveRoomTeacher() {
                 // Fetch persistent suspicious activity logs from DB
                 try {
                     const logsRes = await api.get(`/quiz/${quizRes.data.id}/suspicious-activities`);
-                    if (Array.isArray(logsRes.data) && logsRes.data.length > 0) {
-                        const formattedLogs = logsRes.data.map(log => ({
-                            name: log.studentName || log.student?.name || log.student?.username || 'Student',
-                            rollNumber: log.studentRollNumber || log.student?.username || 'N/A',
-                            action: log.action,
-                            timestamp: log.timestamp ? new Date(log.timestamp) : new Date(),
-                            details: log.details
-                        }));
-                        setCheatAlerts(formattedLogs);
+                    if (Array.isArray(logsRes.data)) {
+                        setCheatAlerts(logsRes.data);
                     }
                 } catch (logErr) {
                     console.warn('Could not load persistent suspicious activities:', logErr);
@@ -748,133 +742,7 @@ if (socket.connected) {
                 )}
 
                 {/* Live Proctoring & Security Dashboard */}
-                <div className="bg-white rounded-[2.5rem] shadow-2xl border-2 border-[var(--border-color)] overflow-hidden animate-in fade-in zoom-in-95 duration-500">
-                    <div className="bg-gradient-to-r from-[var(--bg-accent)] via-[var(--bg-saffron)] to-[var(--bg-accent-hover)] px-8 py-6 flex items-center justify-between flex-wrap gap-4 text-white shadow-md">
-                        <div>
-                            <h2 className="text-xl font-black italic uppercase tracking-tighter flex items-center gap-2.5 text-white">
-                                <ShieldAlert size={24} className={cheatAlerts.length > 0 ? "animate-pulse text-yellow-300" : ""} />
-                                Live Proctoring & <span className="text-amber-200">Suspicious Activity Log Table</span>
-                            </h2>
-                            <p className="text-white/80 text-[10px] font-black uppercase tracking-widest mt-1">
-                                Real-time cheating alerts & persistent database audit history
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Search Roll No or Student..."
-                                    value={searchCheatQuery}
-                                    onChange={(e) => setSearchCheatQuery(e.target.value)}
-                                    className="px-4 py-2 text-xs rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:bg-white focus:text-slate-800 transition-all w-60 font-bold"
-                                />
-                            </div>
-                            <div className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-lg transition-all duration-300 ${
-                                cheatAlerts.length > 0 ? 'bg-red-600 text-white animate-pulse' : 'bg-white/20 text-white'
-                            }`}>
-                                {cheatAlerts.length} {cheatAlerts.length === 1 ? 'Event' : 'Events'} ({groupedCheatAlerts.length} {groupedCheatAlerts.length === 1 ? 'Student' : 'Students'})
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="p-6 sm:p-8">
-                        {groupedCheatAlerts.length > 0 ? (
-                            <div className="max-h-[420px] overflow-y-auto pr-2">
-                                <table className="w-full text-left border-collapse">
-                                    <thead className="sticky top-0 bg-white z-10 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-                                        <tr className="bg-[var(--bg-primary)]/40 border-b-2 border-[var(--border-color)]">
-                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Student Name</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Roll Number</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Recorded Activities</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Latest Timestamp</th>
-                                            <th className="px-6 py-4 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest text-center">Total Violations</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {groupedCheatAlerts.map((record, index) => {
-                                            const timeStr = record.latestTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                                            const dateStr = record.latestTime.toLocaleDateString();
-
-                                            return (
-                                                <tr key={index} className="hover:bg-[var(--bg-primary)]/20 transition-colors">
-                                                    <td className="px-6 py-4">
-                                                        <span className="font-bold text-[var(--text-primary)] text-sm">{record.name}</span>
-                                                    </td>
-                                                    <td className="px-6 py-4 font-mono text-xs text-[var(--text-secondary)] font-bold">
-                                                        {record.rollNumber}
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-wrap gap-1.5">
-                                                            {Object.entries(record.actionsMap).map(([act, count], actIdx) => {
-                                                                let label = act.replace(/_/g, ' ').toUpperCase();
-                                                                let style = 'bg-orange-500 text-white';
-                                                                let icon = <AlertTriangle size={11} />;
-
-                                                                if (act === 'tab_switch') {
-                                                                    label = `TAB SWITCH (${count})`;
-                                                                    style = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
-                                                                } else if (act === 'window_blur' || act === 'window_blur_30s') {
-                                                                    label = `FOCUS LOSS (${count})`;
-                                                                    style = 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white';
-                                                                    icon = <Clock size={11} />;
-                                                                } else if (act === 'split_screen_detected') {
-                                                                    label = `SPLIT SCREEN / RESIZE (${count})`;
-                                                                    style = 'bg-gradient-to-r from-rose-600 to-red-700 text-white animate-pulse';
-                                                                } else if (act === 'auto_submit_terminated' || act === 'window_blur_60s_terminated') {
-                                                                    label = `AUTO-SUBMITTED (TERMINATED)`;
-                                                                    style = 'bg-red-700 text-white font-black animate-pulse ring-2 ring-red-400';
-                                                                    icon = <ShieldAlert size={11} />;
-                                                                } else if (act === 'devtools_shortcut' || act === 'devtools_resize' || act === 'devtools_panel_opened') {
-                                                                    label = `DEVTOOLS OPENED (${count})`;
-                                                                    style = 'bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-black animate-pulse';
-                                                                } else if (act === 'exited_fullscreen') {
-                                                                    label = `EXITED FULLSCREEN (${count})`;
-                                                                    style = 'bg-gradient-to-r from-amber-600 to-orange-700 text-white';
-                                                                } else if (act === 'screenshot_attempt') {
-                                                                    label = `SCREENSHOT (${count})`;
-                                                                    style = 'bg-rose-600 text-white';
-                                                                } else if (act === 'context_menu' || act === 'clipboard_action') {
-                                                                    label = `COPY/PASTE/INSPECT (${count})`;
-                                                                    style = 'bg-slate-700 text-white';
-                                                                } else if (act === 'multi_monitor_detected') {
-                                                                    label = `MULTI-MONITOR (${count})`;
-                                                                    style = 'bg-blue-600 text-white';
-                                                                }
-
-                                                                return (
-                                                                    <span key={actIdx} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black tracking-wider uppercase shadow-sm ${style}`}>
-                                                                        {icon} {label}
-                                                                    </span>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-xs text-[var(--text-secondary)] font-mono">
-                                                        {dateStr} {timeStr}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center">
-                                                        <span className="inline-flex items-center justify-center min-w-[2.25rem] h-8 px-3 rounded-full bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs shadow-md shadow-red-500/30">
-                                                            {record.totalCount}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <div className="py-12 text-center flex flex-col items-center justify-center">
-                                <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 mb-4 border border-emerald-500/20 shadow-inner">
-                                    <ShieldCheck size={32} className="animate-pulse" />
-                                </div>
-                                <h4 className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest mb-1">Secure Environment</h4>
-                                <p className="text-[var(--text-secondary)] font-bold text-xs">No integrity violations detected from active participants.</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                <SecurityDashboard students={cheatAlerts || []} />
 
                 {/* Student Progress — Full Width Table with Dots */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
