@@ -34,7 +34,12 @@ const { verifyQuizIntegrity } = require('./lib/quizintegrity');
 const { gradeAnswer } = require('./utils/grading');
 const { exec } = require('child_process');
 
+const gzipCompressionMiddleware = require('./middleware/compression');
+
 const app = express();
+
+// Enable HTTP Gzip response compression for high throughput
+app.use(gzipCompressionMiddleware);
 
 // Trust proxy for rate limiting (needed for Render/Vercel)
 app.set('trust proxy', 1);

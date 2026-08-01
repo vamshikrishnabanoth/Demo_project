@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { getCache, setCache, invalidateCache } = require('../lib/cache');
 const { moderateContent } = require('../lib/moderator');
 const path = require('path');
 const fs = require('fs');
@@ -991,9 +992,17 @@ const normalizeQuestions = (questions) => {
 
 exports.getQuizById = async (req, res) => {
     try {
-        const quiz = await prisma.quiz.findUnique({
-            where: { id: req.params.id }
-        });
+        const cacheKey = `quiz:${req.params.id}`;
+        let quiz = await getCache(cacheKey);
+
+        if (!quiz) {
+            quiz = await prisma.quiz.findUnique({
+                where: { id: req.params.id }
+            });
+            if (quiz) {
+                await setCache(cacheKey, quiz, 30000); // Cache for 30 seconds
+            }
+        }
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
