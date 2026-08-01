@@ -23,6 +23,8 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import GlobalSearch from './GlobalSearch';
 import { uiTerminology } from '../utils/uiTerminology';
 
+import { prefetchRoute } from '../utils/routePrefetch';
+
 export default function DashboardLayout({ children, role }) {
     const { logout, user } = useContext(AuthContext);
     const location  = useLocation();
@@ -188,6 +190,7 @@ export default function DashboardLayout({ children, role }) {
                                             <Link
                                                 key={link.path}
                                                 to={link.path}
+                                                onMouseEnter={() => prefetchRoute(link.path)}
                                                 aria-current={active ? 'page' : undefined}
                                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest premium-transition border ${
                                                     active

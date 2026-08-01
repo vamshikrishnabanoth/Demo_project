@@ -14,6 +14,9 @@ export const AuthProvider = ({ children }) => {
         console.log('[DIAGNOSTIC-AUTH] Hydration phase initiated.');
         const token = localStorage.getItem('token');
         console.log('[DIAGNOSTIC-AUTH] Retrieved token from localStorage:', token ? `${token.slice(0, 15)}...` : 'NONE');
+        // Background pre-warm ping to keep backend active
+        api.get('/health').catch(() => {});
+
         if (!token) {
             console.log('[DIAGNOSTIC-AUTH] No token found. Skipping session hydration.');
             setLoading(false);

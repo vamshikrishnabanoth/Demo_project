@@ -29,9 +29,12 @@ import {
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
 
+import { useApiQuery } from '../hooks/useApiQuery';
+
 export default function MyQuizzes() {
-    const [quizzes, setQuizzes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { data: quizzesData, loading, refetch } = useApiQuery('/quiz/my-quizzes');
+    const quizzes = quizzesData || [];
+
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedQuizIds, setSelectedQuizIds] = useState([]);
     const [editingScheduleId, setEditingScheduleId] = useState(null);
@@ -42,23 +45,7 @@ export default function MyQuizzes() {
     const [filterBranch, setFilterBranch] = useState('All');
     const [filterSection, setFilterSection] = useState('All');
 
-    const fetchQuizzes = async () => {
-        try {
-            const res = await api.get('/quiz/my-quizzes');
-            setQuizzes(res.data);
-        } catch (err) {
-            console.error('Error fetching quizzes', err);
-            toast.error('Could not load your quizzes. Please refresh.', {
-                style: { background: '#1e293b', color: '#fff', borderRadius: '1rem' },
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchQuizzes();
-    }, []);
+    const fetchQuizzes = () => refetch();
 
     const updateQuizMode = async (quizId, mode) => {
         try {
