@@ -1435,22 +1435,22 @@ export default function AttemptQuiz() {
 
                                     if (isReviewMode) {
                                         if (isCorrect) {
-                                            containerClass = 'bg-emerald-600 border-emerald-600 text-white ring-4 ring-emerald-400/30';
-                                            textColor = '#ffffff';
-                                            shapeFill = 'white';
+                                            containerClass = 'bg-emerald-600 border-emerald-600 ring-4 ring-emerald-400/30';
+                                            textColor = '#1f2937';
+                                            shapeFill = '#1f2937';
                                         } else if (isSelected && !isCorrect) {
-                                            containerClass = 'bg-rose-600 border-rose-600 text-white ring-4 ring-rose-400/30';
-                                            textColor = '#ffffff';
-                                            shapeFill = 'white';
+                                            containerClass = 'bg-rose-600 border-rose-600 ring-4 ring-rose-400/30';
+                                            textColor = '#1f2937';
+                                            shapeFill = '#1f2937';
                                         } else {
                                             containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-50 grayscale';
                                             textColor = '#94a3b8';
                                             shapeFill = '#94a3b8';
                                         }
                                     } else if (isSelected) {
-                                        containerClass = 'bg-[#0f172a] border-[#0f172a] text-white shadow-xl ring-4 ring-slate-300 scale-[0.98]';
-                                        textColor = '#ffffff';
-                                        shapeFill = 'white';
+                                        containerClass = 'bg-[#0f172a] border-[#0f172a] shadow-xl ring-4 ring-slate-300 scale-[0.98]';
+                                        textColor = '#1f2937';
+                                        shapeFill = '#1f2937';
                                     }
 
                                     // In live mode: lock only after submit, allow free re-selection before
@@ -1469,7 +1469,7 @@ export default function AttemptQuiz() {
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                             className={`relative min-h-[5.5rem] md:min-h-[6.5rem] text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected ? 'bg-white/20 text-[#1f2937]' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
                                                 <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
                                             </div>
                                             <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words min-w-0 flex-1" style={{ color: textColor }}>

@@ -39,8 +39,8 @@ function ReviewCard({ question, answer, index }) {
                     const isSelected = opt === selected && selected !== '';
 
                     let cls = 'border border-white/10 bg-white/5 text-slate-400';
-                    if (isThisCorrect) cls = 'border-2 border-green-500/60 bg-green-500/10 text-white font-bold';
-                    else if (isSelected && !isThisCorrect) cls = 'border-2 border-red-500/60 bg-red-500/10 text-white';
+                    if (isThisCorrect) cls = 'border-2 border-green-500/60 bg-green-500/10 text-[#1f2937] font-bold';
+                    else if (isSelected && !isThisCorrect) cls = 'border-2 border-red-500/60 bg-red-500/10 text-[#1f2937]';
 
                     return (
                         <div key={oi} className={`flex items-center gap-3 px-5 py-3 rounded-2xl transition-all ${cls}`}>

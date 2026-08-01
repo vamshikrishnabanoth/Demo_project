@@ -86,7 +86,7 @@ export default function QuizQuestionEditor({
                                 type="text"
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
-                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold text-white placeholder:text-white/20 py-3 text-lg"
+                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold text-[#1f2937] placeholder:text-[#1f2937]/50 py-3 text-lg"
                                 placeholder={`Option ${oIndex + 1}`}
                             />
                             <div className="flex items-center gap-2">
