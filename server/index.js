@@ -415,7 +415,7 @@ io.on('connection', async (socket) => {
     });
 
 
-    socket.on('join_room', ({ quizId, user }) => {
+    socket.on('join_room', async ({ quizId, user }) => {
         // SECURITY CHECK: Verify user identity matches socket.user payload safely
         if (!socket.user) {
             console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted join_room`);
@@ -430,11 +430,21 @@ io.on('connection', async (socket) => {
             return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
-        socket.join(quizId);
+        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID
+        let realQuizId = quizId;
+        try {
+            const foundQuiz = await prisma.quiz.findFirst({
+                where: { OR: [{ id: quizId }, { accessCode: quizId }] },
+                select: { id: true }
+            });
+            if (foundQuiz) realQuizId = foundQuiz.id;
+        } catch (_) {}
+
+        socket.join(realQuizId);
 
         // Fetch and emit lobby study summary to the user
         prisma.quiz.findUnique({
-            where: { id: quizId },
+            where: { id: realQuizId },
             select: { lobbySummary: true }
         }).then(q => {
             if (q && q.lobbySummary) {
@@ -445,13 +455,13 @@ io.on('connection', async (socket) => {
         });
 
         // Track this socket's association for disconnect cleanup
-        socketToUser.set(socket.id, { quizId, username: verifiedUsername });
+        socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
 
-        if (!roomParticipants.has(quizId)) {
-            roomParticipants.set(quizId, []);
+        if (!roomParticipants.has(realQuizId)) {
+            roomParticipants.set(realQuizId, []);
         }
 
-        const participants = roomParticipants.get(quizId);
+        const participants = roomParticipants.get(realQuizId);
         const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
         // Reconstruct secure user properties from JWT context
@@ -477,20 +487,20 @@ io.on('connection', async (socket) => {
             participants.push(userData);
         }
 
-        console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${quizId}. Total participants: ${participants.length}`);
+        console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${realQuizId}. Total participants: ${participants.length}`);
         // Always send the full current participant list directly to the socket that just joined,
         // so the teacher always sees the latest list even if they join after students.
         const cleanedParticipants = [...participants];
 
 socket.emit('participants_update', cleanedParticipants);
 
-io.to(quizId).emit(
+io.to(realQuizId).emit(
     'participants_update',
     cleanedParticipants
 );
 
         // SYNC STATE
-        const state = roomState.get(quizId);
+        const state = roomState.get(realQuizId);
         if (state) {
             if (state.status === 'started') socket.emit('quiz_started');
             if (state.currentQuestion !== undefined) socket.emit('change_question', { questionIndex: state.currentQuestion });
