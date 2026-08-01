@@ -31,47 +31,9 @@ const PremiumLoader = ({ message = "Synchronizing neural pathways..." }) => {
             {/* High-end ambient neon backdrop blur */}
             <div className="absolute w-[350px] h-[350px] rounded-full bg-[var(--bg-accent)]/10 blur-[100px] pointer-events-none -z-10 animate-pulse" />
 
-            <div className="relative w-36 h-36 flex items-center justify-center">
-                {/* Outer Glassmorphic Hexagonal Pulsing Border */}
-                <motion.div
-                    animate={{ 
-                        rotate: 360,
-                        borderRadius: ["42% 58% 70% 30% / 45% 45% 55% 55%", "70% 30% 52% 48% / 60% 40% 60% 40%", "42% 58% 70% 30% / 45% 45% 55% 55%"]
-                    }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 border border-[var(--bg-accent)]/30 bg-gradient-to-tr from-[var(--bg-accent)]/5 via-transparent to-[var(--bg-accent)]/10 shadow-[0_0_50px_var(--bg-accent-glow)] backdrop-blur-sm"
-                />
-
-                {/* Counter-rotating Cyber Ring */}
-                <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-4 border-2 border-dashed border-white/5 border-t-[var(--bg-accent)]/50 border-r-[var(--bg-accent)]/20 rounded-full"
-                />
-
-                {/* Futuristic Morphing Center Core */}
-                <motion.div
-                    animate={{ 
-                        scale: [0.95, 1.1, 0.95],
-                        boxShadow: [
-                            "0 0 20px var(--bg-accent-glow), inset 0 0 15px rgba(255,255,255,0.1)",
-                            "0 0 45px var(--bg-accent-glow), inset 0 0 25px rgba(255,255,255,0.2)",
-                            "0 0 20px var(--bg-accent-glow), inset 0 0 15px rgba(255,255,255,0.1)"
-                        ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--bg-accent)] to-[var(--text-accent)]/80 flex items-center justify-center relative overflow-hidden"
-                >
-                    {/* Gloss Reflection Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none" />
-                    
-                    {/* Core Symbol */}
-                    <svg className="w-7 h-7 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="12 2 2 7 12 12 22 7 12 2 17 4.5 7 9.5" />
-                        <polyline points="2 17 12 22 22 17" />
-                        <polyline points="2 12 12 17 22 12" />
-                    </svg>
-                </motion.div>
+            <div className="relative mb-6 flex items-center justify-center">
+                <div className="loader"></div>
+            </div>
 
                 {/* Floating Micro-nodes */}
                 {[...Array(3)].map((_, i) => (

@@ -24,44 +24,10 @@ export default function PremiumLoading({ message = "Synchronizing..." }) {
             />
 
             <div className="relative flex flex-col items-center">
-                {/* Logo Animation */}
-                <motion.div
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ 
-                        scale: 1, 
-                        opacity: 1,
-                        y: [0, -15, 0] 
-                    }}
-                    transition={{ 
-                        scale: { type: "spring", stiffness: 200, damping: 15 },
-                        y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                    className="mb-12 relative"
-                >
-                    <motion.div 
-                        animate={{ 
-                            rotate: 360 
-                        }}
-                        transition={{ 
-                            duration: 8, 
-                            repeat: Infinity, 
-                            ease: "linear" 
-                        }}
-                        className="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-[var(--bg-accent)]/30"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div
-                            animate={{ 
-                                scale: [1, 1.1, 1],
-                                filter: ["drop-shadow(0 0 0px var(--bg-accent))", "drop-shadow(0 0 20px var(--bg-accent))", "drop-shadow(0 0 0px var(--bg-accent))"]
-                            }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="bg-[var(--bg-accent)] p-6 rounded-[1.5rem] text-[var(--text-on-accent)] shadow-2xl shadow-[var(--bg-accent)]/40"
-                        >
-                            <Zap size={40} fill="currentColor" />
-                        </motion.div>
-                    </div>
-                </motion.div>
+                {/* Logo / Concentric Ring Loader Animation */}
+                <div className="mb-10 relative flex items-center justify-center">
+                    <div className="loader"></div>
+                </div>
 
                 {/* Progress Indicator */}
                 <div className="flex flex-col items-center space-y-6">

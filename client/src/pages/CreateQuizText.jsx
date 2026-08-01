@@ -15,7 +15,6 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
-import DeveloperModeInspector from '../components/quiz/DeveloperModeInspector';
 import { uiTerminology } from '../utils/uiTerminology';
 
 export default function CreateQuizText() {
@@ -291,20 +290,7 @@ export default function CreateQuizText() {
                             <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setDevMode(!devMode)}
-                        className={`px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
-                            devMode ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-lg' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
-                        }`}
-                    >
-                        {devMode ? '🛠️ Developer Mode ON' : '🛠️ Enable Dev Mode'}
-                    </button>
                 </div>
-
-                {devMode && (
-                    <DeveloperModeInspector taskId={location.state?.taskId} />
-                )}
 
                 {/* Tab Interface - Centered */}
                 {!isGeneratedSource && (
@@ -561,21 +547,19 @@ export default function CreateQuizText() {
                                         disabled={loading}
                                         className={`button-fly button-fly-reversed ${loading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
                                     >
-                                        {!loading && <span>POST & PUBLISH QUIZ</span>}
-                                        <div className="svg-wrapper">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 24 24"
-                                                width="24"
-                                                height="24"
-                                            >
-                                                <path fill="none" d="M0 0h24v24H0z"></path>
-                                                <path
-                                                    fill="currentColor"
-                                                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                                ></path>
-                                            </svg>
-                                        </div>
+                                        {loading ? (
+                                            <>
+                                                <Loader2 className="animate-spin" size={18} />
+                                                <span>PUBLISHING...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>PUBLISH</span>
+                                                <div className="svg-wrapper">
+                                                    <Send size={18} />
+                                                </div>
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                             </form>

@@ -384,11 +384,8 @@ export default function AssessmentAttempt() {
                         <ArrowLeft size={14} /> Abandon Challenge
                     </button>
                     <button
-                        onClick={async () => {
-                            const res = await showConfirm('Go to Dashboard?', 'Attempt progress will not be saved. Return to home dashboard?');
-                            if (res.isConfirmed) navigate('/student-dashboard');
-                        }}
-                        className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-[var(--bg-accent-hover)] font-black text-[10px] uppercase tracking-[0.2em] transition-colors btn-press"
+                        onClick={handleExit}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[var(--text-accent)] hover:text-[#334155] text-xs font-black uppercase tracking-widest transition-all"
                     >
                         <Home size={14} /> Go to Home
                     </button>

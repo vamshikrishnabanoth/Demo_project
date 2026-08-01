@@ -157,7 +157,7 @@ import { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2 } from 'lucide-react';
+import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2, Send } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
 import { uiTerminology } from '../utils/uiTerminology';
@@ -702,21 +702,19 @@ export default function CreateQuizPDF() {
                             disabled={isLoading || !file}
                             className={`button-fly button-fly-reversed ${isLoading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
                         >
-                            {!isLoading && <span>POST & PUBLISH QUIZ</span>}
-                            <div className="svg-wrapper">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    width="24"
-                                    height="24"
-                                >
-                                    <path fill="none" d="M0 0h24v24H0z"></path>
-                                    <path
-                                        fill="currentColor"
-                                        d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                    ></path>
-                                </svg>
-                            </div>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="animate-spin" size={18} />
+                                    <span>PUBLISHING...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>PUBLISH</span>
+                                    <div className="svg-wrapper">
+                                        <Send size={18} />
+                                    </div>
+                                </>
+                            )}
                         </button>
                     </div>
                 </form>

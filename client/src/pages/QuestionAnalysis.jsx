@@ -176,7 +176,7 @@ export default function QuestionAnalysis() {
                                     <span className="text-[var(--text-secondary)]/30">|</span>
                                 </>
                             )}
-                            <button onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-black transition-colors text-sm font-black uppercase tracking-widest btn-press">
+                            <button onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-[#334155] transition-colors text-sm font-black uppercase tracking-widest btn-press">
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>

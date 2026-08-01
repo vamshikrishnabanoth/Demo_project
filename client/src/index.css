@@ -1982,32 +1982,34 @@ input.global-search-input:focus,
   box-shadow: 0 4px 15px var(--bg-accent-glow) !important;
 }
 
-/* ─── CLICKED / LOADING STATE: SLEEK GLOWING ROCKET SPINNER ────────────────── */
+/* ─── CLICKED / LOADING STATE: SLEEK GLOWING PULSE & SPINNER ────────────────── */
 .button-fly.is-loading,
 .button-fly-reversed.is-loading {
   background: linear-gradient(135deg, var(--bg-accent-hover) 0%, var(--bg-accent) 100%) !important;
-  padding: 0.9em 2.8em !important;
+  padding: 0.9em 2.4em !important;
   cursor: wait !important;
   box-shadow: 0 0 25px var(--bg-accent-glow), inset 0 0 15px rgba(255, 255, 255, 0.15) !important;
-  justify-content: center !important;
+  animation: publish-pulse-glow 1.2s ease-in-out infinite alternate !important;
 }
 
 .button-fly.is-loading span,
 .button-fly-reversed.is-loading span {
-  display: none !important;
+  display: inline-block !important;
+  opacity: 0.9 !important;
 }
 
 .button-fly.is-loading .svg-wrapper,
 .button-fly-reversed.is-loading .svg-wrapper {
-  order: 1 !important;
-  margin: 0 auto !important;
-  animation: publish-pulse-glow 1.2s ease-in-out infinite alternate !important;
+  order: 2 !important;
+  margin: 0 !important;
+  animation: none !important;
 }
 
 .button-fly.is-loading svg,
 .button-fly-reversed.is-loading svg {
-  transform: rotate(45deg) scale(1.3) !important;
-  filter: drop-shadow(0 0 12px #ffffff) !important;
+  transform: none !important;
+  filter: none !important;
+}
 }
 
 @keyframes publish-pulse-glow {

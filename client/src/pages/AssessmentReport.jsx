@@ -251,7 +251,7 @@ const AssessmentReport = () => {
                                         </button>
                                         <button 
                                             onClick={() => navigate('/student-dashboard')}
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/30 text-[var(--text-accent)] hover:text-white transition-all group btn-press"
+                                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/30 text-[var(--text-accent)] hover:text-[#334155] hover:bg-slate-200/80 transition-all group btn-press"
                                         >
                                             <Home size={16} />
                                             <span className="text-[10px] font-black uppercase tracking-widest">Go to Home</span>

@@ -334,7 +334,7 @@ export default function QuizAnalytics() {
                             )}
                             <button 
                                 onClick={() => navigate(isStudent ? '/student-dashboard' : '/teacher-dashboard')} 
-                                className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-white transition-colors text-sm font-black uppercase tracking-widest btn-press"
+                                className="flex items-center gap-1.5 text-[var(--text-accent)] hover:text-[#334155] transition-colors text-sm font-black uppercase tracking-widest btn-press"
                             >
                                 <Home size={16} /> Go to Home
                             </button>

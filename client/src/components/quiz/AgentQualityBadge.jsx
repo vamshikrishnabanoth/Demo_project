@@ -146,52 +146,5 @@ function AgentExecutionSummary({ report }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AgentQualityBadge({ agentReport }) {
-    if (!agentReport) return null;
-
-    const verdict    = agentReport.verdict || 'review';
-    const cfg        = VERDICT_CONFIG[verdict] || VERDICT_CONFIG.review;
-    const timedOut   = agentReport.timedOut;
-
-    return (
-        <div className="mb-8 space-y-3">
-            {/* ── Agent Execution Summary ─────────────────────────────────── */}
-            <AgentExecutionSummary report={agentReport} />
-
-            {/* ── Top verdict badge ─────────────────────────────────────── */}
-            <div className={`flex items-center justify-between px-5 py-3.5 rounded-2xl border ${cfg.badge} shadow-lg ${cfg.glow} gap-3`}>
-                <div className="flex items-center gap-2.5">
-                    {cfg.icon}
-                    <span className="font-black text-sm uppercase tracking-widest">AGENT VERIFIED, QUALITY : {verdict === 'excellent' ? 'EXCELLENT' : verdict === 'good' ? 'GOOD' : 'NEEDS REVIEW'}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                    {agentReport.totalRetries > 0 && (
-                        <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold opacity-60 uppercase tracking-wider">
-                            <RotateCw size={10} />
-                            {agentReport.totalRetries} refinement{agentReport.totalRetries !== 1 ? 's' : ''}
-                        </span>
-                    )}
-                    {timedOut && (
-                        <span className="flex items-center gap-1 text-[10px] font-bold text-amber-400/70 uppercase tracking-wider">
-                            <Info size={10} /> Timeout — best version returned
-                        </span>
-                    )}
-                </div>
-            </div>
-
-            {/* ── Quiz-level issues ─────────────────────────────────────── */}
-            {(agentReport.quizIssues || []).length > 0 && (
-                <div className="px-5 py-3 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-1">
-                    <p className="text-[10px] font-black text-amber-400/70 uppercase tracking-widest mb-2">
-                        Quiz-level observations
-                    </p>
-                    {agentReport.quizIssues.map((issue, i) => (
-                        <div key={i} className="flex items-start gap-2 text-xs text-amber-300/70 font-bold">
-                            <span className="mt-0.5 flex-shrink-0">⚠</span>
-                            <span>{issue}</span>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
+    return null;
 }
