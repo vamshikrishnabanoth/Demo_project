@@ -220,21 +220,24 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             });
         }
 
-        // --- RULE 5: Prevent Duplicate Logins for Students, Teachers & Admins ---
-        if (user.isOnline && process.env.DISABLE_LIMITS !== 'true') {
-            return res.status(403).json({
-                msg: 'This account is already logged in on another device or tab.'
-            });
+        // --- RULE 5: Handle Active / Stale Session Override ---
+        // If account is marked online (e.g. closed tab without logout or network drop),
+        // increment tokenVersion to invalidate the old token & seamlessly take over session.
+        let updatedTokenVersion = user.tokenVersion;
+        if (user.isOnline) {
+            updatedTokenVersion += 1;
         }
 
-        // --- SUCCESSFUL LOGIN: Reset lockout counter ---
+        // --- SUCCESSFUL LOGIN: Reset lockout counter & mark online ---
         await prisma.user.update({
             where: { id: user.id },
             data: {
                 failedLoginAttempts: 0,
                 lockoutUntil: null,
                 lastFailedLoginAt: null,
-                lastLogin: new Date()
+                lastLogin: new Date(),
+                isOnline: true,
+                tokenVersion: updatedTokenVersion
             }
         });
 
@@ -251,7 +254,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                 id: user.id,
                 username: user.username,
                 role: user.role,
-                tokenVersion: user.tokenVersion
+                tokenVersion: updatedTokenVersion
             }
         };
 
