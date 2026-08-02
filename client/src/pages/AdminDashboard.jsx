@@ -8,7 +8,7 @@ import {
     TrendingUp, Clock, Zap, CheckCircle2, Megaphone,
     ArrowUpRight, BarChart2, Search, Edit3, Trash2, Ban,
     Plus, X, Upload, Award, ArrowUpDown, Eye, Download,
-    Briefcase, BookOpen, Mail, Crown, Filter, Sparkles, Layers
+    Briefcase, BookOpen, Mail, Crown, Filter, Layers
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -36,27 +36,28 @@ function AnimatedCount({ value }) {
 }
 
 function Skeleton({ className = '' }) {
-    return <div className={`animate-pulse bg-slate-200/80 rounded-[1.5rem] ${className}`} />;
+    return <div className={`animate-pulse bg-slate-200 rounded-2xl ${className}`} />;
 }
 
+// ─── High-Contrast Status Badges (100% Readable Text) ────────────────────────
 function StatusBadge({ suspended, online }) {
     if (suspended)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 border border-rose-500/20"><span className="w-1.5 h-1.5 rounded-full bg-rose-500" />Suspended</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-rose-100 text-rose-800 border border-rose-300"><span className="w-2 h-2 rounded-full bg-rose-600" />Suspended</span>;
     if (online)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />Online</span>;
-    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Offline</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300"><span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />Online</span>;
+    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-slate-100 text-slate-700 border border-slate-300"><span className="w-2 h-2 rounded-full bg-slate-500" />Offline</span>;
 }
 
 function RoleBadge({ role }) {
     const cfgs = {
-        student: { label: 'Student', cls: 'bg-sky-500/10 text-sky-600 border-sky-500/20' },
-        teacher: { label: 'Teacher', cls: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-        admin:   { label: 'Admin',   cls: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
-        none:    { label: 'None',    cls: 'bg-slate-100 text-slate-500 border-slate-200' },
+        student: { label: 'Student', cls: 'bg-sky-100 text-sky-900 border-sky-300' },
+        teacher: { label: 'Teacher', cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
+        admin:   { label: 'Admin',   cls: 'bg-purple-100 text-purple-900 border-purple-300' },
+        none:    { label: 'None',    cls: 'bg-slate-100 text-slate-700 border-slate-300' },
     };
     const c = cfgs[role] || cfgs.none;
     return (
-        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${c.cls}`}>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${c.cls}`}>
             {c.label}
         </span>
     );
@@ -64,19 +65,19 @@ function RoleBadge({ role }) {
 
 function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = true }) {
     return (
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50/90 border-2 border-slate-100 hover:bg-slate-100/90 hover:border-slate-200 transition-all shadow-xs">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
             <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-white border-2 border-slate-200/80 shadow-xs flex items-center justify-center shrink-0 text-slate-800 font-bold">
+                <div className="w-10 h-10 rounded-xl bg-white border-2 border-slate-300 flex items-center justify-center shrink-0 text-slate-800">
                     <Icon size={20} />
                 </div>
                 <div>
-                    <h4 className="text-xs font-black text-slate-900 uppercase italic tracking-wide">{title}</h4>
-                    <p className="text-[11px] text-slate-500 font-bold">{subtext}</p>
+                    <h4 className="text-xs font-black text-[#0f172a] uppercase italic tracking-wide">{title}</h4>
+                    <p className="text-xs text-slate-600 font-bold">{subtext}</p>
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-rose-500'}`} />
-                <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${isOnline ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-700 bg-rose-50 border-rose-200'}`}>
+                <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                <span className={`text-xs font-black uppercase px-3 py-1 rounded-full border ${isOnline ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-rose-800 bg-rose-100 border-rose-300'}`}>
                     {statusText}
                 </span>
             </div>
@@ -86,16 +87,16 @@ function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = t
 
 function ActivityRow({ item }) {
     const roleIconMap = {
-        STUDENT_CREATED: { icon: GraduationCap, color: 'text-sky-600 bg-sky-50 border-sky-200' },
-        TEACHER_CREATED: { icon: UserCheck, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-        ADMIN_CREATED:   { icon: Shield, color: 'text-purple-600 bg-purple-50 border-purple-200' },
-        USER_DELETED:    { icon: Users, color: 'text-rose-600 bg-rose-50 border-rose-200' },
-        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-amber-600 bg-amber-50 border-amber-200' },
-        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-amber-600 bg-amber-50 border-amber-200' },
-        BULK_IMPORT:     { icon: Database, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+        STUDENT_CREATED: { icon: GraduationCap, color: 'text-sky-700 bg-sky-100 border-sky-300' },
+        TEACHER_CREATED: { icon: UserCheck, color: 'text-emerald-700 bg-emerald-100 border-emerald-300' },
+        ADMIN_CREATED:   { icon: Shield, color: 'text-purple-700 bg-purple-100 border-purple-300' },
+        USER_DELETED:    { icon: Users, color: 'text-rose-700 bg-rose-100 border-rose-300' },
+        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-amber-700 bg-amber-100 border-amber-300' },
+        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-amber-700 bg-amber-100 border-amber-300' },
+        BULK_IMPORT:     { icon: Database, color: 'text-indigo-700 bg-indigo-100 border-indigo-300' },
     };
 
-    const cfg = roleIconMap[item.action] || { icon: Activity, color: 'text-slate-600 bg-slate-50 border-slate-200' };
+    const cfg = roleIconMap[item.action] || { icon: Activity, color: 'text-slate-700 bg-slate-100 border-slate-300' };
     const IconComponent = cfg.icon;
 
     const timeAgo = (date) => {
@@ -112,20 +113,20 @@ function ActivityRow({ item }) {
     const actionText = item.action ? item.action.replace(/_/g, ' ') : 'System Action';
 
     return (
-        <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl bg-slate-50/80 border-2 border-slate-100 hover:bg-slate-100/90 transition-all">
+        <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
             <div className="flex items-center gap-3.5 min-w-0">
-                <div className={`w-9 h-9 rounded-xl border-2 flex items-center justify-center shrink-0 shadow-xs ${cfg.color}`}>
+                <div className={`w-9 h-9 rounded-xl border-2 flex items-center justify-center shrink-0 ${cfg.color}`}>
                     <IconComponent size={18} />
                 </div>
                 <div className="min-w-0">
-                    <p className="text-xs font-black text-slate-900 truncate uppercase italic tracking-tight">
+                    <p className="text-xs font-black text-[#0f172a] truncate uppercase italic tracking-tight">
                         {item.target ? `${actionText}: ${item.target}` : actionText}
                     </p>
-                    <p className="text-[11px] text-slate-500 font-bold">By {item.adminName || 'Admin'}</p>
+                    <p className="text-xs text-slate-600 font-bold">By {item.adminName || 'Admin'}</p>
                 </div>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-black tracking-wider uppercase shrink-0 ml-3 bg-white px-2.5 py-1 rounded-full border border-slate-200">
-                <Clock size={12} />
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 font-black tracking-wider uppercase shrink-0 ml-3 bg-white px-3 py-1 rounded-full border border-slate-300">
+                <Clock size={14} />
                 <span>{timeAgo(item.timestamp)}</span>
             </div>
         </div>
@@ -138,97 +139,92 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
     return (
         <div className="space-y-8">
-            {/* 4 Stat Cards Grid */}
+            {/* 4 Clean High-Contrast Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {loadingStats ? (
                     Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36" />)
                 ) : (
                     <>
-                        <motion.div 
-                            whileHover={{ scale: 1.02, translateY: -4 }} 
+                        <div 
                             onClick={() => setActiveTab('directory')}
-                            className="p-6 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 cursor-pointer hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-slate-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">TOTAL ENTITIES</span>
-                                <div className="p-3 rounded-2xl bg-slate-100 border border-slate-200 text-slate-800 group-hover:scale-110 transition-transform">
+                                <span className="text-xs font-black text-slate-500 uppercase tracking-wider">TOTAL ENTITIES</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 border border-slate-300 text-slate-800">
                                     <Users size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
-                                <p className="text-xs text-slate-500 font-bold tracking-wide mt-1">Students + Teachers + Admins</p>
+                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
+                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Students + Teachers + Admins</p>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div 
-                            whileHover={{ scale: 1.02, translateY: -4 }} 
+                        <div 
                             onClick={() => setActiveTab('students')}
-                            className="p-6 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 cursor-pointer hover:border-sky-300 transition-all duration-200 flex flex-col justify-between group"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-sky-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-black text-sky-600 uppercase tracking-[0.2em]">ACTIVE STUDENTS</span>
-                                <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-600 group-hover:scale-110 transition-transform">
+                                <span className="text-xs font-black text-sky-700 uppercase tracking-wider">ACTIVE STUDENTS</span>
+                                <div className="p-3 rounded-2xl bg-sky-100 border border-sky-300 text-sky-700">
                                     <GraduationCap size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
-                                <p className="text-xs text-slate-500 font-bold tracking-wide mt-1">Enrolled Degree Candidates</p>
+                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
+                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Enrolled Degree Candidates</p>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div 
-                            whileHover={{ scale: 1.02, translateY: -4 }} 
+                        <div 
                             onClick={() => setActiveTab('teachers')}
-                            className="p-6 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 cursor-pointer hover:border-emerald-300 transition-all duration-200 flex flex-col justify-between group"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-emerald-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em]">FACULTY MEMBERS</span>
-                                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 group-hover:scale-110 transition-transform">
+                                <span className="text-xs font-black text-emerald-700 uppercase tracking-wider">FACULTY MEMBERS</span>
+                                <div className="p-3 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-700">
                                     <UserCheck size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
-                                <p className="text-xs text-slate-500 font-bold tracking-wide mt-1">Academic & Technical Staff</p>
+                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
+                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Academic & Technical Staff</p>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div 
-                            whileHover={{ scale: 1.02, translateY: -4 }} 
+                        <div 
                             onClick={() => setActiveTab('admins')}
-                            className="p-6 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 cursor-pointer hover:border-purple-300 transition-all duration-200 flex flex-col justify-between group"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-purple-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-black text-purple-600 uppercase tracking-[0.2em]">SYSTEM ADMINS</span>
-                                <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 group-hover:scale-110 transition-transform">
+                                <span className="text-xs font-black text-purple-700 uppercase tracking-wider">SYSTEM ADMINS</span>
+                                <div className="p-3 rounded-2xl bg-purple-100 border border-purple-300 text-purple-700">
                                     <Shield size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
-                                <p className="text-xs text-slate-500 font-bold tracking-wide mt-1">Super Administrators</p>
+                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
+                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Super Administrators</p>
                             </div>
-                        </motion.div>
+                        </div>
                     </>
                 )}
             </div>
 
-            {/* Charts Section */}
+            {/* Clean Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="p-8 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-sky-50 text-sky-600 border border-sky-200">
+                            <div className="p-2.5 rounded-xl bg-sky-100 text-sky-700 border border-sky-300">
                                 <BarChart2 size={20} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">Branch Demographics</h3>
-                                <p className="text-xs font-bold text-slate-400">Live Department Breakdown</p>
+                                <h3 className="text-lg font-black text-[#0f172a] uppercase italic tracking-tight">Branch Demographics</h3>
+                                <p className="text-xs font-bold text-slate-500">Department Breakdown</p>
                             </div>
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">Live Matrix</span>
                     </div>
                     <div className="h-72 flex items-center justify-center">
                         {stats.charts?.branchDistribution?.length > 0 ? (
@@ -242,8 +238,8 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                                     <Tooltip content={({ active, payload }) => {
                                         if (active && payload && payload.length) {
                                             return (
-                                                <div className="bg-slate-900/95 text-white p-3 rounded-xl shadow-2xl border border-slate-700 text-xs font-bold">
-                                                    <p className="text-sky-400 font-black">{payload[0].name}</p>
+                                                <div className="bg-[#0f172a] text-white p-3 rounded-xl shadow-xl border border-slate-700 text-xs font-bold">
+                                                    <p className="text-sky-300 font-black">{payload[0].name}</p>
                                                     <p>{payload[0].value} Enrolled Students</p>
                                                 </div>
                                             );
@@ -258,30 +254,29 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                     </div>
                 </div>
 
-                <div className="p-8 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-300">
                                 <TrendingUp size={20} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">Batch Progression</h3>
-                                <p className="text-xs font-bold text-slate-400">Academic Year Breakdown</p>
+                                <h3 className="text-lg font-black text-[#0f172a] uppercase italic tracking-tight">Batch Progression</h3>
+                                <p className="text-xs font-bold text-slate-500">Academic Year Breakdown</p>
                             </div>
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Enrolled Batches</span>
                     </div>
                     <div className="h-72">
                         {stats.charts?.yearDistribution?.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={stats.charts.yearDistribution}>
-                                    <XAxis dataKey="name" stroke="#64748b" fontSize={11} fontWeight={800} />
-                                    <YAxis stroke="#64748b" fontSize={11} fontWeight={800} />
+                                    <XAxis dataKey="name" stroke="#0f172a" fontSize={12} fontWeight={800} />
+                                    <YAxis stroke="#0f172a" fontSize={12} fontWeight={800} />
                                     <Tooltip content={({ active, payload }) => {
                                         if (active && payload && payload.length) {
                                             return (
-                                                <div className="bg-slate-900/95 text-white p-3 rounded-xl shadow-2xl border border-slate-700 text-xs font-bold">
-                                                    <p className="text-emerald-400 font-black">{payload[0].payload.name}</p>
+                                                <div className="bg-[#0f172a] text-white p-3 rounded-xl shadow-xl border border-slate-700 text-xs font-bold">
+                                                    <p className="text-emerald-300 font-black">{payload[0].payload.name}</p>
                                                     <p>{payload[0].value} Students</p>
                                                 </div>
                                             );
@@ -298,17 +293,17 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                 </div>
             </div>
 
-            {/* System Audit & Infrastructure Feed */}
+            {/* System Audit & Status */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 p-8 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="lg:col-span-2 p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b-2 border-slate-100 pb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 border border-purple-200">
+                            <div className="p-2.5 rounded-xl bg-purple-100 text-purple-700 border border-purple-300">
                                 <Activity size={20} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">System Audit Trail</h3>
-                                <p className="text-xs font-bold text-slate-400">Real-Time Administrative Operations Log</p>
+                                <h3 className="text-lg font-black text-[#0f172a] uppercase italic tracking-tight">System Audit Trail</h3>
+                                <p className="text-xs font-bold text-slate-500">Real-Time Administrative Operations Log</p>
                             </div>
                         </div>
                     </div>
@@ -321,15 +316,15 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                     </div>
                 </div>
 
-                <div className="p-8 rounded-[2.2rem] bg-white border-2 border-slate-100 shadow-xl shadow-slate-100/80 space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b-2 border-slate-100 pb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-300">
                                 <Cpu size={20} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tight">System Status</h3>
-                                <p className="text-xs font-bold text-slate-400">Infrastructure Integrity</p>
+                                <h3 className="text-lg font-black text-[#0f172a] uppercase italic tracking-tight">System Status</h3>
+                                <p className="text-xs font-bold text-slate-500">Infrastructure Integrity</p>
                             </div>
                         </div>
                     </div>
@@ -450,78 +445,78 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
     return (
         <div className="space-y-6">
             {/* Header Control Panel */}
-            <div className="bg-white p-6 rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1 min-w-[280px]">
                     <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="text"
                             placeholder="Search student name, roll number, email..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all"
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-sky-600"
                         />
                         {search && <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><X size={16} /></button>}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-sky-600/30 transition-all active:scale-95 cursor-pointer">
+                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
-                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-indigo-50 border-2 border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer">
+                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
-                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-700 hover:bg-amber-100 text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer">
+                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                         <Award size={18} /> Batch Promote
                     </button>
                 </div>
             </div>
 
             {/* Filter Toolbar */}
-            <div className="bg-slate-900 p-5 rounded-[2rem] border-2 border-slate-800 text-white flex flex-wrap items-center gap-4 text-xs font-bold shadow-xl">
-                <div className="flex items-center gap-2 text-amber-400 font-black uppercase tracking-widest text-xs">
+            <div className="bg-slate-100 p-5 rounded-3xl border-2 border-slate-200 text-[#0f172a] flex flex-wrap items-center gap-4 text-xs font-black">
+                <div className="flex items-center gap-2 text-slate-700 font-black uppercase tracking-widest text-xs">
                     <Filter size={16} /> Filters:
                 </div>
-                <select value={yearF} onChange={(e) => { setYearF(e.target.value); setPage(1); }} className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none font-bold">
+                <select value={yearF} onChange={(e) => { setYearF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Years</option>
                     {(filterOptions.years || []).map(y => <option key={y} value={y}>Year {y}</option>)}
                 </select>
-                <select value={semF} onChange={(e) => { setSemF(e.target.value); setPage(1); }} className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none font-bold">
+                <select value={semF} onChange={(e) => { setSemF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Semesters</option>
                     {(filterOptions.semesters || []).map(s => <option key={s} value={s}>Semester {s}</option>)}
                 </select>
-                <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none font-bold">
+                <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Sections</option>
                     {(filterOptions.sections || []).map(sec => <option key={sec} value={sec}>Section {sec}</option>)}
                 </select>
-                <select value={branchF} onChange={(e) => { setBranchF(e.target.value); setPage(1); }} className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none font-bold">
+                <select value={branchF} onChange={(e) => { setBranchF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Branches</option>
                     {(filterOptions.branches || []).map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
-                <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none font-bold">
+                <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Statuses</option>
                     <option value="active">Active</option>
                     <option value="suspended">Suspended</option>
                 </select>
 
                 {selectedIds.length > 0 && (
-                    <div className="ml-auto flex items-center gap-3 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">
-                        <span className="text-xs font-black text-amber-300 uppercase">{selectedIds.length} Selected</span>
-                        <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-black uppercase">Suspend</button>
-                        <button onClick={handleBulkDelete} className="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase">Delete</button>
+                    <div className="ml-auto flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
+                        <span className="text-xs font-black text-rose-700 uppercase">{selectedIds.length} Selected</span>
+                        <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-rose-100 text-rose-800 hover:bg-rose-200 text-xs font-black uppercase">Suspend</button>
+                        <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase">Delete</button>
                     </div>
                 )}
             </div>
 
             {/* Students Table */}
-            <div className="bg-white rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4 w-12 text-center">
-                                    <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === students.length} onChange={toggleSelectAll} className="rounded text-sky-600" />
+                                    <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === students.length} onChange={toggleSelectAll} className="rounded text-sky-600 w-4 h-4" />
                                 </th>
                                 <th className="p-4">Student Details</th>
                                 <th className="p-4">Roll / Reg No</th>
@@ -531,33 +526,33 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                        <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i}><td colSpan="7" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : students.length > 0 ? (
                                 students.map((s) => (
-                                    <tr key={s.id} className="hover:bg-slate-50/90 transition-colors">
+                                    <tr key={s.id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-4 text-center">
-                                            <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => toggleSelectOne(s.id)} className="rounded text-sky-600" />
+                                            <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => toggleSelectOne(s.id)} className="rounded text-sky-600 w-4 h-4" />
                                         </td>
                                         <td className="p-4">
                                             <div>
-                                                <p className="font-black text-slate-900 text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
-                                                <p className="text-[11px] text-slate-400 font-bold">{s.email || 'No email'}</p>
+                                                <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{s.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4 font-mono text-xs font-black text-slate-700">{s.rollNumber || s.regNo || '—'}</td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] font-black uppercase text-slate-800">{s.branch || 'CSE'}</span></td>
-                                        <td className="p-4 text-xs font-bold text-slate-600">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
+                                        <td className="p-4 font-mono text-xs font-black text-slate-800">{s.rollNumber || s.regNo || '—'}</td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
+                                        <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
                                         <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setViewingProfile(s.id)} className="p-2 rounded-xl text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer" title="View Analytics"><Eye size={18} /></button>
-                                                <button onClick={() => setUserModal({ user: s })} className="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer" title="Edit Student"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(s)} className="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer" title={s.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(s)} className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Delete Student"><Trash2 size={18} /></button>
+                                                <button onClick={() => setViewingProfile(s.id)} className="p-2 rounded-xl text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer" title="View Analytics"><Eye size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: s })} className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer" title="Edit Student"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(s)} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer" title={s.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(s)} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Delete Student"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -569,12 +564,12 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     </table>
                 </div>
 
-                <div className="p-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-slate-500 uppercase tracking-wider">
+                <div className="p-5 border-t-2 border-slate-100 flex items-center justify-between text-xs font-black text-slate-600 uppercase tracking-wider">
                     <span>Showing {students.length} of {totalCount} students</span>
                     <div className="flex items-center gap-3">
-                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
+                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
                         <span>Page {page} of {totalPages}</span>
-                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
+                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
                     </div>
                 </div>
             </div>
@@ -652,33 +647,33 @@ function AdminTeachersTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4 flex-1 min-w-[280px]">
                     <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="text"
                             placeholder="Search faculty name, department, email..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-emerald-600"
                         />
                     </div>
-                    <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-800 bg-white focus:outline-none">
+                    <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
                         <option value="">All Departments</option>
                         {(filterOptions.departments || []).map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all active:scale-95 cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
                 </button>
             </div>
 
-            <div className="bg-white rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4">Faculty Member</th>
                                 <th className="p-4">Department</th>
                                 <th className="p-4">Assigned Quizzes</th>
@@ -686,28 +681,28 @@ function AdminTeachersTab({ setUserModal }) {
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                        <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i}><td colSpan="5" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : teachers.length > 0 ? (
                                 teachers.map((t) => (
-                                    <tr key={t.id} className="hover:bg-slate-50/90 transition-colors">
+                                    <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-4">
                                             <div>
-                                                <p className="font-black text-slate-900 text-sm uppercase italic tracking-tight">{t.name || t.username}</p>
-                                                <p className="text-[11px] text-slate-400 font-bold">{t.email || 'No email'}</p>
+                                                <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{t.name || t.username}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{t.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[10px] font-black uppercase">{t.department || 'CSE'}</span></td>
-                                        <td className="p-4 font-extrabold text-slate-700">{t.quizCount || 0} Quizzes Created</td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black uppercase">{t.department || 'CSE'}</span></td>
+                                        <td className="p-4 font-black text-slate-800">{t.quizCount || 0} Quizzes Created</td>
                                         <td className="p-4"><StatusBadge suspended={t.isSuspended} online={t.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: t })} className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(t)} className="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(t)} className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: t })} className="p-2 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(t)} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(t)} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -779,54 +774,54 @@ function AdminAdminsTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 min-w-[280px]">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input
                         type="text"
                         placeholder="Search administrators..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all"
+                        className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600"
                     />
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all active:scale-95 cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                     <Plus size={18} /> Add Administrator
                 </button>
             </div>
 
-            <div className="bg-white rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4">Administrator</th>
                                 <th className="p-4">Role Level</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                        <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 3 }).map((_, i) => (
                                     <tr key={i}><td colSpan="4" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : admins.length > 0 ? (
                                 admins.map((a) => (
-                                    <tr key={a.id} className="hover:bg-slate-50/90 transition-colors">
+                                    <tr key={a.id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-4">
                                             <div>
-                                                <p className="font-black text-slate-900 text-sm uppercase italic tracking-tight">{a.name || a.username}</p>
-                                                <p className="text-[11px] text-slate-400 font-bold">{a.email || 'No email'}</p>
+                                                <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{a.name || a.username}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{a.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-700 border border-purple-500/20 text-[10px] font-black uppercase">SUPER ADMIN</span></td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-300 text-xs font-black uppercase">SUPER ADMIN</span></td>
                                         <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: a })} className="p-2 rounded-xl text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: a })} className="p-2 rounded-xl text-slate-500 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -932,38 +927,38 @@ function AdminDirectoryTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 min-w-[280px]">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input
                         type="text"
                         placeholder="Search global users by name, username, email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-500 focus:ring-4 focus:ring-slate-500/10 transition-all"
+                        className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-600"
                     />
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-100 text-xs font-black text-slate-800 bg-white focus:outline-none">
+                    <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
                         <option value="all">All Roles</option>
                         <option value="student">Student</option>
                         <option value="teacher">Teacher</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-slate-900/30 transition-all active:scale-95 cursor-pointer">
+                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-[2.2rem] border-2 border-slate-100 shadow-xl shadow-slate-100/80 overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4 w-12 text-center">
-                                    <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === users.length} onChange={toggleSelectAll} className="rounded text-slate-800" />
+                                    <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === users.length} onChange={toggleSelectAll} className="rounded text-slate-800 w-4 h-4" />
                                 </th>
                                 <th className="p-4">User Identity</th>
                                 <th className="p-4">Role</th>
@@ -971,30 +966,30 @@ function AdminDirectoryTab({ setUserModal }) {
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                        <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i}><td colSpan="5" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : users.length > 0 ? (
                                 users.map((u) => (
-                                    <tr key={u.id} className="hover:bg-slate-50/90 transition-colors">
+                                    <tr key={u.id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-4 text-center">
-                                            <input type="checkbox" checked={selectedIds.includes(u.id)} onChange={() => toggleSelectOne(u.id)} className="rounded text-slate-800" />
+                                            <input type="checkbox" checked={selectedIds.includes(u.id)} onChange={() => toggleSelectOne(u.id)} className="rounded text-slate-800 w-4 h-4" />
                                         </td>
                                         <td className="p-4">
                                             <div>
-                                                <p className="font-black text-slate-900 text-sm uppercase italic tracking-tight">{u.name || u.username}</p>
-                                                <p className="text-[11px] text-slate-400 font-bold">{u.email || 'No email'}</p>
+                                                <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{u.name || u.username}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{u.email || 'No email'}</p>
                                             </div>
                                         </td>
                                         <td className="p-4"><RoleBadge role={u.role} /></td>
                                         <td className="p-4"><StatusBadge suspended={u.isSuspended} online={u.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: u })} className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: u })} className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -1006,12 +1001,12 @@ function AdminDirectoryTab({ setUserModal }) {
                     </table>
                 </div>
 
-                <div className="p-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-slate-500 uppercase tracking-wider">
+                <div className="p-5 border-t-2 border-slate-100 flex items-center justify-between text-xs font-black text-slate-600 uppercase tracking-wider">
                     <span>Showing {users.length} of {totalCount} users</span>
                     <div className="flex items-center gap-3">
-                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
+                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
                         <span>Page {page} of {totalPages}</span>
-                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
+                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
                     </div>
                 </div>
             </div>
@@ -1046,101 +1041,96 @@ export default function AdminDashboard() {
         <DashboardLayout role="admin">
             <div className="space-y-8 pb-24 max-w-[100rem] mx-auto">
                 
-                {/* Premium Dark Glassmorphism Header Banner */}
-                <motion.div 
-                    initial={{ opacity: 0, y: -12 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-2 border-slate-800 rounded-[2.5rem] p-8 sm:p-10 shadow-2xl text-white relative overflow-hidden"
-                >
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div className="space-y-2">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black uppercase tracking-widest mb-1">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
-                                System Operational
-                            </div>
-                            <h1 className="text-3xl sm:text-5xl font-black italic uppercase tracking-tighter text-balance">
-                                {getGreeting()}, <span className="text-[var(--text-accent)]">{user?.name || user?.username || 'Administrator'}</span>
-                            </h1>
-                            <p className="text-slate-400 font-bold text-xs sm:text-sm tracking-wide">
-                                Unified Enterprise Control Center — Real-Time Directory & Infrastructure
-                            </p>
+                {/* Clean High-Contrast Header Card */}
+                <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="space-y-1.5">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-black uppercase tracking-wider">
+                            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                            System Operational
                         </div>
-
-                        <div className="flex items-center gap-3">
-                            <button 
-                                onClick={refreshStats} 
-                                className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg backdrop-blur-md cursor-pointer active:scale-95"
-                            >
-                                <RefreshCw size={16} className={loadingStats ? 'animate-spin text-amber-400' : 'text-amber-400'} /> 
-                                <span>Sync Live Data</span>
-                            </button>
-                        </div>
+                        <h1 className="text-3xl sm:text-4xl font-black text-[#0f172a] uppercase italic tracking-tight">
+                            {getGreeting()}, <span className="text-[var(--text-accent)]">{user?.name || user?.username || 'Administrator'}</span> 👋
+                        </h1>
+                        <p className="text-slate-600 font-bold text-xs sm:text-sm">
+                            Admin Command Center — Real-Time Directory & Enterprise Controls
+                        </p>
                     </div>
 
-                    {/* Ambient Glow Orbs */}
-                    <div className="absolute -top-24 -left-24 w-80 h-80 bg-[var(--bg-accent)]/15 rounded-full blur-[100px] pointer-events-none" />
-                    <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-purple-500/15 rounded-full blur-[100px] pointer-events-none" />
-                </motion.div>
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={refreshStats} 
+                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer active:scale-95"
+                        >
+                            <RefreshCw size={16} className={loadingStats ? 'animate-spin text-amber-400' : 'text-amber-400'} /> 
+                            <span>Sync Live Data</span>
+                        </button>
+                    </div>
+                </div>
 
-                {/* Master Tab Navigation Bar */}
-                <div className="bg-slate-100/90 border-2 border-slate-200/90 p-2 rounded-[2rem] flex items-center gap-2 shadow-inner overflow-x-auto premium-scrollbar">
+                {/* Master Tab Bar Navigation with Distinct Colorful Icons */}
+                <div className="bg-white border-2 border-slate-200 p-2 rounded-3xl flex items-center gap-2 shadow-sm overflow-x-auto premium-scrollbar">
                     <button
                         onClick={() => setActiveTab('overview')}
-                        className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
                             activeTab === 'overview'
-                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/30 scale-[1.02]'
-                                : 'bg-transparent text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+                                ? 'bg-blue-600 text-white shadow-md'
+                                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                         }`}
                     >
-                        <Activity size={18} /> <span>Overview & Logs</span>
+                        <Activity size={18} className={activeTab === 'overview' ? 'text-white' : 'text-blue-600'} />
+                        <span>Overview & Logs</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('students')}
-                        className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
                             activeTab === 'students'
-                                ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30 scale-[1.02]'
-                                : 'bg-transparent text-slate-600 hover:bg-sky-50 hover:text-sky-700'
+                                ? 'bg-[var(--bg-accent)] text-white shadow-md'
+                                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                         }`}
                     >
-                        <GraduationCap size={18} /> <span>Students</span>
-                        <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{stats.students || 0}</span>
+                        <GraduationCap size={18} className={activeTab === 'students' ? 'text-white' : 'text-[var(--text-accent)]'} />
+                        <span>Students</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'students' ? 'bg-white/20 text-white' : 'bg-sky-100 text-sky-900 border border-sky-300'}`}>{stats.students || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('teachers')}
-                        className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
                             activeTab === 'teachers'
-                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 scale-[1.02]'
-                                : 'bg-transparent text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'
+                                ? 'bg-emerald-600 text-white shadow-md'
+                                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                         }`}
                     >
-                        <UserCheck size={18} /> <span>Teachers</span>
-                        <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{stats.teachers || 0}</span>
+                        <UserCheck size={18} className={activeTab === 'teachers' ? 'text-white' : 'text-emerald-600'} />
+                        <span>Teachers</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'teachers' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'}`}>{stats.teachers || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('admins')}
-                        className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
                             activeTab === 'admins'
-                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30 scale-[1.02]'
-                                : 'bg-transparent text-slate-600 hover:bg-purple-50 hover:text-purple-700'
+                                ? 'bg-purple-600 text-white shadow-md'
+                                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                         }`}
                     >
-                        <Shield size={18} /> <span>Admins</span>
-                        <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{stats.admins || 0}</span>
+                        <Shield size={18} className={activeTab === 'admins' ? 'text-white' : 'text-purple-600'} />
+                        <span>Admins</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'admins' ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-900 border border-purple-300'}`}>{stats.admins || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('directory')}
-                        className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
                             activeTab === 'directory'
-                                ? 'bg-slate-800 text-white shadow-lg shadow-slate-800/30 scale-[1.02]'
-                                : 'bg-transparent text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+                                ? 'bg-slate-900 text-white shadow-md'
+                                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                         }`}
                     >
-                        <Users size={18} /> <span>All Directory</span>
-                        <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{stats.totalUsers || 0}</span>
+                        <Users size={18} className={activeTab === 'directory' ? 'text-white' : 'text-slate-800'} />
+                        <span>All Directory</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'directory' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800 border border-slate-300'}`}>{stats.totalUsers || 0}</span>
                     </button>
                 </div>
 
