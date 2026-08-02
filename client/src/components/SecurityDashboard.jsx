@@ -55,23 +55,20 @@ export function AnalyticsCards({ students = [] }) {
     const metrics = useMemo(() => {
         const totalStudents = students.length;
         const studentsWithViolations = students.filter(s => s.totalViolations > 0).length;
-        const criticalRisk = students.filter(s => s.riskLevel === 'CRITICAL' || s.riskLevel === 'HIGH').length;
         const totalViolations = students.reduce((acc, s) => acc + (s.totalViolations || 0), 0);
         const avgViolations = totalStudents ? (totalViolations / totalStudents).toFixed(1) : 0;
         const highestViolations = students.reduce((max, s) => Math.max(max, s.totalViolations || 0), 0);
 
         return [
-            { label: 'Total Students', value: totalStudents, sub: 'Audited roster', icon: User, badgeStyle: 'bg-blue-600 text-white shadow-xs' },
-            { label: 'Flags Detected', value: studentsWithViolations, sub: 'Students flagged', icon: ShieldAlert, badgeStyle: 'bg-amber-500 text-white shadow-xs' },
-            { label: 'Critical / High', value: criticalRisk, sub: 'Action required', icon: AlertOctagon, badgeStyle: 'bg-red-600 text-white shadow-xs' },
-            { label: 'Total Incidents', value: totalViolations, sub: 'Security telemetry', icon: Activity, badgeStyle: 'bg-purple-600 text-white shadow-xs' },
-            { label: 'Avg Violations', value: avgViolations, sub: 'Per student average', icon: Layers, badgeStyle: 'bg-indigo-600 text-white shadow-xs' },
-            { label: 'Peak Violations', value: highestViolations, sub: 'Single max count', icon: ShieldCheck, badgeStyle: 'bg-rose-600 text-white shadow-xs' }
+            { label: 'Flags Detected', value: studentsWithViolations, sub: 'Students flagged', icon: ShieldAlert, badgeStyle: 'bg-[#0d9488] text-white shadow-xs' },
+            { label: 'Total Incidents', value: totalViolations, sub: 'Security telemetry', icon: Activity, badgeStyle: 'bg-[#c026d3] text-white shadow-xs' },
+            { label: 'Avg Violations', value: avgViolations, sub: 'Per student average', icon: Layers, badgeStyle: 'bg-[#4f46e5] text-white shadow-xs' },
+            { label: 'Peak Violations', value: highestViolations, sub: 'Single max count', icon: ShieldCheck, badgeStyle: 'bg-[#e11d48] text-white shadow-xs' }
         ];
     }, [students]);
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
             {metrics.map((m, idx) => (
                 <motion.div
                     key={idx}
