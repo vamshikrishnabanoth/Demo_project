@@ -61,12 +61,12 @@ export function AnalyticsCards({ students = [] }) {
         const highestViolations = students.reduce((max, s) => Math.max(max, s.totalViolations || 0), 0);
 
         return [
-            { label: 'Total Students', value: totalStudents, sub: 'Audited roster', icon: User, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-            { label: 'Flags Detected', value: studentsWithViolations, sub: 'Students flagged', icon: ShieldAlert, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-            { label: 'Critical / High', value: criticalRisk, sub: 'Action required', icon: AlertOctagon, color: 'text-red-500', bg: 'bg-red-500/10' },
-            { label: 'Total Incidents', value: totalViolations, sub: 'Security telemetry', icon: Activity, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-            { label: 'Avg Violations', value: avgViolations, sub: 'Per student average', icon: Layers, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-            { label: 'Peak Violations', value: highestViolations, sub: 'Single max count', icon: ShieldCheck, color: 'text-rose-500', bg: 'bg-rose-500/10' }
+            { label: 'Total Students', value: totalStudents, sub: 'Audited roster', icon: User, badge: 'bg-blue-600 text-white border-blue-700' },
+            { label: 'Flags Detected', value: studentsWithViolations, sub: 'Students flagged', icon: ShieldAlert, badge: 'bg-amber-500 text-white border-amber-600' },
+            { label: 'Critical / High', value: criticalRisk, sub: 'Action required', icon: AlertOctagon, badge: 'bg-red-600 text-white border-red-700' },
+            { label: 'Total Incidents', value: totalViolations, sub: 'Security telemetry', icon: Activity, badge: 'bg-purple-600 text-white border-purple-700' },
+            { label: 'Avg Violations', value: avgViolations, sub: 'Per student average', icon: Layers, badge: 'bg-indigo-600 text-white border-indigo-700' },
+            { label: 'Peak Violations', value: highestViolations, sub: 'Single max count', icon: ShieldCheck, badge: 'bg-rose-600 text-white border-rose-700' }
         ];
     }, [students]);
 
@@ -82,13 +82,13 @@ export function AnalyticsCards({ students = [] }) {
                 >
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-black uppercase tracking-wider text-[var(--text-secondary)]">{m.label}</span>
-                        <div className={`p-2 rounded-xl ${m.bg} ${m.color}`}>
-                            <m.icon size={16} />
+                        <div className={`p-2.5 rounded-xl border shadow-2xs ${m.badge}`}>
+                            <m.icon size={18} strokeWidth={2.5} />
                         </div>
                     </div>
                     <div>
                         <div className="text-2xl font-black text-[var(--text-primary)] tracking-tight">{m.value}</div>
-                        <div className="text-[10px] font-bold text-[var(--text-secondary)] opacity-70 mt-0.5 truncate">{m.sub}</div>
+                        <div className="text-[10px] font-bold text-[var(--text-secondary)] opacity-80 mt-0.5 truncate">{m.sub}</div>
                     </div>
                 </motion.div>
             ))}
@@ -118,12 +118,12 @@ export function ViolationBreakdown({ eventCounts = {} }) {
                     <div key={v.key} className="h-9 flex flex-col justify-center space-y-1 p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                         <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-primary)]">
                             <div className="flex items-center gap-1.5 min-w-0">
-                                <div className="p-0.5 rounded" style={{ backgroundColor: `${v.color}20`, color: v.color }}>
-                                    <Icon size={12} />
+                                <div className="p-1 rounded-md shadow-2xs" style={{ backgroundColor: v.color, color: '#ffffff' }}>
+                                    <Icon size={13} strokeWidth={2.5} />
                                 </div>
                                 <span className="truncate">{v.label}</span>
                             </div>
-                            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-black shrink-0" style={{ backgroundColor: `${v.color}20`, color: v.color }}>
+                            <span className="px-1.5 py-0.2 rounded-md text-[10px] font-black shrink-0" style={{ backgroundColor: `${v.color}25`, color: v.color }}>
                                 {v.count}
                             </span>
                         </div>
@@ -206,12 +206,12 @@ export function SecurityDashboard({ students = [] }) {
             {/* Header Title */}
             <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-[var(--border-color)]">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shadow-xs">
-                        <ShieldAlert size={26} />
+                    <div className="w-12 h-12 rounded-2xl bg-red-600 text-white border border-red-700 flex items-center justify-center shadow-md shrink-0">
+                        <ShieldAlert size={26} strokeWidth={2.5} />
                     </div>
                     <div>
                         <h2 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-tight flex items-center gap-2">
-                            Security Audit & <span className="text-red-500">Proctoring Telemetry</span>
+                            Security Audit & <span className="text-red-600">Proctoring Telemetry</span>
                         </h2>
                         <p className="text-xs text-[var(--text-secondary)] font-bold uppercase tracking-wider mt-0.5">
                             Student-Centric Aggregated Violations & Security Analysis
@@ -302,7 +302,7 @@ export function SecurityDashboard({ students = [] }) {
                     <div className="bg-[var(--bg-primary)] p-4 rounded-2xl border border-[var(--border-color)] shadow-xs flex items-center justify-between flex-wrap gap-4">
                         {/* Search Bar */}
                         <div className="relative flex-1 min-w-[240px]">
-                            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                            <Search size={18} strokeWidth={2.5} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-800 dark:text-slate-200" />
                             <input
                                 type="text"
                                 placeholder="Search student name or roll number..."
