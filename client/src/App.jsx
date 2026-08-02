@@ -118,12 +118,12 @@ function AnimatedRoutes() {
                     <Route path="/sprint-arena"       element={<FadeTransition><ProtectedRoute roles={['student']}><SprintArena /></ProtectedRoute></FadeTransition>} />
                     <Route path="/match-up-arena"     element={<FadeTransition><ProtectedRoute roles={['student']}><MatchUpArena /></ProtectedRoute></FadeTransition>} />
 
-                    {/* Admin pages */}
+                    {/* Unified Admin Master Route & Legacy Sub-route Redirects */}
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
-                    <Route path="/admin/students"  element={<PageTransition><ProtectedRoute roles={['admin']}><AdminStudents /></ProtectedRoute></PageTransition>} />
-                    <Route path="/admin/teachers"  element={<PageTransition><ProtectedRoute roles={['admin']}><AdminTeachers /></ProtectedRoute></PageTransition>} />
-                    <Route path="/admin/admins"    element={<PageTransition><ProtectedRoute roles={['admin']}><AdminAdmins /></ProtectedRoute></PageTransition>} />
-                    <Route path="/admin/users"     element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUsers /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students"  element={<Navigate to="/admin-dashboard?tab=students" replace />} />
+                    <Route path="/admin/teachers"  element={<Navigate to="/admin-dashboard?tab=teachers" replace />} />
+                    <Route path="/admin/admins"    element={<Navigate to="/admin-dashboard?tab=admins" replace />} />
+                    <Route path="/admin/users"     element={<Navigate to="/admin-dashboard?tab=directory" replace />} />
 
                     {/* Shared pages */}
                     <Route path="/profile"             element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><Profile /></ProtectedRoute></PageTransition>} />
