@@ -1173,17 +1173,17 @@ export default function AttemptQuiz() {
         <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col relative">
             {/* Strict Fullscreen Mode Overlay */}
             {!isFullscreen && !result && !loading && !submitting && !isReviewMode && !isTerminated && (
-                <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[99998] flex flex-col items-center justify-center p-6 text-center text-white">
-                    <div className="w-20 h-20 bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl flex items-center justify-center text-amber-400 mb-6 shadow-2xl animate-pulse">
-                        <Maximize size={44} />
+                <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[99998] flex flex-col items-center justify-center p-4 sm:p-6 text-center text-white min-h-[100dvh] w-full my-auto overflow-y-auto">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl flex items-center justify-center text-amber-400 mb-4 sm:mb-6 shadow-2xl animate-pulse shrink-0">
+                        <Maximize size={36} />
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-amber-400 mb-2">Fullscreen Mode Required</h2>
-                    <p className="text-xs sm:text-sm font-bold text-slate-300 max-w-md mb-8 leading-relaxed">
+                    <h2 className="text-xl sm:text-3xl font-black italic uppercase tracking-tight text-amber-400 mb-2">Fullscreen Mode Required</h2>
+                    <p className="text-xs sm:text-sm font-bold text-slate-300 max-w-md mb-6 sm:mb-8 leading-relaxed">
                         This live examination requires mandatory Fullscreen mode. Exiting fullscreen is recorded as a security violation.
                     </p>
                     <button
                         onClick={requestFullscreenMode}
-                        className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black italic uppercase text-xs tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all cursor-pointer"
+                        className="px-6 sm:px-8 py-3.5 sm:py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black italic uppercase text-xs tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all cursor-pointer shrink-0"
                     >
                         Resume Fullscreen Exam
                     </button>
@@ -1838,8 +1838,8 @@ export default function AttemptQuiz() {
 
             {/* Strict Fullscreen Enforcement Modal Overlay */}
             {!isFullscreen && !loading && !submitting && !result && (
-                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 text-white text-center animate-in fade-in duration-300">
-                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[3rem] p-8 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 text-white text-center animate-in fade-in duration-300 min-h-[100dvh] w-full my-auto overflow-y-auto">
+                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300 my-auto">
                         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mx-auto border border-red-500/30">
                             <ShieldAlert size={44} className="animate-pulse" />
                         </div>

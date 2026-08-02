@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, GraduationCap, RadioTower, ShieldCheck, Users, Zap, CheckCircle2, Sparkles, Award } from 'lucide-react';
+import { Activity, GraduationCap, RadioTower, ShieldCheck, Users, Zap, CheckCircle2, Sparkles, Trophy, Radio, Signal } from 'lucide-react';
 
 const microMessages = [
     "Get ready...",
@@ -10,139 +10,74 @@ const microMessages = [
     "Next round loading..."
 ];
 
-// ─── High-Detail Vector Chess Piece Icons ─────────────────────────────────────
-const ChessKing = ({ size = 32, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M12 2v4M10 4h4" />
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <path d="M6 17l1.5-7L12 13l4.5-3L18 17" />
-        <path d="M6 20v-3" />
-        <path d="M18 20v-3" />
-    </svg>
-);
-
-const ChessQueen = ({ size = 22, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <circle cx="4" cy="7" r="1" fill="currentColor" />
-        <circle cx="9" cy="5" r="1" fill="currentColor" />
-        <circle cx="12" cy="4" r="1" fill="currentColor" />
-        <circle cx="15" cy="5" r="1" fill="currentColor" />
-        <circle cx="20" cy="7" r="1" fill="currentColor" />
-        <path d="M4 8l2 9h12l2-9-4 4-4-5-4 5-4-4z" />
-    </svg>
-);
-
-const ChessRook = ({ size = 22, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <path d="M6 17l1-8h10l1 8" />
-        <path d="M5 5v4h14V5h-3v2h-3V5h-3v2H8V5H5z" />
-    </svg>
-);
-
-const ChessBishop = ({ size = 22, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <circle cx="12" cy="4" r="1.5" fill="currentColor" />
-        <path d="M12 5.5C8 9 7 13 8 17h8c1-4 0-8-4-11.5z" />
-        <path d="M10 10l4 4" />
-    </svg>
-);
-
-const ChessKnight = ({ size = 22, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <path d="M7 17s.5-5 3-7c0 0-2-1.5-2-4 0 0 4-1 6 2l2.5 3c.5.6.5 1.5 0 2l-1.5 2h-3l.5 4H7z" />
-        <circle cx="10" cy="8" r="1" fill="currentColor" />
-    </svg>
-);
-
-const ChessPawn = ({ size = 22, className = '' }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 20h14" />
-        <path d="M6 17h12" />
-        <circle cx="12" cy="7" r="3" />
-        <path d="M9 10c0 4-1.5 7-1.5 7h9S15 14 15 10" />
-    </svg>
-);
-
-function EnergyCore() {
+/**
+ * Modern Live Quiz Signal Radar & Beacon (Replaces old chess piece animation)
+ * High-performance, vector-based animated waiting room signal indicator.
+ */
+function QuizSignalRadarBeacon({ count = 0 }) {
     return (
-        <div className="relative flex items-center justify-center">
-            {/* Outer ambient glow */}
-            <motion.div
-                animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.35, 0.15] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute w-52 h-52 rounded-full bg-[var(--bg-accent)]/15 blur-2xl pointer-events-none"
-            />
+        <div className="relative h-64 w-64 sm:h-72 sm:w-72 flex items-center justify-center select-none" aria-hidden="true">
+            {/* Outer Concentric Radar Waves */}
+            {[0, 1, 2].map((idx) => (
+                <motion.div
+                    key={idx}
+                    animate={{
+                        scale: [0.8, 1.8],
+                        opacity: [0.6, 0]
+                    }}
+                    transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        delay: idx * 0.9,
+                        ease: 'easeOut'
+                    }}
+                    className="absolute inset-0 m-auto w-48 h-48 rounded-full border-2 border-[var(--bg-accent)]/25 pointer-events-none"
+                />
+            ))}
 
-            {/* Visible Outer Dashed Orbit Path (Diameter 220px matching 110px orbit radius) */}
+            {/* Inner Rotating Radar Sweeper Line */}
             <motion.div
                 animate={{ rotate: [0, 360] }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                className="absolute w-[220px] h-[220px] rounded-full border-2 border-dashed border-slate-400/90 shadow-xs pointer-events-none"
-            />
-
-            {/* Inner Secondary Pulsing Dashed Orbit Ring */}
-            <motion.div
-                animate={{ scale: [0.95, 1.05, 0.95], rotate: [360, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute w-36 h-36 rounded-full border-2 border-dashed border-slate-400/70 pointer-events-none"
-            />
-
-            {/* Core King Chess Coin */}
-            <motion.div
-                animate={{ scale: [0.98, 1.04, 0.98] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-10 w-24 h-24 rounded-3xl bg-[var(--bg-accent)] flex flex-col items-center justify-center shadow-xl border-2 border-white text-white"
+                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                className="absolute w-44 h-44 rounded-full border border-dashed border-[var(--bg-accent)]/40 flex items-center justify-center pointer-events-none"
             >
-                <ChessKing size={44} className="drop-shadow-sm text-amber-400" />
-                {/* Green circular indicator on center King coin */}
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 pointer-events-none z-30">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-white shadow-xs"></span>
+                <div className="w-1/2 h-0.5 bg-gradient-to-r from-transparent via-[var(--bg-accent)]/60 to-[var(--bg-accent)] origin-left absolute left-1/2" />
+            </motion.div>
+
+            {/* Orbiting Live Readiness Signal Nodes */}
+            {[0, 120, 240].map((angle, idx) => (
+                <motion.div
+                    key={idx}
+                    className="absolute left-1/2 top-1/2 h-8 w-8 -ml-4 -mt-4 rounded-xl bg-white border-2 border-[var(--bg-accent)] flex items-center justify-center shadow-md text-[var(--bg-accent)] z-20"
+                    animate={{ rotate: angle + 360 }}
+                    transition={{ duration: 12 + idx * 2, repeat: Infinity, ease: 'linear' }}
+                    transformTemplate={({ rotate }) => `rotate(${rotate}) translateX(95px) rotate(-${rotate})`}
+                >
+                    <Signal size={14} className="animate-pulse" />
+                    <span className="absolute -right-1 -top-1 flex h-3 w-3 pointer-events-none z-30">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 ring-2 ring-white"></span>
+                    </span>
+                </motion.div>
+            ))}
+
+            {/* Center Live Quiz Arena Beacon Card */}
+            <motion.div
+                animate={{ scale: [0.96, 1.03, 0.96] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-[var(--bg-accent)] flex flex-col items-center justify-center shadow-2xl border-4 border-white text-white"
+            >
+                <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-1">
+                    <Radio size={28} className="text-amber-400 animate-pulse" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">LIVE BEACON</span>
+                
+                {/* Active Pulse Badge on Center Node */}
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 pointer-events-none z-30">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-90"></span>
+                    <span className="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 ring-2 ring-white shadow-md flex items-center justify-center text-[9px] font-black text-white">✓</span>
                 </span>
             </motion.div>
-        </div>
-    );
-}
-
-function OrbitingStudentAvatars({ count = 6 }) {
-    const avatarIcons = [ChessQueen, ChessRook, ChessBishop, ChessKnight, ChessPawn, ChessQueen];
-    const avatars = Array.from({ length: Math.min(Math.max(3, count), 8) });
-
-    return (
-        <div className="relative h-64 w-64 sm:h-72 sm:w-72 flex items-center justify-center" aria-hidden="true">
-            <EnergyCore />
-
-            {avatars.map((_, idx) => {
-                const angle = (idx / avatars.length) * 360;
-                const radius = 110;
-                const IconComp = avatarIcons[idx % avatarIcons.length];
-
-                return (
-                    <motion.div
-                        key={idx}
-                        className="absolute left-1/2 top-1/2 h-11 w-11 -ml-[22px] -mt-[22px] rounded-2xl border-2 border-slate-300 bg-white flex items-center justify-center shadow-lg text-[var(--bg-accent)] z-20"
-                        animate={{ rotate: angle + 360 }}
-                        transition={{ duration: 16 + idx * 1.5, repeat: Infinity, ease: 'linear' }}
-                        transformTemplate={({ rotate }) => `rotate(${rotate}) translateX(${radius}px) rotate(-${rotate})`}
-                    >
-                        <IconComp size={22} />
-                        {/* Green circular indicator beacon on each orbiting chess coin */}
-                        <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 pointer-events-none z-30">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-85"></span>
-                            <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-white shadow-xs"></span>
-                        </span>
-                    </motion.div>
-                );
-            })}
         </div>
     );
 }
@@ -247,7 +182,7 @@ export default function LiveQuizWaitAnimation({
             title: title || 'Waiting for Host...',
             subtitle: subtitle || 'Session active — quiz will start when teacher begins.',
             detail: detail || `${readyCount} ready${joiningCount ? `, ${joiningCount} joining` : ''}`,
-            visual: <OrbitingStudentAvatars count={readyCount + joiningCount || 6} />,
+            visual: <QuizSignalRadarBeacon count={readyCount + joiningCount || 0} />,
             icon: <Users size={16} />
         },
         'synchronizing-answers': {
@@ -285,7 +220,7 @@ export default function LiveQuizWaitAnimation({
         title: title || 'Waiting...',
         subtitle: subtitle || 'Processing session...',
         detail: detail || 'Connecting...',
-        visual: <OrbitingStudentAvatars count={6} />,
+        visual: <QuizSignalRadarBeacon count={0} />,
         icon: <Activity size={16} />
     };
 
@@ -321,4 +256,3 @@ export default function LiveQuizWaitAnimation({
         </div>
     );
 }
-

@@ -618,8 +618,8 @@ export default function AssessmentAttempt() {
 
             {/* Strict Fullscreen Enforcement Modal Overlay */}
             {!isFullscreen && !loading && !submitting && (
-                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 text-white text-center animate-in fade-in duration-300">
-                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[3rem] p-8 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 text-white text-center animate-in fade-in duration-300 min-h-[100dvh] w-full my-auto overflow-y-auto">
+                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300 my-auto">
                         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mx-auto border border-red-500/30">
                             <ShieldAlert size={44} className="animate-pulse" />
                         </div>

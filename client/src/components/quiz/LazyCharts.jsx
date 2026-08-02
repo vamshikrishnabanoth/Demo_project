@@ -170,8 +170,8 @@ export function TimeSpentChart({ data, onQuestionClick }) {
             >
                 <defs>
                     <linearGradient id="timeSpentGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.35} />
-                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.0} />
+                        <stop offset="5%" stopColor="#0284c7" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#0284c7" stopOpacity={0.0} />
                     </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
@@ -217,7 +217,7 @@ export function TimeSpentChart({ data, onQuestionClick }) {
                 <Area
                     type="monotone"
                     dataKey="timeSpent"
-                    stroke="#a855f7"
+                    stroke="#0284c7"
                     strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#timeSpentGradient)"

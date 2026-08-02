@@ -751,13 +751,10 @@ if (socket.connected) {
                     </div>
                 )}
 
-                {/* Live Proctoring & Security Dashboard */}
-                <SecurityDashboard students={cheatAlerts || []} />
-
-                {/* Student Progress — Full Width Table with Dots */}
+                {/* Student Progress — Full Width Table with Live Dots (BEFORE Security Dashboard) */}
                 <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/80 border border-slate-100 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-[var(--bg-accent)] px-8 py-5 flex items-center justify-between">
+                    <div className="bg-[var(--bg-accent)] px-8 py-5 flex items-center justify-between flex-wrap gap-4">
                         <div>
                             <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">
                                 Live <span className="text-white/80">Student Tracker</span>
@@ -767,18 +764,22 @@ if (socket.connected) {
                             </p>
                         </div>
                         {/* Legend */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-wrap">
                             <div className="flex items-center gap-1.5">
-                                <div className="w-4 h-4 rounded-md bg-green-500"></div>
-                                <span className="text-[10px] font-bold text-white/70">Correct</span>
+                                <div className="w-3.5 h-3.5 rounded-md bg-green-500"></div>
+                                <span className="text-[10px] font-bold text-white/90">Correct</span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <div className="w-4 h-4 rounded-md bg-red-500"></div>
-                                <span className="text-[10px] font-bold text-white/70">Wrong</span>
+                                <div className="w-3.5 h-3.5 rounded-md bg-red-500"></div>
+                                <span className="text-[10px] font-bold text-white/90">Wrong</span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <div className="w-4 h-4 rounded-md bg-gray-200 border border-gray-300"></div>
-                                <span className="text-[10px] font-bold text-white/70">Not Attempted</span>
+                                <div className="w-3.5 h-3.5 rounded-md bg-amber-500"></div>
+                                <span className="text-[10px] font-bold text-white/90">Skipped</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-3.5 h-3.5 rounded-md bg-gray-200 border border-gray-300"></div>
+                                <span className="text-[10px] font-bold text-white/90">Not Attempted</span>
                             </div>
                         </div>
                     </div>
@@ -802,6 +803,7 @@ if (socket.connected) {
                                 // Progress dict is keyed by studentId (UUID) or username as fallback
                                 const progressById = (p._id && studentProgress[p._id]) ? studentProgress[p._id]
                                     : (p.id && studentProgress[p.id]) ? studentProgress[p.id]
+                                    : (p.userId && studentProgress[p.userId]) ? studentProgress[p.userId]
                                     : null;
                                 const progressByName = p.username ? studentProgress[p.username] : null;
                                 const progress = progressById || progressByName || {};
@@ -850,22 +852,26 @@ if (socket.connected) {
                                             </div>
                                         </div>
 
-                                        {/* Question Dots */}
+                                        {/* Question Dots — Live Real-Time Response Visualizer */}
                                         <div className="flex-1 flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
-                                                const isAnswered = data?.answered === true;
+                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || data?.skipped === true;
                                                 const isCorrect = data?.isCorrect === true;
+                                                const isSkipped = data?.skipped === true;
 
                                                 let dotClass = 'bg-gray-100 border-gray-200 text-gray-400';
                                                 let Icon = null;
 
                                                 if (isAnswered) {
                                                     if (isCorrect) {
-                                                        dotClass = 'bg-green-500 border-green-500 text-white';
+                                                        dotClass = 'bg-green-500 border-green-500 text-white shadow-xs';
                                                         Icon = <CheckCircle size={14} />;
+                                                    } else if (isSkipped) {
+                                                        dotClass = 'bg-amber-500 border-amber-500 text-white shadow-xs';
+                                                        Icon = <MinusCircle size={14} />;
                                                     } else {
-                                                        dotClass = 'bg-red-500 border-red-500 text-white';
+                                                        dotClass = 'bg-red-500 border-red-500 text-white shadow-xs';
                                                         Icon = <XCircle size={14} />;
                                                     }
                                                 } else if (!p.isOnline && idx < currentQuestion) {
@@ -876,7 +882,7 @@ if (socket.connected) {
                                                 return (
                                                     <div
                                                         key={idx}
-                                                        title={isAnswered ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`) : `Q${idx + 1}: Not Attempted`}
+                                                        title={isAnswered ? (isCorrect ? `Q${idx + 1}: Correct` : isSkipped ? `Q${idx + 1}: Skipped` : `Q${idx + 1}: Incorrect`) : `Q${idx + 1}: Not Attempted`}
                                                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black border-2 transition-all shadow-sm ${dotClass} ${idx === currentQuestion ? 'ring-2 ring-[var(--bg-accent)] ring-offset-1 scale-110' : ''}`}
                                                     >
                                                         {Icon ? Icon : idx + 1}
