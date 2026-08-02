@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
+import { useAdmin } from '../context/AdminContext';
 import DashboardLayout from '../components/DashboardLayout';
 import UserModal from '../components/admin/UserModal';
 import { showConfirm, showSuccess } from '../utils/alerts';
@@ -35,13 +36,15 @@ const timeAgo = (date) => {
 
 export default function AdminAdmins() {
     const { user: currentUser } = useContext(AuthContext);
-    const [admins,  setAdmins]  = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [modal,   setModal]   = useState(null);
+    const { invalidate } = useAdmin();
 
-    const [search,    setSearch]    = useState('');
+    const [admins, setAdmins] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [modal, setModal] = useState(null);
+
+    const [search, setSearch] = useState('');
     const [debSearch, setDebSearch] = useState('');
-    const [statusF,   setStatusF]   = useState('');
+    const [statusF, setStatusF] = useState('');
 
     useEffect(() => {
         const t = setTimeout(() => setDebSearch(search), 300);
@@ -54,10 +57,7 @@ export default function AdminAdmins() {
             const res = await api.get('/admin/admins', { params: { search: debSearch, status: statusF } });
             setAdmins(res.data.admins || []);
         } catch {
-            try {
-                const res2 = await api.get('/admin/users', { params: { role: 'admin', search: debSearch, all: 'true' } });
-                setAdmins(Array.isArray(res2.data) ? res2.data : (res2.data.users || []));
-            } catch { toast.error('Failed to load admins'); }
+            toast.error('Failed to load system administrators');
         } finally { setLoading(false); }
     }, [debSearch, statusF]);
 
@@ -70,6 +70,7 @@ export default function AdminAdmins() {
             try {
                 await api.delete(`/admin/users/${a.id}`);
                 setAdmins(prev => prev.filter(x => x.id !== a.id));
+                invalidate();
                 showSuccess('Deleted', 'Admin account removed.');
             } catch { toast.error('Delete failed'); }
         }
@@ -83,14 +84,15 @@ export default function AdminAdmins() {
             try {
                 const res = await api.put(`/admin/users/suspend/${a.id}`);
                 setAdmins(prev => prev.map(x => x.id === a.id ? { ...x, ...res.data } : x));
+                invalidate();
                 showSuccess('Updated', `Admin ${a.isSuspended ? 'reinstated' : 'suspended'}.`);
             } catch { toast.error('Action failed'); }
         }
     };
 
-    const handleSave = (saved, action) => {
-        if (action === 'created') setAdmins(prev => [...prev, saved]);
-        else setAdmins(prev => prev.map(x => x.id === saved.id ? saved : x));
+    const handleSave = () => {
+        fetchAdmins();
+        invalidate();
         setModal(null);
     };
 
@@ -106,25 +108,22 @@ export default function AdminAdmins() {
                     <div className="flex items-center gap-3">
                         <div className="p-2.5 rounded-xl bg-violet-50 border border-violet-200 text-violet-700"><Shield size={24} /></div>
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">System Admins</h1>
-                            <p className="text-slate-500 text-xs font-medium mt-0.5">{admins.length} Administrator Accounts</p>
+                            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">System Administrators</h1>
+                            <p className="text-slate-500 text-xs font-medium mt-0.5">{admins.length} Super Administrator Accounts</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button onClick={fetchAdmins}
-                            className="p-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-sm">
+                        <button onClick={fetchAdmins} className="p-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs">
                             <RefreshCw size={15} />
                         </button>
-                        <button onClick={() => setModal({ isNew: true })}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm cursor-pointer active:scale-95">
+                        <button onClick={() => setModal({ isNew: true })} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-xs cursor-pointer active:scale-95">
                             <Plus size={15} /> New Admin
                         </button>
                     </div>
                 </motion.div>
 
                 {/* Filters */}
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-                    className="rounded-[18px] bg-white border border-slate-200/80 p-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-wrap gap-3 items-center">
+                <div className="rounded-[18px] bg-white border border-slate-200/80 p-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-wrap gap-3 items-center">
                     <div className="flex-1 min-w-56 relative">
                         <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input value={search} onChange={e => setSearch(e.target.value)}
@@ -132,91 +131,80 @@ export default function AdminAdmins() {
                             className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-all" />
                     </div>
                     <select value={statusF} onChange={e => setStatusF(e.target.value)}
-                        className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer appearance-none">
+                        className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Status</option>
                         <option value="active">Active</option>
                         <option value="suspended">Suspended</option>
                     </select>
                     {hasFilters && (
-                        <button onClick={() => { setSearch(''); setStatusF(''); }}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer hover:bg-rose-100 transition-all">
+                        <button onClick={() => { setSearch(''); setStatusF(''); }} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer hover:bg-rose-100">
                             <X size={13} /> Clear
                         </button>
                     )}
-                </motion.div>
+                </div>
 
                 {/* Security Warning */}
                 <div className="flex items-start gap-3 p-4 rounded-[18px] bg-amber-50 border border-amber-200">
                     <Lock size={14} className="text-amber-600 shrink-0 mt-0.5" />
                     <p className="text-xs text-amber-800 font-semibold leading-relaxed">
-                        Admin accounts have full system access. Only create admin accounts for trusted personnel.
-                        You cannot suspend or delete your own account.
+                        Admin accounts have full system permissions. Only create admin accounts for trusted users. You cannot delete your own active account.
                     </p>
                 </div>
 
                 {/* Admin Cards */}
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {loading
-                        ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-52" />)
-                        : admins.length === 0
-                            ? <div className="col-span-full py-16 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">No admins found</div>
-                            : admins.map(a => {
-                                const isSelf = a.id === currentUser?.id;
-                                return (
-                                    <motion.div key={a.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                                        className={`relative rounded-[18px] bg-white border p-5 flex flex-col gap-4 group transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${isSelf ? 'border-violet-300 shadow-[0_4px_20px_rgba(124,58,237,0.10)]' : 'border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.05)]'}`}>
-                                        {isSelf && (
-                                            <div className="absolute top-4 right-4">
-                                                <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200">You</span>
-                                            </div>
-                                        )}
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-sm">
-                                                <Crown size={20} className="text-white" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-slate-900">{a.name || a.username}</p>
-                                                <p className="text-[11px] text-slate-500 font-medium">@{a.username}</p>
-                                            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {loading ? (
+                        Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-52" />)
+                    ) : admins.length === 0 ? (
+                        <div className="col-span-full py-16 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">No admin accounts found</div>
+                    ) : (
+                        admins.map(a => {
+                            const isSelf = a.id === currentUser?.id;
+                            return (
+                                <div key={a.id} className={`relative rounded-[18px] bg-white border p-5 flex flex-col gap-4 group transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${isSelf ? 'border-violet-300 shadow-[0_4px_20px_rgba(124,58,237,0.10)]' : 'border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.05)]'}`}>
+                                    {isSelf && (
+                                        <div className="absolute top-4 right-4">
+                                            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200">You</span>
                                         </div>
-                                        <div className="space-y-1.5 text-xs text-slate-600 font-medium">
-                                            {a.email && <div className="flex items-center gap-2 truncate"><Mail size={12} className="text-slate-400" />{a.email}</div>}
-                                            <div className="flex items-center gap-2">
-                                                <Clock size={12} className="text-slate-400" />
-                                                <span>Last login: <span className="text-violet-700 font-bold">{timeAgo(a.lastLogin)}</span></span>
-                                            </div>
-                                            <div className="text-slate-500">
-                                                Joined: <span className="text-slate-700 font-semibold">{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '—'}</span>
-                                            </div>
+                                    )}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-xs">
+                                            <Crown size={20} className="text-white" />
                                         </div>
-                                        <div><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></div>
-                                        {!isSelf && (
-                                            <div className="flex items-center gap-2 pt-3 border-t border-slate-200/80">
-                                                <button onClick={() => setModal({ isNew: false, user: a })}
-                                                    className="flex-1 py-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 text-xs font-bold cursor-pointer transition-all flex items-center justify-center gap-1">
-                                                    <Edit3 size={12} /> Edit
-                                                </button>
-                                                <button onClick={() => handleSuspend(a)}
-                                                    className={`flex-1 py-1.5 rounded-lg border text-xs font-bold cursor-pointer transition-all flex items-center justify-center gap-1 ${a.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'}`}>
-                                                    <Ban size={12} /> {a.isSuspended ? 'Reinstate' : 'Suspend'}
-                                                </button>
-                                                <button onClick={() => handleDelete(a)}
-                                                    className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer transition-all flex items-center justify-center">
-                                                    <Trash2 size={13} />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                );
-                            })
-                    }
-                </motion.div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-900">{a.name || a.username}</p>
+                                            <p className="text-[11px] text-slate-500 font-medium">@{a.username}</p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5 text-xs text-slate-600 font-medium">
+                                        {a.email && <div className="flex items-center gap-2 truncate"><Mail size={12} className="text-slate-400" />{a.email}</div>}
+                                        <div className="flex items-center gap-2">
+                                            <Clock size={12} className="text-slate-400" />
+                                            <span>Last login: <span className="text-violet-700 font-bold">{timeAgo(a.lastLogin)}</span></span>
+                                        </div>
+                                    </div>
+                                    <div><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></div>
+                                    {!isSelf && (
+                                        <div className="flex items-center gap-2 pt-3 border-t border-slate-200/80">
+                                            <button onClick={() => setModal({ isNew: false, user: a })} className="flex-1 py-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 text-xs font-bold cursor-pointer transition-all flex items-center justify-center gap-1">
+                                                <Edit3 size={12} /> Edit
+                                            </button>
+                                            <button onClick={() => handleSuspend(a)} className={`flex-1 py-1.5 rounded-lg border text-xs font-bold cursor-pointer transition-all flex items-center justify-center gap-1 ${a.isSuspended ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                                                <Ban size={12} /> {a.isSuspended ? 'Reinstate' : 'Suspend'}
+                                            </button>
+                                            <button onClick={() => handleDelete(a)} className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer transition-all flex items-center justify-center">
+                                                <Trash2 size={13} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
             </div>
 
-            {modal && (
-                <UserModal isNew={modal.isNew} user={modal.user} defaultRole="admin" onClose={() => setModal(null)} onSave={handleSave} />
-            )}
+            {modal && <UserModal isNew={modal.isNew} user={modal.user} defaultRole="admin" onClose={() => setModal(null)} onSave={handleSave} />}
         </DashboardLayout>
     );
 }

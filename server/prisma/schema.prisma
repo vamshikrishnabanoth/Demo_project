@@ -202,3 +202,16 @@ model CheatingLog {
   @@index([studentId])
 }
 
+model ActivityLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  adminName String?
+  action    String   // e.g. 'STUDENT_CREATED', 'USER_DELETED', 'SEMESTER_PROMOTED'
+  target    String?  // target user display name or entity name
+  targetId  String?  // target user ID
+  details   Json?    // { role, oldValue, newValue, count, ... }
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+}

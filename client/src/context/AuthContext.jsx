@@ -100,6 +100,11 @@ export const AuthProvider = ({ children }) => {
         return res.data;
     }, []);
 
+    // Merge partial user data into context (used after profile/admin edits)
+    const updateUser = useCallback((partialData) => {
+        setUser(prev => prev ? { ...prev, ...partialData } : prev);
+    }, []);
+
     const logout = useCallback(async () => {
         try {
             await api.post('/auth/logout');
@@ -117,7 +122,7 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{
             user, loading, authError, retryAuth,
-            login, logout, setRole,
+            login, logout, setRole, updateUser,
             font: 'inter',
         }}>
             {children}

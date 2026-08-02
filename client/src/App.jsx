@@ -1,6 +1,7 @@
 import { Suspense, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { AdminProvider } from './context/AdminContext';
 import { Toaster, toast } from 'react-hot-toast';
 import AuthContext from './context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
@@ -184,14 +185,16 @@ function App() {
                     }
                 }}
             />
-            <Router>
-                {/* ErrorBoundary catches runtime JS errors — prevents white screen crashes */}
-                <ErrorBoundary>
-                    <Suspense fallback={<NavigationSkeleton />}>
-                        <AnimatedRoutes />
-                    </Suspense>
-                </ErrorBoundary>
-            </Router>
+            <AdminProvider>
+                <Router>
+                    {/* ErrorBoundary catches runtime JS errors — prevents white screen crashes */}
+                    <ErrorBoundary>
+                        <Suspense fallback={<NavigationSkeleton />}>
+                            <AnimatedRoutes />
+                        </Suspense>
+                    </ErrorBoundary>
+                </Router>
+            </AdminProvider>
         </AuthProvider>
     );
 }
