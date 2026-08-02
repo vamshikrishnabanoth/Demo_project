@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { PremiumInput, GlassCard } from '../ui/Primitives';
 
@@ -64,17 +64,52 @@ export default function QuizQuestionEditor({
     onDeleteOption,
     onUpdateOption 
 }) {
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
     return (
         <GlassCard className="relative group overflow-visible">
-            <div className="absolute top-0 right-0 p-6 flex items-center gap-4 translate-x-4 -translate-y-4 opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+            <div className="absolute top-0 right-0 p-6 flex items-center gap-4 translate-x-4 -translate-y-4 opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
                 <button
                     type="button"
-                    onClick={() => onDelete(index)}
+                    onClick={() => setShowConfirmDelete(true)}
                     className="bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white p-3 rounded-xl border border-red-500/30 transition-all shadow-xl"
                 >
                     <Trash2 size={20} />
                 </button>
             </div>
+
+            <AnimatePresence>
+                {showConfirmDelete && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-20 flex items-center justify-center rounded-[2rem] bg-white/90 backdrop-blur-sm border border-red-500/30"
+                    >
+                        <div className="bg-white p-6 rounded-2xl shadow-2xl border border-slate-200 text-center max-w-sm">
+                            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight mb-2">Delete Question?</h3>
+                            <p className="text-sm text-slate-500 mb-6 font-medium">This action cannot be undone. Are you sure you want to remove this data point?</p>
+                            <div className="flex gap-3 justify-center">
+                                <button
+                                    onClick={() => setShowConfirmDelete(false)}
+                                    className="px-6 py-2 rounded-xl text-slate-500 font-bold hover:bg-slate-100 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowConfirmDelete(false);
+                                        onDelete(index);
+                                    }}
+                                    className="px-6 py-2 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors shadow-md shadow-red-500/20"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="space-y-10">
                 <div className="flex items-start gap-6">

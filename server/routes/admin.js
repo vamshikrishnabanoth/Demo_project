@@ -199,16 +199,16 @@ router.get('/students', auth, adminOnly, async (req, res) => {
         const AND_CONDITIONS = [{ role: 'student' }];
 
         if (year) {
-            AND_CONDITIONS.push({ year: { equals: year, mode: 'insensitive' } });
+            AND_CONDITIONS.push({ year });
         }
         if (semester) {
-            AND_CONDITIONS.push({ semester: { equals: semester, mode: 'insensitive' } });
+            AND_CONDITIONS.push({ semester });
         }
         if (section) {
-            AND_CONDITIONS.push({ section: { equals: section, mode: 'insensitive' } });
+            AND_CONDITIONS.push({ section });
         }
         if (branch) {
-            AND_CONDITIONS.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
+            AND_CONDITIONS.push({ studentBranch: branch });
         }
         if (status === 'suspended') AND_CONDITIONS.push({ isSuspended: true });
         if (status === 'active')    AND_CONDITIONS.push({ isSuspended: false });
@@ -299,7 +299,7 @@ router.get('/teachers', auth, adminOnly, async (req, res) => {
 
         if (status === 'suspended') AND_CONDITIONS.push({ isSuspended: true });
         if (status === 'active')    AND_CONDITIONS.push({ isSuspended: false });
-        if (department) AND_CONDITIONS.push({ studentBranch: { equals: department, mode: 'insensitive' } });
+        if (department) AND_CONDITIONS.push({ studentBranch: department });
 
         if (search) {
             AND_CONDITIONS.push({
