@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
-    GraduationCap, Search, Filter, ChevronRight, ChevronDown,
-    Edit3, Trash2, Ban, RefreshCw, Plus, UserCheck, X,
-    KeyRound, Eye, Loader2, Users, BookOpen
+    GraduationCap, Search, ChevronRight, ChevronDown,
+    Edit3, Trash2, Ban, RefreshCw, Plus, X,
+    KeyRound, Users, BookOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -14,16 +14,16 @@ import { showConfirm, showSuccess } from '../utils/alerts';
 
 // ---- Skeleton ----
 function Skeleton({ className = '' }) {
-    return <div className={`animate-pulse bg-white/10 rounded-xl ${className}`} />;
+    return <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />;
 }
 
 // ---- Status Badge ----
 function StatusBadge({ suspended, online }) {
     if (suspended)
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20"><span className="w-1.5 h-1.5 rounded-full bg-rose-400" />Suspended</span>;
+        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200"><span className="w-1.5 h-1.5 rounded-full bg-rose-500" />Suspended</span>;
     if (online)
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Online</span>;
-    return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-white/5 text-white/40 border border-white/10"><span className="w-1.5 h-1.5 rounded-full bg-white/30" />Offline</span>;
+        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />Online</span>;
+    return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-600 border border-slate-200"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Offline</span>;
 }
 
 export default function AdminStudents() {
@@ -75,7 +75,6 @@ export default function AdminStudents() {
             setTotalCount(res.data.totalCount || 0);
             if (res.data.filterOptions) setFilterOptions(res.data.filterOptions);
         } catch (err) {
-            // Fallback to /admin/users?role=student
             try {
                 const res2 = await api.get('/admin/users', { params: { page, limit, role: 'student', search: debSearch } });
                 setStudents(res2.data.users || []);
@@ -130,15 +129,6 @@ export default function AdminStudents() {
         setModal(null);
     };
 
-    // Build tree structure
-    const yearGroups = {};
-    filterOptions.years.forEach(y => {
-        yearGroups[y] = {};
-        filterOptions.semesters.forEach(s => {
-            yearGroups[y][s] = filterOptions.sections;
-        });
-    });
-
     const yearLabels = { '1': '1st Year', '2': '2nd Year', '3': '3rd Year', '4': '4th Year' };
     const semLabels  = { '1': 'Sem 1', '2': 'Sem 2', '3': 'Sem 3', '4': 'Sem 4', '5': 'Sem 5', '6': 'Sem 6', '7': 'Sem 7', '8': 'Sem 8' };
 
@@ -156,18 +146,18 @@ export default function AdminStudents() {
                 {/* ── Academic Tree Sidebar ── */}
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
                     className="lg:w-72 shrink-0">
-                    <div className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-5 sticky top-6">
+                    <div className="rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] sticky top-6">
                         <div className="flex items-center gap-3 mb-5">
-                            <div className="p-2 rounded-xl bg-sky-500/10"><BookOpen size={16} className="text-sky-400" /></div>
+                            <div className="p-2 rounded-xl bg-sky-50 border border-sky-200 text-sky-600"><BookOpen size={16} /></div>
                             <div>
-                                <h2 className="text-sm font-black text-white uppercase tracking-tight">Academic Tree</h2>
-                                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">Year → Semester → Section</p>
+                                <h2 className="text-sm font-bold text-slate-900">Academic Tree</h2>
+                                <p className="text-[11px] font-medium text-slate-500">Year → Semester → Section</p>
                             </div>
                         </div>
 
                         {/* All Students */}
                         <button onClick={clearFilters}
-                            className={`w-full text-left flex items-center gap-3 px-4 py-3 rounded-2xl mb-2 transition-all text-xs font-black uppercase tracking-wider cursor-pointer ${!hasFilters ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
+                            className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl mb-2 transition-all text-xs font-bold cursor-pointer ${!hasFilters ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'}`}>
                             <Users size={14} />All Students ({totalCount})
                         </button>
 
@@ -190,9 +180,9 @@ export default function AdminStudents() {
                                             setSelectedYear(year); setSelectedSemester(''); setSelectedSection('');
                                             setYearF(year); setSemF(''); setSectionF(''); setPage(1);
                                         }}
-                                        className={`w-full text-left flex items-center justify-between gap-2 px-4 py-3 rounded-2xl transition-all text-xs font-black uppercase tracking-wider cursor-pointer ${isYearSelected ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
-                                        <span className="flex items-center gap-2"><GraduationCap size={13} />{yearLabels[year] || `Year ${year}`}</span>
-                                        {isYearExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                                        className={`w-full text-left flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold cursor-pointer ${isYearSelected ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'text-slate-700 hover:bg-slate-100'}`}>
+                                        <span className="flex items-center gap-2"><GraduationCap size={14} />{yearLabels[year] || `Year ${year}`}</span>
+                                        {isYearExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                                     </button>
 
                                     <AnimatePresence>
@@ -209,9 +199,9 @@ export default function AdminStudents() {
                                                                     setSelectedSemester(sem); setSelectedSection('');
                                                                     setSemF(sem); setSectionF(''); setPage(1);
                                                                 }}
-                                                                className={`w-full text-left flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl transition-all text-[11px] font-black uppercase tracking-wider cursor-pointer ${isSemSelected ? 'bg-sky-500/15 text-sky-300' : 'text-white/40 hover:bg-white/5 hover:text-white/70'}`}>
+                                                                className={`w-full text-left flex items-center justify-between gap-2 px-3 py-2 rounded-lg transition-all text-[11px] font-bold cursor-pointer ${isSemSelected ? 'bg-sky-100 text-sky-800' : 'text-slate-600 hover:bg-slate-100'}`}>
                                                                 <span>{semLabels[sem] || `Sem ${sem}`}</span>
-                                                                {isSemExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                                                                {isSemExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                                                             </button>
 
                                                             <AnimatePresence>
@@ -223,7 +213,7 @@ export default function AdminStudents() {
                                                                                     setSelectedSection(sec);
                                                                                     setSectionF(sec); setPage(1);
                                                                                 }}
-                                                                                className={`w-full text-left px-3 py-2 rounded-lg transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer ${selectedSection === sec ? 'bg-sky-500/20 text-sky-300' : 'text-white/30 hover:bg-white/5 hover:text-white/60'}`}>
+                                                                                className={`w-full text-left px-3 py-1.5 rounded-md transition-all text-[10px] font-bold cursor-pointer ${selectedSection === sec ? 'bg-sky-200 text-sky-900' : 'text-slate-500 hover:bg-slate-100'}`}>
                                                                                 Section {sec}
                                                                             </button>
                                                                         ))}
@@ -239,7 +229,7 @@ export default function AdminStudents() {
                                 </div>
                             );
                         }) : (
-                            <div className="text-white/20 text-[10px] font-bold uppercase tracking-widest text-center py-4">No year data yet</div>
+                            <div className="text-slate-400 text-[11px] font-medium text-center py-4">No year data</div>
                         )}
                     </div>
                 </motion.div>
@@ -247,49 +237,49 @@ export default function AdminStudents() {
                 {/* ── Main Content ── */}
                 <div className="flex-1 min-w-0">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-                        className="rounded-3xl bg-white/[0.04] border border-white/[0.08] overflow-hidden">
+                        className="rounded-[18px] bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-6 border-b border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 rounded-2xl bg-sky-500/10"><GraduationCap size={22} className="text-sky-400" /></div>
+                        <div className="p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-600"><GraduationCap size={22} /></div>
                                 <div>
-                                    <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">
-                                        Student <span className="text-sky-400">Directory</span>
+                                    <h2 className="text-lg font-bold text-slate-900">
+                                        Student Directory
                                     </h2>
-                                    <p className="text-white/30 text-[10px] font-black uppercase tracking-widest mt-0.5">
-                                        {selectedYear ? `${yearLabels[selectedYear] || `Year ${selectedYear}`}` : 'All Students'}{selectedSemester ? ` → ${semLabels[selectedSemester] || `Sem ${selectedSemester}`}` : ''}{selectedSection ? ` → Section ${selectedSection}` : ''} — {totalCount} students
+                                    <p className="text-slate-500 text-xs font-medium mt-0.5">
+                                        {selectedYear ? `${yearLabels[selectedYear] || `Year ${selectedYear}`}` : 'All Students'}{selectedSemester ? ` → ${semLabels[selectedSemester] || `Sem ${selectedSemester}`}` : ''}{selectedSection ? ` → Section ${selectedSection}` : ''} — {totalCount} total students
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <button onClick={fetchStudents} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
+                                <button onClick={fetchStudents} className="p-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-sm">
                                     <RefreshCw size={15} />
                                 </button>
                                 <button onClick={() => setModal({ isNew: true })}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[var(--bg-accent)] hover:opacity-90 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer active:scale-95">
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm cursor-pointer active:scale-95">
                                     <Plus size={15} /> Add Student
                                 </button>
                             </div>
                         </div>
 
                         {/* Search + Filters */}
-                        <div className="p-5 border-b border-white/[0.06] flex flex-wrap gap-3">
+                        <div className="p-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-wrap gap-3">
                             <div className="flex-1 min-w-56 relative">
-                                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                                 <input
                                     value={search} onChange={e => setSearch(e.target.value)}
                                     placeholder="Search name, roll number, email..."
-                                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 transition-all" />
+                                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-all" />
                             </div>
                             <select value={branchF} onChange={e => { setBranchF(e.target.value); setPage(1); }}
-                                className="px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs font-black text-white/70 focus:outline-none cursor-pointer appearance-none">
+                                className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer appearance-none">
                                 <option value="">All Branches</option>
                                 {filterOptions.branches.map(b => <option key={b} value={b}>{b}</option>)}
                             </select>
                             {hasFilters && (
                                 <button onClick={clearFilters}
-                                    className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-black text-xs uppercase tracking-wider cursor-pointer hover:bg-rose-500/20 transition-all">
+                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer hover:bg-rose-100 transition-all">
                                     <X size={13} /> Clear
                                 </button>
                             )}
@@ -299,41 +289,41 @@ export default function AdminStudents() {
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
-                                    <tr className="border-b border-white/[0.06]">
+                                    <tr className="border-b border-slate-200 bg-slate-50/80">
                                         {['Roll Number', 'Name', 'Email', 'Branch', 'Year', 'Sem', 'Section', 'Status', 'Actions'].map(h => (
-                                            <th key={h} className="px-4 py-4 text-left text-[9px] font-black text-white/30 uppercase tracking-widest whitespace-nowrap">{h}</th>
+                                            <th key={h} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider whitespace-nowrap">{h}</th>
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/[0.04]">
+                                <tbody className="divide-y divide-slate-200/80">
                                     <AnimatePresence>
                                         {loading
                                             ? Array.from({ length: 8 }).map((_, i) => (
                                                 <tr key={i}><td colSpan={9} className="px-4 py-3"><Skeleton className="h-10 w-full" /></td></tr>
                                             ))
                                             : students.length === 0
-                                                ? <tr><td colSpan={9} className="py-20 text-center text-white/20 text-xs font-bold uppercase tracking-widest">No students found</td></tr>
+                                                ? <tr><td colSpan={9} className="py-16 text-center text-slate-500 text-xs font-semibold uppercase tracking-wider">No students found</td></tr>
                                                 : students.map((s) => (
                                                     <motion.tr key={s.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                                        className="hover:bg-white/[0.03] transition-colors group">
-                                                        <td className="px-4 py-4 text-xs font-black text-[var(--text-accent)] whitespace-nowrap">{s.username}</td>
-                                                        <td className="px-4 py-4 text-sm font-bold text-white whitespace-nowrap">{s.name || '—'}</td>
-                                                        <td className="px-4 py-4 text-xs text-white/50 font-medium max-w-[180px] truncate">{s.email}</td>
-                                                        <td className="px-4 py-4 text-xs font-bold text-white/60 whitespace-nowrap">{s.studentBranch || '—'}</td>
-                                                        <td className="px-4 py-4 text-xs font-bold text-white/60 whitespace-nowrap">{s.year ? `Y${s.year}` : '—'}</td>
-                                                        <td className="px-4 py-4 text-xs font-bold text-white/60 whitespace-nowrap">{s.semester ? `S${s.semester}` : '—'}</td>
-                                                        <td className="px-4 py-4 text-xs font-bold text-white/60 whitespace-nowrap">{s.section || '—'}</td>
-                                                        <td className="px-4 py-4 whitespace-nowrap"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
-                                                        <td className="px-4 py-4">
-                                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        className="hover:bg-slate-50/80 transition-colors group">
+                                                        <td className="px-4 py-3.5 text-xs font-extrabold text-slate-900 whitespace-nowrap">{s.username}</td>
+                                                        <td className="px-4 py-3.5 text-xs font-bold text-slate-800 whitespace-nowrap">{s.name || '—'}</td>
+                                                        <td className="px-4 py-3.5 text-xs text-slate-600 font-medium max-w-[180px] truncate">{s.email}</td>
+                                                        <td className="px-4 py-3.5 text-xs font-bold text-slate-700 whitespace-nowrap">{s.studentBranch || '—'}</td>
+                                                        <td className="px-4 py-3.5 text-xs font-bold text-slate-700 whitespace-nowrap">{s.year ? `Y${s.year}` : '—'}</td>
+                                                        <td className="px-4 py-3.5 text-xs font-bold text-slate-700 whitespace-nowrap">{s.semester ? `S${s.semester}` : '—'}</td>
+                                                        <td className="px-4 py-3.5 text-xs font-bold text-slate-700 whitespace-nowrap">{s.section || '—'}</td>
+                                                        <td className="px-4 py-3.5 whitespace-nowrap"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
+                                                        <td className="px-4 py-3.5">
+                                                            <div className="flex items-center gap-1.5">
                                                                 <button onClick={() => setModal({ isNew: false, user: s })} title="Edit"
-                                                                    className="w-8 h-8 flex items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 transition-all cursor-pointer"><Edit3 size={13} /></button>
+                                                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition-all cursor-pointer"><Edit3 size={13} /></button>
                                                                 <button onClick={() => handleSuspend(s)} title={s.isSuspended ? 'Reinstate' : 'Suspend'}
-                                                                    className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all cursor-pointer ${s.isSuspended ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'}`}><Ban size={13} /></button>
+                                                                    className={`w-7 h-7 flex items-center justify-center rounded-lg border transition-all cursor-pointer ${s.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'}`}><Ban size={13} /></button>
                                                                 <button onClick={() => handleResetPassword(s)} title="Reset Password"
-                                                                    className="w-8 h-8 flex items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 transition-all cursor-pointer"><KeyRound size={13} /></button>
+                                                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all cursor-pointer"><KeyRound size={13} /></button>
                                                                 <button onClick={() => handleDelete(s)} title="Delete" disabled={s.id === currentUser?.id}
-                                                                    className="w-8 h-8 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer disabled:opacity-30"><Trash2 size={13} /></button>
+                                                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-all cursor-pointer disabled:opacity-30"><Trash2 size={13} /></button>
                                                             </div>
                                                         </td>
                                                     </motion.tr>
@@ -346,16 +336,16 @@ export default function AdminStudents() {
 
                         {/* Pagination */}
                         {!loading && totalPages > 1 && (
-                            <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] flex-wrap gap-3">
-                                <p className="text-[10px] text-white/30 font-black uppercase tracking-wider">
-                                    Page <span className="text-[var(--text-accent)]">{page}</span> of <span className="text-[var(--text-accent)]">{totalPages}</span> — {totalCount} total
+                            <div className="flex items-center justify-between px-5 py-3 border-t border-slate-200 bg-slate-50/50 flex-wrap gap-3">
+                                <p className="text-xs text-slate-500 font-medium">
+                                    Page <span className="text-slate-900 font-bold">{page}</span> of <span className="text-slate-900 font-bold">{totalPages}</span> — {totalCount} total
                                 </p>
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
-                                        className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 font-black text-xs hover:bg-white/10 disabled:opacity-30 transition-all cursor-pointer">← Prev</button>
-                                    <span className="px-4 py-2 rounded-xl bg-[var(--bg-accent)] text-white text-xs font-black">{page}/{totalPages}</span>
+                                        className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-40 transition-all cursor-pointer shadow-sm">← Prev</button>
+                                    <span className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold">{page}/{totalPages}</span>
                                     <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-                                        className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 font-black text-xs hover:bg-white/10 disabled:opacity-30 transition-all cursor-pointer">Next →</button>
+                                        className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-40 transition-all cursor-pointer shadow-sm">Next →</button>
                                 </div>
                             </div>
                         )}

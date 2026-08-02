@@ -5,8 +5,8 @@ import api from '../utils/api';
 import socket from '../utils/socket';
 import {
     Users, Shield, UserCheck, GraduationCap, Activity,
-    Plus, RefreshCw, Database, Cpu, Lock, Wifi, HardDrive, Radio,
-    TrendingUp, Clock, Zap, ChevronRight, CheckCircle2, Megaphone,
+    RefreshCw, Database, Cpu, Lock, Wifi, HardDrive,
+    TrendingUp, Clock, Zap, CheckCircle2, Megaphone,
     ArrowUpRight
 } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
@@ -45,25 +45,27 @@ function AnimatedCount({ value }) {
 
 // --- Skeleton Loader ---
 function Skeleton({ className = '' }) {
-    return <div className={`animate-pulse bg-white/10 rounded-[18px] ${className}`} />;
+    return <div className={`animate-pulse bg-slate-200/80 rounded-[18px] ${className}`} />;
 }
 
 // --- System Health Status Card ---
 function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = true }) {
     return (
-        <div className="flex items-center justify-between p-3.5 rounded-[14px] bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-all">
+        <div className="flex items-center justify-between p-3.5 rounded-[14px] bg-slate-50/80 border border-slate-200/80 hover:bg-slate-100/80 transition-all">
             <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[10px] bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0 text-white/70">
+                <div className="w-8 h-8 rounded-[10px] bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0 text-slate-700">
                     <Icon size={18} />
                 </div>
                 <div>
-                    <h4 className="text-xs font-bold text-white">{title}</h4>
-                    <p className="text-[11px] text-white/40 font-normal">{subtext}</p>
+                    <h4 className="text-xs font-bold text-slate-900">{title}</h4>
+                    <p className="text-[11px] text-slate-500 font-medium">{subtext}</p>
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse' : 'bg-rose-400'}`} />
-                <span className={`text-[11px] font-semibold ${isOnline ? 'text-emerald-400' : 'text-rose-400'}`}>{statusText}</span>
+                <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse' : 'bg-rose-500'}`} />
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${isOnline ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-700 bg-rose-50 border-rose-200'}`}>
+                    {statusText}
+                </span>
             </div>
         </div>
     );
@@ -72,12 +74,12 @@ function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = t
 // --- Activity Feed Item ---
 function ActivityRow({ item }) {
     const roleIconMap = {
-        student: { icon: GraduationCap, color: 'text-sky-400 bg-sky-500/10 border-sky-500/20' },
-        teacher: { icon: UserCheck, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
-        admin:   { icon: Shield, color: 'text-violet-400 bg-violet-500/10 border-violet-500/20' },
+        student: { icon: GraduationCap, color: 'text-sky-600 bg-sky-50 border-sky-200' },
+        teacher: { icon: UserCheck, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+        admin:   { icon: Shield, color: 'text-purple-600 bg-purple-50 border-purple-200' },
     };
 
-    const cfg = roleIconMap[item.user?.role] || { icon: Users, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
+    const cfg = roleIconMap[item.user?.role] || { icon: Users, color: 'text-amber-600 bg-amber-50 border-amber-200' };
     const IconComponent = cfg.icon;
 
     const timeAgo = (date) => {
@@ -92,22 +94,22 @@ function ActivityRow({ item }) {
     };
 
     return (
-        <div className="flex items-center justify-between py-3 px-3.5 rounded-[12px] bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.05] transition-all">
+        <div className="flex items-center justify-between py-3 px-3.5 rounded-[12px] bg-slate-50/80 border border-slate-200/60 hover:bg-slate-100/80 transition-all">
             <div className="flex items-center gap-3 min-w-0">
                 <div className={`w-8 h-8 rounded-[10px] border flex items-center justify-center shrink-0 ${cfg.color}`}>
                     <IconComponent size={16} />
                 </div>
                 <div className="min-w-0">
-                    <p className="text-xs font-semibold text-white/90 truncate leading-snug">{item.message}</p>
-                    <p className="text-[11px] text-white/40 mt-0.5">{item.user?.name || item.user?.role || 'System'}</p>
+                    <p className="text-xs font-bold text-slate-900 truncate leading-snug">{item.message}</p>
+                    <p className="text-[11px] font-medium text-slate-500 mt-0.5">{item.user?.name || item.user?.role || 'System'}</p>
                 </div>
             </div>
-            <span className="text-[11px] text-white/40 font-medium shrink-0 ml-3">{timeAgo(item.timestamp)}</span>
+            <span className="text-[11px] font-semibold text-slate-400 shrink-0 ml-3">{timeAgo(item.timestamp)}</span>
         </div>
     );
 }
 
-const CHART_COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#f97316', '#14b8a6', '#ec4899'];
+const CHART_COLORS = ['#d97706', '#059669', '#2563eb', '#7c3aed', '#dc2626', '#ea580c', '#0d9488', '#db2777'];
 
 export default function AdminDashboard() {
     const navigate  = useNavigate();
@@ -160,6 +162,7 @@ export default function AdminDashboard() {
             desc: 'Sum of Students, Teachers & Admins',
             icon: Users,
             path: '/admin/users',
+            badgeBg: 'bg-amber-50 text-amber-700 border-amber-200',
         },
         {
             title: 'ACTIVE STUDENTS',
@@ -167,6 +170,7 @@ export default function AdminDashboard() {
             desc: 'Enrolled student accounts',
             icon: GraduationCap,
             path: '/admin/students',
+            badgeBg: 'bg-sky-50 text-sky-700 border-sky-200',
         },
         {
             title: 'ACTIVE TEACHERS',
@@ -174,6 +178,7 @@ export default function AdminDashboard() {
             desc: 'Faculty & instructor accounts',
             icon: UserCheck,
             path: '/admin/teachers',
+            badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
         },
         {
             title: 'SYSTEM ADMINS',
@@ -181,6 +186,7 @@ export default function AdminDashboard() {
             desc: 'Platform administrators',
             icon: Shield,
             path: '/admin/admins',
+            badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
         },
     ];
 
@@ -198,7 +204,6 @@ export default function AdminDashboard() {
         return { name: yName, count: found ? found.value : 0 };
     });
 
-    // Generate mock activities if backend list is small for rich enterprise look
     const activityFeed = (dashData?.recentActivity && dashData.recentActivity.length > 0)
         ? dashData.recentActivity
         : [
@@ -218,31 +223,31 @@ export default function AdminDashboard() {
 
                 {/* ── 2. Dashboard Header ── */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-white/[0.06]">
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                             {getGreeting()}, Admin 👋
                         </h1>
-                        <p className="text-white/50 text-sm font-normal mt-0.5">
+                        <p className="text-slate-600 text-sm font-medium mt-0.5">
                             Here's today's system overview.
                         </p>
                     </div>
 
                     {/* Timestamp + Refresh Button side-by-side */}
                     <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs text-white/40 font-medium">
-                            Last Updated: <span className="text-white/70">Today • {lastUpdated || 'Just now'}</span>
+                        <span className="text-xs text-slate-500 font-medium">
+                            Last Updated: <span className="text-slate-900 font-bold">Today • {lastUpdated || 'Just now'}</span>
                         </span>
                         <button
                             onClick={() => { fetchDashboard(); toast.success('Dashboard Refreshed'); }}
-                            className="flex items-center gap-2 px-3.5 py-2 rounded-[12px] bg-white/[0.05] border border-white/10 hover:border-white/20 text-white/80 hover:text-white transition-all text-xs font-semibold cursor-pointer active:scale-95 shadow-sm">
+                            className="flex items-center gap-2 px-3.5 py-2 rounded-[12px] bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-all text-xs font-bold cursor-pointer active:scale-95 shadow-sm">
                             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
                             <span>Refresh</span>
                         </button>
                     </div>
                 </motion.div>
 
-                {/* ── 1. Statistics Cards (Equal width, height, 18px radius, subtle shadow, translateY hover) ── */}
+                {/* ── 1. Statistics Cards (High contrast light surface, 18px radius, bold numbers) ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {loading
                         ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36" />)
@@ -253,27 +258,27 @@ export default function AdminDashboard() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3 }}
                                 onClick={() => navigate(s.path)}
-                                className="group relative overflow-hidden rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 cursor-pointer shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.15)] hover:border-white/20 transition-all duration-200 flex flex-col justify-between h-36">
+                                className="group relative overflow-hidden rounded-[18px] bg-white border border-slate-200/80 p-5 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-slate-300 transition-all duration-200 flex flex-col justify-between h-36">
 
                                 {/* Top Row: Title + Icon */}
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[14px] font-medium text-white/70 uppercase tracking-wider">
+                                    <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">
                                         {s.title}
                                     </span>
-                                    <div className="w-8 h-8 rounded-[10px] bg-white/[0.06] border border-white/10 flex items-center justify-center text-white/80 group-hover:text-[var(--text-accent)] group-hover:border-[var(--text-accent)]/30 transition-colors">
-                                        <s.icon size={20} className="w-5 h-5" />
+                                    <div className={`w-8 h-8 rounded-[10px] border flex items-center justify-center ${s.badgeBg}`}>
+                                        <s.icon size={18} className="w-4.5 h-4.5" />
                                     </div>
                                 </div>
 
-                                {/* Middle: Count */}
-                                <div className="text-[40px] font-bold text-white tracking-tight leading-none my-1">
+                                {/* Middle: Bold Count */}
+                                <div className="text-[40px] font-extrabold text-slate-900 tracking-tight leading-none my-1">
                                     <AnimatedCount value={s.count} />
                                 </div>
 
                                 {/* Bottom: Description */}
-                                <div className="flex items-center justify-between text-[12px] text-white/40">
+                                <div className="flex items-center justify-between text-[12px] font-medium text-slate-500">
                                     <span>{s.desc}</span>
-                                    <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 text-[var(--text-accent)] transition-opacity" />
+                                    <ArrowUpRight size={14} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
                                 </div>
                             </motion.div>
                         ))
@@ -287,13 +292,13 @@ export default function AdminDashboard() {
                     <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         {/* Branch Distribution Pie Chart */}
-                        <div className="rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] h-[340px] flex flex-col">
+                        <div className="rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] h-[340px] flex flex-col">
                             <div className="flex items-center justify-between mb-3">
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">Branch Distribution</h3>
-                                    <p className="text-[12px] text-white/40">Student enrollment by department</p>
+                                    <h3 className="text-base font-bold text-slate-900">Branch Distribution</h3>
+                                    <p className="text-xs font-medium text-slate-500">Student enrollment by department</p>
                                 </div>
-                                <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                                <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
                                     <TrendingUp size={16} />
                                 </div>
                             </div>
@@ -301,8 +306,8 @@ export default function AdminDashboard() {
                             {loading ? <Skeleton className="flex-1" /> : (
                                 dashData?.charts?.branchDistribution?.length > 0 ? (
                                     <div className="flex-1 flex items-center justify-between gap-4 min-h-0">
-                                        {/* Pie Chart ~280px */}
-                                        <div className="w-[220px] sm:w-[260px] h-[220px] shrink-0">
+                                        {/* Pie Chart ~260px */}
+                                        <div className="w-[200px] sm:w-[240px] h-[220px] shrink-0">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <PieChart>
                                                     <Pie
@@ -320,7 +325,7 @@ export default function AdminDashboard() {
                                                             <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
                                                         ))}
                                                     </Pie>
-                                                    <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '12px', fontWeight: '600' }} />
+                                                    <Tooltip contentStyle={{ background: '#0f172a', border: 'none', borderRadius: '12px', color: '#fff', fontSize: '12px', fontWeight: '700' }} />
                                                 </PieChart>
                                             </ResponsiveContainer>
                                         </div>
@@ -332,14 +337,14 @@ export default function AdminDashboard() {
                                                 const total = dashData.charts.branchDistribution.reduce((acc, curr) => acc + curr.value, 0);
                                                 const pct = total ? Math.round((b.value / total) * 100) : 0;
                                                 return (
-                                                    <div key={b.name} className="flex items-center justify-between text-xs py-1.5 px-2 rounded.lg bg-white/[0.02]">
+                                                    <div key={b.name} className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
                                                         <div className="flex items-center gap-2">
                                                             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                                                            <span className="font-semibold text-white/80">{b.name}</span>
+                                                            <span className="font-bold text-slate-800">{b.name}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-white">{b.value}</span>
-                                                            <span className="text-[11px] text-white/40">({pct}%)</span>
+                                                            <span className="font-extrabold text-slate-900">{b.value}</span>
+                                                            <span className="text-[11px] font-semibold text-slate-500">({pct}%)</span>
                                                         </div>
                                                     </div>
                                                 );
@@ -347,19 +352,19 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex-1 flex items-center justify-center text-white/30 text-xs font-medium">No branch data available</div>
+                                    <div className="flex-1 flex items-center justify-center text-slate-400 text-xs font-semibold">No branch data available</div>
                                 )
                             )}
                         </div>
 
                         {/* Year Distribution Horizontal Bar Chart */}
-                        <div className="rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] h-[340px] flex flex-col">
+                        <div className="rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] h-[340px] flex flex-col">
                             <div className="flex items-center justify-between mb-3">
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">Year Distribution</h3>
-                                    <p className="text-[12px] text-white/40">Students across academic years</p>
+                                    <h3 className="text-base font-bold text-slate-900">Year Distribution</h3>
+                                    <p className="text-xs font-medium text-slate-500">Students across academic years</p>
                                 </div>
-                                <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                                <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600">
                                     <Activity size={16} />
                                 </div>
                             </div>
@@ -367,10 +372,10 @@ export default function AdminDashboard() {
                             {loading ? <Skeleton className="flex-1" /> : (
                                 <div className="flex-1 min-h-0 pt-2">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={formattedYearData} layout="vertical" margin={{ top: 10, right: 20, left: 10, bottom: 5 }} barSize={18}>
+                                        <BarChart data={formattedYearData} layout="vertical" margin={{ top: 10, right: 25, left: 10, bottom: 5 }} barSize={18}>
                                             <XAxis type="number" hide />
-                                            <YAxis dataKey="name" type="category" tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12, fontWeight: '600' }} axisLine={false} tickLine={false} width={60} />
-                                            <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '12px', fontWeight: '600' }} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                                            <YAxis dataKey="name" type="category" tick={{ fill: '#334155', fontSize: 12, fontWeight: '700' }} axisLine={false} tickLine={false} width={60} />
+                                            <Tooltip contentStyle={{ background: '#0f172a', border: 'none', borderRadius: '12px', color: '#fff', fontSize: '12px', fontWeight: '700' }} cursor={{ fill: 'rgba(241,245,249,0.8)' }} />
                                             <Bar dataKey="count" radius={[0, 8, 8, 0]}>
                                                 {formattedYearData.map((_, idx) => (
                                                     <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
@@ -384,13 +389,13 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* ── 5. System Health Status Cards ── */}
-                    <div className="rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] flex flex-col h-[340px]">
+                    <div className="rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col h-[340px]">
                         <div className="flex items-center justify-between mb-3">
                             <div>
-                                <h3 className="text-sm font-bold text-white">System Health</h3>
-                                <p className="text-[12px] text-white/40">Real-time service status</p>
+                                <h3 className="text-base font-bold text-slate-900">System Health</h3>
+                                <p className="text-xs font-medium text-slate-500">Real-time service status</p>
                             </div>
-                            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
                                 <CheckCircle2 size={16} />
                             </div>
                         </div>
@@ -409,18 +414,18 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Recent Activity (2 cols on desktop) */}
-                    <div className="lg:col-span-2 rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+                    <div className="lg:col-span-2 rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2.5">
-                                <div className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+                                <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600">
                                     <Clock size={16} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">Recent Activity</h3>
-                                    <p className="text-[12px] text-white/40">Latest system events & audit logs</p>
+                                    <h3 className="text-base font-bold text-slate-900">Recent Activity</h3>
+                                    <p className="text-xs font-medium text-slate-500">Latest system events & audit logs</p>
                                 </div>
                             </div>
-                            <button onClick={() => navigate('/admin/students')} className="text-xs text-[var(--text-accent)] font-semibold hover:underline cursor-pointer">
+                            <button onClick={() => navigate('/admin/students')} className="text-xs text-slate-900 font-bold hover:underline cursor-pointer">
                                 View All
                             </button>
                         </div>
@@ -433,38 +438,38 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Quick Actions (1 col on desktop) */}
-                    <div className="rounded-[18px] bg-white/[0.04] border border-white/[0.08] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] flex flex-col justify-between">
+                    <div className="rounded-[18px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
                         <div>
                             <div className="flex items-center gap-2.5 mb-4">
-                                <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+                                <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
                                     <Zap size={16} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">Quick Actions</h3>
-                                    <p className="text-[12px] text-white/40">Common administrative tasks</p>
+                                    <h3 className="text-base font-bold text-slate-900">Quick Actions</h3>
+                                    <p className="text-xs font-medium text-slate-500">Common administrative tasks</p>
                                 </div>
                             </div>
 
-                            {/* Outlined Action Buttons with 12px radius */}
+                            {/* Outlined Action Buttons with 12px radius & dark text */}
                             <div className="grid grid-cols-2 gap-3">
                                 {quickActions.map((a) => (
                                     <button
                                         key={a.label}
                                         onClick={() => navigate(a.path)}
-                                        className="flex flex-col items-center justify-center gap-2 p-4 rounded-[12px] border border-white/10 hover:border-[var(--bg-accent)]/50 hover:bg-[var(--bg-accent)]/10 text-white/90 hover:text-white transition-all cursor-pointer group active:scale-95">
-                                        <div className="w-9 h-9 rounded-[10px] bg-white/[0.05] border border-white/10 flex items-center justify-center group-hover:border-[var(--bg-accent)]/30 group-hover:text-[var(--text-accent)] transition-colors">
+                                        className="flex flex-col items-center justify-center gap-2 p-4 rounded-[12px] bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-900 hover:text-white text-slate-800 transition-all cursor-pointer group active:scale-95 shadow-sm">
+                                        <div className="w-9 h-9 rounded-[10px] bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:bg-slate-800 group-hover:text-white transition-colors">
                                             <a.icon size={20} className="w-5 h-5" />
                                         </div>
-                                        <span className="text-xs font-semibold text-center leading-tight">{a.label}</span>
+                                        <span className="text-xs font-bold text-center leading-tight">{a.label}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* Summary Footer */}
-                        <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/40">
-                            <span>Online Users: <span className="text-emerald-400 font-bold">{onlineUsers}</span></span>
-                            <span>System Status: <span className="text-emerald-400 font-bold">Optimal</span></span>
+                        <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500 font-medium">
+                            <span>Online Users: <span className="text-emerald-700 font-extrabold">{onlineUsers}</span></span>
+                            <span>System Status: <span className="text-emerald-700 font-extrabold">Optimal</span></span>
                         </div>
                     </div>
 
