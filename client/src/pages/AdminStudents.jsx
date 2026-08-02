@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
-    GraduationCap, Search, ChevronRight, ChevronDown,
-    Edit3, Trash2, Ban, RefreshCw, Plus, X,
-    KeyRound, Users, Upload, Award, ArrowUpDown, CheckSquare, Square
+    GraduationCap, Search, Edit3, Trash2, Ban, RefreshCw,
+    Plus, X, Upload, Award, ArrowUpDown, Eye, Download
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
@@ -13,7 +12,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import UserModal from '../components/admin/UserModal';
 import BulkImportModal from '../components/admin/BulkImportModal';
 import PromoteModal from '../components/admin/PromoteModal';
-import { showConfirm, showSuccess } from '../utils/alerts';
+import StudentProfileModal from '../components/admin/StudentProfileModal';
 
 function Skeleton({ className = '' }) {
     return <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />;
@@ -34,11 +33,12 @@ export default function AdminStudents() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filterOptions, setFilterOptions] = useState({ years: [], semesters: [], sections: [], branches: [] });
-    
+
     // Modals
     const [userModal, setUserModal] = useState(null);
     const [showImportModal, setShowImportModal] = useState(false);
     const [showPromoteModal, setShowPromoteModal] = useState(false);
+    const [viewingProfile, setViewingProfile] = useState(null);
 
     // Multi-select state
     const [selectedIds, setSelectedIds] = useState([]);
@@ -97,39 +97,32 @@ export default function AdminStudents() {
     // Single Actions
     const handleDelete = async (s) => {
         if (s.id === currentUser?.id) return;
-        const r = await showConfirm('Delete Student?', `This will permanently delete ${s.name || s.username}.`, 'Delete');
-        if (r.isConfirmed) {
-            try {
-                await api.delete(`/admin/users/${s.id}`);
-                setStudents(prev => prev.filter(x => x.id !== s.id));
-                setTotalCount(c => c - 1);
-                invalidate();
-                showSuccess('Deleted', 'Student removed.');
-            } catch { toast.error('Delete failed'); }
-        }
+        if (!window.confirm(`Permanently delete student ${s.name || s.username}?`)) return;
+        try {
+            await api.delete(`/admin/users/${s.id}`);
+            toast.success('Student record deleted');
+            setStudents(prev => prev.filter(x => x.id !== s.id));
+            setTotalCount(c => Math.max(0, c - 1));
+            invalidate();
+        } catch { toast.error('Delete failed'); }
     };
 
     const handleSuspend = async (s) => {
         if (s.id === currentUser?.id) return;
-        const action = s.isSuspended ? 'Reinstate' : 'Suspend';
-        const r = await showConfirm(`${action} Student?`, `${action} ${s.name || s.username}?`, action);
-        if (r.isConfirmed) {
-            try {
-                const res = await api.put(`/admin/users/suspend/${s.id}`);
-                setStudents(prev => prev.map(x => x.id === s.id ? { ...x, ...res.data } : x));
-                invalidate();
-                showSuccess('Updated', `Student ${s.isSuspended ? 'reinstated' : 'suspended'}.`);
-            } catch { toast.error('Action failed'); }
-        }
+        const action = s.isSuspended ? 'Reactivate' : 'Suspend';
+        if (!window.confirm(`${action} student ${s.name || s.username}?`)) return;
+        try {
+            const res = await api.put(`/admin/users/suspend/${s.id}`);
+            toast.success(`Student account ${s.isSuspended ? 'reactivated' : 'suspended'}`);
+            setStudents(prev => prev.map(x => x.id === s.id ? { ...x, ...res.data } : x));
+            invalidate();
+        } catch { toast.error('Action failed'); }
     };
 
     // Bulk Actions
     const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            setSelectedIds(students.map(s => s.id));
-        } else {
-            setSelectedIds([]);
-        }
+        if (e.target.checked) setSelectedIds(students.map(s => s.id));
+        else setSelectedIds([]);
     };
 
     const handleSelectOne = (id) => {
@@ -138,31 +131,27 @@ export default function AdminStudents() {
 
     const handleBulkDelete = async () => {
         if (selectedIds.length === 0) return;
-        const r = await showConfirm('Bulk Delete?', `Permanently delete ${selectedIds.length} selected student(s)?`, 'Delete All');
-        if (r.isConfirmed) {
-            try {
-                await api.post('/admin/users/bulk-delete', { ids: selectedIds });
-                setSelectedIds([]);
-                fetchStudents();
-                invalidate();
-                showSuccess('Bulk Delete', 'Selected students deleted.');
-            } catch { toast.error('Bulk delete failed'); }
-        }
+        if (!window.confirm(`Permanently delete ${selectedIds.length} selected student(s)?`)) return;
+        try {
+            await api.post('/admin/users/bulk-delete', { ids: selectedIds });
+            setSelectedIds([]);
+            fetchStudents();
+            invalidate();
+            toast.success('Selected students deleted');
+        } catch { toast.error('Bulk delete failed'); }
     };
 
     const handleBulkSuspend = async (suspend) => {
         if (selectedIds.length === 0) return;
-        const action = suspend ? 'Suspend' : 'Reinstate';
-        const r = await showConfirm(`Bulk ${action}?`, `${action} ${selectedIds.length} selected student(s)?`, action);
-        if (r.isConfirmed) {
-            try {
-                await api.post('/admin/users/bulk-suspend', { ids: selectedIds, suspend });
-                setSelectedIds([]);
-                fetchStudents();
-                invalidate();
-                showSuccess(`Bulk ${action}`, `Selected students ${suspend ? 'suspended' : 'reinstated'}.`);
-            } catch { toast.error('Bulk action failed'); }
-        }
+        const action = suspend ? 'Suspend' : 'Reactivate';
+        if (!window.confirm(`${action} ${selectedIds.length} selected student(s)?`)) return;
+        try {
+            await api.post('/admin/users/bulk-suspend', { ids: selectedIds, suspend });
+            setSelectedIds([]);
+            fetchStudents();
+            invalidate();
+            toast.success(`Selected students ${suspend ? 'suspended' : 'reactivated'}`);
+        } catch { toast.error('Bulk action failed'); }
     };
 
     const handleSave = () => {
@@ -172,12 +161,20 @@ export default function AdminStudents() {
     };
 
     const toggleSort = (col) => {
-        if (sortCol === col) {
-            setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortCol(col);
-            setSortDir('asc');
-        }
+        if (sortCol === col) setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
+        else { setSortCol(col); setSortDir('asc'); }
+    };
+
+    const downloadSampleCSV = () => {
+        const header = 'RollNumber,Name,Email,Branch,Year,Semester,Section,Phone,Gender,DateOfAdmission,Status';
+        const sampleRow = '24BD1A0501,Rahul Sharma,24bd1a0501@kmit.in,CSE,1,1,A,9876543210,Male,2024-08-01,active';
+        const blob = new Blob([[header, sampleRow].join('\n')], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'KMIT_Student_Import_Template.csv';
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     const hasFilters = debSearch || yearF || semF || sectionF || branchF || statusF;
@@ -188,7 +185,7 @@ export default function AdminStudents() {
     return (
         <DashboardLayout role="admin">
             <div className="space-y-6 pb-20 max-w-[100rem] mx-auto">
-                
+
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-slate-200/80">
                     <div className="flex items-center gap-3">
@@ -197,16 +194,19 @@ export default function AdminStudents() {
                         </div>
                         <div>
                             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Student Directory</h1>
-                            <p className="text-slate-500 text-xs font-medium mt-0.5">{totalCount} Total Students Enrolled</p>
+                            <p className="text-slate-500 text-xs font-semibold mt-0.5">{totalCount.toLocaleString()} Total Students Enrolled (Database Synchronized)</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2.5 flex-wrap">
-                        <button onClick={() => setShowPromoteModal(true)} className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition-all shadow-xs cursor-pointer">
+                        <button onClick={() => setShowPromoteModal(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition-all shadow-xs cursor-pointer active:scale-95">
                             <Award size={15} /> Promote Workflow
                         </button>
-                        <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-xs cursor-pointer">
+                        <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-xs cursor-pointer active:scale-95">
                             <Upload size={15} /> CSV Import
+                        </button>
+                        <button onClick={downloadSampleCSV} title="Download Sample CSV Template" className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition-all shadow-xs cursor-pointer">
+                            <Download size={14} /> Sample CSV
                         </button>
                         <button onClick={fetchStudents} className="p-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-all cursor-pointer shadow-xs">
                             <RefreshCw size={15} />
@@ -229,25 +229,25 @@ export default function AdminStudents() {
                     <select value={branchF} onChange={e => { setBranchF(e.target.value); setPage(1); }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Branches</option>
-                        {filterOptions.branches.map(b => <option key={b} value={b}>{b}</option>)}
+                        {filterOptions.branches?.map(b => <option key={b} value={b}>{b}</option>)}
                     </select>
 
                     <select value={yearF} onChange={e => { setYearF(e.target.value); setPage(1); }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Years</option>
-                        {filterOptions.years.map(y => <option key={y} value={y}>Year {y}</option>)}
+                        {filterOptions.years?.map(y => <option key={y} value={y}>Year {y}</option>)}
                     </select>
 
                     <select value={semF} onChange={e => { setSemF(e.target.value); setPage(1); }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Semesters</option>
-                        {filterOptions.semesters.map(s => <option key={s} value={s}>Sem {s}</option>)}
+                        {filterOptions.semesters?.map(s => <option key={s} value={s}>Sem {s}</option>)}
                     </select>
 
                     <select value={sectionF} onChange={e => { setSectionF(e.target.value); setPage(1); }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Sections</option>
-                        {filterOptions.sections.map(sec => <option key={sec} value={sec}>Sec {sec}</option>)}
+                        {filterOptions.sections?.map(sec => <option key={sec} value={sec}>Sec {sec}</option>)}
                     </select>
 
                     <select value={statusF} onChange={e => { setStatusF(e.target.value); setPage(1); }}
@@ -274,7 +274,7 @@ export default function AdminStudents() {
                                 Suspend Selected
                             </button>
                             <button onClick={() => handleBulkSuspend(false)} className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold cursor-pointer hover:bg-emerald-500/30">
-                                Reinstate Selected
+                                Reactivate Selected
                             </button>
                             <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold cursor-pointer hover:bg-rose-500/30">
                                 Delete Selected
@@ -316,7 +316,7 @@ export default function AdminStudents() {
                                     <tr><td colSpan={8} className="py-16 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">No student records found</td></tr>
                                 ) : (
                                     students.map(s => (
-                                        <tr key={s.id} className="hover:bg-slate-50/80 transition-colors group">
+                                        <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
                                             <td className="p-3.5 text-center">
                                                 <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => handleSelectOne(s.id)} className="rounded text-slate-900 cursor-pointer" />
                                             </td>
@@ -330,9 +330,10 @@ export default function AdminStudents() {
                                             <td className="px-4 py-3.5"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                             <td className="px-4 py-3.5">
                                                 <div className="flex items-center gap-1.5">
-                                                    <button onClick={() => setUserModal({ isNew: false, user: s })} title="Edit" className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 cursor-pointer"><Edit3 size={13} /></button>
-                                                    <button onClick={() => handleSuspend(s)} title={s.isSuspended ? 'Reinstate' : 'Suspend'} className={`p-1.5 rounded-lg border cursor-pointer ${s.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}><Ban size={13} /></button>
-                                                    <button onClick={() => handleDelete(s)} title="Delete" className="p-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer"><Trash2 size={13} /></button>
+                                                    <button onClick={() => setViewingProfile(s)} title="View Student Profile" className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 cursor-pointer transition-all"><Eye size={13} /></button>
+                                                    <button onClick={() => setUserModal({ isNew: false, user: s })} title="Edit Student" className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 cursor-pointer transition-all"><Edit3 size={13} /></button>
+                                                    <button onClick={() => handleSuspend(s)} title={s.isSuspended ? 'Reactivate' : 'Suspend'} className={`p-1.5 rounded-lg border cursor-pointer transition-all ${s.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}><Ban size={13} /></button>
+                                                    <button onClick={() => handleDelete(s)} title="Delete Student" className="p-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer transition-all"><Trash2 size={13} /></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -345,7 +346,7 @@ export default function AdminStudents() {
                     {/* Pagination */}
                     {!loading && totalPages > 1 && (
                         <div className="flex items-center justify-between px-5 py-3 border-t border-slate-200 bg-slate-50/50">
-                            <p className="text-xs text-slate-500 font-medium">Page {page} of {totalPages} — {totalCount} total</p>
+                            <p className="text-xs text-slate-500 font-medium">Page {page} of {totalPages} — {totalCount.toLocaleString()} total students</p>
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold text-xs disabled:opacity-40 cursor-pointer hover:bg-slate-100">← Prev</button>
                                 <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold text-xs disabled:opacity-40 cursor-pointer hover:bg-slate-100">Next →</button>
@@ -359,7 +360,8 @@ export default function AdminStudents() {
             {/* Modals */}
             {userModal && <UserModal isNew={userModal.isNew} user={userModal.user} defaultRole="student" onClose={() => setUserModal(null)} onSave={handleSave} />}
             {showImportModal && <BulkImportModal onClose={() => setShowImportModal(false)} onSuccess={() => { fetchStudents(); invalidate(); }} />}
-            {showPromoteModal && <PromoteModal selectedIds={selectedIds} filterState={{ year: yearF, semester: semF, branch: branchF, section: sectionF }} onClose={() => setShowPromoteModal(false)} onSuccess={() => { fetchStudents(); invalidate(); }} />}
+            {showPromoteModal && <PromoteModal onClose={() => setShowPromoteModal(false)} onSuccess={() => { fetchStudents(); invalidate(); }} />}
+            {viewingProfile && <StudentProfileModal student={viewingProfile} onClose={() => setViewingProfile(null)} onEdit={(s) => setUserModal({ isNew: false, user: s })} onSuspend={handleSuspend} />}
         </DashboardLayout>
     );
 }

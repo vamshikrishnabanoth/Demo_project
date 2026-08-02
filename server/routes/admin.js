@@ -666,7 +666,177 @@ router.post('/promote', auth, adminOnly, async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// POST /admin/import  (bulk CSV import)
+// GET /admin/students/eligible  (Fetch eligible students for Promotion Wizard)
+// ══════════════════════════════════════════════════════════════════════════════
+router.get('/students/eligible', auth, adminOnly, async (req, res) => {
+    try {
+        const { branch, year, semester, section } = req.query;
+        const where = { role: 'student' };
+        if (branch && branch !== 'ALL')   where.studentBranch = branch;
+        if (year && year !== 'ALL')       where.year          = String(year);
+        if (semester && semester !== 'ALL') where.semester    = String(semester);
+        if (section && section !== 'ALL')  where.section       = section;
+
+        const students = await prisma.user.findMany({
+            where,
+            select: {
+                id: true, username: true, name: true, email: true,
+                studentBranch: true, year: true, semester: true, section: true, isSuspended: true
+            },
+            orderBy: [{ year: 'asc' }, { section: 'asc' }, { username: 'asc' }]
+        });
+
+        res.json({ students, count: students.length });
+    } catch (err) {
+        console.error('Eligible students error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /admin/promote/wizard  (Execute 8-step wizard promotion)
+// ══════════════════════════════════════════════════════════════════════════════
+router.post('/promote/wizard', auth, adminOnly, async (req, res) => {
+    try {
+        const { studentIds, targetYear, targetSemester, targetSection } = req.body;
+
+        if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+            return res.status(400).json({ msg: 'No students selected for promotion' });
+        }
+        if (!targetYear || !targetSemester) {
+            return res.status(400).json({ msg: 'Target year and semester are required' });
+        }
+
+        const updateData = {
+            year: String(targetYear),
+            semester: String(targetSemester)
+        };
+        if (targetSection) {
+            updateData.section = targetSection;
+        }
+
+        const result = await prisma.user.updateMany({
+            where: { id: { in: studentIds }, role: 'student' },
+            data: updateData
+        });
+
+        const admin = await prisma.user.findUnique({ where: { id: req.user.id }, select: { name: true, username: true } });
+        await logActivity(
+            req.user.id,
+            admin?.name || admin?.username,
+            'STUDENT_PROMOTED',
+            `${result.count} students promoted to Year ${targetYear} / Sem ${targetSemester}`,
+            null,
+            { count: result.count, targetYear, targetSemester, targetSection }
+        );
+
+        res.json({
+            msg: `Successfully promoted ${result.count} student(s) to Year ${targetYear}, Semester ${targetSemester}${targetSection ? `, Section ${targetSection}` : ''}!`,
+            promotedCount: result.count
+        });
+    } catch (err) {
+        console.error('Wizard promote error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /admin/import/validate  (Pre-validate CSV batch against DB)
+// ══════════════════════════════════════════════════════════════════════════════
+router.post('/import/validate', auth, adminOnly, async (req, res) => {
+    try {
+        const { students } = req.body;
+        if (!students || !Array.isArray(students)) {
+            return res.status(400).json({ msg: 'students array is required' });
+        }
+
+        const usernames = students.map(s => s.rollNumber || s.username).filter(Boolean);
+        const emails    = students.map(s => (s.email || '').toLowerCase()).filter(Boolean);
+
+        // Fetch existing users from DB matching usernames or emails
+        const existingUsers = await prisma.user.findMany({
+            where: {
+                OR: [
+                    { username: { in: usernames } },
+                    { email: { in: emails } }
+                ]
+            },
+            select: { username: true, email: true }
+        });
+
+        const dbUsernames = new Set(existingUsers.map(u => u.username));
+        const dbEmails    = new Set(existingUsers.map(u => u.email.toLowerCase()));
+
+        const seenUsernames = new Set();
+        const seenEmails    = new Set();
+
+        const valid = [];
+        const invalid = [];
+
+        students.forEach((s, idx) => {
+            const rollNumber = (s.rollNumber || s.username || '').trim();
+            const name       = (s.name || s.fullName || '').trim();
+            const email      = (s.email || '').trim().toLowerCase();
+            const branch     = (s.branch || s.studentBranch || '').trim();
+            const year       = String(s.year || '').trim();
+            const semester   = String(s.semester || '').trim();
+            const section    = (s.section || '').trim();
+
+            const rowNum = idx + 1;
+            const reasons = [];
+
+            if (!rollNumber) reasons.push('Missing Roll Number');
+            if (!name)       reasons.push('Missing Full Name');
+            if (!email)      reasons.push('Missing Email');
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) reasons.push('Invalid Email Format');
+            if (!branch)     reasons.push('Missing Branch');
+            if (!year || !['1','2','3','4'].includes(year)) reasons.push('Invalid/Missing Academic Year (1-4)');
+            if (!semester || !['1','2','3','4','5','6','7','8'].includes(semester)) reasons.push('Invalid/Missing Semester (1-8)');
+            if (!section)    reasons.push('Missing Section');
+
+            // DB Duplicates
+            if (rollNumber && dbUsernames.has(rollNumber)) reasons.push(`Roll Number '${rollNumber}' already exists in database`);
+            if (email && dbEmails.has(email))             reasons.push(`Email '${email}' already exists in database`);
+
+            // File Duplicates
+            if (rollNumber && seenUsernames.has(rollNumber)) reasons.push(`Duplicate Roll Number '${rollNumber}' in file`);
+            if (email && seenEmails.has(email))             reasons.push(`Duplicate Email '${email}' in file`);
+
+            if (rollNumber) seenUsernames.add(rollNumber);
+            if (email)      seenEmails.add(email);
+
+            if (reasons.length > 0) {
+                invalid.push({ rowNum, rollNumber, name, email, reasons: reasons.join('; ') });
+            } else {
+                valid.push({
+                    username: rollNumber,
+                    name,
+                    email,
+                    password: `${rollNumber}@kk`,
+                    studentBranch: branch,
+                    year,
+                    semester,
+                    section,
+                    role: 'student'
+                });
+            }
+        });
+
+        res.json({
+            total: students.length,
+            validCount: valid.length,
+            invalidCount: invalid.length,
+            valid,
+            invalid
+        });
+    } catch (err) {
+        console.error('Validation error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /admin/import  (bulk CSV import with transaction)
 // ══════════════════════════════════════════════════════════════════════════════
 router.post('/import', auth, adminOnly, async (req, res) => {
     const { students } = req.body;
