@@ -182,7 +182,11 @@ export default function LiveQuizWaitAnimation({
             title: title || 'Waiting for Host...',
             subtitle: subtitle || 'Session active — quiz will start when teacher begins.',
             detail: detail || `${readyCount} ready${joiningCount ? `, ${joiningCount} joining` : ''}`,
-            visual: <QuizSignalRadarBeacon count={readyCount + joiningCount || 0} />,
+            visual: (
+                <div className="h-64 flex items-center justify-center">
+                    <div className="loader"></div>
+                </div>
+            ),
             icon: <Users size={16} />
         },
         'synchronizing-answers': {
@@ -220,7 +224,11 @@ export default function LiveQuizWaitAnimation({
         title: title || 'Waiting...',
         subtitle: subtitle || 'Processing session...',
         detail: detail || 'Connecting...',
-        visual: <QuizSignalRadarBeacon count={0} />,
+        visual: (
+            <div className="h-64 flex items-center justify-center">
+                <div className="loader"></div>
+            </div>
+        ),
         icon: <Activity size={16} />
     };
 
