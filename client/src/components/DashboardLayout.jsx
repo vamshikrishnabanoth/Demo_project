@@ -133,10 +133,6 @@ export default function DashboardLayout({ children, role }) {
     ];
     const adminLinks = [
         { name: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
-        { name: 'Students',  path: '/admin-dashboard?tab=students',  icon: GraduationCap },
-        { name: 'Teachers',  path: '/admin-dashboard?tab=teachers',  icon: UserCheck },
-        { name: 'Admins',    path: '/admin-dashboard?tab=admins',    icon: Shield },
-        { name: 'All Users', path: '/admin-dashboard?tab=directory', icon: User },
         { name: 'Profile',   path: '/profile',         icon: User },
     ];
 
