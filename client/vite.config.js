@@ -51,4 +51,11 @@ export default defineConfig({
       overlay: false, // Don't show full-screen error overlay (less rerenders)
     },
   },
+
+  // Vitest unit testing configurations
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
+  },
 })
