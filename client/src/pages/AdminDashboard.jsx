@@ -8,7 +8,7 @@ import {
     TrendingUp, Clock, Zap, CheckCircle2, Megaphone,
     ArrowUpRight, BarChart2, Search, Edit3, Trash2, Ban,
     Plus, X, Upload, Award, ArrowUpDown, Eye, Download,
-    Briefcase, BookOpen, Mail, Crown, Filter, Layers
+    Briefcase, BookOpen, Mail, Crown, Filter, Layers, RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -351,31 +351,43 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
     const [selectedIds, setSelectedIds] = useState([]);
 
     const [search, setSearch] = useState('');
-    const [debSearch, setDebSearch] = useState('');
     const [yearF, setYearF] = useState('');
     const [semF, setSemF] = useState('');
     const [sectionF, setSectionF] = useState('');
     const [branchF, setBranchF] = useState('');
     const [statusF, setStatusF] = useState('');
 
-    const [sortCol, setSortCol] = useState('');
-    const [sortDir, setSortDir] = useState('asc');
-
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const limit = 50;
 
-    useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
-        return () => clearTimeout(t);
-    }, [search]);
+    const resetAllFilters = () => {
+        setSearch('');
+        setYearF('');
+        setSemF('');
+        setSectionF('');
+        setBranchF('');
+        setStatusF('');
+        setPage(1);
+    };
 
-    const fetchStudents = useCallback(async () => {
+    const isFiltered = search || yearF || semF || sectionF || branchF || statusF;
+
+    const fetchStudents = useCallback(async (targetPage = page) => {
         setLoading(true);
         try {
             const res = await api.get('/admin/students', {
-                params: { page, limit, search: debSearch, year: yearF, semester: semF, section: sectionF, branch: branchF, status: statusF, sort: sortCol, sortDir }
+                params: {
+                    page: targetPage,
+                    limit,
+                    search: search.trim(),
+                    year: yearF,
+                    semester: semF,
+                    section: sectionF,
+                    branch: branchF,
+                    status: statusF
+                }
             });
             setStudents(res.data.students || []);
             setTotalPages(res.data.totalPages || 1);
@@ -384,9 +396,14 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
         } catch {
             toast.error('Failed to load student records');
         } finally { setLoading(false); }
-    }, [page, debSearch, yearF, semF, sectionF, branchF, statusF, sortCol, sortDir]);
+    }, [page, limit, search, yearF, semF, sectionF, branchF, statusF]);
 
-    useEffect(() => { fetchStudents(); }, [fetchStudents]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchStudents(page);
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [search, yearF, semF, sectionF, branchF, statusF, page, fetchStudents]);
 
     const handleDelete = async (s) => {
         if (s.id === currentUser?.id) return;
@@ -453,12 +470,12 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                             type="text"
                             placeholder="Search student name, roll number, email..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                             className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20"
                         />
                         {search && (
                             <button 
-                                onClick={() => setSearch('')} 
+                                onClick={() => { setSearch(''); setPage(1); }} 
                                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
                                 aria-label="Clear search"
                             >
@@ -507,6 +524,15 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     <option value="active">Active</option>
                     <option value="suspended">Suspended</option>
                 </select>
+
+                {isFiltered && (
+                    <button 
+                        onClick={resetAllFilters}
+                        className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                    >
+                        <RotateCcw size={14} /> Reset Filters
+                    </button>
+                )}
 
                 {selectedIds.length > 0 && (
                     <div className="ml-auto flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
@@ -621,7 +647,6 @@ function AdminTeachersTab({ setUserModal }) {
     const [filterOptions, setFilterOptions] = useState({ departments: [] });
 
     const [search, setSearch] = useState('');
-    const [debSearch, setDebSearch] = useState('');
     const [deptFilter, setDeptFilter] = useState('');
     const [statusF, setStatusF] = useState('');
 
@@ -630,16 +655,20 @@ function AdminTeachersTab({ setUserModal }) {
     const [totalCount, setTotalCount] = useState(0);
     const limit = 50;
 
-    useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
-        return () => clearTimeout(t);
-    }, [search]);
+    const resetAllFilters = () => {
+        setSearch('');
+        setDeptFilter('');
+        setStatusF('');
+        setPage(1);
+    };
 
-    const fetchTeachers = useCallback(async () => {
+    const isFiltered = search || deptFilter || statusF;
+
+    const fetchTeachers = useCallback(async (targetPage = page) => {
         setLoading(true);
         try {
             const res = await api.get('/admin/teachers', {
-                params: { page, limit, search: debSearch, department: deptFilter, status: statusF }
+                params: { page: targetPage, limit, search: search.trim(), department: deptFilter, status: statusF }
             });
             setTeachers(res.data.teachers || []);
             setTotalPages(res.data.totalPages || 1);
@@ -648,9 +677,14 @@ function AdminTeachersTab({ setUserModal }) {
         } catch {
             toast.error('Failed to load faculty records');
         } finally { setLoading(false); }
-    }, [page, debSearch, deptFilter, statusF]);
+    }, [page, limit, search, deptFilter, statusF]);
 
-    useEffect(() => { fetchTeachers(); }, [fetchTeachers]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchTeachers(page);
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [search, deptFilter, statusF, page, fetchTeachers]);
 
     const handleDelete = async (t) => {
         if (t.id === currentUser?.id) return;
@@ -689,19 +723,32 @@ function AdminTeachersTab({ setUserModal }) {
                             type="text"
                             placeholder="Search faculty name, department, email..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                             className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
                         />
                         {search && (
-                            <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
+                            <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
                                 <X size={16} />
                             </button>
                         )}
                     </div>
-                    <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                    <select value={deptFilter} onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
                         <option value="">All Departments</option>
                         {(filterOptions.departments || []).map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
+                    <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                    {isFiltered && (
+                        <button 
+                            onClick={resetAllFilters}
+                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                        >
+                            <RotateCcw size={14} /> Reset
+                        </button>
+                    )}
                 </div>
                 <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-emerald-700 transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
@@ -786,24 +833,30 @@ function AdminAdminsTab({ setUserModal }) {
     const [admins, setAdmins] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
-    const [debSearch, setDebSearch] = useState('');
     const [statusF, setStatusF] = useState('');
 
-    useEffect(() => {
-        const t = setTimeout(() => setDebSearch(search.trim()), 300);
-        return () => clearTimeout(t);
-    }, [search]);
+    const resetAllFilters = () => {
+        setSearch('');
+        setStatusF('');
+    };
+
+    const isFiltered = search || statusF;
 
     const fetchAdmins = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get('/admin/admins', { params: { search: debSearch, status: statusF } });
+            const res = await api.get('/admin/admins', { params: { search: search.trim(), status: statusF } });
             setAdmins(res.data.admins || []);
         } catch { toast.error('Failed to load system administrators'); }
         finally { setLoading(false); }
-    }, [debSearch, statusF]);
+    }, [search, statusF]);
 
-    useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchAdmins();
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [search, statusF, fetchAdmins]);
 
     const handleDelete = async (a) => {
         if (a.id === currentUser?.id) { toast.error('You cannot delete your own account.'); return; }
@@ -835,18 +888,33 @@ function AdminAdminsTab({ setUserModal }) {
     return (
         <div className="space-y-6">
             <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-                <div className="relative flex-1 min-w-[280px]">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search administrators..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20"
-                    />
-                    {search && (
-                        <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
-                            <X size={16} />
+                <div className="flex items-center gap-4 flex-1 min-w-[280px]">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search administrators..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20"
+                        />
+                        {search && (
+                            <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
+                                <X size={16} />
+                            </button>
+                        )}
+                    </div>
+                    <select value={statusF} onChange={(e) => setStatusF(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                    {isFiltered && (
+                        <button 
+                            onClick={resetAllFilters}
+                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                        >
+                            <RotateCcw size={14} /> Reset
                         </button>
                     )}
                 </div>
@@ -935,7 +1003,6 @@ function AdminDirectoryTab({ setUserModal }) {
     const [selectedIds, setSelectedIds] = useState([]);
 
     const [search, setSearch] = useState('');
-    const [debSearch, setDebSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('');
 
@@ -944,25 +1011,40 @@ function AdminDirectoryTab({ setUserModal }) {
     const [totalCount, setTotalCount] = useState(0);
     const limit = 30;
 
-    useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
-        return () => clearTimeout(t);
-    }, [search]);
+    const resetAllFilters = () => {
+        setSearch('');
+        setRoleFilter('all');
+        setStatusFilter('');
+        setPage(1);
+    };
 
-    const fetchUsers = useCallback(async () => {
+    const isFiltered = search || (roleFilter && roleFilter !== 'all') || statusFilter;
+
+    const fetchUsers = useCallback(async (targetPage = page) => {
         setLoading(true);
         try {
             const res = await api.get('/admin/users', {
-                params: { page, limit, search: debSearch, role: roleFilter === 'all' ? '' : roleFilter, status: statusFilter }
+                params: {
+                    page: targetPage,
+                    limit,
+                    search: search.trim(),
+                    role: roleFilter === 'all' ? '' : roleFilter,
+                    status: statusFilter
+                }
             });
             setUsers(res.data.users || []);
             setTotalPages(res.data.totalPages || 1);
             setTotalCount(res.data.totalCount || 0);
         } catch { toast.error('Failed to load system users'); }
         finally { setLoading(false); }
-    }, [page, debSearch, roleFilter, statusFilter]);
+    }, [page, limit, search, roleFilter, statusFilter]);
 
-    useEffect(() => { fetchUsers(); }, [fetchUsers]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchUsers(page);
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [search, roleFilter, statusFilter, page, fetchUsers]);
 
     const handleDelete = async (u) => {
         if (u.id === currentUser?.id) { toast.error('You cannot delete your own account.'); return; }
@@ -1022,11 +1104,11 @@ function AdminDirectoryTab({ setUserModal }) {
                         type="text"
                         placeholder="Search global users by name, username, email..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                         className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-600 focus:ring-2 focus:ring-slate-600/20"
                     />
                     {search && (
-                        <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
+                        <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
                             <X size={16} />
                         </button>
                     )}
@@ -1039,6 +1121,19 @@ function AdminDirectoryTab({ setUserModal }) {
                         <option value="teacher">Teacher</option>
                         <option value="admin">Admin</option>
                     </select>
+                    <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                    {isFiltered && (
+                        <button 
+                            onClick={resetAllFilters}
+                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                        >
+                            <RotateCcw size={14} /> Reset
+                        </button>
+                    )}
                     <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
@@ -1183,7 +1278,7 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Master Tab Bar Navigation — Active = Solid Black (#0f172a) Fill + Crisp White Text */}
+                {/* Master Tab Bar Navigation */}
                 <div className="bg-white border-2 border-slate-200 p-2 rounded-3xl flex items-center gap-2 shadow-sm overflow-x-auto premium-scrollbar">
                     <button
                         onClick={() => setActiveTab('overview')}
