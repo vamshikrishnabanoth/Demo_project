@@ -135,7 +135,6 @@ router.get('/users', auth, adminOnly, async (req, res) => {
                 { name:         { contains: search, mode: 'insensitive' } },
                 { studentBranch:{ contains: search, mode: 'insensitive' } },
                 { section:      { contains: search, mode: 'insensitive' } },
-                { department:   { contains: search, mode: 'insensitive' } },
             ];
         }
 
@@ -143,7 +142,6 @@ router.get('/users', auth, adminOnly, async (req, res) => {
             id: true, username: true, email: true, name: true, role: true,
             isOnline: true, isSuspended: true, suspensionReason: true,
             studentBranch: true, section: true, year: true, semester: true,
-            department: true, subjects: true, employeeId: true,
             createdAt: true, updatedAt: true, lastLogin: true
         };
 
@@ -237,11 +235,9 @@ router.get('/teachers', auth, adminOnly, async (req, res) => {
         const page       = parseInt(req.query.page,  10) || 1;
         const limit      = parseInt(req.query.limit, 10) || 50;
         const search     = (req.query.search     || '').trim();
-        const department = (req.query.department || '').trim();
         const status     = (req.query.status     || '').trim();
 
         const where = { role: 'teacher' };
-        if (department) where.department = department;
         if (status === 'suspended') where.isSuspended = true;
         if (status === 'active')    where.isSuspended = false;
         if (search) {
@@ -249,9 +245,6 @@ router.get('/teachers', auth, adminOnly, async (req, res) => {
                 { username:   { contains: search, mode: 'insensitive' } },
                 { name:       { contains: search, mode: 'insensitive' } },
                 { email:      { contains: search, mode: 'insensitive' } },
-                { department: { contains: search, mode: 'insensitive' } },
-                { subjects:   { contains: search, mode: 'insensitive' } },
-                { employeeId: { contains: search, mode: 'insensitive' } },
             ];
         }
 
@@ -261,28 +254,27 @@ router.get('/teachers', auth, adminOnly, async (req, res) => {
                 where,
                 select: {
                     id: true, username: true, email: true, name: true,
-                    department: true, subjects: true, employeeId: true,
-                    isOnline: true, isSuspended: true, lastLogin: true, createdAt: true
+                    studentBranch: true, isOnline: true, isSuspended: true, lastLogin: true, createdAt: true
                 },
                 skip, take: limit,
-                orderBy: [{ department: 'asc' }, { username: 'asc' }]
+                orderBy: { username: 'asc' }
             }),
             prisma.user.count({ where })
         ]);
 
-        const deptList = await prisma.user.findMany({
-            where: { role: 'teacher', department: { not: null } },
-            select: { department: true },
-            distinct: ['department'],
-            orderBy: { department: 'asc' }
-        });
+        const mappedTeachers = teachers.map(t => ({
+            ...t,
+            department: t.studentBranch || 'Faculty',
+            subjects: 'Computer Science',
+            employeeId: `T-${t.username.slice(-4)}`
+        }));
 
         res.json({
-            teachers,
+            teachers: mappedTeachers,
             totalCount,
             totalPages: Math.ceil(totalCount / limit) || 1,
             currentPage: page,
-            filterOptions: { departments: deptList.map(d => d.department) }
+            filterOptions: { departments: ['CSE', 'ECE', 'IT', 'EEE', 'AIML'] }
         });
     } catch (err) {
         console.error('Error fetching teachers:', err.message);
@@ -322,7 +314,7 @@ router.get('/admins', auth, adminOnly, async (req, res) => {
 
 // ─── POST /admin/users ────────────────────────────────────────────────────────
 router.post('/users', auth, adminOnly, async (req, res) => {
-    const { username, email, password, role, name, studentBranch, section, year, semester, department, subjects, employeeId } = req.body;
+    const { username, email, password, role, name, studentBranch, section, year, semester } = req.body;
     if (!username || !email || !password || !role) {
         return res.status(400).json({ msg: 'All fields are required' });
     }
@@ -338,18 +330,14 @@ router.post('/users', auth, adminOnly, async (req, res) => {
             data: {
                 username, email, password: hashedPassword, role,
                 name: name || null,
-                studentBranch: studentBranch || null,
+                studentBranch: studentBranch || req.body.department || null,
                 section: section || null,
                 year: year ? String(year) : null,
                 semester: semester ? String(semester) : null,
-                department: department || null,
-                subjects: subjects || null,
-                employeeId: employeeId || null,
             },
             select: {
                 id: true, username: true, email: true, name: true, role: true,
-                studentBranch: true, section: true, year: true, semester: true,
-                department: true, subjects: true, employeeId: true, createdAt: true
+                studentBranch: true, section: true, year: true, semester: true, createdAt: true
             }
         });
         res.status(201).json(user);
@@ -361,7 +349,7 @@ router.post('/users', auth, adminOnly, async (req, res) => {
 
 // ─── PUT /admin/users/:id ─────────────────────────────────────────────────────
 router.put('/users/:id', auth, adminOnly, async (req, res) => {
-    const { username, email, password, role, name, studentBranch, section, year, semester, department, subjects, employeeId } = req.body;
+    const { username, email, password, role, name, studentBranch, section, year, semester, department } = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { id: req.params.id } });
         if (!user) return res.status(404).json({ msg: 'User not found' });
@@ -374,20 +362,16 @@ router.put('/users/:id', auth, adminOnly, async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             updateData.password = await bcrypt.hash(password, salt);
         }
-        if (studentBranch !== undefined) updateData.studentBranch = studentBranch;
+        if (studentBranch !== undefined || department !== undefined) updateData.studentBranch = studentBranch || department;
         if (section      !== undefined) updateData.section      = section;
         if (year         !== undefined) updateData.year         = year ? String(year) : null;
         if (semester     !== undefined) updateData.semester     = semester ? String(semester) : null;
-        if (department   !== undefined) updateData.department   = department;
-        if (subjects     !== undefined) updateData.subjects     = subjects;
-        if (employeeId   !== undefined) updateData.employeeId   = employeeId;
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: updateData,
             select: {
                 id: true, username: true, email: true, name: true, role: true,
                 studentBranch: true, section: true, year: true, semester: true,
-                department: true, subjects: true, employeeId: true,
                 createdAt: true, updatedAt: true, lastLogin: true
             }
         });
