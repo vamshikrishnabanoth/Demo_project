@@ -215,27 +215,76 @@ router.get('/students', auth, adminOnly, async (req, res) => {
         const section  = (req.query.section  || '').trim();
         const branch   = (req.query.branch   || '').trim();
         const status   = (req.query.status   || '').trim();
-        const sortCol  = req.query.sort      || 'username';
+        const sortCol  = req.query.sort      || '';
         const sortDir  = req.query.sortDir   || 'asc';
 
+        console.log('[Admin Students API] Incoming query params:', { page, limit, search, year, semester, section, branch, status, sortCol, sortDir });
+
         const where = { role: 'student' };
-        if (year)     where.year          = year;
-        if (semester) where.semester      = semester;
-        if (section)  where.section       = section;
-        if (branch)   where.studentBranch = branch;
+
+        if (year) {
+            const numY = parseInt(year, 10);
+            const yearOptions = [year];
+            if (!isNaN(numY)) yearOptions.push(String(numY));
+            where.year = { in: Array.from(new Set(yearOptions)) };
+        }
+
+        if (semester) {
+            const numS = parseInt(semester, 10);
+            const semOptions = [semester];
+            if (!isNaN(numS)) semOptions.push(String(numS));
+            where.semester = { in: Array.from(new Set(semOptions)) };
+        }
+
+        if (section)  where.section       = { equals: section, mode: 'insensitive' };
+        if (branch)   where.studentBranch = { equals: branch, mode: 'insensitive' };
         if (status === 'suspended') where.isSuspended = true;
         if (status === 'active')    where.isSuspended = false;
+
         if (search) {
             where.OR = [
-                { username: { contains: search, mode: 'insensitive' } },
-                { name:     { contains: search, mode: 'insensitive' } },
-                { email:    { contains: search, mode: 'insensitive' } },
-                { section:  { contains: search, mode: 'insensitive' } },
+                { username:      { contains: search, mode: 'insensitive' } },
+                { name:          { contains: search, mode: 'insensitive' } },
+                { email:         { contains: search, mode: 'insensitive' } },
+                { studentBranch: { contains: search, mode: 'insensitive' } },
+                { section:       { contains: search, mode: 'insensitive' } },
             ];
         }
 
-        const orderBy = safeSort(sortCol, sortDir);
-        const skip    = (page - 1) * limit;
+        // Mandated Multi-Column Sorting Order:
+        // 1. Year (asc)
+        // 2. Semester (asc)
+        // 3. Branch (asc)
+        // 4. Section (asc)
+        // 5. Roll Number / Username (asc)
+        // 6. Name (asc)
+        const defaultSortFields = [
+            { year: 'asc' },
+            { semester: 'asc' },
+            { studentBranch: 'asc' },
+            { section: 'asc' },
+            { username: 'asc' },
+            { name: 'asc' }
+        ];
+
+        let orderBy = [];
+        if (sortCol && SAFE_USER_SORT_COLS.has(sortCol)) {
+            const primaryDir = sortDir === 'desc' ? 'desc' : 'asc';
+            orderBy.push({ [sortCol]: primaryDir });
+            defaultSortFields.forEach(field => {
+                const key = Object.keys(field)[0];
+                if (key !== sortCol) {
+                    orderBy.push(field);
+                }
+            });
+        } else {
+            orderBy = defaultSortFields;
+        }
+
+        console.log('[Admin Students API] Final DB filter (where):', JSON.stringify(where, null, 2));
+        console.log('[Admin Students API] Final DB sort (orderBy):', JSON.stringify(orderBy, null, 2));
+
+        const skip = (page - 1) * limit;
 
         const [students, totalCount, years, semesters, sections, branches] = await Promise.all([
             prisma.user.findMany({
@@ -244,9 +293,9 @@ router.get('/students', auth, adminOnly, async (req, res) => {
                 skip, take: limit, orderBy
             }),
             prisma.user.count({ where }),
-            prisma.user.findMany({ where: { role: 'student', year: { not: null } },     select: { year: true },          distinct: ['year'],          orderBy: { year: 'asc' } }),
-            prisma.user.findMany({ where: { role: 'student', semester: { not: null } }, select: { semester: true },      distinct: ['semester'],      orderBy: { semester: 'asc' } }),
-            prisma.user.findMany({ where: { role: 'student', section: { not: null } },  select: { section: true },       distinct: ['section'],       orderBy: { section: 'asc' } }),
+            prisma.user.findMany({ where: { role: 'student', year: { not: null } },          select: { year: true },          distinct: ['year'],          orderBy: { year: 'asc' } }),
+            prisma.user.findMany({ where: { role: 'student', semester: { not: null } },      select: { semester: true },      distinct: ['semester'],      orderBy: { semester: 'asc' } }),
+            prisma.user.findMany({ where: { role: 'student', section: { not: null } },       select: { section: true },       distinct: ['section'],       orderBy: { section: 'asc' } }),
             prisma.user.findMany({ where: { role: 'student', studentBranch: { not: null } }, select: { studentBranch: true }, distinct: ['studentBranch'], orderBy: { studentBranch: 'asc' } }),
         ]);
 

@@ -52,7 +52,7 @@ export default function AdminStudents() {
     const [branchF, setBranchF] = useState('');
     const [statusF, setStatusF] = useState('');
 
-    const [sortCol, setSortCol] = useState('username');
+    const [sortCol, setSortCol] = useState('');
     const [sortDir, setSortDir] = useState('asc');
 
     const [page, setPage] = useState(1);
