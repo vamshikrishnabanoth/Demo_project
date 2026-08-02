@@ -293,9 +293,9 @@ export default function AdminUsers() {
                                             </td>
                                             <td className="px-4 py-3.5 whitespace-nowrap"><StatusBadge suspended={u.isSuspended} online={u.isOnline} /></td>
                                             <td className="px-4 py-3.5">
-                                                <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-1.5">
                                                     <button onClick={() => setModal({ isNew: false, user: u })} title="Edit" className="w-7 h-7 flex items-center justify-center rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 cursor-pointer"><Edit3 size={13} /></button>
-                                                    <button onClick={() => handleSuspend(u)} title={u.isSuspended ? 'Reinstate' : 'Suspend'} disabled={u.id === currentUser?.id} className={`w-7 h-7 flex items-center justify-center rounded-lg border cursor-pointer disabled:opacity-30 ${u.isSuspended ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}><Ban size={13} /></button>
+                                                    <button onClick={() => handleSuspend(u)} title={u.isSuspended ? 'Reinstate' : 'Suspend'} disabled={u.id === currentUser?.id} className={`w-7 h-7 flex items-center justify-center rounded-lg border cursor-pointer disabled:opacity-30 ${u.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}><Ban size={13} /></button>
                                                     <button onClick={() => handleDelete(u)} title="Delete" disabled={u.id === currentUser?.id} className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer disabled:opacity-30"><Trash2 size={13} /></button>
                                                 </div>
                                             </td>

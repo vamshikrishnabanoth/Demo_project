@@ -329,10 +329,10 @@ export default function AdminStudents() {
                                             </td>
                                             <td className="px-4 py-3.5"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                             <td className="px-4 py-3.5">
-                                                <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={() => setUserModal({ isNew: false, user: s })} title="Edit" className="p-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 cursor-pointer"><Edit3 size={13} /></button>
-                                                    <button onClick={() => handleSuspend(s)} title={s.isSuspended ? 'Reinstate' : 'Suspend'} className={`p-1.5 rounded-lg border cursor-pointer ${s.isSuspended ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}><Ban size={13} /></button>
-                                                    <button onClick={() => handleDelete(s)} title="Delete" className="p-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 cursor-pointer"><Trash2 size={13} /></button>
+                                                <div className="flex items-center gap-1.5">
+                                                    <button onClick={() => setUserModal({ isNew: false, user: s })} title="Edit" className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 cursor-pointer"><Edit3 size={13} /></button>
+                                                    <button onClick={() => handleSuspend(s)} title={s.isSuspended ? 'Reinstate' : 'Suspend'} className={`p-1.5 rounded-lg border cursor-pointer ${s.isSuspended ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}><Ban size={13} /></button>
+                                                    <button onClick={() => handleDelete(s)} title="Delete" className="p-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer"><Trash2 size={13} /></button>
                                                 </div>
                                             </td>
                                         </tr>
