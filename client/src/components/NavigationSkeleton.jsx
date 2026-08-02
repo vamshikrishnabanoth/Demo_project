@@ -41,7 +41,7 @@ const DashboardSkeleton = () => (
     >
         {/* Navbar skeleton */}
         <div
-            className="h-20 border-b sticky top-0 z-50 flex items-center px-8 gap-8"
+            className="h-16 sm:h-20 border-b sticky top-0 z-50 flex items-center px-3 sm:px-6 md:px-8 gap-4 justify-between"
             style={{
                 background: 'rgba(255,255,255,0.02)',
                 borderColor: 'var(--border-color)',
@@ -49,17 +49,19 @@ const DashboardSkeleton = () => (
             }}
         >
             {/* Logo */}
-            <ShimmerBlock className="h-10 w-32" />
-            {/* Nav links */}
-            <div className="hidden md:flex gap-4">
-                <ShimmerBlock className="h-9 w-20" />
-                <ShimmerBlock className="h-9 w-24" />
+            <div className="flex items-center gap-3">
+                <ShimmerBlock className="h-8 sm:h-9 w-28 sm:w-36 rounded-xl" />
+                {/* Nav links */}
+                <div className="hidden lg:flex gap-2 ml-4">
+                    <ShimmerBlock className="h-8 w-20 rounded-xl" />
+                    <ShimmerBlock className="h-8 w-24 rounded-xl" />
+                </div>
             </div>
             {/* Right side */}
-            <div className="ml-auto flex items-center gap-3">
-                <ShimmerBlock className="h-7 w-14 rounded-full" />
-                <ShimmerBlock className="h-9 w-9 rounded-2xl" />
-                <ShimmerBlock className="h-9 w-9 rounded-2xl" />
+            <div className="flex items-center gap-2 sm:gap-3">
+                <ShimmerBlock className="h-6 sm:h-7 w-12 sm:w-16 rounded-full" />
+                <ShimmerBlock className="h-8 w-8 sm:w-28 rounded-xl" />
+                <ShimmerBlock className="h-8 w-8 sm:w-20 rounded-xl" />
             </div>
         </div>
 
