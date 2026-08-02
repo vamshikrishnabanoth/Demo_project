@@ -195,6 +195,11 @@ export default function useExamProctoring({
                         });
                     }
 
+                    // Display warning toast to user
+                    if (newCount < maxTabSwitches) {
+                        toast.error(`⚠️ Security Warning: Tab switching detected! (${newCount}/${maxTabSwitches} warnings). Exceeding this limit auto-submits your exam.`, { duration: 5000 });
+                    }
+
                     if (newCount >= maxTabSwitches) {
                         triggerAutoSubmit(`Tab switch limit reached (${newCount}/${maxTabSwitches})`);
                     }
@@ -265,10 +270,15 @@ export default function useExamProctoring({
                     timestamp: new Date(),
                 });
             }
+            toast.error("⚠️ Focus Lost! Return to the exam tab immediately to avoid automatic submission.", {
+                id: 'focus-loss-alert',
+                duration: 60000
+            });
         };
 
         const handleFocus = () => {
             stopFocusTimer();
+            toast.dismiss('focus-loss-alert');
         };
 
         window.addEventListener('blur', handleBlur);
@@ -311,6 +321,10 @@ export default function useExamProctoring({
                 } catch (_) {}
 
                 const action = isPrintScreen || isScreenshotCombo ? 'screenshot_attempt' : 'devtools_shortcut';
+                
+                const label = isPrintScreen || isScreenshotCombo ? 'Screenshot shortcut' : 'Developer tools key';
+                toast.error(`⚠️ Security Violation: ${label} detected and blocked! This activity has been recorded.`, { duration: 5000 });
+
                 recordViolation(action, { key: e.key });
             }
         };
@@ -325,11 +339,13 @@ export default function useExamProctoring({
 
         const blockClipboard = (e) => {
             e.preventDefault();
+            toast.error(`⚠️ Clipboard action (${e.type}) is blocked during the exam.`, { duration: 4000 });
             recordViolation('clipboard_action', { type: e.type });
         };
 
         const blockContextMenu = (e) => {
             e.preventDefault();
+            toast.error("⚠️ Right-click context menu is disabled to maintain exam security.", { duration: 4000 });
             recordViolation('context_menu', {});
         };
 
