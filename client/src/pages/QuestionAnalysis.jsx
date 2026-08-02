@@ -225,9 +225,9 @@ export default function QuestionAnalysis() {
                         <button 
                             onClick={handleGetAIReview} 
                             disabled={loadingAi}
-                            className="ml-auto flex items-center gap-2 bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-300 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50 shadow-xs cursor-pointer"
+                            className="ml-auto btn-ai-review"
                         >
-                            <Sparkles size={14} className="text-purple-700" />
+                            <Sparkles size={14} className="transition-colors" />
                             {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
                         </button>
                     </div>

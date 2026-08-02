@@ -2478,6 +2478,44 @@ input.global-search-input:focus,
   animation: progress-slide 2s ease-in-out infinite;
 }
 
+/* Custom theme-consistent styling for the Ask AI Review button */
+.btn-ai-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1.5px solid var(--border-color) !important;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px; /* Rounded pill shape from the screenshot */
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-ai-review:hover:not(:disabled) {
+  background-color: var(--bg-accent) !important;
+  border-color: var(--bg-accent) !important;
+  color: var(--text-on-accent) !important;
+  box-shadow: 0 0 15px var(--bg-accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-ai-review:hover:not(:disabled) svg {
+  color: var(--text-on-accent) !important;
+  stroke: var(--text-on-accent) !important;
+}
+
+.btn-ai-review:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 
 
 

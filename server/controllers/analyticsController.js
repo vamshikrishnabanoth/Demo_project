@@ -571,10 +571,11 @@ exports.getQuestionAIReview = async (req, res) => {
             - Option Pick Counts: ${JSON.stringify(optionSelection)}
             
             Please provide a structured, professional, and visually stunning review in markdown. Include the following sections:
-            1. **Classroom Mastery Assessment**: A brief, engaging summary of how well the class understood this question.
-            2. **Misconception Diagnosis**: Deep dive into why students may have selected the specific wrong options (looking at the option pick counts). Explain the learning gaps causing these errors.
-            3. **Actionable Teaching Strategies**: 2-3 specific pedagogical techniques or quick explanations the teacher can use in class tomorrow to correct these misconceptions.
-            4. **Alternate / Enhanced Formulations**: Propose 1-2 alternate variations of this question to better test this concept or build on it in the next exam.
+            1. **Correct Answer**: State the correct answer clearly and briefly justify why it is correct.
+            2. **Classroom Mastery Assessment**: A brief, engaging summary of how well the class understood this question.
+            3. **Misconception Diagnosis**: Deep dive into why students may have selected the specific wrong options (looking at the option pick counts). Explain the learning gaps causing these errors. If there are no wrong selections, highlight the perfect accuracy.
+            4. **Actionable Teaching Strategies**: 2-3 specific pedagogical techniques or quick explanations the teacher can use in class tomorrow to correct these misconceptions.
+            5. **Alternate / Enhanced Formulations**: Propose 1-2 alternate variations of this question to better test this concept or build on it in the next exam.
         `;
 
         const response = await model.generateContent(prompt);
@@ -597,17 +598,21 @@ exports.getQuestionAIReview = async (req, res) => {
         });
 
         const fallbackReview = `
+## Correct Answer
+The correct answer is **"${question.correctAnswer.toUpperCase()}"**.
+
 ## Classroom Mastery Assessment
 The classroom shows a **${correctPercentage}%** accuracy rating for this question, reflecting a **${correctPercentage > 75 ? 'HIGH' : correctPercentage > 45 ? 'MODERATE' : 'CRITICAL'}** conceptual understanding of this topic. Out of **${totalAttempts}** student attempts, **${correctCount}** were correct, **${wrongCount}** were incorrect, and **${skippedCount}** skipped.
 
 ## Misconception Diagnosis
-* **Primary Distractor Analysis:** Option "${mostPickedWrongOption.toUpperCase()}" was chosen by **${maxWrongCount}** students. 
-* **Learning Gap:** Students who selected the wrong answers are likely suffering from a common misconception relating to the foundational definitions in this section. When choosing "${mostPickedWrongOption.toUpperCase()}", students often confuse direct relationships with inverse parameters, overlooking the exact constraints outlined in the question context.
-* **Confidence Indicators:** The skipped rate of **${Math.round((skippedCount / totalAttempts) * 100) || 0}%** indicates a moderate lack of confidence, where students preferred not to guess, signaling that the core formulas need a brief review.
+${maxWrongCount > 0 ? `* **Primary Distractor Analysis:** Option "${mostPickedWrongOption.toUpperCase()}" was chosen by **${maxWrongCount}** students.
+* **Learning Gap:** Students who selected the wrong answers are likely suffering from a common misconception relating to the foundational definitions in this section. When choosing "${mostPickedWrongOption.toUpperCase()}", students often confuse direct relationships with inverse parameters, overlooking the exact constraints outlined in the question context.` : `* **Distractor Analysis:** No incorrect options were chosen. The class achieved 100% mastery!
+* **Learning Gap:** Since all attempts were correct, there are no immediate misconception gaps identified for this question.`}
+* **Confidence Indicators:** The skipped rate of **${Math.round((skippedCount / totalAttempts) * 100) || 0}%** indicates ${skippedCount > 0 ? 'a lack of confidence' : 'high confidence'}, where students ${skippedCount > 0 ? 'preferred not to guess, signaling that the core formulas need a brief review' : 'actively attempted the question without hesitation'}.
 
 ## Actionable Teaching Strategies
 1. **Interactive Retrieval Practice (10 Mins):** Tomorrow in class, project this exact question on the screen and walk through a process-of-elimination exercise to prove why the distractors are mathematically or logically incorrect.
-2. **Concept Mapping:** Draw a quick flowchart on the board connecting the core variables to show where the inverse correlation occurs, directly targeting the primary distractor "${mostPickedWrongOption.toUpperCase()}".
+${maxWrongCount > 0 ? `2. **Concept Mapping:** Draw a quick flowchart on the board connecting the core variables to show where the inverse correlation occurs, directly targeting the primary distractor "${mostPickedWrongOption.toUpperCase()}".` : `2. **Reinforcement:** Celebrate the 100% success rate with the class and briefly touch on the underlying concepts to reinforce long-term retention.`}
 3. **Peer Instruction:** Have students who answered correctly explain their reasoning to their neighbors for 3 minutes to leverage peer-led cognitive reinforcement.
 
 ## Alternate / Enhanced Formulations
