@@ -519,7 +519,6 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                     <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === students.length} onChange={toggleSelectAll} className="rounded text-sky-600 w-4 h-4" />
                                 </th>
                                 <th className="p-4">Student Details</th>
-                                <th className="p-4">Roll / Reg No</th>
                                 <th className="p-4">Branch</th>
                                 <th className="p-4">Academic Progress</th>
                                 <th className="p-4">Status</th>
@@ -529,7 +528,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
-                                    <tr key={i}><td colSpan="7" className="p-4"><Skeleton className="h-12" /></td></tr>
+                                    <tr key={i}><td colSpan="6" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : students.length > 0 ? (
                                 students.map((s) => (
@@ -540,25 +539,29 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                         <td className="p-4">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
-                                                <p className="text-xs text-slate-500 font-bold">{s.email || 'No email'}</p>
+                                                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                                    <span className="text-[11px] font-mono font-black text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-md border border-sky-300">
+                                                        {s.rollNumber || s.regNo || s.username}
+                                                    </span>
+                                                    <span className="text-xs text-slate-600 font-bold">{s.email || 'No email'}</span>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td className="p-4 font-mono text-xs font-black text-slate-800">{s.rollNumber || s.regNo || '—'}</td>
                                         <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
                                         <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
                                         <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setViewingProfile(s.id)} className="p-2 rounded-xl text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer" title="View Analytics"><Eye size={18} /></button>
-                                                <button onClick={() => setUserModal({ user: s })} className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer" title="Edit Student"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(s)} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer" title={s.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(s)} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Delete Student"><Trash2 size={18} /></button>
+                                                <button onClick={() => setViewingProfile(s.id)} className="p-2.5 rounded-xl bg-sky-100 border-2 border-sky-300 text-sky-700 hover:bg-sky-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="View Analytics"><Eye size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: s })} className="p-2.5 rounded-xl bg-indigo-100 border-2 border-indigo-300 text-indigo-700 hover:bg-indigo-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Edit Student"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(s)} className="p-2.5 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-700 hover:bg-amber-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title={s.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(s)} className="p-2.5 rounded-xl bg-rose-100 border-2 border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Delete Student"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="7" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No student records found</td></tr>
+                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No student records found</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -700,9 +703,9 @@ function AdminTeachersTab({ setUserModal }) {
                                         <td className="p-4"><StatusBadge suspended={t.isSuspended} online={t.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: t })} className="p-2 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(t)} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(t)} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: t })} className="p-2.5 rounded-xl bg-emerald-100 border-2 border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Edit Faculty"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(t)} className="p-2.5 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-700 hover:bg-amber-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title={t.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(t)} className="p-2.5 rounded-xl bg-rose-100 border-2 border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Delete Faculty"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -819,9 +822,9 @@ function AdminAdminsTab({ setUserModal }) {
                                         <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: a })} className="p-2 rounded-xl text-slate-500 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(a)} disabled={a.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: a })} className="p-2.5 rounded-xl bg-purple-100 border-2 border-purple-300 text-purple-700 hover:bg-purple-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Edit Admin"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(a)} disabled={a.id === currentUser?.id} className="p-2.5 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-700 hover:bg-amber-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold disabled:opacity-30" title={a.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(a)} disabled={a.id === currentUser?.id} className="p-2.5 rounded-xl bg-rose-100 border-2 border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold disabled:opacity-30" title="Delete Admin"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -987,9 +990,9 @@ function AdminDirectoryTab({ setUserModal }) {
                                         <td className="p-4"><StatusBadge suspended={u.isSuspended} online={u.isOnline} /></td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setUserModal({ user: u })} className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"><Edit3 size={18} /></button>
-                                                <button onClick={() => handleSuspend(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30 cursor-pointer"><Ban size={18} /></button>
-                                                <button onClick={() => handleDelete(u)} disabled={u.id === currentUser?.id} className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-30 cursor-pointer"><Trash2 size={18} /></button>
+                                                <button onClick={() => setUserModal({ user: u })} className="p-2.5 rounded-xl bg-indigo-100 border-2 border-indigo-300 text-indigo-700 hover:bg-indigo-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold" title="Edit User"><Edit3 size={18} /></button>
+                                                <button onClick={() => handleSuspend(u)} disabled={u.id === currentUser?.id} className="p-2.5 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-700 hover:bg-amber-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold disabled:opacity-30" title={u.isSuspended ? 'Reinstate' : 'Suspend'}><Ban size={18} /></button>
+                                                <button onClick={() => handleDelete(u)} disabled={u.id === currentUser?.id} className="p-2.5 rounded-xl bg-rose-100 border-2 border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white shadow-xs transition-all cursor-pointer font-bold disabled:opacity-30" title="Delete User"><Trash2 size={18} /></button>
                                             </div>
                                         </td>
                                     </tr>
