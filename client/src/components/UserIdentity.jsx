@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ShieldCheck, UserCheck, GraduationCap, User } from 'lucide-react';
 
 /**
@@ -29,9 +28,6 @@ export const StatusBadge = ({ label = 'Live', color = 'emerald' }) => {
 };
 
 export const UserProfileCard = ({ user, role }) => {
-    const location = useLocation();
-    const isProfilePage = location.pathname === '/profile';
-    
     const getRoleIcon = () => {
         switch (role?.toLowerCase()) {
             case 'admin': return <ShieldCheck size={16} strokeWidth={2.5} />;
@@ -47,33 +43,21 @@ export const UserProfileCard = ({ user, role }) => {
     return (
         <Link
             to="/profile"
-            className={`hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border transition-all duration-200 cursor-pointer group shadow-2xs
-                ${isProfilePage 
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm' 
-                    : 'bg-white/90 border-slate-200/90 hover:bg-slate-100/90 hover:border-slate-300 text-slate-900'
-                }`}
-            title={isProfilePage ? "Current Location: Profile" : "View Profile"}
+            className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border transition-all duration-200 cursor-pointer group shadow-2xs bg-white/90 border-slate-200/90 hover:bg-slate-100/90 hover:border-slate-300 text-slate-900"
+            title="View Profile"
         >
             <div className="relative shrink-0">
-                <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-black shadow-xs transition-transform duration-150 group-hover:scale-105 ${
-                        isProfilePage ? 'bg-white text-slate-900' : 'bg-slate-900 text-white'
-                    }`}
-                >
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-black shadow-xs transition-transform duration-150 group-hover:scale-105 bg-slate-900 text-white">
                     {getRoleIcon()}
                 </div>
                 {/* High-Contrast Green Indicator Dot on Profile Avatar */}
                 <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#10b981] border-2 border-white shadow-xs z-10 animate-pulse" />
             </div>
             <div className="text-left pr-1">
-                <p className={`text-[11px] font-black uppercase tracking-tight leading-none transition-colors duration-200 ${
-                    isProfilePage ? 'text-white' : 'text-slate-900 group-hover:text-black'
-                }`}>
+                <p className="text-[11px] font-black uppercase tracking-tight leading-none transition-colors duration-200 text-slate-900 group-hover:text-black">
                     {displayName}
                 </p>
-                <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${
-                    isProfilePage ? 'text-slate-300' : 'text-slate-500'
-                }`}>
+                <p className="text-[9px] font-black uppercase tracking-widest mt-0.5 text-slate-500">
                     {displayRole}
                 </p>
             </div>
