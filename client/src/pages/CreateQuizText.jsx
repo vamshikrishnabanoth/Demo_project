@@ -285,11 +285,13 @@ export default function CreateQuizText() {
             <div className="max-w-[100rem] mx-auto px-6 py-8">
                 
                 {/* Header System */}
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
+                <div className="relative flex items-center mb-6 min-h-[3rem]">
+                    <div className="absolute left-0 z-10">
                         <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => navigate(-1)}>
                             Back
                         </PremiumButton>
+                    </div>
+                    <div className="w-full flex justify-center items-center">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)] m-0">
                             <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
