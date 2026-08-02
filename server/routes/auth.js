@@ -59,7 +59,10 @@ router.post('/register', auth, authLimiter, registerValidation, async (req, res)
 
     // --- RULE 1: Admin Authorization ---
     try {
-        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        const adminUser = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: { id: true, role: true }
+        });
         if (!adminUser || adminUser.role !== 'admin') {
             return res.status(403).json({ msg: 'Only administrators can create new accounts.' });
         }
@@ -127,6 +130,24 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                     { email: { equals: email, mode: 'insensitive' } },
                     { username: { equals: email, mode: 'insensitive' } }
                 ]
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                password: true,
+                role: true,
+                name: true,
+                isOnline: true,
+                isSuspended: true,
+                suspensionReason: true,
+                tokenVersion: true,
+                failedLoginAttempts: true,
+                lockoutUntil: true,
+                studentBranch: true,
+                section: true,
+                year: true,
+                semester: true
             }
         });
 
