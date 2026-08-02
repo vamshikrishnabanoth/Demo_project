@@ -42,18 +42,18 @@ function Skeleton({ className = '' }) {
 // ─── High-Contrast Accessible Status Badges ──────────────────────────
 function StatusBadge({ suspended, online }) {
     if (suspended)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-rose-100 text-rose-900 border-2 border-rose-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-rose-600" />Suspended</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-rose-100 text-rose-900 border border-rose-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-rose-600" />Suspended</span>;
     if (online)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 border-2 border-emerald-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />Online</span>;
-    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-800 border-2 border-slate-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-slate-500" />Offline</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />Online</span>;
+    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-slate-500" />Offline</span>;
 }
 
 function RoleBadge({ role }) {
     const cfgs = {
-        student: { label: 'Student', cls: 'bg-sky-100 text-sky-950 border-2 border-sky-300' },
-        teacher: { label: 'Teacher', cls: 'bg-emerald-100 text-emerald-950 border-2 border-emerald-300' },
-        admin:   { label: 'Admin',   cls: 'bg-purple-100 text-purple-950 border-2 border-purple-300' },
-        none:    { label: 'None',    cls: 'bg-slate-100 text-slate-800 border-2 border-slate-300' },
+        student: { label: 'Student', cls: 'bg-sky-100 text-sky-950 border border-sky-300' },
+        teacher: { label: 'Teacher', cls: 'bg-emerald-100 text-emerald-950 border border-emerald-300' },
+        admin:   { label: 'Admin',   cls: 'bg-purple-100 text-purple-950 border border-purple-300' },
+        none:    { label: 'None',    cls: 'bg-slate-100 text-slate-800 border border-slate-300' },
     };
     const c = cfgs[role] || cfgs.none;
     return (
@@ -547,12 +547,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                         <td className="p-4">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
-                                                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                                    <span className="text-[11px] font-mono font-black text-sky-900 bg-sky-100 px-2.5 py-0.5 rounded-md border border-sky-300">
-                                                        {s.rollNumber || s.regNo || s.username}
-                                                    </span>
-                                                    <span className="text-xs text-slate-600 font-bold">{s.email || 'No email'}</span>
-                                                </div>
+                                                <p className="text-xs text-slate-500 font-bold">{s.email || 'No email'}</p>
                                             </div>
                                         </td>
                                         <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
@@ -562,35 +557,35 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                             <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
                                                     onClick={() => setViewingProfile(s.id)} 
-                                                    className="group p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-sky-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-sky-600 text-sky-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-sky-500/30" 
                                                     title="View Student Analytics"
                                                     aria-label="View Student Analytics"
                                                 >
-                                                    <Eye size={18} className="group-hover:text-white" />
+                                                    <Eye size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => setUserModal({ user: s })} 
-                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
                                                     title="Edit Student Details"
                                                     aria-label="Edit Student Details"
                                                 >
-                                                    <Edit3 size={18} className="group-hover:text-white" />
+                                                    <Edit3 size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(s)} 
-                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
                                                     title={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
                                                     aria-label={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
                                                 >
-                                                    <Ban size={18} className="group-hover:text-white" />
+                                                    <Ban size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(s)} 
-                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
                                                     title="Delete Student Record"
                                                     aria-label="Delete Student Record"
                                                 >
-                                                    <Trash2 size={18} className="group-hover:text-white" />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -739,34 +734,34 @@ function AdminTeachersTab({ setUserModal }) {
                                                 <p className="text-xs text-slate-500 font-bold">{t.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border-2 border-emerald-300 text-xs font-black uppercase">{t.department || 'CSE'}</span></td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black uppercase">{t.department || 'CSE'}</span></td>
                                         <td className="p-4 font-black text-slate-800">{t.quizCount || 0} Quizzes Created</td>
                                         <td className="p-4"><StatusBadge suspended={t.isSuspended} online={t.isOnline} /></td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: t })} 
-                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
                                                     title="Edit Faculty Details"
                                                     aria-label="Edit Faculty Details"
                                                 >
-                                                    <Edit3 size={18} className="group-hover:text-white" />
+                                                    <Edit3 size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(t)} 
-                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
                                                     title={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
                                                     aria-label={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
                                                 >
-                                                    <Ban size={18} className="group-hover:text-white" />
+                                                    <Ban size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(t)} 
-                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
                                                     title="Delete Faculty Record"
                                                     aria-label="Delete Faculty Record"
                                                 >
-                                                    <Trash2 size={18} className="group-hover:text-white" />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -885,35 +880,35 @@ function AdminAdminsTab({ setUserModal }) {
                                                 <p className="text-xs text-slate-500 font-bold">{a.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-100 text-purple-900 border-2 border-purple-300 text-xs font-black uppercase">SUPER ADMIN</span></td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-300 text-xs font-black uppercase">SUPER ADMIN</span></td>
                                         <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: a })} 
-                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
                                                     title="Edit Administrator Details"
                                                     aria-label="Edit Administrator Details"
                                                 >
-                                                    <Edit3 size={18} className="group-hover:text-white" />
+                                                    <Edit3 size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
                                                     aria-label={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
                                                 >
-                                                    <Ban size={18} className="group-hover:text-white" />
+                                                    <Ban size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title="Delete Administrator Record"
                                                     aria-label="Delete Administrator Record"
                                                 >
-                                                    <Trash2 size={18} className="group-hover:text-white" />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -1087,29 +1082,29 @@ function AdminDirectoryTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: u })} 
-                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
                                                     title="Edit User Details"
                                                     aria-label="Edit User Details"
                                                 >
-                                                    <Edit3 size={18} className="group-hover:text-white" />
+                                                    <Edit3 size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(u)} 
                                                     disabled={u.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
                                                     aria-label={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
                                                 >
-                                                    <Ban size={18} className="group-hover:text-white" />
+                                                    <Ban size={18} />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(u)} 
                                                     disabled={u.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title="Delete User Record"
                                                     aria-label="Delete User Record"
                                                 >
-                                                    <Trash2 size={18} className="group-hover:text-white" />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -1188,14 +1183,14 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Master Tab Bar Navigation with Solid Accessible High-Contrast Buttons */}
+                {/* Master Tab Bar Navigation — Active = Solid Black (#0f172a) Fill + Crisp White Text */}
                 <div className="bg-white border-2 border-slate-200 p-2 rounded-3xl flex items-center gap-2 shadow-sm overflow-x-auto premium-scrollbar">
                     <button
                         onClick={() => setActiveTab('overview')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'overview'
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-[1.02]'
-                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <Activity size={18} className={activeTab === 'overview' ? 'text-white' : 'text-blue-600'} />
@@ -1206,8 +1201,8 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('students')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'students'
-                                ? 'bg-teal-600 text-white border-teal-700 shadow-md scale-[1.02]'
-                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <GraduationCap size={18} className={activeTab === 'students' ? 'text-white' : 'text-teal-600'} />
@@ -1219,8 +1214,8 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('teachers')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'teachers'
-                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-[1.02]'
-                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <UserCheck size={18} className={activeTab === 'teachers' ? 'text-white' : 'text-emerald-600'} />
@@ -1232,8 +1227,8 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('admins')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'admins'
-                                ? 'bg-purple-600 text-white border-purple-700 shadow-md scale-[1.02]'
-                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <Shield size={18} className={activeTab === 'admins' ? 'text-white' : 'text-purple-600'} />
@@ -1245,8 +1240,8 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('directory')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'directory'
-                                ? 'bg-slate-900 text-white border-slate-950 shadow-md scale-[1.02]'
-                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <Users size={18} className={activeTab === 'directory' ? 'text-white' : 'text-slate-800'} />
