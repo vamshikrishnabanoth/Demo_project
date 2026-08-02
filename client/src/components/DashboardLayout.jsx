@@ -186,9 +186,9 @@ export default function DashboardLayout({ children, role }) {
                                 </h1>
                             </Link>
 
-                            {/* Desktop navigation links — only on large screens */}
+                            {/* Desktop navigation links — matching screenshot */}
                             {!isSmallScreen && (
-                                <nav className="flex space-x-2" aria-label="Main navigation">
+                                <nav className="flex items-center space-x-1.5" aria-label="Main navigation">
                                     {links.filter(link => link.path !== '/profile').map((link) => {
                                         const Icon  = link.icon;
                                         const active = isActive(link.path);
@@ -198,17 +198,14 @@ export default function DashboardLayout({ children, role }) {
                                                 to={link.path}
                                                 onMouseEnter={() => prefetchRoute(link.path)}
                                                 aria-current={active ? 'page' : undefined}
-                                                className={`relative flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all duration-200 border ${
+                                                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border ${
                                                     active
-                                                        ? 'bg-[var(--bg-accent)]/15 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_4px_16px_rgba(245,158,11,0.15)] font-bold scale-[1.02]'
-                                                        : 'bg-white/10 border-white/20 text-white font-extrabold shadow-xs hover:bg-white/20 hover:border-white/30'
+                                                        ? 'bg-slate-100/90 border-slate-200 text-slate-900 shadow-2xs font-extrabold scale-[1.01]'
+                                                        : 'bg-transparent border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
                                                 }`}
                                             >
-                                                <Icon size={18} aria-hidden="true" className={active ? 'text-[var(--text-accent)]' : 'text-white/90'} />
+                                                <Icon size={16} aria-hidden="true" className={active ? 'text-slate-900' : 'text-slate-500'} />
                                                 <span>{link.name}</span>
-                                                {active && (
-                                                    <motion.div layoutId="activeNavIndicator" className="absolute -bottom-1.5 left-3 right-3 h-0.5 bg-[var(--bg-accent)] rounded-full shadow-[0_0_8px_var(--bg-accent)]" />
-                                                )}
                                             </Link>
                                         );
                                     })}
@@ -217,7 +214,7 @@ export default function DashboardLayout({ children, role }) {
                         </div>
 
                         {/* Right actions */}
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-3 shrink-0">
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
 
@@ -226,14 +223,11 @@ export default function DashboardLayout({ children, role }) {
                                     <UserProfileCard user={user} role={role} />
                                     <button
                                         onClick={handleLogout}
-                                        className="Btn"
+                                        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D96B27] via-[#E65A1C] to-[#C1581E] hover:from-[#c55d1f] hover:to-[#b84d15] text-white flex items-center justify-center shadow-2xs border border-amber-300/40 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
-                                        <div className="sign">
-                                            <LogOut size={17} color="white" aria-hidden="true" />
-                                        </div>
-                                        <div className="text">Logout</div>
+                                        <LogOut size={16} className="text-white ml-0.5" aria-hidden="true" />
                                     </button>
                                 </div>
                             )}
