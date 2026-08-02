@@ -249,9 +249,12 @@ export default function AttemptQuiz() {
                 console.log(`[DIAGNOSTIC-QUIZ] Progress payload for current student (${authUser.id}):`, state.progress[authUser.id]);
             }
 
-             // Check if student has already answered this question
-             if (authUser && state.progress && state.progress[authUser.id]) {
-                  const studentProgress = state.progress[authUser.id];
+             // Check if student has already answered this question (support id, _id, or username)
+             const studentProgress = (authUser && state.progress)
+                 ? (state.progress[authUser.id] || state.progress[authUser._id] || state.progress[authUser.username])
+                 : null;
+
+             if (studentProgress) {
                   
                   // Restore answered tracking for logic
                   const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
