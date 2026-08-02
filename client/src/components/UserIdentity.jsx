@@ -47,7 +47,7 @@ export const UserProfileCard = ({ user, role }) => {
             className={`hidden sm:flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-[background-color,border-color,box-shadow] duration-200 cursor-pointer group
                 ${isProfilePage 
                     ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]' 
-                    : 'bg-white/[0.05] border-white/10 hover:border-[var(--text-accent)] hover:bg-white/10'
+                    : 'bg-white/10 border-white/20 hover:border-[var(--text-accent)] hover:bg-white/20'
                 }`}
             style={{ transform: 'translate3d(0,0,0)', willChange: 'background-color, border-color' }}
             title={isProfilePage ? "Current Location: Profile" : "View Profile"}

@@ -742,15 +742,15 @@ a.bg-\[\#133E87\] *,
 .Btn {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  width: 45px;
-  height: 45px;
-  border: none;
-  border-radius: 50%;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 42px;
+  border-radius: 12px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition-duration: .3s;
+  transition: all 0.2s ease-in-out;
   box-shadow: 0 4px 14px var(--bg-accent-glow);
   background-color: var(--bg-accent) !important;
   border: 1.5px solid var(--border-color) !important;
@@ -785,13 +785,12 @@ a.bg-\[\#133E87\] *,
   color: #ffffff !important;
 }
 
-/* plus sign / icon */
+/* icon container */
 .sign {
-  width: 100%;
-  transition-duration: .3s;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition-duration: .2s;
 }
 
 .sign svg {
@@ -802,42 +801,38 @@ a.bg-\[\#133E87\] *,
   fill: white;
 }
 
-/* text */
+/* text — fully visible without hovering */
 .text {
-  position: absolute;
-  right: 0%;
-  width: 0%;
-  opacity: 0;
+  position: relative;
+  opacity: 1 !important;
+  width: auto !important;
   color: white !important;
-  font-size: 1.0em;
-  font-weight: 600;
-  transition-duration: .3s;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition-duration: .2s;
 }
 
-/* hover effect on button width */
+/* hover effect on button */
 .Btn:hover {
-  width: 125px;
-  border-radius: 40px;
-  transition-duration: .3s;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--bg-accent-glow);
+  transition-duration: .2s;
 }
 
 .Btn:hover .sign {
-  width: 30%;
-  transition-duration: .3s;
-  padding-left: 12px;
+  transform: scale(1.05);
 }
 
-/* hover effect button's text */
 .Btn:hover .text {
   opacity: 1;
-  width: 70%;
-  transition-duration: .3s;
-  padding-right: 10px;
 }
 
 /* button click effect*/
 .Btn:active {
-  transform: translate(2px ,2px);
+  transform: translateY(1px);
 }
 
 /* ─── ANIMATED FILE UPLOAD / DOWNLOAD BUTTON ──────────────────────────────── */

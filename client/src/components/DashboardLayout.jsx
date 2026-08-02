@@ -201,10 +201,10 @@ export default function DashboardLayout({ children, role }) {
                                                 className={`relative flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all duration-200 border ${
                                                     active
                                                         ? 'bg-[var(--bg-accent)]/15 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_4px_16px_rgba(245,158,11,0.15)] font-bold scale-[1.02]'
-                                                        : 'bg-transparent border-transparent text-white/50 hover:bg-white/5 hover:text-white'
+                                                        : 'bg-white/10 border-white/20 text-white font-extrabold shadow-xs hover:bg-white/20 hover:border-white/30'
                                                 }`}
                                             >
-                                                <Icon size={18} aria-hidden="true" className={active ? 'text-[var(--text-accent)]' : 'text-white/40'} />
+                                                <Icon size={18} aria-hidden="true" className={active ? 'text-[var(--text-accent)]' : 'text-white/90'} />
                                                 <span>{link.name}</span>
                                                 {active && (
                                                     <motion.div layoutId="activeNavIndicator" className="absolute -bottom-1.5 left-3 right-3 h-0.5 bg-[var(--bg-accent)] rounded-full shadow-[0_0_8px_var(--bg-accent)]" />
@@ -329,7 +329,7 @@ export default function DashboardLayout({ children, role }) {
                                                     className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
                                                         active
                                                             ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
-                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] font-bold hover:bg-[var(--bg-secondary)]'
                                                     }`}
                                                 >
                                                     <Icon size={18} />
