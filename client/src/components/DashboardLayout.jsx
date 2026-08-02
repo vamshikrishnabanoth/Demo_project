@@ -155,38 +155,40 @@ export default function DashboardLayout({ children, role }) {
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
             <header
-                className="glass-panel dashboard-header border-b-0 shadow-none sticky top-0 z-[100] w-full max-w-full overflow-x-hidden"
-                style={{ backdropFilter: 'blur(var(--blur-strength, 16px))' }}
+                className="glass-panel dashboard-header border-b-0 shadow-none"
+                style={{ backdropFilter: 'blur(var(--blur-strength))' }}
                 role="banner"
             >
-                <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 md:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+                <div className="layout-container">
+                    <div className="flex justify-between h-20">
 
                         {/* Logo + Desktop Nav */}
-                        <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0">
+                        <div className="flex items-center gap-8">
                             <Link
                                 to={homeUrl}
-                                className="flex-shrink-0 flex items-center gap-2 group rounded-xl p-1 transition-all duration-180 ease-out hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-accent)]"
+                                className="flex-shrink-0 flex items-center gap-3 group"
                                 aria-label="Go to home dashboard"
                             >
-                                <div className="bg-white p-1 rounded-xl shadow-sm overflow-hidden shrink-0 border border-white/20">
+                                <motion.div
+                                    whileHover={{ scale: 1.05, rotate: 5 }}
+                                    className="bg-white p-1 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.1)] overflow-hidden"
+                                >
                                     <img 
                                         src="/logo.png" 
                                         alt="KMIT Logo" 
-                                        className="h-7 sm:h-9 w-auto object-contain"
+                                        className="h-10 w-auto object-contain"
                                         loading="eager"
                                         decoding="async"
                                     />
-                                </div>
-                                <h1 className="text-sm sm:text-lg lg:text-xl font-black text-[var(--text-primary)] tracking-tighter italic shrink-0 leading-none">
-                                    <span className="hidden xs:inline">KMIT </span>
-                                    <span className="text-[var(--text-accent)]">KAHOOT</span>
+                                </motion.div>
+                                <h1 className="text-lg sm:text-2xl font-black text-[var(--text-primary)] tracking-tighter italic shrink-0">
+                                    <span className="hidden xs:inline">KMIT </span><span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">KAHOOT</span>
                                 </h1>
                             </Link>
 
-                            {/* Desktop navigation links (>= 1024px) */}
+                            {/* Desktop navigation links — only on large screens */}
                             {!isSmallScreen && (
-                                <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main navigation">
+                                <nav className="flex space-x-2" aria-label="Main navigation">
                                     {links.filter(link => link.path !== '/profile').map((link) => {
                                         const Icon  = link.icon;
                                         const active = isActive(link.path);
@@ -196,14 +198,17 @@ export default function DashboardLayout({ children, role }) {
                                                 to={link.path}
                                                 onMouseEnter={() => prefetchRoute(link.path)}
                                                 aria-current={active ? 'page' : undefined}
-                                                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-180 ease-out border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-accent)] ${
+                                                className={`relative flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all duration-200 border ${
                                                     active
-                                                        ? 'bg-[var(--bg-accent)]/15 border-[var(--bg-accent)]/60 text-[var(--text-accent)] font-extrabold'
-                                                        : 'bg-transparent border-transparent text-white/70 hover:bg-white/10 hover:border-white/20 hover:text-white hover:-translate-y-[1px]'
+                                                        ? 'bg-[var(--bg-accent)]/15 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_4px_16px_rgba(245,158,11,0.15)] font-bold scale-[1.02]'
+                                                        : 'bg-white/10 border-white/20 text-white font-extrabold shadow-xs hover:bg-white/20 hover:border-white/30'
                                                 }`}
                                             >
-                                                <Icon size={16} aria-hidden="true" className={active ? 'text-[var(--text-accent)]' : 'text-white/60'} />
+                                                <Icon size={18} aria-hidden="true" className={active ? 'text-[var(--text-accent)]' : 'text-white/90'} />
                                                 <span>{link.name}</span>
+                                                {active && (
+                                                    <motion.div layoutId="activeNavIndicator" className="absolute -bottom-1.5 left-3 right-3 h-0.5 bg-[var(--bg-accent)] rounded-full shadow-[0_0_8px_var(--bg-accent)]" />
+                                                )}
                                             </Link>
                                         );
                                     })}
@@ -211,35 +216,39 @@ export default function DashboardLayout({ children, role }) {
                             )}
                         </div>
 
-                        {/* Right actions — Prioritized for all screen sizes */}
-                        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                            {/* Live Status Indicator */}
-                            <StatusBadge label="Live" color="emerald" compact={isSmallScreen} />
+                        {/* Right actions */}
+                        <div className="flex items-center gap-2 shrink-0">
+                            {/* Essentials Only on Mobile */}
+                            {!isSmallScreen && <StatusBadge label="Live" />}
 
-                            {/* User Profile Action */}
-                            <UserProfileCard user={user} role={role} compact={isSmallScreen} />
+                            {!isSmallScreen && (
+                                <div className="flex items-center gap-3">
+                                    <UserProfileCard user={user} role={role} />
+                                    <button
+                                        onClick={handleLogout}
+                                        className="Btn"
+                                        aria-label="Log out"
+                                        title="Log out"
+                                    >
+                                        <div className="sign">
+                                            <LogOut size={17} color="white" aria-hidden="true" />
+                                        </div>
+                                        <div className="text">Logout</div>
+                                    </button>
+                                </div>
+                            )}
 
-                            {/* Logout Action — Always Accessible */}
-                            <button
-                                onClick={handleLogout}
-                                className="navbar-btn navbar-btn-logout focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
-                                aria-label="Log out"
-                                title="Log out"
-                            >
-                                <LogOut size={16} aria-hidden="true" />
-                                <span className="hidden md:inline">Logout</span>
-                            </button>
-
-                            {/* Mobile / Tablet Side Drawer Toggle */}
+                            {/* Mobile Side Drawer Toggle */}
                             {isSmallScreen && (
-                                <button
-                                    onClick={() => setMobileOpen(!mobileOpen)}
-                                    className="navbar-btn p-2 rounded-xl text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-accent)] shrink-0"
-                                    aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-                                    aria-expanded={mobileOpen}
-                                >
-                                    {mobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
-                                </button>
+                                <div className="flex items-center shrink-0">
+                                    <button
+                                        onClick={() => setMobileOpen(true)}
+                                        className="p-2 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer shrink-0"
+                                        aria-label="Open navigation menu"
+                                    >
+                                        <Menu size={20} aria-hidden="true" />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -317,10 +326,10 @@ export default function DashboardLayout({ children, role }) {
                                                     key={link.path}
                                                     to={link.path}
                                                     onClick={() => setMobileOpen(false)}
-                                                    className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-180 ease-out border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-accent)] ${
+                                                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
                                                         active
-                                                            ? 'bg-[var(--bg-accent)]/15 border-[var(--bg-accent)]/60 text-[var(--text-accent)] font-extrabold'
-                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:-translate-y-[1px]'
+                                                            ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
+                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] font-bold hover:bg-[var(--bg-secondary)]'
                                                     }`}
                                                 >
                                                     <Icon size={18} />
@@ -338,9 +347,9 @@ export default function DashboardLayout({ children, role }) {
                                         <Link 
                                             to="/profile" 
                                             onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--bg-primary)] border border-transparent hover:border-[var(--border-color)] transition-all duration-180 ease-out hover:-translate-y-[1px] group cursor-pointer"
+                                            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[var(--bg-primary)] border border-transparent hover:border-[var(--border-color)] transition-all group cursor-pointer"
                                         >
-                                            <div className="w-9 h-9 rounded-lg bg-[var(--bg-accent)]/15 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/30 shrink-0">
+                                            <div className="w-9 h-9 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0 group-hover:scale-105 transition-transform">
                                                 <User size={18} />
                                             </div>
                                             <div className="min-w-0 flex-1">
@@ -352,7 +361,7 @@ export default function DashboardLayout({ children, role }) {
 
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full py-3 px-4 navbar-btn navbar-btn-logout rounded-xl font-bold uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all duration-180 ease-out cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+                                        className="w-full py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white border border-red-700 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-md cursor-pointer shrink-0"
                                         aria-label="Log out"
                                     >
                                         <LogOut size={18} />

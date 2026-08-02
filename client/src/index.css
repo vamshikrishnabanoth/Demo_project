@@ -739,62 +739,100 @@ a.bg-\[\#133E87\] *,
 }
 
 /* ─── ANIMATED LOGOUT BUTTON (DEEP BLUE #133E87) ─────────────────────────── */
-/* ─── CLEAN PRODUCTION NAVBAR BUTTONS ──────────────────────────────────── */
-.navbar-btn,
 .Btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
-  height: 38px;
-  border-radius: 0.75rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
+  gap: 8px;
+  padding: 0 16px;
+  height: 42px;
+  border-radius: 12px;
   cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease, color 180ms ease;
-  user-select: none;
-  box-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 14px var(--bg-accent-glow);
+  background-color: var(--bg-accent) !important;
+  border: 1.5px solid var(--border-color) !important;
 }
 
-.navbar-btn:hover,
-.Btn:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+[data-theme="celestial"] .Btn {
+  background-color: #133E87 !important;
+  border: 1.5px solid #0e2e65 !important;
+  box-shadow: 0 4px 14px rgba(19, 62, 135, 0.35) !important;
+}
+
+[data-theme="celestial"] .Btn:hover {
+  background-color: #0e2e65 !important;
+}
+
+[data-theme="india"] .Btn {
+  background: linear-gradient(135deg, #D96B27 0%, #E65A1C 55%, #1C8574 100%) !important;
+  border: 1.5px solid #FED7AA !important;
+  box-shadow: 0 4px 16px rgba(217, 107, 39, 0.35) !important;
+}
+
+[data-theme="india"] .Btn:hover {
+  background: linear-gradient(135deg, #B8571B 0%, #D96B27 55%, #156E60 100%) !important;
+  box-shadow: 0 6px 20px rgba(217, 107, 39, 0.45) !important;
+}
+
+.sign svg path {
+  fill: #ffffff !important;
+}
+
+.Btn .text {
+  color: #ffffff !important;
+}
+
+/* icon container */
+.sign {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .2s;
+}
+
+.sign svg {
+  width: 17px;
+}
+
+.sign svg path {
+  fill: white;
+}
+
+/* text — fully visible without hovering */
+.text {
+  position: relative;
+  opacity: 1 !important;
   width: auto !important;
-  border-radius: 0.75rem !important;
+  color: white !important;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition-duration: .2s;
 }
 
-.navbar-btn:focus-visible,
-.Btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-accent) !important;
-}
-
-.navbar-btn:active,
-.Btn:active {
-  transform: translateY(0);
-}
-
-/* Logout Button Specific Variant */
-.navbar-btn-logout {
-  background-color: rgba(239, 68, 68, 0.1) !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
-  color: #f87171 !important;
-}
-
-.navbar-btn-logout:hover {
-  background-color: rgba(239, 68, 68, 0.2) !important;
-  border-color: rgba(239, 68, 68, 0.5) !important;
-  color: #ef4444 !important;
+/* hover effect on button */
+.Btn:hover {
+  filter: brightness(1.1);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--bg-accent-glow);
+  transition-duration: .2s;
+}
+
+.Btn:hover .sign {
+  transform: scale(1.05);
+}
+
+.Btn:hover .text {
+  opacity: 1;
+}
+
+/* button click effect*/
+.Btn:active {
+  transform: translateY(1px);
 }
 
 /* ─── ANIMATED FILE UPLOAD / DOWNLOAD BUTTON ──────────────────────────────── */
