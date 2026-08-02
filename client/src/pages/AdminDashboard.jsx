@@ -39,25 +39,25 @@ function Skeleton({ className = '' }) {
     return <div className={`animate-pulse bg-slate-200 rounded-2xl ${className}`} />;
 }
 
-// ─── High-Contrast Solid Status Badges ─────────────────────────────────────
+// ─── High-Contrast Accessible Status Badges ──────────────────────────
 function StatusBadge({ suspended, online }) {
     if (suspended)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-rose-600 text-white shadow-xs"><span className="w-2 h-2 rounded-full bg-white" />Suspended</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-rose-100 text-rose-900 border-2 border-rose-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-rose-600" />Suspended</span>;
     if (online)
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-600 text-white shadow-xs"><span className="w-2 h-2 rounded-full bg-white animate-pulse" />Online</span>;
-    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-slate-700 text-white shadow-xs"><span className="w-2 h-2 rounded-full bg-slate-300" />Offline</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 border-2 border-emerald-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />Online</span>;
+    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-800 border-2 border-slate-300 shadow-xs"><span className="w-2 h-2 rounded-full bg-slate-500" />Offline</span>;
 }
 
 function RoleBadge({ role }) {
     const cfgs = {
-        student: { label: 'Student', cls: 'bg-sky-600 text-white' },
-        teacher: { label: 'Teacher', cls: 'bg-emerald-600 text-white' },
-        admin:   { label: 'Admin',   cls: 'bg-purple-600 text-white' },
-        none:    { label: 'None',    cls: 'bg-slate-600 text-white' },
+        student: { label: 'Student', cls: 'bg-sky-100 text-sky-950 border-2 border-sky-300' },
+        teacher: { label: 'Teacher', cls: 'bg-emerald-100 text-emerald-950 border-2 border-emerald-300' },
+        admin:   { label: 'Admin',   cls: 'bg-purple-100 text-purple-950 border-2 border-purple-300' },
+        none:    { label: 'None',    cls: 'bg-slate-100 text-slate-800 border-2 border-slate-300' },
     };
     const c = cfgs[role] || cfgs.none;
     return (
-        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-xs ${c.cls}`}>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${c.cls}`}>
             {c.label}
         </span>
     );
@@ -65,9 +65,9 @@ function RoleBadge({ role }) {
 
 function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = true }) {
     return (
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-white border-2 border-slate-300 shadow-sm">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
             <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-slate-900 text-white border border-slate-700 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-white border-2 border-slate-300 flex items-center justify-center shrink-0 text-slate-900 font-bold">
                     <Icon size={20} />
                 </div>
                 <div>
@@ -77,7 +77,7 @@ function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = t
             </div>
             <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                <span className={`text-xs font-black uppercase px-3 py-1 rounded-full text-white ${isOnline ? 'bg-emerald-600' : 'bg-rose-600'}`}>
+                <span className={`text-xs font-black uppercase px-3 py-1 rounded-full border-2 ${isOnline ? 'text-emerald-900 bg-emerald-100 border-emerald-300' : 'text-rose-900 bg-rose-100 border-rose-300'}`}>
                     {statusText}
                 </span>
             </div>
@@ -87,16 +87,16 @@ function HealthStatusCard({ icon: Icon, title, statusText, subtext, isOnline = t
 
 function ActivityRow({ item }) {
     const roleIconMap = {
-        STUDENT_CREATED: { icon: GraduationCap, color: 'text-white bg-sky-600' },
-        TEACHER_CREATED: { icon: UserCheck, color: 'text-white bg-emerald-600' },
-        ADMIN_CREATED:   { icon: Shield, color: 'text-white bg-purple-600' },
-        USER_DELETED:    { icon: Users, color: 'text-white bg-rose-600' },
-        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-white bg-amber-600' },
-        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-white bg-amber-600' },
-        BULK_IMPORT:     { icon: Database, color: 'text-white bg-indigo-600' },
+        STUDENT_CREATED: { icon: GraduationCap, color: 'text-sky-800 bg-sky-100 border-2 border-sky-300' },
+        TEACHER_CREATED: { icon: UserCheck, color: 'text-emerald-800 bg-emerald-100 border-2 border-emerald-300' },
+        ADMIN_CREATED:   { icon: Shield, color: 'text-purple-800 bg-purple-100 border-2 border-purple-300' },
+        USER_DELETED:    { icon: Users, color: 'text-rose-800 bg-rose-100 border-2 border-rose-300' },
+        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-amber-800 bg-amber-100 border-2 border-amber-300' },
+        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-amber-800 bg-amber-100 border-2 border-amber-300' },
+        BULK_IMPORT:     { icon: Database, color: 'text-indigo-800 bg-indigo-100 border-2 border-indigo-300' },
     };
 
-    const cfg = roleIconMap[item.action] || { icon: Activity, color: 'text-white bg-slate-800' };
+    const cfg = roleIconMap[item.action] || { icon: Activity, color: 'text-slate-800 bg-slate-100 border-2 border-slate-300' };
     const IconComponent = cfg.icon;
 
     const timeAgo = (date) => {
@@ -113,9 +113,9 @@ function ActivityRow({ item }) {
     const actionText = item.action ? item.action.replace(/_/g, ' ') : 'System Action';
 
     return (
-        <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl bg-white border-2 border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between py-3.5 px-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
             <div className="flex items-center gap-3.5 min-w-0">
-                <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 shadow-xs ${cfg.color}`}>
+                <div className={`w-9 h-9 rounded-xl border-2 flex items-center justify-center shrink-0 ${cfg.color}`}>
                     <IconComponent size={18} />
                 </div>
                 <div className="min-w-0">
@@ -125,7 +125,7 @@ function ActivityRow({ item }) {
                     <p className="text-xs text-slate-600 font-bold">By {item.adminName || 'Admin'}</p>
                 </div>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-800 font-black tracking-wider uppercase shrink-0 ml-3 bg-slate-100 px-3 py-1 rounded-full border border-slate-300">
+            <div className="flex items-center gap-1.5 text-xs text-slate-700 font-black tracking-wider uppercase shrink-0 ml-3 bg-white px-3 py-1 rounded-full border-2 border-slate-300">
                 <Clock size={14} />
                 <span>{timeAgo(item.timestamp)}</span>
             </div>
@@ -139,7 +139,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
     return (
         <div className="space-y-8">
-            {/* 4 Clean Solid Stat Cards */}
+            {/* 4 Clean High-Contrast Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {loadingStats ? (
                     Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36" />)
@@ -147,11 +147,11 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                     <>
                         <div 
                             onClick={() => setActiveTab('directory')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-300 shadow-sm cursor-pointer hover:border-slate-800 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-slate-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-slate-700 uppercase tracking-wider">TOTAL ENTITIES</span>
-                                <div className="p-3 rounded-2xl bg-slate-900 text-white">
+                                <span className="text-xs font-black text-slate-600 uppercase tracking-wider">TOTAL ENTITIES</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 border-2 border-slate-300 text-slate-900">
                                     <Users size={22} />
                                 </div>
                             </div>
@@ -163,11 +163,11 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
                         <div 
                             onClick={() => setActiveTab('students')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-300 shadow-sm cursor-pointer hover:border-sky-600 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-sky-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-black text-sky-800 uppercase tracking-wider">ACTIVE STUDENTS</span>
-                                <div className="p-3 rounded-2xl bg-sky-600 text-white">
+                                <div className="p-3 rounded-2xl bg-sky-100 border-2 border-sky-300 text-sky-800">
                                     <GraduationCap size={22} />
                                 </div>
                             </div>
@@ -179,11 +179,11 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
                         <div 
                             onClick={() => setActiveTab('teachers')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-300 shadow-sm cursor-pointer hover:border-emerald-600 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-emerald-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-black text-emerald-800 uppercase tracking-wider">FACULTY MEMBERS</span>
-                                <div className="p-3 rounded-2xl bg-emerald-600 text-white">
+                                <div className="p-3 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-800">
                                     <UserCheck size={22} />
                                 </div>
                             </div>
@@ -195,11 +195,11 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
                         <div 
                             onClick={() => setActiveTab('admins')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-300 shadow-sm cursor-pointer hover:border-purple-600 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-purple-400 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-black text-purple-800 uppercase tracking-wider">SYSTEM ADMINS</span>
-                                <div className="p-3 rounded-2xl bg-purple-600 text-white">
+                                <div className="p-3 rounded-2xl bg-purple-100 border-2 border-purple-300 text-purple-800">
                                     <Shield size={22} />
                                 </div>
                             </div>
@@ -214,10 +214,10 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
             {/* Clean Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="p-8 rounded-3xl bg-white border-2 border-slate-300 shadow-sm">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-sky-600 text-white">
+                            <div className="p-2.5 rounded-xl bg-sky-100 text-sky-800 border-2 border-sky-300">
                                 <BarChart2 size={20} />
                             </div>
                             <div>
@@ -249,15 +249,15 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="text-xs font-black text-slate-400 uppercase tracking-wider">No branch data recorded</div>
+                            <div className="text-xs font-black text-slate-500 uppercase tracking-wider">No branch data recorded</div>
                         )}
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white border-2 border-slate-300 shadow-sm">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-emerald-600 text-white">
+                            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-800 border-2 border-emerald-300">
                                 <TrendingUp size={20} />
                             </div>
                             <div>
@@ -287,7 +287,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-full flex items-center justify-center text-xs font-black text-slate-400 uppercase tracking-wider">No year data recorded</div>
+                            <div className="h-full flex items-center justify-center text-xs font-black text-slate-500 uppercase tracking-wider">No year data recorded</div>
                         )}
                     </div>
                 </div>
@@ -295,10 +295,10 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
             {/* System Audit & Status */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 p-8 rounded-3xl bg-white border-2 border-slate-300 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b-2 border-slate-200 pb-4">
+                <div className="lg:col-span-2 p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b-2 border-slate-100 pb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-purple-600 text-white">
+                            <div className="p-2.5 rounded-xl bg-purple-100 text-purple-800 border-2 border-purple-300">
                                 <Activity size={20} />
                             </div>
                             <div>
@@ -311,15 +311,15 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                         {stats.recentActivity?.length > 0 ? (
                             stats.recentActivity.map(item => <ActivityRow key={item.id} item={item} />)
                         ) : (
-                            <div className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No audit log records available</div>
+                            <div className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No audit log records available</div>
                         )}
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white border-2 border-slate-300 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b-2 border-slate-200 pb-4">
+                <div className="p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b-2 border-slate-100 pb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-emerald-600 text-white">
+                            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-800 border-2 border-emerald-300">
                                 <Cpu size={20} />
                             </div>
                             <div>
@@ -367,7 +367,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
     const limit = 50;
 
     useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search); setPage(1); }, 300);
+        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
         return () => clearTimeout(t);
     }, [search]);
 
@@ -435,7 +435,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
         if (!selectedIds.length) return;
         try {
             await api.post('/admin/users/bulk-suspend', { ids: selectedIds, suspend });
-            setStudents(prev => prev.map(s => selectedIds.includes(s.id) ? { ...x, isSuspended: suspend } : s));
+            setStudents(prev => prev.map(s => selectedIds.includes(s.id) ? { ...s, isSuspended: suspend } : s));
             setSelectedIds([]);
             invalidate();
             toast.success(`Selected students ${suspend ? 'suspended' : 'reinstated'}`);
@@ -445,7 +445,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
     return (
         <div className="space-y-6">
             {/* Header Control Panel */}
-            <div className="bg-white p-6 rounded-3xl border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1 min-w-[280px]">
                     <div className="relative flex-1">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
@@ -453,11 +453,15 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                             type="text"
                             placeholder="Search student name, roll number, email..."
                             value={search}
-                            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-sky-600 bg-white"
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20"
                         />
                         {search && (
-                            <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 p-1">
+                            <button 
+                                onClick={() => setSearch('')} 
+                                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
+                                aria-label="Clear search"
+                            >
                                 <X size={16} />
                             </button>
                         )}
@@ -465,21 +469,21 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-sky-700 transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
-                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-indigo-700 transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
-                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-amber-700 transition-all cursor-pointer">
                         <Award size={18} /> Batch Promote
                     </button>
                 </div>
             </div>
 
             {/* Filter Toolbar */}
-            <div className="bg-white p-5 rounded-3xl border-2 border-slate-300 text-[#0f172a] flex flex-wrap items-center gap-4 text-xs font-black shadow-sm">
-                <div className="flex items-center gap-2 text-slate-900 font-black uppercase tracking-widest text-xs">
+            <div className="bg-slate-100 p-5 rounded-3xl border-2 border-slate-200 text-[#0f172a] flex flex-wrap items-center gap-4 text-xs font-black">
+                <div className="flex items-center gap-2 text-slate-800 font-black uppercase tracking-widest text-xs">
                     <Filter size={16} /> Filters:
                 </div>
                 <select value={yearF} onChange={(e) => { setYearF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
@@ -505,28 +509,28 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </select>
 
                 {selectedIds.length > 0 && (
-                    <div className="ml-auto flex items-center gap-3 bg-slate-100 px-4 py-2 rounded-2xl border-2 border-slate-300">
+                    <div className="ml-auto flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
                         <span className="text-xs font-black text-rose-800 uppercase">{selectedIds.length} Selected</span>
-                        <button onClick={() => handleBulkSuspend(true)} className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase shadow-xs">Suspend</button>
-                        <button onClick={handleBulkDelete} className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase shadow-xs">Delete</button>
+                        <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 hover:bg-amber-500 hover:text-white text-xs font-black uppercase transition-all">Suspend</button>
+                        <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase transition-all">Delete</button>
                     </div>
                 )}
             </div>
 
-            {/* Students Table with Actions next to Details */}
-            <div className="bg-white rounded-3xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            {/* Students Table */}
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-100 border-b-2 border-slate-300 text-[#0f172a] font-black uppercase tracking-wider text-xs">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4 w-12 text-center">
                                     <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === students.length} onChange={toggleSelectAll} className="rounded text-sky-600 w-4 h-4" />
                                 </th>
                                 <th className="p-4">Student Details</th>
-                                <th className="p-4 text-center">Actions</th>
                                 <th className="p-4">Branch</th>
                                 <th className="p-4">Academic Progress</th>
                                 <th className="p-4">Status</th>
+                                <th className="p-4 text-center min-w-[150px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
@@ -551,57 +555,60 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                 </div>
                                             </div>
                                         </td>
-                                        {/* Actions Column Right Next to Details */}
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
+                                        <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
+                                        <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                         <td className="p-4 text-center">
-                                            <div className="flex items-center justify-center gap-2">
+                                            <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
                                                     onClick={() => setViewingProfile(s.id)} 
-                                                    className="p-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="View Analytics"
+                                                    className="group p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-sky-500/30" 
+                                                    title="View Student Analytics"
+                                                    aria-label="View Student Analytics"
                                                 >
-                                                    <Eye size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Eye size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => setUserModal({ user: s })} 
-                                                    className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Edit Student"
+                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    title="Edit Student Details"
+                                                    aria-label="Edit Student Details"
                                                 >
-                                                    <Edit3 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Edit3 size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(s)} 
-                                                    className="p-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title={s.isSuspended ? 'Reinstate' : 'Suspend'}
+                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    title={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
+                                                    aria-label={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
                                                 >
-                                                    <Ban size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Ban size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(s)} 
-                                                    className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Delete Student"
+                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    title="Delete Student Record"
+                                                    aria-label="Delete Student Record"
                                                 >
-                                                    <Trash2 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Trash2 size={18} className="group-hover:text-white" />
                                                 </button>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-200 border border-slate-400 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
-                                        <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
-                                        <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No student records found</td></tr>
+                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your query</td></tr>
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                <div className="p-5 border-t-2 border-slate-200 flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
+                <div className="p-5 border-t-2 border-slate-100 flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
                     <span>Showing {students.length} of {totalCount} students</span>
                     <div className="flex items-center gap-3">
-                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-black text-slate-900">Previous</button>
+                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
                         <span>Page {page} of {totalPages}</span>
-                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-black text-slate-900">Next</button>
+                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
                     </div>
                 </div>
             </div>
@@ -629,7 +636,7 @@ function AdminTeachersTab({ setUserModal }) {
     const limit = 50;
 
     useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search); setPage(1); }, 300);
+        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
         return () => clearTimeout(t);
     }, [search]);
 
@@ -679,7 +686,7 @@ function AdminTeachersTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4 flex-1 min-w-[280px]">
                     <div className="relative flex-1">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
@@ -687,35 +694,35 @@ function AdminTeachersTab({ setUserModal }) {
                             type="text"
                             placeholder="Search faculty name, department, email..."
                             value={search}
-                            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 bg-white"
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
                         />
                         {search && (
-                            <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 p-1">
+                            <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
                                 <X size={16} />
                             </button>
                         )}
                     </div>
-                    <select value={deptFilter} onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                    <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
                         <option value="">All Departments</option>
                         {(filterOptions.departments || []).map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-emerald-700 transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
                 </button>
             </div>
 
-            <div className="bg-white rounded-3xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-100 border-b-2 border-slate-300 text-[#0f172a] font-black uppercase tracking-wider text-xs">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4">Faculty Member</th>
-                                <th className="p-4 text-center">Actions</th>
                                 <th className="p-4">Department</th>
                                 <th className="p-4">Assigned Quizzes</th>
                                 <th className="p-4">Status</th>
+                                <th className="p-4 text-center min-w-[130px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
@@ -729,42 +736,44 @@ function AdminTeachersTab({ setUserModal }) {
                                         <td className="p-4">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{t.name || t.username}</p>
-                                                <p className="text-xs text-slate-600 font-bold">{t.email || 'No email'}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{t.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        {/* Actions Column Right Next to Details */}
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border-2 border-emerald-300 text-xs font-black uppercase">{t.department || 'CSE'}</span></td>
+                                        <td className="p-4 font-black text-slate-800">{t.quizCount || 0} Quizzes Created</td>
+                                        <td className="p-4"><StatusBadge suspended={t.isSuspended} online={t.isOnline} /></td>
                                         <td className="p-4 text-center">
-                                            <div className="flex items-center justify-center gap-2">
+                                            <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: t })} 
-                                                    className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Edit Faculty"
+                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    title="Edit Faculty Details"
+                                                    aria-label="Edit Faculty Details"
                                                 >
-                                                    <Edit3 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Edit3 size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(t)} 
-                                                    className="p-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title={t.isSuspended ? 'Reinstate' : 'Suspend'}
+                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    title={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
+                                                    aria-label={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
                                                 >
-                                                    <Ban size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Ban size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(t)} 
-                                                    className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Delete Faculty"
+                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    title="Delete Faculty Record"
+                                                    aria-label="Delete Faculty Record"
                                                 >
-                                                    <Trash2 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Trash2 size={18} className="group-hover:text-white" />
                                                 </button>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-black uppercase shadow-xs">{t.department || 'CSE'}</span></td>
-                                        <td className="p-4 font-black text-slate-900">{t.quizCount || 0} Quizzes Created</td>
-                                        <td className="p-4"><StatusBadge suspended={t.isSuspended} online={t.isOnline} /></td>
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="5" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No faculty member records found</td></tr>
+                                <tr><td colSpan="5" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No faculty records match your query</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -786,7 +795,7 @@ function AdminAdminsTab({ setUserModal }) {
     const [statusF, setStatusF] = useState('');
 
     useEffect(() => {
-        const t = setTimeout(() => setDebSearch(search), 300);
+        const t = setTimeout(() => setDebSearch(search.trim()), 300);
         return () => clearTimeout(t);
     }, [search]);
 
@@ -830,7 +839,7 @@ function AdminAdminsTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 min-w-[280px]">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input
@@ -838,28 +847,28 @@ function AdminAdminsTab({ setUserModal }) {
                         placeholder="Search administrators..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600 bg-white"
+                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20"
                     />
                     {search && (
-                        <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 p-1">
+                        <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
                             <X size={16} />
                         </button>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-purple-700 transition-all cursor-pointer">
                     <Plus size={18} /> Add Administrator
                 </button>
             </div>
 
-            <div className="bg-white rounded-3xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-100 border-b-2 border-slate-300 text-[#0f172a] font-black uppercase tracking-wider text-xs">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4">Administrator</th>
-                                <th className="p-4 text-center">Actions</th>
                                 <th className="p-4">Role Level</th>
                                 <th className="p-4">Status</th>
+                                <th className="p-4 text-center min-w-[130px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
@@ -873,43 +882,45 @@ function AdminAdminsTab({ setUserModal }) {
                                         <td className="p-4">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{a.name || a.username}</p>
-                                                <p className="text-xs text-slate-600 font-bold">{a.email || 'No email'}</p>
+                                                <p className="text-xs text-slate-500 font-bold">{a.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        {/* Actions Column Right Next to Details */}
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-100 text-purple-900 border-2 border-purple-300 text-xs font-black uppercase">SUPER ADMIN</span></td>
+                                        <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                         <td className="p-4 text-center">
-                                            <div className="flex items-center justify-center gap-2">
+                                            <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: a })} 
-                                                    className="p-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Edit Admin"
+                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    title="Edit Administrator Details"
+                                                    aria-label="Edit Administrator Details"
                                                 >
-                                                    <Edit3 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Edit3 size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="p-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center disabled:opacity-30 active:scale-95" 
-                                                    title={a.isSuspended ? 'Reinstate' : 'Suspend'}
+                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    title={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
+                                                    aria-label={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
                                                 >
-                                                    <Ban size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Ban size={18} className="group-hover:text-white" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center disabled:opacity-30 active:scale-95" 
-                                                    title="Delete Admin"
+                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    title="Delete Administrator Record"
+                                                    aria-label="Delete Administrator Record"
                                                 >
-                                                    <Trash2 size={18} strokeWidth={2.5} color="#ffffff" />
+                                                    <Trash2 size={18} className="group-hover:text-white" />
                                                 </button>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-600 text-white text-xs font-black uppercase shadow-xs">SUPER ADMIN</span></td>
-                                        <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="4" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No administrator records found</td></tr>
+                                <tr><td colSpan="4" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No administrator records match your query</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -939,7 +950,7 @@ function AdminDirectoryTab({ setUserModal }) {
     const limit = 30;
 
     useEffect(() => {
-        const t = setTimeout(() => { setDebSearch(search); setPage(1); }, 300);
+        const t = setTimeout(() => { setDebSearch(search.trim()); setPage(1); }, 300);
         return () => clearTimeout(t);
     }, [search]);
 
@@ -1009,18 +1020,18 @@ function AdminDirectoryTab({ setUserModal }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 min-w-[280px]">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input
                         type="text"
                         placeholder="Search global users by name, username, email..."
                         value={search}
-                        onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-800 bg-white"
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-600 focus:ring-2 focus:ring-slate-600/20"
                     />
                     {search && (
-                        <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 p-1">
+                        <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
                             <X size={16} />
                         </button>
                     )}
@@ -1033,24 +1044,24 @@ function AdminDirectoryTab({ setUserModal }) {
                         <option value="teacher">Teacher</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr className="bg-slate-100 border-b-2 border-slate-300 text-[#0f172a] font-black uppercase tracking-wider text-xs">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
                                 <th className="p-4 w-12 text-center">
                                     <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === users.length} onChange={toggleSelectAll} className="rounded text-slate-800 w-4 h-4" />
                                 </th>
                                 <th className="p-4">User Identity</th>
-                                <th className="p-4 text-center">Actions</th>
                                 <th className="p-4">Role</th>
                                 <th className="p-4">Status</th>
+                                <th className="p-4 text-center min-w-[130px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
@@ -1067,54 +1078,56 @@ function AdminDirectoryTab({ setUserModal }) {
                                         <td className="p-4">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{u.name || u.username}</p>
-                                                <p className="text-xs text-slate-600 font-bold">{u.email || 'No email'}</p>
-                                            </div>
-                                        </td>
-                                        {/* Actions Column Right Next to Details */}
-                                        <td className="p-4 text-center">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <button 
-                                                    onClick={() => setUserModal({ user: u })} 
-                                                    className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center active:scale-95" 
-                                                    title="Edit User"
-                                                >
-                                                    <Edit3 size={18} strokeWidth={2.5} color="#ffffff" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleSuspend(u)} 
-                                                    disabled={u.id === currentUser?.id} 
-                                                    className="p-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center disabled:opacity-30 active:scale-95" 
-                                                    title={u.isSuspended ? 'Reinstate' : 'Suspend'}
-                                                >
-                                                    <Ban size={18} strokeWidth={2.5} color="#ffffff" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleDelete(u)} 
-                                                    disabled={u.id === currentUser?.id} 
-                                                    className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all cursor-pointer font-bold inline-flex items-center justify-center disabled:opacity-30 active:scale-95" 
-                                                    title="Delete User"
-                                                >
-                                                    <Trash2 size={18} strokeWidth={2.5} color="#ffffff" />
-                                                </button>
+                                                <p className="text-xs text-slate-500 font-bold">{u.email || 'No email'}</p>
                                             </div>
                                         </td>
                                         <td className="p-4"><RoleBadge role={u.role} /></td>
                                         <td className="p-4"><StatusBadge suspended={u.isSuspended} online={u.isOnline} /></td>
+                                        <td className="p-4 text-center">
+                                            <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
+                                                <button 
+                                                    onClick={() => setUserModal({ user: u })} 
+                                                    className="group p-2.5 rounded-xl border-2 border-purple-500 bg-purple-50 hover:bg-purple-600 text-amber-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-purple-500/30" 
+                                                    title="Edit User Details"
+                                                    aria-label="Edit User Details"
+                                                >
+                                                    <Edit3 size={18} className="group-hover:text-white" />
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleSuspend(u)} 
+                                                    disabled={u.id === currentUser?.id} 
+                                                    className="group p-2.5 rounded-xl border-2 border-amber-500 bg-amber-100 hover:bg-amber-500 text-amber-950 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    title={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
+                                                    aria-label={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
+                                                >
+                                                    <Ban size={18} className="group-hover:text-white" />
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(u)} 
+                                                    disabled={u.id === currentUser?.id} 
+                                                    className="group p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    title="Delete User Record"
+                                                    aria-label="Delete User Record"
+                                                >
+                                                    <Trash2 size={18} className="group-hover:text-white" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="5" className="py-16 text-center text-xs font-black text-slate-400 uppercase tracking-widest">No matching user records found</td></tr>
+                                <tr><td colSpan="5" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No user records match your query</td></tr>
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                <div className="p-5 border-t-2 border-slate-200 flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
+                <div className="p-5 border-t-2 border-slate-100 flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
                     <span>Showing {users.length} of {totalCount} users</span>
                     <div className="flex items-center gap-3">
-                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-black text-slate-900">Previous</button>
+                        <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
                         <span>Page {page} of {totalPages}</span>
-                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-black text-slate-900">Next</button>
+                        <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Next</button>
                     </div>
                 </div>
             </div>
@@ -1150,16 +1163,16 @@ export default function AdminDashboard() {
             <div className="space-y-8 pb-24 max-w-[100rem] mx-auto">
                 
                 {/* Clean High-Contrast Header Card */}
-                <div className="bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-1.5">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-black uppercase tracking-wider shadow-xs">
-                            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border-2 border-emerald-300 text-emerald-900 text-xs font-black uppercase tracking-wider">
+                            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
                             System Operational
                         </div>
                         <h1 className="text-3xl sm:text-4xl font-black text-[#0f172a] uppercase italic tracking-tight">
                             {getGreeting()}, <span className="text-[var(--text-accent)]">{user?.name || user?.username || 'Administrator'}</span> 👋
                         </h1>
-                        <p className="text-slate-600 font-bold text-xs sm:text-sm">
+                        <p className="text-slate-700 font-bold text-xs sm:text-sm">
                             Admin Command Center — Real-Time Directory & Enterprise Controls
                         </p>
                     </div>
@@ -1167,7 +1180,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={refreshStats} 
-                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer active:scale-95"
+                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-slate-950 cursor-pointer active:scale-95"
                         >
                             <RefreshCw size={16} className={loadingStats ? 'animate-spin text-amber-400' : 'text-amber-400'} /> 
                             <span>Sync Live Data</span>
@@ -1175,14 +1188,14 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Master Tab Bar Navigation with Distinct High-Contrast Solid Color Badges */}
-                <div className="bg-white border-2 border-slate-300 p-2 rounded-3xl flex items-center gap-2 shadow-sm overflow-x-auto premium-scrollbar">
+                {/* Master Tab Bar Navigation with Solid Accessible High-Contrast Buttons */}
+                <div className="bg-white border-2 border-slate-200 p-2 rounded-3xl flex items-center gap-2 shadow-sm overflow-x-auto premium-scrollbar">
                     <button
                         onClick={() => setActiveTab('overview')}
-                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'overview'
-                                ? 'bg-blue-600 text-white shadow-md'
-                                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-[1.02]'
+                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                         }`}
                     >
                         <Activity size={18} className={activeTab === 'overview' ? 'text-white' : 'text-blue-600'} />
@@ -1191,54 +1204,54 @@ export default function AdminDashboard() {
 
                     <button
                         onClick={() => setActiveTab('students')}
-                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'students'
-                                ? 'bg-[var(--bg-accent)] text-white shadow-md'
-                                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300'
+                                ? 'bg-teal-600 text-white border-teal-700 shadow-md scale-[1.02]'
+                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                         }`}
                     >
-                        <GraduationCap size={18} className={activeTab === 'students' ? 'text-white' : 'text-[var(--text-accent)]'} />
+                        <GraduationCap size={18} className={activeTab === 'students' ? 'text-white' : 'text-teal-600'} />
                         <span>Students</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'students' ? 'bg-white/20 text-white' : 'bg-sky-600 text-white'}`}>{stats.students || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'students' ? 'bg-white/20 text-white' : 'bg-teal-100 text-teal-900 border border-teal-300'}`}>{stats.students || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('teachers')}
-                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'teachers'
-                                ? 'bg-emerald-600 text-white shadow-md'
-                                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300'
+                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-[1.02]'
+                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                         }`}
                     >
                         <UserCheck size={18} className={activeTab === 'teachers' ? 'text-white' : 'text-emerald-600'} />
                         <span>Teachers</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'teachers' ? 'bg-white/20 text-white' : 'bg-emerald-600 text-white'}`}>{stats.teachers || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'teachers' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'}`}>{stats.teachers || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('admins')}
-                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'admins'
-                                ? 'bg-purple-600 text-white shadow-md'
-                                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300'
+                                ? 'bg-purple-600 text-white border-purple-700 shadow-md scale-[1.02]'
+                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                         }`}
                     >
                         <Shield size={18} className={activeTab === 'admins' ? 'text-white' : 'text-purple-600'} />
                         <span>Admins</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'admins' ? 'bg-white/20 text-white' : 'bg-purple-600 text-white'}`}>{stats.admins || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'admins' ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-900 border border-purple-300'}`}>{stats.admins || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('directory')}
-                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                        className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'directory'
-                                ? 'bg-slate-900 text-white shadow-md'
-                                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300'
+                                ? 'bg-slate-900 text-white border-slate-950 shadow-md scale-[1.02]'
+                                : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                         }`}
                     >
                         <Users size={18} className={activeTab === 'directory' ? 'text-white' : 'text-slate-800'} />
                         <span>All Directory</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'directory' ? 'bg-white/20 text-white' : 'bg-slate-800 text-white'}`}>{stats.totalUsers || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'directory' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-900 border border-slate-300'}`}>{stats.totalUsers || 0}</span>
                     </button>
                 </div>
 

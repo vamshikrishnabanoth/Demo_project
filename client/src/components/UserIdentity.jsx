@@ -4,8 +4,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, UserCheck, GraduationCap, User } from 'lucide-react';
 
 /**
- * Global Status Badge (Format 1)
- * Used to indicate system/session status (e.g., LIVE)
+ * Global Status Badge
  */
 export const StatusBadge = ({ label = 'Live', color = 'emerald' }) => {
     const colorClasses = {
@@ -32,38 +31,44 @@ export const UserProfileCard = ({ user, role }) => {
     const location = useLocation();
     const isProfilePage = location.pathname === '/profile';
     
-    const getRoleIcon = () => {
-        switch (role?.toLowerCase()) {
-            case 'admin': return <ShieldCheck size={16} strokeWidth={2.5} />;
-            case 'teacher': return <UserCheck size={16} strokeWidth={2.5} />;
-            case 'student': return <GraduationCap size={16} strokeWidth={2.5} />;
-            default: return <User size={16} strokeWidth={2.5} />;
-        }
-    };
-
-    const displayName = user?.name || user?.username || 'STUDENT';
+    const displayName = user?.name || user?.username || 'USER';
     const displayRole = role === 'admin' ? 'ADMIN' : (role || 'STUDENT');
+
+    const renderRoleIcon = () => {
+        if (role === 'admin') {
+            return <ShieldCheck size={18} className={isProfilePage ? 'text-amber-400' : 'text-purple-600'} strokeWidth={2.5} />;
+        }
+        if (role === 'teacher') {
+            return <UserCheck size={18} className={isProfilePage ? 'text-emerald-400' : 'text-emerald-600'} strokeWidth={2.5} />;
+        }
+        if (role === 'student') {
+            return <GraduationCap size={18} className={isProfilePage ? 'text-sky-400' : 'text-sky-600'} strokeWidth={2.5} />;
+        }
+        return <User size={18} className={isProfilePage ? 'text-slate-300' : 'text-slate-700'} strokeWidth={2.5} />;
+    };
 
     return (
         <Link
             to="/profile"
-            className={`hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border transition-all duration-200 cursor-pointer group shadow-2xs
-                ${isProfilePage 
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm' 
-                    : 'bg-white/90 border-slate-200/90 hover:bg-slate-100/90 hover:border-slate-300 text-slate-900'
-                }`}
+            className={`hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border transition-all duration-200 cursor-pointer group shadow-2xs ${
+                isProfilePage 
+                    ? 'bg-slate-900 text-white border-amber-400/50 shadow-sm' 
+                    : 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-900'
+            }`}
             title={isProfilePage ? "Current Location: Profile" : "View Profile"}
         >
             <div className="relative shrink-0">
                 <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-black shadow-xs transition-transform duration-150 group-hover:scale-105 ${
-                        isProfilePage ? 'bg-white text-slate-900' : 'bg-slate-900 text-white'
+                    className={`w-9 h-9 rounded-full flex items-center justify-center font-black shadow-xs transition-transform duration-150 group-hover:scale-105 border-2 ${
+                        isProfilePage 
+                            ? 'bg-slate-800 border-amber-400 text-amber-400' 
+                            : 'bg-slate-100 border-slate-300 text-slate-900'
                     }`}
                 >
-                    {getRoleIcon()}
+                    {renderRoleIcon()}
                 </div>
-                {/* High-Contrast Green Indicator Dot on Profile Avatar */}
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#10b981] border-2 border-white shadow-xs z-10 animate-pulse" />
+                {/* High-Contrast Green Indicator Dot */}
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs z-10 animate-pulse" />
             </div>
             <div className="text-left pr-1">
                 <p className={`text-[11px] font-black uppercase tracking-tight leading-none transition-colors duration-200 ${
@@ -72,7 +77,7 @@ export const UserProfileCard = ({ user, role }) => {
                     {displayName}
                 </p>
                 <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${
-                    isProfilePage ? 'text-slate-300' : 'text-slate-500'
+                    isProfilePage ? 'text-amber-400 font-extrabold' : 'text-slate-500'
                 }`}>
                     {displayRole}
                 </p>
@@ -80,4 +85,3 @@ export const UserProfileCard = ({ user, role }) => {
         </Link>
     );
 };
-
