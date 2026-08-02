@@ -11,7 +11,10 @@ import {
     Menu,
     X,
     MessageSquare,
-    Pin
+    Pin,
+    GraduationCap,
+    UserCheck,
+    Shield
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
@@ -130,7 +133,10 @@ export default function DashboardLayout({ children, role }) {
     ];
     const adminLinks = [
         { name: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
-        { name: 'Users',     path: '/admin/users',     icon: User },
+        { name: 'Students',  path: '/admin/students',  icon: GraduationCap },
+        { name: 'Teachers',  path: '/admin/teachers',  icon: UserCheck },
+        { name: 'Admins',    path: '/admin/admins',    icon: Shield },
+        { name: 'All Users', path: '/admin/users',     icon: User },
         { name: 'Profile',   path: '/profile',         icon: User },
     ];
 

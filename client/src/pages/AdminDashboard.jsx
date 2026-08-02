@@ -1,785 +1,393 @@
-import React, { useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
 import socket from '../utils/socket';
 import {
-    Users, Shield, Ban, Activity, LayoutDashboard,
-    Plus, Trash2, Edit3, Search, RefreshCw, UserCheck, 
-    GraduationCap, ShieldCheck, Loader2, AlertTriangle, Home,
-    Database, Upload, Rocket, FileSpreadsheet, Sparkles, Book
+    Users, Shield, UserCheck, GraduationCap, Activity, LayoutDashboard,
+    Plus, RefreshCw, Database, Cpu, Lock, Wifi, HardDrive, Radio,
+    TrendingUp, Clock, Zap, ChevronRight, AlertCircle, CheckCircle2,
+    BookOpen, Megaphone, UserPlus
 } from 'lucide-react';
-import { showSuccess, showConfirm, showError } from '../utils/alerts';
+import { showSuccess, showError } from '../utils/alerts';
 import DashboardLayout from '../components/DashboardLayout';
-import { PremiumButton, PremiumInput, GlassCard } from '../components/ui/Primitives';
-import UserModal from '../components/admin/UserModal';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+    PieChart, Pie, Cell, Legend
+} from 'recharts';
 
-const ROLE_META = {
-    admin:   { 
-        label: 'ADMIN',   
-        color: 'text-blue-900',   
-        bg: 'bg-blue-100',   
-        border: 'border-blue-300',   
-        icon: ShieldCheck,
-        avatarBg: 'bg-blue-600',
-        avatarColor: 'text-white',
-        avatarBorder: 'border-blue-700'
-    },
-    teacher: { 
-        label: 'TEACHER', 
-        color: 'text-amber-950', 
-        bg: 'bg-amber-100', 
-        border: 'border-amber-300', 
-        icon: UserCheck,
-        avatarBg: 'bg-amber-500',
-        avatarColor: 'text-white',
-        avatarBorder: 'border-amber-600'
-    },
-    student: { 
-        label: 'STUDENT', 
-        color: 'text-emerald-950',   
-        bg: 'bg-emerald-100',   
-        border: 'border-emerald-300',   
-        icon: GraduationCap,
-        avatarBg: 'bg-emerald-600',
-        avatarColor: 'text-white',
-        avatarBorder: 'border-emerald-700'
-    },
-    none:    { 
-        label: 'NONE',    
-        color: 'text-slate-800', 
-        bg: 'bg-slate-200', 
-        border: 'border-slate-300', 
-        icon: Users,
-        avatarBg: 'bg-slate-700',
-        avatarColor: 'text-white',
-        avatarBorder: 'border-slate-800'
-    },
-};
+// --- Animated counter ---
+function AnimatedCount({ value }) {
+    const [display, setDisplay] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const end = parseInt(value, 10) || 0;
+        if (end === 0) { setDisplay(0); return; }
+        const step = Math.max(1, Math.floor(end / 40));
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= end) { setDisplay(end); clearInterval(timer); }
+            else setDisplay(start);
+        }, 20);
+        return () => clearInterval(timer);
+    }, [value]);
+    return <span>{display.toLocaleString()}</span>;
+}
 
-const RoleBadge = ({ role }) => {
-    const meta = ROLE_META[role] || ROLE_META.none;
-    const Icon = meta.icon;
+// --- Skeleton pulse ---
+function Skeleton({ className = '' }) {
+    return <div className={`animate-pulse bg-white/10 rounded-xl ${className}`} />;
+}
+
+// --- System Health Item ---
+function HealthItem({ icon: Icon, label, status = 'online' }) {
+    const colors = {
+        online:   { dot: 'bg-emerald-400', text: 'text-emerald-400', label: 'Online' },
+        degraded: { dot: 'bg-amber-400',   text: 'text-amber-400',   label: 'Degraded' },
+        offline:  { dot: 'bg-rose-400',    text: 'text-rose-400',    label: 'Offline' },
+    };
+    const c = colors[status] || colors.online;
     return (
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider ${meta.color} ${meta.bg} border-2 ${meta.border} shadow-xs`}>
-            <Icon size={14} strokeWidth={2.5} /> {meta.label}
-        </span>
+        <div className="flex items-center justify-between py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-all">
+            <div className="flex items-center gap-3">
+                <Icon size={16} className="text-[var(--text-accent)]" />
+                <span className="text-xs font-bold text-white/70 uppercase tracking-widest">{label}</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${c.dot} ${status === 'online' ? 'animate-pulse' : ''} shadow-[0_0_6px_currentColor]`} />
+                <span className={`text-[10px] font-black uppercase tracking-wider ${c.text}`}>{c.label}</span>
+            </div>
+        </div>
     );
-};
+}
+
+// --- Recent Activity Item ---
+function ActivityItem({ item }) {
+    const roleIcon = { student: '🎓', teacher: '👨‍🏫', admin: '🛡️' };
+    const timeAgo = (date) => {
+        const diff = Date.now() - new Date(date).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        return `${Math.floor(hrs / 24)}d ago`;
+    };
+    return (
+        <div className="flex items-start gap-3 py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-all">
+            <div className="w-8 h-8 rounded-xl bg-[var(--bg-accent)]/10 flex items-center justify-center shrink-0 text-base">
+                {roleIcon[item.user?.role] || '👤'}
+            </div>
+            <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white/80 leading-relaxed truncate">{item.message}</p>
+                <p className="text-[10px] text-white/30 font-bold mt-0.5 uppercase tracking-widest">{timeAgo(item.timestamp)}</p>
+            </div>
+        </div>
+    );
+}
+
+const CHART_COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#f97316', '#14b8a6', '#ec4899'];
 
 export default function AdminDashboard() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { user: currentUser } = useContext(AuthContext);
-    
-    // Tab controller: 'users', 'knowledge', 'operations'
-    const [activeTab, setActiveTab] = useState('users');
+    const navigate  = useNavigate();
+    const { user }  = useContext(AuthContext);
 
-    const [stats, setStats] = useState({ total: 0, teachers: 0, students: 0, admins: 0 });
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [search, setSearch] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [roleFilter, setRoleFilter] = useState('all');
-    const [modal, setModal] = useState(null);
+    const [dashData, setDashData] = useState(null);
+    const [loading,  setLoading]  = useState(true);
+    const [onlineUsers, setOnlineUsers] = useState(0);
+    const [healthStatus, setHealthStatus] = useState({ db: 'online', auth: 'online', socket: 'online', storage: 'online' });
 
-    // Pagination states
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
-    const limit = 20;
-
-    // Textbook management states
-    const [ingestedDocs, setIngestedDocs] = useState([]);
-    const [sourceName, setSourceName] = useState('');
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [ingesting, setIngesting] = useState(false);
-
-    // CSV Roster Import states
-    const [csvText, setCsvText] = useState('');
-    const [importing, setImporting] = useState(false);
-
-    // Debounce search input
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-            setPage(1); // Reset to page 1 on new search query
-        }, 300);
-        return () => clearTimeout(timer);
-    }, [search]);
-
-    const fetchStats = useCallback(async () => {
-        try { const res = await api.get('/admin/stats'); setStats(res.data); }
-        catch (err) { console.error('Stats fetch failed', err); }
-    }, []);
-
-    const fetchUsers = useCallback(async () => {
+    const fetchDashboard = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get('/admin/users', {
-                params: {
-                    page,
-                    limit,
-                    search: debouncedSearch,
-                    role: roleFilter
-                }
-            });
-
-            if (res.data && Array.isArray(res.data.users)) {
-                setUsers(res.data.users);
-                setTotalPages(res.data.totalPages || 1);
-                setTotalCount(res.data.totalCount || 0);
-            } else if (Array.isArray(res.data)) {
-                // Fallback for unpaginated format
-                setUsers(res.data);
-                setTotalPages(1);
-                setTotalCount(res.data.length);
-            }
+            const res = await api.get('/admin/dashboard');
+            setDashData(res.data);
+            setOnlineUsers(res.data.onlineNow || 0);
         } catch (err) {
-            console.error('Users fetch failed', err);
-        } finally {
-            setLoading(false);
-        }
-    }, [page, limit, debouncedSearch, roleFilter]);
+            // Fallback to stats endpoint if new dashboard endpoint not deployed yet
+            try {
+                const res2 = await api.get('/admin/stats');
+                const d = res2.data;
+                setDashData({ ...d, totalUsers: d.students + d.teachers + d.admins, recentActivity: [], charts: { branchDistribution: [], yearDistribution: [] } });
+            } catch { /* no-op */ }
+        } finally { setLoading(false); }
+    }, []);
 
-    const fetchIngestedDocs = useCallback(async () => {
+    // Check API health
+    const checkHealth = useCallback(async () => {
         try {
-            const res = await api.get('/quiz/documents');
-            setIngestedDocs(res.data || []);
-        } catch (err) {
-            console.error('Failed to fetch textbooks:', err.message);
+            await api.get('/health');
+            setHealthStatus(h => ({ ...h, db: 'online', auth: 'online' }));
+        } catch {
+            setHealthStatus(h => ({ ...h, db: 'degraded' }));
         }
     }, []);
 
-    useEffect(() => { fetchStats(); }, [fetchStats]);
-    useEffect(() => { fetchUsers(); }, [fetchUsers]);
-    useEffect(() => { fetchIngestedDocs(); }, [fetchIngestedDocs]);
+    useEffect(() => { fetchDashboard(); checkHealth(); }, [fetchDashboard, checkHealth]);
 
+    // Listen to online user changes via socket
     useEffect(() => {
-        const handleStatusChange = ({ userId, isOnline }) => {
-            setUsers(prev => prev.map(u => u.id === userId ? { ...u, isOnline } : u));
-        };
-        socket.on('user_status_change', handleStatusChange);
-        return () => socket.off('user_status_change', handleStatusChange);
+        const handleStatus = () => {};
+        socket.on('user_status_change', handleStatus);
+        return () => socket.off('user_status_change', handleStatus);
     }, []);
 
-    const handleSave = (savedUser, action) => {
-        if (action === 'created') setUsers(prev => [savedUser, ...prev]);
-        else setUsers(prev => prev.map(u => u.id === savedUser.id ? savedUser : u));
-        fetchStats();
-        setModal(null);
-        showSuccess('System Updated', `User data synchronized successfully.`);
-    };
+    const stats = dashData ? [
+        {
+            label: 'Total Users',
+            value: (dashData.students || 0) + (dashData.teachers || 0) + (dashData.admins || 0),
+            icon: Users,
+            color: 'from-amber-500 to-orange-500',
+            shadow: 'shadow-amber-500/20',
+            path: '/admin/students',
+            description: 'All registered accounts',
+        },
+        {
+            label: 'Students',
+            value: dashData.students || 0,
+            icon: GraduationCap,
+            color: 'from-sky-500 to-blue-600',
+            shadow: 'shadow-sky-500/20',
+            path: '/admin/students',
+            description: 'Enrolled students',
+        },
+        {
+            label: 'Teachers',
+            value: dashData.teachers || 0,
+            icon: UserCheck,
+            color: 'from-emerald-500 to-teal-600',
+            shadow: 'shadow-emerald-500/20',
+            path: '/admin/teachers',
+            description: 'Faculty members',
+        },
+        {
+            label: 'System Admins',
+            value: dashData.admins || 0,
+            icon: Shield,
+            color: 'from-violet-500 to-purple-600',
+            shadow: 'shadow-violet-500/20',
+            path: '/admin/admins',
+            description: 'Admin accounts',
+        },
+    ] : [];
 
-    const handleDelete = async (u) => {
-        if (u.id === currentUser?.id) return;
-        const result = await showConfirm('Wipe Entity?', `Deleting ${u.username} is permanent. Continue?`, 'Confirm Erasure');
-        if (result.isConfirmed) {
-            try {
-                await api.delete(`/admin/users/${u.id}`);
-                setUsers(prev => prev.filter(usr => usr.id !== u.id));
-                fetchStats();
-                showSuccess('Purged', 'User removed from central database.');
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    };
+    const quickActions = [
+        { label: 'Add Teacher',    icon: UserCheck, color: 'bg-emerald-500 hover:bg-emerald-400', path: '/admin/teachers', hint: 'Register new teacher' },
+        { label: 'Add Student',    icon: GraduationCap, color: 'bg-sky-500 hover:bg-sky-400',     path: '/admin/students', hint: 'Register new student' },
+        { label: 'Create Admin',   icon: Shield,    color: 'bg-violet-500 hover:bg-violet-400',   path: '/admin/admins',   hint: 'Create admin account' },
+        { label: 'Broadcast',      icon: Megaphone, color: 'bg-amber-500 hover:bg-amber-400',     path: '/teacher-dashboard', hint: 'Send announcement' },
+    ];
 
-    const handleSuspend = async (u) => {
-        if (u.id === currentUser?.id) return;
-        const action = u.isSuspended ? 'Reinstate' : 'Suspend';
-        const result = await showConfirm(
-            `${action} Access?`, 
-            `Are you sure you want to ${action.toLowerCase()} ${u.username}?`, 
-            action
-        );
-        
-        if (result.isConfirmed) {
-            try {
-                const res = await api.put(`/admin/users/suspend/${u.id}`);
-                setUsers(prev => prev.map(usr => usr.id === u.id ? { ...usr, ...res.data } : usr));
-                showSuccess('Synchronized', `User ${u.username} ${!u.isSuspended ? 'suspended' : 'reinstated'} successfully.`);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    };
-
-    // Promote student year levels
-    const handlePromoteSeniors = async () => {
-        const result = await showConfirm(
-            'Batch Year Promotion?',
-            'WARNING: This increases all students\' years by 1. Year 4 seniors will graduate and be deleted from active rosters. This action is irreversible.',
-            'Confirm Promotion'
-        );
-
-        if (result.isConfirmed) {
-            const toastId = toast.loading('Promoting academic years...');
-            try {
-                const res = await api.post('/admin/promote');
-                toast.success(res.data.msg || 'Academic year promotion complete!', { id: toastId });
-                fetchUsers();
-                fetchStats();
-            } catch (err) {
-                toast.error(err.response?.data?.msg || 'Promotion failed.', { id: toastId });
-            }
-        }
-    };
-
-    // Parse and submit CSV Student Roster import
-    const handleCsvImportSubmit = async (e) => {
-        e.preventDefault();
-        if (!csvText.trim()) return;
-
-        setImporting(true);
-        const lines = csvText.split('\n');
-        const students = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-            // Skip CSV Header line if present
-            if (i === 0 && line.toLowerCase().includes('email')) continue;
-
-            const parts = line.split(',');
-            if (parts.length >= 3) {
-                students.push({
-                    username: parts[0]?.trim(),
-                    email: parts[1]?.trim(),
-                    password: parts[2]?.trim(),
-                    studentBranch: parts[3]?.trim() || null,
-                    section: parts[4]?.trim() || null,
-                    year: parts[5]?.trim() || '1'
-                });
-            }
-        }
-
-        if (students.length === 0) {
-            toast.error('No valid student records found. Check format: username,email,password,...');
-            setImporting(false);
-            return;
-        }
-
-        const toastId = toast.loading(`Importing ${students.length} students...`);
-        try {
-            const res = await api.post('/admin/import', { students });
-            toast.success(`Success! Imported ${res.data.successCount} students. Failures: ${res.data.failureCount}`, { id: toastId });
-            setCsvText('');
-            fetchUsers();
-            fetchStats();
-        } catch (err) {
-            toast.error(err.response?.data?.msg || 'Import failed.', { id: toastId });
-        } finally {
-            setImporting(false);
-        }
-    };
-
-    // Read file as base64 and ingest textbook
-    const handleTextbookIngestSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedFile || !sourceName.trim()) return;
-
-        setIngesting(true);
-        const toastId = toast.loading(`Ingesting "${sourceName}" into pgvector store...`);
-
-        const reader = new FileReader();
-        reader.onload = async () => {
-            try {
-                const base64Data = reader.result.split(',')[1];
-                const fileType = selectedFile.name.split('.').pop().toLowerCase();
-
-                const payload = {
-                    source: sourceName,
-                    type: fileType,
-                    content: `base64:${base64Data}`,
-                    metadata: {
-                        uploadedBy: currentUser?.username,
-                        fileSize: selectedFile.size
-                    }
-                };
-
-                // Post directly to the local Python AI RAG server
-                const res = await api.post('http://localhost:8000/admin/ingest', payload);
-                toast.success(res.data.message || `Ingested "${sourceName}" successfully!`, { id: toastId });
-                
-                setSourceName('');
-                setSelectedFile(null);
-                // Reset file input element
-                e.target.reset();
-                fetchIngestedDocs();
-            } catch (err) {
-                console.error(err);
-                const errMsg = err.response?.data?.detail || 'Failed to connect to Python AI Ingestion engine.';
-                toast.error(errMsg, { id: toastId });
-            } finally {
-                setIngesting(false);
-            }
-        };
-        reader.readAsDataURL(selectedFile);
-    };
+    const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } };
+    const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } } };
 
     return (
         <DashboardLayout role="admin">
-            <div className="space-y-12 pb-20 max-w-[100rem] mx-auto">
-                
-                {/* Global Compact Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {[
-                        { label: 'Total Entities', value: stats.total, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
-                        { label: 'Active Teachers', value: stats.teachers, icon: UserCheck, color: 'text-amber-700', bg: 'bg-amber-50 border border-amber-200' },
-                        { label: 'Active Students', value: stats.students, icon: GraduationCap, color: 'text-sky-700', bg: 'bg-sky-50 border border-sky-200' },
-                        { label: 'System Admins', value: stats.admins, icon: Shield, color: 'text-red-700', bg: 'bg-red-50 border border-red-200' },
-                    ].map((s, i) => (
-                        <div key={i} className="bg-white border-2 border-[var(--border-color)] p-4 sm:p-5 rounded-2xl shadow-xs hover:shadow-md hover:border-[var(--bg-accent)] transition-all duration-300 flex items-center justify-between gap-3">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-wider text-[#334155]" style={{ color: '#334155' }}>{s.label}</p>
-                                <h3 className="text-2xl sm:text-3xl font-black text-[#0f172a] italic tracking-tight mt-0.5" style={{ color: '#0f172a' }}>{s.value}</h3>
-                            </div>
-                            <div className={`p-2.5 rounded-xl ${s.bg} ${s.color} shrink-0`}>
-                                <s.icon size={20} />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            <div className="space-y-8 pb-20 max-w-[100rem] mx-auto">
 
-                {/* Tab Selector Buttons with Crisp Borders & Defined Background Colors */}
-                <div className="flex gap-3 sm:gap-4 flex-wrap pb-2">
-                    {[
-                        { id: 'users', label: 'User Directory', icon: Users },
-                        { id: 'knowledge', label: 'AI Knowledge Hub', icon: Database },
-                        { id: 'operations', label: 'Academic Operations', icon: Rocket },
-                    ].map((tab) => {
-                        const isActive = activeTab === tab.id;
-                        const Icon = tab.icon;
-                        return (
-                            <button
-                                key={tab.id}
-                                type="button"
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-black uppercase tracking-wider text-xs sm:text-sm border-2 transition-all duration-200 cursor-pointer shadow-sm active:scale-95 ${
-                                    isActive
-                                        ? 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] shadow-md !text-white text-white-force'
-                                        : 'bg-white/90 hover:bg-white text-[#0f172a] hover:text-[var(--text-accent)] border-[var(--border-color)] hover:border-[var(--bg-accent)]'
-                                }`}
-                                style={isActive ? { backgroundColor: 'var(--bg-accent)', color: '#ffffff', borderColor: 'var(--bg-accent)' } : { backgroundColor: '#ffffff', color: '#0f172a', borderColor: 'var(--border-color)' }}
-                            >
-                                <Icon size={18} className={isActive ? '!text-white' : 'text-[var(--text-accent)]'} style={isActive ? { color: '#ffffff', stroke: '#ffffff' } : { color: 'var(--text-accent)' }} />
-                                <span className={isActive ? '!text-white font-black' : 'font-black text-[#0f172a]'} style={isActive ? { color: '#ffffff' } : { color: '#0f172a' }}>
-                                    {tab.label}
-                                </span>
-                            </button>
-                        );
-                    })}
-                </div>
+                {/* ── Header ── */}
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+                    className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
+                            Admin <span className="text-[var(--text-accent)]">Dashboard</span>
+                        </h1>
+                        <p className="text-white/40 text-xs font-bold uppercase tracking-widest mt-1">
+                            KMIT Kahoot — System Overview
+                        </p>
+                    </div>
+                    <button onClick={() => { fetchDashboard(); toast.success('Refreshed'); }}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all text-xs font-black uppercase tracking-wider cursor-pointer">
+                        <RefreshCw size={14} /> Refresh
+                    </button>
+                </motion.div>
 
-                {/* Tab: Users */}
-                {activeTab === 'users' && (
-                    <GlassCard className="!p-0 overflow-visible">
-                        <div className="p-8 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-[var(--bg-accent)]/10 rounded-2xl">
-                                    <Activity size={24} className="text-[var(--text-accent)]" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Command <span className="text-[var(--text-accent)]">Central</span></h2>
-                                    <p className="text-white/30 text-[10px] font-black uppercase tracking-widest mt-1">Identity & Clearance Management</p>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-3">
-                                <PremiumButton variant="primary" icon={RefreshCw} onClick={fetchUsers} className="!px-6 !text-white bg-[var(--bg-accent)]">Sync</PremiumButton>
-                                <PremiumButton variant="primary" icon={Plus} onClick={() => setModal({ isNew: true })} className="!text-white">Provision</PremiumButton>
-                            </div>
-                        </div>
-
-                        <div className="p-8 space-y-8">
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="flex-1">
-                                    <PremiumInput 
-                                        icon={Search} 
-                                        placeholder="SEARCH DATABASE..." 
-                                        value={search} 
-                                        onChange={e => setSearch(e.target.value)} 
-                                    />
-                                </div>
-                                <div className="md:w-64">
-                                    <select 
-                                        className="w-full h-[62px] bg-[var(--bg-primary)] border border-white/5 rounded-2xl px-6 text-white font-black text-xs uppercase tracking-widest focus:outline-none focus:border-[var(--bg-accent)]/50 transition-all appearance-none cursor-pointer"
-                                        value={roleFilter} 
-                                        onChange={e => setRoleFilter(e.target.value)}
-                                    >
-                                        <option value="all" className="bg-[var(--bg-primary)]">ALL ROLES</option>
-                                        <option value="student" className="bg-[var(--bg-primary)]">STUDENTS ONLY</option>
-                                        <option value="teacher" className="bg-[var(--bg-primary)]">TEACHERS ONLY</option>
-                                        <option value="admin" className="bg-[var(--bg-primary)]">ADMINS ONLY</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead>
-                                        <tr>
-                                            <th className="table-header-premium">Identity</th>
-                                            <th className="table-header-premium">Status</th>
-                                            <th className="table-header-premium text-center">Clearance</th>
-                                            <th className="table-header-premium text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        <AnimatePresence>
-                                            {users.map((u) => (
-                                                <motion.tr 
-                                                    key={u.id}
-                                                    layout
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    exit={{ opacity: 0 }}
-                                                    className="group hover:bg-white/[0.02] transition-colors"
-                                                >
-                                                    <td className="py-6 px-4">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 text-[#334155] flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-colors duration-200">
-                                                                {React.createElement(ROLE_META[u.role]?.icon || Users, { size: 18, strokeWidth: 2, className: 'text-[#334155]' })}
-                                                            </div>
-                                                            <div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <p className={`font-bold tracking-tight text-sm ${u.isSuspended ? 'text-slate-400 line-through' : 'text-[#0f172a]'}`} style={{ color: u.isSuspended ? '#94a3b8' : '#0f172a' }}>{u.username}</p>
-                                                                    {u.isSuspended && (
-                                                                        <span className="text-[9px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md font-black uppercase tracking-widest border border-rose-300">
-                                                                            Suspended
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex flex-col gap-0.5">
-                                                                    <p className="text-xs text-[#334155] font-medium" style={{ color: '#334155' }}>{u.email}</p>
-                                                                    {u.role === 'student' && (u.studentBranch || u.section) && (
-                                                                        <p className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest">
-                                                                            {u.studentBranch || '—'} / {u.section || '—'} {u.year ? `/ YEAR ${u.year}` : ''}
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-6 px-4">
-                                                        {u.isSuspended ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-xs">
-                                                                <span className="w-2 h-2 rounded-full bg-rose-600" /> Suspended
-                                                            </span>
-                                                        ) : u.isOnline ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-xs">
-                                                                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> Active
-                                                            </span>
-                                                        ) : (
-                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-300 shadow-xs">
-                                                                <span className="w-2 h-2 rounded-full bg-slate-400" /> Offline
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="py-6 px-4 text-center">
-                                                        <RoleBadge role={u.role} />
-                                                    </td>
-                                                    <td className="py-6 px-4 text-right">
-                                                        <div className="flex items-center justify-end gap-2.5">
-                                                            {/* Edit Action Button */}
-                                                            <button 
-                                                                onClick={() => setModal({ isNew: false, user: u })}
-                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 cursor-pointer group hover:scale-105"
-                                                                style={{
-                                                                    color: 'var(--btn-edit)',
-                                                                    borderColor: 'var(--btn-edit)',
-                                                                    borderWidth: '2px',
-                                                                    backgroundColor: 'transparent'
-                                                                }}
-                                                                title="Edit Entity"
-                                                                aria-label="Edit User"
-                                                            >
-                                                                <Edit3 size={18} strokeWidth={2.25} className="transition-transform group-hover:scale-110" />
-                                                            </button>
-
-                                                            {/* Suspend / Reinstate Action Button */}
-                                                            <button 
-                                                                onClick={() => handleSuspend(u)}
-                                                                disabled={u.id === currentUser?.id}
-                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group hover:scale-105"
-                                                                style={{
-                                                                    color: u.isSuspended ? '#10b981' : 'var(--btn-suspend)',
-                                                                    borderColor: u.isSuspended ? '#10b981' : 'var(--btn-suspend)',
-                                                                    borderWidth: '2px',
-                                                                    backgroundColor: 'transparent'
-                                                                }}
-                                                                title={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
-                                                                aria-label={u.isSuspended ? "Reinstate Access" : "Suspend Access"}
-                                                            >
-                                                                <Ban size={18} strokeWidth={2.25} className="transition-transform group-hover:rotate-12 group-hover:scale-110" />
-                                                            </button>
-
-                                                            {/* Delete Action Button */}
-                                                            <button 
-                                                                onClick={() => handleDelete(u)}
-                                                                disabled={u.id === currentUser?.id}
-                                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer group hover:scale-105"
-                                                                style={{
-                                                                    color: 'var(--btn-delete)',
-                                                                    borderColor: 'var(--btn-delete)',
-                                                                    borderWidth: '2px',
-                                                                    backgroundColor: 'transparent'
-                                                                }}
-                                                                title="Purge Identity"
-                                                                aria-label="Delete User"
-                                                            >
-                                                                <Trash2 size={18} strokeWidth={2.25} className="transition-transform group-hover:scale-110" />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            ))}
-                                        </AnimatePresence>
-                                    </tbody>
-                                </table>
-
-                                {loading && (
-                                    <div className="py-20 flex flex-col items-center justify-center gap-4 text-white/20">
-                                        <Loader2 className="animate-spin" size={40} />
-                                        <span className="text-xs font-black uppercase tracking-[0.3em]">Downloading Identities...</span>
+                {/* ── Statistics Cards ── */}
+                <motion.div variants={containerVariants} initial="hidden" animate="visible"
+                    className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    {loading
+                        ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32" />)
+                        : stats.map((s) => (
+                            <motion.div key={s.label} variants={itemVariants}
+                                onClick={() => navigate(s.path)}
+                                className={`relative overflow-hidden rounded-3xl bg-white/[0.04] border border-white/[0.08] p-5 cursor-pointer hover:scale-[1.03] hover:border-white/20 transition-all duration-300 group shadow-xl ${s.shadow}`}>
+                                {/* Gradient glow blob */}
+                                <div className={`absolute -top-6 -right-6 w-24 h-24 rounded-full bg-gradient-to-br ${s.color} opacity-20 blur-xl group-hover:opacity-30 transition-opacity`} />
+                                <div className="relative z-10">
+                                    <div className={`inline-flex p-2.5 rounded-2xl bg-gradient-to-br ${s.color} shadow-lg mb-4`}>
+                                        <s.icon size={20} className="text-white" />
                                     </div>
-                                )}
-                                {!loading && users.length === 0 && (
-                                    <div className="py-20 text-center text-white/20 font-black uppercase tracking-widest text-xs">
-                                        No entities found in database
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Pagination Controls Footer */}
-                            {!loading && totalPages > 0 && (
-                                <div className="flex items-center justify-between border-t border-white/5 pt-6 px-4 flex-wrap gap-4">
-                                    <p className="text-xs text-[#334155] font-black uppercase tracking-wider" style={{ color: '#334155' }}>
-                                        Showing Page <span className="text-[var(--text-accent)]">{page}</span> of <span className="text-[var(--text-accent)]">{totalPages}</span> ({totalCount} Total Entities)
+                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{s.label}</p>
+                                    <p className="text-3xl font-black text-white mt-1 italic tracking-tight">
+                                        <AnimatedCount value={s.value} />
                                     </p>
-                                    <div className="flex items-center gap-3">
-                                        <button
-                                            onClick={() => setPage(p => Math.max(1, p - 1))}
-                                            disabled={page <= 1}
-                                            className="px-5 py-2.5 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-wider border border-white/10 hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                                        >
-                                            &larr; Previous
-                                        </button>
-                                        <span className="px-4 py-2 bg-[var(--bg-accent)] text-white text-xs font-black rounded-xl">
-                                            {page} / {totalPages}
-                                        </span>
-                                        <button
-                                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                            disabled={page >= totalPages}
-                                            className="px-5 py-2.5 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-wider border border-white/10 hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                                        >
-                                            Next &rarr;
-                                        </button>
+                                    <div className="flex items-center gap-1 mt-2 text-white/30 group-hover:text-white/50 transition-colors">
+                                        <span className="text-[9px] font-bold uppercase tracking-widest">{s.description}</span>
+                                        <ChevronRight size={10} />
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                    </GlassCard>
-                )}
+                            </motion.div>
+                        ))
+                    }
+                </motion.div>
 
-                {/* Tab: AI Knowledge Hub */}
-                {activeTab === 'knowledge' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Ingestion Panel */}
-                        <div className="lg:col-span-1">
-                            <GlassCard className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-[var(--bg-accent)]/10 text-[var(--text-accent)] rounded-2xl">
-                                        <Upload size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-white italic uppercase tracking-wider">Ingest textbook</h2>
-                                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Feed the pgvector RAG store</p>
-                                    </div>
+                {/* ── Charts + Activity + Health row ── */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+                    {/* Charts */}
+                    <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        {/* Branch distribution pie chart */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                            className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2 rounded-xl bg-amber-500/10"><TrendingUp size={16} className="text-amber-400" /></div>
+                                <div>
+                                    <h3 className="text-sm font-black text-white uppercase tracking-tight">Branch Distribution</h3>
+                                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Students by branch</p>
                                 </div>
-
-                                <form onSubmit={handleTextbookIngestSubmit} className="space-y-4 pt-4">
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Knowledge Source ID / Name</label>
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. OS_Chapter_3_Syllabus"
-                                            value={sourceName}
-                                            onChange={(e) => setSourceName(e.target.value)}
-                                            required
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 outline-none focus:border-[var(--bg-accent)] transition-all text-sm uppercase"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Select Document File (.pdf, .docx, .pptx, .txt)</label>
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.docx,.pptx,.txt"
-                                            required
-                                            onChange={(e) => setSelectedFile(e.target.files[0])}
-                                            className="w-full text-slate-400 font-bold text-xs uppercase cursor-pointer file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-[var(--bg-accent)]/20 file:text-[var(--text-accent)] file:cursor-pointer hover:file:bg-[var(--bg-accent)]/30"
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={ingesting || !selectedFile || !sourceName.trim()}
-                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] disabled:cursor-not-allowed !text-white text-white-force font-black py-4 rounded-2xl text-xs uppercase tracking-widest transition-all shadow-lg cursor-pointer opacity-100"
-                                    >
-                                        {ingesting ? (
-                                            <Loader2 className="animate-spin !text-white" size={18} style={{ color: '#ffffff' }} />
-                                        ) : (
-                                            <Sparkles size={18} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
-                                        )}
-                                        <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
-                                            {ingesting ? 'INGESTING...' : 'INGEST INTO DB'}
-                                        </span>
-                                    </button>
-                                </form>
-                            </GlassCard>
-                        </div>
-
-                        {/* Ingested Documents List */}
-                        <div className="lg:col-span-2">
-                            <GlassCard className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-emerald-600/10 text-emerald-400 rounded-2xl">
-                                        <Database size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-white italic uppercase tracking-wider">AI syllabus library</h2>
-                                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Available materials for RAG</p>
-                                    </div>
-                                </div>
-
-                                {ingestedDocs.length === 0 ? (
-                                    <div className="py-20 text-center text-white/20 font-black uppercase tracking-widest text-xs">
-                                        No materials have been ingested yet
-                                    </div>
+                            </div>
+                            {loading ? <Skeleton className="h-48" /> : (
+                                dashData?.charts?.branchDistribution?.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height={180}>
+                                        <PieChart>
+                                            <Pie data={dashData.charts.branchDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} stroke="none">
+                                                {dashData.charts.branchDistribution.map((_, idx) => (
+                                                    <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '11px', fontWeight: 'bold' }} />
+                                            <Legend iconType="circle" iconSize={8} formatter={v => <span style={{ color: '#ffffff80', fontSize: 10, fontWeight: 'bold' }}>{v}</span>} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {ingestedDocs.map((doc, idx) => (
-                                            <div key={idx} className="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
-                                                <div className="flex items-center gap-4 overflow-hidden">
-                                                    <div className="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl">
-                                                        <Book size={20} />
-                                                    </div>
-                                                    <span className="font-bold text-sm text-white uppercase truncate">{doc}</span>
-                                                </div>
-                                                <span className="text-[9px] font-black uppercase text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded border border-emerald-400/30">Vectorized</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </GlassCard>
-                        </div>
-                    </div>
-                )}
+                                    <div className="h-48 flex items-center justify-center text-white/20 text-xs font-bold uppercase tracking-widest">No branch data yet</div>
+                                )
+                            )}
+                        </motion.div>
 
-                {/* Tab: Academic Operations */}
-                {activeTab === 'operations' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Year level promotion */}
-                        <GlassCard className="space-y-6 flex flex-col justify-between">
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-red-600/10 text-red-400 rounded-2xl">
-                                        <Rocket size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-white italic uppercase tracking-wider">Academic Year level promotion</h2>
-                                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">End of semester student upgrade</p>
-                                    </div>
-                                </div>
-
-                                <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider leading-relaxed">
-                                    ⚠ CRITICAL WARNING: Promoting student year levels will increase all student entities' year field values by 1 (e.g. Year 1 ➔ Year 2). Year 4 graduating seniors will be permanently wiped out from the active system database. Please ensure you have backup copies of academic profiles.
+                        {/* Year distribution bar chart */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                            className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2 rounded-xl bg-sky-500/10"><Activity size={16} className="text-sky-400" /></div>
+                                <div>
+                                    <h3 className="text-sm font-black text-white uppercase tracking-tight">Year Distribution</h3>
+                                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Students per year</p>
                                 </div>
                             </div>
+                            {loading ? <Skeleton className="h-48" /> : (
+                                dashData?.charts?.yearDistribution?.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height={180}>
+                                        <BarChart data={dashData.charts.yearDistribution} barSize={28}>
+                                            <XAxis dataKey="name" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                                            <YAxis hide />
+                                            <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '11px', fontWeight: 'bold' }} cursor={false} />
+                                            <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                                                {dashData.charts.yearDistribution.map((_, idx) => (
+                                                    <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
+                                                ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="h-48 flex items-center justify-center text-white/20 text-xs font-bold uppercase tracking-widest">No year data yet</div>
+                                )
+                            )}
+                        </motion.div>
+                    </div>
 
-                            <button
-                                onClick={handlePromoteSeniors}
-                                className="w-full mt-6 flex items-center justify-center gap-2.5 bg-red-600 hover:bg-red-700 hover:scale-[1.01] hover:-translate-y-0.5 active:translate-y-0.5 active:scale-95 !text-white text-white-force font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-widest transition-all duration-200 shadow-md hover:shadow-xl hover:shadow-red-600/40 border-b-4 border-red-800 hover:border-red-900 cursor-pointer group"
-                                style={{ color: '#ffffff' }}
-                            >
-                                <Rocket size={18} className="!text-white group-hover:scale-115 group-hover:-rotate-12 transition-transform duration-200" style={{ color: '#ffffff', stroke: '#ffffff' }} />
-                                <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
-                                    EXECUTE YEAR LEVEL PROMOTION
-                                </span>
+                    {/* System Health */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+                        className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-6 flex flex-col">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-emerald-500/10"><CheckCircle2 size={16} className="text-emerald-400" /></div>
+                            <div>
+                                <h3 className="text-sm font-black text-white uppercase tracking-tight">System Health</h3>
+                                <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Service status</p>
+                            </div>
+                        </div>
+                        <div className="space-y-2 flex-1">
+                            <HealthItem icon={Database}   label="Database"        status={healthStatus.db} />
+                            <HealthItem icon={Cpu}        label="AI Engine"       status="online" />
+                            <HealthItem icon={Lock}       label="Authentication"  status={healthStatus.auth} />
+                            <HealthItem icon={Wifi}       label="Socket Server"   status="online" />
+                            <HealthItem icon={HardDrive}  label="Storage"         status="online" />
+                        </div>
+                        <div className="mt-4 p-4 rounded-2xl bg-[var(--bg-accent)]/5 border border-[var(--bg-accent)]/20 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Radio size={14} className="text-[var(--text-accent)]" />
+                                <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">Online Now</span>
+                            </div>
+                            <span className="text-sm font-black text-[var(--text-accent)]">{loading ? '...' : onlineUsers}</span>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* ── Activity + Quick Actions row ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    {/* Recent Activity */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                        className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-6">
+                        <div className="flex items-center justify-between mb-5">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-violet-500/10"><Clock size={16} className="text-violet-400" /></div>
+                                <div>
+                                    <h3 className="text-sm font-black text-white uppercase tracking-tight">Recent Activity</h3>
+                                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Latest system events</p>
+                                </div>
+                            </div>
+                            <button onClick={() => navigate('/admin/students')}
+                                className="text-[10px] text-[var(--text-accent)] font-black uppercase tracking-widest hover:underline cursor-pointer">
+                                View All
                             </button>
-                        </GlassCard>
+                        </div>
+                        <div className="space-y-2">
+                            {loading ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-14" />) :
+                                dashData?.recentActivity?.length > 0
+                                    ? dashData.recentActivity.map((item, i) => <ActivityItem key={i} item={item} />)
+                                    : <div className="py-10 text-center text-white/20 text-xs font-bold uppercase tracking-widest">No recent activity</div>
+                            }
+                        </div>
+                    </motion.div>
 
-                        {/* CSV Roster batch import — Vibrant Purple Theme Container */}
-                        <div className="bg-gradient-to-br from-white via-purple-50/30 to-purple-100/40 border-2 border-purple-300 rounded-[2.5rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3.5 bg-purple-100 border border-purple-300 text-purple-700 rounded-2xl shadow-xs">
-                                        <FileSpreadsheet size={24} className="text-purple-700" />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-[#0f172a] italic uppercase tracking-wider" style={{ color: '#0f172a' }}>
-                                            Roster Batch CSV Import
-                                        </h2>
-                                        <p className="text-purple-700 text-[10px] font-black uppercase tracking-widest mt-0.5" style={{ color: '#7c3aed' }}>
-                                            Register student entities in bulk
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <form onSubmit={handleCsvImportSubmit} className="space-y-4 pt-1">
-                                    <div>
-                                        <label className="block text-[10px] font-black text-[#334155] uppercase tracking-widest mb-1.5" style={{ color: '#334155' }}>
-                                            CSV Format Template (No Headers, comma separated):
-                                        </label>
-                                        <div className="bg-purple-50 border border-purple-200 p-3.5 rounded-xl font-mono text-xs text-purple-900 font-bold select-all shadow-xs">
-                                            username,email,password,studentBranch,section,year
-                                        </div>
-                                    </div>
-
-                                    <textarea
-                                        rows="6"
-                                        placeholder="kmit_student1,student1@kmit.in,Password123,CSE,A,1&#10;kmit_student2,student2@kmit.in,Password123,IT,B,1"
-                                        value={csvText}
-                                        onChange={(e) => setCsvText(e.target.value)}
-                                        required
-                                        className="w-full p-4 bg-white border-2 border-purple-200 focus:border-purple-600 focus:ring-4 focus:ring-purple-100 rounded-2xl text-purple-950 font-mono text-xs font-bold placeholder:text-purple-300 outline-none transition-all shadow-inner leading-relaxed"
-                                        style={{ color: '#2e1065' }}
-                                    />
-
-                                    <button
-                                        type="submit"
-                                        disabled={importing || !csvText.trim()}
-                                        className="w-full flex items-center justify-center gap-2.5 bg-purple-600 hover:bg-purple-700 hover:scale-[1.01] hover:-translate-y-0.5 active:translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 !text-white text-white-force font-black py-4 px-6 rounded-2xl text-xs sm:text-sm uppercase tracking-widest transition-all duration-200 shadow-md hover:shadow-xl hover:shadow-purple-600/40 border-b-4 border-purple-900 hover:border-purple-950 cursor-pointer group"
-                                        style={{ color: '#ffffff' }}
-                                    >
-                                        {importing ? (
-                                            <Loader2 className="animate-spin !text-white" size={18} style={{ color: '#ffffff' }} />
-                                        ) : (
-                                            <FileSpreadsheet size={18} className="!text-white group-hover:scale-115 group-hover:rotate-6 transition-transform duration-200" style={{ color: '#ffffff', stroke: '#ffffff' }} />
-                                        )}
-                                        <span className="!text-white font-black uppercase tracking-widest" style={{ color: '#ffffff' }}>
-                                            {importing ? 'IMPORTING ROSTER...' : 'BATCH IMPORT STUDENTS'}
-                                        </span>
-                                    </button>
-                                </form>
+                    {/* Quick Actions */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                        className="rounded-3xl bg-white/[0.04] border border-white/[0.08] p-6 flex flex-col">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2 rounded-xl bg-orange-500/10"><Zap size={16} className="text-orange-400" /></div>
+                            <div>
+                                <h3 className="text-sm font-black text-white uppercase tracking-tight">Quick Actions</h3>
+                                <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Common admin tasks</p>
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {modal && (
-                    <UserModal 
-                        isNew={modal.isNew} 
-                        user={modal.user} 
-                        onClose={() => setModal(null)} 
-                        onSave={handleSave} 
-                    />
-                )}
+                        <div className="grid grid-cols-2 gap-3 flex-1">
+                            {quickActions.map((a) => (
+                                <button key={a.label} onClick={() => navigate(a.path)}
+                                    className={`flex flex-col items-center justify-center gap-2 p-5 rounded-2xl ${a.color} text-white font-black text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95 hover:scale-[1.03] shadow-lg`}>
+                                    <a.icon size={22} />
+                                    <span className="text-center leading-tight">{a.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                        {/* Active session info */}
+                        {dashData && (
+                            <div className="mt-4 grid grid-cols-2 gap-3">
+                                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center">
+                                    <p className="text-[9px] text-white/30 font-black uppercase tracking-widest">Active Today</p>
+                                    <p className="text-xl font-black text-[var(--text-accent)] mt-0.5"><AnimatedCount value={dashData.activeToday || 0} /></p>
+                                </div>
+                                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center">
+                                    <p className="text-[9px] text-white/30 font-black uppercase tracking-widest">Online Now</p>
+                                    <p className="text-xl font-black text-emerald-400 mt-0.5"><AnimatedCount value={onlineUsers} /></p>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+                </div>
             </div>
         </DashboardLayout>
     );

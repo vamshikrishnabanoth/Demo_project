@@ -29,6 +29,9 @@ model User {
   section          String?
   year             String?
   semester         String?
+  department       String?
+  subjects         String?
+  employeeId       String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
   lastLogin        DateTime?

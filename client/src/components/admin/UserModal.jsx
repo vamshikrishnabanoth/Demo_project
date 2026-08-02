@@ -1,138 +1,317 @@
-import React, { useState } from 'react';
-import { X, Save, Loader2, AlertTriangle, ChevronDown, Eye, EyeOff, Plus, Edit3 } from 'lucide-react';
-import { PremiumInput, PremiumButton } from '../ui/Primitives';
+import React, { useState, useEffect } from 'react';
+import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, BookOpen, Hash } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 
-export default function UserModal({ user, onClose, onSave, isNew }) {
-    const [form, setForm] = useState({
-        username: user?.username || '',
-        email:    user?.email    || '',
-        password: '',
-        role:     user?.role     || 'student',
-    });
-    const [showPw, setShowPw]   = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState('');
+const ROLE_CONFIGS = {
+    student: {
+        color:   'sky',
+        icon:    GraduationCap,
+        label:   'Student',
+        bg:      'bg-sky-500/10',
+        border:  'border-sky-500/30',
+        accent:  'text-sky-400',
+        button:  'bg-sky-600 hover:bg-sky-500 shadow-sky-500/25',
+    },
+    teacher: {
+        color:   'emerald',
+        icon:    UserCheck,
+        label:   'Teacher',
+        bg:      'bg-emerald-500/10',
+        border:  'border-emerald-500/30',
+        accent:  'text-emerald-400',
+        button:  'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25',
+    },
+    admin: {
+        color:   'violet',
+        icon:    Shield,
+        label:   'Admin',
+        bg:      'bg-violet-500/10',
+        border:  'border-violet-500/30',
+        accent:  'text-violet-400',
+        button:  'bg-violet-600 hover:bg-violet-500 shadow-violet-500/25',
+    },
+    none: {
+        color:   'slate',
+        icon:    User,
+        label:   'None',
+        bg:      'bg-slate-500/10',
+        border:  'border-slate-500/30',
+        accent:  'text-slate-400',
+        button:  'bg-slate-600 hover:bg-slate-500 shadow-slate-500/25',
+    },
+};
 
-    const handleSubmit = async () => {
-        if (!form.username || !form.email || (isNew && !form.password)) {
-            setError('Please fill all required fields.');
-            return;
+function FormField({ label, icon: Icon, children, accent = 'sky' }) {
+    return (
+        <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-[10px] font-black text-white/40 uppercase tracking-widest">
+                {Icon && <Icon size={11} className={`text-${accent}-400`} />}
+                {label}
+            </label>
+            {children}
+        </div>
+    );
+}
+
+function Input({ value, onChange, placeholder, type = 'text', required, disabled }) {
+    return (
+        <input
+            type={type}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            required={required}
+            disabled={disabled}
+            className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.08] rounded-2xl text-sm font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 transition-all disabled:opacity-40"
+        />
+    );
+}
+
+function Select({ value, onChange, children }) {
+    return (
+        <select value={value} onChange={onChange}
+            className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.08] rounded-2xl text-sm font-bold text-white focus:outline-none focus:border-sky-500/50 transition-all appearance-none cursor-pointer">
+            {children}
+        </select>
+    );
+}
+
+export default function UserModal({ isNew, user = null, defaultRole = 'student', onClose, onSave }) {
+    const [form, setForm] = useState({
+        username:     '',
+        email:        '',
+        password:     '',
+        name:         '',
+        role:         defaultRole,
+        // Student fields
+        studentBranch: '',
+        section:      '',
+        year:         '',
+        semester:     '',
+        // Teacher fields
+        department:   '',
+        subjects:     '',
+        employeeId:   '',
+    });
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (user) {
+            setForm({
+                username:      user.username     || '',
+                email:         user.email        || '',
+                password:      '',
+                name:          user.name         || '',
+                role:          user.role         || defaultRole,
+                studentBranch: user.studentBranch|| '',
+                section:       user.section      || '',
+                year:          user.year         || '',
+                semester:      user.semester     || '',
+                department:    user.department   || '',
+                subjects:      user.subjects     || '',
+                employeeId:    user.employeeId   || '',
+            });
         }
-        setLoading(true);
-        setError('');
+    }, [user, defaultRole]);
+
+    const set = (field) => (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
+
+    const validate = () => {
+        const e = {};
+        if (!form.username.trim()) e.username = 'Username is required';
+        if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Valid email is required';
+        if (isNew && !form.password.trim()) e.password = 'Password is required';
+        if (isNew && form.password.trim().length < 6) e.password = 'Password must be at least 6 characters';
+        return e;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const v = validate();
+        if (Object.keys(v).length) { setErrors(v); return; }
+        setErrors({});
+        setSaving(true);
+        const payload = { ...form };
+        if (!isNew && !payload.password.trim()) delete payload.password;
         try {
+            let res;
             if (isNew) {
-                const res = await api.post('/admin/users', form);
+                res = await api.post('/admin/users', payload);
+                toast.success(`${ROLE_CONFIGS[form.role]?.label || 'User'} created successfully!`);
                 onSave(res.data, 'created');
             } else {
-                const payload = { ...form };
-                if (!payload.password) delete payload.password;
-                const res = await api.put(`/admin/users/${user.id}`, payload);
+                res = await api.put(`/admin/users/${user.id}`, payload);
+                toast.success('User updated successfully!');
                 onSave(res.data, 'updated');
             }
         } catch (err) {
-            setError(err.response?.data?.msg || 'Something went wrong');
+            const msg = err.response?.data?.msg || 'Operation failed';
+            toast.error(msg);
         } finally {
-            setLoading(false);
+            setSaving(false);
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose} />
-            
-            <div className="relative bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                <div className="flex items-center justify-between p-8 border-b border-[var(--border-color)]">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] rounded-2xl border border-[var(--bg-accent)]/20">
-                            {isNew ? <Plus size={24} className="text-[var(--bg-accent)]" /> : <Edit3 size={24} className="text-[var(--bg-accent)]" />}
-                        </div>
-                        <div>
-                            <h2 className="font-black text-xl italic uppercase tracking-tighter" style={{ color: 'var(--text-primary)' }}>
-                                {isNew ? 'Provision' : 'Modify'} <span style={{ color: 'var(--text-accent)' }}>User</span>
-                            </h2>
-                            <p className="text-[11px] font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
-                                Core Database Management
-                            </p>
-                        </div>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer" style={{ color: 'var(--text-secondary)' }}>
-                        <X size={20} />
-                    </button>
-                </div>
+    const roleConfig = ROLE_CONFIGS[form.role] || ROLE_CONFIGS.student;
+    const RoleIcon   = roleConfig.icon;
+    const isStudent  = form.role === 'student';
+    const isTeacher  = form.role === 'teacher';
 
-                <div className="p-8 space-y-6">
-                    {error && (
-                        <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-black p-4 rounded-2xl uppercase tracking-widest animate-pulse">
-                            <AlertTriangle size={16} /> {error}
-                        </div>
-                    )}
-                    
-                    <div className="grid grid-cols-2 gap-6">
-                        <PremiumInput
-                            label="Full Name"
-                            placeholder="e.g. John Doe"
-                            value={form.username}
-                            onChange={e => setForm(f => ({ ...f, username: e.target.value }))}
-                        />
-                        <div className="space-y-2">
-                            <label className="block text-xs font-bold ml-1" style={{ color: 'var(--text-primary)' }}>
-                                Access Role
-                            </label>
-                            <div className="relative group">
-                                <select 
-                                    className="w-full bg-white border border-[var(--border-color)] rounded-2xl px-5 py-4 font-black text-sm appearance-none cursor-pointer focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-xs"
-                                    style={{ color: 'var(--text-primary)' }}
-                                    value={form.role} 
-                                    onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-                                >
-                                    <option value="student" className="bg-white text-slate-900 font-bold">STUDENT</option>
-                                    <option value="teacher" className="bg-white text-slate-900 font-bold">TEACHER</option>
-                                    <option value="admin"   className="bg-white text-slate-900 font-bold">ADMIN</option>
-                                    <option value="none"    className="bg-white text-slate-900 font-bold">UNASSIGNED</option>
-                                </select>
-                                <ChevronDown size={16} className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors" style={{ color: 'var(--text-secondary)' }} />
+    return (
+        <AnimatePresence>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                {/* Backdrop */}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-black/70 backdrop-blur-md"
+                    onClick={onClose} />
+
+                {/* Modal */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.92, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-[#0f1729] border border-white/10 shadow-2xl"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+
+                    {/* Header */}
+                    <div className={`sticky top-0 z-10 px-6 pt-6 pb-5 border-b border-white/[0.06] bg-[#0f1729] flex items-center justify-between`}>
+                        <div className="flex items-center gap-4">
+                            <div className={`p-3 rounded-2xl ${roleConfig.bg} border ${roleConfig.border}`}>
+                                <RoleIcon size={20} className={roleConfig.accent} />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-black text-white italic uppercase tracking-tighter">
+                                    {isNew ? `Add ${roleConfig.label}` : `Edit ${roleConfig.label}`}
+                                </h2>
+                                {!isNew && <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">@{user?.username}</p>}
                             </div>
                         </div>
+                        <button onClick={onClose}
+                            className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-all cursor-pointer">
+                            <X size={16} />
+                        </button>
                     </div>
 
-                    <PremiumInput
-                        label="Roll Number"
-                        placeholder="admin@kmit.in"
-                        value={form.email}
-                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    />
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
-                    <PremiumInput
-                        label={isNew ? 'Account Password' : 'Reset Password'}
-                        type={showPw ? 'text' : 'password'}
-                        placeholder="••••••••"
-                        value={form.password}
-                        onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                        endIcon={showPw ? EyeOff : Eye}
-                        onEndIconClick={() => setShowPw(p => !p)}
-                    />
-                </div>
+                        {/* Role Selector */}
+                        <FormField label="Role" icon={Shield}>
+                            <div className="grid grid-cols-4 gap-2">
+                                {Object.entries(ROLE_CONFIGS).map(([r, cfg]) => {
+                                    const Ic = cfg.icon;
+                                    return (
+                                        <button key={r} type="button" onClick={() => setForm(p => ({ ...p, role: r }))}
+                                            className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl border transition-all cursor-pointer text-[10px] font-black uppercase tracking-wider ${form.role === r ? `${cfg.bg} ${cfg.border} ${cfg.accent}` : 'border-white/[0.08] text-white/30 hover:border-white/20 hover:text-white/60'}`}>
+                                            <Ic size={16} />{cfg.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </FormField>
 
-                <div className="flex gap-4 p-8 pt-0">
-                    <button 
-                        onClick={onClose} 
-                        className="flex-1 px-6 py-4 rounded-2xl border border-[var(--border-color)] font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-all cursor-pointer"
-                        style={{ color: 'var(--text-secondary)' }}
-                    >
-                        Abort
-                    </button>
-                    <PremiumButton 
-                        onClick={handleSubmit} 
-                        disabled={loading}
-                        className="flex-1 py-4"
-                        icon={loading ? Loader2 : Save}
-                    >
-                        {isNew ? 'PROVISION' : 'SAVE DATA'}
-                    </PremiumButton>
-                </div>
+                        {/* Core Fields */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField label="Username / Roll No." icon={User}>
+                                <div>
+                                    <Input value={form.username} onChange={set('username')} placeholder="e.g. 21A91A0501" required />
+                                    {errors.username && <p className="text-[10px] text-rose-400 mt-1 font-bold">{errors.username}</p>}
+                                </div>
+                            </FormField>
+                            <FormField label="Full Name" icon={User}>
+                                <Input value={form.name} onChange={set('name')} placeholder="Full name (optional)" />
+                            </FormField>
+                        </div>
+
+                        <FormField label="Email Address" icon={Mail}>
+                            <div>
+                                <Input value={form.email} onChange={set('email')} placeholder="user@kmit.in" type="email" required />
+                                {errors.email && <p className="text-[10px] text-rose-400 mt-1 font-bold">{errors.email}</p>}
+                            </div>
+                        </FormField>
+
+                        <FormField label={isNew ? 'Password' : 'New Password (leave blank to keep)'} icon={Lock}>
+                            <div>
+                                <Input value={form.password} onChange={set('password')} placeholder={isNew ? 'Minimum 6 characters' : 'Leave blank to keep current'} type="password" required={isNew} />
+                                {errors.password && <p className="text-[10px] text-rose-400 mt-1 font-bold">{errors.password}</p>}
+                            </div>
+                        </FormField>
+
+                        {/* Student-specific fields */}
+                        {isStudent && (
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="space-y-4">
+                                <div className="flex items-center gap-2 pt-1">
+                                    <div className="flex-1 h-px bg-sky-500/20" />
+                                    <span className="text-[9px] font-black text-sky-400/60 uppercase tracking-widest">Student Details</span>
+                                    <div className="flex-1 h-px bg-sky-500/20" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FormField label="Branch">
+                                        <Input value={form.studentBranch} onChange={set('studentBranch')} placeholder="e.g. CSE, ECE, EEE" />
+                                    </FormField>
+                                    <FormField label="Section">
+                                        <Input value={form.section} onChange={set('section')} placeholder="e.g. A, B, C" />
+                                    </FormField>
+                                    <FormField label="Year">
+                                        <Select value={form.year} onChange={set('year')}>
+                                            <option value="">Select Year</option>
+                                            <option value="1">1st Year</option>
+                                            <option value="2">2nd Year</option>
+                                            <option value="3">3rd Year</option>
+                                            <option value="4">4th Year</option>
+                                        </Select>
+                                    </FormField>
+                                    <FormField label="Semester">
+                                        <Select value={form.semester} onChange={set('semester')}>
+                                            <option value="">Select Semester</option>
+                                            {[1,2,3,4,5,6,7,8].map(n => <option key={n} value={String(n)}>Sem {n}</option>)}
+                                        </Select>
+                                    </FormField>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Teacher-specific fields */}
+                        {isTeacher && (
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="space-y-4">
+                                <div className="flex items-center gap-2 pt-1">
+                                    <div className="flex-1 h-px bg-emerald-500/20" />
+                                    <span className="text-[9px] font-black text-emerald-400/60 uppercase tracking-widest">Teacher Details</span>
+                                    <div className="flex-1 h-px bg-emerald-500/20" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FormField label="Department" icon={Briefcase}>
+                                        <Input value={form.department} onChange={set('department')} placeholder="e.g. CSE, ECE" />
+                                    </FormField>
+                                    <FormField label="Employee ID" icon={Hash}>
+                                        <Input value={form.employeeId} onChange={set('employeeId')} placeholder="e.g. KMIT-T-001" />
+                                    </FormField>
+                                </div>
+                                <FormField label="Subjects (comma-separated)" icon={BookOpen}>
+                                    <Input value={form.subjects} onChange={set('subjects')} placeholder="e.g. DBMS, OS, CN" />
+                                </FormField>
+                            </motion.div>
+                        )}
+
+                        {/* Submit */}
+                        <div className="flex items-center gap-3 pt-2">
+                            <button type="button" onClick={onClose}
+                                className="flex-1 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-sm uppercase tracking-wider hover:bg-white/10 transition-all cursor-pointer">
+                                Cancel
+                            </button>
+                            <button type="submit" disabled={saving}
+                                className={`flex-1 py-3 rounded-2xl ${roleConfig.button} text-white font-black text-sm uppercase tracking-wider transition-all shadow-lg disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2`}>
+                                {saving
+                                    ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Saving...</>
+                                    : isNew ? `Create ${roleConfig.label}` : 'Save Changes'
+                                }
+                            </button>
+                        </div>
+                    </form>
+                </motion.div>
             </div>
-        </div>
+        </AnimatePresence>
     );
 }

@@ -35,6 +35,10 @@ const QuizAttemptSelector = lazyWithSuspense(() => import('./pages/QuizAttemptSe
 const AssessmentReview  = lazyWithSuspense(() => import('./pages/AssessmentReview'));
 const Profile           = lazyWithSuspense(() => import('./pages/Profile'));
 const AdminDashboard    = lazyWithSuspense(() => import('./pages/AdminDashboard'));
+const AdminStudents     = lazyWithSuspense(() => import('./pages/AdminStudents'));
+const AdminTeachers     = lazyWithSuspense(() => import('./pages/AdminTeachers'));
+const AdminAdmins       = lazyWithSuspense(() => import('./pages/AdminAdmins'));
+const AdminUsers        = lazyWithSuspense(() => import('./pages/AdminUsers'));
 const LiveRoomTeacher   = lazyWithSuspense(() => import('./pages/LiveRoomTeacher'));
 const LiveRoomStudent   = lazyWithSuspense(() => import('./pages/LiveRoomStudent'));
 const AssessmentsHistory = lazyWithSuspense(() => import('./pages/AssessmentsHistory'));
@@ -115,7 +119,10 @@ function AnimatedRoutes() {
 
                     {/* Admin pages */}
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
-                    <Route path="/admin/users"     element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students"  element={<PageTransition><ProtectedRoute roles={['admin']}><AdminStudents /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/teachers"  element={<PageTransition><ProtectedRoute roles={['admin']}><AdminTeachers /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/admins"    element={<PageTransition><ProtectedRoute roles={['admin']}><AdminAdmins /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/users"     element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUsers /></ProtectedRoute></PageTransition>} />
 
                     {/* Shared pages */}
                     <Route path="/profile"             element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><Profile /></ProtectedRoute></PageTransition>} />
