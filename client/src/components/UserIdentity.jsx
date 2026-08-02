@@ -63,11 +63,12 @@ export const UserProfileCard = ({ user, role }) => {
                 <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#10b981] border-2 border-white shadow-md animate-pulse z-10" />
             </div>
             <div className="text-left">
-                <p className="text-[11px] font-black text-[var(--text-primary)] leading-none group-hover:text-[var(--text-accent)] transition-colors duration-200">
-                    {user?.username || 'Guest'}
+                <p className="text-xs font-black text-[var(--text-primary)] leading-none group-hover:text-[var(--text-accent)] transition-colors duration-200">
+                    {user?.name || user?.username || 'Guest'}
                 </p>
-                <p className="text-[9px] text-[var(--text-accent)] font-black uppercase mt-1 tracking-[0.2em] opacity-80">
-                    {role || 'System'}
+                <p className="text-[9px] text-[var(--text-accent)] font-black uppercase mt-1 tracking-widest opacity-90 flex items-center gap-1.5">
+                    {role === 'admin' ? 'Super Administrator' : role || 'System'}
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" title="Online" />
                 </p>
             </div>
         </Link>
