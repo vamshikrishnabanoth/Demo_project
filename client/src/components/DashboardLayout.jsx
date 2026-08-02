@@ -232,9 +232,17 @@ export default function DashboardLayout({ children, role }) {
                                 </div>
                             )}
 
-                            {/* Mobile Side Drawer Toggle */}
+                            {/* Mobile Side Drawer & Logout Shortcuts */}
                             {isSmallScreen && (
-                                <div className="flex items-center shrink-0">
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D96B27] via-[#E65A1C] to-[#C1581E] hover:from-[#c55d1f] hover:to-[#b84d15] text-white flex items-center justify-center shadow-2xs border border-amber-300/40 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
+                                        aria-label="Log out"
+                                        title="Log out"
+                                    >
+                                        <LogOut size={16} className="text-white ml-0.5" aria-hidden="true" />
+                                    </button>
                                     <button
                                         onClick={() => setMobileOpen(true)}
                                         className="p-2 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer shrink-0"
@@ -288,80 +296,78 @@ export default function DashboardLayout({ children, role }) {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="mobile-sidebar-drawer fixed top-0 right-0 w-[min(90vw,380px)] h-[100vh] h-[100dvh] max-h-[100vh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-5 pb-[calc(env(safe-area-inset-bottom,0px)+24px)] select-none overflow-hidden"
+                            className="mobile-sidebar-drawer fixed top-0 right-0 w-[min(90vw,360px)] h-full h-[100dvh] max-h-[100dvh] bg-[var(--bg-secondary)] border-l border-[var(--border-color)] z-[var(--z-drawer)] shadow-2xl flex flex-col p-4 select-none overflow-hidden"
                             role="navigation"
                         >
-                            {/* Drawer Content Wrapper - Entire content scrollable if height is small */}
-                            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto overscroll-contain pr-1">
-                                {/* Header */}
-                                <div className="flex items-center justify-between pb-4 border-b border-[var(--border-color)] mb-4 flex-shrink-0">
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-white p-1 rounded-lg shadow-lg">
-                                            <img src="/logo.png" alt="" className="h-6 w-auto" />
-                                        </div>
-                                        <span className="font-black text-sm uppercase italic tracking-tighter text-[var(--text-accent)]">Navigation</span>
+                            {/* Drawer Header — Fixed Top */}
+                            <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)] mb-3 shrink-0">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="bg-white p-1 rounded-lg shadow-sm border border-slate-200">
+                                        <img src="/logo.png" alt="" className="h-6 w-auto" />
                                     </div>
-                                    <button 
+                                    <span className="font-black text-xs uppercase italic tracking-tighter text-[var(--text-accent)]">Navigation</span>
+                                </div>
+                                <button 
+                                    onClick={() => setMobileOpen(false)}
+                                    className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5 cursor-pointer"
+                                >
+                                    <X size={22} />
+                                </button>
+                            </div>
+
+                            {/* Scrollable Navigation Links */}
+                            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 py-1">
+                                <nav className="space-y-2.5" aria-label="Mobile navigation">
+                                    {links.map((link) => {
+                                        const Icon = link.icon;
+                                        const active = isActive(link.path);
+                                        return (
+                                            <Link
+                                                key={link.path}
+                                                to={link.path}
+                                                onClick={() => setMobileOpen(false)}
+                                                className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-xs font-black uppercase tracking-[0.15em] transition-all border ${
+                                                    active
+                                                        ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-2xs'
+                                                        : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] font-bold hover:bg-[var(--bg-secondary)]'
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                {link.name}
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+                            </div>
+
+                            {/* Pinned Drawer Footer — Active Session & Logout Pinned to Bottom */}
+                            <div className="shrink-0 pt-3 mt-2 border-t border-[var(--border-color)] space-y-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-[var(--bg-secondary)]">
+                                <div className="px-1">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-1">Active Session</p>
+                                    <Link 
+                                        to="/profile" 
                                         onClick={() => setMobileOpen(false)}
-                                        className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5"
+                                        className="flex items-center gap-3 p-2 rounded-2xl bg-[var(--bg-primary)] border border-[var(--border-color)] transition-all group cursor-pointer"
                                     >
-                                        <X size={24} />
-                                    </button>
+                                        <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-black text-xs shrink-0 relative">
+                                            <User size={16} />
+                                            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#10b981] border-2 border-white shadow-2xs" />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-xs font-black text-slate-900 truncate">{user?.name || user?.username || 'STUDENT'}</p>
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">{role === 'admin' ? 'ADMIN' : (role || 'STUDENT')}</p>
+                                        </div>
+                                    </Link>
                                 </div>
 
-                                {/* Navigation List */}
-                                <div className="flex-1 py-1">
-                                    <nav className="space-y-3" aria-label="Mobile navigation">
-                                        {links.map((link) => {
-                                            const Icon = link.icon;
-                                            const active = isActive(link.path);
-                                            return (
-                                                <Link
-                                                    key={link.path}
-                                                    to={link.path}
-                                                    onClick={() => setMobileOpen(false)}
-                                                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.15em] premium-transition border ${
-                                                        active
-                                                            ? 'bg-[var(--bg-accent)]/10 border-[var(--bg-accent)] text-[var(--text-accent)] shadow-[0_0_20px_var(--bg-accent-glow)]'
-                                                            : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-primary)] font-bold hover:bg-[var(--bg-secondary)]'
-                                                    }`}
-                                                >
-                                                    <Icon size={18} />
-                                                    {link.name}
-                                                </Link>
-                                            );
-                                        })}
-                                    </nav>
-                                </div>
-
-                                {/* Drawer Footer — Active Session & Logout Pinned inside scrollable content container */}
-                                <div className="pt-4 mt-auto border-t border-[var(--border-color)] space-y-3 flex-shrink-0">
-                                    <div className="px-1">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-1">Active Session</p>
-                                        <Link 
-                                            to="/profile" 
-                                            onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[var(--bg-primary)] border border-transparent hover:border-[var(--border-color)] transition-all group cursor-pointer"
-                                        >
-                                            <div className="w-9 h-9 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center text-[var(--text-accent)] border border-[var(--bg-accent)]/20 shrink-0 group-hover:scale-105 transition-transform">
-                                                <User size={18} />
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="text-xs font-bold text-[var(--text-primary)] truncate group-hover:text-[var(--text-accent)] transition-colors">{user?.username || 'Pilot'}</p>
-                                                <p className="text-[9px] font-black uppercase tracking-widest text-[var(--text-accent)] opacity-80">{role}</p>
-                                            </div>
-                                        </Link>
-                                    </div>
-
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white border border-red-700 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-md cursor-pointer shrink-0"
-                                        aria-label="Log out"
-                                    >
-                                        <LogOut size={18} />
-                                        <span>Logout</span>
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white border border-red-700/50 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm cursor-pointer shrink-0"
+                                    aria-label="Log out"
+                                >
+                                    <LogOut size={18} />
+                                    <span>Logout</span>
+                                </button>
                             </div>
                         </motion.div>
                     </>
