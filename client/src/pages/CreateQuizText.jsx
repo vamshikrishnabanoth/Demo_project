@@ -285,12 +285,12 @@ export default function CreateQuizText() {
             <div className="max-w-[100rem] mx-auto px-6 py-8">
                 
                 {/* Header System */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="space-y-3">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
                         <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => navigate(-1)}>
                             Back
                         </PremiumButton>
-                        <h1 className="text-hero-fluid font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)]">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)] m-0">
                             <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
@@ -298,34 +298,34 @@ export default function CreateQuizText() {
 
                 {/* Tab Interface - Centered */}
                 {!isGeneratedSource && (
-                    <div className="flex justify-center mb-10">
-                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 w-fit">
+                    <div className="flex justify-center mb-6">
+                        <div className="flex flex-wrap items-center justify-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-2 w-full max-w-4xl shadow-sm">
                             <button
                                 onClick={() => setActiveTab('manual')}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                    ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex-1 min-w-[140px]
+                                    ${activeTab === 'manual' ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}
                             >
                                 <Type size={16} /> Manual Matrix
                             </button>
                             <>
                                 <button
                                     onClick={() => setActiveTab('aiken')}
-                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                        ${activeTab === 'aiken' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex-1 min-w-[140px]
+                                        ${activeTab === 'aiken' ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}
                                 >
                                     <Upload size={16} /> AIKEN Uplink
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('aikenPaste')}
-                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                        ${activeTab === 'aikenPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex-1 min-w-[140px]
+                                        ${activeTab === 'aikenPaste' ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}
                                 >
                                     <Clipboard size={16} /> AIKEN Paste
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('jsonPaste')}
-                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-                                        ${activeTab === 'jsonPaste' ? 'bg-[var(--bg-accent)] text-white shadow-xl' : 'text-white/30 hover:text-white'}`}
+                                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex-1 min-w-[140px]
+                                        ${activeTab === 'jsonPaste' ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}
                                 >
                                     <Code size={16} /> JSON Paste
                                 </button>
@@ -352,77 +352,77 @@ export default function CreateQuizText() {
                     )}
                     {activeTab === 'manual' && (
                         <motion.div key="manual" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                            <form onSubmit={handleSubmit} className="space-y-8">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 
                                 {/* Unified Config Row — 3 Equal Columns */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                                     {/* Column 1: Campaign Title */}
-                                    <GlassCard className="flex flex-col justify-center">
+                                    <GlassCard className="flex flex-col justify-center p-4">
                                         <PremiumInput
                                             label="Campaign Title"
                                             placeholder="Enter quiz title..."
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
-                                            className="text-3xl"
+                                            className="text-xl py-2 px-3"
                                         />
                                     </GlassCard>
 
                                     {/* Column 2: Assignment Mode Toggle */}
-                                    <GlassCard className="flex flex-col justify-center gap-3">
-                                        <div className="flex items-center justify-between cursor-pointer group select-none" onClick={() => setIsAssessment(!isAssessment)}>
-                                            <div className="space-y-1">
+                                    <GlassCard className="flex flex-col justify-center p-4">
+                                        <div className="flex items-center justify-between cursor-pointer group select-none h-full" onClick={() => setIsAssessment(!isAssessment)}>
+                                            <div className="flex flex-col justify-center">
                                                 <span className="block font-black text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em]">Assignment Mode</span>
-                                                <span className="block font-black text-sm text-[var(--text-primary)] uppercase tracking-tight italic">
+                                                <span className="block font-black text-sm text-[var(--text-primary)] uppercase tracking-tight italic mt-1">
                                                     {isAssessment ? 'Assessment Exam' : 'Live Interactive Quiz'}
                                                 </span>
-                                                <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">
+                                                <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block mt-1">
                                                     {isAssessment ? 'Self-paced homework task' : 'Manual Time, Team Link Rooms'}
                                                 </span>
                                             </div>
-                                            <div className="relative w-12 h-6 flex-shrink-0">
+                                            <div className="relative w-10 h-5 flex-shrink-0">
                                                 <input 
                                                     type="checkbox" 
                                                     className="sr-only peer" 
                                                     checked={isAssessment} 
                                                     onChange={(e) => setIsAssessment(e.target.checked)} 
                                                 />
-                                                <div className="w-12 h-6 bg-slate-300 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-slate-400"></div>
-                                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6 shadow-sm"></div>
+                                                <div className="w-10 h-5 bg-slate-300 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-slate-400"></div>
+                                                <div className="absolute left-1 top-0.5 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-5 shadow-sm"></div>
                                             </div>
                                         </div>
                                     </GlassCard>
 
                                     {/* Column 3: Timer Mode */}
-                                    <GlassCard className="flex flex-col justify-center gap-4">
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-3">Timer Mode</label>
-                                                <div className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic text-sm uppercase tracking-tighter shadow-sm">
+                                    <GlassCard className="flex flex-col justify-center gap-2 p-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-0">Timer Mode</label>
+                                                <div className="bg-white border border-[var(--border-color)] rounded-xl py-1 px-3 text-[var(--text-primary)] font-black italic text-xs uppercase tracking-tighter shadow-sm">
                                                     {isAssessment ? 'Time Per Question' : 'Total Quiz Time'}
                                                 </div>
                                             </div>
                                             {isAssessment ? (
-                                                <div className="animate-in slide-in-from-top-2 duration-200">
-                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-2">Seconds Per Screen</label>
+                                                <div className="animate-in slide-in-from-top-2 duration-200 pt-1">
+                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Seconds Per Screen</label>
                                                     <input
                                                         type="number"
                                                         min="5"
                                                         max="300"
                                                         value={timerPerQuestion}
                                                         onChange={(e) => { const v = parseInt(e.target.value); setTimerPerQuestion(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
+                                                        className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm text-sm"
                                                     />
                                                 </div>
                                             ) : (
-                                                <div className="animate-in slide-in-from-top-2 duration-200">
-                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-2">Total Minutes</label>
+                                                <div className="animate-in slide-in-from-top-2 duration-200 pt-1">
+                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Total Minutes</label>
                                                     <input
                                                         type="number"
                                                         min="1"
                                                         max="300"
                                                         value={duration}
                                                         onChange={(e) => { const v = parseInt(e.target.value); setDuration(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3 px-5 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
+                                                        className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm text-sm"
                                                     />
                                                 </div>
                                             )}
@@ -432,10 +432,10 @@ export default function CreateQuizText() {
 
                                 {/* Assessment-Only: Schedule & Expiration Row */}
                                 {isAssessment && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <GlassCard className="flex flex-col justify-center gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <GlassCard className="flex flex-col justify-center gap-2 p-4">
                                             <div>
-                                                <div className="flex items-center justify-between mb-3">
+                                                <div className="flex items-center justify-between mb-2">
                                                     <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Scheduled Start</label>
                                                     <label className="flex items-center gap-2 cursor-pointer group">
                                                         <div className="relative w-8 h-4">
@@ -452,30 +452,30 @@ export default function CreateQuizText() {
                                                         type="datetime-local"
                                                         value={startTime}
                                                         onChange={(e) => setStartTime(e.target.value)}
-                                                        className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3.5 px-5 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
+                                                        className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
                                                     />
                                                 ) : (
-                                                    <div className="w-full bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl py-3.5 px-5 flex items-center justify-center">
+                                                    <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded-xl py-2 px-3 flex items-center justify-center">
                                                         <span className="text-xs font-black text-emerald-600 italic uppercase tracking-wider">Active Immediately</span>
                                                     </div>
                                                 )}
                                                 
-                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-2 block">
+                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-1 block">
                                                     {startNow ? 'Opens immediately for students' : 'Optional: Leave blank for instant access'}
                                                 </span>
                                             </div>
                                         </GlassCard>
 
-                                        <GlassCard className="flex flex-col justify-center gap-4">
+                                        <GlassCard className="flex flex-col justify-center gap-2 p-4">
                                             <div>
-                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-3">Expiration End</label>
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-2">Expiration End</label>
                                                 <input
                                                     type="datetime-local"
                                                     value={endTime}
                                                     onChange={(e) => setEndTime(e.target.value)}
-                                                    className="w-full bg-white border-2 border-[var(--border-color)] rounded-2xl py-3.5 px-5 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
+                                                    className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black outline-none focus:border-[var(--bg-accent)] transition-all text-xs shadow-sm"
                                                 />
-                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-2 block">Optional: Leave blank for perpetual access</span>
+                                                <span className="text-[9px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mt-1 block">Optional: Leave blank for perpetual access</span>
                                             </div>
                                         </GlassCard>
                                     </div>
@@ -519,7 +519,7 @@ export default function CreateQuizText() {
                                     <button
                                         type="button"
                                         onClick={addQuestion}
-                                        className="w-full flex items-center justify-center gap-4 p-8 rounded-[2.5rem] border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] hover:bg-white transition-all group shadow-sm"
+                                        className="w-full flex items-center justify-center gap-4 p-6 rounded-[2rem] border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] hover:bg-slate-50 transition-all group shadow-sm"
                                     >
                                         <Plus size={24} className="text-[var(--text-accent)] group-hover:scale-125 transition-transform" />
                                         <span className="font-black text-lg uppercase tracking-widest italic">Add New Data Point</span>
@@ -527,7 +527,7 @@ export default function CreateQuizText() {
                                 </div>
 
                                 {/* Final Execution */}
-                                <div className="flex justify-center pt-12 border-t border-white/5">
+                                <div className="flex justify-center pt-8 border-t border-slate-200">
                                     <button
                                         type="button"
                                         onClick={handleFinalizeClick}
