@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 
 export default function ResultsLoader({ message = 'Calculating Results...' }) {
@@ -16,30 +15,11 @@ export default function ResultsLoader({ message = 'Calculating Results...' }) {
     return () => clearInterval(id);
   }, []);
 
-  const textContainer = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.03, delayChildren: 0.04 * i },
-    }),
-  };
-
-  const childLetter = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', damping: 14, stiffness: 220 },
-    },
-    hidden: { opacity: 0, y: 10 },
-  };
-
   return (
     <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white overflow-hidden select-none">
       {/* Background Soft Glow */}
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.12, 0.3, 0.12] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none bg-[var(--bg-accent)]/15 blur-3xl"
+      <div
+        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none bg-[var(--bg-accent)]/15 blur-3xl animate-soft-glow"
       />
 
       {/* Progress Ring Core */}
@@ -53,7 +33,7 @@ export default function ResultsLoader({ message = 'Calculating Results...' }) {
             strokeWidth="8"
             fill="transparent"
           />
-          <motion.circle
+          <circle
             cx="112"
             cy="112"
             r="100"
@@ -61,9 +41,11 @@ export default function ResultsLoader({ message = 'Calculating Results...' }) {
             strokeWidth="8"
             fill="transparent"
             strokeDasharray="628"
-            strokeDashoffset={628 * (1 - Math.min(pct, 100) / 100)}
+            style={{
+              strokeDashoffset: 628 * (1 - Math.min(pct, 100) / 100),
+              transition: 'stroke-dashoffset 0.1s linear',
+            }}
             strokeLinecap="round"
-            transition={{ duration: 0.1 }}
           />
         </svg>
 
@@ -72,9 +54,9 @@ export default function ResultsLoader({ message = 'Calculating Results...' }) {
           <div className="p-2.5 bg-slate-100 rounded-2xl text-[var(--bg-accent)] mb-1 shadow-xs border border-slate-200">
             <Trophy size={24} />
           </div>
-          <motion.div className="text-4xl font-black italic tracking-tighter text-[#111111]">
+          <div className="text-4xl font-black italic tracking-tighter text-[#111111]">
             {Math.floor(pct)}%
-          </motion.div>
+          </div>
           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#555555]">
             Analyzing
           </span>
@@ -83,31 +65,36 @@ export default function ResultsLoader({ message = 'Calculating Results...' }) {
 
       {/* Progress Bar */}
       <div className="mt-8 w-64 h-2 rounded-full overflow-hidden bg-slate-100 border border-slate-200 p-0.5 shadow-inner">
-        <motion.div
+        <div
           className="h-full rounded-full bg-[var(--bg-accent)]"
-          style={{ width: `${Math.min(pct, 100)}%` }}
-          transition={{ duration: 0.1 }}
+          style={{
+            width: `${Math.min(pct, 100)}%`,
+            transition: 'width 0.1s linear',
+          }}
         />
       </div>
 
       {/* Status Title */}
-      <motion.div
-        variants={textContainer}
-        initial="hidden"
-        animate="visible"
+      <div
         className="mt-6 text-center space-y-1.5"
       >
         <div className="flex flex-wrap justify-center font-black text-[#111111] italic uppercase tracking-[0.2em] text-lg sm:text-xl">
           {textLetters.map((letter, index) => (
-            <motion.span key={index} variants={childLetter}>
+            <span
+              key={index}
+              className="opacity-0 animate-fade-in-up"
+              style={{
+                '--animate-delay': `${0.04 * index + 0.03 * index}s`,
+              }}
+            >
               {letter === " " ? "\u00A0" : letter}
-            </motion.span>
+            </span>
           ))}
         </div>
         <p className="text-[10px] font-black text-[#555555] uppercase tracking-[0.25em]">
           Synthesizing Leaderboard & Analytics
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }
