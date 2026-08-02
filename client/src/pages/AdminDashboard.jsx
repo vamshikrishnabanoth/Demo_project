@@ -139,7 +139,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
     return (
         <div className="space-y-8">
-            {/* 4 Clean High-Contrast Stat Cards */}
+            {/* 4 Clean Stat Cards — Text, Number & Icon Colors Match Container Border Color */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {loadingStats ? (
                     Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36" />)
@@ -147,64 +147,64 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                     <>
                         <div 
                             onClick={() => setActiveTab('directory')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-slate-400 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-slate-400 shadow-sm cursor-pointer hover:border-slate-600 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-slate-600 uppercase tracking-wider">TOTAL ENTITIES</span>
-                                <div className="p-3 rounded-2xl bg-slate-100 border-2 border-slate-300 text-slate-900">
+                                <span className="text-xs font-black text-slate-800 uppercase tracking-wider">TOTAL ENTITIES</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 border-2 border-slate-300 text-slate-800">
                                     <Users size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
+                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
                                 <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Students + Teachers + Admins</p>
                             </div>
                         </div>
 
                         <div 
                             onClick={() => setActiveTab('students')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-sky-400 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-sky-400 shadow-sm cursor-pointer hover:border-sky-500 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-sky-800 uppercase tracking-wider">ACTIVE STUDENTS</span>
-                                <div className="p-3 rounded-2xl bg-sky-100 border-2 border-sky-300 text-sky-800">
+                                <span className="text-xs font-black text-sky-600 uppercase tracking-wider">ACTIVE STUDENTS</span>
+                                <div className="p-3 rounded-2xl bg-sky-50 border-2 border-sky-300 text-sky-600">
                                     <GraduationCap size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
+                                <h2 className="text-4xl font-black text-sky-600 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
                                 <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Enrolled Degree Candidates</p>
                             </div>
                         </div>
 
                         <div 
                             onClick={() => setActiveTab('teachers')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-emerald-400 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-emerald-400 shadow-sm cursor-pointer hover:border-emerald-500 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-emerald-800 uppercase tracking-wider">FACULTY MEMBERS</span>
-                                <div className="p-3 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-800">
+                                <span className="text-xs font-black text-emerald-600 uppercase tracking-wider">FACULTY MEMBERS</span>
+                                <div className="p-3 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-600">
                                     <UserCheck size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
+                                <h2 className="text-4xl font-black text-emerald-600 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
                                 <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Academic & Technical Staff</p>
                             </div>
                         </div>
 
                         <div 
                             onClick={() => setActiveTab('admins')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm cursor-pointer hover:border-purple-400 transition-all flex flex-col justify-between"
+                            className="p-6 rounded-3xl bg-white border-2 border-purple-400 shadow-sm cursor-pointer hover:border-purple-500 transition-all flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-purple-800 uppercase tracking-wider">SYSTEM ADMINS</span>
-                                <div className="p-3 rounded-2xl bg-purple-100 border-2 border-purple-300 text-purple-800">
+                                <span className="text-xs font-black text-purple-600 uppercase tracking-wider">SYSTEM ADMINS</span>
+                                <div className="p-3 rounded-2xl bg-purple-50 border-2 border-purple-300 text-purple-600">
                                     <Shield size={22} />
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <h2 className="text-4xl font-black text-[#0f172a] italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
+                                <h2 className="text-4xl font-black text-purple-600 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
                                 <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Super Administrators</p>
                             </div>
                         </div>
@@ -401,7 +401,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchStudents(page);
-        }, 250);
+        }, 200);
         return () => clearTimeout(timer);
     }, [search, yearF, semF, sectionF, branchF, statusF, page, fetchStudents]);
 
@@ -471,7 +471,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                             placeholder="Search student name, roll number, email..."
                             value={search}
                             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20"
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/20"
                         />
                         {search && (
                             <button 
@@ -486,13 +486,13 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-sky-700 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
-                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-indigo-700 transition-all cursor-pointer">
+                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
-                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-amber-700 transition-all cursor-pointer">
+                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Award size={18} /> Batch Promote
                     </button>
                 </div>
@@ -583,7 +583,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                             <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
                                                     onClick={() => setViewingProfile(s.id)} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-sky-600 text-sky-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-sky-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:border-sky-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="View Student Analytics"
                                                     aria-label="View Student Analytics"
                                                 >
@@ -591,7 +591,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                 </button>
                                                 <button 
                                                     onClick={() => setUserModal({ user: s })} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Student Details"
                                                     aria-label="Edit Student Details"
                                                 >
@@ -599,7 +599,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(s)} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
                                                     aria-label={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
                                                 >
@@ -607,7 +607,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(s)} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Delete Student Record"
                                                     aria-label="Delete Student Record"
                                                 >
@@ -682,7 +682,7 @@ function AdminTeachersTab({ setUserModal }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchTeachers(page);
-        }, 250);
+        }, 200);
         return () => clearTimeout(timer);
     }, [search, deptFilter, statusF, page, fetchTeachers]);
 
@@ -724,7 +724,7 @@ function AdminTeachersTab({ setUserModal }) {
                             placeholder="Search faculty name, department, email..."
                             value={search}
                             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/20"
                         />
                         {search && (
                             <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
@@ -750,7 +750,7 @@ function AdminTeachersTab({ setUserModal }) {
                         </button>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-emerald-700 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
                 </button>
             </div>
@@ -788,7 +788,7 @@ function AdminTeachersTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: t })} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Faculty Details"
                                                     aria-label="Edit Faculty Details"
                                                 >
@@ -796,7 +796,7 @@ function AdminTeachersTab({ setUserModal }) {
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(t)} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
                                                     aria-label={t.isSuspended ? 'Reinstate Faculty' : 'Suspend Faculty'}
                                                 >
@@ -804,7 +804,7 @@ function AdminTeachersTab({ setUserModal }) {
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDelete(t)} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Delete Faculty Record"
                                                     aria-label="Delete Faculty Record"
                                                 >
@@ -854,7 +854,7 @@ function AdminAdminsTab({ setUserModal }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchAdmins();
-        }, 250);
+        }, 200);
         return () => clearTimeout(timer);
     }, [search, statusF, fetchAdmins]);
 
@@ -896,7 +896,7 @@ function AdminAdminsTab({ setUserModal }) {
                             placeholder="Search administrators..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20"
+                            className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/20"
                         />
                         {search && (
                             <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
@@ -918,7 +918,7 @@ function AdminAdminsTab({ setUserModal }) {
                         </button>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-purple-700 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                     <Plus size={18} /> Add Administrator
                 </button>
             </div>
@@ -954,7 +954,7 @@ function AdminAdminsTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: a })} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Administrator Details"
                                                     aria-label="Edit Administrator Details"
                                                 >
@@ -963,7 +963,7 @@ function AdminAdminsTab({ setUserModal }) {
                                                 <button 
                                                     onClick={() => handleSuspend(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
                                                     aria-label={a.isSuspended ? 'Reinstate Administrator' : 'Suspend Administrator'}
                                                 >
@@ -972,7 +972,7 @@ function AdminAdminsTab({ setUserModal }) {
                                                 <button 
                                                     onClick={() => handleDelete(a)} 
                                                     disabled={a.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title="Delete Administrator Record"
                                                     aria-label="Delete Administrator Record"
                                                 >
@@ -1042,7 +1042,7 @@ function AdminDirectoryTab({ setUserModal }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchUsers(page);
-        }, 250);
+        }, 200);
         return () => clearTimeout(timer);
     }, [search, roleFilter, statusFilter, page, fetchUsers]);
 
@@ -1105,7 +1105,7 @@ function AdminDirectoryTab({ setUserModal }) {
                         placeholder="Search global users by name, username, email..."
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-600 focus:ring-2 focus:ring-slate-600/20"
+                        className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-slate-300 text-sm font-bold text-[#0f172a] placeholder:text-slate-400 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/20"
                     />
                     {search && (
                         <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
@@ -1134,7 +1134,7 @@ function AdminDirectoryTab({ setUserModal }) {
                             <RotateCcw size={14} /> Reset
                         </button>
                     )}
-                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
                 </div>
@@ -1177,7 +1177,7 @@ function AdminDirectoryTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ user: u })} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-indigo-500/30" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit User Details"
                                                     aria-label="Edit User Details"
                                                 >
@@ -1186,7 +1186,7 @@ function AdminDirectoryTab({ setUserModal }) {
                                                 <button 
                                                     onClick={() => handleSuspend(u)} 
                                                     disabled={u.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-500 text-amber-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
                                                     aria-label={u.isSuspended ? 'Reinstate User' : 'Suspend User'}
                                                 >
@@ -1195,7 +1195,7 @@ function AdminDirectoryTab({ setUserModal }) {
                                                 <button 
                                                     onClick={() => handleDelete(u)} 
                                                     disabled={u.id === currentUser?.id} 
-                                                    className="group p-2.5 rounded-xl border border-slate-300 bg-white hover:bg-rose-600 text-rose-600 hover:text-white shadow-2xs hover:shadow-md transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 focus:ring-2 focus:ring-rose-500/30 disabled:opacity-30 disabled:cursor-not-allowed" 
+                                                    className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed" 
                                                     title="Delete User Record"
                                                     aria-label="Delete User Record"
                                                 >
