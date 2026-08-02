@@ -52,15 +52,15 @@ export default function AikenPastePanel({ onQuestionsLoaded }) {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Format Protocol Guide */}
-            <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-3xl p-8 backdrop-blur-xl">
+            <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 backdrop-blur-xl shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                    <FileText size={20} className="text-indigo-400" />
-                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">AIKEN Syntax Rules</span>
+                    <FileText size={20} className="text-indigo-600" />
+                    <span className="text-[10px] font-black text-indigo-700 uppercase tracking-[0.3em]">AIKEN Syntax Rules</span>
                 </div>
-                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-4">
+                <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-4">
                     Pasted text must strictly comply with the Aiken standard: Question text on a single line, option labels starting with capital letters followed by a period and space, and a terminal ANSWER line.
                 </p>
-                <pre className="text-indigo-100/40 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-black/20 p-4 rounded-xl border border-white/5">
+                <pre className="text-slate-700 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
 {`What is the capital of India?
 A. Mumbai
 B. New Delhi
@@ -71,17 +71,17 @@ ANSWER: B`}
             </div>
 
             {/* Input Form Matrix */}
-            <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 bg-white/[0.01]">
+            <div className="glass-panel p-8 rounded-[2.5rem] border border-slate-200 bg-white shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                    <label className="block text-[11px] font-black text-white/40 uppercase tracking-widest">Aiken Paste Terminal</label>
-                    <span className="text-[9px] text-white/20 font-black uppercase tracking-widest">UTF-8 Format</span>
+                    <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest">Aiken Paste Terminal</label>
+                    <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest">UTF-8 Format</span>
                 </div>
                 <textarea
                     rows={12}
                     value={pastedText}
                     onChange={(e) => setPastedText(e.target.value)}
                     placeholder="Paste your raw Aiken text data here..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-white font-mono text-sm outline-none focus:border-[var(--bg-accent)]/50 focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all resize-none shadow-inner animate-glow"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-6 text-slate-700 font-mono text-sm outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all resize-none shadow-inner"
                 />
 
                 <div className="flex justify-end mt-6">
@@ -92,9 +92,9 @@ ANSWER: B`}
             </div>
 
             {errorMsg && (
-                <div className="bg-red-500/5 border border-red-500/20 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
+                <div className="bg-red-50 border border-red-200 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
                     <AlertTriangle className="text-red-500 shrink-0 mt-1" size={20} />
-                    <pre className="text-red-300 text-xs font-mono leading-relaxed whitespace-pre-wrap">{errorMsg}</pre>
+                    <pre className="text-red-700/80 text-xs font-mono leading-relaxed whitespace-pre-wrap flex-1">{errorMsg}</pre>
                 </div>
             )}
 

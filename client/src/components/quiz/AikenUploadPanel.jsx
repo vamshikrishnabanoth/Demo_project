@@ -36,9 +36,12 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
             const result = parseAiken(text);
             
             if (!result.isValid) {
-                const errorMsgStr = 'Invalid AIKEN format detected. Please check the uploaded file format.';
+                const specificErrors = result.errors && result.errors.length > 0 
+                    ? '\n\n' + result.errors.slice(0, 5).join('\n') + (result.errors.length > 5 ? `\n...and ${result.errors.length - 5} more errors.` : '')
+                    : '';
+                const errorMsgStr = 'Invalid AIKEN format detected. Please check the uploaded file format.' + specificErrors;
                 setFileError(errorMsgStr);
-                toast.error(errorMsgStr, {
+                toast.error('Invalid AIKEN format detected.', {
                     duration: 6000,
                     id: 'aiken-upload-error'
                 });
@@ -54,12 +57,12 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Format Guide */}
-            <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-3xl p-8 backdrop-blur-xl">
+            <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 backdrop-blur-xl shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                    <FileText size={20} className="text-indigo-400" />
-                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">AIKEN Format Protocol</span>
+                    <FileText size={20} className="text-indigo-600" />
+                    <span className="text-[10px] font-black text-indigo-700 uppercase tracking-[0.3em]">AIKEN Format Protocol</span>
                 </div>
-                <pre className="text-indigo-100/40 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-black/20 p-4 rounded-xl border border-white/5">
+                <pre className="text-slate-700 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
                     {`What is the capital of France?\nA. Berlin\nB. Paris\nC. Madrid\nD. Rome\nANSWER: B`}
                 </pre>
             </div>
@@ -72,25 +75,25 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
                 onClick={() => fileInputRef.current?.click()}
                 className={`
                     relative border-4 border-dashed rounded-[3rem] p-16 text-center cursor-pointer transition-all duration-500
-                    ${dragOver ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 scale-[1.02]' : 'border-white/10 bg-white/[0.02] hover:border-[var(--bg-accent)]/30 hover:bg-white/[0.04]'}
+                    ${dragOver ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 scale-[1.02]' : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'}
                 `}
             >
                 <input ref={fileInputRef} type="file" accept=".txt,.aiken" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
-                <div className="bg-white/5 w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-white/10">
-                    <Upload size={32} className={dragOver ? 'text-[var(--text-accent)]' : 'text-white/20'} />
+                <div className="bg-white w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-slate-200 shadow-sm">
+                    <Upload size={32} className={dragOver ? 'text-[var(--text-accent)]' : 'text-slate-400'} />
                 </div>
-                <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">
+                <h3 className="text-xl font-black text-slate-800 italic uppercase tracking-tighter mb-2">
                     {fileName || 'Drop Intelligence File'}
                 </h3>
-                <p className="text-white/30 text-[10px] font-black uppercase tracking-widest">Supports .txt & .aiken (Max 5MB)</p>
+                <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Supports .txt & .aiken (Max 5MB)</p>
             </div>
 
             {fileError && (
-                <div className="bg-red-500/5 border border-red-500/20 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
+                <div className="bg-red-50 border border-red-200 rounded-[2rem] p-6 flex items-start gap-4 animate-in slide-in-from-top-2">
                     <AlertTriangle className="text-red-500 shrink-0 mt-1" size={20} />
-                    <div className="text-left">
-                        <p className="text-red-400 text-sm font-black uppercase tracking-wider mb-1">AIKEN Format Error</p>
-                        <p className="text-red-300/80 text-xs font-medium leading-relaxed">{fileError}</p>
+                    <div className="text-left w-full">
+                        <p className="text-red-600 text-sm font-black uppercase tracking-wider mb-2">AIKEN Format Error</p>
+                        <pre className="text-red-700/80 text-xs font-mono leading-relaxed whitespace-pre-wrap">{fileError}</pre>
                     </div>
                 </div>
             )}
