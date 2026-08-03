@@ -837,10 +837,12 @@ io.to(realQuizId).emit(
 
             // 4. Emit quiz_ended AFTER data is saved — students will navigate with correct data
             io.to(quizId).emit('quiz_ended');
+            socket.emit('quiz_ended_success', { quizId });
         } catch (err) {
             console.error('Error ending quiz:', err);
             // Still emit so students aren't stuck
             io.to(quizId).emit('quiz_ended');
+            socket.emit('quiz_ended_success', { quizId });
         }
     });
 

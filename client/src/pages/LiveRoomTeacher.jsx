@@ -84,11 +84,11 @@ export default function LiveRoomTeacher() {
             setParticipants([...students]);
         }, 300);
 
-        const handleProgressUpdate = throttle(({ studentId, username, questionIndex, isCorrect }) => {
+        const handleProgressUpdate = ({ studentId, username, questionIndex, isCorrect, skipped }) => {
             setStudentProgress(prev => {
                 const newState = { ...prev };
                 const qIdx = parseInt(questionIndex);
-                const progressEntry = { answered: true, isCorrect };
+                const progressEntry = { answered: true, isCorrect, skipped: skipped === true };
                 if (studentId) {
                     newState[studentId] = {
                         ...(newState[studentId] || {}),
@@ -103,7 +103,7 @@ export default function LiveRoomTeacher() {
                 }
                 return newState;
             });
-        }, 250);
+        };
 
         socket.on('participants_update', handleParticipantsUpdate);
         socket.on('progress_history', (history) => {
@@ -297,8 +297,27 @@ if (socket.connected) {
             'End Quiz'
         );
         if (result.isConfirmed) {
+            const toastId = toast.loading('Finalizing quiz results & generating analytics...');
+            
+            let hasNavigated = false;
+            const goToAnalytics = () => {
+                if (!hasNavigated) {
+                    hasNavigated = true;
+                    toast.dismiss(toastId);
+                    navigate(`/analytics/quiz/${quiz.id}`);
+                }
+            };
+
+            socket.once('quiz_ended_success', () => {
+                goToAnalytics();
+            });
+
             socket.emit('end_quiz', quiz.id);
-            navigate(`/analytics/quiz/${quiz.id}`);
+
+            // Safety fallback: Navigate after 2.5 seconds max if socket event delayed
+            setTimeout(() => {
+                goToAnalytics();
+            }, 2500);
         }
     };
 

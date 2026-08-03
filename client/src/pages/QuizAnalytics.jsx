@@ -79,7 +79,7 @@ export default function QuizAnalytics() {
         setLoading(true);
         setFetchError(null);
         try {
-            const res = await api.get(`/analytics/quiz/${id}`);
+            const res = await api.get(`/analytics/quiz/${id}?t=${Date.now()}`);
             setAnalytics(res.data);
         } catch (err) {
             console.error('Analytics fetch error:', err);
