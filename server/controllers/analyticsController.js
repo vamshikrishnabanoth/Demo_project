@@ -161,7 +161,10 @@ exports.getQuizAnalytics = async (req, res) => {
 
             results.forEach(r => {
                 const answersArray = getAnswersArray(r.answers);
-                const ans = answersArray.find(a => a && a.questionText === q.questionText);
+                const ans = answersArray.find(a => a && (
+                    (a.questionIndex !== undefined && Number(a.questionIndex) === idx) ||
+                    (a.questionText && q.questionText && a.questionText.toString().trim().toLowerCase() === q.questionText.toString().trim().toLowerCase())
+                ));
                 if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                     skipped++;
                 } else {

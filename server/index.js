@@ -1166,6 +1166,7 @@ io.to(realQuizId).emit(
                 points = isCorrect ? (question.points || 10) : 0;
 
                 const answerData = {
+                    questionIndex,
                     questionText: question.questionText,
                     selectedOption: answer,
                     correctOption: resolvedCorrect,

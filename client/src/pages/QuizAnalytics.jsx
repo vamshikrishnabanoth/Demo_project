@@ -693,7 +693,10 @@ export default function QuizAnalytics() {
                             <tbody>
                                 {analytics.questionPerformance.map((q, idx) => {
                                     const studentAnswers = analytics?.studentAttempt?.answers || [];
-                                    const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
+                                    const studentAns = studentAnswers.find(a => a && (
+                                        (a.questionIndex !== undefined && Number(a.questionIndex) === idx) ||
+                                        (a.questionText && q.questionText && a.questionText.toString().trim().toLowerCase() === q.questionText.toString().trim().toLowerCase())
+                                    ));
                                     const studentTime = studentAns ? `${studentAns.timeTaken || 0}s` : '0s';
                                     const isCorrect = studentAns ? studentAns.isCorrect : null;
                                     const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
