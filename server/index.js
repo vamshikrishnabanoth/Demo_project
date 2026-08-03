@@ -1113,33 +1113,74 @@ io.to(realQuizId).emit(
             result.score = result.score || 0;
             result.totalTimeTaken = result.totalTimeTaken || 0;
 
-            if (quiz.questions[questionIndex]) {
-                const question = quiz.questions[questionIndex];
+            // ── GRADE THE ANSWER ──────────────────────────────────────────────
+            // Default to false — overwritten below if question is found and graded
+            let isCorrect = false;
+            let points = 0;
+            let updatedScore = result.score;
+            let updatedTime = result.totalTimeTaken;
+            let updatedAnswers = [...(result.answers || [])];
+            const studentUsername = result.student ? result.student.username : (socket.user?.username || null);
 
-                // Use shared grading utility (eliminates duplicated grading logic)
-                const { isCorrect, points } = gradeAnswer(answer, question);
+            const question = Array.isArray(quiz.questions) ? quiz.questions[questionIndex] : null;
 
-                const existingAnswerIndex = result.answers.findIndex(
-                    a => a.questionText === question.questionText
+            if (question) {
+                // Robust grading: compare submitted full-text answer against correctAnswer.
+                // correctAnswer in DB may be:
+                //   (a) full option text  e.g. "Python"
+                //   (b) a letter label   e.g. "a" / "A"  → resolve to options[0]
+                //   (c) a numeric index  e.g. "0"        → resolve to options[0]
+                // The student ALWAYS submits the full visible option text.
+                const submittedNorm = (answer || '').toString().trim().toLowerCase();
+
+                // Normalise options to plain strings
+                let rawOptions = Array.isArray(question.options) ? question.options : [];
+                rawOptions = rawOptions.map(o =>
+                    typeof o === 'string' ? o : (o?.text || o?.label || String(o))
                 );
+
+                const rawCorrect = (question.correctAnswer || question.correct_answer || '').toString().trim();
+                const labels = ['a', 'b', 'c', 'd', 'e'];
+                const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
+
+                // Resolve correctAnswer to the actual option string
+                let resolvedCorrect = rawCorrect;
+                if (labelIdx !== -1 && rawOptions[labelIdx]) {
+                    resolvedCorrect = rawOptions[labelIdx];
+                } else if (rawCorrect !== '' && !isNaN(rawCorrect) && rawOptions[parseInt(rawCorrect, 10)]) {
+                    resolvedCorrect = rawOptions[parseInt(rawCorrect, 10)];
+                }
+
+                // Primary: compare submitted text against resolved correct text
+                isCorrect = submittedNorm === resolvedCorrect.toLowerCase();
+
+                // Fallback: check if submitted text matches ANY option that IS the correct one
+                // (handles edge case where correctAnswer is full text but has minor casing diff)
+                if (!isCorrect) {
+                    isCorrect = rawOptions.some(opt =>
+                        opt.toLowerCase() === submittedNorm &&
+                        opt.toLowerCase() === resolvedCorrect.toLowerCase()
+                    );
+                }
+
+                points = isCorrect ? (question.points || 10) : 0;
 
                 const answerData = {
                     questionText: question.questionText,
                     selectedOption: answer,
-                    correctOption: question.correctAnswer,
+                    correctOption: resolvedCorrect,
                     isCorrect,
                     timeTaken: qTimeTaken
                 };
 
-                let updatedScore = result.score;
-                let updatedTime = result.totalTimeTaken;
-                let updatedAnswers = [...result.answers];
+                const existingAnswerIndex = updatedAnswers.findIndex(
+                    a => a.questionText === question.questionText
+                );
 
                 if (existingAnswerIndex >= 0) {
-                    const oldAnswer = result.answers[existingAnswerIndex];
+                    const oldAnswer = updatedAnswers[existingAnswerIndex];
                     const oldPoints = oldAnswer.isCorrect ? (question.points || 10) : 0;
                     const oldTime = oldAnswer.timeTaken || 0;
-
                     updatedScore = result.score - oldPoints + points;
                     updatedTime = result.totalTimeTaken - oldTime + qTimeTaken;
                     updatedAnswers[existingAnswerIndex] = answerData;
@@ -1148,76 +1189,8 @@ io.to(realQuizId).emit(
                     updatedScore += points;
                     updatedTime += qTimeTaken;
                 }
-                
-                // Update in-memory state with the actual isCorrect value for reconnection sync
-                const updatedProgress = state.progress || {};
-                if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
-                updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
-                // ALSO store by username so teacher UI can find it regardless of key type
-                const studentUsername = result.student ? result.student.username : null;
-                if (studentUsername) {
-                    if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
-                    updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
-                }
-                // Always key state by the real DB UUID, never the 6-digit PIN
-                roomState.set(realQuizId, { ...state, progress: updatedProgress });
 
-                // Calculate speed-based answer feedback
-                const participants = roomParticipants.get(realQuizId) || [];
-                const otherTimes = [];
-                participants.forEach(p => {
-                    const idKey = p._id || p.id;
-                    if (idKey && idKey.toString() !== studentId.toString()) {
-                        const prog = updatedProgress[idKey.toString()];
-                        if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
-                            otherTimes.push(prog[questionIndex].timeTaken);
-                        }
-                    }
-                });
-
-                const fastMessages = [
-                    "⚡ Fast Answer! Lightning speed!",
-                    "⚡ Quick Response Bonus! Unstoppable!",
-                    "⚡ Hyper-Sonic! You're on fire!",
-                    "⚡ Mind-Bending Velocity! Incredible reflexes!",
-                    "⚡ Sonic Boom! You answered in the blink of an eye!",
-                    "🚀 Speed Demon! Lock and load for the next one!",
-                    "🔥 Absolute Heat! Superb speed!",
-                    "💫 Brilliant Reflexes! Pure brilliance!",
-                    "🌟 Stellar Velocity! Keep holding the lead!"
-                ];
-                const slowMessages = [
-                    "🐢 Smooth and steady, but let's pick up the pace next time!",
-                    "⏰ Took your time! Try to lock it in quicker on the next one!",
-                    "💡 Great focus, but speed is key! Speed up!",
-                    "🏃‍♂️ Slow and calculated! Push your limits and answer faster!",
-                    "⏳ Pondered a bit long! Trust your instincts and click quicker!",
-                    "💤 A bit sluggish! Let's pick up the speed!",
-                    "🛹 Riding a slow wave! Time is point in this game!",
-                    "📈 Accurate but slow! Try to optimize your decision time!"
-                ];
-                const unattemptedMessages = [
-                    "⏳ Time is up! You didn't select an answer for this question. Keep moving!",
-                    "❌ Question unanswered! Be sure to lock in a choice before the timer expires.",
-                    "💤 No response detected! Let's get active on the next challenge!",
-                    "⚠️ Unattempted! Don't let the clock run out without locking in your guess."
-                ];
-
-                const isUnattempted = !answer || answer.trim() === '';
-                const isFast = !isUnattempted && (otherTimes.length > 0
-                    ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
-                    : (qTimeTaken <= timerMax * 0.3));
-
-                const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
-                const feedbackMessage = messageList[Math.floor(Math.random() * messageList.length)];
-
-                socket.emit('answer_feedback', {
-                    isFast,
-                    isUnattempted,
-                    message: feedbackMessage,
-                    timeTaken: qTimeTaken
-                });
-
+                // Persist to DB
                 try {
                     if (result.id && !result.id.startsWith('temp_')) {
                         await prisma.result.update({
@@ -1232,58 +1205,90 @@ io.to(realQuizId).emit(
                         });
                     }
                 } catch (dbUpdateErr) {
-                    console.warn(`[ResultUpdate] Database persistence skipped for test bot ${studentId}:`, dbUpdateErr.message);
+                    console.warn(`[ResultUpdate] DB persist failed for ${studentId}:`, dbUpdateErr.message);
                 }
 
-                // Broadcast student progress to teacher with isCorrect
-                io.to(realQuizId).emit('student_progress_update', {
-                    studentId: studentId.toString(),
-                    username: result.student ? result.student.username : 'Student',
-                    questionIndex,
-                    answered: true,
-                    isCorrect
+                // Speed feedback
+                const participants = roomParticipants.get(realQuizId) || [];
+                const otherTimes = [];
+                participants.forEach(p => {
+                    const idKey = p._id || p.id;
+                    if (idKey && idKey.toString() !== studentId.toString()) {
+                        const prog = (state.progress || {})[idKey.toString()];
+                        if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
+                            otherTimes.push(prog[questionIndex].timeTaken);
+                        }
+                    }
+                });
+                const isUnattempted = !answer || answer.trim() === '';
+                const isFast = !isUnattempted && (otherTimes.length > 0
+                    ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
+                    : (qTimeTaken <= timerMax * 0.3));
+
+                const fastMessages = ["⚡ Fast Answer! Lightning speed!", "⚡ Quick Response Bonus! Unstoppable!", "🚀 Speed Demon! Lock and load for the next one!", "🔥 Absolute Heat! Superb speed!"];
+                const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", "⏰ Took your time! Try to lock it in quicker!", "💡 Great focus, but speed is key!"];
+                const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", "❌ Question unanswered! Lock in a choice before the timer expires."];
+                const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
+                socket.emit('answer_feedback', {
+                    isFast, isUnattempted,
+                    message: messageList[Math.floor(Math.random() * messageList.length)],
+                    timeTaken: qTimeTaken
                 });
 
-                // ── IN-MEMORY LEADERBOARD UPDATE (eliminates N+1 DB query per answer) ──
-                // Only update the one student who just submitted — no DB query needed.
+                // Leaderboard update
                 const currentState = roomState.get(realQuizId) || {};
                 const inMemLeaderboard = [...(currentState.leaderboard || [])];
-                const studentName = result.student?.username || 'Unknown';
                 const existingEntryIdx = inMemLeaderboard.findIndex(e => e.studentId === studentId);
-
                 const updatedEntry = {
-                    studentId,
-                    username: studentName,
-                    currentScore: updatedScore,
-                    totalTimeTaken: updatedTime,
-                    lastAnsweredAt: new Date(),
-                    answeredQuestions: updatedAnswers.length,
+                    studentId, username: studentUsername || 'Unknown',
+                    currentScore: updatedScore, totalTimeTaken: updatedTime,
+                    lastAnsweredAt: new Date(), answeredQuestions: updatedAnswers.length,
                 };
-
-                if (existingEntryIdx >= 0) {
-                    inMemLeaderboard[existingEntryIdx] = updatedEntry;
-                } else {
-                    inMemLeaderboard.push(updatedEntry);
-                }
-
-                // Sort in-memory: score DESC → time ASC → timestamp ASC
+                if (existingEntryIdx >= 0) inMemLeaderboard[existingEntryIdx] = updatedEntry;
+                else inMemLeaderboard.push(updatedEntry);
                 inMemLeaderboard.sort((a, b) => {
                     if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
                     if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
                     return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
                 });
-                const leaderboard = inMemLeaderboard.map((index, idx) => ({ ...index, rank: idx + 1 }));
-
-                // Persist updated leaderboard back to roomState
+                const leaderboard = inMemLeaderboard.map((entry, idx) => ({ ...entry, rank: idx + 1 }));
                 roomState.set(realQuizId, { ...currentState, leaderboard });
-
-                io.to(realQuizId).emit('question_leaderboard', {
-                    questionIndex,
-                    leaderboard
-                });
+                io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
             }
+
+            // ── ALWAYS update progress and notify teacher ─────────────────────
+            // This must run regardless of whether the question was found, so the
+            // teacher dashboard updates in real-time without needing a page refresh.
+            const updatedProgress = { ...(state.progress || {}) };
+            if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
+            updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
+            if (studentUsername) {
+                if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
+                updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
+            }
+            roomState.set(realQuizId, { ...(roomState.get(realQuizId) || state), progress: updatedProgress });
+
+            // Broadcast to teacher — UNCONDITIONAL so teacher always sees real-time updates
+            io.to(realQuizId).emit('student_progress_update', {
+                studentId: studentId.toString(),
+                username: studentUsername || 'Student',
+                questionIndex,
+                answered: true,
+                isCorrect
+            });
+
         } catch (err) {
             console.error('Error submitting question answer:', err);
+            // Even on error — tell teacher the student answered (mark as wrong)
+            try {
+                io.to(realQuizId).emit('student_progress_update', {
+                    studentId: studentId.toString(),
+                    username: socket.user?.username || 'Student',
+                    questionIndex,
+                    answered: true,
+                    isCorrect: false
+                });
+            } catch (_) {}
         }
     });
 
