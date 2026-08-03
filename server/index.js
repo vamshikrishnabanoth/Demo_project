@@ -1055,6 +1055,12 @@ io.to(realQuizId).emit(
             }
             if (!quiz) return;
 
+            // Parse questions JSON string from DB if it hasn't been parsed yet
+            if (quiz.questions && typeof quiz.questions === 'string') {
+                try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
+            }
+            if (!Array.isArray(quiz.questions)) quiz.questions = [];
+
             // Calculate time taken for this question
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
             const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
@@ -1062,8 +1068,9 @@ io.to(realQuizId).emit(
             let result = null;
             if (!studentId.startsWith('bot_student_')) {
                 try {
+                    // Always use realQuizId (UUID) for DB operations, never the raw 6-digit PIN
                     result = await prisma.result.findUnique({
-                        where: { quizId_studentId: { quizId, studentId } },
+                        where: { quizId_studentId: { quizId: realQuizId, studentId } },
                         include: { student: { select: { username: true } } }
                     });
 
@@ -1071,18 +1078,18 @@ io.to(realQuizId).emit(
                         try {
                             result = await prisma.result.create({
                                 data: {
-                                    quizId: quizId,
+                                    quizId: realQuizId,
                                     studentId: studentId,
                                     score: 0,
                                     totalTimeTaken: 0,
-                                    totalQuestions: quiz.questions ? (Array.isArray(quiz.questions) ? quiz.questions.length : JSON.parse(quiz.questions).length) : 0,
+                                    totalQuestions: quiz.questions.length,
                                     answers: []
                                 },
                                 include: { student: { select: { username: true } } }
                             });
                         } catch (dbErr) {
                             result = await prisma.result.findUnique({
-                                where: { quizId_studentId: { quizId, studentId } },
+                                where: { quizId_studentId: { quizId: realQuizId, studentId } },
                                 include: { student: { select: { username: true } } }
                             });
                         }
@@ -1152,10 +1159,11 @@ io.to(realQuizId).emit(
                     if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
                     updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
                 }
-                roomState.set(quizId, { ...state, progress: updatedProgress });
+                // Always key state by the real DB UUID, never the 6-digit PIN
+                roomState.set(realQuizId, { ...state, progress: updatedProgress });
 
                 // Calculate speed-based answer feedback
-                const participants = roomParticipants.get(quizId) || [];
+                const participants = roomParticipants.get(realQuizId) || [];
                 const otherTimes = [];
                 participants.forEach(p => {
                     const idKey = p._id || p.id;
@@ -1290,7 +1298,12 @@ io.to(realQuizId).emit(
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             const result = await prisma.result.findFirst({ where: { quizId, studentId } });
 
-            if (quiz && result && quiz.questions[questionIndex]) {
+            // Parse questions JSON string from DB if needed
+            if (quiz && quiz.questions && typeof quiz.questions === 'string') {
+                try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
+            }
+
+            if (quiz && result && Array.isArray(quiz.questions) && quiz.questions[questionIndex]) {
                 const question = quiz.questions[questionIndex];
 
                 // Use shared grading utility (eliminates duplicated grading logic)
