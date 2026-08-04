@@ -606,6 +606,28 @@ exports.createQuiz = async (req, res) => {
             finalQuestions = await generateQuestions('topic', content || topic, questionCount, difficulty);
         }
 
+        // Pre-save normalization: ensure every question in finalQuestions stores full text in correctAnswer
+        if (Array.isArray(finalQuestions)) {
+            finalQuestions = finalQuestions.map(q => {
+                let options = Array.isArray(q.options) ? q.options : [];
+                options = options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)));
+                const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+                const labels = ['a', 'b', 'c', 'd', 'e'];
+                const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
+                let correctString = rawCorrect;
+                if (labelIdx !== -1 && options[labelIdx]) {
+                    correctString = options[labelIdx];
+                } else if (rawCorrect !== '' && !isNaN(rawCorrect) && options[parseInt(rawCorrect, 10)]) {
+                    correctString = options[parseInt(rawCorrect, 10)];
+                }
+                return {
+                    ...q,
+                    options,
+                    correctAnswer: correctString
+                };
+            });
+        }
+
         if (isLive === 'true' || isLive === true) {
             // Automatic Cleanup: Deactivate existing active live quizzes for this teacher
             await prisma.quiz.updateMany({

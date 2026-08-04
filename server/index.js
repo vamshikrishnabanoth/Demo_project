@@ -1151,15 +1151,14 @@ io.to(realQuizId).emit(
                     resolvedCorrect = rawOptions[parseInt(rawCorrect, 10)];
                 }
 
-                // Primary: compare submitted text against resolved correct text
-                isCorrect = submittedNorm === resolvedCorrect.toLowerCase();
+                // Primary: compare submitted text against resolved correct text or rawCorrect text
+                isCorrect = (submittedNorm === resolvedCorrect.toLowerCase()) || (submittedNorm === rawCorrect.toLowerCase());
 
                 // Fallback: check if submitted text matches ANY option that IS the correct one
-                // (handles edge case where correctAnswer is full text but has minor casing diff)
                 if (!isCorrect) {
                     isCorrect = rawOptions.some(opt =>
                         opt.toLowerCase() === submittedNorm &&
-                        opt.toLowerCase() === resolvedCorrect.toLowerCase()
+                        (opt.toLowerCase() === resolvedCorrect.toLowerCase() || opt.toLowerCase() === rawCorrect.toLowerCase())
                     );
                 }
 
