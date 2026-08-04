@@ -1068,34 +1068,28 @@ io.to(realQuizId).emit(
             let result = null;
             if (!studentId.startsWith('bot_student_')) {
                 try {
-                    // Always use realQuizId (UUID) for DB operations, never the raw 6-digit PIN
-                    result = await prisma.result.findUnique({
+                    // Always use realQuizId (UUID) for DB operations
+                    result = await prisma.result.upsert({
                         where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                        update: {},
+                        create: {
+                            quizId: realQuizId,
+                            studentId: studentId,
+                            score: 0,
+                            totalTimeTaken: 0,
+                            totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+                            answers: []
+                        },
                         include: { student: { select: { username: true } } }
                     });
-
-                    if (!result) {
-                        try {
-                            result = await prisma.result.create({
-                                data: {
-                                    quizId: realQuizId,
-                                    studentId: studentId,
-                                    score: 0,
-                                    totalTimeTaken: 0,
-                                    totalQuestions: quiz.questions.length,
-                                    answers: []
-                                },
-                                include: { student: { select: { username: true } } }
-                            });
-                        } catch (dbErr) {
-                            result = await prisma.result.findUnique({
-                                where: { quizId_studentId: { quizId: realQuizId, studentId } },
-                                include: { student: { select: { username: true } } }
-                            });
-                        }
-                    }
                 } catch (dbLookupErr) {
-                    console.warn(`[ResultLookup] DB result lookup bypassed for ${studentId}:`, dbLookupErr.message);
+                    console.warn(`[ResultLookup] DB result upsert warning for ${studentId}:`, dbLookupErr.message);
+                    try {
+                        result = await prisma.result.findUnique({
+                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                            include: { student: { select: { username: true } } }
+                        });
+                    } catch (_) {}
                 }
             }
 
@@ -1114,7 +1108,6 @@ io.to(realQuizId).emit(
             result.totalTimeTaken = result.totalTimeTaken || 0;
 
             // ── GRADE THE ANSWER ──────────────────────────────────────────────
-            // Default to false — overwritten below if question is found and graded
             let isCorrect = false;
             let points = 0;
             let updatedScore = result.score;
@@ -1139,7 +1132,8 @@ io.to(realQuizId).emit(
                 };
 
                 const existingAnswerIndex = updatedAnswers.findIndex(
-                    a => a.questionText === question.questionText
+                    a => (a.questionIndex !== undefined && Number(a.questionIndex) === questionIndex) ||
+                         (a.questionText && question.questionText && a.questionText.trim().toLowerCase() === question.questionText.trim().toLowerCase())
                 );
 
                 if (existingAnswerIndex >= 0) {
@@ -1155,14 +1149,35 @@ io.to(realQuizId).emit(
                     updatedTime += qTimeTaken;
                 }
 
-                // Persist to DB
+                // Persist to DB - Guaranteed atomic upsert
                 try {
-                    if (result.id && !result.id.startsWith('temp_')) {
+                    if (result && result.id && !result.id.startsWith('temp_')) {
                         await prisma.result.update({
                             where: { id: result.id },
                             data: {
                                 score: updatedScore,
                                 totalTimeTaken: updatedTime,
+                                answers: updatedAnswers,
+                                status: 'in-progress',
+                                lastAnsweredAt: new Date()
+                            }
+                        });
+                    } else if (!studentId.startsWith('bot_student_')) {
+                        await prisma.result.upsert({
+                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                            update: {
+                                score: updatedScore,
+                                totalTimeTaken: updatedTime,
+                                answers: updatedAnswers,
+                                status: 'in-progress',
+                                lastAnsweredAt: new Date()
+                            },
+                            create: {
+                                quizId: realQuizId,
+                                studentId: studentId,
+                                score: updatedScore,
+                                totalTimeTaken: updatedTime,
+                                totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
                                 answers: updatedAnswers,
                                 status: 'in-progress',
                                 lastAnsweredAt: new Date()
