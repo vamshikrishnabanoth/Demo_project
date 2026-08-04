@@ -825,6 +825,7 @@ export default function QuizAnalytics() {
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex items-center gap-2 flex-wrap">
+                                                    {analytics.questionPerformance.map((q, qIdx) => {
                                                         const studentAns = (student.answers || []).find(a => a && (
                                                             (a.questionIndex !== undefined && Number(a.questionIndex) === qIdx) ||
                                                             (a.questionText && q.questionText && a.questionText.toString().trim().toLowerCase() === q.questionText.toString().trim().toLowerCase())
