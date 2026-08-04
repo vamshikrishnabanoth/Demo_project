@@ -14,6 +14,7 @@ const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
+const { resolveCorrectOptionText } = require('../utils/grading');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -612,14 +613,7 @@ exports.createQuiz = async (req, res) => {
                 let options = Array.isArray(q.options) ? q.options : [];
                 options = options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)));
                 const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
-                const labels = ['a', 'b', 'c', 'd', 'e'];
-                const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
-                let correctString = rawCorrect;
-                if (labelIdx !== -1 && options[labelIdx]) {
-                    correctString = options[labelIdx];
-                } else if (rawCorrect !== '' && !isNaN(rawCorrect) && options[parseInt(rawCorrect, 10)]) {
-                    correctString = options[parseInt(rawCorrect, 10)];
-                }
+                const correctString = resolveCorrectOptionText(rawCorrect, options);
                 return {
                     ...q,
                     options,
@@ -978,19 +972,8 @@ const normalizeQuestions = (questions) => {
             );
         }
 
-        // ── Resolve correctAnswer to actual option text ───────────────────
-        // AI models sometimes emit a label ("A") or a 0-based index ("2") instead
-        // of the full option string.  Normalise it once so downstream logic is
-        // always comparing text-to-text.
         const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
-        const labels = ['a', 'b', 'c', 'd', 'e'];
-        const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
-        let correctString = rawCorrect;
-        if (labelIdx !== -1 && options[labelIdx]) {
-            correctString = options[labelIdx];
-        } else if (rawCorrect !== '' && !isNaN(rawCorrect) && options[parseInt(rawCorrect)]) {
-            correctString = options[parseInt(rawCorrect)];
-        }
+        const correctString = resolveCorrectOptionText(rawCorrect, options);
 
         // ── Fisher-Yates shuffle of option positions ──────────────────────
         const shuffledOptions = fisherYatesShuffle(options);

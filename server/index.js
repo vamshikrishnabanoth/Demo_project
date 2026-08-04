@@ -1125,44 +1125,9 @@ io.to(realQuizId).emit(
             const question = Array.isArray(quiz.questions) ? quiz.questions[questionIndex] : null;
 
             if (question) {
-                // Robust grading: compare submitted full-text answer against correctAnswer.
-                // correctAnswer in DB may be:
-                //   (a) full option text  e.g. "Python"
-                //   (b) a letter label   e.g. "a" / "A"  → resolve to options[0]
-                //   (c) a numeric index  e.g. "0"        → resolve to options[0]
-                // The student ALWAYS submits the full visible option text.
-                const submittedNorm = (answer || '').toString().trim().toLowerCase();
-
-                // Normalise options to plain strings
-                let rawOptions = Array.isArray(question.options) ? question.options : [];
-                rawOptions = rawOptions.map(o =>
-                    typeof o === 'string' ? o : (o?.text || o?.label || String(o))
-                );
-
-                const rawCorrect = (question.correctAnswer || question.correct_answer || '').toString().trim();
-                const labels = ['a', 'b', 'c', 'd', 'e'];
-                const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
-
-                // Resolve correctAnswer to the actual option string
-                let resolvedCorrect = rawCorrect;
-                if (labelIdx !== -1 && rawOptions[labelIdx]) {
-                    resolvedCorrect = rawOptions[labelIdx];
-                } else if (rawCorrect !== '' && !isNaN(rawCorrect) && rawOptions[parseInt(rawCorrect, 10)]) {
-                    resolvedCorrect = rawOptions[parseInt(rawCorrect, 10)];
-                }
-
-                // Primary: compare submitted text against resolved correct text or rawCorrect text
-                isCorrect = (submittedNorm === resolvedCorrect.toLowerCase()) || (submittedNorm === rawCorrect.toLowerCase());
-
-                // Fallback: check if submitted text matches ANY option that IS the correct one
-                if (!isCorrect) {
-                    isCorrect = rawOptions.some(opt =>
-                        opt.toLowerCase() === submittedNorm &&
-                        (opt.toLowerCase() === resolvedCorrect.toLowerCase() || opt.toLowerCase() === rawCorrect.toLowerCase())
-                    );
-                }
-
-                points = isCorrect ? (question.points || 10) : 0;
+                const { isCorrect: gradedIsCorrect, points: gradedPoints, resolvedCorrect } = gradeAnswer(answer, question);
+                isCorrect = gradedIsCorrect;
+                points = gradedPoints;
 
                 const answerData = {
                     questionIndex,
