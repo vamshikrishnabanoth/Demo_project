@@ -576,7 +576,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                 <p className="text-xs text-slate-500 font-bold">{s.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || 'CSE'}</span></td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.branch || '-'}</span></td>
                                         <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
                                         <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
                                         <td className="p-4 text-center">
