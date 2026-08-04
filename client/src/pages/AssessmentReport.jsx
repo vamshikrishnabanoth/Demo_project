@@ -62,7 +62,8 @@ const AssessmentReport = () => {
     );
 
     const { score, totalQuestions, answers, quizTitle, totalTimeTaken, createdAt, rank, totalParticipants } = data;
-    const accuracy = Math.round((score / (totalQuestions * 10)) * 100);
+    const maxScore = data.maxPossibleScore || (totalQuestions * 10);
+    const accuracy = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
     const avgTime = Math.round(totalTimeTaken / totalQuestions);
 
     // Data for Accuracy Pie Chart
@@ -186,7 +187,7 @@ const AssessmentReport = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-gradient-to-br from-[var(--accent-sand)] to-[var(--accent-sand-hover)]/50 border border-[var(--border-color)] p-4 rounded-2xl text-left">
                                         <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1">Tactical Yield</p>
-                                        <p className="text-xl font-black italic text-[#0f172a]" style={{ color: '#0f172a' }}>{score} <span className="text-[10px] font-bold text-[#4B5563]">/ {totalQuestions * 10} Pts</span></p>
+                                        <p className="text-xl font-black italic text-[#0f172a]" style={{ color: '#0f172a' }}>{score} <span className="text-[10px] font-bold text-[#4B5563]">/ {maxScore} Pts</span></p>
                                     </div>
                                     <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200 p-4 rounded-2xl text-left">
                                         <p className="text-[9px] font-black text-emerald-800 uppercase tracking-widest mb-1">Net Accuracy</p>
@@ -279,7 +280,7 @@ const AssessmentReport = () => {
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8 px-4">
                                 {[
                                     { label: 'Tactical Rank', value: `#${rank}`, subValue: `of ${totalParticipants}`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
-                                    { label: 'Total Score', value: `${score}`, subValue: `of ${totalQuestions * 10}`, icon: Sparkles, color: 'text-orange-600', bg: 'bg-orange-50 border border-orange-200' },
+                                    { label: 'Total Score', value: `${score}`, subValue: `of ${maxScore}`, icon: Sparkles, color: 'text-orange-600', bg: 'bg-orange-50 border border-orange-200' },
                                     { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-emerald-600', bg: 'bg-emerald-50 border border-emerald-200' },
                                     { label: 'Time Spent', value: `${totalTimeTaken}s`, icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50 border border-blue-200' },
                                     { label: 'Avg Speed', value: `${avgTime}s/q`, icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' }

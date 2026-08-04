@@ -53,4 +53,29 @@ function gradeAnswer(studentRawAnswer, question) {
     return { isCorrect, points };
 }
 
-module.exports = { gradeAnswer };
+/**
+ * Resolves raw correctAnswer (which may be a label like "a" or index like "0") 
+ * to its actual option text value.
+ *
+ * @param {object} question - question object containing options and correctAnswer
+ * @returns {string} resolved correct option text
+ */
+function getCorrectOptionText(question) {
+    const correctAnswer = (question.correctAnswer || '').toString().trim();
+    if (Array.isArray(question.options)) {
+        const labels = ['a', 'b', 'c', 'd', 'e'];
+        const labelIdx = labels.indexOf(correctAnswer.toLowerCase());
+        if (labelIdx !== -1 && question.options[labelIdx]) {
+            return question.options[labelIdx].toString().trim();
+        } else if (
+            correctAnswer !== '' &&
+            !isNaN(correctAnswer) &&
+            question.options[parseInt(correctAnswer, 10)]
+        ) {
+            return question.options[parseInt(correctAnswer, 10)].toString().trim();
+        }
+    }
+    return correctAnswer;
+}
+
+module.exports = { gradeAnswer, getCorrectOptionText };

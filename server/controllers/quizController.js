@@ -14,6 +14,7 @@ const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
+const { getCorrectOptionText } = require('../utils/grading');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -1147,25 +1148,16 @@ exports.submitQuiz = async (req, res) => {
 
         let score = 0;
         let totalTimeTaken = 0;
+        const maxPossibleScore = quiz.questions.reduce((sum, q) => sum + (q.points || 10), 0);
+
         const formattedAnswers = quiz.questions.map((q, idx) => {
             const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
             const timeTaken = parseInt(answers[idx]?.timeTaken || 0);
-            const correctOption = (q.correctAnswer || '').toString().trim();
+            const correctOption = getCorrectOptionText(q);
 
             totalTimeTaken += timeTaken;
 
-            let isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
-
-            // Fallback for labels (A, B, C...) or indices
-            if (!isCorrect && q.options) {
-                const labels = ['a', 'b', 'c', 'd', 'e'];
-                const labelIdx = labels.indexOf(correctOption.toLowerCase());
-                if (labelIdx !== -1 && q.options[labelIdx]) {
-                    isCorrect = selectedOption.toLowerCase() === q.options[labelIdx].toString().trim().toLowerCase();
-                } else if (correctOption !== '' && !isNaN(correctOption) && q.options[parseInt(correctOption)]) {
-                    isCorrect = selectedOption.toLowerCase() === q.options[parseInt(correctOption)].toString().trim().toLowerCase();
-                }
-            }
+            const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
 
             if (isCorrect) {
                 score += q.points || 10;
@@ -1201,7 +1193,8 @@ exports.submitQuiz = async (req, res) => {
                 quizTitle: quiz.title,
                 questions: normalizedQuestions,
                 rank: 1,
-                totalParticipants: 1
+                totalParticipants: 1,
+                maxPossibleScore
             };
             return res.json(dummyResult);
         }
@@ -1250,7 +1243,10 @@ exports.submitQuiz = async (req, res) => {
                     }
                 });
             }
-            return res.json(result);
+            return res.json({
+                ...result,
+                maxPossibleScore
+            });
         }
 
         const existingResult = await prisma.result.findFirst({
@@ -1275,7 +1271,10 @@ exports.submitQuiz = async (req, res) => {
                     lastAnsweredAt: new Date()
                 }
             });
-            return res.json(updated);
+            return res.json({
+                ...updated,
+                maxPossibleScore
+            });
         }
 
         const result = await prisma.result.create({
@@ -1293,7 +1292,10 @@ exports.submitQuiz = async (req, res) => {
             }
         });
 
-        res.json(result);
+        res.json({
+            ...result,
+            maxPossibleScore
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
@@ -1390,12 +1392,15 @@ exports.getLatestResult = async (req, res) => {
             }
         }
 
+        const maxPossibleScore = questions.reduce((sum, q) => sum + (q.points || 10), 0);
+
         res.json({
             ...result,
             quizTitle: quiz ? quiz.title : '',
             questions,
             rank: studentRank,
-            totalParticipants: processedResults.length
+            totalParticipants: processedResults.length,
+            maxPossibleScore
         });
     } catch (err) {
         console.error(err.message);

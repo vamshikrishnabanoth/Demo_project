@@ -963,7 +963,7 @@ export default function AttemptQuiz() {
                         <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-xs">
                             <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mb-1">Score Obtained</p>
                             <p className="text-3xl sm:text-4xl font-black text-indigo-600 italic">
-                                {finalRankResult.score} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.totalQuestions * 10}</span>
+                                {finalRankResult.score} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.maxPossibleScore || (finalRankResult.totalQuestions * 10)}</span>
                             </p>
                         </div>
                     </div>
@@ -1124,7 +1124,7 @@ export default function AttemptQuiz() {
                     <div className="bg-indigo-50 rounded-2xl p-6 mb-8">
                         <p className="text-sm text-indigo-600 font-bold uppercase tracking-wider mb-1">Your Score</p>
                         <div className="text-5xl font-black text-indigo-900">
-                            {result.score} <span className="text-xl text-indigo-400 font-medium">/ {result.totalQuestions * 10}</span>
+                            {result.score} <span className="text-xl text-indigo-400 font-medium">/ {result.maxPossibleScore || (result.totalQuestions * 10)}</span>
                         </div>
                     </div>
 
@@ -1295,7 +1295,7 @@ export default function AttemptQuiz() {
                     )}
                     {isReviewMode && (
                         <div className="bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
-                            Yield: {result.score} / {result.totalQuestions * 10}
+                            Yield: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}
                         </div>
                     )}
                     <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">

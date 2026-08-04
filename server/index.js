@@ -31,7 +31,7 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
-const { gradeAnswer } = require('./utils/grading');
+const { gradeAnswer, getCorrectOptionText } = require('./utils/grading');
 const { exec } = require('child_process');
 
 const gzipCompressionMiddleware = require('./middleware/compression');
@@ -1319,7 +1319,7 @@ io.to(realQuizId).emit(
                 const updatedAnswers = [...result.answers, {
                     questionText: question.questionText,
                     selectedOption: answer,
-                    correctOption: question.correctAnswer,
+                    correctOption: getCorrectOptionText(question),
                     isCorrect
                 }];
 
