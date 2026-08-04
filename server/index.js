@@ -31,7 +31,7 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
-const { gradeAnswer } = require('./utils/grading');
+const { gradeAnswer, resolveCorrectOptionText } = require('./utils/grading');
 const { exec } = require('child_process');
 
 const gzipCompressionMiddleware = require('./middleware/compression');
@@ -1055,11 +1055,23 @@ io.to(realQuizId).emit(
             }
             if (!quiz) return;
 
-            // Parse questions JSON string from DB if it hasn't been parsed yet
+            // Parse and pre-normalize questions so correctAnswer is ALWAYS the resolved full-text string
             if (quiz.questions && typeof quiz.questions === 'string') {
                 try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
             }
             if (!Array.isArray(quiz.questions)) quiz.questions = [];
+            else {
+                quiz.questions = quiz.questions.map(q => {
+                    if (!q) return q;
+                    const rawOptions = Array.isArray(q.options) ? q.options : [];
+                    const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+                    const resolvedCorrect = resolveCorrectOptionText(rawCorrect, rawOptions);
+                    return {
+                        ...q,
+                        correctAnswer: resolvedCorrect
+                    };
+                });
+            }
 
             // Calculate time taken for this question
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
