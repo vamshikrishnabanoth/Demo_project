@@ -1063,9 +1063,7 @@ io.to(realQuizId).emit(
             else {
                 quiz.questions = quiz.questions.map(q => {
                     if (!q) return q;
-                    const rawOptions = Array.isArray(q.options) ? q.options : [];
-                    const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
-                    const resolvedCorrect = resolveCorrectOptionText(rawCorrect, rawOptions);
+                    const resolvedCorrect = resolveCorrectOptionText(q);
                     return {
                         ...q,
                         correctAnswer: resolvedCorrect
