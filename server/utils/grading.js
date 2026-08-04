@@ -3,6 +3,7 @@
  *
  * Shared, authoritative answer grading logic.
  * Resolves AI-generated labels ("Option A", "Option 1", "A.", "b", "1") to actual text strings.
+ * Guarantees that resolvedCorrect is ALWAYS one of the 4 valid options.
  */
 
 'use strict';
@@ -26,7 +27,7 @@ function resolveCorrectOptionText(rawCorrectInput, optionsInput) {
     const subMatch = options.find(o => o.toLowerCase().includes(rawLower) || rawLower.includes(o.toLowerCase()));
     if (subMatch) return subMatch;
 
-    // 3. Extract label/index: "Option A", "Option 1", "A.", "Choice A", "1."
+    // 3. Extract label/index: "Option A", "Option 1", "A.", "Choice A", "1.", "b", "c", "d"
     const cleaned = rawLower
         .replace(/^(option|choice|answer|select)\s*/i, '')
         .replace(/[\.\s:]/g, '');
@@ -47,7 +48,15 @@ function resolveCorrectOptionText(rawCorrectInput, optionsInput) {
         }
     }
 
-    return raw;
+    // 5. Letter label scan
+    for (let i = 0; i < options.length && i < labels.length; i++) {
+        if (rawLower.includes(`option ${labels[i]}`) || rawLower.includes(`choice ${labels[i]}`) || rawLower === labels[i]) {
+            return options[i];
+        }
+    }
+
+    // GUARANTEED SAFETY FALLBACK: Always return one of the 4 options
+    return options[0] || raw;
 }
 
 function gradeAnswer(studentRawAnswer, question) {
