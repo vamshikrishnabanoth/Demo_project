@@ -32,6 +32,7 @@ const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
 const { gradeAnswer, resolveCorrectOptionText } = require('./utils/grading');
+const { getCache, setCache } = require('./lib/cache');
 const { exec } = require('child_process');
 
 const gzipCompressionMiddleware = require('./middleware/compression');
