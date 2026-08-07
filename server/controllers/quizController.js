@@ -938,17 +938,11 @@ exports.getLiveQuizzes = async (req, res) => {
 //   questionText  – string
 //   options       – array of strings (never null / undefined / object)
 //   correctAnswer – string (always resolved to actual text, never a label/index)
-//   correct_option – integer index of correctAnswer in the (shuffled) options array
-
-// Fisher-Yates in-place shuffle (modifies a copy)
-const fisherYatesShuffle = (arr) => {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-};
+//   correct_option – integer index of correctAnswer in the stored options array
+//
+// NOTE: Options are NO LONGER shuffled at read time. Shuffling must be done
+// once at quiz creation and stored in the DB so that all students see the same
+// stable order and server-side grading is consistent across requests.
 
 const normalizeQuestions = (questions) => {
     if (!Array.isArray(questions)) {
@@ -975,17 +969,14 @@ const normalizeQuestions = (questions) => {
         const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
         const correctString = resolveCorrectOptionText(rawCorrect, options);
 
-        // ── Fisher-Yates shuffle of option positions ──────────────────────
-        const shuffledOptions = fisherYatesShuffle(options);
-
-        // Re-map correct_option to the new index of the correct string
-        const newCorrectIdx = shuffledOptions.indexOf(correctString);
-        const resolvedCorrectIdx = newCorrectIdx !== -1 ? newCorrectIdx : 0;
+        // Re-map correct_option to the stable index of the correct string in stored order
+        const correctIdx = options.findIndex(o => o.toLowerCase().trim() === correctString.toLowerCase().trim());
+        const resolvedCorrectIdx = correctIdx !== -1 ? correctIdx : 0;
 
         return {
             ...q,
             questionText: q.questionText || q.prompt_text || q.question || '',
-            options: shuffledOptions,
+            options,
             correctAnswer: correctString,
             correct_option: resolvedCorrectIdx,
             correctOption:  resolvedCorrectIdx,
@@ -1152,35 +1143,24 @@ exports.submitQuiz = async (req, res) => {
 
         let score = 0;
         let totalTimeTaken = 0;
+        // Use the shared gradeAnswer utility for consistent, multi-layer evaluation
+        const { gradeAnswer } = require('../utils/grading');
         const formattedAnswers = quiz.questions.map((q, idx) => {
             const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
             const timeTaken = parseInt(answers[idx]?.timeTaken || 0);
-            const correctOption = (q.correctAnswer || '').toString().trim();
-
             totalTimeTaken += timeTaken;
 
-            let isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
-
-            // Fallback for labels (A, B, C...) or indices
-            if (!isCorrect && q.options) {
-                const labels = ['a', 'b', 'c', 'd', 'e'];
-                const labelIdx = labels.indexOf(correctOption.toLowerCase());
-                if (labelIdx !== -1 && q.options[labelIdx]) {
-                    isCorrect = selectedOption.toLowerCase() === q.options[labelIdx].toString().trim().toLowerCase();
-                } else if (correctOption !== '' && !isNaN(correctOption) && q.options[parseInt(correctOption)]) {
-                    isCorrect = selectedOption.toLowerCase() === q.options[parseInt(correctOption)].toString().trim().toLowerCase();
-                }
-            }
-
+            // Grade using shared utility — supports exact text match, label (A/B/C/D), and index fallback
+            const { isCorrect, points, resolvedCorrect } = gradeAnswer(selectedOption, q);
             if (isCorrect) {
-                score += q.points || 10;
+                score += points;
             }
             return {
                 questionText: q.questionText,
                 selectedOption,
-                correctOption,
+                correctOption: resolvedCorrect || (q.correctAnswer || '').toString().trim(),
                 isCorrect,
-                timeTaken: timeTaken
+                timeTaken
             };
         });
 
@@ -1329,21 +1309,12 @@ exports.getLatestResult = async (req, res) => {
             orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
         });
 
-        // If no result exists yet for this student, auto-create one on the fly so it NEVER 404s
+        // If no result exists, this student hasn't attempted the quiz yet.
+        // Return 404 instead of auto-creating a ghost record (which would pollute analytics).
         if (!result) {
-            const rawQuestions = Array.isArray(quiz.questions) ? quiz.questions : [];
-            result = await prisma.result.create({
-                data: {
-                    quizId: quizId,
-                    studentId: req.user.id,
-                    score: 0,
-                    totalQuestions: rawQuestions.length,
-                    status: 'completed',
-                    answers: [],
-                    completedAt: new Date()
-                }
-            });
+            return res.status(404).json({ msg: 'No result found. You have not attempted this quiz yet.' });
         }
+
 
         // SECURITY: If not completed, don't send questions with answers
         let questions = quiz ? (quiz.questions || []) : [];
