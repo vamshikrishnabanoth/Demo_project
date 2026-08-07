@@ -1250,7 +1250,7 @@ io.to(realQuizId).emit(
                         }
                     }
                 });
-                const isUnattempted = !answer || answer.trim() === '';
+                const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
                 const isFast = !isUnattempted && (otherTimes.length > 0
                     ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
                     : (qTimeTaken <= timerMax * 0.3));
