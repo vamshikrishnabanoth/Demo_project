@@ -79,7 +79,7 @@ export default function LiveRoomTeacher() {
         const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
             const students = participantsList.filter(
-                p => p.role?.toLowerCase() !== 'teacher' && p.isOnline !== false
+                p => p.role?.toLowerCase() !== 'teacher'
             );
             setParticipants([...students]);
         }, 300);
@@ -153,11 +153,8 @@ export default function LiveRoomTeacher() {
             }
             if (state.participants) {
                 const students = state.participants.filter(
-                    p =>
-                        p.role?.toLowerCase() !== 'teacher' &&
-                        p.isOnline !== false
+                    p => p.role?.toLowerCase() !== 'teacher'
                 );
-
                 setParticipants([...students]);
             }
             if (state.progress) {
@@ -180,6 +177,15 @@ export default function LiveRoomTeacher() {
         socket.on('quiz_ended', () => {
             setIsQuizEnded(true);
             setIsTimerRunning(false);
+        });
+
+        // When a student logs out, mark them offline in participants list (do NOT remove)
+        socket.on('user_status_change', ({ userId, isOnline: online }) => {
+            setParticipants(prev => prev.map(p =>
+                (p._id === userId || p.id === userId)
+                    ? { ...p, isOnline: online === true }
+                    : p
+            ));
         });
 
         socket.on('student_cheat_warning', (alert) => {
@@ -430,17 +436,26 @@ if (socket.connected) {
         showSuccess('Copied', 'Join Code copied!');
     };
 
-    // Merge participants (connected) + leaderboard (submitted) so reconnected students always show
+    // Merge participants (connected) + leaderboard (submitted) so all students always show
     const allStudents = useMemo(() => {
         const map = new Map();
-        // Build a leaderboard lookup for scores/rank
         const lbMap = new Map();
-        leaderboard.forEach(l => lbMap.set(l.username, l));
+        leaderboard.forEach(l => lbMap.set(l.studentId?.toString(), l));
+        // Also index by username fallback
+        leaderboard.forEach(l => { if (l.username) lbMap.set(l.username, l); });
 
-        participants.forEach(p => map.set(p.username, { ...p, isOnline: p.isOnline !== false, lb: lbMap.get(p.username) }));
+        // Seed from participants (includes isOnline state from server)
+        participants.forEach(p => {
+            const key = p._id?.toString() || p.username;
+            const lb = lbMap.get(p._id?.toString()) || lbMap.get(p.username);
+            map.set(key, { ...p, isOnline: p.isOnline === true, lb });
+        });
+
+        // Add any leaderboard entries not already in participants (joined but then disconnected before reconnecting)
         leaderboard.forEach(l => {
-            if (!map.has(l.username)) {
-                map.set(l.username, {
+            const key = l.studentId?.toString();
+            if (key && !map.has(key) && !map.has(l.username)) {
+                map.set(key, {
                     username: l.username,
                     _id: l.studentId?.toString(),
                     role: 'student',
@@ -450,11 +465,14 @@ if (socket.connected) {
             }
         });
 
-        // Sort by score descending (those with leaderboard data first)
+        // Sort: highest score first; ties broken by fastest total time
         return Array.from(map.values()).sort((a, b) => {
-            const scoreA = a.lb?.currentScore ?? -1;
-            const scoreB = b.lb?.currentScore ?? -1;
-            return scoreB - scoreA;
+            const scoreA = a.lb?.currentScore ?? 0;
+            const scoreB = b.lb?.currentScore ?? 0;
+            if (scoreB !== scoreA) return scoreB - scoreA;
+            const timeA = a.lb?.totalTimeTaken ?? Infinity;
+            const timeB = b.lb?.totalTimeTaken ?? Infinity;
+            return timeA - timeB;
         });
     }, [participants, leaderboard]);
 
@@ -817,8 +835,8 @@ if (socket.connected) {
                         <div className="divide-y divide-slate-50">
                             {paginatedStudents.map((p, pIdx) => {
                                 const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
-                                const rank = globalIdx + 1;
-                                // Participants from socket store DB id as _id (PostgreSQL UUID)
+                                // Use server-provided rank from leaderboard if available; otherwise use position
+                                const rank = p.lb?.rank ?? (globalIdx + 1);
                                 // Progress dict is keyed by studentId (UUID) or username as fallback
                                 const progressById = (p._id && studentProgress[p._id]) ? studentProgress[p._id]
                                     : (p.id && studentProgress[p.id]) ? studentProgress[p.id]

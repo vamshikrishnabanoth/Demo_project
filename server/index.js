@@ -405,8 +405,17 @@ io.on('connection', async (socket) => {
             userSockets.delete(userId);
             // Scoped broadcast: only to rooms this user participates in
             for (const [quizId, participants] of roomParticipants.entries()) {
-                if (participants.some(p => (p._id || p.id) === userId)) {
-                    io.to(quizId).emit('user_status_change', { userId, isOnline: false });
+                let updated = false;
+                participants.forEach(p => {
+                    if (String(p._id || p.id) === String(userId)) {
+                        p.isOnline = false;
+                        p.socketId = null;
+                        p.lastSeen = Date.now();
+                        updated = true;
+                    }
+                });
+                if (updated) {
+                    io.to(quizId).emit('participants_update', participants);
                 }
             }
             console.log(`User ${userId} logged out securely and marked offline`);
