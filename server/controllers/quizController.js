@@ -967,19 +967,20 @@ const normalizeQuestions = (questions) => {
         }
 
         const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+        // Resolve correctAnswer to full text — use resolveCorrectOptionText which handles labels/indexes
         const correctString = resolveCorrectOptionText(rawCorrect, options);
 
-        // Re-map correct_option to the stable index of the correct string in stored order
+        // Find the index of the correct option in the stored options array.
+        // Use -1 if not found (don't guess index 0 — that would mark the wrong answer as correct).
         const correctIdx = options.findIndex(o => o.toLowerCase().trim() === correctString.toLowerCase().trim());
-        const resolvedCorrectIdx = correctIdx !== -1 ? correctIdx : 0;
 
         return {
             ...q,
             questionText: q.questionText || q.prompt_text || q.question || '',
             options,
             correctAnswer: correctString,
-            correct_option: resolvedCorrectIdx,
-            correctOption:  resolvedCorrectIdx,
+            correct_option: correctIdx,  // -1 means not found (no false index)
+            correctOption:  correctIdx,
             points: q.points || 10,
             blooms_level: q.blooms_level || q.bloomsLevel || 'Remember/Understand'
         };
@@ -1309,10 +1310,23 @@ exports.getLatestResult = async (req, res) => {
             orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
         });
 
-        // If no result exists, this student hasn't attempted the quiz yet.
-        // Return 404 instead of auto-creating a ghost record (which would pollute analytics).
+        // If no result exists yet, the student joined but didn't submit any answers.
+        // Return a zero-score completed result so rank card and history work correctly.
         if (!result) {
-            return res.status(404).json({ msg: 'No result found. You have not attempted this quiz yet.' });
+            const rawQuestions = Array.isArray(quiz.questions) ? quiz.questions : [];
+            result = {
+                id: null,
+                quizId,
+                studentId: req.user.id,
+                score: 0,
+                totalTimeTaken: 0,
+                totalQuestions: rawQuestions.length,
+                answers: [],
+                status: 'completed',
+                startedAt: null,
+                completedAt: null,
+                lastAnsweredAt: null
+            };
         }
 
 
@@ -1352,18 +1366,37 @@ exports.getLatestResult = async (req, res) => {
             return (a.totalTime || 0) - (b.totalTime || 0);
         });
 
-        let studentRank = 1;
+        let studentRank = processedResults.length || 1; // Default to last place if no data
+        let studentFound = false;
         for (let i = 0; i < processedResults.length; i++) {
             const r = processedResults[i];
-            if (i > 0) {
-                const prev = processedResults[i - 1];
-                if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
-                    studentRank = i + 1;
-                }
-            }
             if (r.studentId === req.user.id) {
+                // Assign rank based on position (ties get same rank)
+                if (i === 0) {
+                    studentRank = 1;
+                } else {
+                    const prev = processedResults[i - 1];
+                    if (r.score === prev.score && r.totalTime === prev.totalTime) {
+                        // Tie — same rank as previous
+                        let prevRank = 1;
+                        for (let j = i - 1; j >= 0; j--) {
+                            if (processedResults[j].score !== r.score || processedResults[j].totalTime !== r.totalTime) {
+                                prevRank = j + 2;
+                                break;
+                            }
+                        }
+                        studentRank = prevRank;
+                    } else {
+                        studentRank = i + 1;
+                    }
+                }
+                studentFound = true;
                 break;
             }
+        }
+        // If student not in DB results (joined but never answered) — they are last place
+        if (!studentFound) {
+            studentRank = processedResults.length + 1;
         }
 
         res.json({
