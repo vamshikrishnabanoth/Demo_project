@@ -1165,6 +1165,13 @@ io.to(realQuizId).emit(
                 isCorrect = gradedIsCorrect;
                 points = gradedPoints;
 
+                // ── DIAGNOSTIC LOG: print grading values for every submission ──
+                console.log(`[GRADE DEBUG] student=${studentId} q=${questionIndex}`);
+                console.log(`  submitted answer : "${answer}" (type: ${typeof answer})`);
+                console.log(`  correctAnswer DB : "${question.correctAnswer}" (type: ${typeof question.correctAnswer})`);
+                console.log(`  options          : ${JSON.stringify(question.options)}`);
+                console.log(`  isCorrect        : ${isCorrect} | points: ${points}`);
+
                 const answerData = {
                     questionIndex,
                     questionText: question.questionText,
@@ -1290,6 +1297,7 @@ io.to(realQuizId).emit(
                 updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
             }
             roomState.set(realQuizId, { ...(roomState.get(realQuizId) || state), progress: updatedProgress });
+            console.log(`[GRADE DEBUG] roomState updated at key="${realQuizId}" with isCorrect=${isCorrect} for student=${studentId} q=${questionIndex}`);
 
             // Broadcast to teacher — UNCONDITIONAL so teacher always sees real-time updates
             io.to(realQuizId).emit('student_progress_update', {
