@@ -191,11 +191,13 @@ export default function AttemptQuiz() {
                 setMissionComplete(false);
             } catch (err) {
                 console.error('Error fetching final result:', err);
+                // 404 means student joined but never submitted any answer — navigate to analytics
                 navigate(`/analytics/quiz/${targetId}`);
             } finally {
                 setLoadingRankResult(false);
             }
         });
+
 
         socket.on('sync_timer', ({ timeLeft }) => {
             console.log('Syncing timer from server:', timeLeft);
