@@ -790,6 +790,37 @@ io.to(realQuizId).emit(
                 }
             });
 
+            // 2. Create zero-score completed results for students who joined but never answered.
+            // This ensures the rank card and history work for every participant.
+            const quizForEnd = await prisma.quiz.findUnique({ where: { id: quizId } });
+            const participants = roomParticipants.get(quizId) || [];
+            const realStudents = participants.filter(p =>
+                p.role?.toLowerCase() !== 'teacher' && !((p._id || p.id || '').toString().startsWith('bot_student_'))
+            );
+            await Promise.allSettled(realStudents.map(async (p) => {
+                const studentId = (p._id || p.id || '').toString();
+                if (!studentId) return;
+                const exists = await prisma.result.findFirst({ where: { quizId, studentId } });
+                if (!exists) {
+                    try {
+                        await prisma.result.create({
+                            data: {
+                                quizId,
+                                studentId,
+                                score: 0,
+                                totalTimeTaken: 0,
+                                totalQuestions: Array.isArray(quizForEnd?.questions) ? quizForEnd.questions.length : 0,
+                                answers: [],
+                                status: 'completed',
+                                startedAt: new Date(),
+                                completedAt: new Date(),
+                                lastAnsweredAt: new Date()
+                            }
+                        });
+                    } catch (_) { /* ignore unique constraint violations */ }
+                }
+            }));
+
             // 2. Compute final leaderboard rankings from persisted Results
             const allResults = await prisma.result.findMany({
                 where: { quizId: quizId },
@@ -1055,7 +1086,9 @@ io.to(realQuizId).emit(
             }
             if (!quiz) return;
 
-            // Parse and pre-normalize questions so correctAnswer is ALWAYS the resolved full-text string
+            // Questions from DB already have correctAnswer as the full text string.
+            // DO NOT re-resolve using resolveCorrectOptionText — its fallback returns options[0]
+            // when no exact match is found, which causes all answers to grade wrong.
             if (quiz.questions && typeof quiz.questions === 'string') {
                 try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
             }
@@ -1063,11 +1096,11 @@ io.to(realQuizId).emit(
             else {
                 quiz.questions = quiz.questions.map(q => {
                     if (!q) return q;
-                    const resolvedCorrect = resolveCorrectOptionText(q);
-                    return {
-                        ...q,
-                        correctAnswer: resolvedCorrect
-                    };
+                    // Ensure options are plain strings
+                    const options = Array.isArray(q.options)
+                        ? q.options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)))
+                        : [];
+                    return { ...q, options };
                 });
             }
 
