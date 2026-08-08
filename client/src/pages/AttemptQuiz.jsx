@@ -1168,7 +1168,7 @@ export default function AttemptQuiz() {
                     </div>
                     <h2 className="text-xl sm:text-3xl font-black italic uppercase tracking-tight text-amber-400 mb-2">Fullscreen Mode Required</h2>
                     <p className="text-xs sm:text-sm font-bold text-slate-300 max-w-md mb-6 sm:mb-8 leading-relaxed">
-                        This live examination requires mandatory Fullscreen mode. Exiting fullscreen is recorded as a security violation.
+                        This live examination requires mandatory Fullscreen mode. Exiting fullscreen is recorded as a security violation. If you are on a smaller device (mobile/tablet), please enable fullscreen mode to attempt the quiz.
                     </p>
                     <button
                         onClick={requestFullscreenMode}
@@ -1838,7 +1838,7 @@ export default function AttemptQuiz() {
                                 Fullscreen Mode Required
                             </h2>
                             <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wider">
-                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode only.
+                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode only. If you are on a smaller device (mobile/tablet), please enable fullscreen mode to attempt the quiz.
                             </p>
                         </div>
 

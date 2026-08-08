@@ -391,13 +391,13 @@ export default function QuizAnalytics() {
                 {/* Main Charts Area — Hidden for Students */}
                 {!isStudent && (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Score Distribution */}
+                        {/* Accuracy Distribution */}
                         <div className="lg:col-span-2 bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] shadow-sm">
                             <div className="flex items-center gap-3 mb-8">
                                 <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
                                     <Activity size={22} />
                                 </div>
-                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Score Distribution</h3>
+                                <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Accuracy Distribution</h3>
                             </div>
                             <div className="w-full overflow-x-auto premium-scrollbar">
                                 <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
