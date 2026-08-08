@@ -4,7 +4,7 @@ import {
     AreaChart, Area
 } from 'recharts';
 
-export function ScoreDistributionChart({ data, tooltip }) {
+export function ScoreDistributionChart({ data, tooltip, name = "Students" }) {
     return (
         <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -12,7 +12,7 @@ export function ScoreDistributionChart({ data, tooltip }) {
                 <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
                 <YAxis stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
                 <Tooltip content={tooltip} />
-                <Bar dataKey="count" name="Students" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" name={name} radius={[8, 8, 0, 0]} />
             </BarChart>
         </ResponsiveContainer>
     );

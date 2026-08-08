@@ -115,9 +115,9 @@ export default function QuizAnalytics() {
 
             // Section Mastery
             rows.push(['"SECTION MASTERY"']);
-            rows.push(['"Section / Topic"', '"Average Score (%)"']);
+            rows.push(['"Section / Topic"', '"Average Marks"']);
             radarData.forEach(s => {
-                rows.push([`"${s.subject.replace(/"/g, '""')}"`, `"${s.A}%"`]);
+                rows.push([`"${s.subject.replace(/"/g, '""')}"`, s.A]);
             });
             rows.push([]);
 
@@ -197,9 +197,9 @@ export default function QuizAnalytics() {
 
                    <h2>Section-wise Mastery</h2>
                    <table>
-                     <thead><tr><th>Section / Subject</th><th>Average Score (%)</th></tr></thead>
+                     <thead><tr><th>Section / Subject</th><th>Average Marks</th></tr></thead>
                      <tbody>
-                       ${radarData.map(s => `<tr><td style="font-weight: 600;">${s.subject}</td><td>${s.A}%</td></tr>`).join('')}
+                       ${radarData.map(s => `<tr><td style="font-weight: 600;">${s.subject}</td><td>${s.A}</td></tr>`).join('')}
                      </tbody>
                    </table>
 
@@ -306,7 +306,7 @@ export default function QuizAnalytics() {
     ];
 
     const radarData = (analytics?.sectionPerformance && analytics.sectionPerformance.length > 0) 
-        ? analytics.sectionPerformance.map(s => ({ subject: s.section, A: s.averagePercentage, fullMark: 100 }))
+        ? analytics.sectionPerformance.map(s => ({ subject: s.section, A: s.averageScore !== undefined ? s.averageScore : s.averagePercentage, fullMark: 100 }))
         : [{ subject: 'General', A: analytics?.averageScore || 0, fullMark: 100 }];
 
     return (
@@ -460,6 +460,7 @@ export default function QuizAnalytics() {
                                         <ScoreDistributionChart 
                                             data={(radarData || []).map((entry, idx) => ({ ...entry, range: entry.subject, count: entry.A, fill: getThemePalette()[idx % getThemePalette().length] }))} 
                                             tooltip={<CustomTooltip />} 
+                                            name="Average Marks"
                                         />
                                     </Suspense>
                                 </div>

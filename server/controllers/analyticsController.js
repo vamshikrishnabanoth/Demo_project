@@ -208,7 +208,8 @@ exports.getQuizAnalytics = async (req, res) => {
 
         const sectionPerformance = Object.keys(sectionMap).map(sec => ({
             section: sec,
-            averagePercentage: Math.round((sectionMap[sec].totalScore / sectionMap[sec].maxScore) * 100)
+            averagePercentage: Math.round((sectionMap[sec].totalScore / sectionMap[sec].maxScore) * 100),
+            averageScore: Math.round((sectionMap[sec].totalScore / sectionMap[sec].count) * 10) / 10
         }));
 
         // 4. Leaderboard (All students)
