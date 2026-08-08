@@ -336,6 +336,22 @@ setInterval(() => {
 io.on('connection', async (socket) => {
     console.log('User connected securely:', socket.id);
 
+    // SECURITY: Validate JWT expiration and signature on every incoming socket event
+    socket.use(async ([event, ...args], next) => {
+        if (event === 'disconnect') return next();
+
+        const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+        if (token) {
+            try {
+                jwt.verify(token, process.env.JWT_SECRET || 'secret');
+            } catch (err) {
+                console.warn(`[Security Alert] Socket event '${event}' blocked: Token expired or invalid for socket ${socket.id}`);
+                return socket.emit('error_alert', { msg: 'Session expired. Please login again.', code: 'SESSION_EXPIRED' });
+            }
+        }
+        next();
+    });
+
     // Auto-identify securely from verified JWT payload
     if (socket.user && socket.user.id) {
         const userId = socket.user.id;

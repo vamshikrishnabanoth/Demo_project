@@ -44,6 +44,11 @@ socket.on('connect_error', (err) => {
 
 socket.on('error_alert', (data) => {
     console.error('[SOCKET ERROR ALERT]:', data?.msg || data);
+    if (data?.code === 'SESSION_EXPIRED') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login?expired=true';
+    }
 });
 
 export const ensureSocketConnected = () => {

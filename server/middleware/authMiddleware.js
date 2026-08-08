@@ -31,23 +31,26 @@ module.exports = async function (req, res, next) {
         return res.status(401).json({ msg: 'No token, authorization denied' });
     }
 
+    let decoded;
     try {
-        let decoded;
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
         } catch (jwtErr) {
             // Grace period for active token expiration during live operations if token expired within last 15 mins
             if (jwtErr.name === 'TokenExpiredError') {
-                decoded = jwt.decode(token);
-                const expiredAt = jwtErr.expiredAt ? new Date(jwtErr.expiredAt).getTime() : 0;
-                const graceWindow = 15 * 60 * 1000; // 15 minute grace period for active sessions
-                
-                if (decoded && decoded.user && (Date.now() - expiredAt < graceWindow)) {
-                    // Issue sliding refresh token header for client synchronization
-                    const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '7d' });
-                    res.setHeader('X-Refreshed-Token', newToken);
-                } else {
-                    return res.status(401).json({ msg: 'Token expired. Please login again.', code: 'TOKEN_EXPIRED' });
+                try {
+                    decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+                    const expiredAt = jwtErr.expiredAt ? new Date(jwtErr.expiredAt).getTime() : 0;
+                    const graceWindow = 15 * 60 * 1000; // 15 minute grace period for active sessions
+                    
+                    if (decoded && decoded.user && (Date.now() - expiredAt < graceWindow)) {
+                        // Issue sliding refresh token header for client synchronization
+                        const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                        res.setHeader('X-Refreshed-Token', newToken);
+                    } else {
+                        return res.status(401).json({ msg: 'Token expired. Please login again.', code: 'TOKEN_EXPIRED' });
+                    }
+                } catch (verifyErr) {
+                    return res.status(401).json({ msg: 'Token is not valid', code: 'INVALID_TOKEN' });
                 }
             } else {
                 return res.status(401).json({ msg: 'Token is not valid', code: 'INVALID_TOKEN' });
