@@ -14,7 +14,7 @@ const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
-const { getCorrectOptionText } = require('../utils/grading');
+const { resolveCorrectOptionText } = require('../utils/grading');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -607,6 +607,21 @@ exports.createQuiz = async (req, res) => {
             finalQuestions = await generateQuestions('topic', content || topic, questionCount, difficulty);
         }
 
+        // Pre-save normalization: ensure every question in finalQuestions stores full text in correctAnswer
+        if (Array.isArray(finalQuestions)) {
+            finalQuestions = finalQuestions.map(q => {
+                let options = Array.isArray(q.options) ? q.options : [];
+                options = options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)));
+                const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+                const correctString = resolveCorrectOptionText(rawCorrect, options);
+                return {
+                    ...q,
+                    options,
+                    correctAnswer: correctString
+                };
+            });
+        }
+
         if (isLive === 'true' || isLive === true) {
             // Automatic Cleanup: Deactivate existing active live quizzes for this teacher
             await prisma.quiz.updateMany({
@@ -923,17 +938,11 @@ exports.getLiveQuizzes = async (req, res) => {
 //   questionText  – string
 //   options       – array of strings (never null / undefined / object)
 //   correctAnswer – string (always resolved to actual text, never a label/index)
-//   correct_option – integer index of correctAnswer in the (shuffled) options array
-
-// Fisher-Yates in-place shuffle (modifies a copy)
-const fisherYatesShuffle = (arr) => {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-};
+//   correct_option – integer index of correctAnswer in the stored options array
+//
+// NOTE: Options are NO LONGER shuffled at read time. Shuffling must be done
+// once at quiz creation and stored in the DB so that all students see the same
+// stable order and server-side grading is consistent across requests.
 
 const normalizeQuestions = (questions) => {
     if (!Array.isArray(questions)) {
@@ -957,34 +966,21 @@ const normalizeQuestions = (questions) => {
             );
         }
 
-        // ── Resolve correctAnswer to actual option text ───────────────────
-        // AI models sometimes emit a label ("A") or a 0-based index ("2") instead
-        // of the full option string.  Normalise it once so downstream logic is
-        // always comparing text-to-text.
         const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
-        const labels = ['a', 'b', 'c', 'd', 'e'];
-        const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
-        let correctString = rawCorrect;
-        if (labelIdx !== -1 && options[labelIdx]) {
-            correctString = options[labelIdx];
-        } else if (rawCorrect !== '' && !isNaN(rawCorrect) && options[parseInt(rawCorrect)]) {
-            correctString = options[parseInt(rawCorrect)];
-        }
+        // Resolve correctAnswer to full text — use resolveCorrectOptionText which handles labels/indexes
+        const correctString = resolveCorrectOptionText(rawCorrect, options);
 
-        // ── Fisher-Yates shuffle of option positions ──────────────────────
-        const shuffledOptions = fisherYatesShuffle(options);
-
-        // Re-map correct_option to the new index of the correct string
-        const newCorrectIdx = shuffledOptions.indexOf(correctString);
-        const resolvedCorrectIdx = newCorrectIdx !== -1 ? newCorrectIdx : 0;
+        // Find the index of the correct option in the stored options array.
+        // Use -1 if not found (don't guess index 0 — that would mark the wrong answer as correct).
+        const correctIdx = options.findIndex(o => o.toLowerCase().trim() === correctString.toLowerCase().trim());
 
         return {
             ...q,
             questionText: q.questionText || q.prompt_text || q.question || '',
-            options: shuffledOptions,
+            options,
             correctAnswer: correctString,
-            correct_option: resolvedCorrectIdx,
-            correctOption:  resolvedCorrectIdx,
+            correct_option: correctIdx,  // -1 means not found (no false index)
+            correctOption:  correctIdx,
             points: q.points || 10,
             blooms_level: q.blooms_level || q.bloomsLevel || 'Remember/Understand'
         };
@@ -1150,24 +1146,24 @@ exports.submitQuiz = async (req, res) => {
         let totalTimeTaken = 0;
         const maxPossibleScore = quiz.questions.reduce((sum, q) => sum + (q.points || 10), 0);
 
+        // Use the shared gradeAnswer utility for consistent, multi-layer evaluation
+        const { gradeAnswer } = require('../utils/grading');
         const formattedAnswers = quiz.questions.map((q, idx) => {
             const selectedOption = (answers[idx]?.selectedOption || '').toString().trim();
             const timeTaken = parseInt(answers[idx]?.timeTaken || 0);
-            const correctOption = getCorrectOptionText(q);
-
             totalTimeTaken += timeTaken;
 
-            const isCorrect = selectedOption.toLowerCase() === correctOption.toLowerCase();
-
+            // Grade using shared utility — supports exact text match, label (A/B/C/D), and index fallback
+            const { isCorrect, points, resolvedCorrect } = gradeAnswer(selectedOption, q);
             if (isCorrect) {
-                score += q.points || 10;
+                score += points;
             }
             return {
                 questionText: q.questionText,
                 selectedOption,
-                correctOption,
+                correctOption: resolvedCorrect || (q.correctAnswer || '').toString().trim(),
                 isCorrect,
-                timeTaken: timeTaken
+                timeTaken
             };
         });
 
@@ -1326,21 +1322,25 @@ exports.getLatestResult = async (req, res) => {
             orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
         });
 
-        // If no result exists yet for this student, auto-create one on the fly so it NEVER 404s
+        // If no result exists yet, the student joined but didn't submit any answers.
+        // Return a zero-score completed result so rank card and history work correctly.
         if (!result) {
             const rawQuestions = Array.isArray(quiz.questions) ? quiz.questions : [];
-            result = await prisma.result.create({
-                data: {
-                    quizId: quizId,
-                    studentId: req.user.id,
-                    score: 0,
-                    totalQuestions: rawQuestions.length,
-                    status: 'completed',
-                    answers: [],
-                    completedAt: new Date()
-                }
-            });
+            result = {
+                id: null,
+                quizId,
+                studentId: req.user.id,
+                score: 0,
+                totalTimeTaken: 0,
+                totalQuestions: rawQuestions.length,
+                answers: [],
+                status: 'completed',
+                startedAt: null,
+                completedAt: null,
+                lastAnsweredAt: null
+            };
         }
+
 
         // SECURITY: If not completed, don't send questions with answers
         let questions = quiz ? (quiz.questions || []) : [];
@@ -1378,18 +1378,37 @@ exports.getLatestResult = async (req, res) => {
             return (a.totalTime || 0) - (b.totalTime || 0);
         });
 
-        let studentRank = 1;
+        let studentRank = processedResults.length || 1; // Default to last place if no data
+        let studentFound = false;
         for (let i = 0; i < processedResults.length; i++) {
             const r = processedResults[i];
-            if (i > 0) {
-                const prev = processedResults[i - 1];
-                if (r.score !== prev.score || r.totalTime !== prev.totalTime) {
-                    studentRank = i + 1;
-                }
-            }
             if (r.studentId === req.user.id) {
+                // Assign rank based on position (ties get same rank)
+                if (i === 0) {
+                    studentRank = 1;
+                } else {
+                    const prev = processedResults[i - 1];
+                    if (r.score === prev.score && r.totalTime === prev.totalTime) {
+                        // Tie — same rank as previous
+                        let prevRank = 1;
+                        for (let j = i - 1; j >= 0; j--) {
+                            if (processedResults[j].score !== r.score || processedResults[j].totalTime !== r.totalTime) {
+                                prevRank = j + 2;
+                                break;
+                            }
+                        }
+                        studentRank = prevRank;
+                    } else {
+                        studentRank = i + 1;
+                    }
+                }
+                studentFound = true;
                 break;
             }
+        }
+        // If student not in DB results (joined but never answered) — they are last place
+        if (!studentFound) {
+            studentRank = processedResults.length + 1;
         }
 
         const maxPossibleScore = questions.reduce((sum, q) => sum + (q.points || 10), 0);

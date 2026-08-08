@@ -469,19 +469,20 @@ function buildReport(
  */
 function balanceAnswerPositions(questions) {
     if (!questions || questions.length < 2) return questions;
+
+    const { resolveCorrectOptionText } = require('../utils/grading');
+    questions.forEach(q => {
+        if (q && q.options && q.correctAnswer) {
+            q.correctAnswer = resolveCorrectOptionText(q.correctAnswer, q.options);
+        }
+    });
+
     const total = questions.length;
     const maxAllowed = Math.floor(total * 0.40);
 
     const getPos = (q) => {
         const opts = q.options || [];
         const ans = q.correctAnswer || q.correct_answer;
-        if (typeof opts === 'object' && !Array.isArray(opts)) {
-            if (ans === opts.A || ans === 'A') return 0;
-            if (ans === opts.B || ans === 'B') return 1;
-            if (ans === opts.C || ans === 'C') return 2;
-            if (ans === opts.D || ans === 'D') return 3;
-            return 0;
-        }
         return Array.isArray(opts) ? opts.indexOf(ans) : 0;
     };
 
@@ -499,17 +500,13 @@ function balanceAnswerPositions(questions) {
             const targetPos = counts.indexOf(Math.min(...counts));
             if (targetPos === pos) break;
 
+            const correctText = resolveCorrectOptionText(qToMove.correctAnswer, qToMove.options);
+
             if (Array.isArray(qToMove.options)) {
                 const temp = qToMove.options[targetPos];
                 qToMove.options[targetPos] = qToMove.options[pos];
                 qToMove.options[pos] = temp;
-            } else if (typeof qToMove.options === 'object') {
-                const keys = ['A', 'B', 'C', 'D'];
-                const fromKey = keys[pos];
-                const toKey = keys[targetPos];
-                const temp = qToMove.options[toKey];
-                qToMove.options[toKey] = qToMove.options[fromKey];
-                qToMove.options[fromKey] = temp;
+                qToMove.correctAnswer = correctText;
             }
 
             counts[pos]--;

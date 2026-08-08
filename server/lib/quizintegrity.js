@@ -20,10 +20,15 @@ const crypto = require('crypto');
 
 // ── Canonical question shape ──────────────────────────────────────────────────
 // Strip all non-content fields so only what students answer against is hashed.
+// IMPORTANT: Options are hashed in their stored order (NOT sorted).
+// Sorting options caused hash mismatches because:
+//   1. The hash at creation time used one order
+//   2. The verification recomputed from DB used stored order
+// The teacher's intended option order is part of the quiz content.
 function canonicalizeQuestion(q) {
     return {
         questionText:  (q.questionText  || '').trim(),
-        options:       (q.options       || []).map(o => (o || '').trim()).sort(), // sort to be position-independent
+        options:       (q.options       || []).map(o => (o || '').trim()), // preserve stored order
         correctAnswer: (q.correctAnswer || '').trim(),
         explanation:   (q.explanation   || '').trim(),
         points:        q.points || 10,
@@ -71,18 +76,44 @@ function verifyQuizIntegrity(quiz) {
     }
 
     try {
+        // First: try new hash (options in stored order — for quizzes created after this fix)
         const computed = hashQuiz(
             quiz.questions,
             quiz.publishedAt ? new Date(quiz.publishedAt).toISOString() : '',
             quiz.createdById,
             quiz.version || 1
         );
-        const valid = computed === quiz.quizHash;
+        if (computed === quiz.quizHash) {
+            return { valid: true, computed, stored: quiz.quizHash, reason: 'ok' };
+        }
+
+        // Second: try legacy hash (options sorted — for quizzes created before this fix)
+        // This ensures existing published quizzes don't throw integrity violations.
+        const legacyCanonical = {
+            v:           quiz.version || 1,
+            publishedAt: quiz.publishedAt ? new Date(quiz.publishedAt).toISOString() : '',
+            createdById: quiz.createdById,
+            questions:   (quiz.questions || []).map(q => ({
+                questionText:  (q.questionText  || '').trim(),
+                options:       (q.options       || []).map(o => (o || '').trim()).sort(), // legacy: sorted
+                correctAnswer: (q.correctAnswer || '').trim(),
+                explanation:   (q.explanation   || '').trim(),
+                points:        q.points || 10,
+                type:          q.type   || 'multiple-choice',
+            })),
+        };
+        const legacyPayload = JSON.stringify(legacyCanonical, Object.keys(legacyCanonical).sort());
+        const legacyHash = require('crypto').createHash('sha256').update(legacyPayload, 'utf8').digest('hex');
+        if (legacyHash === quiz.quizHash) {
+            // Legacy quiz — valid (created before the sort fix)
+            return { valid: true, computed: legacyHash, stored: quiz.quizHash, reason: 'ok_legacy' };
+        }
+
         return {
-            valid,
+            valid:    false,
             computed,
-            stored:  quiz.quizHash,
-            reason:  valid ? 'ok' : 'mismatch',
+            stored:   quiz.quizHash,
+            reason:   'mismatch',
         };
     } catch (err) {
         return {

@@ -191,11 +191,13 @@ export default function AttemptQuiz() {
                 setMissionComplete(false);
             } catch (err) {
                 console.error('Error fetching final result:', err);
+                // 404 means student joined but never submitted any answer — navigate to analytics
                 navigate(`/analytics/quiz/${targetId}`);
             } finally {
                 setLoadingRankResult(false);
             }
         });
+
 
         socket.on('sync_timer', ({ timeLeft }) => {
             console.log('Syncing timer from server:', timeLeft);
@@ -978,22 +980,13 @@ export default function AttemptQuiz() {
                             <span>Analytics</span>
                         </button>
                         
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => setIsReviewMode(true)}
-                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 py-3 rounded-2xl font-bold hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
-                            >
-                                <CheckCircle size={16} />
-                                <span>Review Answers</span>
-                            </button>
-                            <button
-                                onClick={() => navigate('/student-dashboard')}
-                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 py-3 rounded-2xl font-bold hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
-                            >
-                                <Home size={16} />
-                                <span>Dashboard</span>
-                            </button>
-                        </div>
+                        <button
+                            onClick={() => navigate('/student-dashboard')}
+                            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 py-4 rounded-2xl font-bold hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                        >
+                            <Home size={18} />
+                            <span>Dashboard</span>
+                        </button>
                     </div>
                 </motion.div>
             </div>
@@ -1135,26 +1128,19 @@ export default function AttemptQuiz() {
                         >
                             <TrendingUp size={20} /> View Detailed Analytics
                         </button>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => {
-                                    if (window.history.length > 2) {
-                                        navigate(-1);
-                                    } else {
-                                        navigate('/student-dashboard');
-                                    }
-                                }}
-                                className="bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
-                            >
-                                Home
-                            </button>
-                            <button
-                                onClick={() => setIsReviewMode(true)}
-                                className="bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-2"
-                            >
-                                Review
-                            </button>
-                        </div>
+                        <button
+                            onClick={() => {
+                                if (window.history.length > 2) {
+                                    navigate(-1);
+                                } else {
+                                    navigate('/student-dashboard');
+                                }
+                            }}
+                            className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                        >
+                            <Home size={18} />
+                            <span>Home</span>
+                        </button>
                     </div>
                 </div>
             </div>

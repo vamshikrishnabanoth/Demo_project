@@ -31,7 +31,8 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
-const { gradeAnswer, getCorrectOptionText } = require('./utils/grading');
+const { gradeAnswer, resolveCorrectOptionText } = require('./utils/grading');
+const { getCache, setCache } = require('./lib/cache');
 const { exec } = require('child_process');
 
 const gzipCompressionMiddleware = require('./middleware/compression');
@@ -404,8 +405,17 @@ io.on('connection', async (socket) => {
             userSockets.delete(userId);
             // Scoped broadcast: only to rooms this user participates in
             for (const [quizId, participants] of roomParticipants.entries()) {
-                if (participants.some(p => (p._id || p.id) === userId)) {
-                    io.to(quizId).emit('user_status_change', { userId, isOnline: false });
+                let updated = false;
+                participants.forEach(p => {
+                    if (String(p._id || p.id) === String(userId)) {
+                        p.isOnline = false;
+                        p.socketId = null;
+                        p.lastSeen = Date.now();
+                        updated = true;
+                    }
+                });
+                if (updated) {
+                    io.to(quizId).emit('participants_update', participants);
                 }
             }
             console.log(`User ${userId} logged out securely and marked offline`);
@@ -790,6 +800,37 @@ io.to(realQuizId).emit(
                 }
             });
 
+            // 2. Create zero-score completed results for students who joined but never answered.
+            // This ensures the rank card and history work for every participant.
+            const quizForEnd = await prisma.quiz.findUnique({ where: { id: quizId } });
+            const participants = roomParticipants.get(quizId) || [];
+            const realStudents = participants.filter(p =>
+                p.role?.toLowerCase() !== 'teacher' && !((p._id || p.id || '').toString().startsWith('bot_student_'))
+            );
+            await Promise.allSettled(realStudents.map(async (p) => {
+                const studentId = (p._id || p.id || '').toString();
+                if (!studentId) return;
+                const exists = await prisma.result.findFirst({ where: { quizId, studentId } });
+                if (!exists) {
+                    try {
+                        await prisma.result.create({
+                            data: {
+                                quizId,
+                                studentId,
+                                score: 0,
+                                totalTimeTaken: 0,
+                                totalQuestions: Array.isArray(quizForEnd?.questions) ? quizForEnd.questions.length : 0,
+                                answers: [],
+                                status: 'completed',
+                                startedAt: new Date(),
+                                completedAt: new Date(),
+                                lastAnsweredAt: new Date()
+                            }
+                        });
+                    } catch (_) { /* ignore unique constraint violations */ }
+                }
+            }));
+
             // 2. Compute final leaderboard rankings from persisted Results
             const allResults = await prisma.result.findMany({
                 where: { quizId: quizId },
@@ -1055,11 +1096,23 @@ io.to(realQuizId).emit(
             }
             if (!quiz) return;
 
-            // Parse questions JSON string from DB if it hasn't been parsed yet
+            // Questions from DB already have correctAnswer as the full text string.
+            // DO NOT re-resolve using resolveCorrectOptionText — its fallback returns options[0]
+            // when no exact match is found, which causes all answers to grade wrong.
             if (quiz.questions && typeof quiz.questions === 'string') {
                 try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
             }
             if (!Array.isArray(quiz.questions)) quiz.questions = [];
+            else {
+                quiz.questions = quiz.questions.map(q => {
+                    if (!q) return q;
+                    // Ensure options are plain strings
+                    const options = Array.isArray(q.options)
+                        ? q.options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)))
+                        : [];
+                    return { ...q, options };
+                });
+            }
 
             // Calculate time taken for this question
             const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
@@ -1068,34 +1121,28 @@ io.to(realQuizId).emit(
             let result = null;
             if (!studentId.startsWith('bot_student_')) {
                 try {
-                    // Always use realQuizId (UUID) for DB operations, never the raw 6-digit PIN
-                    result = await prisma.result.findUnique({
+                    // Always use realQuizId (UUID) for DB operations
+                    result = await prisma.result.upsert({
                         where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                        update: {},
+                        create: {
+                            quizId: realQuizId,
+                            studentId: studentId,
+                            score: 0,
+                            totalTimeTaken: 0,
+                            totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+                            answers: []
+                        },
                         include: { student: { select: { username: true } } }
                     });
-
-                    if (!result) {
-                        try {
-                            result = await prisma.result.create({
-                                data: {
-                                    quizId: realQuizId,
-                                    studentId: studentId,
-                                    score: 0,
-                                    totalTimeTaken: 0,
-                                    totalQuestions: quiz.questions.length,
-                                    answers: []
-                                },
-                                include: { student: { select: { username: true } } }
-                            });
-                        } catch (dbErr) {
-                            result = await prisma.result.findUnique({
-                                where: { quizId_studentId: { quizId: realQuizId, studentId } },
-                                include: { student: { select: { username: true } } }
-                            });
-                        }
-                    }
                 } catch (dbLookupErr) {
-                    console.warn(`[ResultLookup] DB result lookup bypassed for ${studentId}:`, dbLookupErr.message);
+                    console.warn(`[ResultLookup] DB result upsert warning for ${studentId}:`, dbLookupErr.message);
+                    try {
+                        result = await prisma.result.findUnique({
+                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                            include: { student: { select: { username: true } } }
+                        });
+                    } catch (_) {}
                 }
             }
 
@@ -1114,7 +1161,6 @@ io.to(realQuizId).emit(
             result.totalTimeTaken = result.totalTimeTaken || 0;
 
             // ── GRADE THE ANSWER ──────────────────────────────────────────────
-            // Default to false — overwritten below if question is found and graded
             let isCorrect = false;
             let points = 0;
             let updatedScore = result.score;
@@ -1125,45 +1171,16 @@ io.to(realQuizId).emit(
             const question = Array.isArray(quiz.questions) ? quiz.questions[questionIndex] : null;
 
             if (question) {
-                // Robust grading: compare submitted full-text answer against correctAnswer.
-                // correctAnswer in DB may be:
-                //   (a) full option text  e.g. "Python"
-                //   (b) a letter label   e.g. "a" / "A"  → resolve to options[0]
-                //   (c) a numeric index  e.g. "0"        → resolve to options[0]
-                // The student ALWAYS submits the full visible option text.
-                const submittedNorm = (answer || '').toString().trim().toLowerCase();
+                const { isCorrect: gradedIsCorrect, points: gradedPoints, resolvedCorrect } = gradeAnswer(answer, question);
+                isCorrect = gradedIsCorrect;
+                points = gradedPoints;
 
-                // Normalise options to plain strings
-                let rawOptions = Array.isArray(question.options) ? question.options : [];
-                rawOptions = rawOptions.map(o =>
-                    typeof o === 'string' ? o : (o?.text || o?.label || String(o))
-                );
-
-                const rawCorrect = (question.correctAnswer || question.correct_answer || '').toString().trim();
-                const labels = ['a', 'b', 'c', 'd', 'e'];
-                const labelIdx = labels.indexOf(rawCorrect.toLowerCase());
-
-                // Resolve correctAnswer to the actual option string
-                let resolvedCorrect = rawCorrect;
-                if (labelIdx !== -1 && rawOptions[labelIdx]) {
-                    resolvedCorrect = rawOptions[labelIdx];
-                } else if (rawCorrect !== '' && !isNaN(rawCorrect) && rawOptions[parseInt(rawCorrect, 10)]) {
-                    resolvedCorrect = rawOptions[parseInt(rawCorrect, 10)];
-                }
-
-                // Primary: compare submitted text against resolved correct text
-                isCorrect = submittedNorm === resolvedCorrect.toLowerCase();
-
-                // Fallback: check if submitted text matches ANY option that IS the correct one
-                // (handles edge case where correctAnswer is full text but has minor casing diff)
-                if (!isCorrect) {
-                    isCorrect = rawOptions.some(opt =>
-                        opt.toLowerCase() === submittedNorm &&
-                        opt.toLowerCase() === resolvedCorrect.toLowerCase()
-                    );
-                }
-
-                points = isCorrect ? (question.points || 10) : 0;
+                // ── DIAGNOSTIC LOG: print grading values for every submission ──
+                console.log(`[GRADE DEBUG] student=${studentId} q=${questionIndex}`);
+                console.log(`  submitted answer : "${answer}" (type: ${typeof answer})`);
+                console.log(`  correctAnswer DB : "${question.correctAnswer}" (type: ${typeof question.correctAnswer})`);
+                console.log(`  options          : ${JSON.stringify(question.options)}`);
+                console.log(`  isCorrect        : ${isCorrect} | points: ${points}`);
 
                 const answerData = {
                     questionIndex,
@@ -1175,7 +1192,8 @@ io.to(realQuizId).emit(
                 };
 
                 const existingAnswerIndex = updatedAnswers.findIndex(
-                    a => a.questionText === question.questionText
+                    a => (a.questionIndex !== undefined && Number(a.questionIndex) === questionIndex) ||
+                         (a.questionText && question.questionText && a.questionText.trim().toLowerCase() === question.questionText.trim().toLowerCase())
                 );
 
                 if (existingAnswerIndex >= 0) {
@@ -1191,14 +1209,35 @@ io.to(realQuizId).emit(
                     updatedTime += qTimeTaken;
                 }
 
-                // Persist to DB
+                // Persist to DB - Guaranteed atomic upsert
                 try {
-                    if (result.id && !result.id.startsWith('temp_')) {
+                    if (result && result.id && !result.id.startsWith('temp_')) {
                         await prisma.result.update({
                             where: { id: result.id },
                             data: {
                                 score: updatedScore,
                                 totalTimeTaken: updatedTime,
+                                answers: updatedAnswers,
+                                status: 'in-progress',
+                                lastAnsweredAt: new Date()
+                            }
+                        });
+                    } else if (!studentId.startsWith('bot_student_')) {
+                        await prisma.result.upsert({
+                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
+                            update: {
+                                score: updatedScore,
+                                totalTimeTaken: updatedTime,
+                                answers: updatedAnswers,
+                                status: 'in-progress',
+                                lastAnsweredAt: new Date()
+                            },
+                            create: {
+                                quizId: realQuizId,
+                                studentId: studentId,
+                                score: updatedScore,
+                                totalTimeTaken: updatedTime,
+                                totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
                                 answers: updatedAnswers,
                                 status: 'in-progress',
                                 lastAnsweredAt: new Date()
@@ -1221,7 +1260,7 @@ io.to(realQuizId).emit(
                         }
                     }
                 });
-                const isUnattempted = !answer || answer.trim() === '';
+                const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
                 const isFast = !isUnattempted && (otherTimes.length > 0
                     ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
                     : (qTimeTaken <= timerMax * 0.3));
@@ -1268,6 +1307,7 @@ io.to(realQuizId).emit(
                 updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
             }
             roomState.set(realQuizId, { ...(roomState.get(realQuizId) || state), progress: updatedProgress });
+            console.log(`[GRADE DEBUG] roomState updated at key="${realQuizId}" with isCorrect=${isCorrect} for student=${studentId} q=${questionIndex}`);
 
             // Broadcast to teacher — UNCONDITIONAL so teacher always sees real-time updates
             io.to(realQuizId).emit('student_progress_update', {

@@ -32,8 +32,10 @@ export default function useExamProctoring({
     const [isSplitScreen, setIsSplitScreen] = useState(false);
     const [lostFocusSeconds, setLostFocusSeconds] = useState(0);
     const [isTerminated, setIsTerminated] = useState(false);
+    const [bypassFullscreen, setBypassFullscreen] = useState(false);
 
     const autoSubmittedRef = useRef(false);
+
 
     // ── Guard Refs ────────────────────────────────────────────────────────────
     // hasEnteredFullscreen: true only after the student has been CONFIRMED in fullscreen at least once.
@@ -51,8 +53,16 @@ export default function useExamProctoring({
         setIsTerminated(true);
 
         // Exit fullscreen on termination/completion
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
+        const exitFS = document.exitFullscreen ||
+                       document.webkitExitFullscreen ||
+                       document.mozCancelFullScreen ||
+                       document.msExitFullscreen;
+        const fsElement = document.fullscreenElement || 
+                          document.webkitFullscreenElement || 
+                          document.mozFullScreenElement || 
+                          document.msFullscreenElement;
+        if (exitFS && fsElement) {
+            exitFS.call(document).catch(() => {});
         }
 
         if (quizId && userId) {
@@ -92,13 +102,35 @@ export default function useExamProctoring({
     // ─── 1. Fullscreen Mode & Screen Integrity Detection ───
     const requestFullscreenMode = useCallback(async () => {
         try {
-            if (!document.fullscreenElement) {
-                await document.documentElement.requestFullscreen();
+            const docEl = document.documentElement;
+            const requestFS = docEl.requestFullscreen || 
+                              docEl.webkitRequestFullscreen || 
+                              docEl.mozRequestFullScreen || 
+                              docEl.msRequestFullscreen;
+
+            if (requestFS) {
+                const fsElement = document.fullscreenElement || 
+                                  document.webkitFullscreenElement || 
+                                  document.mozFullScreenElement || 
+                                  document.msFullscreenElement;
+                if (!fsElement) {
+                    await requestFS.call(docEl);
+                    setIsFullscreen(true);
+                    hasEnteredFullscreenRef.current = true;
+                }
+            } else {
+                // Device/Browser does not support DOM element requestFullscreen (e.g., iOS Safari/Chrome on iPhone)
+                setBypassFullscreen(true);
                 setIsFullscreen(true);
                 hasEnteredFullscreenRef.current = true;
+                toast.success("Proceeding in browser-maximized mode.", { duration: 4000 });
             }
         } catch (e) {
             console.warn('Fullscreen request failed:', e);
+            // Fallback for security/gesture rejection or restricted iframe permissions
+            setBypassFullscreen(true);
+            setIsFullscreen(true);
+            hasEnteredFullscreenRef.current = true;
         }
     }, []);
 
@@ -106,13 +138,29 @@ export default function useExamProctoring({
         if (!enabled || isTerminated) return;
 
         // Request fullscreen on mount — only triggers when enabled (quiz started, not during lobby)
-        requestFullscreenMode();
+        if (!bypassFullscreen) {
+            requestFullscreenMode();
+        }
 
         // Reset the initial check guard for this mount
         isInitialCheckRef.current = true;
 
         const checkScreenIntegrity = () => {
-            const inFS = !!document.fullscreenElement;
+            const docEl = document.documentElement;
+            const hasFS = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+            );
+            const isFullscreenSupported = !!(
+                docEl.requestFullscreen ||
+                docEl.webkitRequestFullscreen ||
+                docEl.mozRequestFullScreen ||
+                docEl.msRequestFullscreen
+            );
+
+            const inFS = isFullscreenSupported ? hasFS : bypassFullscreen;
             setIsFullscreen(inFS);
 
             // Track when student first enters fullscreen
@@ -137,10 +185,12 @@ export default function useExamProctoring({
             // ── SPLIT-SCREEN / RESIZE VIOLATION ───────────────────────────
             // Detect split-screen / dimension anomalies
             // Only flag if student HAS been in fullscreen before (not on initial load)
+            // Only run split-screen checks if fullscreen is supported. If unsupported, we bypass it.
             const widthDiff = window.screen.availWidth - window.innerWidth;
             const heightDiff = window.screen.availHeight - window.innerHeight;
+            
             // Split detected only when student left fullscreen AND window is significantly reduced
-            const splitDetected = !inFS && hasEnteredFullscreenRef.current && (widthDiff > 25 || heightDiff > 45);
+            const splitDetected = isFullscreenSupported && !inFS && hasEnteredFullscreenRef.current && (widthDiff > 25 || heightDiff > 45);
 
             setIsSplitScreen(splitDetected);
 
@@ -167,13 +217,19 @@ export default function useExamProctoring({
 
         window.addEventListener('resize', checkScreenIntegrity);
         document.addEventListener('fullscreenchange', checkScreenIntegrity);
+        document.addEventListener('webkitfullscreenchange', checkScreenIntegrity);
+        document.addEventListener('mozfullscreenchange', checkScreenIntegrity);
+        document.addEventListener('MSFullscreenChange', checkScreenIntegrity);
 
         return () => {
             clearTimeout(initialCheckTimer);
             window.removeEventListener('resize', checkScreenIntegrity);
             document.removeEventListener('fullscreenchange', checkScreenIntegrity);
+            document.removeEventListener('webkitfullscreenchange', checkScreenIntegrity);
+            document.removeEventListener('mozfullscreenchange', checkScreenIntegrity);
+            document.removeEventListener('MSFullscreenChange', checkScreenIntegrity);
         };
-    }, [enabled, isTerminated, requestFullscreenMode, quizId, userId, recordViolation]);
+    }, [enabled, isTerminated, requestFullscreenMode, quizId, userId, recordViolation, bypassFullscreen]);
 
     // ─── 2. Tab Switch Integrity Monitoring (Max 2 Switches) ───
     useEffect(() => {
