@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, X, Send } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, X, Send, Save } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -299,7 +299,7 @@ export default function CreateQuizText() {
                 assignedGroups
             });
             toast.success(res.data.msg || 'Quiz template saved successfully!', { id: toastId });
-            navigate('/quizzes');
+            navigate('/my-quizzes');
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Failed to save quiz template.', { id: toastId });
         } finally {
@@ -330,7 +330,8 @@ export default function CreateQuizText() {
                             disabled={loading}
                             className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2 cursor-pointer transition-all border-b-4 border-amber-700"
                         >
-                            💾 Save Quiz Template
+                            <Save size={16} />
+                            <span>Save Quiz Template</span>
                         </button>
                     </div>
                 </div>

@@ -168,7 +168,7 @@ export default function JsonPastePanel({ onQuestionsLoaded }) {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle className="text-green-500" size={20} />
-                                    <span className="text-sm font-black text-white uppercase italic">{parsedCount} Questions Decoded & Verified</span>
+                                    <span className="text-sm font-black text-emerald-950 uppercase italic">{parsedCount} Questions Decoded & Verified</span>
                                 </div>
                                 <PremiumButton variant="primary" onClick={() => onQuestionsLoaded(decodedQuestions)}>
                                     Inject Questions

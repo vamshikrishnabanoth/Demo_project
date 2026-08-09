@@ -473,7 +473,7 @@ export default function MyQuizzes() {
                         {savedTemplates.length === 0 ? (
                             <div className="bg-white rounded-3xl p-12 border border-slate-200 text-center space-y-3 shadow-xs">
                                 <p className="text-slate-400 font-black text-xs uppercase tracking-widest">No saved quiz templates found</p>
-                                <p className="text-slate-600 text-xs font-medium">Create a quiz and click "💾 Save Quiz Template" in the top header to store reusable templates here!</p>
+                                <p className="text-slate-600 text-xs font-medium">Create a quiz and click "Save Quiz Template" in the top header to store reusable templates here!</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
