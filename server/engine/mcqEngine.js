@@ -1,4 +1,10 @@
 const Groq = require('groq-sdk');
+const cacheManager = require('../utils/cacheManager');
+const metricsManager = require('../utils/metricsManager');
+const { 
+  generateAnalysisCacheKey, 
+  generateQuizCacheKey 
+} = require('../utils/cacheHash');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -299,6 +305,9 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const startTime = Date.now();
   let { content, difficulty = "Balanced", requestedCount = 10, apiKey } = reqPayload;
 
+  // Correlation Request ID Propagation
+  const reqId = reqPayload.requestId || reqPayload.reqId || Math.random().toString(36).substring(2, 10);
+
   requestedCount = parseInt(requestedCount, 10) || 10;
   if (requestedCount < 1) requestedCount = 1;
   if (requestedCount > 50) requestedCount = 50;
@@ -325,66 +334,16 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
       validAcademicInputs.push({ ...inp, name: srcName, content: srcContent, densityScore: score });
     } else {
       excludedInputs.push({ name: srcName, densityScore: score });
-      console.warn(`[GUARD] Excluded non-academic source: ${srcName}`);
+      console.warn(`[ReqID: ${reqId}] [GUARD] Excluded non-academic source: ${srcName}`);
     }
   });
 
   // ── 3. SAFETY LOCK ──
   if (validAcademicInputs.length === 0) {
-    console.error(`❌ [SAFETY LOCK TRIGGERED] No academic or technical content detected across provided sources.`);
+    console.error(`[ReqID: ${reqId}] ❌ [SAFETY LOCK TRIGGERED] No academic or technical content detected across provided sources.`);
     const error = new Error('400 Bad Request: "No academic or technical content detected in provided sources."');
     error.statusCode = 400;
     throw error;
-  }
-
-  // ── 2. MULTI-DOMAIN DISCREPANCY DETECTION ──
-  const inputConceptSets = validAcademicInputs.map(inp => {
-    const cg = new LightweightConceptGraph().buildFromText(inp.content);
-    return {
-      name: inp.name,
-      concepts: new Set(Array.from(cg.nodes.keys())),
-      graph: cg,
-      content: inp.content
-    };
-  });
-
-  let multiDomainDetected = false;
-  let domainBlocks = [];
-
-  if (inputConceptSets.length > 1) {
-    let totalOverlap = 0;
-    let comparisons = 0;
-    for (let i = 0; i < inputConceptSets.length; i++) {
-      for (let j = i + 1; j < inputConceptSets.length; j++) {
-        const setA = inputConceptSets[i].concepts;
-        const setB = inputConceptSets[j].concepts;
-        const intersection = new Set([...setA].filter(x => setB.has(x)));
-        const union = new Set([...setA, ...setB]);
-        const overlap = union.size === 0 ? 0 : intersection.size / union.size;
-        totalOverlap += overlap;
-        comparisons++;
-      }
-    }
-
-    const avgOverlap = comparisons > 0 ? totalOverlap / comparisons : 1.0;
-    if (avgOverlap < 0.05) {
-      multiDomainDetected = true;
-      console.log(`[GUARD] Multi-Domain Discrepancy Detected across ${inputConceptSets.length} sources (Conceptual Overlap: ${(avgOverlap * 100).toFixed(1)}%). Partitioned concept plan into independent topic blocks.`);
-      
-      const perBlockCount = Math.floor(requestedCount / inputConceptSets.length);
-      let remainder = requestedCount % inputConceptSets.length;
-
-      domainBlocks = inputConceptSets.map((domainObj) => {
-        const targetCount = perBlockCount + (remainder > 0 ? 1 : 0);
-        remainder--;
-        return {
-          domainName: domainObj.name,
-          content: domainObj.content,
-          targetQuestions: targetCount,
-          conceptPlan: domainObj.graph.allocateConcepts(targetCount)
-        };
-      });
-    }
   }
 
   // Combine valid contents for main generation payload
@@ -405,10 +364,10 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const codeBlocks = (cleanedContent.match(/```[\s\S]*?```/g) || []).length;
   const mathSymbolsCount = (cleanedContent.match(/[=+\-*/<>{}\\]/g) || []).length;
 
-  console.log("\n======================= 🚀 MCQ GENERATION DRY-RUN TRACE =======================");
+  console.log(`\n======================= 🚀 MCQ GENERATION DRY-RUN TRACE [ReqID: ${reqId}] =======================`);
 
   // [STEP 1: INGESTION & CONTENT CLEANING]
-  console.log("\n[STEP 1: INGESTION & CONTENT CLEANING]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 1: INGESTION & CONTENT CLEANING]`);
   console.log(`  ├─ Raw Input Received: ${rawCharCount.toLocaleString()} characters (~${wordCount.toLocaleString()} words) across ${validAcademicInputs.length} valid source(s)`);
   if (excludedInputs.length > 0) {
     console.log(`  ├─ Noise Filtering Guard: Excluded ${excludedInputs.length} non-academic source(s).`);
@@ -418,17 +377,43 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Code/Syntax Guard: Preserved formatting across ${codeBlocks} detected code block(s).`);
   console.log(`  └─ Cleaned Academic Text Payload: ${cleanedContent.length.toLocaleString()} characters remaining.`);
 
-  // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH]
-  const conceptGraph = new LightweightConceptGraph().buildFromText(cleanedContent);
+  // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH (WITH NAMESPACED CACHING)]
+  const analysisCacheKey = generateAnalysisCacheKey(cleanedContent);
+
+  const conceptGraph = await cacheManager.fetchCoalesced(analysisCacheKey, async () => {
+    const analysisStart = Date.now();
+    const cg = new LightweightConceptGraph().buildFromText(cleanedContent);
+    const analysisTime = Date.now() - analysisStart;
+
+    cacheManager.set(analysisCacheKey, {
+      nodes: Array.from(cg.nodes.entries()),
+      edges: Array.from(cg.edges.entries())
+    }, {
+      measuredProcessingTimeMs: analysisTime,
+      qualityScore: 1.0,
+      category: 'analysis'
+    }, reqId);
+
+    return cg;
+  }, reqId);
+
+  // Re-hydrate LightweightConceptGraph if retrieved from cache object
+  let hydratedGraph = conceptGraph;
+  if (!(conceptGraph instanceof LightweightConceptGraph) && conceptGraph && conceptGraph.nodes) {
+    hydratedGraph = new LightweightConceptGraph();
+    hydratedGraph.nodes = new Map(conceptGraph.nodes);
+    hydratedGraph.edges = new Map(conceptGraph.edges || []);
+  }
+
   const mathDetected = mathSymbolsCount > 5 ? "YES" : "NO";
   const codeDetected = codeBlocks > 0 ? "YES" : "NO";
 
-  console.log("\n[STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH]`);
   console.log(`  ├─ Code Snippets Detected: ${codeDetected}`);
   console.log(`  ├─ Math Formulas Detected: ${mathDetected}`);
   console.log(`  └─ Extracted Core Technical Concepts:`);
 
-  const sortedConceptsEntries = Array.from(conceptGraph.nodes.entries()).sort((a, b) => b[1] - a[1]);
+  const sortedConceptsEntries = Array.from(hydratedGraph.nodes.entries()).sort((a, b) => b[1] - a[1]);
   const topFourConcepts = sortedConceptsEntries.slice(0, 4);
 
   if (topFourConcepts.length > 0) {
@@ -443,7 +428,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
 
   // [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]
   const { lectureDepthScore, depthBand } = computeLectureDepth(cleanedContent);
-  const totalConceptPlan = conceptGraph.allocateConcepts(requestedCount);
+  const totalConceptPlan = hydratedGraph.allocateConcepts(requestedCount);
 
   let difficultyDist = "";
   if (isBalanced) {
@@ -456,12 +441,9 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     difficultyDist = `100% ${normalizedDifficulty}`;
   }
 
-  console.log("\n[STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]`);
   console.log(`  ├─ Lecture Depth Score: ${lectureDepthScore} / 100 ──► Band: ${depthBand.toUpperCase()} DEPTH`);
   console.log(`  ├─ Difficulty Distribution: ${difficultyDist}`);
-  if (multiDomainDetected) {
-    console.log(`  ├─ Multi-Domain Strategy: Active (${domainBlocks.length} independent topic blocks)`);
-  }
   console.log(`  └─ Target Question Allocation:`);
 
   totalConceptPlan.forEach((planItem, idx) => {
@@ -472,12 +454,12 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   });
 
   // [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]
-  console.log("\n[STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]`);
   console.log(`  ├─ Enforcing Traceability Contract: Requiring explicit sourceEvidence spans for every item.`);
   console.log(`  ├─ Enforcing Anti-Hallucination Rules: Strict zero external domain knowledge constraint.`);
   console.log(`  └─ Multi-Angle Framing Strategy: Active (Direct Recall, Sequential Flow, Comparative Reasoning, Constraint Recognition).`);
 
-  // BATCHING EXECUTION FOR LARGE QUESTION COUNTS (> 10 MCQs)
+  // BATCHING EXECUTION FOR LARGE QUESTION COUNTS (> 10 MCQs) WITH NAMESPACED QUIZ CACHING
   const BATCH_SIZE = 10;
   const numBatches = Math.ceil(requestedCount / BATCH_SIZE);
   let accumulatedQuestions = [];
@@ -486,12 +468,19 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     const targetInBatch = Math.min(BATCH_SIZE, requestedCount - accumulatedQuestions.length);
     if (targetInBatch <= 0) break;
 
-    const batchConceptPlan = conceptGraph.allocateConcepts(targetInBatch);
+    const quizCacheKey = generateQuizCacheKey({
+      text: cleanedContent,
+      difficulty: normalizedDifficulty,
+      count: requestedCount,
+      batchIndex: b
+    });
 
-    const prompt = `
+    const batchQuestions = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
+      const batchConceptPlan = hydratedGraph.allocateConcepts(targetInBatch);
+
+      const prompt = `
 Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
 ${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
-${multiDomainDetected ? `MULTI-DOMAIN NOTE: Sources contain ${domainBlocks.length} distinct subjects. Generate questions for each subject block independently without cross-blending topics into single stems.` : ''}
 
 CONCEPT ALLOCATION PLAN:
 ${JSON.stringify(batchConceptPlan, null, 2)}
@@ -527,28 +516,44 @@ OUTPUT FORMAT (JSON ONLY):
 }
 `;
 
-    console.log(`\n[STEP 5: PRIMARY AI GENERATION ENGINE (Batch ${b + 1} of ${numBatches})]`);
-    console.log(`  ├─ LLM Provider: Groq (llama-3.1-8b-instant)`);
-    console.log(`  ├─ Dispatching Prompt Payload (~${Math.round(prompt.length / 4)} tokens)...`);
+      console.log(`\n[ReqID: ${reqId}] [STEP 5: PRIMARY AI GENERATION ENGINE (Batch ${b + 1} of ${numBatches})]`);
+      console.log(`  ├─ LLM Provider: Groq (llama-3.1-8b-instant)`);
+      console.log(`  ├─ Dispatching Prompt Payload (~${Math.round(prompt.length / 4)} tokens)...`);
 
-    const llmStartTime = Date.now();
-    const llm = new LLMProvider(apiKey);
-    const rawResponse = await llm.generateJSON(prompt);
-    const llmDurationSec = ((Date.now() - llmStartTime) / 1000).toFixed(2);
-    console.log(`  └─ Inference Complete in ${llmDurationSec} seconds.`);
+      const llmStartTime = Date.now();
+      const llm = new LLMProvider(apiKey);
+      const rawResponse = await llm.generateJSON(prompt);
+      const llmDurationMs = Date.now() - llmStartTime;
+      console.log(`  └─ Inference Complete in ${(llmDurationMs / 1000).toFixed(2)} seconds.`);
 
-    const parsedData = parseJSONRecoverable(rawResponse);
-    const batchQuestions = parsedData.questions || parsedData.fixedQuestions || [];
-    accumulatedQuestions.push(...batchQuestions);
+      const parsedData = parseJSONRecoverable(rawResponse);
+      const bQuestions = parsedData.questions || parsedData.fixedQuestions || [];
+
+      // Validate batch quality before writing to cache
+      const batchValidation = validateAndScoreQuiz(bQuestions, config);
+      const avgBatchScore = batchValidation.validQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0) / Math.max(1, batchValidation.validQuestions.length);
+
+      if (batchValidation.validQuestions.length > 0) {
+        cacheManager.set(quizCacheKey, batchValidation.validQuestions, {
+          measuredProcessingTimeMs: llmDurationMs,
+          qualityScore: avgBatchScore,
+          category: 'quiz'
+        }, reqId);
+      }
+
+      return batchValidation.validQuestions;
+    }, reqId);
+
+    accumulatedQuestions.push(...(batchQuestions || []));
   }
 
   // [STEP 6: RECOVERY PARSER GUARDRAIL]
-  console.log("\n[STEP 6: RECOVERY PARSER GUARDRAIL]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 6: RECOVERY PARSER GUARDRAIL]`);
   console.log(`  ├─ Raw JSON Status: Multi-batch JSON parsing complete.`);
   console.log(`  └─ Recovery Action: ${accumulatedQuestions.length} raw question(s) extracted across ${numBatches} batch(es).`);
 
   // [STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]
-  console.log("\n[STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]");
+  console.log(`\n[ReqID: ${reqId}] [STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]`);
 
   let validation = validateAndScoreQuiz(accumulatedQuestions, config);
 
@@ -582,7 +587,7 @@ OUTPUT FORMAT (JSON ONLY):
   let repairAttempts = 0;
   while (!validation.isValid && repairAttempts < config.maxRepairAttempts) {
     repairAttempts++;
-    console.log(`\n[STEP 8: REPAIR PASS GUARDRAIL (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
+    console.log(`\n[ReqID: ${reqId}] [STEP 8: REPAIR PASS GUARDRAIL (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
     
     const repairIndices = validation.invalidQuestions.map(inv => `#${inv.index + 1}`).join(", ");
     const failureReasons = validation.invalidQuestions.map(inv => inv.errors.join(", ")).join(" | ");
@@ -629,9 +634,9 @@ Return JSON: { "fixedQuestions": [...] }
   // [BACKFILL GUARD: GUARANTEE EXACT QUESTION COUNT MATCH]
   if (validation.validQuestions.length < requestedCount) {
     const missingCount = requestedCount - validation.validQuestions.length;
-    console.log(`\n[BACKFILL GUARD] Valid questions (${validation.validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
+    console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validation.validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
     try {
-      const backfillConceptPlan = conceptGraph.allocateConcepts(missingCount);
+      const backfillConceptPlan = hydratedGraph.allocateConcepts(missingCount);
       const backfillPrompt = `
 Generate exactly ${missingCount} UNIQUE Multiple Choice Questions (MCQs) grounded strictly in the source text.
 DO NOT repeat any previous question stems.
@@ -656,7 +661,7 @@ Return JSON: { "questions": [...] }
       const combinedAll = [...validation.validQuestions, ...backfillQuestions];
       validation = validateAndScoreQuiz(combinedAll, config);
     } catch (bfErr) {
-      console.warn('⚠️ Backfill attempt error:', bfErr.message);
+      console.warn(`[ReqID: ${reqId}] ⚠️ Backfill attempt error:`, bfErr.message);
     }
   }
 
@@ -668,15 +673,21 @@ Return JSON: { "questions": [...] }
   const isPartial = finalQuestions.length < requestedCount;
   const finalStatusStr = isPartial ? "PARTIAL_SUCCESS" : "SUCCESS";
 
-  console.log("\n======================= 📊 FINAL EXECUTION SUMMARY =======================");
-  console.log(`  ├─ Generation Status: ${finalStatusStr} (${finalQuestions.length} / ${requestedCount} Validated MCQs Delivered)`);
-  console.log(`  ├─ Average Quality Score: ${avgQualityScore} / 1.00`);
-  console.log(`  ├─ Total Pipeline Latency: ${totalLatencySec} seconds`);
+  // FETCH CACHE METRICS SUMMARY FOR THIS REQUEST
+  const reqMetrics = metricsManager.getRequestSummary(reqId);
+
+  console.log(`\n======================= 📊 CACHE EXECUTION SUMMARY [ReqID: ${reqId}] =======================`);
+  console.log(`  ├─ L1 Memory Hits: ${reqMetrics.l1Hits}`);
+  console.log(`  ├─ L2 Storage Hits: ${reqMetrics.l2Hits}`);
+  console.log(`  ├─ Cache Misses: ${reqMetrics.misses}`);
+  console.log(`  ├─ Cache Writes Skipped (Size/Failure): ${reqMetrics.writesSkipped}`);
+  console.log(`  └─ Total Actual Processing Time Saved: ${reqMetrics.processingTimeSavedMs.toLocaleString()} ms`);
   console.log("========================================================================\n");
 
   return {
     success: true,
     status: finalStatusStr,
+    requestId: reqId,
     lectureDepth: {
       score: lectureDepthScore,
       band: depthBand
@@ -693,10 +704,10 @@ Return JSON: { "questions": [...] }
         score: lectureDepthScore,
         band: depthBand
       },
-      difficultyDistribution: difficultyDist,
-      ...(multiDomainDetected && { domainPartitioning: domainBlocks })
+      difficultyDistribution: difficultyDist
     },
-    questions: finalQuestions
+    questions: finalQuestions,
+    cacheMetrics: reqMetrics
   };
 }
 
