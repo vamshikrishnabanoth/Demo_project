@@ -3,6 +3,7 @@ const {
   computeJaccardSimilarity,
   validateAndScoreQuiz,
   computeLectureDepth,
+  computeAcademicDensityScore,
   LightweightConceptGraph
 } = require('./engine/mcqEngine');
 
@@ -68,5 +69,15 @@ HTTP requests are transmitted over established TCP sockets to port 80 or 443.
 `;
 const depth = computeLectureDepth(sampleLectureText);
 console.log('Calculated Depth:', depth);
+
+console.log('\n=== TEST 5: Academic Relevance Guardrail & Safety Lock ===');
+const academicText = "An algorithm is a finite sequence of rigorous instructions used to solve a class of specific problems or perform a computation in database architecture.";
+const noiseText = "Syllabus for CS 101. Office hours are on Tuesday 2pm to 4pm via Zoom. Homework 1 is due next Friday. Attendance is mandatory.";
+
+const resAcademic = computeAcademicDensityScore(academicText, "Lecture_Notes.pdf");
+const resNoise = computeAcademicDensityScore(noiseText, "Syllabus_Schedule.docx");
+
+console.log(`Academic Text Density: ${resAcademic.score} (Is Academic: ${resAcademic.isAcademic})`);
+console.log(`Administrative Syllabus Density: ${resNoise.score} (Is Academic: ${resNoise.isAcademic})`);
 
 console.log('\n=== ALL MCQ ENGINE TESTS PASSED CLEANLY! ===');

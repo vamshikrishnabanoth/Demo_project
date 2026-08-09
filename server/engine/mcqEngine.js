@@ -15,6 +15,49 @@ const DEFAULT_CONFIG = {
   }
 };
 
+/**
+ * 1. ACADEMIC RELEVANCE GUARDRAIL (Per-Input Noise Filtering)
+ * Evaluates academic and technical density of individual source inputs (0.00 to 1.00)
+ */
+function computeAcademicDensityScore(text, sourceName = "Source") {
+  if (!text || typeof text !== 'string' || text.trim().length < 10) {
+    return { score: 0.0, isAcademic: false };
+  }
+
+  const cleaned = text.trim();
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  if (words.length < 5) {
+    return { score: 0.0, isAcademic: false };
+  }
+
+  // Technical & academic domain term patterns
+  const techRegex = /\b(algorithm|function|database|protocol|interface|class|object|method|structure|query|architecture|system|optimization|complexity|thread|memory|pointer|latency|bandwidth|equation|theorem|reaction|molecule|hypothesis|analysis|property|variable|constant|model|dataset|matrix|vector|derivative|integral|cell|gene|protein|organism|network|quantum|entropy|compiler|cache|schema|index|async|await|event|loop|logic|proof|definition|lemma|corollary)\b|`[^`]+`/gi;
+  const techMatches = (cleaned.match(techRegex) || []).length;
+
+  // Administrative / syllabus noise patterns
+  const noiseRegex = /\b(syllabus|office hours|grading|attendance|midterm|final exam|homework|zoom|classroom|schedule|instructor|email|due date|late policy|prerequisites|welcome|office|location|contact|phone)\b/gi;
+  const noiseMatches = (cleaned.match(noiseRegex) || []).length;
+
+  const techRatio = techMatches / Math.max(1, words.length);
+  const noiseRatio = noiseMatches / Math.max(1, words.length);
+
+  let score = (techRatio * 5.0) - (noiseRatio * 4.0);
+
+  // Boost for code snippets or math formulas
+  if (cleaned.includes('```') || /[=+\-*/<>{}\\]/.test(cleaned)) {
+    score += 0.25;
+  }
+
+  if (words.length >= 30 && techMatches >= 2 && noiseMatches === 0) {
+    score += 0.20;
+  }
+
+  const finalScore = Number(Math.min(1.0, Math.max(0.0, score)).toFixed(2));
+  const isAcademic = finalScore >= 0.20;
+
+  return { score: finalScore, isAcademic };
+}
+
 class LightweightConceptGraph {
   constructor() {
     this.nodes = new Map();
@@ -260,9 +303,92 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   if (requestedCount < 1) requestedCount = 1;
   if (requestedCount > 50) requestedCount = 50;
 
-  if (!content || typeof content !== 'string' || content.trim().length < 10) {
-    throw new Error("Insufficient source content provided for MCQ generation.");
+  // ── 1. ACADEMIC RELEVANCE GUARDRAIL & PER-INPUT NOISE FILTERING ──
+  let sourceInputs = [];
+  if (Array.isArray(reqPayload.inputs) && reqPayload.inputs.length > 0) {
+    sourceInputs = reqPayload.inputs;
+  } else if (Array.isArray(reqPayload.sources) && reqPayload.sources.length > 0) {
+    sourceInputs = reqPayload.sources;
+  } else if (content && typeof content === 'string') {
+    sourceInputs = [{ name: 'Provided Source Content', content: content }];
   }
+
+  const validAcademicInputs = [];
+  const excludedInputs = [];
+
+  sourceInputs.forEach((inp, idx) => {
+    const srcName = inp.name || inp.source_name || `Source #${idx + 1}`;
+    const srcContent = inp.content || (typeof inp === 'string' ? inp : '');
+    const { score, isAcademic } = computeAcademicDensityScore(srcContent, srcName);
+
+    if (isAcademic) {
+      validAcademicInputs.push({ ...inp, name: srcName, content: srcContent, densityScore: score });
+    } else {
+      excludedInputs.push({ name: srcName, densityScore: score });
+      console.warn(`[GUARD] Excluded non-academic source: ${srcName}`);
+    }
+  });
+
+  // ── 3. SAFETY LOCK ──
+  if (validAcademicInputs.length === 0) {
+    console.error(`❌ [SAFETY LOCK TRIGGERED] No academic or technical content detected across provided sources.`);
+    const error = new Error('400 Bad Request: "No academic or technical content detected in provided sources."');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // ── 2. MULTI-DOMAIN DISCREPANCY DETECTION ──
+  const inputConceptSets = validAcademicInputs.map(inp => {
+    const cg = new LightweightConceptGraph().buildFromText(inp.content);
+    return {
+      name: inp.name,
+      concepts: new Set(Array.from(cg.nodes.keys())),
+      graph: cg,
+      content: inp.content
+    };
+  });
+
+  let multiDomainDetected = false;
+  let domainBlocks = [];
+
+  if (inputConceptSets.length > 1) {
+    let totalOverlap = 0;
+    let comparisons = 0;
+    for (let i = 0; i < inputConceptSets.length; i++) {
+      for (let j = i + 1; j < inputConceptSets.length; j++) {
+        const setA = inputConceptSets[i].concepts;
+        const setB = inputConceptSets[j].concepts;
+        const intersection = new Set([...setA].filter(x => setB.has(x)));
+        const union = new Set([...setA, ...setB]);
+        const overlap = union.size === 0 ? 0 : intersection.size / union.size;
+        totalOverlap += overlap;
+        comparisons++;
+      }
+    }
+
+    const avgOverlap = comparisons > 0 ? totalOverlap / comparisons : 1.0;
+    if (avgOverlap < 0.05) {
+      multiDomainDetected = true;
+      console.log(`[GUARD] Multi-Domain Discrepancy Detected across ${inputConceptSets.length} sources (Conceptual Overlap: ${(avgOverlap * 100).toFixed(1)}%). Partitioned concept plan into independent topic blocks.`);
+      
+      const perBlockCount = Math.floor(requestedCount / inputConceptSets.length);
+      let remainder = requestedCount % inputConceptSets.length;
+
+      domainBlocks = inputConceptSets.map((domainObj) => {
+        const targetCount = perBlockCount + (remainder > 0 ? 1 : 0);
+        remainder--;
+        return {
+          domainName: domainObj.name,
+          content: domainObj.content,
+          targetQuestions: targetCount,
+          conceptPlan: domainObj.graph.allocateConcepts(targetCount)
+        };
+      });
+    }
+  }
+
+  // Combine valid contents for main generation payload
+  const cleanedContent = validAcademicInputs.map(i => i.content).join('\n\n--- Source Split ---\n\n').trim();
 
   // Normalize difficulty string (handles "Balanced", "balanced", "⚖️ Balanced", etc.)
   const cleanDiffStr = String(difficulty).replace(/[^a-zA-Z]/g, '').toLowerCase();
@@ -274,18 +400,21 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     else normalizedDifficulty = 'Medium';
   }
 
-  const cleanedContent = content.trim();
-  const rawCharCount = content.length;
+  const rawCharCount = cleanedContent.length;
   const wordCount = cleanedContent.split(/\s+/).length;
-  const codeBlocks = (content.match(/```[\s\S]*?```/g) || []).length;
-  const mathSymbolsCount = (content.match(/[=+\-*/<>{}\\]/g) || []).length;
+  const codeBlocks = (cleanedContent.match(/```[\s\S]*?```/g) || []).length;
+  const mathSymbolsCount = (cleanedContent.match(/[=+\-*/<>{}\\]/g) || []).length;
 
   console.log("\n======================= 🚀 MCQ GENERATION DRY-RUN TRACE =======================");
 
   // [STEP 1: INGESTION & CONTENT CLEANING]
   console.log("\n[STEP 1: INGESTION & CONTENT CLEANING]");
-  console.log(`  ├─ Raw Input Received: ${rawCharCount.toLocaleString()} characters (~${wordCount.toLocaleString()} words)`);
-  console.log(`  ├─ Noise Filtering Guard: Stripped transcript filler words, page headers, & audio noise.`);
+  console.log(`  ├─ Raw Input Received: ${rawCharCount.toLocaleString()} characters (~${wordCount.toLocaleString()} words) across ${validAcademicInputs.length} valid source(s)`);
+  if (excludedInputs.length > 0) {
+    console.log(`  ├─ Noise Filtering Guard: Excluded ${excludedInputs.length} non-academic source(s).`);
+  } else {
+    console.log(`  ├─ Noise Filtering Guard: Stripped transcript filler words, page headers, & audio noise.`);
+  }
   console.log(`  ├─ Code/Syntax Guard: Preserved formatting across ${codeBlocks} detected code block(s).`);
   console.log(`  └─ Cleaned Academic Text Payload: ${cleanedContent.length.toLocaleString()} characters remaining.`);
 
@@ -330,6 +459,9 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log("\n[STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]");
   console.log(`  ├─ Lecture Depth Score: ${lectureDepthScore} / 100 ──► Band: ${depthBand.toUpperCase()} DEPTH`);
   console.log(`  ├─ Difficulty Distribution: ${difficultyDist}`);
+  if (multiDomainDetected) {
+    console.log(`  ├─ Multi-Domain Strategy: Active (${domainBlocks.length} independent topic blocks)`);
+  }
   console.log(`  └─ Target Question Allocation:`);
 
   totalConceptPlan.forEach((planItem, idx) => {
@@ -359,6 +491,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     const prompt = `
 Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
 ${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
+${multiDomainDetected ? `MULTI-DOMAIN NOTE: Sources contain ${domainBlocks.length} distinct subjects. Generate questions for each subject block independently without cross-blending topics into single stems.` : ''}
 
 CONCEPT ALLOCATION PLAN:
 ${JSON.stringify(batchConceptPlan, null, 2)}
@@ -560,7 +693,8 @@ Return JSON: { "questions": [...] }
         score: lectureDepthScore,
         band: depthBand
       },
-      difficultyDistribution: difficultyDist
+      difficultyDistribution: difficultyDist,
+      ...(multiDomainDetected && { domainPartitioning: domainBlocks })
     },
     questions: finalQuestions
   };
@@ -569,6 +703,7 @@ Return JSON: { "questions": [...] }
 module.exports = {
   generateMCQPipeline,
   DEFAULT_CONFIG,
+  computeAcademicDensityScore,
   computeLectureDepth,
   validateAndScoreQuiz,
   parseJSONRecoverable,
