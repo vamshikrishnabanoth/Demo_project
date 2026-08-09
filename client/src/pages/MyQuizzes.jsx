@@ -24,7 +24,8 @@ import {
     Megaphone,
     CalendarRange,
     Lock,
-    Copy
+    Copy,
+    Bookmark
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -250,13 +251,14 @@ export default function MyQuizzes() {
                     </button>
                     <button
                         onClick={() => setActiveMainTab('saved')}
-                        className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${
+                        className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer flex items-center justify-center gap-2 ${
                             activeMainTab === 'saved'
                                 ? 'bg-amber-500 text-white shadow-lg'
                                 : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                         }`}
                     >
-                        💾 Saved Quizzes Repository ({savedTemplates.length})
+                        <Bookmark size={16} />
+                        <span>Saved Quizzes Repository ({savedTemplates.length})</span>
                     </button>
                 </div>
 
