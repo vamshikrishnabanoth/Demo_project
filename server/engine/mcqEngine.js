@@ -7,6 +7,8 @@ const {
 } = require('../utils/cacheHash');
 const { validateMCQ } = require('./validators/validatorOrchestrator');
 const { createValidationContext } = require('./validators/validationContext');
+const { validateCandidateBatch } = require('./validators/index');
+const { VALIDATOR_CONFIG } = require('../config/validatorConfig');
 const { buildConceptGraph } = require('./conceptGraphBuilder/index');
 const { generateQuizPlan } = require('./quizPlanner/index');
 const { buildSlotPrompts } = require('./promptBuilder/index');
@@ -507,70 +509,40 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Raw JSON Status: Slot prompt response assembly complete.`);
   console.log(`  └─ Recovery Action: ${candidateItems.length} candidate item(s) available for validation.`);
 
-  // [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]
-  console.log(`\n[ReqID: ${reqId}] [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]`);
+  // [STEP 7: 3-TIER VALIDATOR ORCHESTRATOR v5.8.0]
+  const pipelineContext = {
+    reqId,
+    cleanedContent,
+    conceptGraph,
+    quizPlan,
+    config: VALIDATOR_CONFIG
+  };
 
-  const acceptedQuestionIndex = new Map();
-  const validQuestions = [];
-  const invalidQuestions = [];
+  const validationResult = await validateCandidateBatch(candidateItems, pipelineContext);
+  const batchSummary = validationResult.batchSummary || {};
+  const effectiveConcurrency = pipelineContext.config?.CONCURRENCY_LIMIT ?? VALIDATOR_CONFIG.CONCURRENCY_LIMIT;
+  const effectiveTimeout = pipelineContext.config?.TIMEOUT_MS ?? VALIDATOR_CONFIG.TIMEOUT_MS;
 
-  for (let idx = 0; idx < candidateItems.length; idx++) {
-    const q = candidateItems[idx];
-    const valContext = createValidationContext({
-      cleanedContent,
-      targetDifficulty: normalizedDifficulty,
-      targetBloom: q.targetBloom || 'UNDERSTAND',
-      expectedFraming: q.expectedFraming || 'Direct Recall',
-      conceptGraph,
-      extractedConcepts: conceptNodes.map(n => n.id),
-      acceptedQuestionIndex
-    });
+  console.log(`\n[ReqID: ${reqId}] [STEP 6: 3-TIER VALIDATOR ORCHESTRATOR v${VALIDATOR_CONFIG.VERSIONS.VALIDATOR}]`);
+  console.log(`  ├─ Batch Evaluated: ${batchSummary.totalCandidatesEvaluated || candidateItems.length} Candidates (Concurrency: ${effectiveConcurrency} Workers | Timeout: ${effectiveTimeout}ms)`);
+  console.log(`  ├─ Telemetry: Validator v${batchSummary.validatorVersion || '5.8.0'} | Pipeline v${batchSummary.pipelineVersion || '4.1.0'}`);
+  console.log(`  ├─ Pass Rates: ${batchSummary.approvedCount || 0} Approved | ${batchSummary.repairRequiredCount || 0} Routed to Repair | ${batchSummary.hardGateFailures || 0} Hard-Gate Rejections`);
+  console.log(`  ├─ Pipeline Context Assigned: pipelineContext.approvedItems (${pipelineContext.approvedItems?.length || 0}) | pipelineContext.repairQueue (${pipelineContext.repairQueue?.length || 0})`);
+  console.log(`  └─ Approved items saved to context; items requiring repair routed to Stage 7.`);
 
-    const report = await validateMCQ(q, valContext);
+  const validQuestions = (pipelineContext.approvedItems || []).map(q => ({
+    ...q,
+    question: q.question || q.questionText || q.stem,
+    questionText: q.question || q.questionText || q.stem
+  }));
 
-    const stem = q.question || q.questionText || q.stem || "Untitled Question";
-    const stemShort = stem.length > 45 ? stem.slice(0, 45) + "..." : stem;
-
-    const structStage = report.validationTrace.find(t => t.stage === 'STRUCTURAL') || { durationMs: 0, code: 'PASS' };
-    const groundStage = report.validationTrace.find(t => t.stage === 'GROUNDING') || { durationMs: 0, matchType: 'Exact Match' };
-    const eduStage = report.validationTrace.find(t => t.stage === 'EDUCATIONAL') || { durationMs: 0, qualityScore: report.qualityScore };
-
-    console.log(`  ├─ Q${idx + 1}: "${stemShort}"`);
-    console.log(`  │   ├─ Gate 1 (Structural):  ${structStage.passed !== false ? '✅ PASS' : '❌ FAIL'} (${structStage.durationMs}ms) | Code: ${structStage.code}`);
-    if (structStage.passed !== false) {
-      console.log(`  │   ├─ Gate 2 (Grounding):   ${groundStage.passed !== false ? '⚡ PASS' : '❌ FAIL'} (${groundStage.durationMs}ms) | Match: ${groundStage.matchType}`);
-      if (groundStage.passed !== false) {
-        console.log(`  │   ├─ Eval 3 (Educational): ${eduStage.passed !== false ? '✅ PASS' : '⚠️ WARNING'} (${eduStage.durationMs}ms) | Bloom Framing: ${valContext.plannerHints.expectedFraming}`);
-      }
-    }
-
-    const b = report.qualityBreakdown;
-    const bdStr = `S:${b.structural.toFixed(1)} | G:${b.grounding.toFixed(1)} | E:${b.educational.toFixed(1)}`;
-    const statusTag = report.isValid ? '✅ APPROVED' : '❌ REJECTED (Triggering Targeted Repair)';
-    console.log(`  │   └─ Quality Score: ${report.qualityScore.toFixed(2)} / 1.00 (Breakdown: ${bdStr}) ──► ${statusTag} (Total: ${report.metrics.totalValidationMs}ms)`);
-    console.log(`  │`);
-
-    const enrichedQuestion = {
-      ...q,
-      question: stem,
-      questionText: stem,
-      qualityScore: report.qualityScore,
-      validationReport: report
-    };
-
-    if (report.isValid) {
-      validQuestions.push(enrichedQuestion);
-      acceptedQuestionIndex.set(stem, { score: report.qualityScore });
-    } else {
-      invalidQuestions.push({
-        index: idx,
-        question: enrichedQuestion,
-        errors: report.findings.criticalFailures.map(f => f.message || f.code || String(f)),
-        failureStage: report.failureStage,
-        code: report.findings.criticalFailures[0]?.code || 'FAIL'
-      });
-    }
-  }
+  const invalidQuestions = (pipelineContext.repairQueue || []).map((r, idx) => ({
+    index: idx,
+    question: r.item,
+    errors: r.findings?.criticalFailures?.map(f => f.message || f.code || String(f)) || [],
+    failureStage: r.failureStage,
+    code: r.findings?.criticalFailures?.[0]?.code || 'FAIL'
+  }));
 
   // [STEP 8: TARGETED REPAIR ROUTING & REVALIDATION]
   let repairAttempts = 0;
@@ -627,14 +599,12 @@ Return JSON: { "fixedQuestions": [...] }
         const valContext = createValidationContext({
           cleanedContent,
           targetDifficulty: normalizedDifficulty,
-          conceptGraph,
-          acceptedQuestionIndex
+          conceptGraph
         });
         const repReport = await validateMCQ(fItem, valContext);
         if (repReport.isValid) {
           fItem.qualityScore = repReport.qualityScore;
           validQuestions.push(fItem);
-          acceptedQuestionIndex.set(fItem.question || fItem.questionText || fItem.stem, { score: repReport.qualityScore });
         }
       }
 
@@ -647,7 +617,6 @@ Return JSON: { "fixedQuestions": [...] }
 
   const executionTimeMs = Date.now() - startTime;
   const finalQuestions = validQuestions.slice(0, requestedCount);
-  const totalScoreSum = finalQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0);
   const isPartial = finalQuestions.length < requestedCount;
   const finalStatusStr = isPartial ? "PARTIAL_SUCCESS" : "SUCCESS";
 
@@ -672,6 +641,7 @@ Return JSON: { "fixedQuestions": [...] }
     promptPayloads,
     generatorResult: generatorResultObj,
     candidateItems,
+    validationResult,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),

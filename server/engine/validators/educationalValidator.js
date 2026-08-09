@@ -1,6 +1,10 @@
-const { VALIDATOR_CONFIG } = require('../../config/validatorConfig');
+const { VALIDATOR_CONFIG, ValidationAbortedError } = require('../../config/validatorConfig');
 
-// Future Refactor: EducationalValidator may be decomposed into DeduplicationValidator, BloomValidator, and DistractorValidator.
+function safeScore(val) {
+  const num = Number(val);
+  const clamped = Number.isFinite(num) ? Math.max(0.0, Math.min(1.0, num)) : 0.0;
+  return Number(clamped.toFixed(2));
+}
 
 function computeJaccardSimilarity(str1, str2) {
   if (!str1 || !str2) return 0;
@@ -37,109 +41,136 @@ function levenshteinDistanceRatio(s1, s2) {
 }
 
 /**
- * EVALUATOR 3: EDUCATIONAL VALIDATOR — SCORED EVALUATOR
- * Evaluates semantic deduplication, Bloom alignment, distractor plausibility, and option ambiguity.
+ * EVALUATOR 3: SAFE EDUCATIONAL VALIDATOR
  */
-function runEducationalValidation(mcqItem, validationContext = {}) {
-  const CODES = validationContext.config?.CODES || VALIDATOR_CONFIG.CODES;
-  const THRESHOLDS = validationContext.config?.THRESHOLDS || VALIDATOR_CONFIG.THRESHOLDS;
-  const acceptedIndex = validationContext.acceptedQuestionIndex || new Map();
-  const embeddingProvider = validationContext.embeddingProvider;
-  const plannerHints = validationContext.plannerHints || {};
-  const extractedConcepts = validationContext.extractedConcepts || [];
+async function runEducationalValidation(mcqItem, validationContext = {}, signal) {
+  if (signal?.aborted) throw new ValidationAbortedError();
 
-  const stem = String(mcqItem?.question || mcqItem?.questionText || '').trim();
+  const services = validationContext.services || {};
+  const stem = String(mcqItem?.stem || mcqItem?.question || mcqItem?.questionText || '').trim();
   const options = mcqItem?.options || [];
+  const targetBloom = mcqItem?.targetBloom || validationContext.plannerHints?.targetBloom || 'UNDERSTAND';
 
-  const criticalFailures = [];
-  const majorWarnings = [];
-  const minorWarnings = [];
+  const scores = { bloom: 1.0, distractors: 1.0, duplication: 1.0, ambiguity: 1.0 };
+  const rawRepairHints = [];
+  const findings = { criticalFailures: [], majorWarnings: [], minorWarnings: [] };
 
-  let structuralScore = 1.0;
-  let groundingScore = 1.0;
-  let educationalScore = 1.0;
-
-  // 1. Embedding / Deduplication (EDU_001)
-  let maxJaccard = 0;
-  let cosineSim = 0;
-
-  for (const [acceptedStem, _meta] of acceptedIndex.entries()) {
-    const sim = computeJaccardSimilarity(stem, acceptedStem);
-    if (sim > maxJaccard) maxJaccard = sim;
-
-    if (sim >= THRESHOLDS.JACCARD_DUPLICATE_HIGH) {
-      criticalFailures.push(CODES.EDU_001_SEMANTIC_DUPLICATE);
-      educationalScore -= 0.40;
-      break;
-    } else if (sim >= THRESHOLDS.JACCARD_BORDERLINE_MIN && embeddingProvider?.getEmbedding) {
-      // Compute Cosine similarity using embedding provider
-      const vecA = [0.2, 0.4, 0.6];
-      const vecB = [0.25, 0.38, 0.59];
-      cosineSim = embeddingProvider.calculateSimilarity(vecA, vecB) || 0.15;
-      
-      if (cosineSim > THRESHOLDS.COSINE_DUPLICATE) {
-        criticalFailures.push(CODES.EDU_001_SEMANTIC_DUPLICATE);
-        educationalScore -= 0.35;
-        break;
-      } else {
-        minorWarnings.push({ code: "EDU_001_BORDERLINE", message: "Borderline stem similarity." });
-        educationalScore -= 0.10;
+  // 1. Safe Asynchronous Duplication Check
+  let nearDupes = [];
+  if (typeof validationContext.acceptedIndex?.findNearDuplicates === 'function') {
+    nearDupes = await validationContext.acceptedIndex.findNearDuplicates(
+      stem,
+      validationContext.config?.THRESHOLDS?.JACCARD_BORDERLINE_MIN ?? VALIDATOR_CONFIG.THRESHOLDS.JACCARD_BORDERLINE_MIN
+    );
+  } else if (validationContext.acceptedQuestionIndex instanceof Map) {
+    for (const [acceptedStem] of validationContext.acceptedQuestionIndex.entries()) {
+      const sim = computeJaccardSimilarity(stem, acceptedStem);
+      if (sim >= (VALIDATOR_CONFIG.THRESHOLDS.JACCARD_BORDERLINE_MIN || 0.40)) {
+        nearDupes.push({ stem: acceptedStem, similarity: sim });
       }
     }
+    nearDupes.sort((a, b) => b.similarity - a.similarity);
   }
 
-  // 2. Planner-Driven Bloom Alignment (EDU_002)
-  const bloomTarget = plannerHints.targetBloom || 'UNDERSTAND';
-  const framingType = mcqItem.framingType || 'Direct Recall';
-  if (bloomTarget === 'ANALYZE' && framingType === 'Direct Recall') {
-    minorWarnings.push(CODES.EDU_002_BLOOM_MISALIGNMENT);
-    educationalScore -= 0.10;
-  }
+  if (signal?.aborted) throw new ValidationAbortedError();
 
-  // 3. Distractor Plausibility (EDU_003)
-  if (extractedConcepts.length > 0) {
-    const distractors = options.filter(o => String(o).trim() !== String(mcqItem.correctAnswer).trim());
-    const domainText = extractedConcepts.join(' ').toLowerCase();
-    
-    const implausibleCount = distractors.filter(d => {
-      const dWords = String(d).toLowerCase().split(/\s+/);
-      return !dWords.some(w => domainText.includes(w) || w.length < 3);
-    }).length;
-
-    if (implausibleCount > 2) {
-      minorWarnings.push(CODES.EDU_003_IMPLAUSIBLE_DISTRACTOR);
-      educationalScore -= 0.10;
+  if (nearDupes.length > 0) {
+    scores.duplication = safeScore(1.0 - nearDupes[0].similarity);
+    if (scores.duplication < 0.30) {
+      rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_DUPLICATE_STEM);
+      findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_001_SEMANTIC_DUPLICATE);
     }
   }
 
-  // 4. Option Ambiguity (EDU_004)
-  for (let i = 0; i < options.length; i++) {
-    for (let j = i + 1; j < options.length; j++) {
-      const ratio = levenshteinDistanceRatio(options[i], options[j]);
-      if (ratio > 0 && ratio <= THRESHOLDS.OPTION_LEVENSHTEIN_RATIO) {
-        majorWarnings.push(CODES.EDU_004_OPTION_AMBIGUITY_TYPO);
-        educationalScore -= 0.15;
-        break;
-      }
-    }
+  // 2. Type-Guarded Bloom Alignment Service
+  const bloomService = (typeof services.bloomMatcher === 'function')
+    ? services.bloomMatcher
+    : async (stemText, target) => {
+        const framing = mcqItem?.expectedFraming || mcqItem?.framingType || 'Direct Recall';
+        if (target === 'ANALYZE' && framing === 'Direct Recall') return false;
+        return true;
+      };
+
+  const bloomPassed = await bloomService(stem, targetBloom);
+  if (signal?.aborted) throw new ValidationAbortedError();
+
+  if (targetBloom && !bloomPassed) {
+    scores.bloom = 0.60;
+    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.IMPROVE_BLOOM_ALIGNMENT);
+    findings.minorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_002_BLOOM_MISALIGNMENT);
   }
 
-  const finalEducationalScore = Math.max(0.1, Number(educationalScore.toFixed(2)));
-  const finalQualityScore = Number(((structuralScore * 0.3) + (groundingScore * 0.3) + (finalEducationalScore * 0.4)).toFixed(2));
-  const passed = criticalFailures.length === 0 && finalQualityScore >= (validationContext.config?.MIN_CACHEABLE_QUALITY_SCORE || 0.80);
+  // 3. Type-Guarded Distractor Plausibility Service
+  const distractorService = (typeof services.distractorAnalyzer === 'function')
+    ? services.distractorAnalyzer
+    : async (optsList, graph) => {
+        const extracted = validationContext.extractedConcepts || [];
+        if (extracted.length === 0) return 0.85;
+        const distractors = optsList.filter(o => String(o).trim() !== String(mcqItem.correctAnswer).trim());
+        const domainText = extracted.join(' ').toLowerCase();
+        const implausible = distractors.filter(d => {
+          const dWords = String(d).toLowerCase().split(/\s+/);
+          return !dWords.some(w => domainText.includes(w) || w.length < 3);
+        }).length;
+        return implausible > 2 ? 0.60 : 0.85;
+      };
+
+  const rawDistractor = await distractorService(options, validationContext.conceptGraph);
+  if (signal?.aborted) throw new ValidationAbortedError();
+
+  scores.distractors = safeScore(rawDistractor);
+  if (scores.distractors < (VALIDATOR_CONFIG.THRESHOLDS.DISTRACTOR_MIN_SCORE || 0.70)) {
+    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REGENERATE_DISTRACTORS);
+    findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_003_IMPLAUSIBLE_DISTRACTOR);
+  }
+
+  // 4. Type-Guarded Option Ambiguity / Typo Service
+  const ambiguityService = (typeof services.ambiguityAnalyzer === 'function')
+    ? services.ambiguityAnalyzer
+    : async (optsList) => {
+        let minRatio = 1.0;
+        for (let i = 0; i < optsList.length; i++) {
+          for (let j = i + 1; j < optsList.length; j++) {
+            const ratio = levenshteinDistanceRatio(optsList[i], optsList[j]);
+            if (ratio > 0 && ratio < minRatio) minRatio = ratio;
+          }
+        }
+        return minRatio;
+      };
+
+  const rawAmbiguity = await ambiguityService(options);
+  if (signal?.aborted) throw new ValidationAbortedError();
+
+  const minLevenshtein = safeScore(rawAmbiguity);
+  if (minLevenshtein < (VALIDATOR_CONFIG.THRESHOLDS.AMBIGUITY_LEVENSHTEIN_MIN || 0.15)) {
+    scores.ambiguity = 0.50;
+    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REDUCE_OPTION_AMBIGUITY);
+    findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_004_OPTION_AMBIGUITY_TYPO);
+  }
+
+  const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
+  const rawQuality = (
+    w.BLOOM * scores.bloom +
+    w.DISTRACTORS * scores.distractors +
+    w.DUPLICATION * scores.duplication +
+    w.AMBIGUITY * scores.ambiguity
+  );
+
+  const qualityScore = safeScore(rawQuality);
+  const repairHints = [...new Set(rawRepairHints)];
+  const minRequired = validationContext.config?.THRESHOLDS?.MIN_QUALITY_SCORE ?? VALIDATOR_CONFIG.THRESHOLDS.MIN_QUALITY_SCORE;
 
   return {
-    passed,
-    qualityScore: finalQualityScore,
+    passed: qualityScore >= minRequired,
+    scores,
+    qualityScore,
     qualityBreakdown: {
-      structural: structuralScore,
-      grounding: groundingScore,
-      educational: finalEducationalScore
+      structural: 1.0,
+      grounding: 1.0,
+      educational: qualityScore
     },
-    criticalFailures,
-    majorWarnings,
-    minorWarnings,
-    cosineSim
+    repairHints,
+    findings
   };
 }
 

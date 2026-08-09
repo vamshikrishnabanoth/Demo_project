@@ -1,89 +1,128 @@
-const { VALIDATOR_CONFIG } = require('../../config/validatorConfig');
+const { VALIDATOR_CONFIG, ValidationAbortedError } = require('../../config/validatorConfig');
+
+function escapeRegexToken(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function searchText(sourceText, evidenceText, baseOffset = 0) {
+  const exactIndex = sourceText.indexOf(evidenceText);
+  if (exactIndex !== -1) {
+    const realStart = baseOffset + exactIndex;
+    return {
+      matched: true,
+      matchType: "Exact",
+      offsets: [[realStart, realStart + evidenceText.length]]
+    };
+  }
+
+  if (evidenceText.length <= (VALIDATOR_CONFIG.MAX_REGEX_EVIDENCE_CHARS || 1000)) {
+    const tokens = evidenceText.split(/\s+/).map(escapeRegexToken).filter(Boolean);
+    if (tokens.length > 0) {
+      const flexibleRegexPattern = tokens.join('\\s+');
+      const flexibleRegex = new RegExp(flexibleRegexPattern, 'g');
+
+      const match = flexibleRegex.exec(sourceText);
+      if (match) {
+        const realStart = baseOffset + match.index;
+        const realEnd = realStart + match[0].length;
+        return {
+          matched: true,
+          matchType: "Normalized_Realigned",
+          offsets: [[realStart, realEnd]]
+        };
+      }
+    }
+  }
+
+  return { matched: false };
+}
 
 /**
- * GATE 2: BOUNDED GROUNDING VALIDATOR — HARD GATE
- * Verifies source evidence existence using a 3-step match cascade.
+ * GATE 2: SAFE GROUNDING VALIDATOR — HARD GATE
  */
-function runGroundingValidation(mcqItem, validationContext = {}) {
-  const CODES = validationContext.config?.CODES || VALIDATOR_CONFIG.CODES;
-  const THRESHOLDS = validationContext.config?.THRESHOLDS || VALIDATOR_CONFIG.THRESHOLDS;
-  const cleanedContent = validationContext.cleanedContent || '';
+function runGroundingValidation(mcqItem, validationContext = {}, signal) {
+  if (signal?.aborted) throw new ValidationAbortedError();
 
-  const evidenceList = mcqItem?.sourceEvidence;
-  if (!Array.isArray(evidenceList) || evidenceList.length === 0 || !evidenceList[0]?.text) {
+  const cleanedContent = typeof validationContext?.cleanedContent === 'string'
+    ? validationContext.cleanedContent
+    : "";
+
+  let evidenceText = "";
+  if (Array.isArray(mcqItem?.sourceEvidence) && mcqItem.sourceEvidence.length > 0 && mcqItem.sourceEvidence[0]?.text) {
+    evidenceText = String(mcqItem.sourceEvidence[0].text).trim();
+  } else if (typeof mcqItem?.sourceEvidence?.text === 'string') {
+    evidenceText = mcqItem.sourceEvidence.text.trim();
+  } else if (typeof mcqItem?.evidence === 'string') {
+    evidenceText = mcqItem.evidence.trim();
+  }
+
+  if (!evidenceText || !cleanedContent) {
     return {
       passed: false,
-      code: CODES.GROUND_001_MISSING_EVIDENCE.code,
-      errorDetail: CODES.GROUND_001_MISSING_EVIDENCE,
-      matchType: "NONE"
+      matchType: "None",
+      repairedOffsets: null,
+      code: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE.code,
+      errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE
     };
   }
 
-  const evidenceText = String(evidenceList[0].text).trim();
-  if (evidenceText.length < 3) {
-    return {
-      passed: false,
-      code: CODES.GROUND_001_MISSING_EVIDENCE.code,
-      errorDetail: CODES.GROUND_001_MISSING_EVIDENCE,
-      matchType: "NONE"
-    };
-  }
-
-  // Step 1: Exact Substring Match
-  const exactIndex = cleanedContent.indexOf(evidenceText);
-  if (exactIndex !== -1) {
-    return {
-      passed: true,
-      code: "PASS",
-      matchType: "Exact Match",
-      startOffset: exactIndex,
-      endOffset: exactIndex + evidenceText.length
-    };
-  }
-
-  // Step 2: Normalized Whitespace Match
-  const normContent = cleanedContent.replace(/\s+/g, ' ');
-  const normEvidence = evidenceText.replace(/\s+/g, ' ');
-  const normIndex = normContent.indexOf(normEvidence);
-  if (normIndex !== -1) {
-    return {
-      passed: true,
-      code: "PASS",
-      matchType: "Bounded Normalized",
-      startOffset: normIndex,
-      endOffset: normIndex + normEvidence.length
-    };
-  }
-
-  // Step 3: Bounded Fuzzy Search Window (± GROUNDING_SEARCH_WINDOW_CHARS)
-  const windowSize = THRESHOLDS.GROUNDING_SEARCH_WINDOW_CHARS || 2000;
-  const targetOffset = evidenceList[0].startOffset || 0;
-  const winStart = Math.max(0, targetOffset - Math.floor(windowSize / 2));
-  const winEnd = Math.min(cleanedContent.length, targetOffset + Math.floor(windowSize / 2));
-  const searchWindow = cleanedContent.slice(winStart, winEnd).replace(/\s+/g, ' ');
-
-  const evTokens = new Set(normEvidence.toLowerCase().split(/\s+/).filter(Boolean));
-  const winTokens = new Set(searchWindow.toLowerCase().split(/\s+/).filter(Boolean));
+  const baseWindow = VALIDATOR_CONFIG.THRESHOLDS.GROUNDING_SEARCH_WINDOW_CHARS || 2000;
   
-  const intersection = new Set([...evTokens].filter(x => winTokens.has(x)));
-  const overlapRatio = evTokens.size === 0 ? 0 : intersection.size / evTokens.size;
+  let expectedOffset = null;
+  const rawBounds = mcqItem?.sourceEvidence?.evidenceBounds || mcqItem?.sourceEvidence?.[0]?.evidenceBounds;
+  if (Array.isArray(rawBounds) && rawBounds.length > 0 && typeof rawBounds[0]?.[0] === 'number') {
+    expectedOffset = rawBounds[0][0];
+  }
 
-  if (overlapRatio >= (THRESHOLDS.GROUNDING_FUZZY || 0.85)) {
+  if (expectedOffset !== null) {
+    // Tier 1: Primary Window Search (±2000 chars)
+    const pStart = Math.max(0, expectedOffset - baseWindow);
+    const pEnd = Math.min(cleanedContent.length, expectedOffset + evidenceText.length + baseWindow);
+    const primarySlice = cleanedContent.substring(pStart, pEnd);
+
+    const primaryResult = searchText(primarySlice, evidenceText, pStart);
+    if (primaryResult.matched) {
+      return {
+        passed: true,
+        matchType: `PrimaryWindow_${primaryResult.matchType}`,
+        repairedOffsets: primaryResult.offsets,
+        code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
+      };
+    }
+
+    // Tier 2: Expanded Window Search (±4000 chars)
+    const eStart = Math.max(0, expectedOffset - (baseWindow * 2));
+    const eEnd = Math.min(cleanedContent.length, expectedOffset + evidenceText.length + (baseWindow * 2));
+    const expandedSlice = cleanedContent.substring(eStart, eEnd);
+
+    const expandedResult = searchText(expandedSlice, evidenceText, eStart);
+    if (expandedResult.matched) {
+      return {
+        passed: true,
+        matchType: `ExpandedWindow_${expandedResult.matchType}`,
+        repairedOffsets: expandedResult.offsets,
+        code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
+      };
+    }
+  }
+
+  // Tier 3: Global Document Fallback
+  const globalResult = searchText(cleanedContent, evidenceText, 0);
+  if (globalResult.matched) {
     return {
       passed: true,
-      code: "PASS",
-      matchType: "Bounded Fuzzy",
-      startOffset: winStart,
-      endOffset: winEnd
+      matchType: `Global_${globalResult.matchType}`,
+      repairedOffsets: globalResult.offsets,
+      code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
     };
   }
 
-  // Failed all 3 cascade steps -> Hard Gate Failure
   return {
     passed: false,
-    code: CODES.GROUND_001_MISSING_EVIDENCE.code,
-    errorDetail: CODES.GROUND_001_MISSING_EVIDENCE,
-    matchType: "FAILED_ALL_CASCADE_STEPS"
+    matchType: "None",
+    repairedOffsets: null,
+    code: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE.code,
+    errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE
   };
 }
 

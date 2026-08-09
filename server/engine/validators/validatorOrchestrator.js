@@ -1,126 +1,188 @@
 const { performance } = require('perf_hooks');
-const { VALIDATOR_CONFIG } = require('../../config/validatorConfig');
+const { VALIDATOR_CONFIG, ValidationAbortedError } = require('../../config/validatorConfig');
 const { runStructuralValidation } = require('./structuralValidator');
 const { runGroundingValidation } = require('./groundingValidator');
 const { runEducationalValidation } = require('./educationalValidator');
 
+function buildAbortedResult(version, mcqItem, terminationReason, timeoutMs) {
+  return {
+    validatorVersion: version,
+    pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,
+    item: mcqItem,
+    status: "ABORTED",
+    terminationReason,
+    isValid: false,
+    qualityScore: 0.0,
+    scores: { bloom: 0, distractors: 0, duplication: 0, ambiguity: 0 },
+    repairRequired: false,
+    repairHints: [],
+    failureStage: VALIDATOR_CONFIG.FAILURE_STAGES.TIMEOUT,
+    validationTrace: [
+      {
+        ...(mcqItem?.existingTraceMetadata || {}),
+        validatorVersion: version,
+        stage: "ORCHESTRATOR",
+        status: "ABORTED",
+        code: "VAL_000",
+        durationMs: timeoutMs,
+        diagnostics: {
+          ...(mcqItem?.existingDiagnostics || {}),
+          error: `${timeoutMs}ms validation timeout exceeded`
+        }
+      }
+    ],
+    findings: {
+      criticalFailures: [VALIDATOR_CONFIG.CODES.VAL_000_TIMEOUT_EXCEEDED],
+      majorWarnings: [],
+      minorWarnings: []
+    }
+  };
+}
+
 /**
- * 6. ORCHESTRATOR WITH TIMEOUT PROTECTION
- * Sequentially executes Gate 1 (Structural), Gate 2 (Grounding), and Evaluator 3 (Educational).
- * Hard-gated early returns on Gate 1/2 failure. Wrapped in a 500ms Promise.race timeout guard.
+ * 5. METADATA-PRESERVING ORCHESTRATOR WITH TIMEOUT GUARD
  */
-async function validateMCQ(mcqItem, validationContext = {}) {
+async function validateMCQWithTimeout(mcqItem, validationContext = {}) {
   const timeoutMs = validationContext.config?.TIMEOUT_MS || VALIDATOR_CONFIG.TIMEOUT_MS || 500;
+  const version = VALIDATOR_CONFIG.VERSIONS.VALIDATOR;
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  let timer;
 
   const validationPromise = (async () => {
-    const trace = [];
-    const start = performance.now();
+    try {
+      const trace = [];
+      const start = performance.now();
 
-    // Gate 1: Structural
-    const structStart = performance.now();
-    const structRes = runStructuralValidation(mcqItem, validationContext);
-    const structTimeMs = Math.round(performance.now() - structStart);
-    trace.push({ stage: "STRUCTURAL", passed: structRes.passed, durationMs: structTimeMs, code: structRes.code });
-
-    if (!structRes.passed) {
-      return buildReport({
-        isValid: false,
-        qualityScore: 0.0,
-        repairRequired: true,
-        failureStage: "STRUCTURAL",
-        criticalFailures: [structRes.errorDetail],
-        trace,
-        metrics: { structTimeMs, groundingTimeMs: 0, educationalTimeMs: 0, totalValidationMs: structTimeMs }
+      // Gate 1: Structural
+      const structRes = runStructuralValidation(mcqItem, validationContext, signal);
+      trace.push({
+        ...(mcqItem?.existingTraceMetadata || {}),
+        validatorVersion: version,
+        stage: "STRUCTURAL",
+        status: structRes.passed ? "PASS" : "FAIL",
+        code: structRes.code,
+        durationMs: Math.round(performance.now() - start),
+        diagnostics: {
+          ...(mcqItem?.existingDiagnostics || {}),
+          schemaValid: structRes.passed
+        }
       });
-    }
 
-    // Gate 2: Grounding
-    const groundStart = performance.now();
-    const groundRes = runGroundingValidation(mcqItem, validationContext);
-    const groundingTimeMs = Math.round(performance.now() - groundStart);
-    trace.push({ stage: "GROUNDING", passed: groundRes.passed, durationMs: groundingTimeMs, matchType: groundRes.matchType });
+      if (!structRes.passed) {
+        return {
+          validatorVersion: version,
+          pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,
+          item: mcqItem,
+          status: "FAILED",
+          isValid: false,
+          qualityScore: 0.0,
+          scores: { bloom: 0, distractors: 0, duplication: 0, ambiguity: 0 },
+          repairRequired: true,
+          repairHints: [VALIDATOR_CONFIG.REPAIR_HINTS.FULL_REGENERATE],
+          failureStage: VALIDATOR_CONFIG.FAILURE_STAGES.STRUCTURAL,
+          validationTrace: trace,
+          findings: { criticalFailures: [structRes.errorDetail], majorWarnings: [], minorWarnings: [] }
+        };
+      }
 
-    if (!groundRes.passed) {
-      return buildReport({
-        isValid: false,
-        qualityScore: 0.0,
-        repairRequired: true,
-        failureStage: "GROUNDING",
-        criticalFailures: [groundRes.errorDetail],
-        trace,
-        metrics: { structTimeMs, groundingTimeMs, educationalTimeMs: 0, totalValidationMs: structTimeMs + groundingTimeMs }
+      // Gate 2: Grounding
+      const groundStart = performance.now();
+      const groundRes = runGroundingValidation(mcqItem, validationContext, signal);
+      trace.push({
+        ...(mcqItem?.existingTraceMetadata || {}),
+        validatorVersion: version,
+        stage: "GROUNDING",
+        status: groundRes.passed ? "PASS" : "FAIL",
+        code: groundRes.code,
+        durationMs: Math.round(performance.now() - groundStart),
+        diagnostics: {
+          ...(mcqItem?.existingDiagnostics || {}),
+          matchType: groundRes.matchType,
+          repairedOffsets: !!groundRes.repairedOffsets
+        }
       });
+
+      if (!groundRes.passed) {
+        return {
+          validatorVersion: version,
+          pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,
+          item: mcqItem,
+          status: "FAILED",
+          isValid: false,
+          qualityScore: 0.0,
+          scores: { bloom: 0, distractors: 0, duplication: 0, ambiguity: 0 },
+          repairRequired: true,
+          repairHints: [VALIDATOR_CONFIG.REPAIR_HINTS.FULL_REGENERATE],
+          failureStage: VALIDATOR_CONFIG.FAILURE_STAGES.GROUNDING,
+          validationTrace: trace,
+          findings: { criticalFailures: [groundRes.errorDetail], majorWarnings: [], minorWarnings: [] }
+        };
+      }
+
+      // Evaluator 3: Educational
+      const eduStart = performance.now();
+      const eduRes = await runEducationalValidation(mcqItem, validationContext, signal);
+      trace.push({
+        ...(mcqItem?.existingTraceMetadata || {}),
+        validatorVersion: version,
+        stage: "EDUCATIONAL",
+        status: eduRes.passed ? "PASS" : "FAIL",
+        code: eduRes.passed ? VALIDATOR_CONFIG.PASS_CODES.EDUCATIONAL : "EDU_WARN",
+        durationMs: Math.round(performance.now() - eduStart),
+        diagnostics: {
+          ...(mcqItem?.existingDiagnostics || {}),
+          qualityScore: eduRes.qualityScore,
+          scores: eduRes.scores
+        }
+      });
+
+      const updatedItem = groundRes.repairedOffsets ? {
+        ...mcqItem,
+        sourceEvidence: {
+          ...(mcqItem?.sourceEvidence || {}),
+          evidenceBounds: groundRes.repairedOffsets
+        }
+      } : mcqItem;
+
+      return {
+        validatorVersion: version,
+        pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,
+        item: updatedItem,
+        status: eduRes.passed ? "SUCCESS" : "REPAIR_REQUIRED",
+        isValid: eduRes.passed,
+        qualityScore: eduRes.qualityScore,
+        qualityBreakdown: eduRes.qualityBreakdown || { structural: 1.0, grounding: 1.0, educational: eduRes.qualityScore },
+        scores: eduRes.scores,
+        repairRequired: !eduRes.passed,
+        repairHints: eduRes.repairHints,
+        failureStage: eduRes.passed ? null : VALIDATOR_CONFIG.FAILURE_STAGES.EDUCATIONAL,
+        validationTrace: trace,
+        findings: eduRes.findings,
+        metrics: { totalValidationMs: Math.round(performance.now() - start) }
+      };
+    } finally {
+      clearTimeout(timer);
     }
+  })().catch(err => {
+    if (err instanceof ValidationAbortedError || signal.aborted) {
+      return buildAbortedResult(version, mcqItem, "TIMEOUT", timeoutMs);
+    }
+    throw err;
+  });
 
-    // Evaluator 3: Educational
-    const eduStart = performance.now();
-    const eduRes = runEducationalValidation(mcqItem, validationContext);
-    const educationalTimeMs = Math.round(performance.now() - eduStart);
-    trace.push({ stage: "EDUCATIONAL", passed: eduRes.passed, durationMs: educationalTimeMs, qualityScore: eduRes.qualityScore });
-
-    const totalValidationMs = Math.round(performance.now() - start);
-
-    return buildReport({
-      validatorVersion: VALIDATOR_CONFIG.VERSIONS.VALIDATOR,
-      pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,
-      isValid: eduRes.passed,
-      qualityScore: eduRes.qualityScore,
-      qualityBreakdown: eduRes.qualityBreakdown,
-      repairRequired: !eduRes.passed,
-      failureStage: eduRes.passed ? null : "EDUCATIONAL",
-      repairHistory: mcqItem.repairHistory || [],
-      validationTrace: trace,
-      findings: {
-        criticalFailures: eduRes.criticalFailures || [],
-        majorWarnings: eduRes.majorWarnings || [],
-        minorWarnings: eduRes.minorWarnings || []
-      },
-      metrics: { structTimeMs, groundingTimeMs, educationalTimeMs, totalValidationMs }
-    });
-  })();
-
-  // Timeout Fallback (500ms)
-  const timeoutPromise = new Promise((resolve) =>
-    setTimeout(() => {
-      resolve(buildReport({
-        isValid: false,
-        qualityScore: 0.0,
-        repairRequired: false, // Skip repair on timeout to unblock pipeline
-        failureStage: "TIMEOUT",
-        criticalFailures: [VALIDATOR_CONFIG.CODES.VAL_000_TIMEOUT_EXCEEDED],
-        findings: {
-          criticalFailures: [VALIDATOR_CONFIG.CODES.VAL_000_TIMEOUT_EXCEEDED],
-          majorWarnings: [],
-          minorWarnings: []
-        },
-        metrics: { structTimeMs: 0, groundingTimeMs: 0, educationalTimeMs: 0, totalValidationMs: timeoutMs }
-      }));
-    }, timeoutMs)
-  );
+  const timeoutPromise = new Promise((resolve) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      resolve(buildAbortedResult(version, mcqItem, "TIMEOUT", timeoutMs));
+    }, timeoutMs);
+  });
 
   return Promise.race([validationPromise, timeoutPromise]);
 }
 
-function buildReport(opts) {
-  return {
-    validatorVersion: opts.validatorVersion || VALIDATOR_CONFIG.VERSIONS.VALIDATOR,
-    pipelineVersion: opts.pipelineVersion || VALIDATOR_CONFIG.VERSIONS.PIPELINE,
-    isValid: !!opts.isValid,
-    qualityScore: opts.qualityScore !== undefined ? opts.qualityScore : 0.0,
-    qualityBreakdown: opts.qualityBreakdown || { structural: 0.0, grounding: 0.0, educational: 0.0 },
-    repairRequired: !!opts.repairRequired,
-    failureStage: opts.failureStage || null,
-    repairHistory: opts.repairHistory || [],
-    validationTrace: opts.trace || [],
-    findings: opts.findings || {
-      criticalFailures: opts.criticalFailures || [],
-      majorWarnings: [],
-      minorWarnings: []
-    },
-    metrics: opts.metrics || { totalValidationMs: 0 }
-  };
-}
-
 module.exports = {
-  validateMCQ
+  validateMCQWithTimeout,
+  validateMCQ: validateMCQWithTimeout // Backward compatibility
 };
