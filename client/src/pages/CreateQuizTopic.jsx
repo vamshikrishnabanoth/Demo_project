@@ -55,6 +55,7 @@ export default function CreateQuizTopic() {
     const [recordingPaused, setRecordingPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const audioChunksRef = useRef([]);
+    const isCancelledRef = useRef(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [transcribing, setTranscribing] = useState(false);
 
@@ -231,6 +232,7 @@ export default function CreateQuizTopic() {
     // Voice recording lifecycle
     const startRecording = async () => {
         if (isGenerating) return;
+        isCancelledRef.current = false;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new MediaRecorder(stream);
@@ -241,8 +243,18 @@ export default function CreateQuizTopic() {
             };
 
             recorder.onstop = async () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
                 stream.getTracks().forEach(t => t.stop());
+                
+                // CRITICAL SAFETY CHECK: If recording was cancelled by user, DO NOT transcribe or add to docket
+                if (isCancelledRef.current) {
+                    console.log('🚫 Voice recording was cancelled by user. Skipping docket ingestion.');
+                    setRecording(false);
+                    setRecordingPaused(false);
+                    setRecordingDuration(0);
+                    return;
+                }
+
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
                 setRecording(false);
                 setRecordingPaused(false);
                 setRecordingDuration(0);
@@ -305,6 +317,7 @@ export default function CreateQuizTopic() {
     };
 
     const stopRecording = () => {
+        isCancelledRef.current = false;
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
             mediaRecorder.stop();
         }
@@ -325,13 +338,21 @@ export default function CreateQuizTopic() {
     };
 
     const cancelRecording = () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.onstop = null; // Prevent onstop transcription trigger
-            mediaRecorder.stop();
+        isCancelledRef.current = true;
+        if (mediaRecorder) {
+            mediaRecorder.onstop = null; // Detach listener
+            if (mediaRecorder.state !== 'inactive') {
+                try {
+                    mediaRecorder.stop();
+                } catch (e) {
+                    console.error('Error stopping recorder:', e);
+                }
+            }
             if (mediaRecorder.stream) {
                 mediaRecorder.stream.getTracks().forEach(t => t.stop());
             }
         }
+        audioChunksRef.current = [];
         setRecording(false);
         setRecordingPaused(false);
         setRecordingDuration(0);
