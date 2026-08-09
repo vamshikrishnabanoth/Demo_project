@@ -254,19 +254,25 @@ function validateAndScoreQuiz(questions, config = DEFAULT_CONFIG) {
 
 async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const startTime = Date.now();
-  const { content, difficulty = "Balanced", requestedCount = 10, apiKey } = reqPayload;
+  let { content, difficulty = "Balanced", requestedCount = 10, apiKey } = reqPayload;
+
+  requestedCount = parseInt(requestedCount, 10) || 10;
+  if (requestedCount < 1) requestedCount = 1;
+  if (requestedCount > 50) requestedCount = 50;
 
   if (!content || typeof content !== 'string' || content.trim().length < 10) {
     throw new Error("Insufficient source content provided for MCQ generation.");
   }
 
-  const internalTelemetry = {
-    pipelineVersion: "4.1-Architect",
-    provider: "groq",
-    model: "llama-3.1-8b-instant",
-    repairAttempts: 0,
-    startTime
-  };
+  // Normalize difficulty string (handles "Balanced", "balanced", "⚖️ Balanced", etc.)
+  const cleanDiffStr = String(difficulty).replace(/[^a-zA-Z]/g, '').toLowerCase();
+  let isBalanced = cleanDiffStr.includes('balanced');
+  let normalizedDifficulty = 'Balanced';
+  if (!isBalanced) {
+    if (cleanDiffStr.includes('easy')) normalizedDifficulty = 'Easy';
+    else if (cleanDiffStr.includes('hard')) normalizedDifficulty = 'Hard';
+    else normalizedDifficulty = 'Medium';
+  }
 
   const cleanedContent = content.trim();
   const rawCharCount = content.length;
@@ -308,17 +314,17 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
 
   // [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]
   const { lectureDepthScore, depthBand } = computeLectureDepth(cleanedContent);
-  const conceptPlan = conceptGraph.allocateConcepts(parseInt(requestedCount, 10));
+  const totalConceptPlan = conceptGraph.allocateConcepts(requestedCount);
 
   let difficultyDist = "";
-  if (difficulty === "Balanced") {
+  if (isBalanced) {
     if (depthBand === "Low") difficultyDist = "70% Easy, 30% Medium, 0% Hard";
     else if (depthBand === "Moderate") difficultyDist = "50% Easy, 40% Medium, 10% Hard";
     else if (depthBand === "High") difficultyDist = "30% Easy, 40% Medium, 30% Hard";
     else if (depthBand === "Very High") difficultyDist = "20% Easy, 40% Medium, 40% Hard";
     else difficultyDist = "50% Easy, 40% Medium, 10% Hard";
   } else {
-    difficultyDist = `100% ${difficulty}`;
+    difficultyDist = `100% ${normalizedDifficulty}`;
   }
 
   console.log("\n[STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]");
@@ -326,8 +332,8 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Difficulty Distribution: ${difficultyDist}`);
   console.log(`  └─ Target Question Allocation:`);
 
-  conceptPlan.forEach((planItem, idx) => {
-    const isLast = idx === conceptPlan.length - 1;
+  totalConceptPlan.forEach((planItem, idx) => {
+    const isLast = idx === totalConceptPlan.length - 1;
     const prefix = isLast ? "      └─" : "      ├─";
     const conceptPadded = `"${planItem.concept}"`.padEnd(24, '─');
     console.log(`${prefix} • ${conceptPadded}► Target: ${planItem.targetQuestions} MCQ(s)`);
@@ -339,12 +345,23 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Enforcing Anti-Hallucination Rules: Strict zero external domain knowledge constraint.`);
   console.log(`  └─ Multi-Angle Framing Strategy: Active (Direct Recall, Sequential Flow, Comparative Reasoning, Constraint Recognition).`);
 
-  // Construct Deterministic Prompt
-  const prompt = `
-Generate exactly ${requestedCount} Multiple Choice Questions (MCQs) grounded strictly in the source text.
+  // BATCHING EXECUTION FOR LARGE QUESTION COUNTS (> 10 MCQs)
+  const BATCH_SIZE = 10;
+  const numBatches = Math.ceil(requestedCount / BATCH_SIZE);
+  let accumulatedQuestions = [];
+
+  for (let b = 0; b < numBatches; b++) {
+    const targetInBatch = Math.min(BATCH_SIZE, requestedCount - accumulatedQuestions.length);
+    if (targetInBatch <= 0) break;
+
+    const batchConceptPlan = conceptGraph.allocateConcepts(targetInBatch);
+
+    const prompt = `
+Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
+${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
 
 CONCEPT ALLOCATION PLAN:
-${JSON.stringify(conceptPlan, null, 2)}
+${JSON.stringify(batchConceptPlan, null, 2)}
 
 TARGET DIFFICULTY STRATEGY: ${difficultyDist}
 LECTURE DEPTH BAND: ${depthBand} (Score: ${lectureDepthScore}/100)
@@ -377,34 +394,32 @@ OUTPUT FORMAT (JSON ONLY):
 }
 `;
 
-  // [STEP 5: PRIMARY AI GENERATION ENGINE]
-  console.log("\n[STEP 5: PRIMARY AI GENERATION ENGINE]");
-  console.log(`  ├─ LLM Provider: Groq (llama-3.1-8b-instant)`);
-  console.log(`  ├─ Dispatching Prompt Payload (~${Math.round(prompt.length / 4)} tokens)...`);
+    console.log(`\n[STEP 5: PRIMARY AI GENERATION ENGINE (Batch ${b + 1} of ${numBatches})]`);
+    console.log(`  ├─ LLM Provider: Groq (llama-3.1-8b-instant)`);
+    console.log(`  ├─ Dispatching Prompt Payload (~${Math.round(prompt.length / 4)} tokens)...`);
 
-  const llmStartTime = Date.now();
-  const llm = new LLMProvider(apiKey);
-  const rawResponse = await llm.generateJSON(prompt);
-  const llmDurationSec = ((Date.now() - llmStartTime) / 1000).toFixed(2);
-  console.log(`  └─ Inference Complete in ${llmDurationSec} seconds.`);
+    const llmStartTime = Date.now();
+    const llm = new LLMProvider(apiKey);
+    const rawResponse = await llm.generateJSON(prompt);
+    const llmDurationSec = ((Date.now() - llmStartTime) / 1000).toFixed(2);
+    console.log(`  └─ Inference Complete in ${llmDurationSec} seconds.`);
+
+    const parsedData = parseJSONRecoverable(rawResponse);
+    const batchQuestions = parsedData.questions || parsedData.fixedQuestions || [];
+    accumulatedQuestions.push(...batchQuestions);
+  }
 
   // [STEP 6: RECOVERY PARSER GUARDRAIL]
   console.log("\n[STEP 6: RECOVERY PARSER GUARDRAIL]");
-  let rawStatus = "Valid JSON structure received.";
-  if (rawResponse.includes("```json")) {
-    rawStatus = "Valid structure enclosed in markdown fences.";
-  }
-  const parsedData = parseJSONRecoverable(rawResponse);
-  let rawQuestions = parsedData.questions || [];
-  console.log(`  ├─ Raw JSON Status: ${rawStatus}`);
-  console.log(`  └─ Recovery Action: Markdown fences stripped successfully. ${rawQuestions.length} raw question(s) extracted.`);
+  console.log(`  ├─ Raw JSON Status: Multi-batch JSON parsing complete.`);
+  console.log(`  └─ Recovery Action: ${accumulatedQuestions.length} raw question(s) extracted across ${numBatches} batch(es).`);
 
   // [STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]
   console.log("\n[STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]");
 
-  let validation = validateAndScoreQuiz(rawQuestions, config);
+  let validation = validateAndScoreQuiz(accumulatedQuestions, config);
 
-  rawQuestions.forEach((q, idx) => {
+  accumulatedQuestions.forEach((q, idx) => {
     const stem = q.question || q.questionText || "Untitled Question";
     const stemShort = stem.length > 45 ? stem.slice(0, 45) + "..." : stem;
     
@@ -431,9 +446,10 @@ OUTPUT FORMAT (JSON ONLY):
   });
 
   // [STEP 8: REPAIR PASS GUARDRAIL]
-  while (!validation.isValid && internalTelemetry.repairAttempts < config.maxRepairAttempts) {
-    internalTelemetry.repairAttempts++;
-    console.log(`\n[STEP 8: REPAIR PASS GUARDRAIL (Attempt ${internalTelemetry.repairAttempts} / ${config.maxRepairAttempts})]`);
+  let repairAttempts = 0;
+  while (!validation.isValid && repairAttempts < config.maxRepairAttempts) {
+    repairAttempts++;
+    console.log(`\n[STEP 8: REPAIR PASS GUARDRAIL (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
     
     const repairIndices = validation.invalidQuestions.map(inv => `#${inv.index + 1}`).join(", ");
     const failureReasons = validation.invalidQuestions.map(inv => inv.errors.join(", ")).join(" | ");
@@ -459,6 +475,7 @@ Return JSON: { "fixedQuestions": [...] }
 `;
 
     try {
+      const llm = new LLMProvider(apiKey);
       const repairRaw = await llm.generateJSON(repairPrompt);
       const repairDurationSec = ((Date.now() - repairStartTime) / 1000).toFixed(2);
       console.log(`  ├─ Repair Agent Execution Complete in ${repairDurationSec} seconds.`);
@@ -471,14 +488,47 @@ Return JSON: { "fixedQuestions": [...] }
 
       console.log(`  └─ Re-Validating Repaired Item... PASS! Updated Validation State.`);
     } catch (repairErr) {
-      console.log(`  └─ Repair Attempt #${internalTelemetry.repairAttempts} Failed: ${repairErr.message}`);
+      console.log(`  └─ Repair Attempt #${repairAttempts} Failed: ${repairErr.message}`);
       break;
     }
   }
 
-  internalTelemetry.executionTimeMs = Date.now() - startTime;
-  
-  const totalLatencySec = (internalTelemetry.executionTimeMs / 1000).toFixed(2);
+  // [BACKFILL GUARD: GUARANTEE EXACT QUESTION COUNT MATCH]
+  if (validation.validQuestions.length < requestedCount) {
+    const missingCount = requestedCount - validation.validQuestions.length;
+    console.log(`\n[BACKFILL GUARD] Valid questions (${validation.validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
+    try {
+      const backfillConceptPlan = conceptGraph.allocateConcepts(missingCount);
+      const backfillPrompt = `
+Generate exactly ${missingCount} UNIQUE Multiple Choice Questions (MCQs) grounded strictly in the source text.
+DO NOT repeat any previous question stems.
+
+CONCEPT ALLOCATION PLAN:
+${JSON.stringify(backfillConceptPlan, null, 2)}
+
+TARGET DIFFICULTY STRATEGY: ${difficultyDist}
+LECTURE DEPTH BAND: ${depthBand}
+
+SOURCE TEXT:
+"""
+${cleanedContent}
+"""
+
+Return JSON: { "questions": [...] }
+`;
+      const llm = new LLMProvider(apiKey);
+      const backfillRaw = await llm.generateJSON(backfillPrompt);
+      const backfillData = parseJSONRecoverable(backfillRaw);
+      const backfillQuestions = backfillData.questions || backfillData.fixedQuestions || [];
+      const combinedAll = [...validation.validQuestions, ...backfillQuestions];
+      validation = validateAndScoreQuiz(combinedAll, config);
+    } catch (bfErr) {
+      console.warn('⚠️ Backfill attempt error:', bfErr.message);
+    }
+  }
+
+  const executionTimeMs = Date.now() - startTime;
+  const totalLatencySec = (executionTimeMs / 1000).toFixed(2);
   const finalQuestions = validation.validQuestions.slice(0, requestedCount);
   const totalScoreSum = finalQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0);
   const avgQualityScore = finalQuestions.length > 0 ? (totalScoreSum / finalQuestions.length).toFixed(2) : "0.00";
@@ -493,17 +543,17 @@ Return JSON: { "fixedQuestions": [...] }
 
   return {
     success: true,
-    status: isPartial ? "PARTIAL_SUCCESS" : "SUCCESS",
+    status: finalStatusStr,
     lectureDepth: {
       score: lectureDepthScore,
       band: depthBand
     },
     ...(isPartial && {
-      notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested. Failing items were discarded to maintain factual precision.`
+      notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
     quizPlanSummary: {
-      allocatedConcepts: conceptPlan,
-      targetDifficulty: difficulty,
+      allocatedConcepts: totalConceptPlan,
+      targetDifficulty: normalizedDifficulty,
       depthScore: lectureDepthScore,
       depthBand,
       assignedDepth: {
