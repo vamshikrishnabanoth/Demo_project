@@ -22,7 +22,6 @@ export default function CreateQuizText() {
     const location = useLocation();
     
     // ─── STATE MANAGEMENT ───────────────────────────────────────────────────
-    const [devMode, setDevMode] = useState(false);
     const [title, setTitle] = useState('');
     const [isAssessment, setIsAssessment] = useState(false);
     const [duration, setDuration] = useState(30);
@@ -332,15 +331,6 @@ export default function CreateQuizText() {
                             className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2 cursor-pointer transition-all border-b-4 border-amber-700"
                         >
                             💾 Save Quiz Template
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setDevMode(!devMode)}
-                            className={`px-4 py-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
-                                devMode ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-lg' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
-                            }`}
-                        >
-                            {devMode ? '🛠️ Developer Mode ON' : '🛠️ Enable Dev Mode'}
                         </button>
                     </div>
                 </div>
