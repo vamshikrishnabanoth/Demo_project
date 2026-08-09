@@ -11,6 +11,8 @@ const { buildConceptGraph } = require('./conceptGraphBuilder/index');
 const { generateQuizPlan } = require('./quizPlanner/index');
 const { buildSlotPrompts } = require('./promptBuilder/index');
 const { PROMPT_CONFIG } = require('../config/promptConfig');
+const { generateQuestions } = require('./questionGenerator/index');
+const { GENERATOR_CONFIG } = require('../config/generatorConfig');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -444,83 +446,66 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Safety & Observability: Pipeline evidenceBounds attached | Fallback route 'INSUFFICIENT_EVIDENCE' enabled`);
   console.log(`  └─ Prompt Payloads attached to context for LLM generation.`);
 
-  // BATCHING EXECUTION FOR LARGE QUESTION COUNTS (> 10 MCQs) WITH NAMESPACED QUIZ CACHING
-  const BATCH_SIZE = 10;
-  const numBatches = Math.ceil(requestedCount / BATCH_SIZE);
-  let accumulatedQuestions = [];
+  // [STEP 5: QUESTION GENERATOR ENGINE v1.2.0 (WITH NAMESPACED QUIZ CACHING)]
+  const quizCacheKey = generateQuizCacheKey({
+    text: cleanedContent,
+    difficulty: normalizedDifficulty,
+    count: requestedCount
+  });
 
-  for (let b = 0; b < numBatches; b++) {
-    const targetInBatch = Math.min(BATCH_SIZE, requestedCount - accumulatedQuestions.length);
-    if (targetInBatch <= 0) break;
-
-    const quizCacheKey = generateQuizCacheKey({
-      text: cleanedContent,
-      difficulty: normalizedDifficulty,
-      count: requestedCount,
-      batchIndex: b
+  const generatorResult = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
+    return await generateQuestions(promptPayloads, {
+      requestId: reqId,
+      cleanedContent,
+      conceptGraph,
+      quizPlan
     });
+  }, reqId);
 
-    const batchQuestions = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
-      const batchPayloads = promptPayloads.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
+  let candidateItems = [];
+  let generatorResultObj = {};
 
-      const prompt = `
-Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text snippets.
-${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
-
-ISOLATED SLOT PROMPT PAYLOADS:
-${JSON.stringify(batchPayloads.map(p => ({
-  slotId: p.slotId,
-  conceptId: p.conceptId,
-  userPrompt: p.userPrompt
-})), null, 2)}
-
-OUTPUT FORMAT CONTRACT:
-{
-  "questions": [
-    {
-      "question": "Question stem",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": "Exact matching string from options",
-      "explanation": "Academic rationale quoting source snippet",
-      "sourceEvidence": [{ "text": "exact span from source", "chunkId": 1, "startOffset": 0, "endOffset": 50 }],
-      "relativeDifficulty": "Easy | Medium | Hard",
-      "framingType": "Direct Recall | Sequential Flow | Comparative Reasoning | Constraint Recognition"
-    }
-  ]
-}
-`;
-
-      console.log(`\n[ReqID: ${reqId}] [STEP 5: PRIMARY AI GENERATION ENGINE (Batch ${b + 1} of ${numBatches})]`);
-      console.log(`  ├─ LLM Provider: Groq (llama-3.1-8b-instant)`);
-      console.log(`  ├─ Dispatching Prompt Payload (~${Math.round(prompt.length / 4)} tokens)...`);
-
-      const llmStartTime = Date.now();
-      const llm = new LLMProvider(apiKey);
-      const rawResponse = await llm.generateJSON(prompt);
-      const llmDurationMs = Date.now() - llmStartTime;
-      console.log(`  └─ Inference Complete in ${(llmDurationMs / 1000).toFixed(2)} seconds.`);
-
-      const parsedData = parseJSONRecoverable(rawResponse);
-      const bQuestions = parsedData.questions || parsedData.fixedQuestions || [];
-
-      if (bQuestions.length > 0) {
-        cacheManager.set(quizCacheKey, bQuestions, {
-          measuredProcessingTimeMs: llmDurationMs,
-          qualityScore: 0.90,
-          category: 'quiz'
-        }, reqId);
+  if (Array.isArray(generatorResult)) {
+    candidateItems = generatorResult;
+    generatorResultObj = {
+      batchSummary: {
+        totalSlotsProcessed: candidateItems.length,
+        successfulGenerations: candidateItems.length,
+        insufficientEvidenceSkipped: 0,
+        failedSlots: 0,
+        circuitBroken: false,
+        totalGenerationTimeMs: 0
+      },
+      pipelineDiagnostics: {
+        averageLatencyMs: 0,
+        retriesPerformed: 0,
+        timeoutCount: 0,
+        parseRepairCount: 0,
+        unicodeNormalizations: 0,
+        circuitBreakerTriggered: false
       }
-
-      return bQuestions;
-    }, reqId);
-
-    accumulatedQuestions.push(...(batchQuestions || []));
+    };
+  } else if (generatorResult && typeof generatorResult === 'object') {
+    generatorResultObj = generatorResult;
+    candidateItems = generatorResult.candidateItems || [];
   }
+
+  const bSum = generatorResultObj.batchSummary || {};
+  const pDiagGen = generatorResultObj.pipelineDiagnostics || {};
+  const sampleDiag = candidateItems[0]?.providerDiagnostics || {};
+
+  console.log(`\n[ReqID: ${reqId}] [STEP 5: QUESTION GENERATOR ENGINE v1.2.0]`);
+  console.log(`  ├─ Provider & Model: ${sampleDiag.provider || GENERATOR_CONFIG.ACTIVE_PROVIDER} (${sampleDiag.model || 'llama-3.1-8b-instant'})`);
+  console.log(`  ├─ Batch Execution: ${bSum.totalSlotsProcessed || promptPayloads.length} Slots (Concurrency:${GENERATOR_CONFIG.CONCURRENCY_LIMIT})`);
+  console.log(`  ├─ Success Rate: ${bSum.successfulGenerations || candidateItems.length}/${bSum.totalSlotsProcessed || promptPayloads.length} Candidate MCQs Generated (${bSum.totalGenerationTimeMs || 0}ms)`);
+  console.log(`  ├─ Resilience: ${pDiagGen.parseRepairCount || 0} JSON Repairs | ${pDiagGen.unicodeNormalizations || 0} Unicode Normalizations | ${pDiagGen.retriesPerformed || 0} Retries (Jittered)`);
+  console.log(`  ├─ Provider Circuit Breaker: ${pDiagGen.circuitBreakerTriggered ? '⚠️ TRIGGERED' : '✅ HEALTHY (Provider Availability OK)'}`);
+  console.log(`  └─ Candidate Items attached to context for Stage 6 (3-Tier Validation Orchestrator).`);
 
   // [STEP 6: RECOVERY PARSER GUARDRAIL]
   console.log(`\n[ReqID: ${reqId}] [STEP 6: RECOVERY PARSER GUARDRAIL]`);
-  console.log(`  ├─ Raw JSON Status: Multi-batch JSON parsing complete.`);
-  console.log(`  └─ Recovery Action: ${accumulatedQuestions.length} raw question(s) extracted across ${numBatches} batch(es).`);
+  console.log(`  ├─ Raw JSON Status: Slot prompt response assembly complete.`);
+  console.log(`  └─ Recovery Action: ${candidateItems.length} candidate item(s) available for validation.`);
 
   // [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]
   console.log(`\n[ReqID: ${reqId}] [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]`);
@@ -529,13 +514,13 @@ OUTPUT FORMAT CONTRACT:
   const validQuestions = [];
   const invalidQuestions = [];
 
-  for (let idx = 0; idx < accumulatedQuestions.length; idx++) {
-    const q = accumulatedQuestions[idx];
+  for (let idx = 0; idx < candidateItems.length; idx++) {
+    const q = candidateItems[idx];
     const valContext = createValidationContext({
       cleanedContent,
       targetDifficulty: normalizedDifficulty,
-      targetBloom: 'UNDERSTAND',
-      expectedFraming: q.framingType || 'Direct Recall',
+      targetBloom: q.targetBloom || 'UNDERSTAND',
+      expectedFraming: q.expectedFraming || 'Direct Recall',
       conceptGraph,
       extractedConcepts: conceptNodes.map(n => n.id),
       acceptedQuestionIndex
@@ -543,7 +528,7 @@ OUTPUT FORMAT CONTRACT:
 
     const report = await validateMCQ(q, valContext);
 
-    const stem = q.question || q.questionText || "Untitled Question";
+    const stem = q.question || q.questionText || q.stem || "Untitled Question";
     const stemShort = stem.length > 45 ? stem.slice(0, 45) + "..." : stem;
 
     const structStage = report.validationTrace.find(t => t.stage === 'STRUCTURAL') || { durationMs: 0, code: 'PASS' };
@@ -600,7 +585,7 @@ OUTPUT FORMAT CONTRACT:
 
       return {
         index: inv.index + 1,
-        question: qItem.question,
+        question: qItem.question || qItem.stem,
         options: qItem.options,
         correctAnswer: qItem.correctAnswer,
         failureStage: inv.failureStage,
@@ -649,7 +634,7 @@ Return JSON: { "fixedQuestions": [...] }
         if (repReport.isValid) {
           fItem.qualityScore = repReport.qualityScore;
           validQuestions.push(fItem);
-          acceptedQuestionIndex.set(fItem.question || fItem.questionText, { score: repReport.qualityScore });
+          acceptedQuestionIndex.set(fItem.question || fItem.questionText || fItem.stem, { score: repReport.qualityScore });
         }
       }
 
@@ -660,55 +645,9 @@ Return JSON: { "fixedQuestions": [...] }
     }
   }
 
-  // [BACKFILL GUARD: GUARANTEE EXACT QUESTION COUNT MATCH]
-  if (validQuestions.length < requestedCount) {
-    const missingCount = requestedCount - validQuestions.length;
-    console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
-    try {
-      const backfillSlots = quizPlan.slots.slice(0, missingCount);
-      const backfillPrompt = `
-Generate exactly ${missingCount} UNIQUE Multiple Choice Questions (MCQs) grounded strictly in the source text.
-DO NOT repeat any previous question stems.
-
-QUIZ PLAN BLUEPRINT SLOTS:
-${JSON.stringify(backfillSlots, null, 2)}
-
-SOURCE TEXT:
-"""
-${cleanedContent}
-"""
-
-Return JSON: { "questions": [...] }
-`;
-      const llm = new LLMProvider(apiKey);
-      const backfillRaw = await llm.generateJSON(backfillPrompt);
-      const backfillData = parseJSONRecoverable(backfillRaw);
-      const backfillQuestions = backfillData.questions || backfillData.fixedQuestions || [];
-      
-      for (const bfItem of backfillQuestions) {
-        const valContext = createValidationContext({
-          cleanedContent,
-          targetDifficulty: normalizedDifficulty,
-          conceptGraph,
-          acceptedQuestionIndex
-        });
-        const bfReport = await validateMCQ(bfItem, valContext);
-        if (bfReport.isValid) {
-          bfItem.qualityScore = bfReport.qualityScore;
-          validQuestions.push(bfItem);
-          acceptedQuestionIndex.set(bfItem.question || bfItem.questionText, { score: bfReport.qualityScore });
-        }
-      }
-    } catch (bfErr) {
-      console.warn(`[ReqID: ${reqId}] ⚠️ Backfill attempt error:`, bfErr.message);
-    }
-  }
-
   const executionTimeMs = Date.now() - startTime;
-  const totalLatencySec = (executionTimeMs / 1000).toFixed(2);
   const finalQuestions = validQuestions.slice(0, requestedCount);
   const totalScoreSum = finalQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0);
-  const avgQualityScore = finalQuestions.length > 0 ? (totalScoreSum / finalQuestions.length).toFixed(2) : "0.00";
   const isPartial = finalQuestions.length < requestedCount;
   const finalStatusStr = isPartial ? "PARTIAL_SUCCESS" : "SUCCESS";
 
@@ -731,6 +670,8 @@ Return JSON: { "questions": [...] }
     conceptIndex,
     quizPlan,
     promptPayloads,
+    generatorResult: generatorResultObj,
+    candidateItems,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
