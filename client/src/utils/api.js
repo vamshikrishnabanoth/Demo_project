@@ -6,7 +6,21 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ||
 
 async function request(endpoint, options = {}, retryCount = 0) {
     const token = localStorage.getItem('token');
-    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+    let url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
+    // Automatically convert options.params object into URL query string (Axios compatibility)
+    if (options.params && typeof options.params === 'object') {
+        const queryParams = new URLSearchParams();
+        Object.entries(options.params).forEach(([key, val]) => {
+            if (val !== undefined && val !== null && val !== '') {
+                queryParams.append(key, val);
+            }
+        });
+        const queryString = queryParams.toString();
+        if (queryString) {
+            url += (url.includes('?') ? '&' : '?') + queryString;
+        }
+    }
 
     const headers = {
         'Content-Type': 'application/json',
