@@ -1029,15 +1029,42 @@ function AdminDirectoryTab({ setUserModal }) {
                     limit,
                     search: search.trim(),
                     role: roleFilter === 'all' ? '' : roleFilter,
-                    status: statusFilter
+                    branch: branchFilter === 'all' ? '' : branchFilter,
+                    year: yearFilter === 'all' ? '' : yearFilter,
+                    semester: semesterFilter === 'all' ? '' : semesterFilter,
+                    section: sectionFilter === 'all' ? '' : sectionFilter,
+                    status: statusFilter,
+                    sortBy
                 }
             });
-            setUsers(res.data.users || []);
-            setTotalPages(res.data.totalPages || 1);
-            setTotalCount(res.data.totalCount || 0);
-        } catch { toast.error('Failed to load system users'); }
-        finally { setLoading(false); }
-    }, [page, limit, search, roleFilter, statusFilter]);
+            if (res.data && Array.isArray(res.data.users)) {
+                setUsers(res.data.users);
+                setTotalPages(res.data.totalPages || 1);
+                setTotalCount(res.data.totalCount || 0);
+            } else if (Array.isArray(res.data)) {
+                setUsers(res.data);
+                setTotalPages(1);
+                setTotalCount(res.data.length);
+            }
+        } catch (err) {
+            toast.error('Failed to load system users');
+        } finally {
+            setLoading(false);
+        }
+    }, [page, limit, search, roleFilter, branchFilter, yearFilter, semesterFilter, sectionFilter, statusFilter, sortBy]);
+
+    const fetchIngestedDocs = useCallback(async () => {
+        try {
+            const res = await api.get('/quiz/documents');
+            setIngestedDocs(res.data || []);
+        } catch (err) {
+            console.error('Failed to fetch textbooks:', err.message);
+        }
+    }, []);
+
+    useEffect(() => { fetchStats(); }, [fetchStats]);
+    useEffect(() => { fetchUsers(); }, [fetchUsers]);
+    useEffect(() => { fetchIngestedDocs(); }, [fetchIngestedDocs]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -1081,6 +1108,72 @@ function AdminDirectoryTab({ setUserModal }) {
 
     const toggleSelectOne = (id) => {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    };
+
+    // Reset password strictly to default `${username}@kk`
+    const handleResetPassword = async (u) => {
+        const defaultPw = `${u.username}@kk`;
+        const result = await showConfirm(
+            'Reset Credentials?',
+            `Are you sure you want to reset password for "${u.username}" to default (${defaultPw})?`,
+            'Reset Password'
+        );
+
+        if (result.isConfirmed) {
+            const toastId = toast.loading(`Resetting password for ${u.username}...`);
+            try {
+                const res = await api.post(`/admin/users/${u.id}/reset-password`);
+                toast.success(res.data.msg || `Password reset to default: ${defaultPw}`, { id: toastId, duration: 6000 });
+                fetchUsers();
+            } catch (err) {
+                toast.error(err.response?.data?.msg || 'Password reset failed.', { id: toastId });
+            }
+        }
+    };
+
+    // Step 1: Promotion Preview
+    const handlePromotionStep1Preview = async () => {
+        setPromotionModal(m => ({ ...m, loading: true }));
+        try {
+            const res = await api.post('/admin/promote/preview', {
+                sourceYear: promotionModal.sourceYear,
+                targetYear: promotionModal.targetYear,
+                targetSemester: promotionModal.targetSemester,
+                academicYear: promotionModal.academicYear,
+                targetSectionOverride: promotionModal.targetSectionOverride
+            });
+            setPromotionModal(m => ({
+                ...m,
+                step: 2,
+                previewData: res.data,
+                loading: false
+            }));
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Failed to generate promotion preview');
+            setPromotionModal(m => ({ ...m, loading: false }));
+        }
+    };
+
+    // Step 2: Promotion Execution
+    const handlePromotionStep2Confirm = async () => {
+        setPromotionModal(m => ({ ...m, loading: true }));
+        const toastId = toast.loading('Executing batch student promotion transaction...');
+        try {
+            const res = await api.post('/admin/promote/confirm', {
+                sourceYear: promotionModal.sourceYear,
+                targetYear: promotionModal.targetYear,
+                targetSemester: promotionModal.targetSemester,
+                academicYear: promotionModal.academicYear,
+                targetSectionOverride: promotionModal.targetSectionOverride
+            });
+            toast.success(res.data.msg || 'Batch promotion executed successfully!', { id: toastId });
+            setPromotionModal(m => ({ ...m, isOpen: false, step: 1, previewData: null, loading: false }));
+            fetchUsers();
+            fetchStats();
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Promotion transaction failed.', { id: toastId });
+            setPromotionModal(m => ({ ...m, loading: false }));
+        }
     };
 
     const handleBulkDelete = async () => {
@@ -1411,7 +1504,6 @@ export default function AdminDashboard() {
                         onClose={() => setViewingProfile(null)}
                     />
                 )}
-
             </div>
         </DashboardLayout>
     );

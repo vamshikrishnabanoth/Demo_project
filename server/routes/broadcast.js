@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const prisma = require('../lib/prisma');
 
-// Helper to check if a student is authorized for a quiz/broadcast (Case-insensitive & section-optional)
+// Helper to check if a student is authorized for a quiz/broadcast (Case-insensitive branch, year, semester & section validation)
 function isStudentTargeted(student, assignedGroups, assignedStudents) {
     if (!student) return false;
     
@@ -13,15 +13,17 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
         return true;
     }
     
-    // Check group targeting (branch & section)
+    // Check group targeting (branch, year, semester & section)
     const hasAssignedGroups = assignedGroups && Array.isArray(assignedGroups) && assignedGroups.length > 0;
     if (hasAssignedGroups) {
         const match = assignedGroups.some(g => {
-            const branchMatch = g.branch && student.studentBranch && 
-                               g.branch.toLowerCase().trim() === student.studentBranch.toLowerCase().trim();
+            const branchMatch = !g.branch || (student.studentBranch && 
+                               g.branch.toLowerCase().trim() === student.studentBranch.toLowerCase().trim());
+            const yearMatch = !g.year || (student.year && String(g.year).trim() === String(student.year).trim());
+            const semMatch = !g.semester || (student.semester && String(g.semester).trim() === String(student.semester).trim());
             const secMatch = !g.section || g.section.trim() === '' || 
                              (student.section && g.section.toLowerCase().trim() === student.section.toLowerCase().trim());
-            return branchMatch && secMatch;
+            return branchMatch && yearMatch && semMatch && secMatch;
         });
         if (match) return true;
     }

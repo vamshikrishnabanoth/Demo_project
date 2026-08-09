@@ -29,6 +29,7 @@ model User {
   section          String?
   year             String?
   semester         String?
+  academicYear     String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
   lastLogin        DateTime?
@@ -63,6 +64,8 @@ model Quiz {
   createdBy        User     @relation(fields: [createdById], references: [id])
   createdById      String
   isActive         Boolean  @default(true)
+  isTemplate       Boolean  @default(false) // True if saved in Saved Quizzes Repository
+  templateId       String?  // References template quiz ID if cloned for live session
   joinCode         String?  @unique
   difficulty       String   @default("Medium")
   timerPerQuestion Int      @default(30)
@@ -82,7 +85,7 @@ model Quiz {
   isLive           Boolean  @default(false)
   isAssessment     Boolean  @default(false)
   status           String   @default("waiting") // 'waiting', 'started', 'finished'
-  assignedGroups   Json?    // Stores targeting parameters e.g. [{ branch: 'CSE', section: 'A' }]
+  assignedGroups   Json?    // Stores targeting parameters e.g. [{ branch: 'CSE', section: 'A', year: '3', semester: '1' }]
   assignedStudents String[] @default([]) // Selected User IDs
   createdAt        DateTime @default(now())
   finalLeaderboard Json?    // Stores the leaderboard array
@@ -100,6 +103,8 @@ model Quiz {
   cheatingLogs     CheatingLog[]
 
   @@index([createdById])                 // teacher's quiz list queries
+  @@index([createdById, isTemplate])    // saved templates vs active quizzes
+  @@index([createdById, title])         // unique quiz name checks
   @@index([status])                      // scheduler filter
   @@index([startTime])                   // scheduler start filter
   @@index([isActive])                    // scheduler end filter

@@ -36,7 +36,7 @@ function safeSort(col, dir) {
 const USER_SELECT = {
     id: true, username: true, email: true, name: true, role: true,
     isOnline: true, isSuspended: true, suspensionReason: true,
-    studentBranch: true, section: true, year: true, semester: true,
+    studentBranch: true, section: true, year: true, semester: true, academicYear: true,
     createdAt: true, updatedAt: true, lastLogin: true
 };
 
@@ -138,14 +138,23 @@ router.get('/users', auth, adminOnly, async (req, res) => {
         const limit       = parseInt(req.query.limit, 10) || 30;
         const search      = (req.query.search || '').trim();
         const role        = (req.query.role   || '').trim();
+        const branch      = (req.query.branch || req.query.studentBranch || '').trim();
+        const year        = (req.query.year || '').trim();
+        const semester    = (req.query.semester || '').trim();
+        const section     = (req.query.section || '').trim();
         const status      = (req.query.status || '').trim();
         const sortCol     = req.query.sort    || 'createdAt';
         const sortDir     = req.query.sortDir || 'desc';
+        const sortBy      = req.query.sortBy;
         const isUnpaginated = req.query.all === 'true';
 
         const AND_CONDITIONS = [];
 
         if (role && role !== 'all') AND_CONDITIONS.push({ role });
+        if (branch && branch !== 'all') AND_CONDITIONS.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
+        if (year && year !== 'all') AND_CONDITIONS.push({ year });
+        if (semester && semester !== 'all') AND_CONDITIONS.push({ semester });
+        if (section && section !== 'all') AND_CONDITIONS.push({ section: { equals: section, mode: 'insensitive' } });
         if (status === 'suspended') AND_CONDITIONS.push({ isSuspended: true });
         if (status === 'active')    AND_CONDITIONS.push({ isSuspended: false });
         if (search) {
@@ -161,7 +170,21 @@ router.get('/users', auth, adminOnly, async (req, res) => {
         }
 
         const where = AND_CONDITIONS.length > 0 ? { AND: AND_CONDITIONS } : {};
-        const orderBy = safeSort(sortCol, sortDir);
+
+        let orderBy = [];
+        if (typeof sortBy === 'string' && sortBy.trim()) {
+            const sortPairs = sortBy.split(',');
+            sortPairs.forEach(pair => {
+                const [field, dir] = pair.split(':');
+                if (field && SAFE_USER_SORT_COLS.has(field)) {
+                    const direction = dir && dir.toLowerCase() === 'asc' ? 'asc' : 'desc';
+                    orderBy.push({ [field]: direction });
+                }
+            });
+        }
+        if (orderBy.length === 0) {
+            orderBy = safeSort(sortCol, sortDir);
+        }
 
         if (isUnpaginated) {
             const users = await prisma.user.findMany({ where, select: USER_SELECT, orderBy });
@@ -177,6 +200,132 @@ router.get('/users', auth, adminOnly, async (req, res) => {
     } catch (err) {
         console.error('Users fetch error:', err.message);
         res.status(500).json({ msg: 'Server error', error: err.message });
+    }
+});
+
+// POST create new user
+router.post('/users', auth, adminOnly, async (req, res) => {
+    const { username, email, password, role, name, studentBranch, section, year, semester, academicYear } = req.body;
+
+    if (!username || !email || !password || !role) {
+        return res.status(400).json({ msg: 'Username, email, password, and role are required' });
+    }
+
+    if (!['teacher', 'student', 'admin', 'none'].includes(role)) {
+        return res.status(400).json({ msg: 'Invalid role' });
+    }
+
+    try {
+        let existingUser = await prisma.user.findFirst({
+            where: { OR: [{ email }, { username }] }
+        });
+        if (existingUser) {
+            return res.status(400).json({ msg: 'User with that email or username already exists' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = await prisma.user.create({
+            data: { 
+                username, 
+                email, 
+                password: hashedPassword, 
+                role,
+                name: name || null,
+                studentBranch: studentBranch || null,
+                section: section || null,
+                year: year ? String(year) : null,
+                semester: semester ? String(semester) : null,
+                academicYear: academicYear || null
+            },
+            select: USER_SELECT
+        });
+
+        res.status(201).json(user);
+    } catch (err) {
+        console.error('Error creating user:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// PUT update user
+router.put('/users/:id', auth, adminOnly, async (req, res) => {
+    const { username, email, password, role, name, studentBranch, section, year, semester, academicYear } = req.body;
+
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        const updateData = {};
+        if (username) updateData.username = username;
+        if (email) updateData.email = email;
+        if (name !== undefined) updateData.name = name;
+        if (role && ['teacher', 'student', 'admin', 'none'].includes(role)) updateData.role = role;
+        if (password && password.trim() !== '') {
+            const salt = await bcrypt.genSalt(10);
+            updateData.password = await bcrypt.hash(password, salt);
+            updateData.tokenVersion = { increment: 1 };
+        }
+        if (studentBranch !== undefined) updateData.studentBranch = studentBranch;
+        if (section !== undefined) updateData.section = section;
+        if (year !== undefined) updateData.year = year ? String(year) : null;
+        if (semester !== undefined) updateData.semester = semester ? String(semester) : null;
+        if (academicYear !== undefined) updateData.academicYear = academicYear;
+
+        const updatedUser = await prisma.user.update({
+            where: { id: req.params.id },
+            data: updateData,
+            select: USER_SELECT
+        });
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.error('Error updating user:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST reset password strictly to default `${username}@kk`
+router.post('/users/:id/reset-password', auth, adminOnly, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        const defaultPassword = `${user.username}@kk`;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(defaultPassword, salt);
+
+        await prisma.user.update({
+            where: { id: req.params.id },
+            data: { 
+                password: hashedPassword,
+                tokenVersion: { increment: 1 }
+            }
+        });
+
+        res.json({
+            msg: `Password successfully reset to default: ${defaultPassword}`,
+            defaultPassword,
+            username: user.username
+        });
+    } catch (err) {
+        console.error('Error resetting password:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// DELETE user
+router.delete('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        await prisma.user.delete({ where: { id: req.params.id } });
+        res.json({ msg: 'User deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting user:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
     }
 });
 
@@ -198,18 +347,10 @@ router.get('/students', auth, adminOnly, async (req, res) => {
 
         const AND_CONDITIONS = [{ role: 'student' }];
 
-        if (year) {
-            AND_CONDITIONS.push({ year });
-        }
-        if (semester) {
-            AND_CONDITIONS.push({ semester });
-        }
-        if (section) {
-            AND_CONDITIONS.push({ section });
-        }
-        if (branch) {
-            AND_CONDITIONS.push({ studentBranch: branch });
-        }
+        if (year) AND_CONDITIONS.push({ year });
+        if (semester) AND_CONDITIONS.push({ semester });
+        if (section) AND_CONDITIONS.push({ section });
+        if (branch) AND_CONDITIONS.push({ studentBranch: branch });
         if (status === 'suspended') AND_CONDITIONS.push({ isSuspended: true });
         if (status === 'active')    AND_CONDITIONS.push({ isSuspended: false });
 
@@ -376,6 +517,225 @@ router.get('/admins', auth, adminOnly, async (req, res) => {
         res.json({ admins, totalCount: admins.length });
     } catch (err) {
         res.status(500).json({ msg: 'Server error' });
+    }
+});
+
+// POST Step 1 Promotion Preview
+router.post('/promote/preview', auth, adminOnly, async (req, res) => {
+    try {
+        const { sourceYear = '1', targetYear = '2', targetSemester = '1', academicYear = '2025-2026', targetSectionOverride } = req.body;
+
+        const whereClause = { role: 'student' };
+        if (sourceYear !== 'all') {
+            whereClause.year = String(sourceYear);
+        }
+
+        const affectedCount = await prisma.user.count({ where: whereClause });
+        const graduatingCount = sourceYear === '4' ? affectedCount : await prisma.user.count({ where: { role: 'student', year: '4' } });
+
+        const students = await prisma.user.findMany({
+            where: whereClause,
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                studentBranch: true,
+                section: true,
+                year: true,
+                semester: true
+            },
+            take: 15,
+            orderBy: [{ section: 'asc' }, { username: 'asc' }]
+        });
+
+        const allStudents = await prisma.user.findMany({
+            where: whereClause,
+            select: { section: true, studentBranch: true }
+        });
+
+        const sectionBreakdown = {};
+        allStudents.forEach(s => {
+            const key = `${s.studentBranch || 'General'}-${s.section || 'Unassigned'}`;
+            sectionBreakdown[key] = (sectionBreakdown[key] || 0) + 1;
+        });
+
+        res.json({
+            sourceYear,
+            targetYear,
+            targetSemester,
+            academicYear,
+            targetSectionOverride: targetSectionOverride || 'Keep Current',
+            affectedCount,
+            graduatingCount,
+            sectionBreakdown,
+            previewStudents: students
+        });
+    } catch (err) {
+        console.error('Promotion preview error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST Step 2 Promotion Execution (Batch DB Transaction)
+router.post('/promote/confirm', auth, adminOnly, async (req, res) => {
+    try {
+        const { sourceYear, targetYear, targetSemester, academicYear, targetSectionOverride } = req.body;
+
+        let promotedCount = 0;
+        let graduatedCount = 0;
+
+        if (sourceYear === '4') {
+            const delRes = await prisma.user.deleteMany({
+                where: { role: 'student', year: '4' }
+            });
+            graduatedCount = delRes.count;
+        } else if (sourceYear === 'all') {
+            const deleteRes = await prisma.user.deleteMany({
+                where: { role: 'student', year: '4' }
+            });
+            graduatedCount = deleteRes.count;
+
+            const updateData = { semester: targetSemester || '1' };
+            if (academicYear) updateData.academicYear = academicYear;
+            if (targetSectionOverride && targetSectionOverride !== 'keep') {
+                updateData.section = targetSectionOverride;
+            }
+
+            const p3 = await prisma.user.updateMany({
+                where: { role: 'student', year: '3' },
+                data: { ...updateData, year: '4' }
+            });
+
+            const p2 = await prisma.user.updateMany({
+                where: { role: 'student', year: '2' },
+                data: { ...updateData, year: '3' }
+            });
+
+            const p1 = await prisma.user.updateMany({
+                where: { role: 'student', year: '1' },
+                data: { ...updateData, year: '2' }
+            });
+
+            promotedCount = p3.count + p2.count + p1.count;
+        } else {
+            const updateData = {
+                year: String(targetYear),
+                semester: targetSemester ? String(targetSemester) : '1'
+            };
+            if (academicYear) updateData.academicYear = academicYear;
+            if (targetSectionOverride && targetSectionOverride !== 'keep') {
+                updateData.section = targetSectionOverride;
+            }
+
+            const promoRes = await prisma.user.updateMany({
+                where: { role: 'student', year: String(sourceYear) },
+                data: updateData
+            });
+
+            promotedCount = promoRes.count;
+        }
+
+        res.json({
+            msg: `Batch promotion executed successfully! ${promotedCount} students promoted. ${graduatedCount} seniors graduated.`,
+            promotedCount,
+            graduatedCount
+        });
+    } catch (err) {
+        console.error('Promotion confirmation error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// Legacy route fallback for /promote
+router.post('/promote', auth, adminOnly, async (req, res) => {
+    try {
+        const deleteRes = await prisma.user.deleteMany({
+            where: { role: 'student', year: '4' }
+        });
+
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '3' },
+            data: { year: '4' }
+        });
+
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '2' },
+            data: { year: '3' }
+        });
+
+        await prisma.user.updateMany({
+            where: { role: 'student', year: '1' },
+            data: { year: '2' }
+        });
+
+        res.json({
+            msg: 'Batch year promotion completed successfully!',
+            graduatedCount: deleteRes.count
+        });
+    } catch (err) {
+        console.error('Promotion error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST batch import students from CSV data
+router.post('/import', auth, adminOnly, async (req, res) => {
+    const { students } = req.body;
+    if (!students || !Array.isArray(students)) {
+        return res.status(400).json({ msg: 'Invalid payload: students list is required' });
+    }
+
+    try {
+        let successCount = 0;
+        let errors = [];
+
+        for (const s of students) {
+            const { username, email, password, studentBranch, section, year, semester, academicYear } = s;
+            if (!username || !email || !password) {
+                errors.push({ email: email || 'unknown', reason: 'Missing username, email, or password' });
+                continue;
+            }
+
+            try {
+                const existing = await prisma.user.findFirst({
+                    where: { OR: [{ email }, { username }] }
+                });
+                if (existing) {
+                    errors.push({ email, reason: 'Duplicate username or email already in database' });
+                    continue;
+                }
+
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+
+                await prisma.user.create({
+                    data: {
+                        username,
+                        email,
+                        password: hashedPassword,
+                        role: 'student',
+                        studentBranch: studentBranch || null,
+                        section: section || null,
+                        year: year ? String(year) : '1',
+                        semester: semester ? String(semester) : '1',
+                        academicYear: academicYear || null
+                    }
+                });
+                successCount++;
+            } catch (innerErr) {
+                errors.push({ email, reason: innerErr.message });
+            }
+        }
+
+        res.json({
+            msg: `Batch import complete. Imported ${successCount} students.`,
+            successCount,
+            failureCount: errors.length,
+            errors
+        });
+    } catch (err) {
+        console.error('Import error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
     }
 });
 

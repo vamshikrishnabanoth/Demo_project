@@ -578,6 +578,18 @@ exports.createQuiz = async (req, res) => {
         let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType, autoBroadcast } = req.body;
         let finalQuestions = [];
 
+        // --- UNIQUE QUIZ NAME CHECK ---
+        const titleStr = (title || topic || content || 'Untitled').trim();
+        const existingQuiz = await prisma.quiz.findFirst({
+            where: {
+                createdById: req.user.id,
+                title: { equals: titleStr, mode: 'insensitive' }
+            }
+        });
+        if (existingQuiz && (!req.body.id || existingQuiz.id !== req.body.id)) {
+            return res.status(400).json({ msg: `A quiz named '${titleStr}' already exists. Please choose a unique name.` });
+        }
+
         // --- AI MODERATION GUARD ---
         if (req.file) {
             const ext = path.extname(req.file.originalname).toLowerCase();
@@ -832,6 +844,156 @@ exports.getMyQuizzes = async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error: ' + err.message });
+    }
+};
+
+exports.saveTemplate = async (req, res) => {
+    try {
+        let { id, title, description, topic, questions, difficulty, timerPerQuestion, assignedGroups } = req.body;
+        const titleStr = (title || topic || 'Saved Quiz').trim();
+
+        if (!titleStr) {
+            return res.status(400).json({ msg: 'Quiz title is required to save template.' });
+        }
+
+        // Title Uniqueness check per teacher
+        const existing = await prisma.quiz.findFirst({
+            where: {
+                createdById: req.user.id,
+                title: { equals: titleStr, mode: 'insensitive' }
+            }
+        });
+
+        if (existing && (!id || existing.id !== id)) {
+            return res.status(400).json({ msg: `A quiz named '${titleStr}' already exists. Please choose a unique name.` });
+        }
+
+        let finalQuestions = Array.isArray(questions) ? questions : [];
+        if (typeof questions === 'string') {
+            try { finalQuestions = JSON.parse(questions); } catch (_) {}
+        }
+
+        let parsedGroups = null;
+        if (assignedGroups) {
+            parsedGroups = typeof assignedGroups === 'string' ? JSON.parse(assignedGroups) : assignedGroups;
+        }
+
+        let template;
+        if (id) {
+            // Update existing template in place (standard overwrite)
+            template = await prisma.quiz.update({
+                where: { id },
+                data: {
+                    title: titleStr,
+                    description: description || null,
+                    topic: topic || null,
+                    questions: finalQuestions,
+                    difficulty: difficulty || 'Medium',
+                    timerPerQuestion: timerPerQuestion ? parseInt(timerPerQuestion) : 30,
+                    assignedGroups: parsedGroups,
+                    isTemplate: true
+                }
+            });
+        } else {
+            // Create new saved template
+            let joinCode = Math.floor(100000 + Math.random() * 900000).toString();
+            let codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
+            while (codeExists) {
+                joinCode = Math.floor(100000 + Math.random() * 900000).toString();
+                codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
+            }
+
+            template = await prisma.quiz.create({
+                data: {
+                    title: titleStr,
+                    description: description || `Saved Quiz Template`,
+                    topic: topic || '',
+                    questions: finalQuestions,
+                    createdById: req.user.id,
+                    isTemplate: true,
+                    isActive: false,
+                    joinCode,
+                    difficulty: difficulty || 'Medium',
+                    timerPerQuestion: timerPerQuestion ? parseInt(timerPerQuestion) : 30,
+                    assignedGroups: parsedGroups,
+                    status: 'waiting'
+                }
+            });
+        }
+
+        res.json({
+            msg: `Quiz template saved to Saved Quizzes repository successfully!`,
+            quizTemplate: template
+        });
+    } catch (err) {
+        console.error('Error saving template:', err.message);
+        res.status(500).json({ msg: 'Server error saving template: ' + err.message });
+    }
+};
+
+exports.getSavedTemplates = async (req, res) => {
+    try {
+        const templates = await prisma.quiz.findMany({
+            where: {
+                createdById: req.user.id,
+                isTemplate: true
+            },
+            orderBy: { updatedAt: 'desc' }
+        });
+        res.json(templates);
+    } catch (err) {
+        console.error('Error fetching templates:', err.message);
+        res.status(500).json({ msg: 'Server error fetching templates: ' + err.message });
+    }
+};
+
+exports.instantiateTemplate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const template = await prisma.quiz.findUnique({ where: { id } });
+        if (!template || template.createdById !== req.user.id) {
+            return res.status(404).json({ msg: 'Saved template not found' });
+        }
+
+        let joinCode = Math.floor(100000 + Math.random() * 900000).toString();
+        let codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
+        while (codeExists) {
+            joinCode = Math.floor(100000 + Math.random() * 900000).toString();
+            codeExists = await prisma.quiz.findUnique({ where: { joinCode } });
+        }
+
+        const { assignedGroups, timerPerQuestion, title } = req.body;
+        let parsedGroups = assignedGroups || template.assignedGroups;
+
+        // Create active live quiz instance from template
+        const liveQuiz = await prisma.quiz.create({
+            data: {
+                title: title || `${template.title} (Live)`,
+                description: template.description,
+                questions: template.questions,
+                createdById: req.user.id,
+                isTemplate: false,
+                templateId: template.id,
+                isActive: true,
+                isLive: true,
+                status: 'waiting',
+                joinCode,
+                difficulty: template.difficulty,
+                timerPerQuestion: timerPerQuestion ? parseInt(timerPerQuestion) : template.timerPerQuestion,
+                topic: template.topic,
+                assignedGroups: parsedGroups,
+                autoBroadcast: true
+            }
+        });
+
+        res.json({
+            msg: 'Live quiz session launched from template!',
+            liveQuiz,
+            joinCode
+        });
+    } catch (err) {
+        console.error('Error instantiating template:', err.message);
+        res.status(500).json({ msg: 'Server error launching template: ' + err.message });
     }
 };
 

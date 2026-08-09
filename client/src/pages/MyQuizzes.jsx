@@ -35,9 +35,21 @@ export default function MyQuizzes() {
     const { data: quizzesData, loading, refetch } = useApiQuery('/quiz/my-quizzes');
     const quizzes = quizzesData || [];
 
+    const [activeMainTab, setActiveMainTab] = useState('quizzes'); // 'quizzes' or 'saved'
+    const [savedTemplates, setSavedTemplates] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedQuizIds, setSelectedQuizIds] = useState([]);
     const [editingScheduleId, setEditingScheduleId] = useState(null);
+
+    // Section Broadcast Modal state
+    const [broadcastModal, setBroadcastModal] = useState({
+        isOpen: false,
+        template: null,
+        branch: 'CSE',
+        year: '3',
+        semester: '1',
+        section: 'A'
+    });
 
     // Filters state
     const [filterType, setFilterType] = useState('All');
@@ -46,6 +58,58 @@ export default function MyQuizzes() {
     const [filterSection, setFilterSection] = useState('All');
 
     const fetchQuizzes = () => refetch();
+
+    const fetchSavedTemplates = async () => {
+        try {
+            const res = await api.get('/quiz/templates');
+            setSavedTemplates(res.data || []);
+        } catch (err) {
+            console.error('Error fetching templates:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchSavedTemplates();
+    }, []);
+
+    const handleCloneAndBroadcast = async () => {
+        if (!broadcastModal.template) return;
+        const toastId = toast.loading(`Launching live session for ${broadcastModal.branch} Sec ${broadcastModal.section}...`);
+        try {
+            const targetGroup = [{
+                branch: broadcastModal.branch,
+                year: broadcastModal.year,
+                semester: broadcastModal.semester,
+                section: broadcastModal.section
+            }];
+            const res = await api.post(`/quiz/templates/${broadcastModal.template.id}/instantiate`, {
+                title: `${broadcastModal.template.title} (${broadcastModal.branch}-${broadcastModal.section})`,
+                assignedGroups: targetGroup
+            });
+            toast.success(`Live quiz session active! PIN: ${res.data.joinCode}`, { id: toastId });
+            setBroadcastModal({ isOpen: false, template: null, branch: 'CSE', year: '3', semester: '1', section: 'A' });
+            refetch();
+            setActiveMainTab('quizzes');
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Failed to launch live quiz.', { id: toastId });
+        }
+    };
+
+    const handleDeleteTemplate = async (templateId, title) => {
+        const result = await showConfirm(
+            'Delete Saved Template?',
+            `"${title}" will be permanently removed from your Saved Quizzes repository.`,
+            'Yes, Delete'
+        );
+        if (!result.isConfirmed) return;
+        try {
+            await api.delete(`/quiz/${templateId}`);
+            setSavedTemplates(prev => prev.filter(t => t.id !== templateId));
+            toast.success('Saved template deleted');
+        } catch (err) {
+            toast.error('Failed to delete template');
+        }
+    };
 
     const updateQuizMode = async (quizId, mode) => {
         try {
@@ -157,7 +221,7 @@ export default function MyQuizzes() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <h1 className="text-hero-fluid font-black text-[var(--text-primary)] italic tracking-tight">Quiz <span className="text-[var(--text-accent)]">Library</span></h1>
-                        <p className="text-[var(--text-secondary)] font-bold mt-2 text-xs sm:text-sm text-balance">Manage your knowledge assets</p>
+                        <p className="text-[var(--text-secondary)] font-bold mt-2 text-xs sm:text-sm text-balance">Manage your knowledge assets and saved templates</p>
                     </div>
 
                     <div className="relative w-full md:w-80 group">
@@ -170,6 +234,30 @@ export default function MyQuizzes() {
                             className="w-full bg-white border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-6 text-[var(--text-primary)] font-black italic placeholder:text-[var(--text-secondary)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent)]/20 focus:border-[var(--bg-accent)] transition-all tracking-tight"
                         />
                     </div>
+                </div>
+
+                {/* Main Tabs Navigation */}
+                <div className="flex gap-4 border-b border-[var(--border-color)] pb-2">
+                    <button
+                        onClick={() => setActiveMainTab('quizzes')}
+                        className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${
+                            activeMainTab === 'quizzes'
+                                ? 'bg-[var(--bg-accent)] text-white shadow-lg'
+                                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                        }`}
+                    >
+                        Active &amp; Created Sessions ({filteredQuizzes.length})
+                    </button>
+                    <button
+                        onClick={() => setActiveMainTab('saved')}
+                        className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${
+                            activeMainTab === 'saved'
+                                ? 'bg-amber-500 text-white shadow-lg'
+                                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                        }`}
+                    >
+                        💾 Saved Quizzes Repository ({savedTemplates.length})
+                    </button>
                 </div>
 
 
@@ -373,6 +461,54 @@ export default function MyQuizzes() {
                         )}
                     />
                 )}
+
+                {/* Saved Quizzes Repository Tab View */}
+                {activeMainTab === 'saved' && (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-black text-slate-800 uppercase italic">Saved Quiz Templates</h2>
+                            <p className="text-xs text-slate-500 font-bold">Reusable base templates across sections and academic sessions</p>
+                        </div>
+
+                        {savedTemplates.length === 0 ? (
+                            <div className="bg-white rounded-3xl p-12 border border-slate-200 text-center space-y-3 shadow-xs">
+                                <p className="text-slate-400 font-black text-xs uppercase tracking-widest">No saved quiz templates found</p>
+                                <p className="text-slate-600 text-xs font-medium">Create a quiz and click "💾 Save Quiz Template" in the top header to store reusable templates here!</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {savedTemplates.map(tpl => (
+                                    <div key={tpl.id} className="bg-white rounded-3xl border-2 border-amber-200 p-6 space-y-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-[10px] font-black uppercase tracking-wider">Template</span>
+                                                <span className="text-[10px] font-bold text-slate-500">{Array.isArray(tpl.questions) ? tpl.questions.length : 0} Questions</span>
+                                            </div>
+                                            <h3 className="text-lg font-black text-slate-900 leading-snug">{tpl.title}</h3>
+                                            <p className="text-xs text-slate-500 line-clamp-2">{tpl.description || 'Saved Quiz Template for infinite re-broadcasting.'}</p>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
+                                            <button
+                                                onClick={() => setBroadcastModal({ isOpen: true, template: tpl, branch: 'CSE', year: '3', semester: '1', section: 'A' })}
+                                                className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                                            >
+                                                <Megaphone size={14} /> Clone &amp; Broadcast
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteTemplate(tpl.id, tpl.title)}
+                                                className="p-3 text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 cursor-pointer transition-all"
+                                                title="Delete Template"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             <ScheduleEditModal
@@ -381,6 +517,110 @@ export default function MyQuizzes() {
                 quizId={editingScheduleId}
                 onSuccess={fetchQuizzes}
             />
+
+            {/* Section-Specific Broadcast Modal */}
+            {broadcastModal.isOpen && broadcastModal.template && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} />
+                    
+                    <div className="relative bg-white border-2 border-slate-200 rounded-[2.5rem] w-full max-w-lg shadow-2xl p-8 space-y-6 animate-in zoom-in-95">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl">
+                                    <Megaphone size={24} />
+                                </div>
+                                <div>
+                                    <h2 className="font-black text-lg text-slate-900 uppercase italic">
+                                        Section-Specific <span className="text-amber-600">Broadcasting</span>
+                                    </h2>
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                                        Target Live Session
+                                    </p>
+                                </div>
+                            </div>
+                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="p-2 hover:bg-slate-100 rounded-xl cursor-pointer">
+                                <span className="text-slate-400 font-bold text-lg">✕</span>
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">Target Department / Branch</label>
+                                <select
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs"
+                                    value={broadcastModal.branch}
+                                    onChange={e => setBroadcastModal(m => ({ ...m, branch: e.target.value }))}
+                                >
+                                    <option value="CSE">CSE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="CSM">CSM</option>
+                                    <option value="CSD">CSD</option>
+                                </select>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-600 mb-1">Year</label>
+                                    <select
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs"
+                                        value={broadcastModal.year}
+                                        onChange={e => setBroadcastModal(m => ({ ...m, year: e.target.value }))}
+                                    >
+                                        <option value="1">Year 1</option>
+                                        <option value="2">Year 2</option>
+                                        <option value="3">Year 3</option>
+                                        <option value="4">Year 4</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-600 mb-1">Semester</label>
+                                    <select
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs"
+                                        value={broadcastModal.semester}
+                                        onChange={e => setBroadcastModal(m => ({ ...m, semester: e.target.value }))}
+                                    >
+                                        <option value="1">Sem 1</option>
+                                        <option value="2">Sem 2</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-600 mb-1">Target Section</label>
+                                    <select
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs font-black"
+                                        value={broadcastModal.section}
+                                        onChange={e => setBroadcastModal(m => ({ ...m, section: e.target.value }))}
+                                    >
+                                        <option value="A">Section A</option>
+                                        <option value="B">Section B</option>
+                                        <option value="C">Section C</option>
+                                        <option value="D">Section D</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 font-medium">
+                                🎯 <strong>Targeting Info:</strong> Only students enrolled in <strong>{broadcastModal.branch} - Year {broadcastModal.year} - Section {broadcastModal.section}</strong> will receive live push notifications &amp; live room access.
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-2">
+                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="px-5 py-3 border border-slate-200 rounded-xl font-bold text-xs cursor-pointer">
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCloneAndBroadcast}
+                                className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg cursor-pointer"
+                            >
+                                <Megaphone size={16} /> Broadcast to Section {broadcastModal.section}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

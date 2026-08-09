@@ -280,21 +280,68 @@ export default function CreateQuizText() {
         handleSubmit();
     };
 
+    const handleSaveQuizTemplate = async () => {
+        if (!title || !title.trim()) {
+            toast.error('Please enter a quiz title before saving to Saved Quizzes repository.');
+            return;
+        }
+        if (!questions || questions.length === 0 || !questions[0].questionText.trim()) {
+            toast.error('Please add at least one valid question before saving quiz.');
+            return;
+        }
+        setLoading(true);
+        const toastId = toast.loading('Saving quiz to Saved Quizzes repository...');
+        try {
+            const res = await api.post('/quiz/save-template', {
+                title: title.trim(),
+                questions,
+                difficulty: 'Medium',
+                timerPerQuestion: parseInt(timerPerQuestion) || 30,
+                assignedGroups
+            });
+            toast.success(res.data.msg || 'Quiz template saved successfully!', { id: toastId });
+            navigate('/quizzes');
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Failed to save quiz template.', { id: toastId });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <DashboardLayout role="teacher">
             <div className="max-w-[100rem] mx-auto px-6 py-8">
                 
                 {/* Header System */}
-                <div className="relative flex items-center mb-6 min-h-[3rem]">
-                    <div className="absolute left-0 z-10">
+                <div className="relative flex items-center justify-between mb-6 min-h-[3rem]">
+                    <div className="z-10">
                         <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => navigate(-1)}>
                             Back
                         </PremiumButton>
                     </div>
-                    <div className="w-full flex justify-center items-center">
+                    <div className="flex-1 flex justify-center items-center">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)] m-0">
                             <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
+                    </div>
+                    <div className="flex items-center gap-3 z-10">
+                        <button
+                            type="button"
+                            onClick={handleSaveQuizTemplate}
+                            disabled={loading}
+                            className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2 cursor-pointer transition-all border-b-4 border-amber-700"
+                        >
+                            💾 Save Quiz Template
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setDevMode(!devMode)}
+                            className={`px-4 py-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
+                                devMode ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-lg' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
+                            }`}
+                        >
+                            {devMode ? '🛠️ Developer Mode ON' : '🛠️ Enable Dev Mode'}
+                        </button>
                     </div>
                 </div>
 

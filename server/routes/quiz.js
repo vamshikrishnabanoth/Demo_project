@@ -239,6 +239,18 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
     });
 });
 
+// @route   POST api/quiz/save-template
+// @desc    Save quiz template to Saved Quizzes Repository
+router.post('/save-template', auth, quizController.saveTemplate);
+
+// @route   GET api/quiz/templates
+// @desc    Get all saved quiz templates created by current teacher
+router.get('/templates', auth, quizController.getSavedTemplates);
+
+// @route   POST api/quiz/templates/:id/instantiate
+// @desc    Instantiate / clone a saved quiz template to a live broadcast session
+router.post('/templates/:id/instantiate', auth, quizController.instantiateTemplate);
+
 // @route   GET api/quiz/my-quizzes
 // @desc    Get all quizzes created by current user
 router.get('/my-quizzes', auth, quizController.getMyQuizzes);

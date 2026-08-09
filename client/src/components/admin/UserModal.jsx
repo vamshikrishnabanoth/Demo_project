@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, BookOpen, Hash, KeyRound } from 'lucide-react';
+import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, BookOpen, Hash, KeyRound, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -90,10 +90,11 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
         password: '',
         name: '',
         role: defaultRole,
-        studentBranch: '',
-        section: '',
-        year: '',
-        semester: '',
+        studentBranch: 'CSE',
+        section: 'A',
+        year: '1',
+        semester: '1',
+        academicYear: '2025-2026',
         department: '',
         subjects: '',
         employeeId: '',
@@ -109,10 +110,11 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                 password: '',
                 name: user.name || '',
                 role: user.role || defaultRole,
-                studentBranch: user.studentBranch || user.department || '',
-                section: user.section || '',
-                year: user.year || '',
-                semester: user.semester || '',
+                studentBranch: user.studentBranch || user.department || 'CSE',
+                section: user.section || 'A',
+                year: user.year || '1',
+                semester: user.semester || '1',
+                academicYear: user.academicYear || '2025-2026',
                 department: user.department || user.studentBranch || '',
                 subjects: user.subjects || '',
                 employeeId: user.employeeId || '',
@@ -168,15 +170,10 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
 
     const handlePasswordResetSubmit = async (e) => {
         e.preventDefault();
-        if (!newPasswordReset.trim() || newPasswordReset.trim().length < 6) {
-            toast.error('Password must be at least 6 characters');
-            return;
-        }
         setSaving(true);
         try {
-            await api.put(`/admin/users/${user.id}/reset-password`, { newPassword: newPasswordReset });
-            toast.success(`Password reset for ${user.username}!`);
-            setNewPasswordReset('');
+            const res = await api.post(`/admin/users/${user.id}/reset-password`);
+            toast.success(res.data.msg || `Password reset for ${user.username}!`);
             setTab('details');
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Password reset failed');
@@ -244,18 +241,14 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                     {/* Body */}
                     {tab === 'reset-password' && !isNew ? (
                         <form onSubmit={handlePasswordResetSubmit} className="p-6 space-y-4">
-                            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
                                 <h4 className="font-extrabold flex items-center gap-1.5"><KeyRound size={15} /> Reset User Password</h4>
-                                <p className="font-medium">Directly update password for account <span className="font-bold">@{user?.username}</span>.</p>
+                                <p className="font-medium">Reset password for account <span className="font-bold">@{user?.username}</span> strictly to default format: <code className="font-bold bg-amber-100 px-1.5 py-0.5 rounded">{user?.username}@kk</code>.</p>
                             </div>
-                            <FormField label="New Password" icon={Lock}>
-                                <Input value={newPasswordReset} onChange={(e) => setNewPasswordReset(e.target.value)}
-                                    placeholder="Enter minimum 6 character password" type="password" required />
-                            </FormField>
                             <div className="flex justify-end gap-3 pt-2">
                                 <button type="button" onClick={() => setTab('details')} className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs">Cancel</button>
                                 <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl bg-rose-700 text-white font-bold text-xs disabled:opacity-40">
-                                    {saving ? 'Resetting...' : 'Confirm Reset Password'}
+                                    {saving ? 'Resetting...' : 'Confirm Default Password Reset'}
                                 </button>
                             </div>
                         </form>
@@ -313,24 +306,30 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <FormField label="Branch / Dept">
-                                            <Input value={form.studentBranch} onChange={set('studentBranch')} placeholder="e.g. CSE, ECE, IT" />
+                                            <Select value={form.studentBranch} onChange={set('studentBranch')}>
+                                                <option value="CSE">CSE</option>
+                                                <option value="ECE">ECE</option>
+                                                <option value="EEE">EEE</option>
+                                                <option value="IT">IT</option>
+                                                <option value="CSM">CSM</option>
+                                                <option value="CSD">CSD</option>
+                                            </Select>
                                         </FormField>
                                         <FormField label="Section">
                                             <Input value={form.section} onChange={set('section')} placeholder="e.g. A, B, C" />
                                         </FormField>
                                         <FormField label="Year">
                                             <Select value={form.year} onChange={set('year')}>
-                                                <option value="">Select Year</option>
-                                                <option value="1">1st Year</option>
-                                                <option value="2">2nd Year</option>
-                                                <option value="3">3rd Year</option>
-                                                <option value="4">4th Year</option>
+                                                <option value="1">Year 1</option>
+                                                <option value="2">Year 2</option>
+                                                <option value="3">Year 3</option>
+                                                <option value="4">Year 4</option>
                                             </Select>
                                         </FormField>
                                         <FormField label="Semester">
                                             <Select value={form.semester} onChange={set('semester')}>
-                                                <option value="">Select Semester</option>
-                                                {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={String(n)}>Sem {n}</option>)}
+                                                <option value="1">Sem 1</option>
+                                                <option value="2">Sem 2</option>
                                             </Select>
                                         </FormField>
                                     </div>
