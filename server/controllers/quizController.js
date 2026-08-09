@@ -751,7 +751,7 @@ exports.createQuiz = async (req, res) => {
         console.error('❌ Final CreateQuiz Error:', err.message);
         res.status(500).json({ 
             message: 'Failed to create quiz', 
-            error: err.message
+            error: process.env.NODE_ENV === 'development' ? err.message : 'Internal error'
         });
     }
 };
@@ -807,7 +807,7 @@ exports.joinByCode = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -843,7 +843,7 @@ exports.getMyQuizzes = async (req, res) => {
         res.json(enriched);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1030,7 +1030,7 @@ exports.deleteQuiz = async (req, res) => {
         res.json({ msg: 'Quiz removed' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1088,7 +1088,7 @@ exports.getLiveQuizzes = async (req, res) => {
         res.json(quizzesWithAttempts);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1238,7 +1238,7 @@ exports.getQuizById = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1456,7 +1456,7 @@ exports.submitQuiz = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1585,7 +1585,7 @@ exports.getLatestResult = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1694,7 +1694,7 @@ exports.getLeaderboard = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1767,7 +1767,7 @@ exports.publishQuiz = async (req, res) => {
         res.json(updated);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1812,7 +1812,7 @@ exports.getTeacherStats = async (req, res) => {
         res.json(stats);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -1913,7 +1913,7 @@ exports.updateQuiz = async (req, res) => {
         res.json(updated);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -2558,7 +2558,7 @@ exports.getStudentHistory = async (req, res) => {
         res.json(history);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -2675,7 +2675,7 @@ exports.getLiveQuizzes = async (req, res) => {
         res.json(quizzesWithAttempts);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -2854,7 +2854,7 @@ exports.assignQuiz = async (req, res) => {
         });
     } catch (err) {
         console.error('Error assigning quiz:', err);
-        res.status(500).json({ msg: 'Server error assigning quiz: ' + err.message });
+        res.status(500).json({ msg: 'Server error assigning quiz' });
     }
 };
 
@@ -2955,7 +2955,7 @@ exports.getIngestedDocuments = async (req, res) => {
         res.json(docs.map(d => d.source));
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 };
 
@@ -3135,7 +3135,7 @@ Return ONLY a clean JSON object conforming strictly to this format:
         if (err.response && err.response.status === 422) {
             return res.status(422).json(err.response.data.detail || err.response.data);
         }
-        res.status(500).json({ msg: 'Failed to analyze sources: ' + err.message });
+        res.status(500).json({ msg: 'Failed to analyze sources' });
     }
 };
 
@@ -3159,7 +3159,7 @@ exports.transcribe = async (req, res) => {
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
         try { fs.unlinkSync(absolutePath); } catch (_) {}
-        res.status(500).json({ msg: 'Transcription failed: ' + err.message });
+        res.status(500).json({ msg: 'Transcription failed' });
     }
 };
 

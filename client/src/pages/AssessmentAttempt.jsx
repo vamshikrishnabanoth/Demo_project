@@ -629,7 +629,7 @@ export default function AssessmentAttempt() {
                                 Fullscreen Mode Required
                             </h2>
                             <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wider">
-                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode only. If you are on a smaller device (mobile/tablet), please enable fullscreen mode to attempt the quiz.
+                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode on desktop browsers. Mobile and tablet devices operate in maximized view automatically.
                             </p>
                         </div>
 

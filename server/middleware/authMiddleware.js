@@ -3,7 +3,7 @@ const prisma = require('../lib/prisma');
 
 // Short-term in-memory cache for user session metadata to prevent DB pool exhaustion under heavy traffic
 const userCache = new Map();
-const CACHE_TTL_MS = 15000; // 15 seconds cache
+const CACHE_TTL_MS = 5000; // 5 seconds cache (faster suspension propagation)
 
 function getCachedUser(userId) {
     const cached = userCache.get(userId);
@@ -24,7 +24,12 @@ function setCachedUser(userId, data) {
     }
 }
 
-module.exports = async function (req, res, next) {
+// Export cache invalidation for immediate suspension propagation
+function clearUserCache(userId) {
+    userCache.delete(userId);
+}
+
+const authMiddleware = async function (req, res, next) {
     const token = req.cookies?.token || req.header('x-auth-token');
 
     if (!token) {
@@ -33,18 +38,19 @@ module.exports = async function (req, res, next) {
 
     let decoded;
     try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
         } catch (jwtErr) {
-            // Grace period for active token expiration during live operations if token expired within last 15 mins
+            // Grace period for active token expiration during live operations
             if (jwtErr.name === 'TokenExpiredError') {
                 try {
                     decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
                     const expiredAt = jwtErr.expiredAt ? new Date(jwtErr.expiredAt).getTime() : 0;
-                    const graceWindow = 15 * 60 * 1000; // 15 minute grace period for active sessions
+                    const graceWindow = 2 * 60 * 1000; // 2 minute grace period (covers slow page loads only)
                     
                     if (decoded && decoded.user && (Date.now() - expiredAt < graceWindow)) {
                         // Issue sliding refresh token header for client synchronization
-                        const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                        const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '12h' });
                         res.setHeader('X-Refreshed-Token', newToken);
                     } else {
                         return res.status(401).json({ msg: 'Token expired. Please login again.', code: 'TOKEN_EXPIRED' });
@@ -71,7 +77,8 @@ module.exports = async function (req, res, next) {
             if (user) setCachedUser(decoded.user.id, user);
         }
 
-        if (!user || (user.tokenVersion !== undefined && decoded.user.tokenVersion !== undefined && user.tokenVersion !== decoded.user.tokenVersion)) {
+        // SECURITY: Strict tokenVersion check — if token lacks a version, treat as -1 (always fails)
+        if (!user || (user.tokenVersion != null && user.tokenVersion !== (decoded.user.tokenVersion ?? -1))) {
             return res.status(401).json({ msg: 'Session expired or revoked. Please login again.', code: 'SESSION_REVOKED' });
         }
 
@@ -98,3 +105,6 @@ module.exports = async function (req, res, next) {
         res.status(401).json({ msg: 'Authentication check failed', code: 'AUTH_FAILED' });
     }
 };
+
+module.exports = authMiddleware;
+module.exports.clearUserCache = clearUserCache;

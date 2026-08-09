@@ -72,9 +72,8 @@ app.use(cors({
             'http://localhost:5173',
             'http://127.0.0.1:5173',
         ];
-        // Also allow any Vercel preview deployment URLs (*.vercel.app)
-        const isVercelPreview = /^https:\/\/[a-z0-9-]+-[a-z0-9]+-[a-z0-9]+\.vercel\.app$/.test(origin)
-            || origin.endsWith('.vercel.app');
+        // SECURITY: Only allow preview URLs matching the project name pattern
+        const isVercelPreview = /^https:\/\/kmit-khaoot(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
         if (allowed.includes(origin) || isVercelPreview) {
             callback(null, true);
         } else {
@@ -92,7 +91,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://fonts.googleapis.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
             imgSrc: ["'self'", "data:", "blob:", "https:"],
@@ -130,7 +129,7 @@ app.use(helmet({
 
 // 2.5 Additional Permissions-Policy header (camera, microphone, geolocation restrictions)
 app.use((req, res, next) => {
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(), payment=(), usb=()');
     next();
 });
 
@@ -158,9 +157,9 @@ app.use('/api/', speedLimiter);
 // 4. Cookie Parser (for secure cookie-based token transport)
 app.use(cookieParser(process.env.COOKIE_SECRET || process.env.JWT_SECRET));
 
-// 5. Body Parser with limit (supports large generated quiz payloads up to 50MB)
-app.use(express.json({ limit: '50mb' })); 
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// 5. Body Parser with limit (file uploads handled by multer separately)
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // 6. Input Sanitization (PostgreSQL-appropriate — strips null bytes, control chars, prototype pollution)
 app.use(sanitizeInput);
@@ -235,7 +234,8 @@ const io = new Server(server, {
         origin: (origin, callback) => {
             if (!origin) return callback(null, true);
             const allowed = ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'];
-            if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+            const isVercelPreview = /^https:\/\/kmit-khaoot(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
+            if (allowed.includes(origin) || isVercelPreview) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
@@ -269,14 +269,11 @@ const jwt = require('jsonwebtoken');
 io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
     if (!token) {
-        if (socket.handshake.auth?.user) {
-            socket.user = socket.handshake.auth.user;
-            return next();
-        }
+        // SECURITY: No fallback to client-provided user — require valid JWT
         return next(new Error('Authentication failed: Missing token'));
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
@@ -297,10 +294,7 @@ io.use(async (socket, next) => {
         
         next();
     } catch (err) {
-        if (socket.handshake.auth?.user) {
-            socket.user = socket.handshake.auth.user;
-            return next();
-        }
+        // SECURITY: No fallback — reject invalid tokens
         return next(new Error('Authentication failed: Invalid token'));
     }
 });

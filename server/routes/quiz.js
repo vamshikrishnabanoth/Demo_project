@@ -9,6 +9,14 @@ const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
 
+// ── SECURITY: Role-based access control for teacher-only operations ───────────
+const teacherOrAdmin = (req, res, next) => {
+    if (!req.user || !['teacher', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ msg: 'Teacher or admin access required' });
+    }
+    next();
+};
+
 // ── MIME Magic Bytes Verification ─────────────────────────────────────────────
 // Validates actual file content signatures (magic bytes) rather than trusting extensions alone.
 // Prevents extension spoofing (e.g., renaming malware.exe to malware.pdf).
@@ -196,7 +204,7 @@ router.post('/generate-voice', auth, upload.single('file'), verifyUploadedFile, 
 
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
-router.post('/create', auth, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);
+router.post('/create', auth, teacherOrAdmin, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);
 
 // @route   POST api/quiz/join
 // @desc    Join a quiz by code
@@ -208,8 +216,9 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
-router.post('/generate', auth, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
-router.post('/generate/callback/:taskId', quizController.taskCompleteCallback);
+router.post('/generate', auth, teacherOrAdmin, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
+// SECURITY: Require auth on callback to prevent injection of fake task results
+router.post('/generate/callback/:taskId', auth, quizController.taskCompleteCallback);
 
 // @route   GET api/quiz/generate/status/:taskId
 // @desc    Poll status of an async generation task
@@ -304,18 +313,18 @@ router.get('/:id', auth, quizController.getQuizById);
 
 // @route   PUT api/quiz/publish/:id
 // @desc    Publish/Unpublish a quiz
-router.put('/publish/:id', auth, quizController.publishQuiz);
+router.put('/publish/:id', auth, teacherOrAdmin, quizController.publishQuiz);
 
 // @route   DELETE api/quiz/:id
 // @desc    Delete a quiz
-router.delete('/:id', auth, quizController.deleteQuiz);
+router.delete('/:id', auth, teacherOrAdmin, quizController.deleteQuiz);
 
 // @route   PUT api/quiz/:id
 // @desc    Update a quiz
-router.put('/:id', auth, quizController.updateQuiz);
+router.put('/:id', auth, teacherOrAdmin, quizController.updateQuiz);
 
 // @route   POST api/quiz/assign/:id
 // @desc    Assign a quiz to student groups and manually targeted student list
-router.post('/assign/:id', auth, quizController.assignQuiz);
+router.post('/assign/:id', auth, teacherOrAdmin, quizController.assignQuiz);
 
 module.exports = router;

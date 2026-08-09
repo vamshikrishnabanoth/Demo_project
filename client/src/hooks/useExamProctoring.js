@@ -99,6 +99,42 @@ export default function useExamProctoring({
         });
     }, [quizId, userId, triggerAutoSubmit]);
 
+    // ── Device Capabilities & Auto-Detect ───────────────────────────────────
+    const checkIsIOSOrMobile = useCallback(() => {
+        if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+        const ua = navigator.userAgent || '';
+        const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isMobileScreen = window.innerWidth < 768;
+        return isIOS || isMobileScreen;
+    }, []);
+
+    // Initial state check — verify actual fullscreen on mount
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+        const docEl = document.documentElement;
+        const isSupported = !!(
+            docEl.requestFullscreen ||
+            docEl.webkitRequestFullscreen ||
+            docEl.mozRequestFullScreen ||
+            docEl.msRequestFullscreen
+        );
+        const isMobile = checkIsIOSOrMobile();
+
+        if (!isSupported || isMobile) {
+            setBypassFullscreen(true);
+            setIsFullscreen(true);
+            hasEnteredFullscreenRef.current = true;
+        } else {
+            const hasFS = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+            );
+            setIsFullscreen(hasFS);
+        }
+    }, [checkIsIOSOrMobile]);
+
     // ─── 1. Fullscreen Mode & Screen Integrity Detection ───
     const requestFullscreenMode = useCallback(async () => {
         try {
@@ -108,7 +144,9 @@ export default function useExamProctoring({
                               docEl.mozRequestFullScreen || 
                               docEl.msRequestFullscreen;
 
-            if (requestFS) {
+            const isMobile = checkIsIOSOrMobile();
+
+            if (requestFS && !isMobile) {
                 const fsElement = document.fullscreenElement || 
                                   document.webkitFullscreenElement || 
                                   document.mozFullScreenElement || 
@@ -119,11 +157,11 @@ export default function useExamProctoring({
                     hasEnteredFullscreenRef.current = true;
                 }
             } else {
-                // Device/Browser does not support DOM element requestFullscreen (e.g., iOS Safari/Chrome on iPhone)
+                // Device/Browser does not support DOM element requestFullscreen (e.g., iOS Safari) or is mobile
                 setBypassFullscreen(true);
                 setIsFullscreen(true);
                 hasEnteredFullscreenRef.current = true;
-                toast.success("Proceeding in browser-maximized mode.", { duration: 4000 });
+                toast.success("Operating in maximized browser mode.", { id: 'max-browser-mode', duration: 4000 });
             }
         } catch (e) {
             console.warn('Fullscreen request failed:', e);
@@ -132,7 +170,7 @@ export default function useExamProctoring({
             setIsFullscreen(true);
             hasEnteredFullscreenRef.current = true;
         }
-    }, []);
+    }, [checkIsIOSOrMobile]);
 
     useEffect(() => {
         if (!enabled || isTerminated) return;
@@ -160,7 +198,8 @@ export default function useExamProctoring({
                 docEl.msRequestFullscreen
             );
 
-            const inFS = isFullscreenSupported ? hasFS : bypassFullscreen;
+            const isMobile = checkIsIOSOrMobile();
+            const inFS = (isFullscreenSupported && !isMobile) ? hasFS : true;
             setIsFullscreen(inFS);
 
             // Track when student first enters fullscreen
@@ -185,12 +224,12 @@ export default function useExamProctoring({
             // ── SPLIT-SCREEN / RESIZE VIOLATION ───────────────────────────
             // Detect split-screen / dimension anomalies
             // Only flag if student HAS been in fullscreen before (not on initial load)
-            // Only run split-screen checks if fullscreen is supported. If unsupported, we bypass it.
+            // Skip split-screen checks on mobile screens (where virtual keyboard triggers false heightDiff)
             const widthDiff = window.screen.availWidth - window.innerWidth;
             const heightDiff = window.screen.availHeight - window.innerHeight;
             
-            // Split detected only when student left fullscreen AND window is significantly reduced
-            const splitDetected = isFullscreenSupported && !inFS && hasEnteredFullscreenRef.current && (widthDiff > 25 || heightDiff > 45);
+            // Split detected only on desktop browsers when student left fullscreen AND window is significantly reduced
+            const splitDetected = !isMobile && isFullscreenSupported && !inFS && hasEnteredFullscreenRef.current && (widthDiff > 35 || heightDiff > 60);
 
             setIsSplitScreen(splitDetected);
 

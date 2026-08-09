@@ -29,24 +29,8 @@ const loginValidation = [
     check('password', 'Password is required').exists()
 ];
 
-// Debug DB route
-router.get('/debug-db', async (req, res) => {
-    try {
-        const result = await prisma.$queryRaw`SELECT 1 as result`;
-        const userCount = await prisma.user.count();
-        res.json({ success: true, message: 'Database connection successful!', result, userCount });
-    } catch (err) {
-        console.error('Debug DB Error:', err);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Database connection failed!', 
-            error: err.message, 
-            code: err.code,
-            meta: err.meta,
-            stack: err.stack 
-        });
-    }
-});
+// SECURITY: Debug DB route removed — was publicly accessible and leaked internal details
+
 
 // @route   POST api/auth/register
 // @desc    Register user (Admin Only)
@@ -287,7 +271,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         );
     } catch (err) {
         console.error("Login Error:", err);
-        res.status(500).json({ msg: 'Server error: ' + err.message });
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -313,7 +297,7 @@ router.get('/me', auth, async (req, res) => {
         res.json(user);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -321,7 +305,8 @@ router.get('/me', auth, async (req, res) => {
 router.post('/set-role', auth, async (req, res) => {
     const { role } = req.body;
 
-    if (!['teacher', 'student', 'admin'].includes(role)) {
+    // SECURITY: Only 'teacher' and 'student' are self-assignable — admin accounts must be created by existing admins
+    if (!['teacher', 'student'].includes(role)) {
         return res.status(400).json({ msg: 'Invalid role' });
     }
 
@@ -360,7 +345,7 @@ router.post('/set-role', auth, async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ msg: 'Server Error: ' + err.message });
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -447,13 +432,14 @@ router.post('/forgot-password', authLimiter, [
         const payload = { resetUserId: user.id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10m' });
 
+        // SECURITY: Do NOT return the reset token in the API response.
+        // For intranet deployments, use the admin-reset-password endpoint instead.
         res.json({
-            msg: 'Password reset link generated successfully.',
-            resetToken: token // Exposed so client can proceed with reset flow cleanly
+            msg: 'If that account exists, a password reset has been initiated. Contact your administrator.'
         });
     } catch (err) {
         console.error('Forgot password error:', err);
-        res.status(500).json({ msg: 'Server error: ' + err.message });
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 
@@ -497,6 +483,62 @@ router.post('/reset-password', authLimiter, [
     } catch (err) {
         console.error('Reset password error:', err);
         res.status(400).json({ msg: 'Invalid or expired password reset token.' });
+    }
+});
+
+// @route   POST api/auth/admin-reset-password
+// @desc    Admin-only: Reset any user's password directly (for intranet deployments without email)
+// @access  Private/Admin
+router.post('/admin-reset-password', auth, [
+    check('userId', 'User ID is required').not().isEmpty(),
+    check('newPassword', 'Password must be 8+ chars, including 1 uppercase and 1 special char')
+        .isLength({ min: 8 })
+        .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])/)
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        // Verify admin role
+        const adminUser = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: { id: true, role: true, username: true }
+        });
+        if (!adminUser || adminUser.role !== 'admin') {
+            return res.status(403).json({ msg: 'Only administrators can reset passwords.' });
+        }
+
+        const { userId, newPassword } = req.body;
+        const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+        if (!targetUser) {
+            return res.status(404).json({ msg: 'User not found.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                password: hashedPassword,
+                tokenVersion: { increment: 1 }
+            }
+        });
+
+        logSecurityEvent({
+            type: 'ADMIN_PASSWORD_RESET',
+            message: `Admin ${adminUser.username} reset password for user ${targetUser.username}`,
+            userId: req.user.id,
+            targetUserId: userId,
+            ip: req.ip || 'unknown',
+        });
+
+        res.json({ msg: `Password reset successfully for ${targetUser.username}.` });
+    } catch (err) {
+        console.error('Admin reset password error:', err);
+        res.status(500).json({ msg: 'Server error' });
     }
 });
 

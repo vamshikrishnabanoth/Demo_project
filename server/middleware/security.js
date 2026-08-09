@@ -44,7 +44,8 @@ function logSecurityEvent(event) {
  * Enables distributed tracing and correlating security events.
  */
 function requestIdMiddleware(req, res, next) {
-    const requestId = req.headers['x-request-id'] || crypto.randomUUID();
+    // SECURITY: Always generate server-side — never trust client-provided request IDs
+    const requestId = crypto.randomUUID();
     req.requestId = requestId;
     res.setHeader('X-Request-ID', requestId);
     next();
