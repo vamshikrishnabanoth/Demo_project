@@ -310,16 +310,15 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const { lectureDepthScore, depthBand } = computeLectureDepth(cleanedContent);
   const conceptPlan = conceptGraph.allocateConcepts(parseInt(requestedCount, 10));
 
-  let difficultyDist = "Balanced (30% Easy | 40% Medium | 30% Hard)";
-  let difficultyPlanNotice = difficulty;
+  let difficultyDist = "";
   if (difficulty === "Balanced") {
-    if (depthBand === "Low") difficultyDist = "Balanced (70% Easy | 30% Medium)";
-    else if (depthBand === "Moderate") difficultyDist = "Balanced (40% Easy | 40% Medium | 20% Hard)";
-    else if (depthBand === "High") difficultyDist = "Balanced (30% Easy | 40% Medium | 30% Hard)";
-    else difficultyDist = "Balanced (20% Easy | 40% Medium | 40% Hard)";
-    difficultyPlanNotice = difficultyDist;
+    if (depthBand === "Low") difficultyDist = "70% Easy, 30% Medium, 0% Hard";
+    else if (depthBand === "Moderate") difficultyDist = "50% Easy, 40% Medium, 10% Hard";
+    else if (depthBand === "High") difficultyDist = "30% Easy, 40% Medium, 30% Hard";
+    else if (depthBand === "Very High") difficultyDist = "20% Easy, 40% Medium, 40% Hard";
+    else difficultyDist = "50% Easy, 40% Medium, 10% Hard";
   } else {
-    difficultyDist = `${difficulty} Focus Mode`;
+    difficultyDist = `100% ${difficulty}`;
   }
 
   console.log("\n[STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]");
@@ -347,7 +346,7 @@ Generate exactly ${requestedCount} Multiple Choice Questions (MCQs) grounded str
 CONCEPT ALLOCATION PLAN:
 ${JSON.stringify(conceptPlan, null, 2)}
 
-TARGET DIFFICULTY STRATEGY: ${difficultyPlanNotice}
+TARGET DIFFICULTY STRATEGY: ${difficultyDist}
 LECTURE DEPTH BAND: ${depthBand} (Score: ${lectureDepthScore}/100)
 
 GROUNDING & EVIDENCE RULES:
@@ -506,7 +505,12 @@ Return JSON: { "fixedQuestions": [...] }
       allocatedConcepts: conceptPlan,
       targetDifficulty: difficulty,
       depthScore: lectureDepthScore,
-      depthBand
+      depthBand,
+      assignedDepth: {
+        score: lectureDepthScore,
+        band: depthBand
+      },
+      difficultyDistribution: difficultyDist
     },
     questions: finalQuestions
   };
