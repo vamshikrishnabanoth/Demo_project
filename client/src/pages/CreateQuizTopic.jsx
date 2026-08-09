@@ -428,11 +428,11 @@ export default function CreateQuizTopic() {
                     </div>
                 )}
 
-                {/* 2-COLUMN GRID WORKSPACE */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 lg:p-6 w-full">
+                {/* 2-COLUMN ASYMMETRIC GRID WORKSPACE (60% / 40%) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 lg:p-6 w-full">
                     
-                    {/* LEFT COLUMN: Input 1 - Source Content */}
-                    <div className="bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col space-y-5 shadow-lg">
+                    {/* LEFT COLUMN: Input 1 - Source Content (60% Desktop Width -> lg:col-span-7) */}
+                    <div className="lg:col-span-7 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col space-y-5 shadow-lg">
                         <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
                             <div className="flex items-center gap-2.5">
                                 <span className="px-2.5 py-1 bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)] rounded-lg text-[9px] font-black uppercase tracking-wider">Input 1</span>
@@ -443,11 +443,11 @@ export default function CreateQuizTopic() {
                             </span>
                         </div>
 
-                        {/* 1. VOICE AUDIO RECORDING WIDGET (Top of Left Column) */}
-                        <div className={`bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 text-center flex flex-col items-center justify-center space-y-3 transition-all ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
-                            <div className="flex items-center justify-between w-full border-b pb-2 border-slate-100">
-                                <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider flex items-center gap-1.5">
-                                    <Mic size={14} /> Voice Audio Recording
+                        {/* 1. VOICE AUDIO RECORDING WIDGET (Prominently Highlighted with Accent Border & Tint) */}
+                        <div className={`bg-amber-500/5 border-2 border-amber-500/40 rounded-2xl p-6 text-center flex flex-col items-center justify-center space-y-4 shadow-sm transition-all ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
+                            <div className="flex items-center justify-between w-full border-b pb-2.5 border-amber-500/20">
+                                <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-1.5">
+                                    <Mic size={15} className="text-amber-600" /> Voice Audio Recording
                                 </span>
                                 {recording && (
                                     <span className="text-[10px] font-mono font-bold text-emerald-600 animate-pulse">
@@ -457,27 +457,29 @@ export default function CreateQuizTopic() {
                             </div>
 
                             {transcribing ? (
-                                <div className="py-3 flex flex-col items-center gap-2">
-                                    <Loader2 size={24} className="animate-spin text-purple-600" />
-                                    <p className="text-xs font-black text-slate-700 uppercase">Transcribing Speech...</p>
+                                <div className="py-4 flex flex-col items-center gap-2">
+                                    <Loader2 size={26} className="animate-spin text-purple-600" />
+                                    <p className="text-xs font-black text-slate-800 uppercase tracking-wider">Transcribing Speech...</p>
                                 </div>
                             ) : (
-                                <div className="flex items-center gap-4 py-1">
+                                <div className="flex items-center gap-5 py-2">
                                     <button
                                         type="button"
                                         disabled={isGenerating}
                                         onClick={recording ? stopRecording : startRecording}
-                                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                                            recording ? 'bg-red-500 text-white animate-pulse' : 'bg-purple-600 text-white hover:scale-105'
+                                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
+                                            recording 
+                                                ? 'bg-red-500 text-white animate-pulse shadow-red-500/30' 
+                                                : 'bg-gradient-to-r from-amber-500 to-purple-600 text-white hover:scale-105 shadow-purple-500/30'
                                         }`}
                                     >
-                                        <Mic size={24} />
+                                        <Mic size={28} />
                                     </button>
                                     <div className="text-left">
-                                        <p className="text-xs font-black text-slate-800 uppercase">
+                                        <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
                                             {recording ? 'Recording Active...' : 'Tap to Record Lecture'}
                                         </p>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase">
+                                        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mt-0.5">
                                             {recording ? 'Click to stop & transcribe' : 'Speech will be added to source docket'}
                                         </p>
                                     </div>
@@ -534,11 +536,11 @@ export default function CreateQuizTopic() {
                             accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
                         />
 
-                        {/* 3. SOURCE MATERIAL DOCKET LIST */}
+                        {/* 3. SOURCE MATERIAL DOCKET LIST (Compact Empty State py-5) */}
                         <div className={isGenerating ? 'pointer-events-none opacity-60' : ''}>
                             {inputs.length === 0 ? (
-                                <div className="py-10 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-white space-y-2 shadow-xs">
-                                    <Database size={32} className="text-[var(--text-accent)] opacity-80" />
+                                <div className="py-5 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-white space-y-1.5 shadow-xs">
+                                    <Database size={26} className="text-[var(--text-accent)] opacity-80" />
                                     <p className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">No source material added</p>
                                     <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Upload curriculum guides, enter text, or record audio lecture</p>
                                 </div>
@@ -619,8 +621,8 @@ export default function CreateQuizTopic() {
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration */}
-                    <div className={`bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
+                    {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration (40% Desktop Width -> lg:col-span-5) */}
+                    <div className={`lg:col-span-5 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                         <div className="space-y-6">
                             
                             {/* 1. DIFFICULTY FOCUS SELECTOR */}
@@ -630,22 +632,24 @@ export default function CreateQuizTopic() {
                                     <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Difficulty Focus</h3>
                                 </div>
 
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => (
-                                        <button
-                                            key={level}
-                                            type="button"
-                                            disabled={isGenerating}
-                                            onClick={() => setDifficulty(level)}
-                                            className={`py-3.5 px-4 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                                                difficulty === level
-                                                    ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20 scale-[1.02]'
-                                                    : 'bg-white text-[var(--text-primary)] border-[var(--border-color)] hover:border-[var(--bg-accent)]/50'
-                                            }`}
-                                        >
-                                            {level === 'Balanced' ? '⚖️ Balanced' : level}
-                                        </button>
-                                    ))}
+                                <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 shadow-sm space-y-3">
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => (
+                                            <button
+                                                key={level}
+                                                type="button"
+                                                disabled={isGenerating}
+                                                onClick={() => setDifficulty(level)}
+                                                className={`py-3 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-200 border-2 cursor-pointer active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${
+                                                    difficulty === level
+                                                        ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20'
+                                                        : 'bg-white text-[var(--text-primary)] border-slate-200 hover:border-[var(--bg-accent)]/60 hover:bg-slate-50'
+                                                }`}
+                                            >
+                                                {level === 'Balanced' ? '⚖️ Balanced' : level}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
@@ -656,14 +660,14 @@ export default function CreateQuizTopic() {
                                     <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Question Count</h3>
                                 </div>
 
-                                <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 flex items-center gap-6 shadow-sm">
-                                    <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/20 flex items-center justify-center text-[var(--text-accent)] font-black text-xl italic shrink-0">
-                                        <Hash size={24} />
+                                <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 flex items-center gap-5 shadow-sm">
+                                    <div className="w-12 h-12 rounded-xl bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/20 flex items-center justify-center text-[var(--text-accent)] font-black text-lg italic shrink-0">
+                                        <Hash size={22} />
                                     </div>
                                     <div className="flex-1 space-y-2">
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-black text-slate-700 uppercase tracking-wider">Target Count:</span>
-                                            <span className="text-xl font-black text-[var(--text-accent)] italic">{questionCount} MCQs</span>
+                                            <span className="text-lg font-black text-[var(--text-accent)] italic">{questionCount} MCQs</span>
                                         </div>
                                         <input
                                             type="range"
