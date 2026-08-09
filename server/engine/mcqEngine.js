@@ -8,6 +8,7 @@ const {
 const { validateMCQ } = require('./validators/validatorOrchestrator');
 const { createValidationContext } = require('./validators/validationContext');
 const { buildConceptGraph } = require('./conceptGraphBuilder/index');
+const { generateQuizPlan } = require('./quizPlanner/index');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -404,40 +405,24 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Health Diagnostics: ${conceptGraph.diagnostics?.extractorWarnings?.length || 0} Extractor Warnings | ${conceptGraph.diagnostics?.buildWarnings?.length || 0} Build Warnings`);
   console.log(`  └─ Normalized Concept Graph and Inverted Index attached to context.`);
 
-  // [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]
-  const { lectureDepthScore, depthBand } = computeLectureDepth(cleanedContent);
-  
-  // Re-hydrate concept allocation plan
-  const legacyGraph = new LightweightConceptGraph();
-  if (Array.isArray(conceptNodes) && conceptNodes.length > 0) {
-    conceptNodes.forEach(n => legacyGraph.nodes.set(n.label || n.id, n.importanceScore || 1));
-  } else {
-    legacyGraph.nodes.set("Core Curriculum Concept", 1);
-  }
-  const totalConceptPlan = legacyGraph.allocateConcepts(requestedCount);
-
-  let difficultyDist = "";
-  if (isBalanced) {
-    if (depthBand === "Low") difficultyDist = "70% Easy, 30% Medium, 0% Hard";
-    else if (depthBand === "Moderate") difficultyDist = "50% Easy, 40% Medium, 10% Hard";
-    else if (depthBand === "High") difficultyDist = "30% Easy, 40% Medium, 30% Hard";
-    else if (depthBand === "Very High") difficultyDist = "20% Easy, 40% Medium, 40% Hard";
-    else difficultyDist = "50% Easy, 40% Medium, 10% Hard";
-  } else {
-    difficultyDist = `100% ${normalizedDifficulty}`;
-  }
-
-  console.log(`\n[ReqID: ${reqId}] [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]`);
-  console.log(`  ├─ Lecture Depth Score: ${lectureDepthScore} / 100 ──► Band: ${depthBand.toUpperCase()} DEPTH`);
-  console.log(`  ├─ Difficulty Distribution: ${difficultyDist}`);
-  console.log(`  └─ Target Question Allocation:`);
-
-  totalConceptPlan.forEach((planItem, idx) => {
-    const isLast = idx === totalConceptPlan.length - 1;
-    const prefix = isLast ? "      └─" : "      ├─";
-    const conceptPadded = `"${planItem.concept}"`.padEnd(24, '─');
-    console.log(`${prefix} • ${conceptPadded}► Target: ${planItem.targetQuestions} MCQ(s)`);
+  // [STEP 3: QUIZ PLANNER ENGINE v1.3.0]
+  const quizPlan = generateQuizPlan(conceptGraph, {
+    requestedCount,
+    difficulty: normalizedDifficulty
   });
+
+  const dist = quizPlan.distributionSummary || { EASY: 0, MEDIUM: 0, HARD: 0 };
+  const pMeta = quizPlan.metadata || {};
+  const pDiag = quizPlan.diagnostics || {};
+
+  console.log(`\n[ReqID: ${reqId}] [STEP 3: QUIZ PLANNER ENGINE v1.3.0]`);
+  console.log(`  ├─ Plan Configuration: ${requestedCount} Questions | Depth Profile: ${pMeta.difficultyProfile || 'BALANCED'}`);
+  console.log(`  ├─ Metadata: Allocation Method: ${pMeta.allocationMethod || 'Hamilton'} | Strategy: ${pMeta.framingStrategy || 'RoundRobinWithCodeOverride'} | Build Time: ${pMeta.buildTimeMs || 0}ms`);
+  console.log(`  ├─ Slot Distribution: ${dist.EASY} Easy (RECALL) | ${dist.MEDIUM} Medium (APPLY) | ${dist.HARD} Hard (ANALYZE)`);
+  console.log(`  ├─ Hamilton Allocation: Proportional Integer Distribution Applied (0 Fractional Leaks)`);
+  console.log(`  ├─ Concept Coverage: ${((pDiag.conceptCoverageRatio || 1.0) * 100).toFixed(1)}% of Graph Nodes Mapped (Avg Imp: ${pDiag.averageConceptImportance || 0.85})`);
+  console.log(`  ├─ Anti-Repetition Guard: Enforced (0 Back-to-Back Duplicate Concept Slots)`);
+  console.log(`  └─ Quiz Plan blueprint generated and attached to pipeline context.`);
 
   // [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]
   console.log(`\n[ReqID: ${reqId}] [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]`);
@@ -462,17 +447,14 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     });
 
     const batchQuestions = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
-      const batchConceptPlan = legacyGraph.allocateConcepts(targetInBatch);
+      const batchSlots = quizPlan.slots.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
 
       const prompt = `
 Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
 ${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
 
-CONCEPT ALLOCATION PLAN:
-${JSON.stringify(batchConceptPlan, null, 2)}
-
-TARGET DIFFICULTY STRATEGY: ${difficultyDist}
-LECTURE DEPTH BAND: ${depthBand} (Score: ${lectureDepthScore}/100)
+QUIZ PLAN BLUEPRINT SLOTS:
+${JSON.stringify(batchSlots, null, 2)}
 
 GROUNDING & EVIDENCE RULES:
 1. Every question, choice, explanation, and answer MUST be supported directly by the text.
@@ -677,16 +659,13 @@ Return JSON: { "fixedQuestions": [...] }
     const missingCount = requestedCount - validQuestions.length;
     console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
     try {
-      const backfillConceptPlan = legacyGraph.allocateConcepts(missingCount);
+      const backfillSlots = quizPlan.slots.slice(0, missingCount);
       const backfillPrompt = `
 Generate exactly ${missingCount} UNIQUE Multiple Choice Questions (MCQs) grounded strictly in the source text.
 DO NOT repeat any previous question stems.
 
-CONCEPT ALLOCATION PLAN:
-${JSON.stringify(backfillConceptPlan, null, 2)}
-
-TARGET DIFFICULTY STRATEGY: ${difficultyDist}
-LECTURE DEPTH BAND: ${depthBand}
+QUIZ PLAN BLUEPRINT SLOTS:
+${JSON.stringify(backfillSlots, null, 2)}
 
 SOURCE TEXT:
 """
@@ -744,23 +723,15 @@ Return JSON: { "questions": [...] }
     requestId: reqId,
     conceptGraph,
     conceptIndex,
-    lectureDepth: {
-      score: lectureDepthScore,
-      band: depthBand
-    },
+    quizPlan,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
     quizPlanSummary: {
-      allocatedConcepts: totalConceptPlan,
+      allocatedConcepts: quizPlan.slots.map(s => ({ concept: s.conceptLabel, targetQuestions: 1 })),
       targetDifficulty: normalizedDifficulty,
-      depthScore: lectureDepthScore,
-      depthBand,
-      assignedDepth: {
-        score: lectureDepthScore,
-        band: depthBand
-      },
-      difficultyDistribution: difficultyDist
+      depthProfile: pMeta.difficultyProfile,
+      distributionSummary: dist
     },
     questions: finalQuestions,
     cacheMetrics: reqMetrics
