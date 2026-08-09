@@ -17,6 +17,8 @@ const { generateQuestions } = require('./questionGenerator/index');
 const { GENERATOR_CONFIG } = require('../config/generatorConfig');
 const { processRepairQueue } = require('./repairRouter/index');
 const { REPAIR_CONFIG } = require('../config/repairConfig');
+const { assembleQuizPortfolio } = require('./portfolioAssembly/index');
+const { PORTFOLIO_CONFIG } = require('../config/portfolioConfig');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -546,14 +548,24 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     console.log(`\n[ReqID: ${reqId}] [STEP 7: TARGETED REPAIR ROUTER v${REPAIR_CONFIG.VERSION}] ──► No items in repair queue; skipping.`);
   }
 
-  const validQuestions = (pipelineContext.approvedItems || []).map(q => ({
+  // [STEP 9: PORTFOLIO ASSEMBLY ENGINE v1.8.1]
+  console.log(`\n[ReqID: ${reqId}] [STEP 8: PORTFOLIO ASSEMBLY ENGINE v${PORTFOLIO_CONFIG.VERSION}]`);
+  const { finalQuiz, portfolioSummary } = await assembleQuizPortfolio(pipelineContext.approvedItems, pipelineContext);
+
+  console.log(`  ├─ Candidate Pre-Filter: ${portfolioSummary.totalValidCandidates}/${portfolioSummary.totalApprovedAvailable} Candidates Valid (${portfolioSummary.invalidCandidatesExcluded} Malformed Excluded)`);
+  console.log(`  ├─ Stratified Selection: ${finalQuiz.totalQuestions} Questions selected matching QuizPlan (${portfolioSummary.metrics.totalAssemblyTimeMs}ms total | Sel: ${portfolioSummary.metrics.selectionMs}ms)`);
+  console.log(`  ├─ Quality & Coverage: Avg Quality ${portfolioSummary.averageQualityScore} | Concepts Covered: ${portfolioSummary.diversityAudit.uniqueConceptsCovered} | Strict Diversity Swaps: ${portfolioSummary.diversityAudit.repairsApplied}`);
+  console.log(`  ├─ Exact Answer Key Distribution: A:${portfolioSummary.answerDistribution.A} | B:${portfolioSummary.answerDistribution.B} | C:${portfolioSummary.answerDistribution.C} | D:${portfolioSummary.answerDistribution.D} (Balanced Quotas: ${portfolioSummary.exactQuotasMet ? 'YES' : 'NO'})`);
+  console.log(`  ├─ Bloom-First Ramp: ${finalQuiz.questions.map(q => `${q.targetBloom || 'RECALL'} (${q.targetDifficulty || 'MEDIUM'})`).join(' ──► ')}`);
+  console.log(`  └─ Global Review: ${portfolioSummary.globalReview.passed ? 'PASSED ✅' : 'WARNINGS ⚠️'} | Final Quiz JSON bound to pipelineContext.finalQuiz. Pipeline complete.`);
+
+  const finalQuestions = finalQuiz.questions.map(q => ({
     ...q,
-    question: q.question || q.questionText || q.stem,
-    questionText: q.question || q.questionText || q.stem
+    question: q.stem,
+    questionText: q.stem
   }));
 
   const executionTimeMs = Date.now() - startTime;
-  const finalQuestions = validQuestions.slice(0, requestedCount);
   const isPartial = finalQuestions.length < requestedCount;
   const finalStatusStr = isPartial ? "PARTIAL_SUCCESS" : "SUCCESS";
 
@@ -580,6 +592,8 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     candidateItems,
     validationResult,
     repairResult,
+    finalQuiz,
+    portfolioSummary,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
