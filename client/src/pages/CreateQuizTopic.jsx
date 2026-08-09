@@ -4,7 +4,8 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
     Hash, Sparkles, Loader2, Database, 
-    FileText, FileCode, Plus, Trash2, Mic, X, Award
+    FileText, FileCode, Plus, Trash2, Mic, X, Award,
+    PlayCircle, PauseCircle, StopCircle
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
@@ -309,6 +310,34 @@ export default function CreateQuizTopic() {
         }
     };
 
+    const pauseRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.pause();
+            setRecordingPaused(true);
+        }
+    };
+
+    const resumeRecording = () => {
+        if (mediaRecorder && mediaRecorder.state === 'paused') {
+            mediaRecorder.resume();
+            setRecordingPaused(false);
+        }
+    };
+
+    const cancelRecording = () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.onstop = null; // Prevent onstop transcription trigger
+            mediaRecorder.stop();
+            if (mediaRecorder.stream) {
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+        }
+        setRecording(false);
+        setRecordingPaused(false);
+        setRecordingDuration(0);
+        toast('Recording cancelled', { icon: '🗑️' });
+    };
+
     // Direct Generation Submission
     const handleGenerateQuiz = async () => {
         if (inputs.length === 0 || isGenerating) {
@@ -443,7 +472,7 @@ export default function CreateQuizTopic() {
                             </span>
                         </div>
 
-                        {/* 1. VOICE AUDIO RECORDING WIDGET (Prominently Highlighted with Accent Border & Tint) */}
+                        {/* 1. VOICE AUDIO RECORDING WIDGET (With Tactile Pause, Resume, Stop & Cancel Controls) */}
                         <div className={`bg-amber-500/5 border-2 border-amber-500/40 rounded-2xl p-6 text-center flex flex-col items-center justify-center space-y-4 shadow-sm transition-all ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                             <div className="flex items-center justify-between w-full border-b pb-2.5 border-amber-500/20">
                                 <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-1.5">
@@ -461,26 +490,71 @@ export default function CreateQuizTopic() {
                                     <Loader2 size={26} className="animate-spin text-purple-600" />
                                     <p className="text-xs font-black text-slate-800 uppercase tracking-wider">Transcribing Speech...</p>
                                 </div>
+                            ) : recording ? (
+                                <div className="flex flex-col items-center gap-3 py-1">
+                                    <div className="flex items-center gap-2 font-mono font-bold text-xs text-amber-900 bg-amber-100/80 px-3 py-1 rounded-full border border-amber-300">
+                                        <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                        <span>{recordingPaused ? 'RECORDING PAUSED' : 'RECORDING LECTURE'}</span>
+                                        <span className="font-mono font-black text-slate-800">({formatTime(recordingDuration)})</span>
+                                    </div>
+
+                                    {/* Tactile Voice Control Buttons */}
+                                    <div className="flex items-center justify-center gap-2.5 pt-1 flex-wrap">
+                                        {recordingPaused ? (
+                                            <button
+                                                type="button"
+                                                onClick={resumeRecording}
+                                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-1.5 shadow-sm border border-emerald-500 cursor-pointer"
+                                            >
+                                                <PlayCircle size={15} />
+                                                <span>Resume</span>
+                                            </button>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={pauseRecording}
+                                                className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-1.5 shadow-sm border border-amber-400 cursor-pointer"
+                                            >
+                                                <PauseCircle size={15} />
+                                                <span>Pause</span>
+                                            </button>
+                                        )}
+                                        
+                                        <button
+                                            type="button"
+                                            onClick={stopRecording}
+                                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-1.5 shadow-sm border border-purple-500 cursor-pointer"
+                                        >
+                                            <StopCircle size={15} />
+                                            <span>Stop & Transcribe</span>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={cancelRecording}
+                                            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                                        >
+                                            <Trash2 size={15} />
+                                            <span>Cancel</span>
+                                        </button>
+                                    </div>
+                                </div>
                             ) : (
                                 <div className="flex items-center gap-5 py-2">
                                     <button
                                         type="button"
                                         disabled={isGenerating}
-                                        onClick={recording ? stopRecording : startRecording}
-                                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
-                                            recording 
-                                                ? 'bg-red-500 text-white animate-pulse shadow-red-500/30' 
-                                                : 'bg-gradient-to-r from-amber-500 to-purple-600 text-white hover:scale-105 shadow-purple-500/30'
-                                        }`}
+                                        onClick={startRecording}
+                                        className="w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-amber-500 to-purple-600 text-white hover:scale-105 shadow-purple-500/30"
                                     >
                                         <Mic size={28} />
                                     </button>
                                     <div className="text-left">
                                         <p className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
-                                            {recording ? 'Recording Active...' : 'Tap to Record Lecture'}
+                                            Tap to Record Lecture
                                         </p>
                                         <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mt-0.5">
-                                            {recording ? 'Click to stop & transcribe' : 'Speech will be added to source docket'}
+                                            Speech will be added to source docket
                                         </p>
                                     </div>
                                 </div>
