@@ -2742,7 +2742,8 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             let blendedRatios = parsedTargetRatios;
             let executionMessages = [];
-            const voiceTitle = `Voice Quiz: ${new Date().toLocaleTimeString()}`;
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const voiceTitle = `Recording (${timeStr})`;
             const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
             const isNonComp = keywords.some(kw => voiceTitle.toLowerCase().includes(kw) || transcript.toLowerCase().includes(kw));
 

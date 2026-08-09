@@ -215,7 +215,8 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
             startPolling(taskId, {
                 onComplete: (result) => {
                     if (result.questions && result.questions.length > 0) {
-                        onQuestionsLoaded(result.questions, result.title || 'Live Lesson Quiz', result.agentReport);
+                        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        onQuestionsLoaded(result.questions, result.title || `Recording (${timeStr})`, result.agentReport);
                     } else {
                         setError('No questions were generated. Please try again with a longer recording.');
                     }

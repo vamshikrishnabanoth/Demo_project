@@ -12,7 +12,30 @@ import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
 
 export default function CreateQuizTopic() {
-    const [inputs, setInputs] = useState([]);
+    const [inputs, setInputs] = useState(() => {
+        try {
+            const saved = localStorage.getItem('quiz_docket_inputs');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
+        } catch (e) {
+            console.error('Failed to load docket inputs:', e);
+        }
+        return [];
+    });
+
+    useEffect(() => {
+        try {
+            const serializable = inputs.map(inp => {
+                const { file, ...rest } = inp;
+                return rest;
+            });
+            localStorage.setItem('quiz_docket_inputs', JSON.stringify(serializable));
+        } catch (e) {
+            console.error('Failed to save docket inputs:', e);
+        }
+    }, [inputs]);
     const [textPrompt, setTextPrompt] = useState('');
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
@@ -345,12 +368,13 @@ export default function CreateQuizTopic() {
                         }
 
                         if (transcriptText && transcriptText.trim().length > 5) {
+                            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             toast.success('Speech transcribed successfully!', { id: toastId });
                             setInputs(prev => [...prev, {
                                 id: Math.random().toString(),
                                 type: 'voice',
                                 content: transcriptText,
-                                source_name: `Voice Transcript (${new Date().toLocaleTimeString()})`
+                                source_name: `Recording (${timeStr})`
                             }]);
                             setAnalyzedData(null); // Reset analysis
                         } else {
