@@ -5,6 +5,8 @@ const {
   generateAnalysisCacheKey, 
   generateQuizCacheKey 
 } = require('../utils/cacheHash');
+const { validateMCQ } = require('./validators/validatorOrchestrator');
+const { createValidationContext } = require('./validators/validationContext');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -236,6 +238,9 @@ function computeLectureDepth(text) {
   return { lectureDepthScore, depthBand };
 }
 
+/**
+ * Legacy Validation Wrapper (for backward compatibility)
+ */
 function validateAndScoreQuiz(questions, config = DEFAULT_CONFIG) {
   const validQuestions = [];
   const invalidQuestions = [];
@@ -529,19 +534,15 @@ OUTPUT FORMAT (JSON ONLY):
       const parsedData = parseJSONRecoverable(rawResponse);
       const bQuestions = parsedData.questions || parsedData.fixedQuestions || [];
 
-      // Validate batch quality before writing to cache
-      const batchValidation = validateAndScoreQuiz(bQuestions, config);
-      const avgBatchScore = batchValidation.validQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0) / Math.max(1, batchValidation.validQuestions.length);
-
-      if (batchValidation.validQuestions.length > 0) {
-        cacheManager.set(quizCacheKey, batchValidation.validQuestions, {
+      if (bQuestions.length > 0) {
+        cacheManager.set(quizCacheKey, bQuestions, {
           measuredProcessingTimeMs: llmDurationMs,
-          qualityScore: avgBatchScore,
+          qualityScore: 0.90,
           category: 'quiz'
         }, reqId);
       }
 
-      return batchValidation.validQuestions;
+      return bQuestions;
     }, reqId);
 
     accumulatedQuestions.push(...(batchQuestions || []));
@@ -552,57 +553,104 @@ OUTPUT FORMAT (JSON ONLY):
   console.log(`  ├─ Raw JSON Status: Multi-batch JSON parsing complete.`);
   console.log(`  └─ Recovery Action: ${accumulatedQuestions.length} raw question(s) extracted across ${numBatches} batch(es).`);
 
-  // [STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]
-  console.log(`\n[ReqID: ${reqId}] [STEP 7: MULTI-TIER VALIDATION & QUALITY GUARDRAILS]`);
+  // [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]
+  console.log(`\n[ReqID: ${reqId}] [STEP 7: VALIDATOR ORCHESTRATOR v4.2.0]`);
 
-  let validation = validateAndScoreQuiz(accumulatedQuestions, config);
+  const acceptedQuestionIndex = new Map();
+  const validQuestions = [];
+  const invalidQuestions = [];
 
-  accumulatedQuestions.forEach((q, idx) => {
+  for (let idx = 0; idx < accumulatedQuestions.length; idx++) {
+    const q = accumulatedQuestions[idx];
+    const valContext = createValidationContext({
+      cleanedContent,
+      targetDifficulty: normalizedDifficulty,
+      targetBloom: 'UNDERSTAND',
+      expectedFraming: q.framingType || 'Direct Recall',
+      conceptGraph: hydratedGraph,
+      extractedConcepts: sortedConceptsEntries.map(e => e[0]),
+      acceptedQuestionIndex
+    });
+
+    const report = await validateMCQ(q, valContext);
+
     const stem = q.question || q.questionText || "Untitled Question";
     const stemShort = stem.length > 45 ? stem.slice(0, 45) + "..." : stem;
-    
-    const invalidInfo = validation.invalidQuestions.find(inv => inv.index === idx);
-    const validInfo = validation.validQuestions.find(v => v.question === stem || v.questionText === stem);
 
-    console.log(`  ├─ Question #${idx + 1} ["${stemShort}"]:`);
+    const structStage = report.validationTrace.find(t => t.stage === 'STRUCTURAL') || { durationMs: 0, code: 'PASS' };
+    const groundStage = report.validationTrace.find(t => t.stage === 'GROUNDING') || { durationMs: 0, matchType: 'Exact Match' };
+    const eduStage = report.validationTrace.find(t => t.stage === 'EDUCATIONAL') || { durationMs: 0, qualityScore: report.qualityScore };
 
-    if (!invalidInfo && validInfo) {
-      const evidenceSpan = validInfo.sourceEvidence?.[0];
-      const chunkInfo = evidenceSpan ? `[Chunk ${evidenceSpan.chunkId || 1}, Offsets: ${evidenceSpan.startOffset || 0}-${evidenceSpan.endOffset || 50}]` : "[No Span]";
-      console.log(`  │   ├─ 4 Unique Choices: PASS`);
-      console.log(`  │   ├─ Verbatim Answer Match: PASS ("${validInfo.correctAnswer}")`);
-      console.log(`  │   ├─ Forbidden Choice Filter ("All/None of above"): PASS`);
-      console.log(`  │   ├─ Deduplication Guard (Jaccard Similarity): PASS (Max Overlap < ${config.similarityThreshold})`);
-      console.log(`  │   ├─ Traceable Evidence Span: PASS ${chunkInfo}`);
-      console.log(`  │   └─ Quality Score: ${validInfo.qualityScore.toFixed(2)} / 1.00 ──► ✅ APPROVED`);
-    } else if (invalidInfo) {
-      const errorStr = invalidInfo.errors.join("; ");
-      console.log(`  │   ├─ Validation Check: FAIL (${errorStr})`);
-      console.log(`  │   └─ Quality Score: 0.00 / 1.00 ──► ❌ REJECTED (Triggering Repair Guardrail)`);
+    console.log(`  ├─ Q${idx + 1}: "${stemShort}"`);
+    console.log(`  │   ├─ Gate 1 (Structural):  ${structStage.passed !== false ? '✅ PASS' : '❌ FAIL'} (${structStage.durationMs}ms) | Code: ${structStage.code}`);
+    if (structStage.passed !== false) {
+      console.log(`  │   ├─ Gate 2 (Grounding):   ${groundStage.passed !== false ? '⚡ PASS' : '❌ FAIL'} (${groundStage.durationMs}ms) | Match: ${groundStage.matchType}`);
+      if (groundStage.passed !== false) {
+        console.log(`  │   ├─ Eval 3 (Educational): ${eduStage.passed !== false ? '✅ PASS' : '⚠️ WARNING'} (${eduStage.durationMs}ms) | Bloom Framing: ${valContext.plannerHints.expectedFraming}`);
+      }
     }
+
+    const b = report.qualityBreakdown;
+    const bdStr = `S:${b.structural.toFixed(1)} | G:${b.grounding.toFixed(1)} | E:${b.educational.toFixed(1)}`;
+    const statusTag = report.isValid ? '✅ APPROVED' : '❌ REJECTED (Triggering Targeted Repair)';
+    console.log(`  │   └─ Quality Score: ${report.qualityScore.toFixed(2)} / 1.00 (Breakdown: ${bdStr}) ──► ${statusTag} (Total: ${report.metrics.totalValidationMs}ms)`);
     console.log(`  │`);
-  });
 
-  // [STEP 8: REPAIR PASS GUARDRAIL]
+    const enrichedQuestion = {
+      ...q,
+      question: stem,
+      questionText: stem,
+      qualityScore: report.qualityScore,
+      validationReport: report
+    };
+
+    if (report.isValid) {
+      validQuestions.push(enrichedQuestion);
+      acceptedQuestionIndex.set(stem, { score: report.qualityScore });
+    } else {
+      invalidQuestions.push({
+        index: idx,
+        question: enrichedQuestion,
+        errors: report.findings.criticalFailures.map(f => f.message || f.code || String(f)),
+        failureStage: report.failureStage,
+        code: report.findings.criticalFailures[0]?.code || 'FAIL'
+      });
+    }
+  }
+
+  // [STEP 8: TARGETED REPAIR ROUTING & REVALIDATION]
   let repairAttempts = 0;
-  while (!validation.isValid && repairAttempts < config.maxRepairAttempts) {
+  while (validQuestions.length < requestedCount && invalidQuestions.length > 0 && repairAttempts < config.maxRepairAttempts) {
     repairAttempts++;
-    console.log(`\n[ReqID: ${reqId}] [STEP 8: REPAIR PASS GUARDRAIL (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
-    
-    const repairIndices = validation.invalidQuestions.map(inv => `#${inv.index + 1}`).join(", ");
-    const failureReasons = validation.invalidQuestions.map(inv => inv.errors.join(", ")).join(" | ");
+    console.log(`\n[ReqID: ${reqId}] [STEP 8: TARGETED REPAIR ROUTING (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
 
-    console.log(`  ├─ Targeted Repair Index: Question ${repairIndices}`);
-    console.log(`  ├─ Failure Reason Sent to Repair Agent: "${failureReasons}"`);
+    const targetedRepairs = invalidQuestions.map(inv => {
+      const qItem = inv.question;
+      if (!qItem.repairHistory) qItem.repairHistory = [];
+      qItem.repairHistory.push({ stage: inv.failureStage, code: inv.code, timestamp: Date.now() });
+
+      return {
+        index: inv.index + 1,
+        question: qItem.question,
+        options: qItem.options,
+        correctAnswer: qItem.correctAnswer,
+        failureStage: inv.failureStage,
+        errorCode: inv.code,
+        failureReasons: inv.errors
+      };
+    });
+
+    console.log(`  ├─ Targeted Repair Index: ${targetedRepairs.map(r => `#${r.index}`).join(', ')}`);
+    console.log(`  ├─ Error Codes Sent to Repair Agent: ${targetedRepairs.map(r => r.errorCode).join(', ')}`);
 
     const repairStartTime = Date.now();
 
     const repairPrompt = `
 Fix the following defective MCQ objects based STRICTLY on the source text.
-Preserve the original intent and difficulty level.
+Address the specific failureStage and errorCode listed for each item.
 
-DEFECTIVE ITEMS & ERRORS:
-${JSON.stringify(validation.invalidQuestions, null, 2)}
+DEFECTIVE ITEMS & ERROR CODES:
+${JSON.stringify(targetedRepairs, null, 2)}
 
 SOURCE TEXT:
 """
@@ -621,10 +669,22 @@ Return JSON: { "fixedQuestions": [...] }
       const repairedData = parseJSONRecoverable(repairRaw);
       const fixedList = (repairedData.fixedQuestions || repairedData.questions || []).map(q => ({ ...q, wasRepaired: true }));
 
-      const mergedList = [...validation.validQuestions, ...fixedList];
-      validation = validateAndScoreQuiz(mergedList, config);
+      for (const fItem of fixedList) {
+        const valContext = createValidationContext({
+          cleanedContent,
+          targetDifficulty: normalizedDifficulty,
+          conceptGraph: hydratedGraph,
+          acceptedQuestionIndex
+        });
+        const repReport = await validateMCQ(fItem, valContext);
+        if (repReport.isValid) {
+          fItem.qualityScore = repReport.qualityScore;
+          validQuestions.push(fItem);
+          acceptedQuestionIndex.set(fItem.question || fItem.questionText, { score: repReport.qualityScore });
+        }
+      }
 
-      console.log(`  └─ Re-Validating Repaired Item... PASS! Updated Validation State.`);
+      console.log(`  └─ Re-Validating Repaired Items Complete. Approved Valid Count: ${validQuestions.length}`);
     } catch (repairErr) {
       console.log(`  └─ Repair Attempt #${repairAttempts} Failed: ${repairErr.message}`);
       break;
@@ -632,9 +692,9 @@ Return JSON: { "fixedQuestions": [...] }
   }
 
   // [BACKFILL GUARD: GUARANTEE EXACT QUESTION COUNT MATCH]
-  if (validation.validQuestions.length < requestedCount) {
-    const missingCount = requestedCount - validation.validQuestions.length;
-    console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validation.validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
+  if (validQuestions.length < requestedCount) {
+    const missingCount = requestedCount - validQuestions.length;
+    console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
     try {
       const backfillConceptPlan = hydratedGraph.allocateConcepts(missingCount);
       const backfillPrompt = `
@@ -658,8 +718,21 @@ Return JSON: { "questions": [...] }
       const backfillRaw = await llm.generateJSON(backfillPrompt);
       const backfillData = parseJSONRecoverable(backfillRaw);
       const backfillQuestions = backfillData.questions || backfillData.fixedQuestions || [];
-      const combinedAll = [...validation.validQuestions, ...backfillQuestions];
-      validation = validateAndScoreQuiz(combinedAll, config);
+      
+      for (const bfItem of backfillQuestions) {
+        const valContext = createValidationContext({
+          cleanedContent,
+          targetDifficulty: normalizedDifficulty,
+          conceptGraph: hydratedGraph,
+          acceptedQuestionIndex
+        });
+        const bfReport = await validateMCQ(bfItem, valContext);
+        if (bfReport.isValid) {
+          bfItem.qualityScore = bfReport.qualityScore;
+          validQuestions.push(bfItem);
+          acceptedQuestionIndex.set(bfItem.question || bfItem.questionText, { score: bfReport.qualityScore });
+        }
+      }
     } catch (bfErr) {
       console.warn(`[ReqID: ${reqId}] ⚠️ Backfill attempt error:`, bfErr.message);
     }
@@ -667,7 +740,7 @@ Return JSON: { "questions": [...] }
 
   const executionTimeMs = Date.now() - startTime;
   const totalLatencySec = (executionTimeMs / 1000).toFixed(2);
-  const finalQuestions = validation.validQuestions.slice(0, requestedCount);
+  const finalQuestions = validQuestions.slice(0, requestedCount);
   const totalScoreSum = finalQuestions.reduce((acc, q) => acc + (q.qualityScore || 1.0), 0);
   const avgQualityScore = finalQuestions.length > 0 ? (totalScoreSum / finalQuestions.length).toFixed(2) : "0.00";
   const isPartial = finalQuestions.length < requestedCount;
