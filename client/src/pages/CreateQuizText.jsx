@@ -324,15 +324,17 @@ export default function CreateQuizText() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
-                        <button
-                            type="button"
-                            onClick={handleSaveQuizTemplate}
-                            disabled={loading}
-                            className="px-7 py-3 rounded-full bg-[#e55b00] hover:bg-[#d45200] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2.5 cursor-pointer transition-all border-b-4 border-[#b34700] shrink-0"
-                        >
-                            <Save size={17} className="stroke-[2.5]" />
-                            <span>Save Quiz Template</span>
-                        </button>
+                        {(aikenLoaded || isGeneratedSource) && (
+                            <button
+                                type="button"
+                                onClick={handleSaveQuizTemplate}
+                                disabled={loading}
+                                className="px-7 py-3 rounded-full bg-[#e55b00] hover:bg-[#d45200] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2.5 cursor-pointer transition-all border-b-4 border-[#b34700] shrink-0 animate-in fade-in duration-200"
+                            >
+                                <Save size={17} className="stroke-[2.5]" />
+                                <span>Save Quiz Template</span>
+                            </button>
+                        )}
                     </div>
                 </div>
 
