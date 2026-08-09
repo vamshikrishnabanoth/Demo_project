@@ -328,9 +328,9 @@ export default function CreateQuizText() {
                             type="button"
                             onClick={handleSaveQuizTemplate}
                             disabled={loading}
-                            className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2 cursor-pointer transition-all border-b-4 border-amber-700"
+                            className="px-7 py-3 rounded-full bg-[#e55b00] hover:bg-[#d45200] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2.5 cursor-pointer transition-all border-b-4 border-[#b34700] shrink-0"
                         >
-                            <Save size={16} />
+                            <Save size={17} className="stroke-[2.5]" />
                             <span>Save Quiz Template</span>
                         </button>
                     </div>

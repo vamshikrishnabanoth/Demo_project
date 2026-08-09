@@ -67,14 +67,17 @@ export default function QuizQuestionEditor({
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
     return (
-        <GlassCard className="relative group overflow-visible">
-            <div className="absolute top-0 right-0 p-6 flex items-center gap-4 translate-x-4 -translate-y-4 opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
+        <GlassCard className="relative overflow-hidden">
+            {/* Clean, Professional Top-Right Delete Action Button */}
+            <div className="absolute top-6 right-6 z-10">
                 <button
                     type="button"
                     onClick={() => setShowConfirmDelete(true)}
-                    className="bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white p-3 rounded-xl border border-red-500/30 transition-all shadow-xl"
+                    className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
+                    title="Remove Question"
+                    aria-label="Remove Question"
                 >
-                    <Trash2 size={20} />
+                    <Trash2 size={18} />
                 </button>
             </div>
 
@@ -112,7 +115,7 @@ export default function QuizQuestionEditor({
             </AnimatePresence>
 
             <div className="space-y-10">
-                <div className="flex items-start gap-6">
+                <div className="flex items-start gap-6 pr-14">
                     <div className="bg-[var(--bg-accent)]/10 w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-accent)] font-black text-2xl border border-[var(--bg-accent)]/20 italic shrink-0">
                         {index + 1}
                     </div>
