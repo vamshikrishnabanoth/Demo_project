@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
-    Book, Hash, Gauge, Sparkles, Loader2, Database, 
-    FileText, FileCode, Plus, Trash2, Mic, PlayCircle, 
-    PauseCircle, StopCircle, X, Award
+    Hash, Sparkles, Loader2, Database, 
+    FileText, FileCode, Plus, Trash2, Mic, X, Award
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
@@ -41,7 +40,7 @@ export default function CreateQuizTopic() {
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
 
-    // 3. Question Count (Integer, default 10)
+    // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
 
     // Dynamic Lecture Depth Rating
@@ -55,7 +54,6 @@ export default function CreateQuizTopic() {
     const [recordingPaused, setRecordingPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const audioChunksRef = useRef([]);
-    const wakeLockRef = useRef(null);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [transcribing, setTranscribing] = useState(false);
 
@@ -76,6 +74,8 @@ export default function CreateQuizTopic() {
     const pollIntervalRef = useRef(null);
     const startTimeRef = useRef(null);
     const elapsedRef = useRef(null);
+
+    const isGenerating = submitting || polling;
 
     const formatTime = (secs) => {
         const h = Math.floor(secs / 3600);
@@ -223,11 +223,13 @@ export default function CreateQuizTopic() {
     };
 
     const handleRemoveInput = (id) => {
+        if (isGenerating) return;
         setInputs(prev => prev.filter(item => item.id !== id));
     };
 
     // Voice recording lifecycle
     const startRecording = async () => {
+        if (isGenerating) return;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new MediaRecorder(stream);
@@ -307,38 +309,10 @@ export default function CreateQuizTopic() {
         }
     };
 
-    const pauseRecording = () => {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.pause();
-            setRecordingPaused(true);
-        }
-    };
-
-    const resumeRecording = () => {
-        if (mediaRecorder && mediaRecorder.state === 'paused') {
-            mediaRecorder.resume();
-            setRecordingPaused(false);
-        }
-    };
-
-    const cancelRecording = () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.onstop = null;
-            mediaRecorder.stop();
-            if (mediaRecorder.stream) {
-                mediaRecorder.stream.getTracks().forEach(t => t.stop());
-            }
-        }
-        setRecording(false);
-        setRecordingPaused(false);
-        setRecordingDuration(0);
-        toast('Recording cancelled', { icon: '🗑️' });
-    };
-
     // Direct Generation Submission
     const handleGenerateQuiz = async () => {
-        if (inputs.length === 0) {
-            toast.error('Please add at least one source input (document, voice recording, or text).');
+        if (inputs.length === 0 || isGenerating) {
+            if (inputs.length === 0) toast.error('Please add at least one source input (document, voice recording, or text).');
             return;
         }
 
@@ -404,11 +378,9 @@ export default function CreateQuizTopic() {
         }
     };
 
-    const isLoading = submitting || polling;
-
     return (
         <DashboardLayout role="teacher">
-            {isLoading && (
+            {isGenerating && (
                 <AgentPipelineLoader
                     stage={stage}
                     stageLabel={stageLabel}
@@ -456,79 +428,122 @@ export default function CreateQuizTopic() {
                     </div>
                 )}
 
-                {/* 3 INPUTS ONLY WORKSPACE */}
-                <div className="flex flex-col lg:flex-row flex-grow w-full bg-[var(--bg-primary)] gap-6 p-4 lg:p-6">
+                {/* 2-COLUMN GRID WORKSPACE */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 lg:p-6 w-full">
                     
-                    {/* INPUT 1: Source Content / Active Sources */}
-                    <div className="w-full lg:w-1/2 xl:w-[540px] bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between shrink-0 space-y-5 shadow-lg">
-                        <div className="space-y-5">
-                            <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
-                                <div className="flex items-center gap-2.5">
-                                    <span className="px-2.5 py-1 bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)] rounded-lg text-[9px] font-black uppercase tracking-wider">Input 1</span>
-                                    <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic tracking-wide">Source Content</h2>
-                                </div>
-                                <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)]">
-                                    {inputs.length} {inputs.length === 1 ? 'Source' : 'Sources'}
-                                </span>
+                    {/* LEFT COLUMN: Input 1 - Source Content */}
+                    <div className="bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col space-y-5 shadow-lg">
+                        <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                            <div className="flex items-center gap-2.5">
+                                <span className="px-2.5 py-1 bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)] rounded-lg text-[9px] font-black uppercase tracking-wider">Input 1</span>
+                                <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic tracking-wide">Source Content</h2>
                             </div>
+                            <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)]">
+                                {inputs.length} {inputs.length === 1 ? 'Source' : 'Sources'}
+                            </span>
+                        </div>
 
-                            {/* Dropdown trigger button */}
-                            <div className="relative">
-                                <button 
-                                    type="button"
-                                    onClick={() => setShowDropdown(prev => !prev)}
-                                    className="w-full py-4 bg-white border-2 border-[var(--border-color)] hover:border-[var(--bg-accent)] text-[var(--text-accent)] rounded-2xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.98] hover:bg-[var(--accent-sand)]/80 cursor-pointer"
-                                >
-                                    <Plus size={18} className="text-[var(--text-accent)]" /> Add Source Material
-                                </button>
-                                
-                                {showDropdown && (
-                                    <div className="absolute left-0 right-0 mt-2 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl z-20">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowDropdown(false);
-                                                fileInputRef.current.click();
-                                            }}
-                                            className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 border-b border-[var(--border-color)]/50 cursor-pointer"
-                                        >
-                                            <FileText size={16} className="text-[var(--text-accent)]" /> Upload Document (.pdf, .docx, .pptx)
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowDropdown(false);
-                                                setTextModalType('context');
-                                                setTextInputContent('');
-                                                setShowTextModal(true);
-                                            }}
-                                            className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 cursor-pointer"
-                                        >
-                                            <Plus size={16} className="text-emerald-600" /> Enter Topic Description / Text
-                                        </button>
-                                    </div>
+                        {/* 1. VOICE AUDIO RECORDING WIDGET (Top of Left Column) */}
+                        <div className={`bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 text-center flex flex-col items-center justify-center space-y-3 transition-all ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
+                            <div className="flex items-center justify-between w-full border-b pb-2 border-slate-100">
+                                <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider flex items-center gap-1.5">
+                                    <Mic size={14} /> Voice Audio Recording
+                                </span>
+                                {recording && (
+                                    <span className="text-[10px] font-mono font-bold text-emerald-600 animate-pulse">
+                                        {formatTime(recordingDuration)}
+                                    </span>
                                 )}
                             </div>
 
-                            <input 
-                                type="file" 
-                                ref={fileInputRef}
-                                multiple 
-                                onChange={handleFileUpload} 
-                                className="hidden"
-                                accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
-                            />
+                            {transcribing ? (
+                                <div className="py-3 flex flex-col items-center gap-2">
+                                    <Loader2 size={24} className="animate-spin text-purple-600" />
+                                    <p className="text-xs font-black text-slate-700 uppercase">Transcribing Speech...</p>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-4 py-1">
+                                    <button
+                                        type="button"
+                                        disabled={isGenerating}
+                                        onClick={recording ? stopRecording : startRecording}
+                                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                                            recording ? 'bg-red-500 text-white animate-pulse' : 'bg-purple-600 text-white hover:scale-105'
+                                        }`}
+                                    >
+                                        <Mic size={24} />
+                                    </button>
+                                    <div className="text-left">
+                                        <p className="text-xs font-black text-slate-800 uppercase">
+                                            {recording ? 'Recording Active...' : 'Tap to Record Lecture'}
+                                        </p>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase">
+                                            {recording ? 'Click to stop & transcribe' : 'Speech will be added to source docket'}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
-                            {/* Ingested sources list */}
+                        {/* 2. ADD SOURCE MATERIAL BUTTON */}
+                        <div className={`relative ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
+                            <button 
+                                type="button"
+                                disabled={isGenerating}
+                                onClick={() => setShowDropdown(prev => !prev)}
+                                className="w-full py-4 bg-white border-2 border-[var(--border-color)] hover:border-[var(--bg-accent)] text-[var(--text-accent)] rounded-2xl font-black uppercase text-xs italic tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.98] hover:bg-[var(--accent-sand)]/80 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                <Plus size={18} className="text-[var(--text-accent)]" /> + Add Source Material
+                            </button>
+                            
+                            {showDropdown && !isGenerating && (
+                                <div className="absolute left-0 right-0 mt-2 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl z-20">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowDropdown(false);
+                                            fileInputRef.current.click();
+                                        }}
+                                        className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 border-b border-[var(--border-color)]/50 cursor-pointer"
+                                    >
+                                        <FileText size={16} className="text-[var(--text-accent)]" /> Upload Document (.pdf, .docx, .pptx)
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowDropdown(false);
+                                            setTextModalType('context');
+                                            setTextInputContent('');
+                                            setShowTextModal(true);
+                                        }}
+                                        className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 cursor-pointer"
+                                    >
+                                        <Plus size={16} className="text-emerald-600" /> Enter Topic Description / Text
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        <input 
+                            type="file" 
+                            ref={fileInputRef}
+                            multiple 
+                            onChange={handleFileUpload} 
+                            className="hidden"
+                            accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
+                        />
+
+                        {/* 3. SOURCE MATERIAL DOCKET LIST */}
+                        <div className={isGenerating ? 'pointer-events-none opacity-60' : ''}>
                             {inputs.length === 0 ? (
-                                <div className="py-12 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-white space-y-2 shadow-xs">
+                                <div className="py-10 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-white space-y-2 shadow-xs">
                                     <Database size={32} className="text-[var(--text-accent)] opacity-80" />
                                     <p className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">No source material added</p>
                                     <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Upload curriculum guides, enter text, or record audio lecture</p>
                                 </div>
                             ) : (
-                                <div className="space-y-3 max-h-[45vh] overflow-y-auto premium-scrollbar pr-1">
+                                <div className="space-y-3 max-h-[35vh] overflow-y-auto premium-scrollbar pr-1">
                                     {inputs.map((inp) => (
                                         <div key={inp.id} className="p-4 bg-white rounded-2xl border-2 border-[var(--border-color)] shadow-sm space-y-3 hover:border-[var(--bg-accent)]/50 transition-all">
                                             <div className="flex items-center justify-between gap-3">
@@ -543,8 +558,9 @@ export default function CreateQuizTopic() {
                                                 </div>
                                                 <button 
                                                     type="button" 
+                                                    disabled={isGenerating}
                                                     onClick={() => handleRemoveInput(inp.id)}
-                                                    className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all shrink-0 cursor-pointer"
+                                                    className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                                     title="Remove input"
                                                 >
                                                     <Trash2 size={16} />
@@ -560,12 +576,11 @@ export default function CreateQuizTopic() {
                                             {inp.file && !['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image'].includes(inp.type) && (
                                                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]/60 bg-slate-50 p-2.5 rounded-xl">
                                                      <div className="flex items-center gap-2">
-                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">
-                                                             Start Page:
-                                                         </span>
+                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Start Page:</span>
                                                          <input 
                                                              type="number" 
                                                              min="1" 
+                                                             disabled={isGenerating}
                                                              max={inp.maxPages || undefined}
                                                              value={inp.startPage || 1} 
                                                              onChange={(e) => {
@@ -574,16 +589,15 @@ export default function CreateQuizTopic() {
                                                                  if (inp.maxPages && val > inp.maxPages) val = inp.maxPages;
                                                                  setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, startPage: val } : item));
                                                              }}
-                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50" 
                                                          />
                                                      </div>
                                                      <div className="flex items-center gap-2">
-                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">
-                                                             End Page:
-                                                         </span>
+                                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">End Page:</span>
                                                          <input 
                                                              type="number" 
                                                              min="1"
+                                                             disabled={isGenerating}
                                                              max={inp.maxPages || undefined}
                                                              placeholder="All"
                                                              value={inp.endPage || ''} 
@@ -593,7 +607,7 @@ export default function CreateQuizTopic() {
                                                                  if (val !== undefined && inp.maxPages && val > inp.maxPages) val = inp.maxPages;
                                                                  setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
                                                              }}
-                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50" 
                                                          />
                                                      </div>
                                                 </div>
@@ -605,55 +619,13 @@ export default function CreateQuizTopic() {
                         </div>
                     </div>
 
-                    {/* INPUT 2 & 3: Difficulty Focus & Question Count Configuration */}
-                    <div className="flex-1 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-6 lg:p-8 flex flex-col justify-between space-y-6 shadow-lg">
-                        
+                    {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration */}
+                    <div className={`bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                         <div className="space-y-6">
                             
-                            {/* Voice Audio Recorder Container */}
-                            <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 text-center flex flex-col items-center justify-center space-y-3">
-                                <div className="flex items-center justify-between w-full border-b pb-2 border-slate-100">
-                                    <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider flex items-center gap-1.5">
-                                        <Mic size={14} /> Voice Audio Recording
-                                    </span>
-                                    {recording && (
-                                        <span className="text-[10px] font-mono font-bold text-emerald-600 animate-pulse">
-                                            {formatTime(recordingDuration)}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {transcribing ? (
-                                    <div className="py-4 flex flex-col items-center gap-2">
-                                        <Loader2 size={24} className="animate-spin text-purple-600" />
-                                        <p className="text-xs font-black text-slate-700 uppercase">Transcribing Speech...</p>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-4 py-2">
-                                        <button
-                                            type="button"
-                                            onClick={recording ? stopRecording : startRecording}
-                                            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
-                                                recording ? 'bg-red-500 text-white animate-pulse' : 'bg-purple-600 text-white hover:scale-105'
-                                            }`}
-                                        >
-                                            <Mic size={28} />
-                                        </button>
-                                        <div className="text-left">
-                                            <p className="text-xs font-black text-slate-800 uppercase">
-                                                {recording ? 'Recording Active...' : 'Tap to Record Lecture'}
-                                            </p>
-                                            <p className="text-[10px] text-slate-500 font-bold uppercase">
-                                                {recording ? 'Click to stop & transcribe' : 'Speech will be added to source docket'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* INPUT 2: Difficulty Focus Selector */}
+                            {/* 1. DIFFICULTY FOCUS SELECTOR */}
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
                                     <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-[9px] font-black uppercase tracking-wider">Input 2</span>
                                     <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Difficulty Focus</h3>
                                 </div>
@@ -663,8 +635,9 @@ export default function CreateQuizTopic() {
                                         <button
                                             key={level}
                                             type="button"
+                                            disabled={isGenerating}
                                             onClick={() => setDifficulty(level)}
-                                            className={`py-3.5 px-4 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border-2 cursor-pointer ${
+                                            className={`py-3.5 px-4 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
                                                 difficulty === level
                                                     ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20 scale-[1.02]'
                                                     : 'bg-white text-[var(--text-primary)] border-[var(--border-color)] hover:border-[var(--bg-accent)]/50'
@@ -676,9 +649,9 @@ export default function CreateQuizTopic() {
                                 </div>
                             </div>
 
-                            {/* INPUT 3: Question Count Selector */}
+                            {/* 2. QUESTION COUNT SLIDER (min=1, max=30) */}
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
                                     <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-[9px] font-black uppercase tracking-wider">Input 3</span>
                                     <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Question Count</h3>
                                 </div>
@@ -696,42 +669,49 @@ export default function CreateQuizTopic() {
                                             type="range"
                                             min="1"
                                             max="30"
+                                            disabled={isGenerating}
                                             value={questionCount}
                                             onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
-                                            className="w-full accent-[var(--bg-accent)] bg-slate-100 h-2 rounded-lg cursor-pointer"
+                                            className="w-full accent-[var(--bg-accent)] bg-slate-100 h-2 rounded-lg cursor-pointer disabled:opacity-50"
                                         />
                                     </div>
                                 </div>
                             </div>
 
                         </div>
-
-                        {/* GENERATE ACTION BUTTON */}
-                        <div className="pt-4 border-t border-[var(--border-color)]">
-                            <button
-                                type="button"
-                                disabled={inputs.length === 0 || isLoading}
-                                onClick={handleGenerateQuiz}
-                                className={`w-full py-4.5 px-8 font-black text-sm sm:text-base uppercase tracking-[0.15em] rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 border-2 cursor-pointer ${
-                                    inputs.length === 0 || isLoading
-                                        ? 'bg-[var(--bg-saffron)]/80 text-white border-[var(--bg-saffron)] opacity-80 cursor-not-allowed'
-                                        : 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] active:scale-[0.99]'
-                                }`}
-                                style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="animate-spin text-white" size={20} />
-                                ) : (
-                                    <Sparkles size={20} className="text-amber-300 animate-pulse" />
-                                )}
-                                <span className="!text-white font-black uppercase tracking-widest text-base">
-                                    {isLoading ? 'GENERATING AI MCQS...' : 'GENERATE AI MCQS'}
-                                </span>
-                            </button>
-                        </div>
-
                     </div>
 
+                </div>
+
+                {/* BOTTOM FULL-WIDTH ACTION BUTTON */}
+                <div className="p-4 lg:p-6 pt-0 w-full">
+                    <button
+                        type="button"
+                        disabled={inputs.length === 0 || isGenerating}
+                        onClick={handleGenerateQuiz}
+                        className={`w-full py-4.5 px-8 font-black text-sm sm:text-base uppercase tracking-[0.15em] rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 border-2 cursor-pointer ${
+                            inputs.length === 0 || isGenerating
+                                ? 'bg-[var(--bg-saffron)]/80 text-white border-[var(--bg-saffron)] opacity-80 cursor-not-allowed'
+                                : 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] active:scale-[0.99]'
+                        }`}
+                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
+                    >
+                        {isGenerating ? (
+                            <>
+                                <Loader2 className="animate-spin text-white" size={20} />
+                                <span className="!text-white font-black uppercase tracking-widest text-base" style={{ color: '#ffffff' }}>
+                                    Generating MCQs...
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles size={20} className="text-amber-300 animate-pulse" />
+                                <span className="!text-white font-black uppercase tracking-widest text-base" style={{ color: '#ffffff' }}>
+                                    GENERATE AI MCQS
+                                </span>
+                            </>
+                        )}
+                    </button>
                 </div>
 
             </div>
