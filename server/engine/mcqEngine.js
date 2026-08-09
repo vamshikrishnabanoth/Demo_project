@@ -7,6 +7,7 @@ const {
 } = require('../utils/cacheHash');
 const { validateMCQ } = require('./validators/validatorOrchestrator');
 const { createValidationContext } = require('./validators/validationContext');
+const { buildConceptGraph } = require('./conceptGraphBuilder/index');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -73,21 +74,9 @@ class LightweightConceptGraph {
   }
 
   buildFromText(text) {
-    if (!text || typeof text !== 'string') return this;
-    
-    // Extract technical concepts: Acronyms, CamelCase, snake_case, code tokens, function calls
-    const conceptRegex = /\b([A-Z]{2,}[0-9]?|[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+|[a-z0-9]+_[a-z0-9_]+|`[^`]+`|[A-Z][a-zA-Z0-9_\-]{2,})\b/g;
-    const matches = text.match(conceptRegex) || [];
-    const sanitized = matches.map(m => m.replace(/`/g, '').toLowerCase());
-
-    sanitized.forEach(term => {
-      this.nodes.set(term, (this.nodes.get(term) || 0) + 1);
-    });
-
-    for (let i = 0; i < sanitized.length - 1; i++) {
-      const pair = [sanitized[i], sanitized[i + 1]].sort().join('::');
-      this.edges.set(pair, (this.edges.get(pair) || 0) + 1);
-    }
+    const cg = buildConceptGraph(text);
+    cg.nodes.forEach(n => this.nodes.set(n.label || n.id, n.importanceScore || 1));
+    cg.edges.forEach(e => this.edges.set(`${e.source}::${e.target}`, e.confidence || 0.8));
     return this;
   }
 
@@ -204,8 +193,8 @@ function computeLectureDepth(text) {
   }
 
   const words = text.trim().split(/\s+/).length;
-  const conceptGraph = new LightweightConceptGraph().buildFromText(text);
-  const uniqueConcepts = conceptGraph.nodes.size;
+  const conceptGraph = buildConceptGraph(text);
+  const uniqueConcepts = conceptGraph.nodes.length;
 
   const codeBlocks = (text.match(/```[\s\S]*?```/g) || []).length;
   const mathSymbols = (text.match(/[=+\-*/<>{}\\]/g) || []).length;
@@ -382,18 +371,15 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Code/Syntax Guard: Preserved formatting across ${codeBlocks} detected code block(s).`);
   console.log(`  └─ Cleaned Academic Text Payload: ${cleanedContent.length.toLocaleString()} characters remaining.`);
 
-  // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH (WITH NAMESPACED CACHING)]
+  // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH BUILDER v2.6.0 (WITH NAMESPACED CACHING)]
   const analysisCacheKey = generateAnalysisCacheKey(cleanedContent);
 
   const conceptGraph = await cacheManager.fetchCoalesced(analysisCacheKey, async () => {
     const analysisStart = Date.now();
-    const cg = new LightweightConceptGraph().buildFromText(cleanedContent);
+    const cg = buildConceptGraph(cleanedContent);
     const analysisTime = Date.now() - analysisStart;
 
-    cacheManager.set(analysisCacheKey, {
-      nodes: Array.from(cg.nodes.entries()),
-      edges: Array.from(cg.edges.entries())
-    }, {
+    cacheManager.set(analysisCacheKey, cg, {
       measuredProcessingTimeMs: analysisTime,
       qualityScore: 1.0,
       category: 'analysis'
@@ -402,38 +388,33 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     return cg;
   }, reqId);
 
-  // Re-hydrate LightweightConceptGraph if retrieved from cache object
-  let hydratedGraph = conceptGraph;
-  if (!(conceptGraph instanceof LightweightConceptGraph) && conceptGraph && conceptGraph.nodes) {
-    hydratedGraph = new LightweightConceptGraph();
-    hydratedGraph.nodes = new Map(conceptGraph.nodes);
-    hydratedGraph.edges = new Map(conceptGraph.edges || []);
-  }
+  const meta = conceptGraph.metadata || {};
+  const conceptNodes = conceptGraph.nodes || [];
+  const conceptEdges = conceptGraph.edges || [];
+  const conceptIndex = conceptGraph.conceptIndex || {};
+  const traversalOrder = conceptGraph.traversalOrder || [];
 
-  const mathDetected = mathSymbolsCount > 5 ? "YES" : "NO";
-  const codeDetected = codeBlocks > 0 ? "YES" : "NO";
-
-  console.log(`\n[ReqID: ${reqId}] [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH]`);
-  console.log(`  ├─ Code Snippets Detected: ${codeDetected}`);
-  console.log(`  ├─ Math Formulas Detected: ${mathDetected}`);
-  console.log(`  └─ Extracted Core Technical Concepts:`);
-
-  const sortedConceptsEntries = Array.from(hydratedGraph.nodes.entries()).sort((a, b) => b[1] - a[1]);
-  const topFourConcepts = sortedConceptsEntries.slice(0, 4);
-
-  if (topFourConcepts.length > 0) {
-    topFourConcepts.forEach(([term, freq], idx) => {
-      const isLast = idx === topFourConcepts.length - 1;
-      const prefix = isLast ? "      └─" : "      ├─";
-      console.log(`${prefix} • "${term}" (Frequency: ${freq})`);
-    });
-  } else {
-    console.log(`      └─ • "General Topic" (Frequency: 1)`);
-  }
+  console.log(`\n[ReqID: ${reqId}] [STEP 2: CONCEPT GRAPH BUILDER & NORMALIZER v2.6.0]`);
+  console.log(`  ├─ Extractor Registry: ${meta.activeExtractorsCount || 5} Active Extractors (Stateless)`);
+  console.log(`  ├─ Raw Candidates Scanned: ${meta.totalCandidates || conceptNodes.length} | Adaptive Node Limit: ${meta.retainedLimit || 30}`);
+  console.log(`  ├─ Graph Normalizer: Pruned ${meta.prunedOrphans || 0} Orphans | Cycles Resolved: ${meta.cyclesResolved || 0}`);
+  console.log(`  ├─ Graph Assembly: ${conceptNodes.length} Nodes | ${conceptEdges.length} Edges | Inverted Index: ${Object.keys(conceptIndex).length} Mapped Keys`);
+  console.log(`  ├─ Traversal Sequence: Derived ${traversalOrder.length}-step DAG topological order`);
+  console.log(`  ├─ Graph Metadata: Avg Confidence: ${meta.averageConfidence || 0.90} | Build Time: ${meta.buildTimeMs || 0}ms`);
+  console.log(`  ├─ Health Diagnostics: ${conceptGraph.diagnostics?.extractorWarnings?.length || 0} Extractor Warnings | ${conceptGraph.diagnostics?.buildWarnings?.length || 0} Build Warnings`);
+  console.log(`  └─ Normalized Concept Graph and Inverted Index attached to context.`);
 
   // [STEP 3: QUIZ PLANNER & COGNITIVE DEPTH EVALUATOR]
   const { lectureDepthScore, depthBand } = computeLectureDepth(cleanedContent);
-  const totalConceptPlan = hydratedGraph.allocateConcepts(requestedCount);
+  
+  // Re-hydrate concept allocation plan
+  const legacyGraph = new LightweightConceptGraph();
+  if (Array.isArray(conceptNodes) && conceptNodes.length > 0) {
+    conceptNodes.forEach(n => legacyGraph.nodes.set(n.label || n.id, n.importanceScore || 1));
+  } else {
+    legacyGraph.nodes.set("Core Curriculum Concept", 1);
+  }
+  const totalConceptPlan = legacyGraph.allocateConcepts(requestedCount);
 
   let difficultyDist = "";
   if (isBalanced) {
@@ -481,7 +462,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     });
 
     const batchQuestions = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
-      const batchConceptPlan = hydratedGraph.allocateConcepts(targetInBatch);
+      const batchConceptPlan = legacyGraph.allocateConcepts(targetInBatch);
 
       const prompt = `
 Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
@@ -567,8 +548,8 @@ OUTPUT FORMAT (JSON ONLY):
       targetDifficulty: normalizedDifficulty,
       targetBloom: 'UNDERSTAND',
       expectedFraming: q.framingType || 'Direct Recall',
-      conceptGraph: hydratedGraph,
-      extractedConcepts: sortedConceptsEntries.map(e => e[0]),
+      conceptGraph,
+      extractedConcepts: conceptNodes.map(n => n.id),
       acceptedQuestionIndex
     });
 
@@ -673,7 +654,7 @@ Return JSON: { "fixedQuestions": [...] }
         const valContext = createValidationContext({
           cleanedContent,
           targetDifficulty: normalizedDifficulty,
-          conceptGraph: hydratedGraph,
+          conceptGraph,
           acceptedQuestionIndex
         });
         const repReport = await validateMCQ(fItem, valContext);
@@ -696,7 +677,7 @@ Return JSON: { "fixedQuestions": [...] }
     const missingCount = requestedCount - validQuestions.length;
     console.log(`\n[ReqID: ${reqId}] [BACKFILL GUARD] Valid questions (${validQuestions.length}) < Requested (${requestedCount}). Fetching ${missingCount} supplemental MCQs...`);
     try {
-      const backfillConceptPlan = hydratedGraph.allocateConcepts(missingCount);
+      const backfillConceptPlan = legacyGraph.allocateConcepts(missingCount);
       const backfillPrompt = `
 Generate exactly ${missingCount} UNIQUE Multiple Choice Questions (MCQs) grounded strictly in the source text.
 DO NOT repeat any previous question stems.
@@ -723,7 +704,7 @@ Return JSON: { "questions": [...] }
         const valContext = createValidationContext({
           cleanedContent,
           targetDifficulty: normalizedDifficulty,
-          conceptGraph: hydratedGraph,
+          conceptGraph,
           acceptedQuestionIndex
         });
         const bfReport = await validateMCQ(bfItem, valContext);
@@ -761,6 +742,8 @@ Return JSON: { "questions": [...] }
     success: true,
     status: finalStatusStr,
     requestId: reqId,
+    conceptGraph,
+    conceptIndex,
     lectureDepth: {
       score: lectureDepthScore,
       band: depthBand

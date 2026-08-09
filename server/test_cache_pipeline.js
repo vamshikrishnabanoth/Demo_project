@@ -60,7 +60,7 @@ async function runCacheTests() {
     content: 'TCP/IP network protocols and socket programming architecture using C code ```c int socket = socket(); ```.',
     difficulty: 'Balanced',
     requestedCount: 5,
-    requestId: 'demo_req_99'
+    requestId: 'demo_req_100'
   });
 
   console.log(`Engine Status: ${engineRes.status}, Questions Delivered: ${engineRes.questions.length}`);
@@ -69,7 +69,7 @@ async function runCacheTests() {
     content: 'TCP/IP network protocols and socket programming architecture using C code ```c int socket = socket(); ```.',
     difficulty: 'Balanced',
     requestedCount: 5,
-    requestId: 'demo_req_99_second_hit'
+    requestId: 'demo_req_100_second_hit'
   });
 
   console.log(`Second Call Engine Status: ${engineHitRes.status}, Questions Delivered: ${engineHitRes.questions.length}`);
