@@ -1,7 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X } from 'lucide-react';
+import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X, WifiOff, RefreshCw } from 'lucide-react';
 import api from '../utils/api';
 import AgentPipelineLoader from './loaders/AgentPipelineLoader';
+import { 
+    createSessionRecord, 
+    saveAudioChunk, 
+    reconstructSessionBlob, 
+    getPendingSessions, 
+    markSessionCompleted, 
+    deleteSessionRecord 
+} from '../utils/audioDB';
+import { createTimerWorker } from '../utils/timerWorker';
 
 export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const [isRecording, setIsRecording] = useState(false);
@@ -9,16 +18,21 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const [recordingTime, setRecordingTime] = useState(0);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
+    const [isOffline, setIsOffline] = useState(!navigator.onLine);
+    const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
 
     // ── Config modal state (shown after recording stops) ───────────────────
     const [showConfig, setShowConfig] = useState(false);
     const [pendingBlob, setPendingBlob] = useState(null);
+    const [currentSessionId, setCurrentSessionId] = useState(null);
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
 
     const mediaRecorderRef = useRef(null);
     const audioChunksRef   = useRef([]);
-    const timerRef         = useRef(null);
+    const chunkIndexRef    = useRef(0);
+    const timerWorkerRef   = useRef(null);
+    const currentSessionIdRef = useRef(null);
 
     // ── Inline polling state ──────────────────────────────────────────────────
     const [polling, setPolling]       = useState(false);
@@ -79,44 +93,56 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                             
                             return {
                                 ...q,
-                                questionText: q.questionText || q.prompt_text || q.question || '',
+                                question: q.question || q.questionText || '',
                                 options: cleanOpts,
                                 correctAnswer: correctVal,
-                                concept_tag: q.concept_tag || q.sub_topic || result.title || 'Curriculum Concept',
-                                points: q.points || 10
+                                explanation: q.explanation || '',
                             };
                         });
                     }
-                    if (onComplete) onComplete(result);
-                } else if (status === 'FAILED' || status === 'EXPIRED' || status === 'NOT_FOUND') {
+                    if (currentSessionIdRef.current) {
+                        await markSessionCompleted(currentSessionIdRef.current);
+                        await deleteSessionRecord(currentSessionIdRef.current);
+                    }
+                    onComplete(result);
+                } else if (status === 'FAILED' || status === 'EXPIRED') {
                     stopPolling();
-                    const msg = e || 'Generation failed. Please try again.';
-                    if (onError) onError(msg);
+                    if (onError) onError(e || 'Audio processing failed.');
                 }
             } catch (err) {
-                console.warn('[VoicePoller] poll error:', err.message);
+                console.warn('Polling error:', err);
             }
         };
 
         doPoll();
         pollIntervalRef.current = setInterval(doPoll, 1500);
     }, [stopPolling]);
-    // ─────────────────────────────────────────────────────────────────────────
 
     const isProcessing = uploading || polling;
     const displayError = error;
 
-    // Timer logic
+    // Listen to network state
     useEffect(() => {
-        if (isRecording && !isPaused) {
-            timerRef.current = setInterval(() => {
-                setRecordingTime(prev => prev + 1);
-            }, 1000);
-        } else {
-            clearInterval(timerRef.current);
+        const handleOnline = () => setIsOffline(false);
+        const handleOffline = () => setIsOffline(true);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    // Check for crash recovery sessions on mount
+    useEffect(() => {
+        async function checkRecovery() {
+            const sessions = await getPendingSessions();
+            if (sessions && sessions.length > 0) {
+                setPendingRecoverySessions(sessions);
+            }
         }
-        return () => clearInterval(timerRef.current);
-    }, [isRecording, isPaused]);
+        checkRecovery();
+    }, []);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -127,18 +153,61 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const startRecording = async () => {
         try {
             setError(null);
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
+
+            const newSessionId = `live_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+            currentSessionIdRef.current = newSessionId;
+            setCurrentSessionId(newSessionId);
+            chunkIndexRef.current = 0;
+
+            await createSessionRecord(newSessionId, { title: 'Live Lecture Recording' });
+
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                } 
+            });
+
+            let mimeType = 'audio/webm;codecs=opus';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+            }
+
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType,
+                audioBitsPerSecond: 32000 // Low memory speech compression
+            });
 
             mediaRecorderRef.current = mediaRecorder;
             audioChunksRef.current   = [];
 
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) audioChunksRef.current.push(event.data);
+            mediaRecorder.ondataavailable = async (event) => {
+                if (event.data && event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                    const cIndex = chunkIndexRef.current++;
+                    await saveAudioChunk({
+                        sessionId: newSessionId,
+                        chunkIndex: cIndex,
+                        blobData: event.data,
+                        timestamp: Date.now()
+                    });
+                }
             };
+
             mediaRecorder.onstop = handleStop;
 
-            mediaRecorder.start();
+            // Background Tab Resilient Web Worker Timer
+            const worker = createTimerWorker();
+            timerWorkerRef.current = worker;
+            worker.onmessage = (e) => {
+                if (e.data.type === 'tick') {
+                    setRecordingTime(e.data.seconds);
+                }
+            };
+            worker.postMessage({ command: 'start', seconds: 0 });
+
+            mediaRecorder.start(10000); // 10-second chunking
             setIsRecording(true);
             setIsPaused(false);
             setRecordingTime(0);
@@ -151,6 +220,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const pauseRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.pause();
+            if (timerWorkerRef.current) timerWorkerRef.current.postMessage({ command: 'pause' });
             setIsPaused(true);
         }
     };
@@ -158,12 +228,18 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const resumeRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.resume();
+            if (timerWorkerRef.current) timerWorkerRef.current.postMessage({ command: 'resume' });
             setIsPaused(false);
         }
     };
 
     const stopRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
+            if (timerWorkerRef.current) {
+                timerWorkerRef.current.postMessage({ command: 'stop' });
+                timerWorkerRef.current.terminate();
+                timerWorkerRef.current = null;
+            }
             mediaRecorderRef.current.stop();
             mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
             setIsRecording(false);
@@ -171,12 +247,15 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     };
 
     const handleStop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        if (audioBlob.size < 1000) {
+        const sessionId = currentSessionIdRef.current;
+        const audioBlob = await reconstructSessionBlob(sessionId, 'audio/webm');
+        
+        if (!audioBlob || audioBlob.size < 1000) {
             setError('Recording too short. Please speak for at least a few seconds.');
+            if (sessionId) await deleteSessionRecord(sessionId);
             return;
         }
-        // Instead of processing immediately, save the blob and show config modal
+        
         setPendingBlob(audioBlob);
         setShowConfig(true);
     };
@@ -190,6 +269,9 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const handleConfigCancel = () => {
         setShowConfig(false);
         setPendingBlob(null);
+        if (currentSessionIdRef.current) {
+            deleteSessionRecord(currentSessionIdRef.current);
+        }
     };
 
     const processAudio = async (blob) => {
@@ -204,7 +286,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
 
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 300000, // 5 minutes — large audio files (e.g. 42-min lectures) need time to upload
+                timeout: 300000, // 5 minutes timeout for 4-hour recordings
             });
 
             const { taskId } = res.data;
@@ -218,232 +300,249 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         onQuestionsLoaded(result.questions, result.title || `Recording (${timeStr})`, result.agentReport);
                     } else {
-                        setError('No questions were generated. Please try again with a longer recording.');
+                        setError('No questions were generated from the recording. Please try speaking for longer.');
                     }
                 },
                 onError: (msg) => {
-                    setError(msg || 'Failed to process audio. Ensure you are speaking clearly.');
+                    setError(msg || 'Failed to generate quiz from recording.');
                 },
             });
         } catch (err) {
-            console.error('Processing error:', err);
+            console.error('Error uploading voice:', err);
             setUploading(false);
-            setError(err.response?.data?.msg || 'Failed to process audio. Please try again.');
+            const msg = err.response?.data?.message || err.message || 'Failed to send audio to server.';
+            setError(msg);
         }
     };
 
-    // Show full-screen loader during pipeline
-    if (isProcessing) {
-        return (
-            <AgentPipelineLoader
-                stage={stage}
-                stageLabel={stageLabel}
-                elapsed={elapsed}
-                isVoice={true}
-            />
-        );
-    }
-
-    const difficulties = [
-        { value: 'Easy', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20 hover:border-green-500/50', activeBg: 'bg-green-500/20 border-green-400 shadow-green-500/20' },
-        { value: 'Medium', color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20 hover:border-yellow-500/50', activeBg: 'bg-yellow-500/20 border-yellow-400 shadow-yellow-500/20' },
-        { value: 'Hard', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20 hover:border-red-500/50', activeBg: 'bg-red-500/20 border-red-400 shadow-red-500/20' },
-    ];
+    const handleRecoverSession = async (sess) => {
+        try {
+            const blob = await reconstructSessionBlob(sess.sessionId);
+            if (blob && blob.size >= 1000) {
+                currentSessionIdRef.current = sess.sessionId;
+                setPendingBlob(blob);
+                setShowConfig(true);
+                setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
+            } else {
+                await deleteSessionRecord(sess.sessionId);
+                setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
+            }
+        } catch (e) {
+            console.error('Failed crash recovery:', e);
+        }
+    };
 
     return (
-        <>
-            {/* ── Config Modal (shown after recording stops) ─────────────── */}
-            {showConfig && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}>
-                    <div
-                        className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-10 max-w-lg w-full shadow-2xl relative"
-                        style={{ animation: 'fadeInUp 0.3s ease-out' }}
-                    >
-                        {/* Close button */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden">
+            {/* Ambient Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400">
+                        <Mic size={22} />
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-100 tracking-tight">Live Class Voice Recorder</h2>
+                        <p className="text-xs text-slate-400 font-medium">Memory-safe 4h background recording & offline resilience</p>
+                    </div>
+                </div>
+
+                {isOffline && (
+                    <span className="text-[10px] font-black text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <WifiOff size={12} /> Offline - Recording saved locally
+                    </span>
+                )}
+            </div>
+
+            {/* Crash Recovery Notification */}
+            {pendingRecoverySessions.length > 0 && (
+                <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                        <RefreshCw className="text-amber-400 animate-spin" size={18} />
+                        <span className="text-xs font-bold text-amber-200">Unsaved Recording Session Found</span>
+                    </div>
+                    {pendingRecoverySessions.map(sess => (
                         <button
-                            onClick={handleConfigCancel}
-                            className="absolute top-6 right-6 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all"
+                            key={sess.sessionId}
+                            type="button"
+                            onClick={() => handleRecoverSession(sess)}
+                            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs uppercase rounded-lg transition-all"
                         >
-                            <X size={18} />
+                            Recover Session
                         </button>
+                    ))}
+                </div>
+            )}
 
-                        {/* Header */}
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="w-14 h-14 rounded-2xl bg-[var(--bg-accent)]/20 border border-[var(--bg-accent)]/30 flex items-center justify-center">
-                                <Sparkles size={28} className="text-[var(--text-accent)]" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase tracking-tight">Configure</h2>
-                                <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest">Quiz Generation</p>
-                            </div>
+            {/* Pipeline Loader Overlay */}
+            {isProcessing ? (
+                <div className="py-8">
+                    <AgentPipelineLoader 
+                        stage={stage} 
+                        stageLabel={stageLabel} 
+                        elapsed={elapsed} 
+                        isVoice={true} 
+                    />
+                </div>
+            ) : (
+                <div className="space-y-6">
+                    {/* Error Banner */}
+                    {displayError && (
+                        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-start gap-3 text-red-400 text-sm">
+                            <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                            <div className="flex-1 font-medium">{displayError}</div>
+                            <button 
+                                onClick={() => setError(null)}
+                                className="text-slate-400 hover:text-slate-200"
+                            >
+                                <X size={16} />
+                            </button>
                         </div>
+                    )}
 
-                        {/* Recording info */}
-                        <div className="bg-white/5 rounded-2xl p-4 mb-8 flex items-center gap-3 border border-white/5">
-                            <Mic size={16} className="text-[var(--text-accent)]" />
-                            <span className="text-sm font-bold text-[var(--text-secondary)]">
-                                Recording captured: <span className="text-[var(--text-primary)]">{formatTime(recordingTime)}</span>
-                            </span>
+                    {/* Recording Display & Controls */}
+                    <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4">
+                        {isRecording ? (
+                            <>
+                                <div className="flex items-center gap-3">
+                                    <span className="relative flex h-4 w-4">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                        <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500" />
+                                    </span>
+                                    <span className="font-mono text-3xl font-bold tracking-wider text-slate-100">
+                                        {formatTime(recordingTime)}
+                                    </span>
+                                </div>
+
+                                <p className="text-xs text-slate-400 font-medium">
+                                    {isPaused ? 'Recording paused' : 'Recording in progress... (Chunks saved to IndexedDB)'}
+                                </p>
+
+                                <div className="flex items-center gap-3 pt-2">
+                                    {isPaused ? (
+                                        <button
+                                            type="button"
+                                            onClick={resumeRecording}
+                                            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
+                                        >
+                                            <Play size={16} /> Resume
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={pauseRecording}
+                                            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
+                                        >
+                                            <Pause size={16} /> Pause
+                                        </button>
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        onClick={stopRecording}
+                                        className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20 cursor-pointer"
+                                    >
+                                        <Square size={16} fill="currentColor" /> Stop & Generate Quiz
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="py-4 flex flex-col items-center gap-4">
+                                <button
+                                    type="button"
+                                    onClick={startRecording}
+                                    className="w-20 h-20 bg-gradient-to-tr from-purple-600 to-indigo-500 hover:from-purple-500 hover:to-indigo-400 rounded-full flex items-center justify-center text-white shadow-xl shadow-purple-500/25 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
+                                >
+                                    <Mic size={36} />
+                                </button>
+                                <div className="text-center">
+                                    <p className="text-sm font-semibold text-slate-200">Click to start recording your lecture</p>
+                                    <p className="text-xs text-slate-400 mt-1">Supports 4-hour sessions, background tab switching & offline resilience</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Quiz Generation Configuration Modal */}
+            {showConfig && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-md space-y-6 shadow-2xl relative">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Sparkles size={20} className="text-purple-400" />
+                                Quiz Generation Settings
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={handleConfigCancel}
+                                className="p-1 rounded-lg text-slate-400 hover:text-slate-200"
+                            >
+                                <X size={20} />
+                            </button>
                         </div>
 
                         {/* Question Count */}
-                        <div className="mb-8">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Hash size={16} className="text-[var(--text-accent)]" />
-                                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">
-                                    Number of Questions
-                                </label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="20"
-                                    value={questionCount}
-                                    onChange={(e) => setQuestionCount(parseInt(e.target.value))}
-                                    className="flex-1 h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[var(--bg-accent)]"
-                                />
-                                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-accent)]/20 border border-[var(--bg-accent)]/30 flex items-center justify-center">
-                                    <span className="text-2xl font-black text-[var(--text-accent)] italic">{questionCount}</span>
-                                </div>
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <Hash size={14} className="text-purple-400" /> Number of Questions: {questionCount}
+                            </label>
+                            <input
+                                type="range"
+                                min="1"
+                                max="30"
+                                value={questionCount}
+                                onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
+                                className="w-full accent-purple-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                            />
                         </div>
 
                         {/* Difficulty */}
-                        <div className="mb-10">
-                            <div className="flex items-center gap-3 mb-4">
-                                <BarChart3 size={16} className="text-[var(--text-accent)]" />
-                                <label className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">
-                                    Difficulty Level
-                                </label>
-                            </div>
-                            <div className="grid grid-cols-3 gap-3">
-                                {difficulties.map((d) => (
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <BarChart3 size={14} className="text-purple-400" /> Target Difficulty
+                            </label>
+                            <div className="grid grid-cols-4 gap-2">
+                                {['Balanced', 'Easy', 'Medium', 'Hard'].map((lvl) => (
                                     <button
-                                        key={d.value}
-                                        onClick={() => setDifficulty(d.value)}
-                                        className={`py-4 rounded-2xl border-2 font-black text-sm uppercase tracking-widest transition-all ${
-                                            difficulty === d.value
-                                                ? `${d.activeBg} ${d.color} shadow-lg`
-                                                : `${d.bg} text-white/50`
+                                        key={lvl}
+                                        type="button"
+                                        onClick={() => setDifficulty(lvl)}
+                                        className={`py-2 rounded-xl text-xs font-bold transition-all border ${
+                                            difficulty === lvl
+                                                ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20'
+                                                : 'bg-slate-800/60 text-slate-400 border-slate-700 hover:bg-slate-800 hover:text-slate-200'
                                         }`}
                                     >
-                                        {d.value}
+                                        {lvl}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Generate Button */}
-                        <button
-                            onClick={handleConfigConfirm}
-                            className="w-full flex items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-lg shadow-[var(--bg-accent)]/30"
-                        >
-                            <Sparkles size={18} />
-                            Generate Quiz
-                        </button>
+                        {/* Modal Action Buttons */}
+                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                            <button
+                                type="button"
+                                onClick={handleConfigCancel}
+                                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all"
+                            >
+                                Discard Recording
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleConfigConfirm}
+                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all"
+                            >
+                                Generate MCQs
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-
-            {/* ── Recording UI ──────────────────────────────────────────── */}
-            <div className="bg-white/5 rounded-[2.5rem] border border-white/10 p-12 text-center space-y-8 overflow-hidden relative group transition-all hover:border-[#ff6b00]/30 shadow-2xl">
-                <div className="space-y-4">
-                    <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                        {isRecording ? (isPaused ? 'Recording Paused' : 'Listening to Lesson...') : 'Live Class Mode'}
-                    </h3>
-                    <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">
-                        Record your lecture in real-time and let AI generate the quiz instantly.
-                    </p>
-                </div>
-
-                {/* Visualizer / Pulse */}
-                <div className="relative py-10 flex justify-center">
-                    {isRecording && !isPaused && (
-                        <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-20 pointer-events-none">
-                            {[...Array(20)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="w-1 bg-[#ff6b00] rounded-full animate-pulse"
-                                    style={{
-                                        height: `${Math.random() * 100 + 20}%`,
-                                        animationDelay: `${i * 0.1}s`,
-                                        animationDuration: '0.8s'
-                                    }}
-                                ></div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 relative z-10
-                        ${isRecording ? (isPaused ? 'bg-yellow-500 shadow-[0_0_50px_rgba(234,179,8,0.3)]' : 'bg-red-500 animate-pulse shadow-[0_0_50px_rgba(239,68,68,0.5)]') : 'bg-white/5 border-2 border-white/10 text-slate-500'}
-                    `}>
-                        {isRecording ? (
-                            isPaused ? <Play size={48} className="text-white ml-2" /> : <Mic size={48} className="text-white" />
-                        ) : (
-                            <Mic size={48} />
-                        )}
-                    </div>
-                </div>
-
-                <div className="text-5xl font-black text-white tracking-tighter tabular-nums">
-                    {formatTime(recordingTime)}
-                </div>
-
-                <div className="flex justify-center gap-4">
-                    {!isRecording ? (
-                        <button
-                            onClick={startRecording}
-                            className="flex items-center gap-3 px-10 py-5 bg-[#ff6b00] text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-[#ff6b00]/20 hover:scale-105 active:scale-95 transition-all"
-                        >
-                            <Mic size={20} />
-                            Start Recording
-                        </button>
-                    ) : (
-                        <>
-                            {isPaused ? (
-                                <button
-                                    onClick={resumeRecording}
-                                    className="flex items-center gap-3 px-8 py-5 bg-green-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-green-500/20 hover:scale-105 transition-all"
-                                >
-                                    <Play size={20} />
-                                    Resume
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={pauseRecording}
-                                    className="flex items-center gap-3 px-8 py-5 bg-yellow-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-yellow-500/20 hover:scale-105 transition-all"
-                                >
-                                    <Pause size={20} />
-                                    Pause
-                                </button>
-                            )}
-                            <button
-                                onClick={stopRecording}
-                                className="flex items-center gap-3 px-8 py-5 bg-red-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-red-500/20 hover:scale-105 transition-all"
-                            >
-                                <Square size={20} />
-                                Stop & Generate
-                            </button>
-                        </>
-                    )}
-                </div>
-
-                {displayError && (
-                    <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-500 animate-in fade-in">
-                        <AlertCircle size={20} />
-                        <p className="text-xs font-black uppercase tracking-wider">{displayError}</p>
-                    </div>
-                )}
-            </div>
-
-            {/* Animation keyframes */}
-            <style>{`
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(20px) scale(0.97); }
-                    to { opacity: 1; transform: translateY(0) scale(1); }
-                }
-            `}</style>
-        </>
+        </div>
     );
 }

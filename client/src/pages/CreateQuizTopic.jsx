@@ -5,10 +5,19 @@ import DashboardLayout from '../components/DashboardLayout';
 import { 
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X, Award,
-    PlayCircle, PauseCircle, StopCircle
+    PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
+import { 
+    createSessionRecord, 
+    saveAudioChunk, 
+    reconstructSessionBlob, 
+    getPendingSessions, 
+    markSessionCompleted, 
+    deleteSessionRecord 
+} from '../utils/audioDB';
+import { createTimerWorker } from '../utils/timerWorker';
 
 export default function CreateQuizTopic() {
     // ── 3 Inputs Only ──────────────────────────────────────────────────────────
@@ -50,7 +59,7 @@ export default function CreateQuizTopic() {
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
-    // Voice recording states
+    // Voice recording states & offline/crash resilience
     const [recording, setRecording] = useState(false);
     const [recordingPaused, setRecordingPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -58,6 +67,12 @@ export default function CreateQuizTopic() {
     const isCancelledRef = useRef(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [transcribing, setTranscribing] = useState(false);
+    const [isOffline, setIsOffline] = useState(!navigator.onLine);
+    const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
+
+    const currentSessionIdRef = useRef(null);
+    const chunkIndexRef = useRef(0);
+    const timerWorkerRef = useRef(null);
 
     const fileInputRef = useRef(null);
 
@@ -90,17 +105,35 @@ export default function CreateQuizTopic() {
         ].filter(x => x !== null).join(':');
     };
 
+    // Listen for Online / Offline events
     useEffect(() => {
-        let interval = null;
-        if (recording && !recordingPaused) {
-            interval = setInterval(() => {
-                setRecordingDuration(prev => prev + 1);
-            }, 1000);
-        } else {
-            clearInterval(interval);
+        const handleOnline = () => {
+            setIsOffline(false);
+            toast.success('🌐 Connection restored. Ready to sync voice recordings.');
+        };
+        const handleOffline = () => {
+            setIsOffline(true);
+            toast('⚠️ Network offline. Recording saved locally to IndexedDB.', { icon: '💾' });
+        };
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    // Check for crash recovery sessions on mount
+    useEffect(() => {
+        async function checkRecovery() {
+            const sessions = await getPendingSessions();
+            if (sessions && sessions.length > 0) {
+                setPendingRecoverySessions(sessions);
+            }
         }
-        return () => clearInterval(interval);
-    }, [recording, recordingPaused]);
+        checkRecovery();
+    }, []);
 
     // Calculate lecture depth whenever text content in docket changes
     useEffect(() => {
@@ -229,38 +262,87 @@ export default function CreateQuizTopic() {
         setInputs(prev => prev.filter(item => item.id !== id));
     };
 
-    // Voice recording lifecycle
+    // ── 4-Hour Memory-Safe & Crash-Proof Voice Recording Lifecycle ───────────────
     const startRecording = async () => {
         if (isGenerating) return;
         isCancelledRef.current = false;
+
+        const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+        currentSessionIdRef.current = newSessionId;
+        chunkIndexRef.current = 0;
+
+        // Initialize recording session in IndexedDB
+        await createSessionRecord(newSessionId, { title: 'Lecture Recording' });
+
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const recorder = new MediaRecorder(stream);
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                } 
+            });
+
+            let mimeType = 'audio/webm;codecs=opus';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+            }
+
+            const recorder = new MediaRecorder(stream, {
+                mimeType,
+                audioBitsPerSecond: 32000 // Speech-optimized low bitrate for 4-hour memory safety
+            });
+
             audioChunksRef.current = [];
 
-            recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            // Memory-safe 10-second timeslice chunking directly saved to IndexedDB
+            recorder.ondataavailable = async (e) => {
+                if (e.data && e.data.size > 0) {
+                    audioChunksRef.current.push(e.data);
+                    const cIndex = chunkIndexRef.current++;
+                    await saveAudioChunk({
+                        sessionId: newSessionId,
+                        chunkIndex: cIndex,
+                        blobData: e.data,
+                        timestamp: Date.now()
+                    });
+                }
             };
 
             recorder.onstop = async () => {
                 stream.getTracks().forEach(t => t.stop());
-                
-                // CRITICAL SAFETY CHECK: If recording was cancelled by user, DO NOT transcribe or add to docket
+
+                if (timerWorkerRef.current) {
+                    timerWorkerRef.current.postMessage({ command: 'stop' });
+                    timerWorkerRef.current.terminate();
+                    timerWorkerRef.current = null;
+                }
+
+                // If user clicked Cancel, discard session & IndexedDB store
                 if (isCancelledRef.current) {
-                    console.log('🚫 Voice recording was cancelled by user. Skipping docket ingestion.');
+                    console.log('🚫 Voice recording was cancelled by user. Discarding IndexedDB session.');
+                    await deleteSessionRecord(newSessionId);
                     setRecording(false);
                     setRecordingPaused(false);
                     setRecordingDuration(0);
                     return;
                 }
 
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                // Reconstruct Blob from IndexedDB chunks for maximum reliability
+                const audioBlob = await reconstructSessionBlob(newSessionId, mimeType);
                 setRecording(false);
                 setRecordingPaused(false);
                 setRecordingDuration(0);
 
-                if (audioBlob.size < 1000) {
+                if (!audioBlob || audioBlob.size < 1000) {
                     toast.error('Recording too short. Please speak for at least a few seconds.');
+                    await deleteSessionRecord(newSessionId);
+                    return;
+                }
+
+                // Offline handling
+                if (!navigator.onLine) {
+                    toast('Network offline. Recording safely saved locally in IndexedDB.', { icon: '💾' });
                     return;
                 }
 
@@ -275,7 +357,7 @@ export default function CreateQuizTopic() {
                     try {
                         const localRes = await api.post('http://localhost:8000/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' },
-                            timeout: 10000
+                            timeout: 30000
                         });
                         transcriptText = localRes.data.text;
                     } catch (_) {
@@ -294,18 +376,31 @@ export default function CreateQuizTopic() {
                             content: transcriptText,
                             source_name: `Recording (${timeStr})`
                         }]);
+                        await markSessionCompleted(newSessionId);
+                        await deleteSessionRecord(newSessionId);
                     } else {
                         toast.error('Could not capture clear speech. Please try again.', { id: toastId });
                     }
                 } catch (err) {
                     console.error('Transcription failed:', err);
-                    toast.error('Failed to transcribe voice.', { id: toastId });
+                    toast.error('Failed to transcribe voice. Recording saved in IndexedDB.', { id: toastId });
                 } finally {
                     setTranscribing(false);
                 }
             };
 
-            recorder.start(1000);
+            // Instantiate Web Worker for background-tab resilient timer
+            const worker = createTimerWorker();
+            timerWorkerRef.current = worker;
+            worker.onmessage = (e) => {
+                if (e.data.type === 'tick') {
+                    setRecordingDuration(e.data.seconds);
+                }
+            };
+            worker.postMessage({ command: 'start', seconds: 0 });
+
+            // Start recorder with 10-second timeslice intervals
+            recorder.start(10000);
             setMediaRecorder(recorder);
             setRecording(true);
             setRecordingPaused(false);
@@ -326,6 +421,7 @@ export default function CreateQuizTopic() {
     const pauseRecording = () => {
         if (mediaRecorder && mediaRecorder.state === 'recording') {
             mediaRecorder.pause();
+            if (timerWorkerRef.current) timerWorkerRef.current.postMessage({ command: 'pause' });
             setRecordingPaused(true);
         }
     };
@@ -333,30 +429,85 @@ export default function CreateQuizTopic() {
     const resumeRecording = () => {
         if (mediaRecorder && mediaRecorder.state === 'paused') {
             mediaRecorder.resume();
+            if (timerWorkerRef.current) timerWorkerRef.current.postMessage({ command: 'resume' });
             setRecordingPaused(false);
         }
     };
 
     const cancelRecording = () => {
         isCancelledRef.current = true;
+        if (timerWorkerRef.current) {
+            timerWorkerRef.current.postMessage({ command: 'stop' });
+            timerWorkerRef.current.terminate();
+            timerWorkerRef.current = null;
+        }
         if (mediaRecorder) {
-            mediaRecorder.onstop = null; // Detach listener
+            mediaRecorder.onstop = null;
             if (mediaRecorder.state !== 'inactive') {
-                try {
-                    mediaRecorder.stop();
-                } catch (e) {
-                    console.error('Error stopping recorder:', e);
-                }
+                try { mediaRecorder.stop(); } catch (e) {}
             }
             if (mediaRecorder.stream) {
                 mediaRecorder.stream.getTracks().forEach(t => t.stop());
             }
+        }
+        if (currentSessionIdRef.current) {
+            deleteSessionRecord(currentSessionIdRef.current);
         }
         audioChunksRef.current = [];
         setRecording(false);
         setRecordingPaused(false);
         setRecordingDuration(0);
         toast('Recording cancelled', { icon: '🗑️' });
+    };
+
+    // Recover session from previous tab crashes
+    const handleRecoverSession = async (sess) => {
+        const toastId = toast.loading(`Recovering recording from ${new Date(sess.createdAt).toLocaleTimeString()}...`);
+        try {
+            const blob = await reconstructSessionBlob(sess.sessionId);
+            if (!blob || blob.size < 1000) {
+                toast.error('Recovered recording was empty or corrupt.', { id: toastId });
+                await deleteSessionRecord(sess.sessionId);
+                setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', blob, 'recovered_recording.webm');
+
+            let transcriptText = '';
+            try {
+                const localRes = await api.post('http://localhost:8000/transcribe', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    timeout: 30000
+                });
+                transcriptText = localRes.data.text;
+            } catch (_) {
+                const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                transcriptText = transcribeRes.data.text;
+            }
+
+            if (transcriptText && transcriptText.trim().length > 5) {
+                const timeStr = new Date(sess.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                toast.success('Recovered recording transcribed successfully!', { id: toastId });
+                setInputs(prev => [...prev, {
+                    id: Math.random().toString(),
+                    type: 'voice',
+                    content: transcriptText,
+                    source_name: `Recovered Recording (${timeStr})`
+                }]);
+                await markSessionCompleted(sess.sessionId);
+                await deleteSessionRecord(sess.sessionId);
+                setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
+            } else {
+                toast.error('Could not transcribe recovered audio.', { id: toastId });
+            }
+        } catch (err) {
+            console.error('Session recovery failed:', err);
+            toast.error('Failed to recover session.', { id: toastId });
+        }
     };
 
     // Direct Generation Submission
@@ -478,6 +629,35 @@ export default function CreateQuizTopic() {
                     </div>
                 )}
 
+                {/* CRASH RECOVERY BANNER */}
+                {pendingRecoverySessions.length > 0 && (
+                    <div className="mx-4 lg:mx-6 mt-4 p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+                        <div className="flex items-center gap-3">
+                            <RefreshCw className="text-amber-600 animate-spin" size={20} />
+                            <div>
+                                <p className="text-xs font-black text-amber-900 uppercase tracking-wider">
+                                    Unsaved Recording Session Detected ({pendingRecoverySessions.length})
+                                </p>
+                                <p className="text-[10px] font-bold text-amber-700">
+                                    Recover previous recording session saved in IndexedDB from a prior crash or tab closure.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {pendingRecoverySessions.map(sess => (
+                                <button
+                                    key={sess.sessionId}
+                                    type="button"
+                                    onClick={() => handleRecoverSession(sess)}
+                                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                >
+                                    Recover Session
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* 2-COLUMN ASYMMETRIC GRID WORKSPACE (60% / 40%) */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 lg:p-6 w-full">
                     
@@ -493,17 +673,21 @@ export default function CreateQuizTopic() {
                             </span>
                         </div>
 
-                        {/* 1. VOICE AUDIO RECORDING WIDGET (With Tactile Pause, Resume, Stop & Cancel Controls) */}
+                        {/* 1. VOICE AUDIO RECORDING WIDGET (4-Hour Memory-Safe & Offline Resilient) */}
                         <div className={`bg-amber-500/5 border-2 border-amber-500/40 rounded-2xl p-6 text-center flex flex-col items-center justify-center space-y-4 shadow-sm transition-all ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                             <div className="flex items-center justify-between w-full border-b pb-2.5 border-amber-500/20">
                                 <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-1.5">
-                                    <Mic size={15} className="text-amber-600" /> Voice Audio Recording
+                                    <Mic size={15} className="text-amber-600" /> Voice Audio Recording (4h Memory-Safe)
                                 </span>
-                                {recording && (
+                                {isOffline ? (
+                                    <span className="text-[10px] font-black text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300 flex items-center gap-1">
+                                        <WifiOff size={12} /> Offline - Recording saved locally
+                                    </span>
+                                ) : recording ? (
                                     <span className="text-[10px] font-mono font-bold text-emerald-600 animate-pulse">
                                         {formatTime(recordingDuration)}
                                     </span>
-                                )}
+                                ) : null}
                             </div>
 
                             {transcribing ? (
@@ -575,7 +759,7 @@ export default function CreateQuizTopic() {
                                             Tap to Record Lecture
                                         </p>
                                         <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mt-0.5">
-                                            Speech will be added to source docket
+                                            Background tab & offline safe • Speech added to docket
                                         </p>
                                     </div>
                                 </div>
