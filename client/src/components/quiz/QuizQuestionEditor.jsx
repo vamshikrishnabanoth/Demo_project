@@ -127,6 +127,16 @@ export default function QuizQuestionEditor({
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
                             className="text-xl italic"
                         />
+                        {question.qualityScore !== undefined && (
+                            <div className="mt-2 inline-flex items-center gap-2 text-xs font-mono text-purple-700 bg-purple-50 px-3 py-1 rounded-lg border border-purple-200 mr-2">
+                                📊 <strong>Quality Score:</strong> {(question.qualityScore * 100).toFixed(0)}%
+                            </div>
+                        )}
+                        {question.sourceEvidence && Array.isArray(question.sourceEvidence) && question.sourceEvidence.length > 0 && question.sourceEvidence[0]?.text && (
+                            <div className="mt-2 text-xs font-mono text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+                                📌 <strong>Source Evidence Span:</strong> "{question.sourceEvidence[0].text}"
+                            </div>
+                        )}
                         {question.assessment_objective && (
                             <p className="mt-2 text-xs font-mono text-emerald-400/90 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
                                 🎯 Objective: {question.assessment_objective}
