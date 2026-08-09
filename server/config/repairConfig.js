@@ -1,0 +1,35 @@
+/**
+ * Centralized Targeted Repair Router Configuration
+ * Version: 1.2.0
+ */
+
+function deepFreeze(obj) {
+  Object.freeze(obj);
+  Object.values(obj).forEach(value => {
+    if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+      deepFreeze(value);
+    }
+  });
+  return obj;
+}
+
+const REPAIR_CONFIG = deepFreeze({
+  VERSION: "1.2.0",
+  MAX_REPAIR_ATTEMPTS: 1,
+  MAX_LLM_RETRIES: 1,
+  CONCURRENCY_LIMIT: parseInt(process.env.REPAIR_CONCURRENCY || "3", 10),
+  TIMEOUT_MS: parseInt(process.env.REPAIR_TIMEOUT_MS || "8000", 10),
+  MAX_EVIDENCE_SNIPPET_CHARS: 1200,
+  HINTS: {
+    REGENERATE_DISTRACTORS: "REGENERATE_DISTRACTORS",
+    IMPROVE_BLOOM_ALIGNMENT: "IMPROVE_BLOOM_ALIGNMENT",
+    REDUCE_OPTION_AMBIGUITY: "REDUCE_OPTION_AMBIGUITY",
+    REWRITE_DUPLICATE_STEM: "REWRITE_DUPLICATE_STEM",
+    FULL_REGENERATE: "FULL_REGENERATE"
+  }
+});
+
+module.exports = {
+  REPAIR_CONFIG,
+  deepFreeze
+};

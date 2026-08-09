@@ -15,6 +15,8 @@ const { buildSlotPrompts } = require('./promptBuilder/index');
 const { PROMPT_CONFIG } = require('../config/promptConfig');
 const { generateQuestions } = require('./questionGenerator/index');
 const { GENERATOR_CONFIG } = require('../config/generatorConfig');
+const { processRepairQueue } = require('./repairRouter/index');
+const { REPAIR_CONFIG } = require('../config/repairConfig');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -530,90 +532,25 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Pipeline Context Assigned: pipelineContext.approvedItems (${pipelineContext.approvedItems?.length || 0}) | pipelineContext.repairQueue (${pipelineContext.repairQueue?.length || 0})`);
   console.log(`  └─ Approved items saved to context; items requiring repair routed to Stage 7.`);
 
+  // [STEP 8: TARGETED REPAIR ROUTER ENGINE v1.2.0]
+  let repairResult = null;
+  if (pipelineContext.repairQueue && pipelineContext.repairQueue.length > 0) {
+    console.log(`\n[ReqID: ${reqId}] [STEP 7: TARGETED REPAIR ROUTER v${REPAIR_CONFIG.VERSION}]`);
+    repairResult = await processRepairQueue(pipelineContext.repairQueue, pipelineContext);
+    
+    console.log(`  ├─ Queue Processed: ${repairResult.batchSummary.totalItemsQueued} Items (Concurrency: ${REPAIR_CONFIG.CONCURRENCY_LIMIT} Workers | Timeout: ${REPAIR_CONFIG.TIMEOUT_MS}ms)`);
+    console.log(`  ├─ Yield & Success Rate: ${repairResult.batchSummary.successfullyRepaired}/${repairResult.batchSummary.totalItemsQueued} Repaired (${(repairResult.batchSummary.repairSuccessRate * 100).toFixed(0)}%) | Avg Latency: ${repairResult.batchSummary.avgRepairLatencyMs}ms`);
+    console.log(`  ├─ Discarded: ${repairResult.batchSummary.discardedCount} Items | Discard Reasons: ${JSON.stringify(repairResult.batchSummary.discardReasons)}`);
+    console.log(`  └─ Final Approved Pool Size: ${pipelineContext.approvedItems.length} MCQs ready for Stage 8 (Final Selection).`);
+  } else {
+    console.log(`\n[ReqID: ${reqId}] [STEP 7: TARGETED REPAIR ROUTER v${REPAIR_CONFIG.VERSION}] ──► No items in repair queue; skipping.`);
+  }
+
   const validQuestions = (pipelineContext.approvedItems || []).map(q => ({
     ...q,
     question: q.question || q.questionText || q.stem,
     questionText: q.question || q.questionText || q.stem
   }));
-
-  const invalidQuestions = (pipelineContext.repairQueue || []).map((r, idx) => ({
-    index: idx,
-    question: r.item,
-    errors: r.findings?.criticalFailures?.map(f => f.message || f.code || String(f)) || [],
-    failureStage: r.failureStage,
-    code: r.findings?.criticalFailures?.[0]?.code || 'FAIL'
-  }));
-
-  // [STEP 8: TARGETED REPAIR ROUTING & REVALIDATION]
-  let repairAttempts = 0;
-  while (validQuestions.length < requestedCount && invalidQuestions.length > 0 && repairAttempts < config.maxRepairAttempts) {
-    repairAttempts++;
-    console.log(`\n[ReqID: ${reqId}] [STEP 8: TARGETED REPAIR ROUTING (Attempt ${repairAttempts} / ${config.maxRepairAttempts})]`);
-
-    const targetedRepairs = invalidQuestions.map(inv => {
-      const qItem = inv.question;
-      if (!qItem.repairHistory) qItem.repairHistory = [];
-      qItem.repairHistory.push({ stage: inv.failureStage, code: inv.code, timestamp: Date.now() });
-
-      return {
-        index: inv.index + 1,
-        question: qItem.question || qItem.stem,
-        options: qItem.options,
-        correctAnswer: qItem.correctAnswer,
-        failureStage: inv.failureStage,
-        errorCode: inv.code,
-        failureReasons: inv.errors
-      };
-    });
-
-    console.log(`  ├─ Targeted Repair Index: ${targetedRepairs.map(r => `#${r.index}`).join(', ')}`);
-    console.log(`  ├─ Error Codes Sent to Repair Agent: ${targetedRepairs.map(r => r.errorCode).join(', ')}`);
-
-    const repairStartTime = Date.now();
-
-    const repairPrompt = `
-Fix the following defective MCQ objects based STRICTLY on the source text.
-Address the specific failureStage and errorCode listed for each item.
-
-DEFECTIVE ITEMS & ERROR CODES:
-${JSON.stringify(targetedRepairs, null, 2)}
-
-SOURCE TEXT:
-"""
-${cleanedContent}
-"""
-
-Return JSON: { "fixedQuestions": [...] }
-`;
-
-    try {
-      const llm = new LLMProvider(apiKey);
-      const repairRaw = await llm.generateJSON(repairPrompt);
-      const repairDurationSec = ((Date.now() - repairStartTime) / 1000).toFixed(2);
-      console.log(`  ├─ Repair Agent Execution Complete in ${repairDurationSec} seconds.`);
-
-      const repairedData = parseJSONRecoverable(repairRaw);
-      const fixedList = (repairedData.fixedQuestions || repairedData.questions || []).map(q => ({ ...q, wasRepaired: true }));
-
-      for (const fItem of fixedList) {
-        const valContext = createValidationContext({
-          cleanedContent,
-          targetDifficulty: normalizedDifficulty,
-          conceptGraph
-        });
-        const repReport = await validateMCQ(fItem, valContext);
-        if (repReport.isValid) {
-          fItem.qualityScore = repReport.qualityScore;
-          validQuestions.push(fItem);
-        }
-      }
-
-      console.log(`  └─ Re-Validating Repaired Items Complete. Approved Valid Count: ${validQuestions.length}`);
-    } catch (repairErr) {
-      console.log(`  └─ Repair Attempt #${repairAttempts} Failed: ${repairErr.message}`);
-      break;
-    }
-  }
 
   const executionTimeMs = Date.now() - startTime;
   const finalQuestions = validQuestions.slice(0, requestedCount);
@@ -642,6 +579,7 @@ Return JSON: { "fixedQuestions": [...] }
     generatorResult: generatorResultObj,
     candidateItems,
     validationResult,
+    repairResult,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
