@@ -1299,15 +1299,18 @@ export default function AttemptQuiz() {
                             />
                         ))}
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-2"
-                        aria-label="Log out"
-                        title="Log out"
-                    >
-                        <LogOut size={15} />
-                        <span>Logout</span>
-                    </button>
+                    {/* Show logout ONLY when quiz is finished or in review mode */}
+                    {(result || isReviewMode) && (
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-2"
+                            aria-label="Log out"
+                            title="Log out"
+                        >
+                            <LogOut size={15} />
+                            <span>Logout</span>
+                        </button>
+                    )}
                 </div>
             </header>
 
