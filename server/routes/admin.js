@@ -347,10 +347,10 @@ router.get('/students', auth, adminOnly, async (req, res) => {
 
         const AND_CONDITIONS = [{ role: 'student' }];
 
-        if (year) AND_CONDITIONS.push({ year });
-        if (semester) AND_CONDITIONS.push({ semester });
-        if (section) AND_CONDITIONS.push({ section });
-        if (branch) AND_CONDITIONS.push({ studentBranch: branch });
+        if (year && year !== 'all') AND_CONDITIONS.push({ year: String(year) });
+        if (semester && semester !== 'all') AND_CONDITIONS.push({ semester: String(semester) });
+        if (section && section !== 'all') AND_CONDITIONS.push({ section: { equals: section, mode: 'insensitive' } });
+        if (branch && branch !== 'all') AND_CONDITIONS.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
         if (status === 'suspended') AND_CONDITIONS.push({ isSuspended: true });
         if (status === 'active')    AND_CONDITIONS.push({ isSuspended: false });
 

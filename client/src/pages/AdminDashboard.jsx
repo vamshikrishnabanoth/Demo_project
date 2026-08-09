@@ -374,7 +374,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
 
     const isFiltered = search || yearF || semF || sectionF || branchF || statusF;
 
-    const fetchStudents = useCallback(async (targetPage = page) => {
+    const fetchStudents = useCallback(async (targetPage = 1) => {
         setLoading(true);
         try {
             const res = await api.get('/admin/students', {
@@ -396,12 +396,12 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
         } catch {
             toast.error('Failed to load student records');
         } finally { setLoading(false); }
-    }, [page, limit, search, yearF, semF, sectionF, branchF, statusF]);
+    }, [limit, search, yearF, semF, sectionF, branchF, statusF]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchStudents(page);
-        }, 200);
+        }, 150);
         return () => clearTimeout(timer);
     }, [search, yearF, semF, sectionF, branchF, statusF, page, fetchStudents]);
 
@@ -534,13 +534,27 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     </button>
                 )}
 
-                {selectedIds.length > 0 && (
-                    <div className="ml-auto flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
-                        <span className="text-xs font-black text-rose-800 uppercase">{selectedIds.length} Selected</span>
-                        <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 hover:bg-amber-500 hover:text-white text-xs font-black uppercase transition-all">Suspend</button>
-                        <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase transition-all">Delete</button>
-                    </div>
-                )}
+                {/* Filter Results Counter Pill */}
+                <div className="ml-auto flex items-center gap-3">
+                    {isFiltered ? (
+                        <span className="px-4 py-2 rounded-xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs animate-in zoom-in-95 duration-200">
+                            <CheckCircle2 size={16} className="text-emerald-700" />
+                            Found {totalCount} matching {totalCount === 1 ? 'student' : 'students'}
+                        </span>
+                    ) : (
+                        <span className="px-3.5 py-2 rounded-xl bg-white border-2 border-slate-300 text-slate-700 text-xs font-black uppercase tracking-wider">
+                            {totalCount} Total Students
+                        </span>
+                    )}
+
+                    {selectedIds.length > 0 && (
+                        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
+                            <span className="text-xs font-black text-rose-800 uppercase">{selectedIds.length} Selected</span>
+                            <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 hover:bg-amber-500 hover:text-white text-xs font-black uppercase transition-all">Suspend</button>
+                            <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase transition-all">Delete</button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Students Table */}
@@ -618,14 +632,14 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your query</td></tr>
+                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your filter criteria</td></tr>
                             )}
                         </tbody>
                     </table>
                 </div>
 
                 <div className="p-5 border-t-2 border-slate-100 flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
-                    <span>Showing {students.length} of {totalCount} students</span>
+                    <span>Showing {students.length} of {totalCount} {isFiltered ? 'filtered' : ''} students</span>
                     <div className="flex items-center gap-3">
                         <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="px-4 py-2 rounded-xl border-2 border-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">Previous</button>
                         <span>Page {page} of {totalPages}</span>
@@ -741,13 +755,23 @@ function AdminTeachersTab({ setUserModal }) {
                         <option value="active">Active</option>
                         <option value="suspended">Suspended</option>
                     </select>
-                    {isFiltered && (
-                        <button 
-                            onClick={resetAllFilters}
-                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
-                        >
-                            <RotateCcw size={14} /> Reset
-                        </button>
+                    {isFiltered ? (
+                        <>
+                            <button 
+                                onClick={resetAllFilters}
+                                className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                            >
+                                <RotateCcw size={14} /> Reset
+                            </button>
+                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs">
+                                <CheckCircle2 size={16} className="text-emerald-700" />
+                                Found {totalCount} matching faculty
+                            </span>
+                        </>
+                    ) : (
+                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider">
+                            {totalCount} Total Teachers
+                        </span>
                     )}
                 </div>
                 <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
@@ -1020,7 +1044,7 @@ function AdminDirectoryTab({ setUserModal }) {
 
     const isFiltered = search || (roleFilter && roleFilter !== 'all') || statusFilter;
 
-    const fetchUsers = useCallback(async (targetPage = page) => {
+    const fetchUsers = useCallback(async (targetPage = 1) => {
         setLoading(true);
         try {
             const res = await api.get('/admin/users', {
@@ -1029,12 +1053,7 @@ function AdminDirectoryTab({ setUserModal }) {
                     limit,
                     search: search.trim(),
                     role: roleFilter === 'all' ? '' : roleFilter,
-                    branch: branchFilter === 'all' ? '' : branchFilter,
-                    year: yearFilter === 'all' ? '' : yearFilter,
-                    semester: semesterFilter === 'all' ? '' : semesterFilter,
-                    section: sectionFilter === 'all' ? '' : sectionFilter,
-                    status: statusFilter,
-                    sortBy
+                    status: statusFilter
                 }
             });
             if (res.data && Array.isArray(res.data.users)) {
@@ -1051,25 +1070,12 @@ function AdminDirectoryTab({ setUserModal }) {
         } finally {
             setLoading(false);
         }
-    }, [page, limit, search, roleFilter, branchFilter, yearFilter, semesterFilter, sectionFilter, statusFilter, sortBy]);
-
-    const fetchIngestedDocs = useCallback(async () => {
-        try {
-            const res = await api.get('/quiz/documents');
-            setIngestedDocs(res.data || []);
-        } catch (err) {
-            console.error('Failed to fetch textbooks:', err.message);
-        }
-    }, []);
-
-    useEffect(() => { fetchStats(); }, [fetchStats]);
-    useEffect(() => { fetchUsers(); }, [fetchUsers]);
-    useEffect(() => { fetchIngestedDocs(); }, [fetchIngestedDocs]);
+    }, [limit, search, roleFilter, statusFilter]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchUsers(page);
-        }, 200);
+        }, 150);
         return () => clearTimeout(timer);
     }, [search, roleFilter, statusFilter, page, fetchUsers]);
 
@@ -1208,24 +1214,34 @@ function AdminDirectoryTab({ setUserModal }) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                    <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none font-bold">
                         <option value="all">All Roles</option>
                         <option value="student">Student</option>
                         <option value="teacher">Teacher</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
+                    <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none font-bold">
                         <option value="">All Statuses</option>
                         <option value="active">Active</option>
                         <option value="suspended">Suspended</option>
                     </select>
-                    {isFiltered && (
-                        <button 
-                            onClick={resetAllFilters}
-                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
-                        >
-                            <RotateCcw size={14} /> Reset
-                        </button>
+                    {isFiltered ? (
+                        <>
+                            <button 
+                                onClick={resetAllFilters}
+                                className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                            >
+                                <RotateCcw size={14} /> Reset
+                            </button>
+                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs">
+                                <CheckCircle2 size={16} className="text-emerald-700" />
+                                Found {totalCount} matching {totalCount === 1 ? 'user' : 'users'}
+                            </span>
+                        </>
+                    ) : (
+                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider">
+                            {totalCount} Total Users
+                        </span>
                     )}
                     <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Create User
