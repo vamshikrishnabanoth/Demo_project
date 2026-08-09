@@ -9,6 +9,8 @@ const { validateMCQ } = require('./validators/validatorOrchestrator');
 const { createValidationContext } = require('./validators/validationContext');
 const { buildConceptGraph } = require('./conceptGraphBuilder/index');
 const { generateQuizPlan } = require('./quizPlanner/index');
+const { buildSlotPrompts } = require('./promptBuilder/index');
+const { PROMPT_CONFIG } = require('../config/promptConfig');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -110,7 +112,7 @@ class LLMProvider {
     this.client = new Groq({ apiKey: apiKey || process.env.GROQ_API_KEY });
   }
 
-  async generateJSON(prompt, systemMessage = "You are a precise academic assessment engine.") {
+  async generateJSON(prompt, systemMessage = PROMPT_CONFIG.SYSTEM_PROMPT) {
     let attempts = 0;
     const maxAttempts = 2;
     let lastError = null;
@@ -129,7 +131,9 @@ class LLMProvider {
           ],
           model: "llama-3.1-8b-instant",
           response_format: { type: "json_object" },
-          temperature: 0.15
+          temperature: PROMPT_CONFIG.LLM_PARAMS.TEMPERATURE,
+          top_p: PROMPT_CONFIG.LLM_PARAMS.TOP_P,
+          max_tokens: PROMPT_CONFIG.LLM_PARAMS.MAX_TOKENS
         });
 
         const response = await Promise.race([apiPromise, timeoutPromise]);
@@ -424,11 +428,21 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Anti-Repetition Guard: Enforced (0 Back-to-Back Duplicate Concept Slots)`);
   console.log(`  └─ Quiz Plan blueprint generated and attached to pipeline context.`);
 
-  // [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]
-  console.log(`\n[ReqID: ${reqId}] [STEP 4: PROMPT CONSTRUCTION & GROUNDING CONTRACT]`);
-  console.log(`  ├─ Enforcing Traceability Contract: Requiring explicit sourceEvidence spans for every item.`);
-  console.log(`  ├─ Enforcing Anti-Hallucination Rules: Strict zero external domain knowledge constraint.`);
-  console.log(`  └─ Multi-Angle Framing Strategy: Active (Direct Recall, Sequential Flow, Comparative Reasoning, Constraint Recognition).`);
+  // [STEP 4: PROMPT BUILDER ENGINE v1.2.0]
+  const promptPayloads = buildSlotPrompts(quizPlan, {
+    cleanedContent,
+    conceptGraph,
+    quizPlan
+  });
+
+  const avgSnippetLen = Math.round(promptPayloads.reduce((acc, p) => acc + (p.diagnostics?.snippetLengthChars || 370), 0) / Math.max(1, promptPayloads.length));
+
+  console.log(`\n[ReqID: ${reqId}] [STEP 4: PROMPT BUILDER ENGINE v1.2.0]`);
+  console.log(`  ├─ Payloads Assembled: ${promptPayloads.length} Slot Prompts (Temp:${PROMPT_CONFIG.LLM_PARAMS.TEMPERATURE})`);
+  console.log(`  ├─ Version Propagation: Graph v${conceptGraph.graphVersion || '2.6.0'} | Planner v${quizPlan.plannerVersion || '1.3.0'} | Prompt v${PROMPT_CONFIG.VERSION}`);
+  console.log(`  ├─ Context Isolation: Sentence/Newline boundary snapped snippets (Avg: ~${avgSnippetLen} chars/slot | Max: 500)`);
+  console.log(`  ├─ Safety & Observability: Pipeline evidenceBounds attached | Fallback route 'INSUFFICIENT_EVIDENCE' enabled`);
+  console.log(`  └─ Prompt Payloads attached to context for LLM generation.`);
 
   // BATCHING EXECUTION FOR LARGE QUESTION COUNTS (> 10 MCQs) WITH NAMESPACED QUIZ CACHING
   const BATCH_SIZE = 10;
@@ -447,35 +461,27 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     });
 
     const batchQuestions = await cacheManager.fetchCoalesced(quizCacheKey, async () => {
-      const batchSlots = quizPlan.slots.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
+      const batchPayloads = promptPayloads.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
 
       const prompt = `
-Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text.
+Generate exactly ${targetInBatch} Multiple Choice Questions (MCQs) grounded strictly in the source text snippets.
 ${numBatches > 1 ? `BATCH ${b + 1} OF ${numBatches}: Focus on generating distinct, non-overlapping questions.` : ''}
 
-QUIZ PLAN BLUEPRINT SLOTS:
-${JSON.stringify(batchSlots, null, 2)}
+ISOLATED SLOT PROMPT PAYLOADS:
+${JSON.stringify(batchPayloads.map(p => ({
+  slotId: p.slotId,
+  conceptId: p.conceptId,
+  userPrompt: p.userPrompt
+})), null, 2)}
 
-GROUNDING & EVIDENCE RULES:
-1. Every question, choice, explanation, and answer MUST be supported directly by the text.
-2. For "sourceEvidence", return an object array containing the smallest text span and character offsets:
-   "sourceEvidence": [{ "text": "exact or near-exact span from text", "chunkId": 1, "startOffset": 0, "endOffset": 50 }]
-3. Do NOT use "All of the above", "None of the above", or "Both A and B".
-4. Multi-angle framing strategies to utilize: Direct Recall, Sequential Flow, Comparative Reasoning, Constraint Recognition.
-
-SOURCE TEXT:
-"""
-${cleanedContent}
-"""
-
-OUTPUT FORMAT (JSON ONLY):
+OUTPUT FORMAT CONTRACT:
 {
   "questions": [
     {
       "question": "Question stem",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correctAnswer": "Exact matching string from options",
-      "explanation": "Academic rationale directly supported by text",
+      "explanation": "Academic rationale quoting source snippet",
       "sourceEvidence": [{ "text": "exact span from source", "chunkId": 1, "startOffset": 0, "endOffset": 50 }],
       "relativeDifficulty": "Easy | Medium | Hard",
       "framingType": "Direct Recall | Sequential Flow | Comparative Reasoning | Constraint Recognition"
@@ -724,14 +730,15 @@ Return JSON: { "questions": [...] }
     conceptGraph,
     conceptIndex,
     quizPlan,
+    promptPayloads,
     ...(isPartial && {
       notice: `Generated ${finalQuestions.length} validated questions out of ${requestedCount} requested.`
     }),
     quizPlanSummary: {
       allocatedConcepts: quizPlan.slots.map(s => ({ concept: s.conceptLabel, targetQuestions: 1 })),
       targetDifficulty: normalizedDifficulty,
-      depthProfile: pMeta.difficultyProfile,
-      distributionSummary: dist
+      depthProfile: quizPlan.metadata.difficultyProfile,
+      distributionSummary: quizPlan.distributionSummary
     },
     questions: finalQuestions,
     cacheMetrics: reqMetrics
