@@ -286,14 +286,14 @@ export default function AdminStudents() {
                 {/* Students Table */}
                 <div className="rounded-[18px] bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full min-w-[1000px]">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50/80">
                                     <th className="p-3.5 w-10 text-center">
                                         <input type="checkbox" checked={students.length > 0 && selectedIds.length === students.length} onChange={handleSelectAll} className="rounded text-slate-900 cursor-pointer" />
                                     </th>
                                     <th onClick={() => toggleSort('username')} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider cursor-pointer hover:text-slate-900">
-                                        <div className="flex items-center gap-1">Roll / Username <ArrowUpDown size={12} /></div>
+                                        <div className="flex items-center gap-1">Roll Number <ArrowUpDown size={12} /></div>
                                     </th>
                                     <th onClick={() => toggleSort('name')} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider cursor-pointer hover:text-slate-900">
                                         <div className="flex items-center gap-1">Name <ArrowUpDown size={12} /></div>
@@ -303,7 +303,13 @@ export default function AdminStudents() {
                                         <div className="flex items-center gap-1">Branch <ArrowUpDown size={12} /></div>
                                     </th>
                                     <th onClick={() => toggleSort('year')} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider cursor-pointer hover:text-slate-900">
-                                        <div className="flex items-center gap-1">Yr / Sem / Sec <ArrowUpDown size={12} /></div>
+                                        <div className="flex items-center gap-1">Year <ArrowUpDown size={12} /></div>
+                                    </th>
+                                    <th onClick={() => toggleSort('semester')} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider cursor-pointer hover:text-slate-900">
+                                        <div className="flex items-center gap-1">Semester <ArrowUpDown size={12} /></div>
+                                    </th>
+                                    <th onClick={() => toggleSort('section')} className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider cursor-pointer hover:text-slate-900">
+                                        <div className="flex items-center gap-1">Section <ArrowUpDown size={12} /></div>
                                     </th>
                                     <th className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">Status</th>
                                     <th className="px-4 py-3 text-left text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">Actions</th>
@@ -311,24 +317,24 @@ export default function AdminStudents() {
                             </thead>
                             <tbody className="divide-y divide-slate-200/80">
                                 {loading ? (
-                                    Array.from({ length: 10 }).map((_, i) => <tr key={i}><td colSpan={8} className="px-4 py-3"><Skeleton className="h-9" /></td></tr>)
+                                    Array.from({ length: 10 }).map((_, i) => <tr key={i}><td colSpan={10} className="px-4 py-3"><Skeleton className="h-9" /></td></tr>)
                                 ) : students.length === 0 ? (
-                                    <tr><td colSpan={8} className="py-16 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">No student records found</td></tr>
+                                    <tr><td colSpan={10} className="py-16 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">No student records found</td></tr>
                                 ) : (
                                     students.map(s => (
                                         <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
                                             <td className="p-3.5 text-center">
                                                 <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => handleSelectOne(s.id)} className="rounded text-slate-900 cursor-pointer" />
                                             </td>
-                                            <td className="px-4 py-3.5 text-xs font-bold text-sky-700">{s.username}</td>
-                                            <td className="px-4 py-3.5 text-xs font-bold text-slate-900">{s.name || '—'}</td>
+                                            <td className="px-4 py-3.5 text-xs font-bold text-sky-700 whitespace-nowrap">{s.username}</td>
+                                            <td className="px-4 py-3.5 text-xs font-bold text-slate-900 whitespace-nowrap">{s.name || '—'}</td>
                                             <td className="px-4 py-3.5 text-xs text-slate-600 font-medium truncate max-w-[180px]">{s.email}</td>
-                                            <td className="px-4 py-3.5 text-xs font-bold text-slate-700">{s.studentBranch || '—'}</td>
-                                            <td className="px-4 py-3.5 text-xs font-semibold text-slate-700">
-                                                Y{s.year || '?'} / Sem {s.semester || '?'} / Sec {s.section || '?'}
-                                            </td>
-                                            <td className="px-4 py-3.5"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
-                                            <td className="px-4 py-3.5">
+                                            <td className="px-4 py-3.5 text-xs font-bold text-slate-700 whitespace-nowrap">{s.studentBranch || '—'}</td>
+                                            <td className="px-4 py-3.5 text-xs font-semibold text-slate-700 whitespace-nowrap">Yr {s.year || '?'}</td>
+                                            <td className="px-4 py-3.5 text-xs font-semibold text-slate-700 whitespace-nowrap">Sem {s.semester || '?'}</td>
+                                            <td className="px-4 py-3.5 text-xs font-semibold text-slate-700 whitespace-nowrap">Sec {s.section || '?'}</td>
+                                            <td className="px-4 py-3.5 whitespace-nowrap"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
+                                            <td className="px-4 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-1.5">
                                                     <button onClick={() => setViewingProfile(s)} title="View Student Profile" className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 cursor-pointer transition-all"><Eye size={13} /></button>
                                                     <button onClick={() => setUserModal({ isNew: false, user: s })} title="Edit Student" className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 cursor-pointer transition-all"><Edit3 size={13} /></button>

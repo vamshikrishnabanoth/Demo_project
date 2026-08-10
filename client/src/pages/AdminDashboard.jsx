@@ -560,15 +560,18 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
             {/* Students Table */}
             <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs">
+                    <table className="w-full text-left border-collapse text-xs min-w-[900px]">
                         <thead>
-                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs">
+                            <tr className="bg-slate-100 border-b-2 border-slate-200 text-[#0f172a] font-black uppercase tracking-wider text-xs whitespace-nowrap">
                                 <th className="p-4 w-12 text-center">
                                     <input type="checkbox" checked={selectedIds.length > 0 && selectedIds.length === students.length} onChange={toggleSelectAll} className="rounded text-sky-600 w-4 h-4" />
                                 </th>
+                                <th className="p-4">Roll Number</th>
                                 <th className="p-4">Student Details</th>
                                 <th className="p-4">Branch</th>
-                                <th className="p-4">Academic Progress</th>
+                                <th className="p-4">Year</th>
+                                <th className="p-4">Semester</th>
+                                <th className="p-4">Section</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4 text-center min-w-[150px]">Actions</th>
                             </tr>
@@ -576,7 +579,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                         <tbody className="divide-y-2 divide-slate-100 font-bold text-slate-800">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
-                                    <tr key={i}><td colSpan="6" className="p-4"><Skeleton className="h-12" /></td></tr>
+                                    <tr key={i}><td colSpan="9" className="p-4"><Skeleton className="h-12" /></td></tr>
                                 ))
                             ) : students.length > 0 ? (
                                 students.map((s) => (
@@ -584,16 +587,25 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                         <td className="p-4 text-center">
                                             <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => toggleSelectOne(s.id)} className="rounded text-sky-600 w-4 h-4" />
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 whitespace-nowrap">
+                                            <span className="font-mono font-black text-[#0f172a] text-xs px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-300">
+                                                {s.username || s.rollNumber || '—'}
+                                            </span>
+                                        </td>
+                                        <td className="p-4 whitespace-nowrap">
                                             <div>
                                                 <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
-                                                <p className="text-xs text-slate-500 font-bold">{s.email || 'No email'}</p>
+                                                {s.email && s.email.includes('@') && !s.email.toLowerCase().startsWith(s.username?.toLowerCase()) && (
+                                                    <p className="text-xs text-slate-500 font-bold">{s.email}</p>
+                                                )}
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.studentBranch || 'CSE'}</span></td>
-                                        <td className="p-4 text-xs font-bold text-slate-700">Yr {s.year || 1} · Sem {s.semester || 1} · Sec {s.section || 'A'}</td>
-                                        <td className="p-4"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
-                                        <td className="p-4 text-center">
+                                        <td className="p-4 whitespace-nowrap"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.studentBranch || 'CSE'}</span></td>
+                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Yr {s.year || 1}</td>
+                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sem {s.semester || 1}</td>
+                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sec {s.section || 'A'}</td>
+                                        <td className="p-4 whitespace-nowrap"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
+                                        <td className="p-4 text-center whitespace-nowrap">
                                             <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
                                                     onClick={() => setViewingProfile(s.id)} 
@@ -632,7 +644,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="6" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your filter criteria</td></tr>
+                                <tr><td colSpan="9" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your filter criteria</td></tr>
                             )}
                         </tbody>
                     </table>
