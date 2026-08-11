@@ -522,7 +522,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     }
                 }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
                     <option value="">All Branches</option>
-                    {['CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'].map(b => <option key={b} value={b}>{b}</option>)}
+                    {['CSE', 'CSM'].map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
                 <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
                     <option value="">All Sections</option>

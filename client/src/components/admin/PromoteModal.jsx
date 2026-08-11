@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { getSectionsForBranch } from '../../utils/sectionUtils';
 
-const BRANCHES = ['ALL', 'CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'];
+const BRANCHES = ['ALL', 'CSE', 'CSM'];
 
 export default function PromoteModal({ onClose, onSuccess }) {
     // Source Scope Filters

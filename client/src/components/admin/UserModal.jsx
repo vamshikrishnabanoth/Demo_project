@@ -396,12 +396,6 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                                             }}>
                                                 <option value="CSE">CSE (Computer Science & Engg)</option>
                                                 <option value="CSM">CSM (CSE - AI & ML)</option>
-                                                <option value="CSD">CSD (CSE - Data Science)</option>
-                                                <option value="ECE">ECE (Electronics & Comm)</option>
-                                                <option value="IT">IT (Information Tech)</option>
-                                                <option value="EEE">EEE (Electrical & Electronics)</option>
-                                                <option value="CIVIL">CIVIL Engineering</option>
-                                                <option value="MECH">MECH Engineering</option>
                                             </Select>
                                         </FormField>
 
@@ -446,11 +440,7 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                                     <FormField label="Department / Branch" icon={Briefcase} required>
                                         <Select value={form.department} onChange={set('department')}>
                                             <option value="CSE">CSE - Computer Science & Engg</option>
-                                            <option value="ECE">ECE - Electronics & Comm</option>
-                                            <option value="EEE">EEE - Electrical & Electronics</option>
-                                            <option value="IT">IT - Information Tech</option>
                                             <option value="CSM">CSM - AI & Machine Learning</option>
-                                            <option value="CSD">CSD - Data Science</option>
                                         </Select>
                                     </FormField>
                                 </div>

@@ -238,7 +238,7 @@ export default function AdminStudents() {
                     }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Branches</option>
-                        {['CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'].map(b => <option key={b} value={b}>{b}</option>)}
+                        {['CSE', 'CSM'].map(b => <option key={b} value={b}>{b}</option>)}
                     </select>
 
                     <select value={yearF} onChange={e => { setYearF(e.target.value); setPage(1); }}

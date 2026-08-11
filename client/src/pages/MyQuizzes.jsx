@@ -555,11 +555,7 @@ export default function MyQuizzes() {
                                     onChange={e => setBroadcastModal(m => ({ ...m, branch: e.target.value }))}
                                 >
                                     <option value="CSE">CSE</option>
-                                    <option value="ECE">ECE</option>
-                                    <option value="EEE">EEE</option>
-                                    <option value="IT">IT</option>
                                     <option value="CSM">CSM</option>
-                                    <option value="CSD">CSD</option>
                                 </select>
                             </div>
 
