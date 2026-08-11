@@ -408,7 +408,8 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
 
     const handleDelete = async (s) => {
         if (s.id === currentUser?.id) return;
-        if (!window.confirm(`Permanently delete student ${s.name || s.username}?`)) return;
+        const res = await showConfirm('Delete Student Account?', `Permanently delete student ${s.name || s.username}?`, 'Delete Account');
+        if (!res || !res.isConfirmed) return;
         try {
             await api.delete(`/admin/users/${s.id}`);
             setStudents(prev => prev.filter(x => x.id !== s.id));
@@ -439,7 +440,8 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
 
     const handleBulkDelete = async () => {
         if (!selectedIds.length) return;
-        if (!window.confirm(`Delete ${selectedIds.length} selected students?`)) return;
+        const res = await showConfirm('Delete Selected Students?', `Delete ${selectedIds.length} selected students?`, 'Delete Selected');
+        if (!res || !res.isConfirmed) return;
         try {
             await api.post('/admin/users/bulk-delete', { ids: selectedIds });
             setStudents(prev => prev.filter(s => !selectedIds.includes(s.id)));
@@ -1205,7 +1207,8 @@ function AdminDirectoryTab({ setUserModal }) {
 
     const handleBulkDelete = async () => {
         if (!selectedIds.length) return;
-        if (!window.confirm(`Delete ${selectedIds.length} selected users?`)) return;
+        const res = await showConfirm('Delete Selected Users?', `Delete ${selectedIds.length} selected users?`, 'Delete Selected');
+        if (!res || !res.isConfirmed) return;
         try {
             await api.post('/admin/users/bulk-delete', { ids: selectedIds });
             setUsers(prev => prev.filter(u => !selectedIds.includes(u.id)));

@@ -161,36 +161,38 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
 
         const id = toast.custom((t) => (
             React.createElement('div', {
-                className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[var(--bg-secondary)] backdrop-blur-2xl border-2 border-[var(--border-color)] shadow-[0_25px_60px_rgba(0,0,0,0.25)] rounded-3xl p-6 pointer-events-auto transition-all space-y-5`,
-                style: { color: 'var(--text-primary)' }
+                className: `${t.visible ? 'animate-enter' : 'animate-leave'} max-w-lg w-full bg-[#f8fafc] border border-slate-200/90 shadow-[0_20px_60px_rgba(0,0,0,0.18)] rounded-[28px] p-6 pointer-events-auto transition-all space-y-4`,
+                style: { color: '#0f172a' }
             }, [
                 React.createElement('div', {
                     key: 'header',
-                    className: 'flex items-start gap-4'
+                    className: 'flex items-center gap-4'
                 }, [
                     React.createElement('div', {
                         key: 'icon',
-                        className: 'p-3.5 rounded-2xl bg-[var(--bg-accent)]/15 text-[var(--text-accent)] border border-[var(--border-color)] shrink-0'
-                    }, React.createElement(HelpCircle, { size: 26, className: 'stroke-[2.5]' })),
+                        className: 'w-14 h-14 rounded-2xl bg-slate-200/80 text-slate-900 border border-slate-300/40 flex items-center justify-center shrink-0 shadow-inner'
+                    }, React.createElement(HelpCircle, { size: 28, className: 'stroke-[2.2]' })),
                     React.createElement('div', {
                         key: 'content',
-                        className: 'flex-1 min-w-0 pt-0.5'
+                        className: 'flex-1 min-w-0'
                     }, [
                         React.createElement('h3', {
                             key: 'h3',
-                            className: 'text-lg font-black tracking-wide leading-tight text-[var(--text-primary)]',
-                            style: { color: 'var(--text-primary)' }
+                            className: 'text-xl font-black tracking-tight text-slate-900 leading-tight'
                         }, title),
                         text ? React.createElement('p', {
                             key: 'p',
-                            className: 'text-sm font-semibold mt-1.5 leading-relaxed text-[var(--text-secondary)]',
-                            style: { color: 'var(--text-secondary)' }
+                            className: 'text-sm font-medium mt-1 text-slate-600 leading-relaxed'
                         }, text) : null
                     ])
                 ]),
                 React.createElement('div', {
+                    key: 'divider',
+                    className: 'h-px w-full bg-slate-200/80 my-2'
+                }),
+                React.createElement('div', {
                     key: 'actions',
-                    className: 'flex items-center justify-end gap-3 pt-3.5 border-t border-[var(--border-color)]'
+                    className: 'flex items-center justify-end gap-3 pt-1'
                 }, [
                     React.createElement('button', {
                         key: 'cancel',
@@ -199,7 +201,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                             if (activeConfirmId === t.id) activeConfirmId = null;
                             safeResolve({ isConfirmed: false });
                         },
-                        className: 'px-5 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 transition-all cursor-pointer shadow-xs',
+                        className: 'px-6 py-2.5 rounded-full text-xs font-bold bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition-all cursor-pointer shadow-xs',
                         style: { color: '#334155' }
                     }, 'Cancel'),
                     React.createElement('button', {
@@ -209,7 +211,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                             if (activeConfirmId === t.id) activeConfirmId = null;
                             safeResolve({ isConfirmed: true });
                         },
-                        className: 'px-6 py-2.5 rounded-xl text-xs font-black bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg hover:opacity-90 transition-all transform active:scale-95 cursor-pointer btn-cinematic',
+                        className: 'px-7 py-2.5 rounded-full text-xs font-black bg-gradient-to-r from-amber-600 via-orange-600 to-emerald-700 text-white shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all cursor-pointer',
                         style: { color: '#ffffff' }
                     }, confirmText)
                 ])

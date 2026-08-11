@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { getSectionsForBranch } from '../../utils/sectionUtils';
+import { showConfirm } from '../../utils/alerts';
 
 const BRANCHES = ['ALL', 'CSE', 'CSM'];
 
@@ -76,11 +77,13 @@ export default function PromoteModal({ onClose, onSuccess }) {
         }
 
         const isGraduation = targetYear === 'graduated';
-        const confirmText = isGraduation 
+        const dialogTitle = isGraduation ? 'Graduate Senior Students?' : 'Confirm Student Promotion?';
+        const dialogMsg = isGraduation 
             ? `Are you sure you want to graduate ${totalCount} senior student(s)? Their records will be archived.`
             : `Promote ${totalCount} student(s) to Year ${targetYear}, Semester ${targetSem}${targetSec !== 'keep' ? `, Section ${targetSec}` : ''}?`;
 
-        if (!window.confirm(confirmText)) return;
+        const confirmRes = await showConfirm(dialogTitle, dialogMsg, isGraduation ? 'Yes, Graduate' : 'Yes, Proceed');
+        if (!confirmRes || !confirmRes.isConfirmed) return;
 
         setExecuting(true);
         try {

@@ -14,6 +14,7 @@ import BulkImportModal from '../components/admin/BulkImportModal';
 import PromoteModal from '../components/admin/PromoteModal';
 import StudentProfileModal from '../components/admin/StudentProfileModal';
 import { getSectionsForBranch } from '../utils/sectionUtils';
+import { showConfirm } from '../utils/alerts';
 
 function Skeleton({ className = '' }) {
     return <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />;
@@ -98,7 +99,8 @@ export default function AdminStudents() {
     // Single Actions
     const handleDelete = async (s) => {
         if (s.id === currentUser?.id) return;
-        if (!window.confirm(`Permanently delete student ${s.name || s.username}?`)) return;
+        const res = await showConfirm('Delete Student Account?', `Permanently delete student ${s.name || s.username}?`, 'Delete Account');
+        if (!res || !res.isConfirmed) return;
         try {
             await api.delete(`/admin/users/${s.id}`);
             toast.success('Student record deleted');
@@ -111,7 +113,8 @@ export default function AdminStudents() {
     const handleSuspend = async (s) => {
         if (s.id === currentUser?.id) return;
         const action = s.isSuspended ? 'Reactivate' : 'Suspend';
-        if (!window.confirm(`${action} student ${s.name || s.username}?`)) return;
+        const res = await showConfirm(`${action} Student Account?`, `${action} student account ${s.name || s.username}?`, `${action} Student`);
+        if (!res || !res.isConfirmed) return;
         try {
             const res = await api.put(`/admin/users/suspend/${s.id}`);
             toast.success(`Student account ${s.isSuspended ? 'reactivated' : 'suspended'}`);
@@ -132,7 +135,8 @@ export default function AdminStudents() {
 
     const handleBulkDelete = async () => {
         if (selectedIds.length === 0) return;
-        if (!window.confirm(`Permanently delete ${selectedIds.length} selected student(s)?`)) return;
+        const res = await showConfirm('Delete Selected Students?', `Permanently delete ${selectedIds.length} selected student(s)?`, 'Delete Selected');
+        if (!res || !res.isConfirmed) return;
         try {
             await api.post('/admin/users/bulk-delete', { ids: selectedIds });
             setSelectedIds([]);
@@ -145,7 +149,8 @@ export default function AdminStudents() {
     const handleBulkSuspend = async (suspend) => {
         if (selectedIds.length === 0) return;
         const action = suspend ? 'Suspend' : 'Reactivate';
-        if (!window.confirm(`${action} ${selectedIds.length} selected student(s)?`)) return;
+        const res = await showConfirm(`${action} Selected Students?`, `${action} ${selectedIds.length} selected student(s)?`, `${action} Selected`);
+        if (!res || !res.isConfirmed) return;
         try {
             await api.post('/admin/users/bulk-suspend', { ids: selectedIds, suspend });
             setSelectedIds([]);
