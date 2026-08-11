@@ -137,6 +137,9 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
         }
     } catch (engineErr) {
         console.error(`⚠️ MCQ Engine Pipeline error:`, engineErr.message);
+        if (engineErr.code === 'LIVE_GENERATOR_UNAVAILABLE' || (engineErr.message && engineErr.message.includes('LIVE_GENERATOR_UNAVAILABLE'))) {
+            throw engineErr;
+        }
     }
     
     console.log(`⚠️ Returning pre-formatted editable fallback questions.`);
