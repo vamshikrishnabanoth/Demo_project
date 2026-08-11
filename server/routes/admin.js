@@ -216,31 +216,39 @@ router.post('/users', auth, adminOnly, async (req, res) => {
     }
 
     try {
+        const cleanUsername = username.trim();
+        const cleanEmail = email.trim().toLowerCase();
+
         let existingUser = await prisma.user.findFirst({
-            where: { OR: [{ email }, { username }] }
+            where: { OR: [{ email: cleanEmail }, { username: cleanUsername }] }
         });
         if (existingUser) {
             return res.status(400).json({ msg: 'User with that email or username already exists' });
         }
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password.trim(), salt);
+
+        const isStudent = role === 'student';
 
         const user = await prisma.user.create({
             data: { 
-                username, 
-                email, 
+                username: cleanUsername, 
+                email: cleanEmail, 
                 password: hashedPassword, 
                 role,
-                name: name || null,
-                studentBranch: studentBranch || null,
-                section: section || null,
-                year: year ? String(year) : null,
-                semester: semester ? String(semester) : null,
-                academicYear: academicYear || null
+                name: name ? name.trim() : null,
+                studentBranch: studentBranch ? studentBranch.trim() : null,
+                section: isStudent ? (section ? section.trim() : null) : null,
+                year: isStudent ? (year ? String(year).trim() : null) : null,
+                semester: isStudent ? (semester ? String(semester).trim() : null) : null,
+                academicYear: isStudent ? (academicYear ? academicYear.trim() : null) : null
             },
             select: USER_SELECT
         });
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(req.user.id, adminUser?.name || adminUser?.username || 'Admin', `${role.toUpperCase()}_CREATED`, 'User', user.id, { username: user.username, role: user.role });
 
         res.status(201).json(user);
     } catch (err) {
@@ -258,26 +266,38 @@ router.put('/users/:id', auth, adminOnly, async (req, res) => {
         if (!user) return res.status(404).json({ msg: 'User not found' });
 
         const updateData = {};
-        if (username) updateData.username = username;
-        if (email) updateData.email = email;
-        if (name !== undefined) updateData.name = name;
+        if (username) updateData.username = username.trim();
+        if (email) updateData.email = email.trim().toLowerCase();
+        if (name !== undefined) updateData.name = name ? name.trim() : null;
         if (role && ['teacher', 'student', 'admin', 'none'].includes(role)) updateData.role = role;
         if (password && password.trim() !== '') {
             const salt = await bcrypt.genSalt(10);
-            updateData.password = await bcrypt.hash(password, salt);
+            updateData.password = await bcrypt.hash(password.trim(), salt);
             updateData.tokenVersion = { increment: 1 };
         }
-        if (studentBranch !== undefined) updateData.studentBranch = studentBranch;
-        if (section !== undefined) updateData.section = section;
-        if (year !== undefined) updateData.year = year ? String(year) : null;
-        if (semester !== undefined) updateData.semester = semester ? String(semester) : null;
-        if (academicYear !== undefined) updateData.academicYear = academicYear;
+        if (studentBranch !== undefined) updateData.studentBranch = studentBranch ? studentBranch.trim() : null;
+        
+        const targetRole = updateData.role || user.role;
+        if (targetRole === 'student') {
+            if (section !== undefined) updateData.section = section ? section.trim() : null;
+            if (year !== undefined) updateData.year = year ? String(year).trim() : null;
+            if (semester !== undefined) updateData.semester = semester ? String(semester).trim() : null;
+            if (academicYear !== undefined) updateData.academicYear = academicYear ? academicYear.trim() : null;
+        } else {
+            updateData.section = null;
+            updateData.year = null;
+            updateData.semester = null;
+            updateData.academicYear = null;
+        }
 
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: updateData,
             select: USER_SELECT
         });
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(req.user.id, adminUser?.name || adminUser?.username || 'Admin', 'USER_UPDATED', 'User', updatedUser.id, { username: updatedUser.username, role: updatedUser.role });
 
         res.json(updatedUser);
     } catch (err) {
@@ -315,16 +335,142 @@ router.post('/users/:id/reset-password', auth, adminOnly, async (req, res) => {
     }
 });
 
-// DELETE user
+// Helper function for safe cascading user deletion
+async function safeDeleteUser(userId) {
+    // 1. Delete student results
+    await prisma.result.deleteMany({ where: { studentId: userId } });
+    // 2. Delete broadcasts sent by user
+    await prisma.broadcast.deleteMany({ where: { senderId: userId } });
+    // 3. If user is a teacher, delete quizzes created by them and related data
+    const teacherQuizzes = await prisma.quiz.findMany({ where: { createdById: userId }, select: { id: true } });
+    if (teacherQuizzes.length > 0) {
+        const quizIds = teacherQuizzes.map(q => q.id);
+        await prisma.result.deleteMany({ where: { quizId: { in: quizIds } } });
+        await prisma.broadcast.deleteMany({ where: { quizId: { in: quizIds } } });
+        await prisma.quiz.deleteMany({ where: { id: { in: quizIds } } });
+    }
+    // 4. Delete user record
+    return await prisma.user.delete({ where: { id: userId } });
+}
+
+// PUT toggle suspend user status
+const handleUserSuspendToggle = async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+        if (user.id === req.user.id) return res.status(400).json({ msg: 'Cannot suspend yourself' });
+
+        const updatedUser = await prisma.user.update({
+            where: { id: req.params.id },
+            data: {
+                isSuspended: !user.isSuspended,
+                tokenVersion: { increment: 1 }
+            },
+            select: USER_SELECT
+        });
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(
+            req.user.id,
+            adminUser?.name || adminUser?.username || 'Admin',
+            updatedUser.isSuspended ? 'USER_SUSPENDED' : 'USER_REINSTATED',
+            'User',
+            updatedUser.id,
+            { username: updatedUser.username, role: updatedUser.role }
+        );
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.error('Suspend error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+};
+
+router.put('/users/suspend/:id', auth, adminOnly, handleUserSuspendToggle);
+router.put('/users/:id/suspend', auth, adminOnly, handleUserSuspendToggle);
+
+// POST bulk suspend users
+router.post('/users/bulk-suspend', auth, adminOnly, async (req, res) => {
+    try {
+        const ids = req.body.ids || req.body.userIds || [];
+        const suspend = req.body.suspend !== undefined ? Boolean(req.body.suspend) : true;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ msg: 'No user IDs provided' });
+        }
+
+        const validIds = ids.filter(id => id !== req.user.id);
+
+        const result = await prisma.user.updateMany({
+            where: { id: { in: validIds } },
+            data: {
+                isSuspended: suspend,
+                tokenVersion: { increment: 1 }
+            }
+        });
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(
+            req.user.id,
+            adminUser?.name || adminUser?.username || 'Admin',
+            suspend ? 'BULK_USERS_SUSPENDED' : 'BULK_USERS_REINSTATED',
+            'Users',
+            null,
+            { count: result.count, suspend }
+        );
+
+        res.json({ msg: `Successfully ${suspend ? 'suspended' : 'reinstated'} ${result.count} users`, count: result.count });
+    } catch (err) {
+        console.error('Bulk suspend error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// DELETE single user
 router.delete('/users/:id', auth, adminOnly, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: req.params.id } });
         if (!user) return res.status(404).json({ msg: 'User not found' });
+        if (user.id === req.user.id) return res.status(400).json({ msg: 'Cannot delete your own account' });
 
-        await prisma.user.delete({ where: { id: req.params.id } });
+        await safeDeleteUser(user.id);
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(req.user.id, adminUser?.name || adminUser?.username || 'Admin', 'USER_DELETED', 'User', user.id, { username: user.username, role: user.role });
+
         res.json({ msg: 'User deleted successfully' });
     } catch (err) {
         console.error('Error deleting user:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST bulk delete users
+router.post('/users/bulk-delete', auth, adminOnly, async (req, res) => {
+    try {
+        const ids = req.body.ids || req.body.userIds || [];
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ msg: 'No user IDs provided' });
+        }
+
+        const validIds = ids.filter(id => id !== req.user.id);
+        let deletedCount = 0;
+
+        for (const userId of validIds) {
+            try {
+                await safeDeleteUser(userId);
+                deletedCount++;
+            } catch (e) {
+                console.error(`Failed to delete user ${userId}:`, e.message);
+            }
+        }
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(req.user.id, adminUser?.name || adminUser?.username || 'Admin', 'BULK_USERS_DELETED', 'Users', null, { count: deletedCount });
+
+        res.json({ msg: `Successfully deleted ${deletedCount} users`, count: deletedCount });
+    } catch (err) {
+        console.error('Bulk delete error:', err.message);
         res.status(500).json({ msg: 'Server error: ' + err.message });
     }
 });
@@ -517,6 +663,138 @@ router.get('/admins', auth, adminOnly, async (req, res) => {
         res.json({ admins, totalCount: admins.length });
     } catch (err) {
         res.status(500).json({ msg: 'Server error' });
+    }
+});
+
+// GET /admin/students/eligible - Query matching students for batch promotion preview
+router.get('/students/eligible', auth, adminOnly, async (req, res) => {
+    try {
+        const { branch = 'ALL', year = 'ALL', semester = 'ALL', section = 'ALL' } = req.query;
+
+        const whereConditions = [{ role: 'student' }];
+        if (branch && branch !== 'ALL') whereConditions.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
+        if (year && year !== 'ALL') whereConditions.push({ year: String(year) });
+        if (semester && semester !== 'ALL') whereConditions.push({ semester: String(semester) });
+        if (section && section !== 'ALL') whereConditions.push({ section: { equals: section, mode: 'insensitive' } });
+
+        const where = { AND: whereConditions };
+
+        const [students, totalCount] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                select: { id: true, username: true, name: true, studentBranch: true, year: true, semester: true, section: true },
+                take: 200,
+                orderBy: [{ year: 'asc' }, { studentBranch: 'asc' }, { section: 'asc' }, { username: 'asc' }]
+            }),
+            prisma.user.count({ where })
+        ]);
+
+        res.json({ students, totalCount });
+    } catch (err) {
+        console.error('Eligible fetch error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// POST /admin/promote/quick - Single-step batch student promotion
+router.post('/promote/quick', auth, adminOnly, async (req, res) => {
+    try {
+        const {
+            branch = 'ALL',
+            sourceYear = 'ALL',
+            sourceSemester = 'ALL',
+            sourceSection = 'ALL',
+            targetYear = '2',
+            targetSemester = '3',
+            targetSection = '',
+            studentIds = []
+        } = req.body;
+
+        const whereConditions = [{ role: 'student' }];
+
+        if (Array.isArray(studentIds) && studentIds.length > 0) {
+            whereConditions.push({ id: { in: studentIds } });
+        } else {
+            if (branch && branch !== 'ALL') whereConditions.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
+            if (sourceYear && sourceYear !== 'ALL') whereConditions.push({ year: String(sourceYear) });
+            if (sourceSemester && sourceSemester !== 'ALL') whereConditions.push({ semester: String(sourceSemester) });
+            if (sourceSection && sourceSection !== 'ALL') whereConditions.push({ section: { equals: sourceSection, mode: 'insensitive' } });
+        }
+
+        const where = { AND: whereConditions };
+
+        // Handle graduation
+        if (targetYear === 'graduated' || targetYear === 'alumni' || targetYear === '5') {
+            const deleteRes = await prisma.user.deleteMany({ where });
+            const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+            logActivity(req.user.id, adminUser?.name || adminUser?.username || 'Admin', 'BATCH_STUDENT_GRADUATED', 'Students', null, { count: deleteRes.count });
+            return res.json({
+                msg: `Batch graduation completed! ${deleteRes.count} senior student(s) graduated.`,
+                promotedCount: 0,
+                graduatedCount: deleteRes.count
+            });
+        }
+
+        const updateData = {
+            year: String(targetYear),
+            semester: String(targetSemester || '1')
+        };
+        if (targetSection && targetSection.trim() !== '' && targetSection !== 'keep') {
+            updateData.section = targetSection.trim();
+        }
+
+        const result = await prisma.user.updateMany({
+            where,
+            data: updateData
+        });
+
+        const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
+        logActivity(
+            req.user.id,
+            adminUser?.name || adminUser?.username || 'Admin',
+            'BATCH_STUDENT_PROMOTION',
+            'Students',
+            null,
+            { count: result.count, targetYear, targetSemester, targetSection }
+        );
+
+        res.json({
+            msg: `Successfully promoted ${result.count} student(s) to Year ${targetYear}, Semester ${targetSemester}${targetSection && targetSection !== 'keep' ? `, Section ${targetSection}` : ''}!`,
+            promotedCount: result.count
+        });
+    } catch (err) {
+        console.error('Single-step promotion error:', err.message);
+        res.status(500).json({ msg: 'Server error: ' + err.message });
+    }
+});
+
+// Support wizard endpoint fallback
+router.post('/promote/wizard', auth, adminOnly, async (req, res) => {
+    try {
+        const { studentIds, targetYear, targetSemester, targetSection } = req.body;
+        if (!Array.isArray(studentIds) || studentIds.length === 0) {
+            return res.status(400).json({ msg: 'No students selected for promotion' });
+        }
+
+        if (targetYear === 'graduated' || targetYear === '5') {
+            const deleteRes = await prisma.user.deleteMany({ where: { id: { in: studentIds } } });
+            return res.json({ msg: `Graduated ${deleteRes.count} student(s)`, count: deleteRes.count });
+        }
+
+        const updateData = {
+            year: String(targetYear),
+            semester: String(targetSemester || '1')
+        };
+        if (targetSection && targetSection !== 'keep') updateData.section = targetSection;
+
+        const result = await prisma.user.updateMany({
+            where: { id: { in: studentIds } },
+            data: updateData
+        });
+
+        res.json({ msg: `Successfully promoted ${result.count} student(s)!`, count: result.count });
+    } catch (err) {
+        res.status(500).json({ msg: 'Server error: ' + err.message });
     }
 });
 

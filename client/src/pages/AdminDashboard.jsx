@@ -486,7 +486,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => setUserModal({ defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
                     <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
@@ -616,7 +616,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                                     <Eye size={18} />
                                                 </button>
                                                 <button 
-                                                    onClick={() => setUserModal({ user: s })} 
+                                                    onClick={() => setUserModal({ isNew: false, user: s, defaultRole: 'student' })} 
                                                     className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Student Details"
                                                     aria-label="Edit Student Details"
@@ -786,7 +786,7 @@ function AdminTeachersTab({ setUserModal }) {
                         </span>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
                 </button>
             </div>
@@ -823,7 +823,7 @@ function AdminTeachersTab({ setUserModal }) {
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
-                                                    onClick={() => setUserModal({ user: t })} 
+                                                    onClick={() => setUserModal({ isNew: false, user: t, defaultRole: 'teacher' })} 
                                                     className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Faculty Details"
                                                     aria-label="Edit Faculty Details"
@@ -954,7 +954,7 @@ function AdminAdminsTab({ setUserModal }) {
                         </button>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                     <Plus size={18} /> Add Administrator
                 </button>
             </div>
@@ -989,7 +989,7 @@ function AdminAdminsTab({ setUserModal }) {
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
-                                                    onClick={() => setUserModal({ user: a })} 
+                                                    onClick={() => setUserModal({ isNew: false, user: a, defaultRole: 'admin' })} 
                                                     className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Administrator Details"
                                                     aria-label="Edit Administrator Details"
@@ -1255,7 +1255,7 @@ function AdminDirectoryTab({ setUserModal }) {
                             {totalCount} Total Users
                         </span>
                     )}
-                    <button onClick={() => setUserModal({})} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
                 </div>
@@ -1297,7 +1297,7 @@ function AdminDirectoryTab({ setUserModal }) {
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
-                                                    onClick={() => setUserModal({ user: u })} 
+                                                    onClick={() => setUserModal({ isNew: false, user: u, defaultRole: u.role || 'student' })} 
                                                     className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit User Details"
                                                     aria-label="Edit User Details"
@@ -1497,8 +1497,9 @@ export default function AdminDashboard() {
                 {/* Shared Modals */}
                 {userModal && (
                     <UserModal
+                        isNew={userModal.isNew !== undefined ? userModal.isNew : !userModal.user}
                         user={userModal.user}
-                        defaultRole={userModal.defaultRole}
+                        defaultRole={userModal.defaultRole || userModal.user?.role || 'student'}
                         onClose={() => setUserModal(null)}
                         onSave={handleSaveUser}
                     />

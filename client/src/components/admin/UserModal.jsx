@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, BookOpen, Hash, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, KeyRound, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -9,71 +9,75 @@ const ROLE_CONFIGS = {
     student: {
         icon: GraduationCap,
         label: 'Student',
-        activeBg: 'bg-sky-50 border-sky-300 text-sky-700',
-        inactiveBg: 'border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700',
+        badgeBg: 'bg-sky-50 border-sky-300 text-sky-700',
         dividerColor: 'border-sky-200',
         dividerText: 'text-sky-600',
-        button: 'bg-sky-700 hover:bg-sky-800',
+        button: 'bg-sky-700 hover:bg-sky-800 text-white',
     },
     teacher: {
         icon: UserCheck,
         label: 'Teacher',
-        activeBg: 'bg-emerald-50 border-emerald-300 text-emerald-700',
-        inactiveBg: 'border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700',
+        badgeBg: 'bg-emerald-50 border-emerald-300 text-emerald-700',
         dividerColor: 'border-emerald-200',
         dividerText: 'text-emerald-600',
-        button: 'bg-emerald-700 hover:bg-emerald-800',
+        button: 'bg-emerald-700 hover:bg-emerald-800 text-white',
     },
     admin: {
         icon: Shield,
         label: 'Admin',
-        activeBg: 'bg-violet-50 border-violet-300 text-violet-700',
-        inactiveBg: 'border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700',
+        badgeBg: 'bg-violet-50 border-violet-300 text-violet-700',
         dividerColor: 'border-violet-200',
         dividerText: 'text-violet-600',
-        button: 'bg-violet-700 hover:bg-violet-800',
+        button: 'bg-violet-700 hover:bg-violet-800 text-white',
     },
     none: {
         icon: User,
         label: 'None',
-        activeBg: 'bg-slate-100 border-slate-400 text-slate-700',
-        inactiveBg: 'border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700',
+        badgeBg: 'bg-slate-100 border-slate-300 text-slate-700',
         dividerColor: 'border-slate-200',
         dividerText: 'text-slate-500',
-        button: 'bg-slate-700 hover:bg-slate-800',
+        button: 'bg-slate-700 hover:bg-slate-800 text-white',
     },
 };
 
-function FormField({ label, icon: Icon, children }) {
+function FormField({ label, icon: Icon, required, children }) {
     return (
         <div className="space-y-1.5">
-            <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                {Icon && <Icon size={11} className="text-slate-500" />}
-                {label}
+            <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                {Icon && <Icon size={12} className="text-slate-500" />}
+                <span>{label}</span>
+                {required && <span className="text-rose-500 font-bold ml-0.5">*</span>}
             </label>
             {children}
         </div>
     );
 }
 
-function Input({ value, onChange, placeholder, type = 'text', required, disabled }) {
+function Input({ value, onChange, placeholder, type = 'text', required, disabled, rightElement }) {
     return (
-        <input
-            type={type}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={required}
-            disabled={disabled}
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-all disabled:opacity-40 disabled:bg-slate-50"
-        />
+        <div className="relative">
+            <input
+                type={type}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                required={required}
+                disabled={disabled}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all disabled:opacity-40 disabled:bg-slate-50"
+            />
+            {rightElement && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+                    {rightElement}
+                </div>
+            )}
+        </div>
     );
 }
 
 function Select({ value, onChange, children }) {
     return (
         <select value={value} onChange={onChange}
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-slate-900 transition-all appearance-none cursor-pointer">
+            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all appearance-none cursor-pointer">
             {children}
         </select>
     );
@@ -82,23 +86,27 @@ function Select({ value, onChange, children }) {
 export default function UserModal({ isNew, user = null, defaultRole = 'student', onClose, onSave }) {
     const { user: currentUser, updateUser } = useContext(AuthContext);
     const [tab, setTab] = useState('details'); // 'details' | 'reset-password'
-    const [newPasswordReset, setNewPasswordReset] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    // Reliable determination of whether creating new user or editing existing user
+    const isNewUser = isNew !== undefined ? isNew : !user;
+
+    const activeRole = user?.role || defaultRole || 'student';
 
     const [form, setForm] = useState({
-        username: '',
-        email: '',
+        username: user?.username || '',
+        email: user?.email || '',
         password: '',
-        name: '',
-        role: defaultRole,
-        studentBranch: 'CSE',
-        section: 'A',
-        year: '1',
-        semester: '1',
-        academicYear: '2025-2026',
-        department: '',
-        subjects: '',
-        employeeId: '',
+        name: user?.name || '',
+        role: activeRole,
+        studentBranch: user?.studentBranch || 'CSE',
+        section: user?.section || 'A',
+        year: user?.year || '1',
+        semester: user?.semester || '1',
+        academicYear: user?.academicYear || '2025-2026',
+        department: user?.studentBranch || user?.department || 'CSE',
     });
+
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -109,27 +117,50 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                 email: user.email || '',
                 password: '',
                 name: user.name || '',
-                role: user.role || defaultRole,
-                studentBranch: user.studentBranch || user.department || 'CSE',
+                role: user.role || defaultRole || 'student',
+                studentBranch: user.studentBranch || 'CSE',
                 section: user.section || 'A',
                 year: user.year || '1',
                 semester: user.semester || '1',
                 academicYear: user.academicYear || '2025-2026',
-                department: user.department || user.studentBranch || '',
-                subjects: user.subjects || '',
-                employeeId: user.employeeId || '',
+                department: user.studentBranch || user.department || 'CSE',
+            });
+        } else {
+            setForm({
+                username: '',
+                email: '',
+                password: '',
+                name: '',
+                role: defaultRole || 'student',
+                studentBranch: 'CSE',
+                section: 'A',
+                year: '1',
+                semester: '1',
+                academicYear: '2025-2026',
+                department: 'CSE',
             });
         }
+        setErrors({});
     }, [user, defaultRole]);
 
     const set = (field) => (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
 
+    const isStudent = form.role === 'student';
+    const isTeacher = form.role === 'teacher';
+
     const validate = () => {
         const e = {};
-        if (!form.username.trim()) e.username = 'Username / Roll No is required';
-        if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Valid email address is required';
-        if (isNew && !form.password.trim()) e.password = 'Password is required';
-        if (isNew && form.password.trim().length < 6) e.password = 'Password must be at least 6 characters';
+        if (!form.username.trim()) {
+            e.username = isStudent ? 'Roll No / Username is required' : isTeacher ? 'Faculty ID / Username is required' : 'Username is required';
+        }
+        if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+            e.email = 'Valid email address is required';
+        }
+        if (isNewUser && !form.password.trim()) {
+            e.password = 'Password is required';
+        } else if (isNewUser && form.password.trim().length < 6) {
+            e.password = 'Password must be at least 6 characters';
+        }
         return e;
     };
 
@@ -140,12 +171,30 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
         setErrors({});
         setSaving(true);
 
-        const payload = { ...form };
-        if (!isNew && !payload.password.trim()) delete payload.password;
+        const payload = {
+            username: form.username.trim(),
+            email: form.email.trim(),
+            name: form.name.trim() || null,
+            role: form.role,
+        };
+
+        if (form.password && form.password.trim()) {
+            payload.password = form.password.trim();
+        }
+
+        if (isStudent) {
+            payload.studentBranch = form.studentBranch || 'CSE';
+            payload.section = form.section || 'A';
+            payload.year = String(form.year || '1');
+            payload.semester = String(form.semester || '1');
+            payload.academicYear = form.academicYear || '2025-2026';
+        } else if (isTeacher) {
+            payload.studentBranch = form.department || form.studentBranch || 'CSE';
+        }
 
         try {
             let res;
-            if (isNew) {
+            if (isNewUser) {
                 res = await api.post('/admin/users', payload);
                 toast.success(`${ROLE_CONFIGS[form.role]?.label || 'User'} created successfully!`);
                 onSave(res.data, 'created');
@@ -153,8 +202,7 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                 res = await api.put(`/admin/users/${user.id}`, payload);
                 toast.success('User updated successfully!');
                 
-                // If editing self, synchronize AuthContext
-                if (user.id === currentUser?.id) {
+                if (user?.id === currentUser?.id) {
                     updateUser(res.data);
                 }
 
@@ -184,8 +232,6 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
 
     const roleConfig = ROLE_CONFIGS[form.role] || ROLE_CONFIGS.student;
     const RoleIcon = roleConfig.icon;
-    const isStudent = form.role === 'student';
-    const isTeacher = form.role === 'teacher';
 
     return (
         <AnimatePresence>
@@ -201,25 +247,31 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.94, y: 16 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] bg-white border border-slate-200 shadow-[0_24px_80px_rgba(0,0,0,0.15)]"
+                    className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[24px] bg-white border border-slate-200 shadow-[0_24px_80px_rgba(0,0,0,0.15)]"
                     style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.1) transparent' }}>
 
                     {/* Header */}
-                    <div className="sticky top-0 z-10 px-6 pt-6 pb-4 border-b border-slate-200/80 bg-white flex items-center justify-between">
+                    <div className="sticky top-0 z-10 px-6 pt-6 pb-4 border-b border-slate-200 bg-white flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-xl border ${roleConfig.activeBg}`}>
-                                <RoleIcon size={18} />
+                            <div className={`p-2.5 rounded-xl border ${roleConfig.badgeBg}`}>
+                                <RoleIcon size={20} />
                             </div>
                             <div>
                                 <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
-                                    {isNew ? `Add ${roleConfig.label}` : `Edit ${roleConfig.label}`}
+                                    {isNewUser ? `Add New ${roleConfig.label}` : `Edit ${roleConfig.label}`}
                                 </h2>
-                                {!isNew && <p className="text-[11px] text-slate-500 font-medium">@{user?.username}</p>}
+                                {!isNewUser ? (
+                                    <p className="text-[11px] text-slate-500 font-semibold">@{user?.username}</p>
+                                ) : (
+                                    <p className="text-[11px] text-slate-500 font-medium">
+                                        Fill in required details for {roleConfig.label.toLowerCase()} account
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            {!isNew && (
+                            {!isNewUser && (
                                 <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
                                     <button onClick={() => setTab('details')}
                                         className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${tab === 'details' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}>
@@ -239,7 +291,7 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                     </div>
 
                     {/* Body */}
-                    {tab === 'reset-password' && !isNew ? (
+                    {tab === 'reset-password' && !isNewUser ? (
                         <form onSubmit={handlePasswordResetSubmit} className="p-6 space-y-4">
                             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
                                 <h4 className="font-extrabold flex items-center gap-1.5"><KeyRound size={15} /> Reset User Password</h4>
@@ -253,59 +305,84 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                             </div>
                         </form>
                     ) : (
-                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                            {/* Role Selector */}
-                            <FormField label="Role" icon={Shield}>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {Object.entries(ROLE_CONFIGS).map(([r, cfg]) => {
-                                        const Ic = cfg.icon;
-                                        return (
-                                            <button key={r} type="button" onClick={() => setForm(p => ({ ...p, role: r }))}
-                                                className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border transition-all cursor-pointer text-[10px] font-bold uppercase tracking-wider ${form.role === r ? cfg.activeBg : cfg.inactiveBg}`}>
-                                                <Ic size={16} />{cfg.label}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </FormField>
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
-                            {/* Core Fields */}
+                            {/* Core Required Fields */}
                             <div className="grid grid-cols-2 gap-4">
-                                <FormField label="Username / Roll No." icon={User}>
+                                <FormField 
+                                    label={isStudent ? "Roll No. / Username" : isTeacher ? "Faculty ID / Username" : "Username"} 
+                                    icon={User}
+                                    required
+                                >
                                     <div>
-                                        <Input value={form.username} onChange={set('username')} placeholder="e.g. 21A91A0501" required />
+                                        <Input 
+                                            value={form.username} 
+                                            onChange={set('username')} 
+                                            placeholder={isStudent ? "e.g. 21A91A0501" : isTeacher ? "e.g. T101 or faculty_cse" : "Username"} 
+                                            required 
+                                        />
                                         {errors.username && <p className="text-[10px] text-rose-600 mt-1 font-semibold">{errors.username}</p>}
                                     </div>
                                 </FormField>
+                                
                                 <FormField label="Full Name" icon={User}>
-                                    <Input value={form.name} onChange={set('name')} placeholder="Full name (optional)" />
+                                    <Input 
+                                        value={form.name} 
+                                        onChange={set('name')} 
+                                        placeholder={isStudent ? "e.g. John Doe" : isTeacher ? "e.g. Dr. Jane Smith" : "Full name"} 
+                                    />
                                 </FormField>
                             </div>
 
-                            <FormField label="Email Address" icon={Mail}>
+                            <FormField label="Email Address" icon={Mail} required>
                                 <div>
-                                    <Input value={form.email} onChange={set('email')} placeholder="user@kmit.in" type="email" required />
+                                    <Input 
+                                        value={form.email} 
+                                        onChange={set('email')} 
+                                        placeholder={isStudent ? "student@kmit.in" : isTeacher ? "teacher@kmit.in" : "admin@kmit.in"} 
+                                        type="email" 
+                                        required 
+                                    />
                                     {errors.email && <p className="text-[10px] text-rose-600 mt-1 font-semibold">{errors.email}</p>}
                                 </div>
                             </FormField>
 
-                            <FormField label={isNew ? 'Password' : 'New Password (leave blank to keep current)'} icon={Lock}>
+                            <FormField label={isNewUser ? "Password" : "New Password (leave blank to keep current)"} icon={Lock} required={isNewUser}>
                                 <div>
-                                    <Input value={form.password} onChange={set('password')} placeholder={isNew ? 'Minimum 6 characters' : 'Leave blank to keep current'} type="password" required={isNew} />
+                                    <Input 
+                                        value={form.password} 
+                                        onChange={set('password')} 
+                                        placeholder={isNewUser ? "Minimum 6 characters" : "Leave blank to keep current"} 
+                                        type={showPassword ? "text" : "password"} 
+                                        required={isNewUser}
+                                        rightElement={
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="text-slate-400 hover:text-slate-600 focus:outline-none p-1 cursor-pointer"
+                                                title={showPassword ? "Hide Password" : "Show Password"}
+                                            >
+                                                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                            </button>
+                                        }
+                                    />
                                     {errors.password && <p className="text-[10px] text-rose-600 mt-1 font-semibold">{errors.password}</p>}
                                 </div>
                             </FormField>
 
-                            {/* Student-specific fields */}
+                            {/* Student-specific details */}
                             {isStudent && (
-                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="space-y-4">
-                                    <div className="flex items-center gap-2 pt-1">
+                                <div className="space-y-4 pt-2">
+                                    <div className="flex items-center gap-2">
                                         <div className={`flex-1 h-px ${roleConfig.dividerColor} border-t`} />
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${roleConfig.dividerText}`}>Student Details</span>
+                                        <span className={`text-[10px] font-extrabold uppercase tracking-widest ${roleConfig.dividerText}`}>
+                                            Student Academic Details
+                                        </span>
                                         <div className={`flex-1 h-px ${roleConfig.dividerColor} border-t`} />
                                     </div>
+
                                     <div className="grid grid-cols-2 gap-4">
-                                        <FormField label="Branch / Dept">
+                                        <FormField label="Branch / Dept" required>
                                             <Select value={form.studentBranch} onChange={set('studentBranch')}>
                                                 <option value="CSE">CSE</option>
                                                 <option value="ECE">ECE</option>
@@ -315,58 +392,78 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                                                 <option value="CSD">CSD</option>
                                             </Select>
                                         </FormField>
-                                        <FormField label="Section">
-                                            <Input value={form.section} onChange={set('section')} placeholder="e.g. A, B, C" />
+
+                                        <FormField label="Section" required>
+                                            <Select value={form.section} onChange={set('section')}>
+                                                <option value="A">Section A</option>
+                                                <option value="B">Section B</option>
+                                                <option value="C">Section C</option>
+                                                <option value="D">Section D</option>
+                                            </Select>
                                         </FormField>
-                                        <FormField label="Year">
+
+                                        <FormField label="Year" required>
                                             <Select value={form.year} onChange={set('year')}>
-                                                <option value="1">Year 1</option>
-                                                <option value="2">Year 2</option>
-                                                <option value="3">Year 3</option>
-                                                <option value="4">Year 4</option>
+                                                <option value="1">Year 1 (1st Year)</option>
+                                                <option value="2">Year 2 (2nd Year)</option>
+                                                <option value="3">Year 3 (3rd Year)</option>
+                                                <option value="4">Year 4 (4th Year)</option>
                                             </Select>
                                         </FormField>
-                                        <FormField label="Semester">
+
+                                        <FormField label="Semester" required>
                                             <Select value={form.semester} onChange={set('semester')}>
-                                                <option value="1">Sem 1</option>
-                                                <option value="2">Sem 2</option>
+                                                <option value="1">Semester 1</option>
+                                                <option value="2">Semester 2</option>
                                             </Select>
                                         </FormField>
                                     </div>
-                                </motion.div>
+                                </div>
                             )}
 
-                            {/* Teacher-specific fields */}
+                            {/* Teacher-specific details */}
                             {isTeacher && (
-                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="space-y-4">
-                                    <div className="flex items-center gap-2 pt-1">
+                                <div className="space-y-4 pt-2">
+                                    <div className="flex items-center gap-2">
                                         <div className={`flex-1 h-px ${roleConfig.dividerColor} border-t`} />
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${roleConfig.dividerText}`}>Teacher Details</span>
+                                        <span className={`text-[10px] font-extrabold uppercase tracking-widest ${roleConfig.dividerText}`}>
+                                            Faculty Department Details
+                                        </span>
                                         <div className={`flex-1 h-px ${roleConfig.dividerColor} border-t`} />
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <FormField label="Department" icon={Briefcase}>
-                                            <Input value={form.department} onChange={set('department')} placeholder="e.g. CSE, ECE" />
-                                        </FormField>
-                                        <FormField label="Employee ID" icon={Hash}>
-                                            <Input value={form.employeeId} onChange={set('employeeId')} placeholder="e.g. KMIT-T-001" />
-                                        </FormField>
-                                    </div>
-                                </motion.div>
+
+                                    <FormField label="Department / Branch" icon={Briefcase} required>
+                                        <Select value={form.department} onChange={set('department')}>
+                                            <option value="CSE">CSE - Computer Science & Engg</option>
+                                            <option value="ECE">ECE - Electronics & Comm</option>
+                                            <option value="EEE">EEE - Electrical & Electronics</option>
+                                            <option value="IT">IT - Information Tech</option>
+                                            <option value="CSM">CSM - AI & Machine Learning</option>
+                                            <option value="CSD">CSD - Data Science</option>
+                                        </Select>
+                                    </FormField>
+                                </div>
                             )}
 
-                            {/* Submit */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <button type="button" onClick={onClose}
-                                    className="flex-1 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all cursor-pointer">
+                            {/* Actions */}
+                            <div className="flex items-center gap-3 pt-4">
+                                <button 
+                                    type="button" 
+                                    onClick={onClose}
+                                    className="flex-1 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all cursor-pointer"
+                                >
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={saving}
-                                    className={`flex-1 py-2.5 rounded-xl ${roleConfig.button} text-white font-bold text-sm transition-all shadow-sm disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2`}>
-                                    {saving
-                                        ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Saving...</>
-                                        : isNew ? `Create ${roleConfig.label}` : 'Save Changes'
-                                    }
+                                <button 
+                                    type="submit" 
+                                    disabled={saving}
+                                    className={`flex-1 py-2.5 rounded-xl ${roleConfig.button} text-white font-bold text-sm transition-all shadow-sm disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2`}
+                                >
+                                    {saving ? (
+                                        <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Saving...</>
+                                    ) : (
+                                        isNewUser ? `Create ${roleConfig.label}` : 'Save Changes'
+                                    )}
                                 </button>
                             </div>
                         </form>

@@ -204,7 +204,7 @@ export default function AdminAdmins() {
                 </div>
             </div>
 
-            {modal && <UserModal isNew={modal.isNew} user={modal.user} defaultRole="admin" onClose={() => setModal(null)} onSave={handleSave} />}
+            {modal && <UserModal isNew={modal.isNew !== undefined ? modal.isNew : !modal.user} user={modal.user} defaultRole="admin" onClose={() => setModal(null)} onSave={handleSave} />}
         </DashboardLayout>
     );
 }

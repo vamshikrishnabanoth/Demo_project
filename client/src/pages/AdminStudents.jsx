@@ -364,7 +364,7 @@ export default function AdminStudents() {
             </div>
 
             {/* Modals */}
-            {userModal && <UserModal isNew={userModal.isNew} user={userModal.user} defaultRole="student" onClose={() => setUserModal(null)} onSave={handleSave} />}
+            {userModal && <UserModal isNew={userModal.isNew !== undefined ? userModal.isNew : !userModal.user} user={userModal.user} defaultRole="student" onClose={() => setUserModal(null)} onSave={handleSave} />}
             {showImportModal && <BulkImportModal onClose={() => setShowImportModal(false)} onSuccess={() => { fetchStudents(); invalidate(); }} />}
             {showPromoteModal && <PromoteModal onClose={() => setShowPromoteModal(false)} onSuccess={() => { fetchStudents(); invalidate(); }} />}
             {viewingProfile && <StudentProfileModal student={viewingProfile} onClose={() => setViewingProfile(null)} onEdit={(s) => setUserModal({ isNew: false, user: s })} onSuspend={handleSuspend} />}
