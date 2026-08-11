@@ -137,7 +137,17 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
         }
     } catch (engineErr) {
         console.error(`⚠️ MCQ Engine Pipeline error:`, engineErr.message);
-        if (engineErr.code === 'LIVE_GENERATOR_UNAVAILABLE' || (engineErr.message && engineErr.message.includes('LIVE_GENERATOR_UNAVAILABLE'))) {
+        const isUserOrConfigError = engineErr.statusCode === 400 || 
+            engineErr.code === 'NON_ACADEMIC_CONTENT' || 
+            engineErr.code === 'LIVE_GENERATOR_UNAVAILABLE' ||
+            (engineErr.message && (
+                engineErr.message.includes('400') ||
+                engineErr.message.includes('Non-academic') ||
+                engineErr.message.includes('No educational') ||
+                engineErr.message.includes('LIVE_GENERATOR_UNAVAILABLE')
+            ));
+        
+        if (isUserOrConfigError || process.env.ALLOW_MOCK_FALLBACK !== 'true') {
             throw engineErr;
         }
     }
