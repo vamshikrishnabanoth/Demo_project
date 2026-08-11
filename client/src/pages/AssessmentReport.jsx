@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import PremiumLoading from '../components/PremiumLoading';
 import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import PremiumError from '../components/PremiumError';
 import { uiTerminology } from '../utils/uiTerminology';
 
@@ -445,9 +446,10 @@ const AssessmentReport = () => {
                                                         {/* Question Directive */}
                                                         <td className="px-6 py-5 align-top">
                                                             <div className="max-w-md">
-                                                                <p className="text-[#0f172a] font-bold text-sm leading-snug break-words group-hover:text-[#133E87] transition-colors" style={{ color: '#0f172a' }}>
-                                                                    {ans.questionText}
-                                                                </p>
+                                                                <FormattedQuestionText
+                                                                    questionText={ans.questionText}
+                                                                    textClassName="text-[#0f172a] font-bold text-sm leading-snug"
+                                                                />
                                                             </div>
                                                         </td>
 
@@ -619,7 +621,10 @@ const AssessmentReport = () => {
                                     <div className="space-y-8">
                                         <div>
                                             <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-[0.2em] mb-4">Question Directive</p>
-                                            <p className="text-xl font-bold text-[#0f172a] leading-relaxed" style={{ color: '#0f172a' }}>{details.questionText}</p>
+                                            <FormattedQuestionText
+                                                questionText={details.questionText}
+                                                textClassName="text-xl font-bold text-[#0f172a] leading-relaxed"
+                                            />
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -658,7 +663,10 @@ const AssessmentReport = () => {
                                                     <div className="space-y-6 text-[#0f172a]">
                                                         <div>
                                                             <p className="text-[10px] font-black text-[var(--text-accent)] uppercase tracking-widest mb-1.5">Question Directive</p>
-                                                            <p className="text-base font-bold leading-relaxed text-[#0f172a]" style={{ color: '#0f172a' }}>{details.questionText}</p>
+                                                            <FormattedQuestionText
+                                                                questionText={details.questionText}
+                                                                textClassName="text-base font-bold leading-relaxed text-[#0f172a]"
+                                                            />
                                                         </div>
                                                         <div className="pt-4 border-t border-slate-200">
                                                             <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest mb-1.5">Correct Target</p>

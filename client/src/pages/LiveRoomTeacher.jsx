@@ -757,20 +757,20 @@ if (socket.connected) {
 
                 {/* Active Question Preview */}
                 {quiz?.questions?.[currentQuestion] && (
-                    <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-8 shadow-2xl shadow-slate-100/80 relative overflow-hidden">
-                        <div className="flex items-center gap-2 mb-6">
-                            <span className="px-4 py-1.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-full text-xs font-black uppercase tracking-wider italic">
+                    <div className="bg-white border-2 border-slate-100 rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 md:p-8 shadow-2xl shadow-slate-100/80 relative overflow-hidden w-full max-w-full">
+                        <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-6">
+                            <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider italic">
                                 Active Question Preview
                             </span>
-                            <span className="text-slate-300 font-bold tracking-widest uppercase text-xs">
+                            <span className="text-slate-400 font-bold tracking-widest uppercase text-[10px] sm:text-xs">
                                 Visible to Teacher Only · Answers Hidden
                             </span>
                         </div>
 
-                        <div className="mb-6">
+                        <div className="mb-4 sm:mb-6 w-full max-w-full overflow-hidden">
                             <FormattedQuestionText 
                                 questionText={quiz.questions[currentQuestion].questionText} 
-                                textClassName="text-2xl font-black text-[#0f172a] leading-tight"
+                                textClassName="text-base sm:text-xl md:text-2xl font-black text-[#0f172a] leading-tight"
                             />
                         </div>
 
