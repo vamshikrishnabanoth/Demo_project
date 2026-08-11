@@ -424,8 +424,14 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Graph Assembly: ${conceptNodes.length} Nodes | ${conceptEdges.length} Edges | Inverted Index: ${Object.keys(conceptIndex).length} Mapped Keys`);
   console.log(`  ├─ Traversal Sequence: Derived ${traversalOrder.length}-step DAG topological order`);
   console.log(`  ├─ Graph Metadata: Avg Confidence: ${meta.averageConfidence || 0.90} | Build Time: ${meta.buildTimeMs || 0}ms`);
-  console.log(`  ├─ Health Diagnostics: ${conceptGraph.diagnostics?.extractorWarnings?.length || 0} Extractor Warnings | ${conceptGraph.diagnostics?.buildWarnings?.length || 0} Build Warnings`);
   console.log(`  └─ Normalized Concept Graph and Inverted Index attached to context.`);
+
+  if (!conceptNodes || conceptNodes.length === 0) {
+    console.error(`[ReqID: ${reqId}] ❌ No educational or academic study topics could be extracted from provided documents.`);
+    const error = new Error('400 Bad Request: "No educational or academic study topics could be extracted from these documents. Please upload educational notes, slides, or study materials."');
+    error.statusCode = 400;
+    throw error;
+  }
 
   // [STEP 3: QUIZ PLANNER ENGINE v1.3.0]
   const quizPlan = generateQuizPlan(conceptGraph, {
