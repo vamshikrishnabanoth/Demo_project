@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
+import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 
 const LADDER = [
     { level: 10, points: 5000, label: 'Level 10' },
@@ -484,11 +486,12 @@ export default function CyberQuest() {
                                         </div>
                                     </div>
 
-                                    {/* Question Text */}
                                     <div className="my-4">
-                                        <h3 className="text-xl sm:text-2xl font-black leading-snug text-white tracking-tight">
-                                            {activeQuestion.questionText}
-                                        </h3>
+                                        <FormattedQuestionText
+                                            questionText={activeQuestion.questionText}
+                                            textClassName="text-xl sm:text-2xl font-black leading-snug text-white tracking-tight"
+                                            dark={true}
+                                        />
                                     </div>
 
                                     {/* Glassmorphic Option Buttons Grid */}

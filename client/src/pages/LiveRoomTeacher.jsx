@@ -11,6 +11,8 @@ import throttle from '../utils/throttle';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import { SecurityDashboard } from '../components/SecurityDashboard';
 
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
     const { user } = useContext(AuthContext);
@@ -765,9 +767,12 @@ if (socket.connected) {
                             </span>
                         </div>
 
-                        <h3 className="text-2xl font-black text-[#0f172a] mb-6 leading-tight">
-                            {quiz.questions[currentQuestion].questionText}
-                        </h3>
+                        <div className="mb-6">
+                            <FormattedQuestionText 
+                                questionText={quiz.questions[currentQuestion].questionText} 
+                                textClassName="text-2xl font-black text-[#0f172a] leading-tight"
+                            />
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {quiz.questions[currentQuestion].options?.map((option, idx) => {

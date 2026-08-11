@@ -23,7 +23,8 @@ const PROMPT_CONFIG = {
     "4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.",
     "5. Sentence Length: Keep stem character length strictly under maxStemLength.",
     "6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.",
-    "7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically."
+    "7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.",
+    "8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line."
   ]
 };
 

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 
 const FALLBACK_QUESTIONS = [
     {
@@ -475,11 +476,12 @@ export default function SprintArena() {
                                 </div>
                             </div>
 
-                            {/* Question Text */}
                             <div className="my-6 min-h-[70px]">
-                                <h3 className="text-xl sm:text-2xl font-black leading-snug text-white tracking-tight">
-                                    {activeQuestion.questionText}
-                                </h3>
+                                <FormattedQuestionText
+                                    questionText={activeQuestion.questionText}
+                                    textClassName="text-xl sm:text-2xl font-black leading-snug text-white tracking-tight"
+                                    dark={true}
+                                />
                             </div>
 
                             {/* Option Grid */}

@@ -6,6 +6,8 @@ import {
     Volume2, VolumeX, Layers, CheckCircle2, AlertTriangle, Clock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import api from '../utils/api';
 
 const FALLBACK_QUESTIONS = [
@@ -524,10 +526,14 @@ export default function MatchUpArena() {
                                                             transition: 'opacity 0.2s ease-in-out'
                                                         }}
                                                     >
-                                                        <span className="text-[8px] font-black uppercase tracking-widest text-purple-400 absolute top-2 left-3">
-                                                            {card.type}
-                                                        </span>
-                                                        <p className="hyphens-auto break-words max-h-full">{card.text}</p>
+                                                        <div className="w-full max-h-full overflow-y-auto font-bold text-center">
+                                                            <FormattedQuestionText
+                                                                questionText={card.text}
+                                                                textClassName="text-[11px] font-bold leading-tight"
+                                                                showBadge={false}
+                                                                dark={true}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </motion.div>
                                             </div>

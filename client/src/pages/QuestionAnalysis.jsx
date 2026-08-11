@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import toast from 'react-hot-toast';
 import AuthContext from '../context/AuthContext';
 import {
@@ -232,9 +233,12 @@ export default function QuestionAnalysis() {
                         </button>
                     </div>
 
-                    <h2 className="text-2xl md:text-3xl font-black leading-tight mb-10 relative z-10 break-words overflow-wrap-anywhere whitespace-normal text-balance" style={{ color: '#0f172a' }}>
-                        {question.questionText}
-                    </h2>
+                    <div className="mb-10 relative z-10">
+                        <FormattedQuestionText 
+                            questionText={question.questionText} 
+                            textClassName="text-2xl md:text-3xl font-black leading-tight text-[#0f172a]"
+                        />
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                         {question.options.map((opt, idx) => {

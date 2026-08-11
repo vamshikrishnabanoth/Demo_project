@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import {
     CheckCircle, XCircle, ArrowLeft, Trophy, BookOpen,
     Loader2, AlertCircle, RotateCcw
@@ -25,8 +26,13 @@ function ReviewCard({ question, answer, index }) {
                 </div>
                 <div className="flex-1">
                     <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Question {index + 1}</p>
-                    <p className="text-white font-bold text-lg leading-snug">{question?.questionText || answer?.questionText}</p>
+                    <FormattedQuestionText 
+                        questionText={question?.questionText || answer?.questionText} 
+                        textClassName="text-white font-bold text-lg leading-snug"
+                        dark={true}
+                    />
                 </div>
+
                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shrink-0
                     ${isCorrect ? 'bg-green-500/20 text-green-400' : selected ? 'bg-red-500/20 text-red-400' : 'bg-slate-700/50 text-slate-500'}`}>
                     {isCorrect ? 'Correct' : selected ? 'Wrong' : 'Skipped'}

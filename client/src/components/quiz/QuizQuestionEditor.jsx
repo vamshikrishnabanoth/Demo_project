@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus, Minus } from 'lucide-react';
+import { Trash2, Plus, Minus, Eye, Code } from 'lucide-react';
 import { PremiumInput, GlassCard } from '../ui/Primitives';
+import FormattedQuestionText from './FormattedQuestionText';
 
 // Pastel card backgrounds keyed by index
 const kahootColors = [
@@ -33,24 +34,24 @@ const kahootSelectedBorders = [
     'ring-4 ring-pink-500/50 !border-pink-500 shadow-md shadow-pink-500/20',
 ];
 
-// Auto-resize textarea helper
+// Auto-resize textarea helper for multiline questions & code blocks
 function AutoTextarea({ value, onChange, placeholder, style, className }) {
     const ref = useRef(null);
     useEffect(() => {
         if (ref.current) {
             ref.current.style.height = 'auto';
-            ref.current.style.height = ref.current.scrollHeight + 'px';
+            ref.current.style.height = Math.max(80, ref.current.scrollHeight) + 'px';
         }
     }, [value]);
     return (
         <textarea
             ref={ref}
-            rows={1}
+            rows={3}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             className={className}
-            style={{ ...style, resize: 'none', overflow: 'hidden' }}
+            style={{ ...style, resize: 'vertical' }}
         />
     );
 }
@@ -119,14 +120,32 @@ export default function QuizQuestionEditor({
                     <div className="bg-[var(--bg-accent)]/10 w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-accent)] font-black text-2xl border border-[var(--bg-accent)]/20 italic shrink-0">
                         {index + 1}
                     </div>
-                    <div className="flex-1">
-                        <PremiumInput
-                            label={question.concept_tag || "Neural Query"}
-                            placeholder="Ask your question here..."
+                    <div className="flex-1 space-y-3">
+                        <label className="block text-xs font-bold text-[var(--text-primary)]">
+                            {question.concept_tag || "Question Text / Code Snippet / Scenario"}
+                        </label>
+
+                        <AutoTextarea
+                            placeholder="Enter question prompt or paste multi-line source code here..."
                             value={question.questionText}
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
-                            className="text-xl italic"
+                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-primary)] font-mono text-sm tracking-wide focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
                         />
+
+                        {/* Live Formatted Question Preview */}
+                        {question.questionText && question.questionText.trim() && (
+                            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 mt-3">
+                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
+                                    <Eye size={12} className="text-slate-500" />
+                                    <span>Teacher Live Preview</span>
+                                </div>
+                                <FormattedQuestionText
+                                    questionText={question.questionText}
+                                    textClassName="text-sm font-bold text-slate-800"
+                                />
+                            </div>
+                        )}
+
                         {question.qualityScore !== undefined && (
                             <div className="mt-2 inline-flex items-center gap-2 text-xs font-mono text-purple-700 bg-purple-50 px-3 py-1 rounded-lg border border-purple-200 mr-2">
                                 📊 <strong>Quality Score:</strong> {(question.qualityScore * 100).toFixed(0)}%
@@ -154,6 +173,7 @@ export default function QuizQuestionEditor({
                         )}
                     </div>
                 </div>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                     {question.options.map((opt, oIndex) => (

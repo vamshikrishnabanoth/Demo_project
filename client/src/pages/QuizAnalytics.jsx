@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
@@ -706,8 +707,12 @@ export default function QuizAnalytics() {
                                         <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
                                             <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
                                             <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
-                                                <div className="max-h-[100px] overflow-y-auto premium-scrollbar pr-2 break-words overflow-wrap-anywhere whitespace-normal leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
-                                                    {q.questionText}
+                                                <div className="max-h-[160px] overflow-y-auto premium-scrollbar pr-2 leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
+                                                    <FormattedQuestionText
+                                                        questionText={q.questionText}
+                                                        textClassName="text-sm text-[#0f172a] font-bold"
+                                                        showBadge={false}
+                                                    />
                                                 </div>
                                             </td>
                                             {isStudent ? (
