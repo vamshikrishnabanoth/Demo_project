@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
