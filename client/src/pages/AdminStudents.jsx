@@ -13,6 +13,7 @@ import UserModal from '../components/admin/UserModal';
 import BulkImportModal from '../components/admin/BulkImportModal';
 import PromoteModal from '../components/admin/PromoteModal';
 import StudentProfileModal from '../components/admin/StudentProfileModal';
+import { getSectionsForBranch } from '../utils/sectionUtils';
 
 function Skeleton({ className = '' }) {
     return <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />;
@@ -226,10 +227,18 @@ export default function AdminStudents() {
                             className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-all" />
                     </div>
 
-                    <select value={branchF} onChange={e => { setBranchF(e.target.value); setPage(1); }}
+                    <select value={branchF} onChange={e => { 
+                        const newBranch = e.target.value;
+                        setBranchF(newBranch); 
+                        setPage(1); 
+                        const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
+                        if (sectionF && !validSecs.includes(sectionF)) {
+                            setSectionF('');
+                        }
+                    }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Branches</option>
-                        {filterOptions.branches?.map(b => <option key={b} value={b}>{b}</option>)}
+                        {['CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'].map(b => <option key={b} value={b}>{b}</option>)}
                     </select>
 
                     <select value={yearF} onChange={e => { setYearF(e.target.value); setPage(1); }}
@@ -247,7 +256,7 @@ export default function AdminStudents() {
                     <select value={sectionF} onChange={e => { setSectionF(e.target.value); setPage(1); }}
                         className="px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                         <option value="">All Sections</option>
-                        {filterOptions.sections?.map(sec => <option key={sec} value={sec}>Sec {sec}</option>)}
+                        {getSectionsForBranch(branchF, filterOptions.sections).map(sec => <option key={sec} value={sec}>Sec {sec}</option>)}
                     </select>
 
                     <select value={statusF} onChange={e => { setStatusF(e.target.value); setPage(1); }}

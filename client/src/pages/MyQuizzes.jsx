@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError } from '../utils/alerts';
+import { getSectionsForBranch } from '../utils/sectionUtils';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
@@ -592,14 +593,13 @@ export default function MyQuizzes() {
                                 <div>
                                     <label className="block text-xs font-bold text-slate-600 mb-1">Target Section</label>
                                     <select
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs font-black"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-bold text-xs"
                                         value={broadcastModal.section}
                                         onChange={e => setBroadcastModal(m => ({ ...m, section: e.target.value }))}
                                     >
-                                        <option value="A">Section A</option>
-                                        <option value="B">Section B</option>
-                                        <option value="C">Section C</option>
-                                        <option value="D">Section D</option>
+                                        {getSectionsForBranch(broadcastModal.branch).map(sec => (
+                                            <option key={sec} value={sec}>Section {sec}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>

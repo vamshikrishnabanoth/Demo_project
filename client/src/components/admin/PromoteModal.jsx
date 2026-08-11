@@ -6,9 +6,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
+import { getSectionsForBranch } from '../../utils/sectionUtils';
 
-const BRANCHES = ['ALL', 'CSE', 'ECE', 'EEE', 'IT', 'CSM', 'CSD'];
-const DEFAULT_SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+const BRANCHES = ['ALL', 'CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'];
 
 export default function PromoteModal({ onClose, onSuccess }) {
     // Source Scope Filters
@@ -25,10 +25,13 @@ export default function PromoteModal({ onClose, onSuccess }) {
     // Matching students live preview & pool
     const [totalCount, setTotalCount] = useState(0);
     const [previewStudents, setPreviewStudents] = useState([]);
-    const [dynamicSections, setDynamicSections] = useState(DEFAULT_SECTIONS);
+    const [availableDBSections, setAvailableDBSections] = useState([]);
     const [loadingCount, setLoadingCount] = useState(false);
     const [showPreviewDrawer, setShowPreviewDrawer] = useState(false);
     const [executing, setExecuting] = useState(false);
+
+    // Active dynamic sections for current department choice
+    const activeSections = getSectionsForBranch(dept, availableDBSections);
 
     // Auto-compute recommended target state when current year changes
     const handleCurYearChange = (y) => {
@@ -49,10 +52,8 @@ export default function PromoteModal({ onClose, onSuccess }) {
             setTotalCount(res.data.totalCount || 0);
             setPreviewStudents(res.data.students || []);
 
-            // Merge dynamic sections from database with default list
             if (res.data.availableSections && Array.isArray(res.data.availableSections)) {
-                const combined = Array.from(new Set([...DEFAULT_SECTIONS, ...res.data.availableSections])).sort();
-                setDynamicSections(combined);
+                setAvailableDBSections(res.data.availableSections);
             }
         } catch {
             setTotalCount(0);
@@ -202,7 +203,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
                                     >
                                         <option value="ALL">All Sections</option>
-                                        {dynamicSections.map(s => <option key={s} value={s}>Section {s}</option>)}
+                                        {activeSections.map(s => <option key={s} value={s}>Section {s}</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -255,7 +256,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         className="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer disabled:opacity-50"
                                     >
                                         <option value="keep">Keep Current Section</option>
-                                        {dynamicSections.map(s => <option key={s} value={s}>Section {s}</option>)}
+                                        {activeSections.map(s => <option key={s} value={s}>Section {s}</option>)}
                                     </select>
                                 </div>
                             </div>

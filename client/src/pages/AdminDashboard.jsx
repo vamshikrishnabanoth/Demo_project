@@ -23,6 +23,7 @@ import BulkImportModal from '../components/admin/BulkImportModal';
 import PromoteModal from '../components/admin/PromoteModal';
 import StudentProfileModal from '../components/admin/StudentProfileModal';
 import { showConfirm, showSuccess } from '../utils/alerts';
+import { getSectionsForBranch } from '../utils/sectionUtils';
 
 function getGreeting() {
     const hour = new Date().getHours();
@@ -511,13 +512,21 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     <option value="">All Semesters</option>
                     {(filterOptions.semesters || []).map(s => <option key={s} value={s}>Semester {s}</option>)}
                 </select>
-                <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
-                    <option value="">All Sections</option>
-                    {(filterOptions.sections || []).map(sec => <option key={sec} value={sec}>Section {sec}</option>)}
-                </select>
-                <select value={branchF} onChange={(e) => { setBranchF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
+                <select value={branchF} onChange={(e) => { 
+                    const newBranch = e.target.value;
+                    setBranchF(newBranch); 
+                    setPage(1); 
+                    const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
+                    if (sectionF && !validSecs.includes(sectionF)) {
+                        setSectionF('');
+                    }
+                }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
                     <option value="">All Branches</option>
-                    {(filterOptions.branches || []).map(b => <option key={b} value={b}>{b}</option>)}
+                    {['CSE', 'CSM', 'CSD', 'ECE', 'IT', 'EEE', 'CIVIL', 'MECH'].map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+                <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
+                    <option value="">All Sections</option>
+                    {getSectionsForBranch(branchF, filterOptions.sections).map(sec => <option key={sec} value={sec}>Section {sec}</option>)}
                 </select>
                 <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
                     <option value="">All Statuses</option>

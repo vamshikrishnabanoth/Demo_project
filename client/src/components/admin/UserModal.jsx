@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import AuthContext from '../../context/AuthContext';
+import { getSectionsForBranch } from '../../utils/sectionUtils';
 
 const ROLE_CONFIGS = {
     student: {
@@ -383,22 +384,32 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <FormField label="Branch / Dept" required>
-                                            <Select value={form.studentBranch} onChange={set('studentBranch')}>
-                                                <option value="CSE">CSE</option>
-                                                <option value="ECE">ECE</option>
-                                                <option value="EEE">EEE</option>
-                                                <option value="IT">IT</option>
-                                                <option value="CSM">CSM</option>
-                                                <option value="CSD">CSD</option>
+                                            <Select value={form.studentBranch} onChange={(e) => {
+                                                const newBranch = e.target.value;
+                                                const secs = getSectionsForBranch(newBranch);
+                                                setForm(prev => ({
+                                                    ...prev,
+                                                    studentBranch: newBranch,
+                                                    department: newBranch,
+                                                    section: secs.includes(prev.section) ? prev.section : secs[0]
+                                                }));
+                                            }}>
+                                                <option value="CSE">CSE (Computer Science & Engg)</option>
+                                                <option value="CSM">CSM (CSE - AI & ML)</option>
+                                                <option value="CSD">CSD (CSE - Data Science)</option>
+                                                <option value="ECE">ECE (Electronics & Comm)</option>
+                                                <option value="IT">IT (Information Tech)</option>
+                                                <option value="EEE">EEE (Electrical & Electronics)</option>
+                                                <option value="CIVIL">CIVIL Engineering</option>
+                                                <option value="MECH">MECH Engineering</option>
                                             </Select>
                                         </FormField>
 
                                         <FormField label="Section" required>
                                             <Select value={form.section} onChange={set('section')}>
-                                                <option value="A">Section A</option>
-                                                <option value="B">Section B</option>
-                                                <option value="C">Section C</option>
-                                                <option value="D">Section D</option>
+                                                {getSectionsForBranch(form.studentBranch).map(s => (
+                                                    <option key={s} value={s}>Section {s}</option>
+                                                ))}
                                             </Select>
                                         </FormField>
 
