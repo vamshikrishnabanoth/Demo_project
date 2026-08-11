@@ -345,20 +345,19 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     }
   });
 
-  if (validAcademicInputs.length === 0 && sourceInputs.length > 0) {
-    sourceInputs.forEach((inp, idx) => {
-      const srcName = inp.name || inp.source_name || `Source #${idx + 1}`;
-      const srcContent = inp.content || (typeof inp === 'string' ? inp : '');
-      if (srcContent && srcContent.trim().length > 0) {
-        validAcademicInputs.push({ ...inp, name: srcName, content: srcContent, densityScore: 0.5 });
-      }
-    });
+  if (validAcademicInputs.length === 0 && excludedInputs.length > 0) {
+    const excludedNames = excludedInputs.map(i => i.name).join(', ');
+    console.error(`[ReqID: ${reqId}] ❌ [NON-ACADEMIC REJECTION] All uploaded sources failed academic density guardrail: ${excludedNames}`);
+    const error = new Error(`400 Bad Request: "Non-academic content detected in uploaded files (${excludedNames}). Please upload educational study materials, lecture slides, or technical notes."`);
+    error.statusCode = 400;
+    error.code = 'NON_ACADEMIC_CONTENT';
+    throw error;
   }
 
   // ── 3. SAFETY LOCK ──
   if (validAcademicInputs.length === 0) {
     console.error(`[ReqID: ${reqId}] ❌ [SAFETY LOCK TRIGGERED] No content detected across provided sources.`);
-    const error = new Error('400 Bad Request: "No content detected in provided sources."');
+    const error = new Error('400 Bad Request: "No educational content detected in provided sources."');
     error.statusCode = 400;
     throw error;
   }
