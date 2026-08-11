@@ -15,6 +15,15 @@ function loadProvider(providerName) {
  */
 async function dispatchLLMRequest(promptPayload, signal) {
   const providerName = GENERATOR_CONFIG.ACTIVE_PROVIDER;
+
+  // NO Silent Fallback Rule: Enforce valid GROQ_API_KEY unless mock is explicitly set via env
+  if (providerName !== 'mock' && (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'dummy_key') && process.env.ALLOW_MOCK_FALLBACK !== 'true') {
+    const err = new Error('503 Service Unavailable: "LIVE_GENERATOR_UNAVAILABLE: GROQ_API_KEY is missing or unconfigured."');
+    err.statusCode = 503;
+    err.code = 'LIVE_GENERATOR_UNAVAILABLE';
+    throw err;
+  }
+
   const provider = loadProvider(providerName);
 
   const startedAt = Date.now();

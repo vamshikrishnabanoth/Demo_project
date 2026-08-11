@@ -4,14 +4,14 @@ const { PLANNER_CONFIG } = require('../../config/plannerConfig');
  * Pass 3: Framing Style Rotation & Code/Math Overrides (framingRotator.js)
  */
 function rotateFramingStyles(allocatedConceptNodes = []) {
-  const defaultRotation = ["DEFINITION", "SCENARIO", "COMPARATIVE"];
+  const defaultRotation = ["Conceptual", "Scenario", "Diagnostic", "Trade-Off"];
   let rotIdx = 0;
   let framingConflictsResolved = 0;
 
   const slotFramings = allocatedConceptNodes.map((conceptNode, idx) => {
     if (conceptNode?.hasCodeOrMath) {
       framingConflictsResolved++;
-      return (idx % 2 === 0) ? "CALCULATION" : "TROUBLESHOOTING";
+      return (idx % 2 === 0) ? "Diagnostic" : "Trade-Off";
     }
 
     const assignedStyle = defaultRotation[rotIdx % defaultRotation.length];
@@ -22,7 +22,7 @@ function rotateFramingStyles(allocatedConceptNodes = []) {
   return {
     slotFramings,
     framingConflictsResolved,
-    framingStrategy: "RoundRobinWithCodeOverride"
+    framingStrategy: "RoundRobin5D"
   };
 }
 

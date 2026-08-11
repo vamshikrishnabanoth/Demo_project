@@ -17,6 +17,22 @@ function buildConstraintText(slot) {
     `- Allow Negation ("Which is NOT..."): ${profile.allowNegation ? 'YES' : 'NO'}`
   ];
 
+  const diff = String(slot.targetDifficulty || 'EASY').toUpperCase();
+  const bloom = String(slot.targetBloom || 'RECALL').toUpperCase();
+  const framing = slot.framingStyle || slot.expectedFraming || 'Conceptual';
+
+  lines.push(`- Stem Blueprint Pattern: "${slot.stemPattern || 'Analyze the concept'}"`);
+
+  if (diff === 'HARD' || bloom === 'ANALYZE' || bloom === 'EVALUATE') {
+    lines.push(`- HARD COGNITIVE DEPTH: Construct a multi-step analytical scenario requiring trade-off or diagnostic evaluation strictly justified by the source snippet. Minimum stem length: 150 characters.`);
+  } else if (diff === 'MEDIUM' || bloom === 'APPLY') {
+    lines.push(`- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.`);
+  } else {
+    lines.push(`- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.`);
+  }
+
+  lines.push(`- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.`);
+
   if (hints.prerequisiteIds && hints.prerequisiteIds.length > 0) {
     lines.push(`- Prerequisite Concepts: ${hints.prerequisiteIds.join(', ')}`);
   }

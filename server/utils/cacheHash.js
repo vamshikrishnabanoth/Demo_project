@@ -61,11 +61,12 @@ function generateAnalysisCacheKey(text) {
  */
 function generateQuizCacheKey({ text, difficulty = 'Balanced', count = 10, batchIndex = 0 }) {
   const normText = normalizeTextCodeSafe(text);
-  const cleanDiff = String(difficulty).replace(/[^a-zA-Z]/g, '').toLowerCase();
+  const cleanDiff = String(difficulty || 'Balanced').replace(/[^a-zA-Z]/g, '').toLowerCase() || 'balanced';
+  const cleanCount = parseInt(count, 10) || 10;
   
-  const rawSig = `${normText}_${cleanDiff}_${count}_batch${batchIndex}_${config.PROMPT_VERSION}_${config.PLANNER_VERSION}_${config.VALIDATOR_VERSION}_${config.MODEL_NAME}_${config.PIPELINE_VERSION}_${config.TEMPERATURE}`;
+  const rawSig = `diff_${cleanDiff}_count_${cleanCount}_batch_${batchIndex}_text_${normText}_${config.PROMPT_VERSION}_${config.PLANNER_VERSION}_${config.VALIDATOR_VERSION}_${config.MODEL_NAME}_${config.PIPELINE_VERSION}_${config.TEMPERATURE}`;
   const hash = sha256(rawSig).slice(0, 32);
-  return `quiz:${hash}`;
+  return `quiz:${cleanDiff}:${cleanCount}:${hash}`;
 }
 
 module.exports = {

@@ -47,6 +47,15 @@ function runStructuralValidation(mcqItem, validationContext = {}, signal) {
     };
   }
 
+  const mockContaminationRegex = /Primary Protocol Mechanism|Unrelated Network Protocol|Secondary Interface Command|Database Table Operation|Legacy database table query definition|Alternative secondary protocol/i;
+  if (normalizedChoices.some(c => mockContaminationRegex.test(c)) || mockContaminationRegex.test(norm(rawStem))) {
+    return {
+      passed: false,
+      code: "STRUCT_MOCK_CONTAMINATION",
+      errorDetail: { code: "STRUCT_MOCK_CONTAMINATION", msg: "Reject options or stems containing hardcoded mock template strings." }
+    };
+  }
+
   const metaRegex = /all of the above|none of the above|both a and b|both b and c|neither/i;
   if (normalizedChoices.some(c => metaRegex.test(c))) {
     return {

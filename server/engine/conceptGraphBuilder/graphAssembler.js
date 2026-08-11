@@ -27,7 +27,10 @@ function assembleGraph(opts) {
 
     return {
       id: n.id,
+      conceptId: n.id,
+      concept: n.label,
       label: n.label,
+      keywords: sources.length > 0 ? sources : [n.label],
       aliases,
       sources,
       category: "CORE_CONCEPT",
@@ -37,6 +40,8 @@ function assembleGraph(opts) {
       confidence: n.confidence || 0.90,
       hasCodeOrMath: !!n.hasCodeOrMath,
       summaryContext,
+      evidenceText: summaryContext || `Source text discussing ${n.label}.`,
+      sourceSpan: { startChar: firstSpan[0] || 0, endChar: firstSpan[1] || Math.min(fullText.length, 300) },
       evidenceOffsets: n.evidenceOffsets || []
     };
   });
