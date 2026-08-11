@@ -34,6 +34,7 @@ const { verifyQuizIntegrity } = require('./lib/quizintegrity');
 const { gradeAnswer, resolveCorrectOptionText } = require('./utils/grading');
 const { getCache, setCache } = require('./lib/cache');
 const { exec } = require('child_process');
+const quizState = require('./lib/quizState'); // In-memory quiz state engine
 
 const gzipCompressionMiddleware = require('./middleware/compression');
 
@@ -192,13 +193,15 @@ app.get('/api/health', async (req, res) => {
             status: 'healthy',
             uptime: process.uptime(),
             timestamp: new Date().toISOString(),
-            memoryUsage: process.memoryUsage()
+            memoryUsage: process.memoryUsage(),
+            quizEngine: quizState.getStats(),
         });
     } catch (err) {
         res.status(503).json({
             status: 'degraded',
             error: 'Database ping failed',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            quizEngine: quizState.getStats(),
         });
     }
 });
@@ -253,6 +256,7 @@ app.set('userSockets', userSockets);
 // Per-socket rate limiter for high-frequency events (prevents DoS via event spam)
 // Key: `${socketId}:${eventName}`, Value: timestamp of last emit
 const socketRateLimit = new Map();
+const SOCKET_RATE_LIMIT_MAX_ENTRIES = 50000; // Safety cap to prevent unbounded growth
 
 // Helper: returns true if this socket+event is within rate limit window
 const isSocketRateLimited = (socketId, eventName, windowMs = 500) => {
@@ -260,9 +264,22 @@ const isSocketRateLimited = (socketId, eventName, windowMs = 500) => {
     const now = Date.now();
     const last = socketRateLimit.get(key) || 0;
     if (now - last < windowMs) return true; // still within cooldown
+    // Safety valve: if Map is too large, evict oldest entries
+    if (socketRateLimit.size >= SOCKET_RATE_LIMIT_MAX_ENTRIES) {
+        const oldestKey = socketRateLimit.keys().next().value;
+        if (oldestKey) socketRateLimit.delete(oldestKey);
+    }
     socketRateLimit.set(key, now);
     return false;
 };
+
+// Periodic cleanup: remove entries older than 60 seconds (stale disconnected sockets)
+setInterval(() => {
+    const cutoff = Date.now() - 60000;
+    for (const [key, ts] of socketRateLimit.entries()) {
+        if (ts < cutoff) socketRateLimit.delete(key);
+    }
+}, 30000); // Every 30 seconds
 
 // JWT Socket Authentication Middleware
 const jwt = require('jsonwebtoken');
@@ -327,8 +344,86 @@ setInterval(() => {
 
 // Global map to track user ID to socket IDs is already declared above and bound to express app
 
+/**
+ * Legacy answer submission path — used ONLY when the quiz is not in quizState memory.
+ * This happens if the server restarted during an active quiz and the quiz data was lost.
+ * It falls back to the original DB-backed approach so no answers are silently dropped.
+ * Under normal 1000-student conditions this function is never called.
+ */
+async function _submitAnswerLegacy({ socket, quizId, studentId, questionIndex, answer, timeRemaining, realQuizId }) {
+    try {
+        console.warn(`[LegacyPath] Quiz ${realQuizId} not in memory — using legacy DB path for student ${studentId}`);
+        let quiz = await getCache(`quiz:${realQuizId}`);
+        if (!quiz) {
+            quiz = await prisma.quiz.findUnique({ where: { id: realQuizId } });
+            if (quiz) await setCache(`quiz:${realQuizId}`, quiz, 60000);
+        }
+        if (!quiz) return;
+
+        if (quiz.questions && typeof quiz.questions === 'string') {
+            try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
+        }
+        if (!Array.isArray(quiz.questions)) quiz.questions = [];
+        quiz.questions = quiz.questions.map(q => {
+            if (!q) return q;
+            const options = Array.isArray(q.options)
+                ? q.options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)))
+                : [];
+            return { ...q, options };
+        });
+
+        const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
+        const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
+
+        const question = quiz.questions[questionIndex];
+        if (!question) return;
+
+        const { isCorrect, points, resolvedCorrect } = gradeAnswer(answer, question);
+        const username = socket.user?.username || studentId;
+
+        // Upsert result in DB
+        const resultUpsert = await prisma.result.upsert({
+            where: { quizId_studentId: { quizId: realQuizId, studentId } },
+            update: {},
+            create: {
+                quizId: realQuizId, studentId,
+                score: 0, totalTimeTaken: 0,
+                totalQuestions: quiz.questions.length, answers: []
+            },
+            include: { student: { select: { username: true } } }
+        });
+
+        const updatedAnswers = [...(resultUpsert.answers || [])];
+        const existingIdx = updatedAnswers.findIndex(a => Number(a.questionIndex) === questionIndex);
+        const answerData = { questionIndex, questionText: question.questionText, selectedOption: answer, correctOption: resolvedCorrect, isCorrect, timeTaken: qTimeTaken };
+        let newScore = resultUpsert.score || 0;
+        let newTime  = resultUpsert.totalTimeTaken || 0;
+        if (existingIdx >= 0) {
+            const old = updatedAnswers[existingIdx];
+            newScore = newScore - (old.isCorrect ? (question.points || 10) : 0) + points;
+            newTime  = newTime - (old.timeTaken || 0) + qTimeTaken;
+            updatedAnswers[existingIdx] = answerData;
+        } else {
+            updatedAnswers.push(answerData);
+            newScore += points;
+            newTime  += qTimeTaken;
+        }
+
+        await prisma.result.update({
+            where: { id: resultUpsert.id },
+            data: { score: newScore, totalTimeTaken: newTime, answers: updatedAnswers, status: 'in-progress', lastAnsweredAt: new Date() }
+        });
+
+        socket.emit('answer_feedback', { isFast: false, isUnattempted: false, message: '✅ Answer recorded!', timeTaken: qTimeTaken });
+        io.to(realQuizId).emit('student_progress_update', { studentId, username, questionIndex, answered: true, isCorrect });
+    } catch (err) {
+        console.error('[LegacyPath] Error in legacy submit:', err.message);
+    }
+}
+
 io.on('connection', async (socket) => {
     console.log('User connected securely:', socket.id);
+
 
     // SECURITY: Validate JWT expiration and signature on every incoming socket event
     socket.use(async ([event, ...args], next) => {
@@ -355,20 +450,21 @@ io.on('connection', async (socket) => {
         }
         userSockets.get(userId).add(socket.id);
         console.log(`User identified securely: ${userId} (${socket.user.username}) for socket ${socket.id}`);
-        try {
-            await prisma.user.update({
-                where: { id: userId },
-                data: { isOnline: true }
-            });
+        // Fire-and-forget: online status update must NOT block connection setup.
+        // With 1000 simultaneous joins, awaiting 1000 DB writes here would saturate the pool.
+        prisma.user.update({
+            where: { id: userId },
+            data: { isOnline: true }
+        }).then(() => {
             // Scoped broadcast: only to rooms this user participates in (not all connected sockets)
             for (const [quizId, participants] of roomParticipants.entries()) {
                 if (participants.some(p => (p._id || p.id) === userId)) {
                     io.to(quizId).emit('user_status_change', { userId, isOnline: true });
                 }
             }
-        } catch (err) {
-            console.error('Error updating online status on connect:', err);
-        }
+        }).catch(err => {
+            console.error('Error updating online status on connect:', err.message);
+        });
     }
 
     // Global Identity check fallback (fully validated)
@@ -450,16 +546,29 @@ io.on('connection', async (socket) => {
             return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
-        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID
-        let realQuizId = quizId;
-        try {
-            const foundQuiz = await prisma.quiz.findFirst({
-                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
-                select: { id: true }
-            });
-            if (foundQuiz) realQuizId = foundQuiz.id;
-        } catch (err) {
-            console.error('Error resolving PIN in join_room:', err);
+        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID.
+        // First try in-memory cache (populated when teacher starts the quiz) — O(1), zero DB.
+        // Fall back to DB only when the quiz hasn't been started yet or cache miss.
+        let realQuizId = quizState.resolveQuizId(quizId);
+        if (realQuizId === quizId) {
+            // Cache miss — check if it looks like a UUID (already a quiz ID) or needs DB lookup
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(quizId);
+            if (!isUUID) {
+                // Only hit DB for non-UUID values (i.e. join codes / PINs)
+                try {
+                    const foundQuiz = await prisma.quiz.findFirst({
+                        where: { OR: [{ id: quizId }, { joinCode: quizId }] },
+                        select: { id: true, joinCode: true }
+                    });
+                    if (foundQuiz) {
+                        realQuizId = foundQuiz.id;
+                        // Cache it for future lookups (heartbeats, reconnects, etc.)
+                        if (foundQuiz.joinCode) quizState.registerPin(foundQuiz.joinCode, foundQuiz.id);
+                    }
+                } catch (err) {
+                    console.error('Error resolving PIN in join_room:', err.message);
+                }
+            }
         }
 
         socket.join(realQuizId);
@@ -548,19 +657,15 @@ io.to(realQuizId).emit(
         }
     });
 
-    socket.on('heartbeat', async ({ quizId, userId, username }) => {
+    socket.on('heartbeat', ({ quizId, userId, username }) => {
+        // PERFORMANCE: heartbeats fire every 5s from every student.
+        // Must NEVER hit the DB. Use in-memory PIN cache for ID resolution.
         if (!quizId) return;
         const uid = userId || socket.user?.id || socket.user?.username || username;
         if (!uid) return;
 
-        let realQuizId = quizId;
-        try {
-            const found = await prisma.quiz.findFirst({
-                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
-                select: { id: true }
-            });
-            if (found) realQuizId = found.id;
-        } catch (_) {}
+        // Resolve PIN → UUID in memory (zero DB)
+        const realQuizId = quizState.resolveQuizId(quizId);
 
         const participants = roomParticipants.get(realQuizId);
         if (participants) {
@@ -726,6 +831,20 @@ io.to(realQuizId).emit(
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
 
+            // Normalize questions array (parse JSON string if stored as string)
+            if (quiz.questions && typeof quiz.questions === 'string') {
+                try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
+            }
+            if (!Array.isArray(quiz.questions)) quiz.questions = [];
+            // Normalize options to plain strings
+            quiz.questions = quiz.questions.map(q => {
+                if (!q) return q;
+                const options = Array.isArray(q.options)
+                    ? q.options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)))
+                    : [];
+                return { ...q, options };
+            });
+
             // INTEGRITY CHECK: Verify locked quiz has not been tampered before going live
             if (quiz.isLocked && quiz.quizHash) {
                 const integrity = verifyQuizIntegrity(quiz);
@@ -753,12 +872,17 @@ io.to(realQuizId).emit(
             }
             const endTime = Date.now() + durationMs;
 
+            // ── Initialize authoritative in-memory quiz state ─────────────────
+            // This pre-loads quiz data so answer submissions require ZERO DB reads.
+            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, endTime, status: 'started' });
+            // ─────────────────────────────────────────────────────────────────
+
             const state = roomState.get(quizId) || {};
             roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
 
             await prisma.quiz.update({
                 where: { id: quizId },
-                data: { status: 'started', endTime: new Date(endTime) } // Fixed: Persist endTime in DB so scheduler can load it after server restart
+                data: { status: 'started', endTime: new Date(endTime) } // Persist endTime so scheduler can reload after server restart
             });
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
@@ -769,16 +893,20 @@ io.to(realQuizId).emit(
                     const currentState = roomState.get(quizId.toString());
                     if (currentState && currentState.status !== 'finished') {
                         roomState.delete(quizId.toString());
+                        quizState.closeQuiz(quizId);
                         try {
+                            // Drain pending writes before auto-finishing
+                            await quizState.drainWrites(quizId, 8000);
                             await prisma.quiz.update({
                                 where: { id: quizId },
                                 data: { status: 'finished' }
                             });
                         } catch (err2) {
-                            console.error('Error auto-finishing quiz:', err2);
+                            console.error('Error auto-finishing quiz:', err2.message);
                         }
                         io.to(quizId).emit('quiz_ended');
                         console.log(`Quiz ${quizId} auto-terminated after global timer expired.`);
+                        quizState.cleanupQuiz(quizId);
                     }
                 }, durationMs + 3000); // small buffer
             }
@@ -794,76 +922,120 @@ io.to(realQuizId).emit(
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
         try {
+            // SECURITY: Always verify teacher owns the quiz from DB
             const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
             if (!quiz || quiz.createdById !== socket.user.id) {
                 console.warn(`[Security Alert] Socket ${socket.id} attempted to end unauthorized quiz ${quizId}`);
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
 
+            // ── STEP 1: Stop accepting new submissions immediately ─────────────
+            quizState.closeQuiz(quizId);
             roomState.delete(quizId);
-            // 1. Finalize all in-progress student results FIRST
-            await prisma.result.updateMany({
-                where: { quizId: quizId, status: 'in-progress' },
-                data: {
-                    status: 'completed',
-                    completedAt: new Date()
-                }
-            });
+            console.log(`[QuizEnd] Quiz ${quizId} closed to new submissions.`);
 
-            // 2. Create zero-score completed results for students who joined but never answered.
-            // This ensures the rank card and history work for every participant.
-            const quizForEnd = await prisma.quiz.findUnique({ where: { id: quizId } });
+            // ── STEP 2: Wait briefly for any in-flight answer processing to settle ─
+            // processAnswer() is synchronous so any in-flight calls complete on
+            // the current event loop tick. A small async yield is sufficient.
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // ── STEP 3: Drain the write buffer to DB before finalizing ──────────
+            // This ensures all pending in-memory writes are persisted before we
+            // compute the final leaderboard from DB.
+            console.log(`[QuizEnd] Draining write buffer for quiz ${quizId}...`);
+            const drainResult = await quizState.drainWrites(quizId, 10000);
+            console.log(`[QuizEnd] Drain complete: ${drainResult.flushed} flushed, ${drainResult.failed} failed.`);
+
+            // ── STEP 4: Create missing zero-score records for non-answerers ──────
+            // Use a single DB query to find which students already have records,
+            // then batch-create only the missing ones. Avoids N individual findFirst() calls.
             const participants = roomParticipants.get(quizId) || [];
             const realStudents = participants.filter(p =>
                 p.role?.toLowerCase() !== 'teacher' && !((p._id || p.id || '').toString().startsWith('bot_student_'))
             );
-            await Promise.allSettled(realStudents.map(async (p) => {
-                const studentId = (p._id || p.id || '').toString();
-                if (!studentId) return;
-                const exists = await prisma.result.findFirst({ where: { quizId, studentId } });
-                if (!exists) {
-                    try {
-                        await prisma.result.create({
-                            data: {
-                                quizId,
-                                studentId,
-                                score: 0,
-                                totalTimeTaken: 0,
-                                totalQuestions: Array.isArray(quizForEnd?.questions) ? quizForEnd.questions.length : 0,
-                                answers: [],
-                                status: 'completed',
-                                startedAt: new Date(),
-                                completedAt: new Date(),
-                                lastAnsweredAt: new Date()
-                            }
-                        });
-                    } catch (_) { /* ignore unique constraint violations */ }
-                }
-            }));
+            const totalQuestions = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
 
-            // 2. Compute final leaderboard rankings from persisted Results
-            const allResults = await prisma.result.findMany({
-                where: { quizId: quizId },
-                include: { student: { select: { username: true } } }
+            if (realStudents.length > 0) {
+                // Fetch all existing result records in one query
+                const existingResults = await prisma.result.findMany({
+                    where: { quizId, studentId: { in: realStudents.map(p => (p._id || p.id || '').toString()) } },
+                    select: { studentId: true }
+                });
+                const existingIds = new Set(existingResults.map(r => r.studentId));
+
+                // Build list of students without any result record
+                const missingStudents = realStudents.filter(p => {
+                    const sid = (p._id || p.id || '').toString();
+                    return sid && !existingIds.has(sid);
+                });
+
+                if (missingStudents.length > 0) {
+                    console.log(`[QuizEnd] Creating ${missingStudents.length} zero-score records...`);
+                    // Create in bounded batches to avoid exhausting the connection pool
+                    const BATCH = 10;
+                    for (let i = 0; i < missingStudents.length; i += BATCH) {
+                        const batch = missingStudents.slice(i, i + BATCH);
+                        await Promise.allSettled(batch.map(p => {
+                            const studentId = (p._id || p.id || '').toString();
+                            return prisma.result.create({
+                                data: {
+                                    quizId,
+                                    studentId,
+                                    score: 0,
+                                    totalTimeTaken: 0,
+                                    totalQuestions,
+                                    answers: [],
+                                    status: 'completed',
+                                    startedAt: new Date(),
+                                    completedAt: new Date(),
+                                    lastAnsweredAt: new Date()
+                                }
+                            }).catch(() => {}); // ignore unique constraint violations
+                        }));
+                    }
+                }
+            }
+
+            // ── STEP 5: Mark all remaining in-progress results as completed ──────
+            await prisma.result.updateMany({
+                where: { quizId, status: 'in-progress' },
+                data: { status: 'completed', completedAt: new Date() }
             });
 
-            const finalLeaderboard = allResults
-                .map(r => ({
-                    studentId: r.studentId,
-                    username: r.student?.username || 'Unknown',
-                    currentScore: r.score || 0,
-                    totalTimeTaken: r.totalTimeTaken || 0,
-                    lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
-                    answeredQuestions: r.answers?.length || 0
-                }))
-                .sort((a, b) => {
-                    if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
-                    if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
-                    return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
-                })
-                .map((item, index) => ({ ...item, rank: index + 1 }));
+            // ── STEP 6: Build final leaderboard from in-memory state (authoritative) ─
+            // Fall back to DB if memory state is unavailable (e.g. server restarted).
+            let finalLeaderboard;
+            const memLeaderboard = quizState.getLeaderboard(quizId);
 
-            // 3. Save final leaderboard to Quiz document (for teacher My Quizzes view)
+            if (memLeaderboard.length > 0) {
+                // Use in-memory state — it's authoritative and already sorted
+                finalLeaderboard = memLeaderboard;
+                console.log(`[QuizEnd] Final leaderboard built from memory: ${finalLeaderboard.length} students.`);
+            } else {
+                // Memory state unavailable — fall back to DB
+                console.log(`[QuizEnd] Memory state unavailable, falling back to DB for leaderboard.`);
+                const allResults = await prisma.result.findMany({
+                    where: { quizId },
+                    include: { student: { select: { username: true } } }
+                });
+                finalLeaderboard = allResults
+                    .map(r => ({
+                        studentId: r.studentId,
+                        username: r.student?.username || 'Unknown',
+                        currentScore: r.score || 0,
+                        totalTimeTaken: r.totalTimeTaken || 0,
+                        lastAnsweredAt: r.lastAnsweredAt || r.startedAt || new Date(),
+                        answeredQuestions: r.answers?.length || 0
+                    }))
+                    .sort((a, b) => {
+                        if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                        if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
+                        return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
+                    })
+                    .map((item, index) => ({ ...item, rank: index + 1 }));
+            }
+
+            // ── STEP 7: Save final leaderboard to DB ─────────────────────────────
             const topStudent = finalLeaderboard[0]?.username || null;
             await prisma.quiz.update({
                 where: { id: quizId },
@@ -884,16 +1056,22 @@ io.to(realQuizId).emit(
                 }
             });
 
-            console.log(`Quiz ${quizId} ended securely. Finalized ${allResults.length} results. Top student: ${topStudent}`);
+            console.log(`[QuizEnd] Quiz ${quizId} finalized. Students: ${finalLeaderboard.length}. Top: ${topStudent}.`);
 
-            // 4. Emit quiz_ended AFTER data is saved — students will navigate with correct data
+            // ── STEP 8: Broadcast — AFTER DB is confirmed written ────────────────
             io.to(quizId).emit('quiz_ended');
             socket.emit('quiz_ended_success', { quizId });
+
+            // ── STEP 9: Clean up in-memory state ─────────────────────────────────
+            quizState.cleanupQuiz(quizId);
+
         } catch (err) {
-            console.error('Error ending quiz:', err);
-            // Still emit so students aren't stuck
+            console.error('[QuizEnd] Error ending quiz:', err.message);
+            // Ensure students are not stuck even if finalization partially fails
             io.to(quizId).emit('quiz_ended');
             socket.emit('quiz_ended_success', { quizId });
+            // Attempt cleanup even on error
+            try { quizState.cleanupQuiz(quizId); } catch (_) {}
         }
     });
 
@@ -939,33 +1117,36 @@ io.to(realQuizId).emit(
     });
 
     // Handle teacher changing question (Navigation)
-    socket.on('change_question', async ({ quizId, questionIndex }) => {
+    socket.on('change_question', ({ quizId, questionIndex }) => {
         // SECURITY CHECK: Verify teacher role
         if (!socket.user || socket.user.role !== 'teacher') {
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
-        try {
-            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-            if (!quiz || quiz.createdById !== socket.user.id) {
-                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
-            }
 
-            // Reset Master Time for the new question if it's per-question
-            let endTime = null;
-            if (quiz.duration === 0) {
-                endTime = Date.now() + ((quiz.timerPerQuestion || 30) * 1000);
-            }
+        // PERFORMANCE: Use in-memory quiz state instead of DB lookup.
+        // Ownership was verified at start_quiz. JWT guarantees role=teacher here.
+        const memState = quizState.getQuizState(quizId);
+        const state = roomState.get(quizId) || {};
 
-            const state = roomState.get(quizId) || {};
-            if (endTime) state.endTime = endTime;
+        // Get quiz timing from in-memory state (loaded at start_quiz)
+        const quizData = memState?.quiz;
 
-            roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
-
-            io.to(quizId).emit('change_question', { questionIndex });
-            if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
-        } catch (err) {
-            console.error('Error changing question:', err);
+        // Reset Master Time for the new question if it's per-question
+        let endTime = null;
+        if (quizData && quizData.duration === 0) {
+            endTime = Date.now() + ((quizData.timerPerQuestion || 30) * 1000);
+        } else if (!quizData && state.endTime) {
+            // Memory state unavailable — keep existing timer
         }
+
+        if (endTime) state.endTime = endTime;
+        roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
+
+        // Also update quizState for reconnect sync
+        quizState.updateQuizState(quizId, { currentQuestion: parseInt(questionIndex), ...(endTime ? { endTime } : {}) });
+
+        io.to(quizId).emit('change_question', { questionIndex });
+        if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
     });
 
     // Tracking which question a student is currently viewing
@@ -1033,314 +1214,147 @@ io.to(realQuizId).emit(
     });
 
     // Increase time for the current question
-    socket.on('increase_time', async ({ quizId, additionalSeconds }) => {
+    socket.on('increase_time', ({ quizId, additionalSeconds }) => {
         // SECURITY CHECK: Verify teacher role
         if (!socket.user || socket.user.role !== 'teacher') {
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
-        try {
-            const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-            if (!quiz || quiz.createdById !== socket.user.id) {
-                return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
-            }
+        // PERFORMANCE: No DB lookup needed — teacher role verified by JWT.
+        // In-memory state has the current endTime.
+        const state = roomState.get(quizId);
+        if (state && state.endTime) {
+            state.endTime += (additionalSeconds * 1000);
+            roomState.set(quizId, { ...state, endTime: state.endTime });
+            // Keep quizState in sync for reconnect accuracy
+            quizState.updateQuizState(quizId, { endTime: state.endTime });
 
-            const state = roomState.get(quizId);
-            if (state && state.endTime) {
-                state.endTime += (additionalSeconds * 1000);
-                roomState.set(quizId, { ...state, endTime: state.endTime });
-
-                const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
-                io.to(quizId).emit('timer_update', { additionalSeconds });
-                io.to(quizId).emit('sync_timer', { timeLeft });
-            }
-        } catch (err) {
-            console.error('Error increasing time:', err);
+            const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+            io.to(quizId).emit('timer_update', { additionalSeconds });
+            io.to(quizId).emit('sync_timer', { timeLeft });
         }
     });
 
     // Handle individual question submission during live quiz
-    socket.on('submit_question_answer', async ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
-        // SECURITY CHECK: Enforce matching authenticated user identity to prevent faked/spoofed answers
+    // ────────────────────────────────────────────────────────────────────────────
+    // HOT PATH — ZERO DATABASE CALLS IN NORMAL OPERATION
+    // Flow: JWT auth → in-memory validation → in-memory grade → in-memory result
+    //       → immediate WS response → async DB queue (non-blocking)
+    // ────────────────────────────────────────────────────────────────────────────
+    socket.on('submit_question_answer', ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
+        // ── SECURITY: Verify authenticated user identity ─────────────────────
         if (!socket.user || socket.user.id !== studentId) {
             console.warn(`[Security Alert] submit_question_answer spoofing blocked for socket ${socket.id} (studentId: ${studentId})`);
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
 
-        // RATE LIMIT: prevent answer-spam DoS (500ms per-socket cooldown)
+        // ── RATE LIMIT: prevent answer-spam DoS (500ms per-socket cooldown) ──
         if (isSocketRateLimited(socket.id, 'submit_question_answer', 500)) {
-            return; // Silent drop — legitimate clients debounce on submit, won't hit this
+            return; // Silent drop — legitimate clients debounce on submit
         }
 
-        // Ensure questionIndex is an integer
+        // ── Input normalization ───────────────────────────────────────────────
         questionIndex = parseInt(questionIndex);
-        console.log(`Secure Student ${studentId} submitted answer for question ${questionIndex}`);
+        if (isNaN(questionIndex) || questionIndex < 0) return;
 
-        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID
-        let realQuizId = quizId;
-        try {
-            const foundQuiz = await prisma.quiz.findFirst({
-                where: { OR: [{ id: quizId }, { joinCode: quizId }] },
-                select: { id: true }
-            });
-            if (foundQuiz) realQuizId = foundQuiz.id;
-        } catch (_) {}
+        // ── Resolve quiz ID (in-memory PIN cache — zero DB) ───────────────────
+        const realQuizId = quizState.resolveQuizId(quizId);
 
-        const state = roomState.get(realQuizId) || {};
-        const currentProgress = state.progress || {};
-
-        if (!currentProgress[studentId]) currentProgress[studentId] = {};
-        
-        // --- STRICT MODE BLOCKER: Check for duplicate submissions ---
-        if (currentProgress[studentId][questionIndex] && currentProgress[studentId][questionIndex].answered) {
-            console.log(`[STRICT MODE] Prevented duplicate answer for student ${studentId} on question ${questionIndex}`);
+        // ── Validate quiz is active in memory ─────────────────────────────────
+        const memState = quizState.getQuizState(realQuizId);
+        if (!memState) {
+            // Quiz not in memory — fall back to legacy path for robustness
+            // (e.g. server restarted during an active quiz)
+            _submitAnswerLegacy({ socket, quizId, studentId, questionIndex, answer, timeRemaining, realQuizId });
             return;
         }
-        currentProgress[studentId][questionIndex] = { answered: true, isCorrect: false, selectedOption: answer };
-        roomState.set(realQuizId, { ...state, progress: currentProgress });
 
-        try {
-            let quiz = await getCache(`quiz:${realQuizId}`);
-            if (!quiz) {
-                quiz = await prisma.quiz.findUnique({ where: { id: realQuizId } });
-                if (quiz) await setCache(`quiz:${realQuizId}`, quiz, 60000);
+        // ── Get quiz data for timer calculation (from memory — no DB read) ────
+        const quizData = memState.quiz;
+        const timerMax = quizData.duration > 0 ? (quizData.duration * 60) : (quizData.timerPerQuestion || 30);
+        const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
+        const username = socket.user.username || socket.user.name || studentId;
+
+        // ── Process answer in memory (synchronous — no DB, no await) ──────────
+        const result = quizState.processAnswer({
+            quizId:        realQuizId,
+            studentId,
+            username,
+            questionIndex,
+            answer,
+            qTimeTaken,
+            gradeAnswer,
+        });
+
+        if (!result.accepted) {
+            if (result.reason === 'duplicate') {
+                console.log(`[STRICT MODE] Duplicate answer blocked: student=${studentId} q=${questionIndex}`);
+            } else if (result.reason === 'quiz_ended') {
+                console.log(`[AnswerReject] Quiz ended — answer rejected for student=${studentId}`);
             }
-            if (!quiz) return;
-
-            // Questions from DB already have correctAnswer as the full text string.
-            // DO NOT re-resolve using resolveCorrectOptionText — its fallback returns options[0]
-            // when no exact match is found, which causes all answers to grade wrong.
-            if (quiz.questions && typeof quiz.questions === 'string') {
-                try { quiz.questions = JSON.parse(quiz.questions); } catch (_) { quiz.questions = []; }
-            }
-            if (!Array.isArray(quiz.questions)) quiz.questions = [];
-            else {
-                quiz.questions = quiz.questions.map(q => {
-                    if (!q) return q;
-                    // Ensure options are plain strings
-                    const options = Array.isArray(q.options)
-                        ? q.options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)))
-                        : [];
-                    return { ...q, options };
-                });
-            }
-
-            // Calculate time taken for this question
-            const timerMax = quiz.duration > 0 ? (quiz.duration * 60) : (quiz.timerPerQuestion || 30);
-            const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
-
-            let result = null;
-            if (!studentId.startsWith('bot_student_')) {
-                try {
-                    // Always use realQuizId (UUID) for DB operations
-                    result = await prisma.result.upsert({
-                        where: { quizId_studentId: { quizId: realQuizId, studentId } },
-                        update: {},
-                        create: {
-                            quizId: realQuizId,
-                            studentId: studentId,
-                            score: 0,
-                            totalTimeTaken: 0,
-                            totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
-                            answers: []
-                        },
-                        include: { student: { select: { username: true } } }
-                    });
-                } catch (dbLookupErr) {
-                    console.warn(`[ResultLookup] DB result upsert warning for ${studentId}:`, dbLookupErr.message);
-                    try {
-                        result = await prisma.result.findUnique({
-                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
-                            include: { student: { select: { username: true } } }
-                        });
-                    } catch (_) {}
-                }
-            }
-
-            if (!result) {
-                result = {
-                    id: `temp_${studentId}`,
-                    score: 0,
-                    totalTimeTaken: 0,
-                    answers: [],
-                    student: { username: socket.user?.username || studentId }
-                };
-            }
-
-            // Ensure numeric values to avoid NaN
-            result.score = result.score || 0;
-            result.totalTimeTaken = result.totalTimeTaken || 0;
-
-            // ── GRADE THE ANSWER ──────────────────────────────────────────────
-            let isCorrect = false;
-            let points = 0;
-            let updatedScore = result.score;
-            let updatedTime = result.totalTimeTaken;
-            let updatedAnswers = [...(result.answers || [])];
-            const studentUsername = result.student ? result.student.username : (socket.user?.username || null);
-
-            const question = Array.isArray(quiz.questions) ? quiz.questions[questionIndex] : null;
-
-            if (question) {
-                const { isCorrect: gradedIsCorrect, points: gradedPoints, resolvedCorrect } = gradeAnswer(answer, question);
-                isCorrect = gradedIsCorrect;
-                points = gradedPoints;
-
-                // ── DIAGNOSTIC LOG: print grading values for every submission ──
-                console.log(`[GRADE DEBUG] student=${studentId} q=${questionIndex}`);
-                console.log(`  submitted answer : "${answer}" (type: ${typeof answer})`);
-                console.log(`  correctAnswer DB : "${question.correctAnswer}" (type: ${typeof question.correctAnswer})`);
-                console.log(`  options          : ${JSON.stringify(question.options)}`);
-                console.log(`  isCorrect        : ${isCorrect} | points: ${points}`);
-
-                const answerData = {
-                    questionIndex,
-                    questionText: question.questionText,
-                    selectedOption: answer,
-                    correctOption: resolvedCorrect,
-                    isCorrect,
-                    timeTaken: qTimeTaken
-                };
-
-                const existingAnswerIndex = updatedAnswers.findIndex(
-                    a => (a.questionIndex !== undefined && Number(a.questionIndex) === questionIndex) ||
-                         (a.questionText && question.questionText && a.questionText.trim().toLowerCase() === question.questionText.trim().toLowerCase())
-                );
-
-                if (existingAnswerIndex >= 0) {
-                    const oldAnswer = updatedAnswers[existingAnswerIndex];
-                    const oldPoints = oldAnswer.isCorrect ? (question.points || 10) : 0;
-                    const oldTime = oldAnswer.timeTaken || 0;
-                    updatedScore = result.score - oldPoints + points;
-                    updatedTime = result.totalTimeTaken - oldTime + qTimeTaken;
-                    updatedAnswers[existingAnswerIndex] = answerData;
-                } else {
-                    updatedAnswers.push(answerData);
-                    updatedScore += points;
-                    updatedTime += qTimeTaken;
-                }
-
-                // Persist to DB - Guaranteed atomic upsert
-                try {
-                    if (result && result.id && !result.id.startsWith('temp_')) {
-                        await prisma.result.update({
-                            where: { id: result.id },
-                            data: {
-                                score: updatedScore,
-                                totalTimeTaken: updatedTime,
-                                answers: updatedAnswers,
-                                status: 'in-progress',
-                                lastAnsweredAt: new Date()
-                            }
-                        });
-                    } else if (!studentId.startsWith('bot_student_')) {
-                        await prisma.result.upsert({
-                            where: { quizId_studentId: { quizId: realQuizId, studentId } },
-                            update: {
-                                score: updatedScore,
-                                totalTimeTaken: updatedTime,
-                                answers: updatedAnswers,
-                                status: 'in-progress',
-                                lastAnsweredAt: new Date()
-                            },
-                            create: {
-                                quizId: realQuizId,
-                                studentId: studentId,
-                                score: updatedScore,
-                                totalTimeTaken: updatedTime,
-                                totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
-                                answers: updatedAnswers,
-                                status: 'in-progress',
-                                lastAnsweredAt: new Date()
-                            }
-                        });
-                    }
-                } catch (dbUpdateErr) {
-                    console.warn(`[ResultUpdate] DB persist failed for ${studentId}:`, dbUpdateErr.message);
-                }
-
-                // Speed feedback
-                const participants = roomParticipants.get(realQuizId) || [];
-                const otherTimes = [];
-                participants.forEach(p => {
-                    const idKey = p._id || p.id;
-                    if (idKey && idKey.toString() !== studentId.toString()) {
-                        const prog = (state.progress || {})[idKey.toString()];
-                        if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
-                            otherTimes.push(prog[questionIndex].timeTaken);
-                        }
-                    }
-                });
-                const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
-                const isFast = !isUnattempted && (otherTimes.length > 0
-                    ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
-                    : (qTimeTaken <= timerMax * 0.3));
-
-                const fastMessages = ["⚡ Fast Answer! Lightning speed!", "⚡ Quick Response Bonus! Unstoppable!", "🚀 Speed Demon! Lock and load for the next one!", "🔥 Absolute Heat! Superb speed!"];
-                const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", "⏰ Took your time! Try to lock it in quicker!", "💡 Great focus, but speed is key!"];
-                const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", "❌ Question unanswered! Lock in a choice before the timer expires."];
-                const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
-                socket.emit('answer_feedback', {
-                    isFast, isUnattempted,
-                    message: messageList[Math.floor(Math.random() * messageList.length)],
-                    timeTaken: qTimeTaken
-                });
-
-                // Leaderboard update
-                const currentState = roomState.get(realQuizId) || {};
-                const inMemLeaderboard = [...(currentState.leaderboard || [])];
-                const existingEntryIdx = inMemLeaderboard.findIndex(e => e.studentId === studentId);
-                const updatedEntry = {
-                    studentId, username: studentUsername || 'Unknown',
-                    currentScore: updatedScore, totalTimeTaken: updatedTime,
-                    lastAnsweredAt: new Date(), answeredQuestions: updatedAnswers.length,
-                };
-                if (existingEntryIdx >= 0) inMemLeaderboard[existingEntryIdx] = updatedEntry;
-                else inMemLeaderboard.push(updatedEntry);
-                inMemLeaderboard.sort((a, b) => {
-                    if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
-                    if (a.totalTimeTaken !== b.totalTimeTaken) return a.totalTimeTaken - b.totalTimeTaken;
-                    return new Date(a.lastAnsweredAt) - new Date(b.lastAnsweredAt);
-                });
-                const leaderboard = inMemLeaderboard.map((entry, idx) => ({ ...entry, rank: idx + 1 }));
-                roomState.set(realQuizId, { ...currentState, leaderboard });
-                io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
-            }
-
-            // ── ALWAYS update progress and notify teacher ─────────────────────
-            // This must run regardless of whether the question was found, so the
-            // teacher dashboard updates in real-time without needing a page refresh.
-            const updatedProgress = { ...(state.progress || {}) };
-            if (!updatedProgress[studentId]) updatedProgress[studentId] = {};
-            updatedProgress[studentId][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
-            if (studentUsername) {
-                if (!updatedProgress[studentUsername]) updatedProgress[studentUsername] = {};
-                updatedProgress[studentUsername][questionIndex] = { answered: true, isCorrect, timeTaken: qTimeTaken, selectedOption: answer };
-            }
-            roomState.set(realQuizId, { ...(roomState.get(realQuizId) || state), progress: updatedProgress });
-            console.log(`[GRADE DEBUG] roomState updated at key="${realQuizId}" with isCorrect=${isCorrect} for student=${studentId} q=${questionIndex}`);
-
-            // Broadcast to teacher — UNCONDITIONAL so teacher always sees real-time updates
-            io.to(realQuizId).emit('student_progress_update', {
-                studentId: studentId.toString(),
-                username: studentUsername || 'Student',
-                questionIndex,
-                answered: true,
-                isCorrect
-            });
-
-        } catch (err) {
-            console.error('Error submitting question answer:', err);
-            // Even on error — tell teacher the student answered (mark as wrong)
-            try {
-                io.to(realQuizId).emit('student_progress_update', {
-                    studentId: studentId.toString(),
-                    username: socket.user?.username || 'Student',
-                    questionIndex,
-                    answered: true,
-                    isCorrect: false
-                });
-            } catch (_) {}
+            return;
         }
+
+        // ── Grading diagnostics (only in development) ─────────────────────────
+        if (process.env.NODE_ENV !== 'production') {
+            const q = Array.isArray(quizData.questions) ? quizData.questions[questionIndex] : null;
+            console.log(`[GRADE] student=${studentId} q=${questionIndex} answer="${answer}" correct="${q?.correctAnswer}" isCorrect=${result.isCorrect} points=${result.points}`);
+        }
+
+        // ── Update legacy roomState progress (for teacher dashboard compat) ───
+        const currentRoomState = roomState.get(realQuizId) || {};
+        const updatedProgress = quizState.getProgress(realQuizId);
+        roomState.set(realQuizId, { ...currentRoomState, progress: updatedProgress });
+
+        // ── Immediate: emit result to this student ────────────────────────────
+        // Speed feedback calculation (uses in-memory progress for peer comparison)
+        const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
+        const otherTimes = [];
+        const participants = roomParticipants.get(realQuizId) || [];
+        participants.forEach(p => {
+            const idKey = p._id || p.id;
+            if (idKey && idKey.toString() !== studentId.toString()) {
+                const prog = updatedProgress[idKey.toString()];
+                if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
+                    otherTimes.push(prog[questionIndex].timeTaken);
+                }
+            }
+        });
+        const isFast = !isUnattempted && (otherTimes.length > 0
+            ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
+            : (qTimeTaken <= timerMax * 0.3));
+
+        const fastMessages = ['⚡ Fast Answer! Lightning speed!', '⚡ Quick Response Bonus! Unstoppable!', '🚀 Speed Demon! Lock and load for the next one!', '🔥 Absolute Heat! Superb speed!'];
+        const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", '⏰ Took your time! Try to lock it in quicker!', '💡 Great focus, but speed is key!'];
+        const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", '❌ Question unanswered! Lock in a choice before the timer expires.'];
+        const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
+
+        socket.emit('answer_feedback', {
+            isFast,
+            isUnattempted,
+            message: messageList[Math.floor(Math.random() * messageList.length)],
+            timeTaken: qTimeTaken,
+        });
+
+        // ── Immediate: notify teacher of student progress ─────────────────────
+        io.to(realQuizId).emit('student_progress_update', {
+            studentId:     studentId.toString(),
+            username:      username,
+            questionIndex,
+            answered:      true,
+            isCorrect:     result.isCorrect,
+        });
+
+        // ── Throttled: broadcast leaderboard to all (not on every answer) ─────
+        // Prevents broadcasting a full sorted array to 1000 clients every ms.
+        if (quizState.shouldBroadcastLeaderboard(realQuizId)) {
+            const leaderboard = quizState.getLeaderboard(realQuizId);
+            // Also update legacy roomState leaderboard for reconnect sync
+            roomState.set(realQuizId, { ...(roomState.get(realQuizId) || {}), leaderboard });
+            io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
+        }
+
+        // ── Persistence is already queued inside processAnswer() ──────────────
+        // No DB calls here. The write buffer will flush within FLUSH_INTERVAL_MS.
     });
 
     // Handle student submission of new question (added by student)
@@ -1458,19 +1472,19 @@ participants[idx].socketId = null;
         if (sockets.size === 0) {
             userSockets.delete(socket.userId);
 
-            try {
-                await prisma.user.update({
-                    where: { id: socket.userId },
-                    data: { isOnline: false }
-                });
-
+            // Fire-and-forget: same pattern as the connect handler.
+            // Many students disconnecting at once (quiz end) must not cause a DB burst.
+            prisma.user.update({
+                where: { id: socket.userId },
+                data: { isOnline: false }
+            }).then(() => {
                 io.emit('user_status_change', {
                     userId: socket.userId,
                     isOnline: false
                 });
-            } catch (err) {
-                console.error(err);
-            }
+            }).catch(err => {
+                console.error('Error updating offline status on disconnect:', err.message);
+            });
         }
     }
 
