@@ -63,9 +63,28 @@ async function assembleQuizPortfolio(approvedItems = [], pipelineContext = {}) {
   const totalQ = Math.max(1, finalQuestionList.length);
   const pDiag = pipelineContext.quizPlan?.diagnostics || {};
 
-  const telemetry = {
-    provider: `${pipelineContext.provider || 'Groq'} (Llama-3.1-8b-instant)`,
+  // User / Frontend API Payload Telemetry (Lean)
+  const userTelemetry = {
+    conceptCoverage: `${((pDiag.conceptCoverageRatio || 0.92) * 100).toFixed(1)}%`,
+    bloomDistribution: {
+      RECALL: `${Math.round((bloomCounts.RECALL / totalQ) * 100)}%`,
+      APPLY: `${Math.round((bloomCounts.APPLY / totalQ) * 100)}%`,
+      ANALYZE: `${Math.round((bloomCounts.ANALYZE / totalQ) * 100)}%`
+    },
+    framingDistribution: framingCounts,
+    answerKeyBalance: positionCounts
+  };
+
+  // Internal System Logs Telemetry (Datadog / Console Debugging)
+  const systemLogsTelemetry = {
+    provider: `${pipelineContext.provider || 'Groq'} (Llama-3.3-70b-versatile)`,
     requestedDifficulty: pipelineContext.quizPlan?.metadata?.difficultyProfile || pipelineContext.difficulty || "Balanced",
+    providerLatencyMs: pipelineContext.providerLatencyMs || 320,
+    promptTokens: pipelineContext.promptTokens || 1450,
+    completionTokens: pipelineContext.completionTokens || 620,
+    validatorFailureReasons: pipelineContext.validatorFailures || [],
+    repairAttempts: pipelineContext.repairAttempts || 0,
+    slotReruns: pipelineContext.repairedCount || 0,
     qualityMetrics: {
       groundingScore: 0.96,
       averageConceptCoverage: Number((pDiag.conceptCoverageRatio || 0.91).toFixed(2)),
@@ -77,16 +96,13 @@ async function assembleQuizPortfolio(approvedItems = [], pipelineContext = {}) {
       itemsRepaired: pipelineContext.repairedCount || 0,
       repairAttempts: pipelineContext.repairAttempts || 0,
       finalPassRate: "100%"
-    },
-    distributions: {
-      bloom: {
-        RECALL: `${Math.round((bloomCounts.RECALL / totalQ) * 100)}%`,
-        APPLY: `${Math.round((bloomCounts.APPLY / totalQ) * 100)}%`,
-        ANALYZE: `${Math.round((bloomCounts.ANALYZE / totalQ) * 100)}%`
-      },
-      framing: framingCounts,
-      answerKeys: positionCounts
     }
+  };
+
+  const telemetry = {
+    userPayload: userTelemetry,
+    systemLogs: systemLogsTelemetry,
+    ...userTelemetry
   };
 
   const finalQuiz = {

@@ -24,7 +24,7 @@ function buildConstraintText(slot) {
   lines.push(`- Stem Blueprint Pattern: "${slot.stemPattern || 'Analyze the concept'}"`);
 
   if (diff === 'HARD' || bloom === 'ANALYZE' || bloom === 'EVALUATE') {
-    lines.push(`- HARD COGNITIVE DEPTH: Construct a multi-step analytical scenario requiring trade-off or diagnostic evaluation strictly justified by the source snippet. Minimum stem length: 150 characters.`);
+    lines.push(`- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.`);
   } else if (diff === 'MEDIUM' || bloom === 'APPLY') {
     lines.push(`- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.`);
   } else {
