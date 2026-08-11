@@ -4,11 +4,13 @@ import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import { parseQuestionContent } from '../utils/questionFormatter';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import {
-    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck, CheckCircle2, XCircle, MinusCircle, LayoutList
+    Activity, Download, Users, CheckCircle, Clock, Trophy, ChevronLeft, Target, Award, FileText, ArrowRight, AlertCircle, Home, Loader2, ShieldAlert, ShieldCheck, CheckCircle2, XCircle, MinusCircle, LayoutList, Eye, EyeOff, Code
 } from 'lucide-react';
+
 import { SecurityDashboard } from '../components/SecurityDashboard';
 
 // Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
@@ -75,6 +77,8 @@ export default function QuizAnalytics() {
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
+    const [expandedQuestionIdx, setExpandedQuestionIdx] = useState(null);
+
 
     const fetchAnalytics = async () => {
         setLoading(true);
@@ -703,78 +707,127 @@ export default function QuizAnalytics() {
                                     const isCorrect = studentAns ? studentAns.isCorrect : null;
                                     const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
 
+                                    const parsed = parseQuestionContent(q.questionText || '');
+                                    const firstText = parsed.segments.find(s => s.type === 'text')?.content?.trim() || q.questionText || '';
+                                    const firstCode = parsed.segments.find(s => s.type === 'code');
+                                    const langTag = firstCode?.language ? firstCode.language.toUpperCase() : 'CODE';
+                                    const isExpanded = expandedQuestionIdx === idx;
+
                                     return (
-                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
-                                            <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
-                                            <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
-                                                <div className="max-h-[160px] overflow-y-auto premium-scrollbar pr-2 leading-relaxed text-left scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
-                                                    <FormattedQuestionText
-                                                        questionText={q.questionText}
-                                                        textClassName="text-sm text-[#0f172a] font-bold"
-                                                        showBadge={false}
-                                                    />
-                                                </div>
-                                            </td>
-                                            {isStudent ? (
-                                                <>
-                                                    <td className="p-4 text-center">
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-slate-100 border border-slate-300 text-slate-800 shadow-xs">
-                                                            <Clock size={12} className="text-slate-500" /> {studentTime}
+                                        <React.Fragment key={idx}>
+                                            <tr className="border-b border-slate-200 hover:bg-slate-50 transition-colors group">
+                                                <td className="p-4 text-sm font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>#{idx + 1}</td>
+                                                <td className="p-4 text-sm text-[#0f172a] font-bold" style={{ color: '#0f172a' }}>
+                                                    <div className="flex flex-wrap items-center gap-2.5">
+                                                        <span className="font-bold text-[#0f172a] text-sm leading-snug line-clamp-2" style={{ color: '#0f172a' }}>
+                                                            {firstText || 'Question Directive'}
                                                         </span>
-                                                    </td>
-                                                    <td className="p-4 text-center">
-                                                        {isAnswered ? (
-                                                            isCorrect ? (
-                                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100 border border-emerald-400 text-emerald-800 shadow-xs">
-                                                                    <CheckCircle2 size={12} /> Correct
+
+                                                        {parsed.hasCode && (
+                                                            <div className="flex items-center gap-2 shrink-0 my-0.5">
+                                                                <span className="px-2 py-0.5 rounded-md bg-slate-900 text-cyan-400 font-mono text-[10px] font-black uppercase tracking-wider border border-slate-700 shadow-xs">
+                                                                    {langTag}
                                                                 </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-rose-100 border border-rose-400 text-rose-800 shadow-xs">
-                                                                    <XCircle size={12} /> Incorrect
-                                                                </span>
-                                                            )
-                                                        ) : (
-                                                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-100 border border-slate-300 text-slate-600 shadow-xs">
-                                                                <MinusCircle size={12} /> Skipped
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <td className="p-4">
-                                                        <span className={`text-[10px] font-black px-3 py-1 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
-                                                            q.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
-                                                            q.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
-                                                            'bg-amber-100 border-amber-400 text-amber-800'
-                                                        }`}>
-                                                            {q.difficulty}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4 text-center">
-                                                        <div className="flex flex-col items-center gap-1">
-                                                            <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-emerald-700' : q.accuracy < 40 ? 'text-rose-700' : 'text-amber-700'}`}>
-                                                                {q.accuracy}%
-                                                            </span>
-                                                            <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
-                                                                <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-emerald-600' : q.accuracy < 40 ? 'bg-rose-600' : 'bg-amber-500'}`} style={{ width: `${q.accuracy}%` }}></div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setExpandedQuestionIdx(isExpanded ? null : idx)}
+                                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all border cursor-pointer active:scale-95 shadow-xs ${
+                                                                        isExpanded
+                                                                        ? 'bg-amber-100 border-amber-400 text-amber-900'
+                                                                        : 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+                                                                    }`}
+                                                                >
+                                                                    {isExpanded ? <EyeOff size={13} /> : <Eye size={13} />}
+                                                                    <span>{isExpanded ? 'Hide Code' : 'View Code'}</span>
+                                                                </button>
                                                             </div>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                {isStudent ? (
+                                                    <>
+                                                        <td className="p-4 text-center">
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-slate-100 border border-slate-300 text-slate-800 shadow-xs">
+                                                                <Clock size={12} className="text-slate-500" /> {studentTime}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            {isAnswered ? (
+                                                                isCorrect ? (
+                                                                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100 border border-emerald-400 text-emerald-800 shadow-xs">
+                                                                        <CheckCircle2 size={12} /> Correct
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-rose-100 border border-rose-400 text-rose-800 shadow-xs">
+                                                                        <XCircle size={12} /> Incorrect
+                                                                    </span>
+                                                                )
+                                                            ) : (
+                                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-100 border border-slate-300 text-slate-600 shadow-xs">
+                                                                    <MinusCircle size={12} /> Skipped
+                                                                </span>
+                                                            )}
+                                                        </td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <td className="p-4">
+                                                            <span className={`text-[10px] font-black px-3 py-1 rounded-xl uppercase tracking-widest border-2 shadow-xs ${
+                                                                q.difficulty === 'Easy' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 
+                                                                q.difficulty === 'Hard' ? 'bg-rose-100 border-rose-400 text-rose-800' : 
+                                                                'bg-amber-100 border-amber-400 text-amber-800'
+                                                            }`}>
+                                                                {q.difficulty}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <div className="flex flex-col items-center gap-1">
+                                                                <span className={`text-sm font-black italic ${q.accuracy > 70 ? 'text-emerald-700' : q.accuracy < 40 ? 'text-rose-700' : 'text-amber-700'}`}>
+                                                                    {q.accuracy}%
+                                                                </span>
+                                                                <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                                                                    <div className={`h-full rounded-full ${q.accuracy > 70 ? 'bg-emerald-600' : q.accuracy < 40 ? 'bg-rose-600' : 'bg-amber-500'}`} style={{ width: `${q.accuracy}%` }}></div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </>
+                                                )}
+                                                <td className="p-4 text-right">
+                                                    <Link 
+                                                        to={`/analytics/question/${id}/${idx}`}
+                                                        className="inline-flex items-center gap-1.5 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[var(--bg-saffron)] text-white-force"
+                                                        style={{ color: '#ffffff' }}
+                                                    >
+                                                        <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                                    </Link>
+                                                </td>
+                                            </tr>
+
+                                            {/* Accordion Expandable Row for Code Inspection */}
+                                            {isExpanded && (
+                                                <tr className="bg-slate-900/5 border-b-2 border-indigo-200">
+                                                    <td colSpan={5} className="p-4 sm:p-6">
+                                                        <div className="bg-slate-950 rounded-2xl p-4 border border-slate-800 shadow-xl">
+                                                            <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-800 text-[10px] font-black uppercase text-cyan-400 tracking-widest font-mono">
+                                                                <div className="flex items-center gap-2">
+                                                                    <Code size={13} />
+                                                                    <span>Code Inspection View</span>
+                                                                </div>
+                                                                <span className="text-slate-400">Question #{idx + 1}</span>
+                                                            </div>
+                                                            <FormattedQuestionText
+                                                                questionText={q.questionText}
+                                                                textClassName="text-sm text-slate-100 font-bold"
+                                                                dark={true}
+                                                            />
                                                         </div>
                                                     </td>
-                                                </>
+                                                </tr>
                                             )}
-                                            <td className="p-4 text-right">
-                                                <Link 
-                                                    to={`/analytics/question/${id}/${idx}`}
-                                                    className="inline-flex items-center gap-1.5 bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] !text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 border border-[var(--bg-saffron)] text-white-force"
-                                                    style={{ color: '#ffffff' }}
-                                                >
-                                                    <span className="!text-white font-black" style={{ color: '#ffffff' }}>Analyze</span> <ArrowRight size={14} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
-                                                </Link>
-                                            </td>
-                                        </tr>
+                                        </React.Fragment>
                                     );
                                 })}
+
                             </tbody>
                         </table>
                     </div>
