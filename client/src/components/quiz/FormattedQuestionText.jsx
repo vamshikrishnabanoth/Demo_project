@@ -80,18 +80,18 @@ export default function FormattedQuestionText({
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopy(segment.content, idx)}
-                                                className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-[9px] font-mono border border-slate-700 cursor-pointer active:scale-95"
+                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-all text-[9px] font-bold font-mono border border-cyan-500 cursor-pointer active:scale-95 shadow-sm"
                                                 title="Copy Code"
                                             >
                                                 {copiedIdx === idx ? (
                                                     <>
-                                                        <Check size={11} className="text-emerald-400 shrink-0" />
-                                                        <span className="text-emerald-400">COPIED</span>
+                                                        <Check size={12} className="text-white shrink-0" />
+                                                        <span className="text-white">COPIED</span>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Copy size={11} className="shrink-0" />
-                                                        <span>COPY</span>
+                                                        <Copy size={12} className="text-white shrink-0" />
+                                                        <span className="text-white">COPY</span>
                                                     </>
                                                 )}
                                             </button>
@@ -100,11 +100,11 @@ export default function FormattedQuestionText({
                                             <button
                                                 type="button"
                                                 onClick={() => setExpandedIdx(isExpanded ? null : idx)}
-                                                className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-[9px] font-mono border border-slate-700 cursor-pointer active:scale-95"
+                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all text-[9px] font-bold font-mono border border-indigo-500 cursor-pointer active:scale-95 shadow-sm"
                                                 title="Toggle Fullscreen View"
                                             >
-                                                <Maximize2 size={11} className="shrink-0" />
-                                                <span className="hidden sm:inline">EXPAND</span>
+                                                <Maximize2 size={12} className="text-white shrink-0" />
+                                                <span className="hidden sm:inline text-white">EXPAND</span>
                                             </button>
                                         </div>
                                     </div>
@@ -139,18 +139,18 @@ export default function FormattedQuestionText({
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopy(segment.content, idx)}
-                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700 cursor-pointer"
+                                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold font-mono border border-cyan-500 cursor-pointer shadow-md active:scale-95 transition-all"
                                             >
-                                                {copiedIdx === idx ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                                                <span>{copiedIdx === idx ? 'Copied' : 'Copy'}</span>
+                                                {copiedIdx === idx ? <Check size={15} className="text-white" /> : <Copy size={15} className="text-white" />}
+                                                <span className="text-white">{copiedIdx === idx ? 'Copied' : 'Copy'}</span>
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setExpandedIdx(null)}
-                                                className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700 cursor-pointer"
+                                                className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition-all border border-rose-500 cursor-pointer shadow-md active:scale-95"
                                                 title="Close Reader Mode"
                                             >
-                                                <Minimize2 size={16} />
+                                                <Minimize2 size={18} className="text-white" />
                                             </button>
                                         </div>
                                     </div>
