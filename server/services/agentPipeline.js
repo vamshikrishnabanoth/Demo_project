@@ -311,7 +311,7 @@ async function refineQuestion(q, criticResult, groqClient, difficulty, isMinor) 
         : 'Fully improve this question based on every issue listed. You may rewrite the question text if needed.';
 
     const prompt = [
-        'You are an expert quiz editor. Improve this multiple-choice question based on the specific issues listed.',
+        `You are an academic assessment specialist for ${q.concept_tag || 'the uploaded lecture document'}. Improve this multiple-choice question while preserving its core concept and source subject verbatim.`,
         '',
         modeInstruction,
         '',
