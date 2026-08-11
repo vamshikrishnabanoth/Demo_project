@@ -1280,13 +1280,14 @@ def validate_stage_b_blueprint(blueprint: dict) -> (bool, List[str]):
     if not slots or len(slots) == 0:
         errors.append("Blueprint contains 0 slots")
         
+    valid_blooms = {"Remember", "Understand", "Apply", "Analyze", "Evaluate", "Create", "RECALL", "APPLY", "ANALYZE"}
     for idx, slot in enumerate(slots):
         s_idx = slot.get("slot_index", idx + 1)
         if not slot.get("concept_tag") and not slot.get("concept"):
             errors.append(f"Slot {s_idx}: Missing concept")
-        if not slot.get("blooms_level"):
-            errors.append(f"Slot {s_idx}: Missing blooms_level")
-        errors.append("No valid Bloom's levels present in slots")
+        b_lvl = slot.get("blooms_level") or slot.get("bloom_level")
+        if not b_lvl or b_lvl not in valid_blooms:
+            errors.append(f"Slot {s_idx}: Invalid or missing Bloom's level ({b_lvl})")
 
     return (len(errors) == 0, errors)
 
