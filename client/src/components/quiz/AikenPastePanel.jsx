@@ -58,15 +58,27 @@ export default function AikenPastePanel({ onQuestionsLoaded }) {
                     <span className="text-[10px] font-black text-indigo-700 uppercase tracking-[0.3em]">AIKEN Syntax Rules</span>
                 </div>
                 <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-4">
-                    Pasted text must strictly comply with the Aiken standard: Question text on a single line, option labels starting with capital letters followed by a period and space, and a terminal ANSWER line.
+                    Supports single and multi-line question stems (including code blocks with blank lines, indentation & syntax). All lines before Option A. are treated as the question stem. Options must start with A., B., C., D. followed by a period and space, ending with ANSWER: X.
                 </p>
                 <pre className="text-slate-700 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
-{`What is the capital of India?
-A. Mumbai
-B. New Delhi
-C. Chennai
-D. Kolkata
-ANSWER: B`}
+{`What is the output of the following C++ code?
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    for(int i = 4; i >= 0; i -= 2) {
+        cout << arr[i] << " ";
+    }
+    return 0;
+}
+
+A. 50 30 10
+B. 10 30 50
+C. 40 20
+D. 50 40 30
+ANSWER: A`}
                 </pre>
             </div>
 

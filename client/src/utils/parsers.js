@@ -1,99 +1,129 @@
 /**
  * AikenParser Utility
- * Robust state-machine parser for the AIKEN quiz format.
- * Handles single and double newline separators.
+ * Robust multi-line parser for the AIKEN quiz format.
+ * Supports multi-line question stems (including code blocks, blank lines, braces, and indentation).
+ * Every line before option A. (A., B., C., D.) is treated as part of the question stem.
  */
 export function parseAiken(text) {
     const errors = [];
     const questions = [];
 
-    const isOption = line => /^[A-Z]\.\s+.+$/.test(line);
-    const isAnswer = line => /^ANSWER\s*:\s*[A-Z]$/i.test(line);
+    if (!text || !text.trim()) {
+        return { questions: [], errors: ['File or text buffer is empty.'], isValid: false };
+    }
 
-    const rawLines = text.split('\n').map(l => l.trim());
+    // Split raw text into individual lines
+    const lines = text.split(/\r?\n/);
 
-    // Build chunks: each chunk is the lines for one question.
-    const chunks = [];
-    let current = [];
-    let sawAnswer = false;
+    // Group lines into question blocks ending with "ANSWER: X"
+    const questionBlocks = [];
+    let currentBlock = [];
 
-    for (const line of rawLines) {
-        if (line === '') continue;
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        currentBlock.push(line);
 
-        if (sawAnswer && !isOption(line) && !isAnswer(line)) {
-            if (current.length > 0) {
-                chunks.push(current);
-                current = [];
-            }
-            sawAnswer = false;
-        }
-
-        current.push(line);
-
-        if (isAnswer(line)) {
-            sawAnswer = true;
+        if (/^ANSWER\s*:\s*[A-Z]\s*$/i.test(line.trim())) {
+            questionBlocks.push(currentBlock);
+            currentBlock = [];
         }
     }
-    if (current.length > 0) chunks.push(current);
 
-    for (let i = 0; i < chunks.length; i++) {
-        const lines = chunks[i];
-        const qNum = i + 1;
+    // Check for remaining lines without a closing ANSWER line
+    if (currentBlock.length > 0) {
+        const remainingNonEmpty = currentBlock.filter(l => l.trim() !== '');
+        if (remainingNonEmpty.length > 0) {
+            errors.push(`Incomplete question block at the end of file (missing terminal "ANSWER: X" line).`);
+        }
+    }
 
-        if (lines.length < 3) {
-            errors.push(`Question ${qNum}: Too few lines to be valid.`);
+    for (let qIdx = 0; qIdx < questionBlocks.length; qIdx++) {
+        const blockLines = questionBlocks[qIdx];
+        const qNum = qIdx + 1;
+
+        // Find the index of Option A line (/^A\.\s+.+$/)
+        let optionAIndex = -1;
+        for (let j = 0; j < blockLines.length; j++) {
+            if (/^A\.\s+.+$/.test(blockLines[j].trim())) {
+                optionAIndex = j;
+                break;
+            }
+        }
+
+        if (optionAIndex === -1) {
+            errors.push(`Question ${qNum}: Could not locate Option "A." line.`);
             continue;
         }
 
-        const questionText = lines[0];
+        // Extract all lines before option A as the question stem
+        const stemLines = blockLines.slice(0, optionAIndex);
+
+        // Strip outer leading/trailing blank lines while preserving interior code structure and indentation
+        while (stemLines.length > 0 && stemLines[0].trim() === '') {
+            stemLines.shift();
+        }
+        while (stemLines.length > 0 && stemLines[stemLines.length - 1].trim() === '') {
+            stemLines.pop();
+        }
+
+        const questionText = stemLines.join('\n');
+
+        if (!questionText.trim()) {
+            errors.push(`Question ${qNum}: Question stem is empty.`);
+            continue;
+        }
+
+        // Parse options A, B, C, D and ANSWER line
         const options = [];
         let correctAnswer = '';
-        let unrecognizedLinesCount = 0;
+        let hasError = false;
 
-        for (let j = 1; j < lines.length; j++) {
-            const optMatch = lines[j].match(/^([A-Z])\.\s+(.+)$/);
-            const ansMatch = lines[j].match(/^ANSWER\s*:\s*([A-Z])$/i);
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        let expectedOptIdx = 0;
+
+        for (let k = optionAIndex; k < blockLines.length; k++) {
+            const trimmedLine = blockLines[k].trim();
+            if (trimmedLine === '') continue;
+
+            const optMatch = trimmedLine.match(/^([A-Z])\.\s+(.+)$/);
+            const ansMatch = trimmedLine.match(/^ANSWER\s*:\s*([A-Z])$/i);
 
             if (optMatch) {
-                options.push({ letter: optMatch[1], text: optMatch[2] });
+                const letter = optMatch[1].toUpperCase();
+                const optText = optMatch[2].trim();
+
+                if (expectedOptIdx < 4 && letter === optionLetters[expectedOptIdx]) {
+                    options.push({ letter, text: optText });
+                    expectedOptIdx++;
+                } else {
+                    errors.push(`Question ${qNum}: Expected option "${optionLetters[expectedOptIdx] || 'ANSWER'}", but found "${letter}.". Option letters must be A, B, C, D in exact order.`);
+                    hasError = true;
+                    break;
+                }
             } else if (ansMatch) {
                 correctAnswer = ansMatch[1].toUpperCase();
             } else {
-                errors.push(`Question ${qNum}: Unrecognized line → "${lines[j]}"`);
-                unrecognizedLinesCount++;
+                errors.push(`Question ${qNum}: Unrecognized line in options section → "${trimmedLine}"`);
+                hasError = true;
+                break;
             }
         }
 
-        if (unrecognizedLinesCount > 0) {
-            continue;
-        }
+        if (hasError) continue;
 
         if (options.length !== 4) {
-            errors.push(`Question ${qNum}: Every question must contain exactly 4 options. Found ${options.length} options instead.`);
-            continue;
-        }
-
-        const expectedLetters = ['A', 'B', 'C', 'D'];
-        let hasSequenceError = false;
-        for (let oIdx = 0; oIdx < 4; oIdx++) {
-            if (options[oIdx].letter !== expectedLetters[oIdx]) {
-                errors.push(`Question ${qNum}: Option ${oIdx + 1} must start with letter "${expectedLetters[oIdx]}" (found "${options[oIdx].letter}" instead). No option letters should be skipped.`);
-                hasSequenceError = true;
-            }
-        }
-
-        if (hasSequenceError) {
+            errors.push(`Question ${qNum}: Every question must contain exactly 4 options (A, B, C, D). Found ${options.length}.`);
             continue;
         }
 
         if (!correctAnswer) {
-            errors.push(`Question ${qNum}: Missing ANSWER line. Each question must contain: ANSWER: X`);
+            errors.push(`Question ${qNum}: Missing terminal "ANSWER: X" line.`);
             continue;
         }
 
         const correctOpt = options.find(o => o.letter === correctAnswer);
         if (!correctOpt) {
-            errors.push(`Question ${qNum}: ANSWER "${correctAnswer}" does not match any valid option letter (A, B, C, or D).`);
+            errors.push(`Question ${qNum}: ANSWER "${correctAnswer}" does not match option letters A, B, C, or D.`);
             continue;
         }
 

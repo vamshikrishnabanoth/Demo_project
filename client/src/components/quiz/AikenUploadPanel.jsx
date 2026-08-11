@@ -62,8 +62,28 @@ export default function AikenUploadPanel({ onQuestionsLoaded }) {
                     <FileText size={20} className="text-indigo-600" />
                     <span className="text-[10px] font-black text-indigo-700 uppercase tracking-[0.3em]">AIKEN Format Protocol</span>
                 </div>
+                <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-4">
+                    Supports single and multi-line question stems (including code blocks with blank lines, indentation & syntax). All lines before Option A. are treated as the question stem.
+                </p>
                 <pre className="text-slate-700 text-xs font-mono leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
-                    {`What is the capital of France?\nA. Berlin\nB. Paris\nC. Madrid\nD. Rome\nANSWER: B`}
+{`What is the output of the following C++ code?
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    for(int i = 4; i >= 0; i -= 2) {
+        cout << arr[i] << " ";
+    }
+    return 0;
+}
+
+A. 50 30 10
+B. 10 30 50
+C. 40 20
+D. 50 40 30
+ANSWER: A`}
                 </pre>
             </div>
 
