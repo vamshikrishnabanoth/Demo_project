@@ -2329,6 +2329,177 @@ input.global-search-input:focus,
     transform: translate(calc(var(--p-x) * 0.5), calc(var(--p-y) * 0.5)) rotate(90deg) scale(1);
   }
   100% {
+  animation: vs-text-scale 0.8s ease-in-out infinite;
+}
+
+@keyframes shake-left {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-opacity-pulse {
+  animation: opacity-pulse 1s ease-in-out infinite;
+}
+
+@keyframes soft-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+}
+.animate-soft-glow {
+  animation: soft-glow 3.5s ease-in-out infinite;
+}
+
+@keyframes arrow-bob {
+  0%, 100% {
+    transform: translateY(-4px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-12px);
+    opacity: 1;
+  }
+}
+.animate-arrow-bob {
+  animation: arrow-bob 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.animate-progress-slide {
+  animation: progress-slide 2s ease-in-out infinite;
+}
+
+/* Custom theme-consistent styling for the Ask AI Review button */
+.btn-ai-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1.5px solid var(--border-color) !important;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px; /* Rounded pill shape from the screenshot */
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-ai-review:hover:not(:disabled) {
+  background-color: var(--bg-accent) !important;
+  border-color: var(--bg-accent) !important;
+  color: var(--text-on-accent) !important;
+  box-shadow: 0 0 15px var(--bg-accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-ai-review:hover:not(:disabled) svg {
+  color: var(--text-on-accent) !important;
+  stroke: var(--text-on-accent) !important;
+}
+
+.btn-ai-review:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── CODE QUESTION PRESENTATION SYSTEM ──────────────────────────────── */
+.question-code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", "Courier New", monospace !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  overflow-x: auto !important;
+  line-height: 1.6 !important;
+  tab-size: 4 !important;
+  -moz-tab-size: 4 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.question-code code {
+  font-family: inherit !important;
+  white-space: pre !important;
+  line-height: inherit !important;
+  display: block;
+}
+
+.formatted-question-container pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.formatted-question-container pre::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 9999px;
+}
+
+@keyframes doc-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-doc-bob {
+  animation: doc-bob 2.5s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+  0%, 100% {
+    top: 10%;
+  }
+  50% {
+    top: 90%;
+  }
+}
+.animate-scan-line {
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+@keyframes line-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleX(0.95);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+}
+.animate-line-pulse {
+  animation: line-pulse 1.5s ease-in-out var(--line-delay, 0s) infinite;
+}
+
+@keyframes particle-explode {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(calc(var(--p-x) * 0.5), calc(var(--p-y) * 0.5)) rotate(90deg) scale(1);
+  }
+  100% {
     transform: translate(var(--p-x), var(--p-y)) rotate(180deg) scale(0.5);
     opacity: 0;
   }
@@ -2337,70 +2508,6 @@ input.global-search-input:focus,
   animation: particle-explode 2.5s cubic-bezier(0.16, 1, 0.3, 1) var(--p-delay, 0s) infinite;
 }
 
-@keyframes streak-pulse {
-  0%, 100% {
-    opacity: 0;
-    transform: var(--streak-transform) scaleX(0.5);
-  }
-  50% {
-    opacity: 0.5;
-    transform: var(--streak-transform) scaleX(1.2);
-  }
-}
-.animate-streak-pulse {
-  transform-origin: center;
-  animation: streak-pulse 1.5s ease-in-out var(--streak-delay, 0s) infinite;
-}
-
-@keyframes shake-right {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(6px);
-  }
-}
-.animate-shake-right {
-  animation: shake-right 0.8s ease-in-out infinite;
-}
-
-@keyframes glow-box-pulse {
-  0%, 100% {
-    box-shadow: 0 0 20px var(--bg-accent-glow);
-  }
-  50% {
-    box-shadow: 0 0 50px var(--bg-accent-glow);
-  }
-}
-.animate-glow-box-pulse {
-  animation: glow-box-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes vs-glow {
-  0%, 100% {
-    transform: scale(0.8);
-    opacity: 0.3;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 0.8;
-  }
-}
-.animate-vs-glow {
-  animation: vs-glow 1s ease-in-out infinite;
-}
-
-@keyframes vs-text-scale {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-.animate-vs-text-scale {
-  animation: vs-text-scale 0.8s ease-in-out infinite;
-}
 
 @keyframes shake-left {
   0%, 100% {
@@ -2552,4 +2659,52 @@ input.global-search-input:focus,
 
 .formatted-question-container pre::-webkit-scrollbar-thumb:hover {
   background: rgba(56, 189, 248, 0.45);
+}
+
+/* Gutter Line Numbers System */
+.code-line-table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.code-line-row {
+  display: table-row;
+}
+
+.code-line-number {
+  display: table-cell;
+  text-align: right;
+  padding-right: 1rem;
+  color: #64748b;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 0.825em;
+  opacity: 0.65;
+  min-width: 2.2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-line-content {
+  display: table-cell;
+  padding-left: 1rem;
+  white-space: pre !important;
+}
+
+/* Mobile Scroll Indicator Edge Gradient */
+.code-scroll-fade {
+  position: relative;
+}
+
+.code-scroll-fade::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.85));
+  pointer-events: none;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
