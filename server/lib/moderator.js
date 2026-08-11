@@ -39,8 +39,9 @@ const moderateContent = async (userId, content, type = 'text', filePath = null) 
 
                 CONTENT: ${contentSample}
             `;
-            const response = await model.generateContent(prompt);
-            result = response.response.text().trim();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Moderation Timeout')), 5000));
+            const apiPromise = model.generateContent(prompt).then(res => res.response.text().trim());
+            result = await Promise.race([apiPromise, timeoutPromise]);
         } else if (type === 'image' && filePath) {
             const imageData = fs.readFileSync(filePath);
             const imagePart = {
