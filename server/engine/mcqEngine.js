@@ -51,7 +51,7 @@ function computeAcademicDensityScore(text, sourceName = "Source") {
   }
 
   // Technical & academic domain term patterns
-  const techRegex = /\b(algorithm|function|database|protocol|interface|class|object|method|structure|query|architecture|system|optimization|complexity|thread|memory|pointer|latency|bandwidth|equation|theorem|reaction|molecule|hypothesis|analysis|property|variable|constant|model|dataset|matrix|vector|derivative|integral|cell|gene|protein|organism|network|quantum|entropy|compiler|cache|schema|index|async|await|event|loop|logic|proof|definition|lemma|corollary)\b|`[^`]+`/gi;
+  const techRegex = /\b(git|commit|branch|merge|repository|push|pull|rebase|remote|checkout|stash|algorithm|function|database|protocol|interface|class|object|method|structure|query|architecture|system|optimization|complexity|thread|memory|pointer|latency|bandwidth|equation|theorem|reaction|molecule|hypothesis|analysis|property|variable|constant|model|dataset|matrix|vector|derivative|integral|cell|gene|protein|organism|network|quantum|entropy|compiler|cache|schema|index|async|await|event|loop|logic|proof|definition|lemma|corollary)\b|`[^`]+`/gi;
   const techMatches = (cleaned.match(techRegex) || []).length;
 
   // Administrative / syllabus noise patterns
@@ -73,7 +73,7 @@ function computeAcademicDensityScore(text, sourceName = "Source") {
   }
 
   const finalScore = Number(Math.min(1.0, Math.max(0.0, score)).toFixed(2));
-  const isAcademic = finalScore >= 0.20;
+  const isAcademic = finalScore >= 0.20 || (words.length >= 15 && noiseMatches === 0);
 
   return { score: finalScore, isAcademic };
 }
@@ -345,10 +345,20 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     }
   });
 
+  if (validAcademicInputs.length === 0 && sourceInputs.length > 0) {
+    sourceInputs.forEach((inp, idx) => {
+      const srcName = inp.name || inp.source_name || `Source #${idx + 1}`;
+      const srcContent = inp.content || (typeof inp === 'string' ? inp : '');
+      if (srcContent && srcContent.trim().length > 0) {
+        validAcademicInputs.push({ ...inp, name: srcName, content: srcContent, densityScore: 0.5 });
+      }
+    });
+  }
+
   // ── 3. SAFETY LOCK ──
   if (validAcademicInputs.length === 0) {
-    console.error(`[ReqID: ${reqId}] ❌ [SAFETY LOCK TRIGGERED] No academic or technical content detected across provided sources.`);
-    const error = new Error('400 Bad Request: "No academic or technical content detected in provided sources."');
+    console.error(`[ReqID: ${reqId}] ❌ [SAFETY LOCK TRIGGERED] No content detected across provided sources.`);
+    const error = new Error('400 Bad Request: "No content detected in provided sources."');
     error.statusCode = 400;
     throw error;
   }
