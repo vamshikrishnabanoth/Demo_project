@@ -666,6 +666,20 @@ router.get('/admins', auth, adminOnly, async (req, res) => {
     }
 });
 
+// Helper to build normalized semester query filter
+function buildSemesterFilter(semStr) {
+    if (!semStr || semStr === 'ALL') return null;
+    const sem = String(semStr);
+    const semValues = [sem];
+    if (sem === '3') semValues.push('1');
+    if (sem === '4') semValues.push('2');
+    if (sem === '5') semValues.push('1');
+    if (sem === '6') semValues.push('2');
+    if (sem === '7') semValues.push('1');
+    if (sem === '8') semValues.push('2');
+    return { semester: { in: semValues } };
+}
+
 // GET /admin/students/eligible - Query matching students for batch promotion preview
 router.get('/students/eligible', auth, adminOnly, async (req, res) => {
     try {
@@ -674,22 +688,35 @@ router.get('/students/eligible', auth, adminOnly, async (req, res) => {
         const whereConditions = [{ role: 'student' }];
         if (branch && branch !== 'ALL') whereConditions.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
         if (year && year !== 'ALL') whereConditions.push({ year: String(year) });
-        if (semester && semester !== 'ALL') whereConditions.push({ semester: String(semester) });
+        
+        const semFilter = buildSemesterFilter(semester);
+        if (semFilter) whereConditions.push(semFilter);
+
         if (section && section !== 'ALL') whereConditions.push({ section: { equals: section, mode: 'insensitive' } });
 
         const where = { AND: whereConditions };
 
-        const [students, totalCount] = await Promise.all([
+        const [students, totalCount, availableSections] = await Promise.all([
             prisma.user.findMany({
                 where,
                 select: { id: true, username: true, name: true, studentBranch: true, year: true, semester: true, section: true },
                 take: 200,
                 orderBy: [{ year: 'asc' }, { studentBranch: 'asc' }, { section: 'asc' }, { username: 'asc' }]
             }),
-            prisma.user.count({ where })
+            prisma.user.count({ where }),
+            prisma.user.findMany({
+                where: { role: 'student', section: { not: null } },
+                select: { section: true },
+                distinct: ['section'],
+                orderBy: { section: 'asc' }
+            })
         ]);
 
-        res.json({ students, totalCount });
+        res.json({ 
+            students, 
+            totalCount,
+            availableSections: availableSections.map(s => s.section).filter(Boolean)
+        });
     } catch (err) {
         console.error('Eligible fetch error:', err.message);
         res.status(500).json({ msg: 'Server error: ' + err.message });
@@ -717,7 +744,10 @@ router.post('/promote/quick', auth, adminOnly, async (req, res) => {
         } else {
             if (branch && branch !== 'ALL') whereConditions.push({ studentBranch: { equals: branch, mode: 'insensitive' } });
             if (sourceYear && sourceYear !== 'ALL') whereConditions.push({ year: String(sourceYear) });
-            if (sourceSemester && sourceSemester !== 'ALL') whereConditions.push({ semester: String(sourceSemester) });
+            
+            const semFilter = buildSemesterFilter(sourceSemester);
+            if (semFilter) whereConditions.push(semFilter);
+
             if (sourceSection && sourceSection !== 'ALL') whereConditions.push({ section: { equals: sourceSection, mode: 'insensitive' } });
         }
 

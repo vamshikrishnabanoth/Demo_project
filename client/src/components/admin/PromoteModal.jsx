@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    X, Award, ArrowRight, ShieldAlert,
-    Loader2, Users, Filter, CheckCircle2, ChevronDown, ChevronUp
+    X, Award, ArrowRight,
+    Loader2, Users, Filter, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
 
 const BRANCHES = ['ALL', 'CSE', 'ECE', 'EEE', 'IT', 'CSM', 'CSD'];
+const DEFAULT_SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
 
 export default function PromoteModal({ onClose, onSuccess }) {
     // Source Scope Filters
@@ -24,6 +25,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
     // Matching students live preview & pool
     const [totalCount, setTotalCount] = useState(0);
     const [previewStudents, setPreviewStudents] = useState([]);
+    const [dynamicSections, setDynamicSections] = useState(DEFAULT_SECTIONS);
     const [loadingCount, setLoadingCount] = useState(false);
     const [showPreviewDrawer, setShowPreviewDrawer] = useState(false);
     const [executing, setExecuting] = useState(false);
@@ -46,6 +48,12 @@ export default function PromoteModal({ onClose, onSuccess }) {
             });
             setTotalCount(res.data.totalCount || 0);
             setPreviewStudents(res.data.students || []);
+
+            // Merge dynamic sections from database with default list
+            if (res.data.availableSections && Array.isArray(res.data.availableSections)) {
+                const combined = Array.from(new Set([...DEFAULT_SECTIONS, ...res.data.availableSections])).sort();
+                setDynamicSections(combined);
+            }
         } catch {
             setTotalCount(0);
             setPreviewStudents([]);
@@ -137,7 +145,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                     {/* Body Form */}
                     <form onSubmit={handleExecutePromotion} className="p-6 space-y-6 overflow-y-auto flex-1">
                         
-                        {/* Section 1: Source Student Pool (Who to Promote) */}
+                        {/* Section 1: Source Student Scope (Who to Promote) */}
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
@@ -194,10 +202,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
                                     >
                                         <option value="ALL">All Sections</option>
-                                        <option value="A">Section A</option>
-                                        <option value="B">Section B</option>
-                                        <option value="C">Section C</option>
-                                        <option value="D">Section D</option>
+                                        {dynamicSections.map(s => <option key={s} value={s}>Section {s}</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -250,10 +255,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         className="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer disabled:opacity-50"
                                     >
                                         <option value="keep">Keep Current Section</option>
-                                        <option value="A">Section A</option>
-                                        <option value="B">Section B</option>
-                                        <option value="C">Section C</option>
-                                        <option value="D">Section D</option>
+                                        {dynamicSections.map(s => <option key={s} value={s}>Section {s}</option>)}
                                     </select>
                                 </div>
                             </div>
