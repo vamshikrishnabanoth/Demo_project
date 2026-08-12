@@ -1,15 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const STAGES = [
-    { label: 'Generating Questions',   sub: 'AI crafting questions from your source…',    icon: '✦' },
-    { label: 'Agent Reviewing',        sub: 'Critic Agent checking quality across the quiz…', icon: '◈' },
-    { label: 'Optimising Quality',     sub: 'Refiner improving low-scoring questions…',   icon: '◎' },
-    { label: 'Preparing Final Quiz',   sub: 'Assembling your polished quiz…',             icon: '✓' },
+// ── 8-Stage Multi-Agent System Pipeline ───────────────────────────────────────
+const AGENT_STAGES = [
+    { label: 'Agent 1: Ingestion & Filtering',  sub: 'Cleans administrative noise and prepares source text…', icon: '🧹' },
+    { label: 'Agent 2: Knowledge Graph',        sub: 'Identifies core concepts and maps exact source evidence…', icon: '🎯' },
+    { label: 'Agent 3: 5D Quiz Planning',       sub: 'Designs quiz depth, Bloom levels, and slot blueprints…', icon: '📐' },
+    { label: 'Agent 4: Prompt Architect',       sub: 'Writes strict prompts enforcing self-contained context…', icon: '✍️' },
+    { label: 'Agent 5: LLM Gateway Execution',  sub: 'Communicates with Groq Llama-3 for live MCQ generation…', icon: '🤖' },
+    { label: 'Agent 6: Quality Validator',      sub: 'Evaluates candidates against grounding & quality rules…', icon: '🛡️' },
+    { label: 'Agent 7: Self-Healing Repair',    sub: 'Automatically reruns and rewrites flagged questions…', icon: '🛠️' },
+    { label: 'Agent 8: Portfolio Assembly',     sub: 'Balances answer keys (A/B/C/D) and finalizes quiz studio…', icon: '🚀' },
 ];
 
-// Advance a stage every N ms while loading is true
-const STAGE_INTERVAL_MS = 4500;
+const VOICE_STAGES = [
+    { label: 'Uploading Audio',                 sub: 'Sending your recording to the server…',           icon: '📤' },
+    { label: 'Transcribing Speech',             sub: 'AI converting your speech to text…',              icon: '🎙️' },
+    { label: 'Extracting Topics',               sub: 'Identifying key concepts from lecture…',          icon: '🔍' },
+    { label: 'Agent 1: Ingestion & Filtering',  sub: 'Cleans administrative noise…',              icon: '🧹' },
+    { label: 'Agent 2: Knowledge Graph',        sub: 'Building knowledge graph…',             icon: '🎯' },
+    { label: 'Agent 5: LLM Generator',          sub: 'Generating questions from lecture…',         icon: '🤖' },
+    { label: 'Agent 6: Quality Validator',      sub: 'Checking quality across quiz…',          icon: '🛡️' },
+    { label: 'Agent 8: Portfolio Assembly',     sub: 'Finalizing quiz studio…',              icon: '🚀' },
+];
+
+const STAGE_MAP = {
+    'Generating Questions': 4,
+    'Reviewing Questions':  5,
+    'Improving Questions':   6,
+    'Preparing Final Quiz':  7,
+};
+
+// Advance auto stage every 3.5 seconds if prop stage is not updated from server
+const STAGE_INTERVAL_MS = 3500;
 
 const NODES = [
     { x: 50, y: 50 },
@@ -22,17 +45,29 @@ const CONNECTIONS = [
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
 ];
 
-export default function AgentPipelineLoader() {
-    const [stage, setStage] = useState(0);
+export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0 }) {
+    const stageList = isVoice ? VOICE_STAGES : AGENT_STAGES;
+
+    const [activeStage, setActiveStage] = useState(stage);
+
+    useEffect(() => {
+        let resolvedStage = stage;
+        if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
+            resolvedStage = STAGE_MAP[stageLabel];
+        }
+        if (resolvedStage > activeStage) {
+            setActiveStage(Math.min(resolvedStage, stageList.length - 1));
+        }
+    }, [stage, stageLabel, stageList.length]);
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setStage(s => Math.min(s + 1, STAGES.length - 1));
+            setActiveStage(s => Math.min(s + 1, stageList.length - 1));
         }, STAGE_INTERVAL_MS);
         return () => clearInterval(timer);
-    }, []);
+    }, [stageList.length]);
 
-    const pct = Math.round(((stage + 1) / STAGES.length) * 100);
+    const pct = Math.round(((activeStage + 1) / stageList.length) * 100);
 
     return (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#E6F0FA] overflow-hidden select-none">
@@ -44,7 +79,7 @@ export default function AgentPipelineLoader() {
                 className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,#133E87_0%,transparent_65%)] opacity-15"
             />
 
-            {/* Differentiated Animation & Stage Container Card */}
+            {/* Original Light Theme Stage Container Card */}
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -52,7 +87,7 @@ export default function AgentPipelineLoader() {
                 className="relative max-w-md w-full mx-4 bg-white/90 backdrop-blur-md border-2 border-[#9cbcd8] rounded-[2.5rem] p-8 sm:p-10 shadow-xl flex flex-col items-center justify-center text-center overflow-hidden"
             >
                 {/* Neural Network Visualization */}
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56 mb-2">
+                <div className="relative w-44 h-44 sm:w-52 sm:h-52 mb-2">
                     <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
                         {CONNECTIONS.map(([a, b], i) => (
                             <motion.line
@@ -102,7 +137,7 @@ export default function AgentPipelineLoader() {
                 {/* Stage Label */}
                 <AnimatePresence mode="wait">
                     <motion.div
-                        key={stage}
+                        key={activeStage}
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
@@ -110,30 +145,28 @@ export default function AgentPipelineLoader() {
                         className="space-y-1.5 px-2 max-w-xs"
                     >
                         <div className="flex items-center justify-center gap-2">
-                            <span className="text-xl font-black text-[#133E87]">
-                                {STAGES[stage].icon}
-                            </span>
-                            <h2 className="text-lg sm:text-xl font-black uppercase italic tracking-tight text-[#0f172a]" style={{ color: '#0f172a' }}>
-                                {STAGES[stage].label}
+                            <span className="text-xl">{stageList[activeStage].icon}</span>
+                            <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[#0f172a]" style={{ color: '#0f172a' }}>
+                                {stageList[activeStage].label}
                             </h2>
                         </div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#334155] leading-relaxed" style={{ color: '#334155' }}>
-                            {STAGES[stage].sub}
+                        <p className="text-[11px] font-bold tracking-wider text-[#334155] leading-relaxed" style={{ color: '#334155' }}>
+                            {stageList[activeStage].sub}
                         </p>
                     </motion.div>
                 </AnimatePresence>
 
                 {/* Stage Dots */}
-                <div className="flex items-center gap-2 mt-5 mb-3">
-                    {STAGES.map((s, i) => (
+                <div className="flex items-center gap-1.5 mt-5 mb-3">
+                    {stageList.map((s, i) => (
                         <motion.div
                             key={i}
                             animate={{
-                                width:   i <= stage ? 20 : 8,
-                                opacity: i <= stage ? 1  : 0.35,
+                                width:   i <= activeStage ? 16 : 6,
+                                opacity: i <= activeStage ? 1  : 0.35,
                             }}
                             transition={{ duration: 0.3 }}
-                            className={`h-2 rounded-full ${i <= stage ? 'bg-[#133E87]' : 'bg-slate-300'}`}
+                            className={`h-2 rounded-full ${i <= activeStage ? 'bg-[#133E87]' : 'bg-slate-300'}`}
                         />
                     ))}
                 </div>
@@ -150,7 +183,7 @@ export default function AgentPipelineLoader() {
                 {/* Stage Badge */}
                 <div className="mt-2 px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
                     <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
-                        Agent Pipeline · Stage {stage + 1} of {STAGES.length}
+                        Multi-Agent Pipeline · Agent {activeStage + 1} of {stageList.length}
                     </p>
                 </div>
             </motion.div>
