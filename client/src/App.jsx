@@ -50,7 +50,6 @@ const AnimationPreview  = lazyWithSuspense(() => import('./pages/AnimationPrevie
 const CyberQuest        = lazyWithSuspense(() => import('./pages/CyberQuest'));
 const SprintArena       = lazyWithSuspense(() => import('./pages/SprintArena'));
 const MatchUpArena      = lazyWithSuspense(() => import('./pages/MatchUpArena'));
-const PipelineDebugger  = lazyWithSuspense(() => import('./pages/PipelineDebugger'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -103,7 +102,6 @@ function AnimatedRoutes() {
                     <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
                     <Route path="/my-quizzes"        element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
-                    <Route path="/pipeline-debugger"  element={<PageTransition><ProtectedRoute roles={['teacher']}><PipelineDebugger /></ProtectedRoute></PageTransition>} />
                     <Route path="/live-room-teacher/:joinCode" element={<FadeTransition><ProtectedRoute roles={['teacher']}><LiveRoomTeacher /></ProtectedRoute></FadeTransition>} />
                     <Route path="/analytics/quiz/:id" element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></PageTransition>} />
                     <Route path="/analytics/question/:quizId/:questionIndex" element={<SlideUpTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuestionAnalysis /></ProtectedRoute></SlideUpTransition>} />

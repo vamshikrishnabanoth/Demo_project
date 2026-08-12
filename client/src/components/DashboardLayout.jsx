@@ -122,10 +122,9 @@ export default function DashboardLayout({ children, role }) {
     const isActive = (path) => location.pathname === path;
 
     const teacherLinks = [
-        { name: 'Home',        path: '/teacher-dashboard', icon: LayoutDashboard },
-        { name: 'My Quizzes',  path: '/my-quizzes',        icon: BookOpen },
-        { name: 'AI Debugger', path: '/pipeline-debugger', icon: Cpu },
-        { name: 'Profile',     path: '/profile',           icon: User },
+        { name: 'Home',       path: '/teacher-dashboard', icon: LayoutDashboard },
+        { name: 'My Quizzes', path: '/my-quizzes',        icon: BookOpen },
+        { name: 'Profile',    path: '/profile',           icon: User },
     ];
     const studentLinks = [
         { name: 'Home',        path: '/student-dashboard', icon: LayoutDashboard },
