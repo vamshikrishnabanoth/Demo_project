@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm, showError } from '../utils/alerts';
@@ -26,7 +26,8 @@ import {
     CalendarRange,
     Lock,
     Copy,
-    Bookmark
+    Bookmark,
+    Eye
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -34,6 +35,7 @@ import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
 import { useApiQuery } from '../hooks/useApiQuery';
 
 export default function MyQuizzes() {
+    const navigate = useNavigate();
     const { data: quizzesData, loading, refetch } = useApiQuery('/quiz/my-quizzes');
     const quizzes = quizzesData || [];
 
@@ -42,6 +44,28 @@ export default function MyQuizzes() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedQuizIds, setSelectedQuizIds] = useState([]);
     const [editingScheduleId, setEditingScheduleId] = useState(null);
+
+    const handlePreviewTemplate = (tpl) => {
+        let questionsList = tpl.questions;
+        if (typeof questionsList === 'string') {
+            try {
+                questionsList = JSON.parse(questionsList);
+            } catch (e) {
+                questionsList = [];
+            }
+        }
+        navigate('/create-quiz/text', {
+            state: {
+                questions: questionsList,
+                title: tpl.title,
+                duration: tpl.duration || 10,
+                timerPerQuestion: tpl.timerPerQuestion || 30,
+                isAssessment: tpl.isAssessment || false,
+                source: 'template',
+                isTemplate: true
+            }
+        });
+    };
 
     // Section Broadcast Modal state
     const [broadcastModal, setBroadcastModal] = useState({
@@ -480,34 +504,47 @@ export default function MyQuizzes() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {savedTemplates.map(tpl => (
-                                    <div key={tpl.id} className="bg-white rounded-3xl border-2 border-amber-200 p-6 space-y-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-[10px] font-black uppercase tracking-wider">Template</span>
-                                                <span className="text-[10px] font-bold text-slate-500">{Array.isArray(tpl.questions) ? tpl.questions.length : 0} Questions</span>
+                                {savedTemplates.map(tpl => {
+                                    const questionCount = Array.isArray(tpl.questions) 
+                                        ? tpl.questions.length 
+                                        : (typeof tpl.questions === 'string' ? JSON.parse(tpl.questions || '[]').length : 0);
+                                    return (
+                                        <div key={tpl.id} className="bg-white rounded-3xl border-2 border-amber-200 p-6 space-y-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                                            <div className="space-y-2 cursor-pointer group/card" onClick={() => handlePreviewTemplate(tpl)}>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-[10px] font-black uppercase tracking-wider">Template</span>
+                                                    <span className="text-[10px] font-bold text-slate-500">{questionCount} Questions</span>
+                                                </div>
+                                                <h3 className="text-lg font-black text-slate-900 leading-snug group-hover/card:text-amber-600 transition-colors">{tpl.title}</h3>
+                                                <p className="text-xs text-slate-500 line-clamp-2">{tpl.description || 'Saved Quiz Template for infinite re-broadcasting.'}</p>
                                             </div>
-                                            <h3 className="text-lg font-black text-slate-900 leading-snug">{tpl.title}</h3>
-                                            <p className="text-xs text-slate-500 line-clamp-2">{tpl.description || 'Saved Quiz Template for infinite re-broadcasting.'}</p>
-                                        </div>
 
-                                        <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
-                                            <button
-                                                onClick={() => setBroadcastModal({ isOpen: true, template: tpl, branch: 'CSE', year: '3', semester: '1', section: 'A' })}
-                                                className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
-                                            >
-                                                <Megaphone size={14} /> Clone &amp; Broadcast
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteTemplate(tpl.id, tpl.title)}
-                                                className="p-3 text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 cursor-pointer transition-all"
-                                                title="Delete Template"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                            <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
+                                                <button
+                                                    onClick={() => handlePreviewTemplate(tpl)}
+                                                    className="flex-1 py-3 px-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                                                    title="Preview quiz questions before creating room"
+                                                >
+                                                    <Eye size={14} /> Preview &amp; Publish
+                                                </button>
+                                                <button
+                                                    onClick={() => setBroadcastModal({ isOpen: true, template: tpl, branch: 'CSE', year: '3', semester: '1', section: 'A' })}
+                                                    className="py-3 px-3 bg-slate-800 hover:bg-slate-900 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                                                    title="Directly launch live session"
+                                                >
+                                                    <Megaphone size={14} /> Broadcast
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteTemplate(tpl.id, tpl.title)}
+                                                    className="p-3 text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 cursor-pointer transition-all"
+                                                    title="Delete Template"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

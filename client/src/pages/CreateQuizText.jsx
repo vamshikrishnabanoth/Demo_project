@@ -87,9 +87,16 @@ export default function CreateQuizText() {
             setIsGeneratedSource(true);
             if (location.state.title)           setTitle(location.state.title);
             if (location.state.duration)        setDuration(location.state.duration);
+            if (location.state.timerPerQuestion) setTimerPerQuestion(location.state.timerPerQuestion);
+            if (location.state.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
             if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
-            toast.success('AI Intel Injected Successfully');
+
+            if (location.state.isTemplate || location.state.source === 'template') {
+                toast.success('Template Loaded for Preview & Publishing');
+            } else {
+                toast.success('AI Intel Injected Successfully');
+            }
 
             if (location.state.executionMessages && Array.isArray(location.state.executionMessages) && location.state.executionMessages.length > 0) {
                 location.state.executionMessages.forEach(msg => {
