@@ -404,7 +404,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
 
   const conceptGraph = await cacheManager.fetchCoalesced(analysisCacheKey, async () => {
     const analysisStart = Date.now();
-    const cg = buildConceptGraph(cleanedContent);
+    const cg = buildConceptGraph(cleanedContent, { documentProfile });
     const analysisTime = Date.now() - analysisStart;
 
     cacheManager.set(analysisCacheKey, cg, {
@@ -443,7 +443,8 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   tracer.recordStageStart(3, 'Quiz Planner Engine');
   const quizPlan = generateQuizPlan(conceptGraph, {
     requestedCount,
-    difficulty: normalizedDifficulty
+    difficulty: normalizedDifficulty,
+    documentProfile
   });
 
   const dist = quizPlan.distributionSummary || { EASY: 0, MEDIUM: 0, HARD: 0 };
@@ -465,7 +466,8 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const promptPayloads = buildSlotPrompts(quizPlan, {
     cleanedContent,
     conceptGraph,
-    quizPlan
+    quizPlan,
+    documentProfile
   });
 
   const avgSnippetLen = Math.round(promptPayloads.reduce((acc, p) => acc + (p.diagnostics?.snippetLengthChars || 370), 0) / Math.max(1, promptPayloads.length));
@@ -549,6 +551,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     cleanedContent,
     conceptGraph,
     quizPlan,
+    documentProfile,
     config: VALIDATOR_CONFIG
   };
 

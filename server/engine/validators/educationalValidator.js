@@ -217,6 +217,19 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     findings.majorWarnings.push(codeStr);
   }
 
+  // 10. Cross-Stage Contract Violation Guard (EDU_011_PROFILE_CONTRACT_VIOLATION)
+  const hasContractViolation = options.some(opt => {
+    const str = String(opt);
+    return /\$\s*([a-z]+\s+[a-z]+)/i.test(str) || /\{\s*\$[a-zA-Z0-9_\s]+\s*:/i.test(str) && /\s+/.test(str.match(/\{\s*\$([a-zA-Z0-9_\s]+)\s*:/)?.[1] || '');
+  });
+
+  if (hasContractViolation) {
+    scores.distractors = 0.0;
+    rawRepairHints.push("REWRITE_PROFILE_CONTRACT_VIOLATION");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_011_PROFILE_CONTRACT_VIOLATION?.code || "EDU_011";
+    findings.majorWarnings.push(codeStr);
+  }
+
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
   let rawQuality = (
     w.BLOOM * scores.bloom +

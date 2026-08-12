@@ -35,8 +35,11 @@ function buildConstraintText(slot) {
   lines.push(`- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.`);
 
   if (slot.executable || slot.canGenerateSyntaxQuestion) {
-    lines.push(`- EXECUTABLE SYNTAX DIRECTIVE: Construct a practical query, command execution, or syntax correctness question (e.g. 'Which query correctly...', 'Which statement updates...', 'What will this operator produce?').`);
-    lines.push(`- SYNTACTICALLY PLAUSIBLE DISTRACTORS: All 4 options MUST be syntactically plausible, domain-relevant executable syntax or query choices. Avoid abstract non-executable definitions.`);
+    const lang = slot.documentProfile?.detectedLanguage || slot.documentProfile?.primaryLanguageFamily || 'MongoDB';
+    const constructs = slot.documentProfile?.executableConstructs?.join(', ') || '';
+    lines.push(`- EXECUTABLE SYNTAX DIRECTIVE: Target Language Family: ${lang}. Construct a practical query, command execution, or syntax correctness question.`);
+    lines.push(`- APPROVED EXECUTABLE CONSTRUCTS: [${constructs}].`);
+    lines.push(`- EXECUTABLE SYNTAX CONTRACT: All 4 options MUST be valid, syntactically realistic ${lang} code choices. NEVER synthesize operators by prefixing '$' to arbitrary English words (e.g. '$${slot.conceptLabel}'). NEVER invent plain text English keys in code blocks.`);
   }
 
   if (slot.learningObjective) {

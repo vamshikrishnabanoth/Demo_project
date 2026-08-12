@@ -105,6 +105,7 @@ const BASE_VALIDATOR_PROPERTIES = {
     EDU_008_LOW_ALIGNMENT: { code: "EDU_008", message: "Question framing lacks alignment with target practical learning objective." },
     EDU_009_LOW_PRACTICALITY: { code: "EDU_009", message: "Question practical utility score is below required 0.70 threshold for practical assignment." },
     EDU_010_INVALID_EXECUTABLE_SYNTAX: { code: "EDU_010", message: "Code option does not conform strictly to target language family syntax or contains invented plain-text keys." },
+    EDU_011_PROFILE_CONTRACT_VIOLATION: { code: "EDU_011", message: "Question item diverges from Stage 1.5 Canonical Document Profile contract (e.g. unapproved raw phrase synthesized into code operator)." },
     VAL_000_TIMEOUT_EXCEEDED: { code: "VAL_000", message: "Validation execution time exceeded maximum allowed threshold." },
     VAL_500_INTERNAL_FAILURE: { code: "VAL_500", message: "Unexpected internal exception encountered during validation." }
   }

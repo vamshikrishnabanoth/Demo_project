@@ -34,6 +34,9 @@ function buildConsolidatedRepairPrompt(item, hints = [], findings = {}) {
   if (hints.includes("REWRITE_LEARNING_OBJECTIVE_ALIGNMENT") || hints.includes(REPAIR_CONFIG.HINTS.REWRITE_LEARNING_OBJECTIVE_ALIGNMENT)) {
     instructions.push("- ALIGN WITH LEARNING OBJECTIVE: Ensure the question directly tests student mastery of operational execution rather than a generic definition.");
   }
+  if (hints.includes("REWRITE_PROFILE_CONTRACT_VIOLATION") || hints.includes(REPAIR_CONFIG.HINTS.REWRITE_PROFILE_CONTRACT_VIOLATION)) {
+    instructions.push("- PROFILE CONTRACT REPAIR: Regenerate stem and options using ONLY verified instructional concepts and valid language constructs from Stage 1.5. NEVER prefix '$' to arbitrary English words or synthesize invalid operators.");
+  }
 
   if (instructions.length === 0) {
     instructions.push("- Improve distractor plausibility and align wording strictly with source evidence.");
