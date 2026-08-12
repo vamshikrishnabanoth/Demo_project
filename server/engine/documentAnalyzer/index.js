@@ -91,6 +91,7 @@ function analyzeInstructionalDocument(cleanedContent, options = {}) {
   const allocatedPracticalRatio = isPractical ? 0.70 : 0.20;
 
   return {
+    profileVersion: "3.1",
     documentType,
     detectedLanguage: primaryLanguageFamily,
     primaryLanguageFamily,

@@ -34,8 +34,10 @@ function passesControlledEnrichment(term, documentProfile) {
   const hasDomainMatch = termWords.some(w => domainWords.has(w)) ||
     (documentProfile.executableConstructs && documentProfile.executableConstructs.some(c => c.toLowerCase().includes(rawLower)));
 
-  if (!hasDomainMatch && !/\$|[()=><\{\}]|\b(index|scan|query|command|api|method|class)\b/i.test(rawLower)) {
-    return false;
+  if (!hasDomainMatch && (documentProfile.instructionalConcepts || []).length >= 5) {
+    if (!/\$|[()=><\{\}]|\b(index|scan|query|command|api|method|class|tree|pattern|permission|coroutine)\b/i.test(rawLower)) {
+      return false;
+    }
   }
 
   // Rule 3: Validated concept check

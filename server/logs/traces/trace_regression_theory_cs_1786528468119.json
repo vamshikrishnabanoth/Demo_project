@@ -1,0 +1,625 @@
+{
+  "version": "2.0.0",
+  "requestId": "regression_theory_cs_1786528468119",
+  "timestamp": "2026-08-12T09:54:28.120Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 15,
+      "timestamp": "2026-08-12T09:54:28.136Z"
+    },
+    {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "durationMs": 3,
+      "timestamp": "2026-08-12T09:54:28.139Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 13,
+      "timestamp": "2026-08-12T09:54:28.152Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T09:54:28.153Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T09:54:28.154Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 1934,
+      "timestamp": "2026-08-12T09:54:30.088Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 12,
+      "timestamp": "2026-08-12T09:54:30.100Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T09:54:30.100Z"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T09:54:30.102Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T09:54:30.102Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 0.8487999999999971,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Chapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\nKey properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys.\nSearch, insertion, and deletion operations take O(log n) logarithmic time complexity."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 15
+    },
+    "stage_1.5_instructional_document_analyzer": {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "startTimeMs": 16.295699999999997,
+      "status": "COMPLETED",
+      "inputs": {
+        "documentProfile": {
+          "profileVersion": "3.1",
+          "documentType": "THEORY_TEXTBOOK",
+          "detectedLanguage": "MongoDB",
+          "primaryLanguageFamily": "MongoDB",
+          "confidence": 0.75,
+          "textTriad": {
+            "structuralMetadata": [
+              "B-Trees are optimized for storage systems that read and write large blocks of memory",
+              "Non-leaf nodes with k children contain k-1 keys",
+              "Search, insertion, and deletion operations take O(log n) logarithmic time complexity"
+            ],
+            "proceduralActions": [],
+            "instructionalConcepts": [
+              "AND"
+            ]
+          },
+          "instructionalConcepts": [
+            "AND"
+          ],
+          "executableConstructs": [
+            "and"
+          ],
+          "proceduralActions": [],
+          "structuralMetadata": [
+            "B-Trees are optimized for storage systems that read and write large blocks of memory",
+            "Non-leaf nodes with k children contain k-1 keys",
+            "Search, insertion, and deletion operations take O(log n) logarithmic time complexity"
+          ],
+          "learningObjectives": [
+            "Student should understand and correctly execute AND in MongoDB operations."
+          ],
+          "instructionalIntent": "Recall definitions & Describe concepts",
+          "domainProfile": [
+            "and",
+            "tree",
+            "search",
+            "nodes",
+            "children"
+          ],
+          "allocatedPracticalRatio": 0.2
+        }
+      },
+      "outputs": {
+        "languageFamily": "MongoDB"
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 3
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 19.324600000000004,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 414
+      },
+      "outputs": {
+        "activeNodes": 6,
+        "edges": 15
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 13
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 31.8609,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 3,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 3,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 1,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 33.1874,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 3
+      },
+      "outputs": {
+        "promptPayloadsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 33.985600000000005,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 3
+      },
+      "outputs": {
+        "candidateItemsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1934
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 1967.8912,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 3
+      },
+      "outputs": {
+        "approved": 3,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 12
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 1979.6113999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 1979.6551,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 3
+      },
+      "outputs": {
+        "finalQuestionsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_9_portfolio-level_reviewer": {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "startTimeMs": 1981.6048999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "finalQuizCount": 3
+      },
+      "outputs": {
+        "approved": true
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_chapter_4",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Chapter 4\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of Chapter 4?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Chapter 4\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nChapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\n\"\"\"\nSummary Context:\n\"\"\"\nChapter 4: Advanced Data Structures - B-Tree Indexing A B-Tree is a self-balancing search tree in which nodes can have more than...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_key_properties",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Key properties\" (SECURITY_MECHANISM)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Key properties. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Key properties\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\nKey properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys.\nSearch, insertion, and deletion operations take O(log n) logarithmic time complexity.\n\"\"\"\nSummary Context:\n\"\"\"\n...can have more than two children. B-Trees are optimized for storage systems that read and write large blocks of memory. Key properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys. Search, insertion, and deletion op...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_advanced_data_structure",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Advanced Data Structure\" (DATA_STRUCTURE)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Advanced Data Structure. What is the root cause?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Advanced Data Structure\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nChapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\n\"\"\"\nSummary Context:\n\"\"\"\nChapter 4: Advanced Data Structures - B-Tree Indexing A B-Tree is a self-balancing search tree in which nodes can have more than two children. B-Trees are...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "In software engineering and domain design, what is the primary role of Chapter 4?",
+      "options": [
+        "Defines the structural model and operational behavior of Chapter 4.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Chapter 4.",
+      "explanation": "The source content specifies Chapter 4 as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Chapter 4' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "Chapter 4",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Chapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.",
+          "evidenceBounds": {
+            "startChar": 0,
+            "endChar": 9
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_001_chapter_4",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Chapter 4\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allo..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Chapter 4?\",\n  \"options\": [\n    \"Defines the structural model and operational behavior of Chapter 4.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "In software engineering and domain design, what is the primary role of Key properties?",
+      "options": [
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Key properties.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Key properties.",
+      "explanation": "The source content specifies Key properties as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Key properties' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Key properties",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "A B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\nKey properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys.\nSearch, insertion, and deletion operations take O(log n) logarithmic time complexity.",
+          "evidenceBounds": {
+            "startChar": 229,
+            "endChar": 243
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_key_properties",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Key properties\" (SECURITY_MECHANISM)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Key properties?\",\n  \"options\": [\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Key properties.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 3,
+      "questionId": "Q3",
+      "finalStem": "In software engineering and domain design, what is the primary role of Advanced Data Structure?",
+      "options": [
+        "Executes background compilation of binary dependencies.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Advanced Data Structure.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Advanced Data Structure.",
+      "explanation": "The source content specifies Advanced Data Structure as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Advanced Data Structure' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "Advanced Data Structure",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Chapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.",
+          "evidenceBounds": {
+            "startChar": 11,
+            "endChar": 35
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_advanced_data_structure",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Chapter 4\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allo..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Advanced Data Structure?\",\n  \"options\": [\n    \"Executes background compilation of binary dependencies.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Advanced Data Structure.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_regression_theory_cs_1786528468119",
+    "sourceId": "document_upload",
+    "totalQuestions": 3,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "50.0%",
+        "bloomDistribution": {
+          "RECALL": "33%",
+          "APPLY": "33%",
+          "ANALYZE": "33%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 1,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 1,
+          "B": 1,
+          "C": 1,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.5,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 3,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "50.0%",
+      "bloomDistribution": {
+        "RECALL": "33%",
+        "APPLY": "33%",
+        "ANALYZE": "33%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 1,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 0
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_001_chapter_4",
+        "conceptId": "chapter_4",
+        "conceptLabel": "Chapter 4",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Chapter 4?",
+        "options": [
+          "Defines the structural model and operational behavior of Chapter 4.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Chapter 4.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies Chapter 4 as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Chapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.",
+          "evidenceBounds": [
+            [
+              0,
+              228
+            ]
+          ],
+          "summaryContext": "Chapter 4: Advanced Data Structures - B-Tree Indexing A B-Tree is a self-balancing search tree in which nodes can have more than..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_002_key_properties",
+        "conceptId": "key_properties",
+        "conceptLabel": "Key properties",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Key properties?",
+        "options": [
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Key properties.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Key properties.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Key properties as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "A B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.\nKey properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys.\nSearch, insertion, and deletion operations take O(log n) logarithmic time complexity.",
+          "evidenceBounds": [
+            [
+              54,
+              414
+            ]
+          ],
+          "summaryContext": "...can have more than two children. B-Trees are optimized for storage systems that read and write large blocks of memory. Key properties: Every node has at most m children. Non-leaf nodes with k children contain k-1 keys. Search, insertion, and deletion op..."
+        }
+      },
+      {
+        "questionNumber": 3,
+        "slotId": "slot_003_advanced_data_structure",
+        "conceptId": "advanced_data_structure",
+        "conceptLabel": "Advanced Data Structure",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Advanced Data Structure?",
+        "options": [
+          "Executes background compilation of binary dependencies.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Advanced Data Structure.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Advanced Data Structure.",
+        "correctOptionLetter": "C",
+        "explanation": "The source content specifies Advanced Data Structure as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Chapter 4: Advanced Data Structures - B-Tree Indexing\nA B-Tree is a self-balancing search tree in which nodes can have more than two children.\nB-Trees are optimized for storage systems that read and write large blocks of memory.",
+          "evidenceBounds": [
+            [
+              0,
+              228
+            ]
+          ],
+          "summaryContext": "Chapter 4: Advanced Data Structures - B-Tree Indexing A B-Tree is a self-balancing search tree in which nodes can have more than two children. B-Trees are..."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 1982
+  }
+}
