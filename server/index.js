@@ -289,10 +289,10 @@ io.use(async (socket, next) => {
     
     // Support load test student bots
     const botUser = socket.handshake.auth?.user;
-    if (!token && botUser && (botUser.username?.startsWith('Student_') || botUser.username?.startsWith('bot_'))) {
+    if (botUser && (botUser.username?.startsWith('Student_') || botUser.username?.startsWith('bot_') || socket.handshake.auth?.isBot)) {
         socket.user = {
             id: botUser.id || botUser._id || `bot_${socket.id}`,
-            username: botUser.username,
+            username: botUser.username || `Student_${socket.id.slice(0, 5)}`,
             role: 'student'
         };
         return next();

@@ -77,6 +77,7 @@ function createStudentBot(index) {
     const socket = io(SERVER_URL, {
         transports: ['websocket', 'polling'],
         auth: {
+            isBot: true,
             user: {
                 id: studentId,
                 _id: studentId,
