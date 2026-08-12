@@ -14,7 +14,8 @@ import {
     Pin,
     GraduationCap,
     UserCheck,
-    Shield
+    Shield,
+    Cpu
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
