@@ -132,25 +132,6 @@ export default function QuizQuestionEditor({
                             className="w-full bg-white border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-primary)] font-mono text-sm tracking-wide focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
                         />
 
-                        {/* Live Formatted Question Preview */}
-                        {question.questionText && question.questionText.trim() && (
-                            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 mt-3">
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                                    <Eye size={12} className="text-slate-500" />
-                                    <span>Teacher Live Preview</span>
-                                </div>
-                                <FormattedQuestionText
-                                    questionText={question.questionText}
-                                    textClassName="text-sm font-bold text-slate-800"
-                                />
-                            </div>
-                        )}
-
-                        {question.qualityScore !== undefined && (
-                            <div className="mt-2 inline-flex items-center gap-2 text-xs font-mono text-purple-700 bg-purple-50 px-3 py-1 rounded-lg border border-purple-200 mr-2">
-                                📊 <strong>Quality Score:</strong> {(question.qualityScore * 100).toFixed(0)}%
-                            </div>
-                        )}
                         {question.sourceEvidence && Array.isArray(question.sourceEvidence) && question.sourceEvidence.length > 0 && question.sourceEvidence[0]?.text && (
                             <div className="mt-2 text-xs font-mono text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
                                 📌 <strong>Source Evidence Span:</strong> "{question.sourceEvidence[0].text}"
