@@ -14,6 +14,7 @@
     "test:ai": "powershell -Command \"$env:K6_WEB_DASHBOARD='true'; & 'C:\\Program Files\\k6\\k6.exe' run --out json=load_tests/ai_results.json load_tests/ai_test.js; node generate_html_report.js\"",
     "test:stress": "powershell -Command \"$env:K6_WEB_DASHBOARD='true'; & 'C:\\Program Files\\k6\\k6.exe' run --out json=load_tests/stress_results.json load_tests/stress_test.js; node generate_html_report.js\"",
     "test:endurance": "powershell -Command \"$env:K6_WEB_DASHBOARD='true'; & 'C:\\Program Files\\k6\\k6.exe' run --out json=load_tests/endurance_results.json load_tests/endurance_test.js; node generate_html_report.js\"",
+    "inject": "node load_tests/inject_live_students.js",
     "report": "node generate_html_report.js"
   },
   "keywords": [],
