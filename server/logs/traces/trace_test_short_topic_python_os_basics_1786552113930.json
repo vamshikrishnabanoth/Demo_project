@@ -1,0 +1,621 @@
+{
+  "version": "2.0.0",
+  "requestId": "test_short_topic_python_os_basics_1786552113930",
+  "timestamp": "2026-08-12T16:28:33.930Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.931Z"
+    },
+    {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T16:28:33.932Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 11,
+      "timestamp": "2026-08-12T16:28:33.943Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.944Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T16:28:33.944Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 53,
+      "timestamp": "2026-08-12T16:28:33.998Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T16:28:33.999Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:34.000Z"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:34.000Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T16:28:34.000Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 0.7303000000001703,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Educational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of Python OS basics."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_1.5_instructional_document_analyzer": {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "startTimeMs": 1.3611000000000786,
+      "status": "COMPLETED",
+      "inputs": {
+        "documentProfile": {
+          "profileVersion": "3.1",
+          "documentType": "THEORY_TEXTBOOK",
+          "detectedLanguage": "MongoDB",
+          "primaryLanguageFamily": "MongoDB",
+          "confidence": 0.75,
+          "textTriad": {
+            "structuralMetadata": [],
+            "proceduralActions": [],
+            "instructionalConcepts": [
+              "AND"
+            ]
+          },
+          "instructionalConcepts": [
+            "AND"
+          ],
+          "executableConstructs": [
+            "and"
+          ],
+          "proceduralActions": [],
+          "structuralMetadata": [],
+          "learningObjectives": [
+            "Student should understand and correctly execute AND in MongoDB operations."
+          ],
+          "instructionalIntent": "Recall definitions & Describe concepts",
+          "domainProfile": [
+            "and",
+            "study",
+            "python",
+            "basics",
+            "systems",
+            "process",
+            "management",
+            "scheduling",
+            "memory"
+          ],
+          "allocatedPracticalRatio": 0.2
+        }
+      },
+      "outputs": {
+        "languageFamily": "MongoDB"
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 2.08179999999993,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 465
+      },
+      "outputs": {
+        "activeNodes": 15,
+        "edges": 105
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 11
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 13.34880000000021,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 3,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 3,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 1,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 13.763100000000122,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 3
+      },
+      "outputs": {
+        "promptPayloadsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 14.389000000000124,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 3
+      },
+      "outputs": {
+        "candidateItemsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 53
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 67.86320000000023,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 3
+      },
+      "outputs": {
+        "approved": 3,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 69.48010000000022,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 69.50440000000026,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 3
+      },
+      "outputs": {
+        "finalQuestionsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_9_portfolio-level_reviewer": {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "startTimeMs": 70.16980000000012,
+      "status": "COMPLETED",
+      "inputs": {
+        "finalQuizCount": 3
+      },
+      "outputs": {
+        "approved": true
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_os",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"OS\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of OS?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand OS\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nEducational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\n\"\"\"\nSummary Context:\n\"\"\"\nEducational Study Topic: Python OS basics Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Manage...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_process_communication",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Process Communication\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Process Communication. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Process Communication\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of Python OS basics.\n\"\"\"\nSummary Context:\n\"\"\"\n...S, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security. Detailed Study Focus: Practical implementation, fundament...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_operating_systems",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Operating Systems\" (GENERAL_CONCEPT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Operating Systems. What is the root cause?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Operating Systems\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nEducational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\n\"\"\"\nSummary Context:\n\"\"\"\nEducational Study Topic: Python OS basics Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Vi...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "In software engineering and domain design, what is the primary role of OS?",
+      "options": [
+        "Defines the structural model and operational behavior of OS.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of OS.",
+      "explanation": "The source content specifies OS as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'OS' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "OS",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.6,
+          "centralityScore": 0.76
+        },
+        "supportingEvidence": {
+          "textSnippet": "Educational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.",
+          "evidenceBounds": {
+            "startChar": 32,
+            "endChar": 34
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_001_os",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"OS\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negat..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of OS?\",\n  \"options\": [\n    \"Defines the structural model and operational behavior of OS.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "In software engineering and domain design, what is the primary role of Process Communication?",
+      "options": [
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Process Communication.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Process Communication.",
+      "explanation": "The source content specifies Process Communication as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Process Communication' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Process Communication",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.76,
+          "centralityScore": 0.86
+        },
+        "supportingEvidence": {
+          "textSnippet": "Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of Python OS basics.",
+          "evidenceBounds": {
+            "startChar": 229,
+            "endChar": 256
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_process_communication",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"OS\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negat..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Process Communication?\",\n  \"options\": [\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Process Communication.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 3,
+      "questionId": "Q3",
+      "finalStem": "In software engineering and domain design, what is the primary role of Operating Systems?",
+      "options": [
+        "Executes background compilation of binary dependencies.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Operating Systems.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Operating Systems.",
+      "explanation": "The source content specifies Operating Systems as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Operating Systems' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "Operating Systems",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.42,
+          "centralityScore": 0.65
+        },
+        "supportingEvidence": {
+          "textSnippet": "Educational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.",
+          "evidenceBounds": {
+            "startChar": 42,
+            "endChar": 64
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_operating_systems",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"OS\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negat..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Operating Systems?\",\n  \"options\": [\n    \"Executes background compilation of binary dependencies.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Operating Systems.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_test_short_topic_python_os_basics_1786552113930",
+    "sourceId": "document_upload",
+    "totalQuestions": 3,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "20.0%",
+        "bloomDistribution": {
+          "RECALL": "33%",
+          "APPLY": "33%",
+          "ANALYZE": "33%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 1,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 1,
+          "B": 1,
+          "C": 1,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.2,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 3,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "20.0%",
+      "bloomDistribution": {
+        "RECALL": "33%",
+        "APPLY": "33%",
+        "ANALYZE": "33%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 1,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 0
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_001_os",
+        "conceptId": "os",
+        "conceptLabel": "OS",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of OS?",
+        "options": [
+          "Defines the structural model and operational behavior of OS.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of OS.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies OS as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Educational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.",
+          "evidenceBounds": [
+            [
+              0,
+              318
+            ]
+          ],
+          "summaryContext": "Educational Study Topic: Python OS basics Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Manage..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_002_process_communication",
+        "conceptId": "process_communication",
+        "conceptLabel": "Process Communication",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Process Communication?",
+        "options": [
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Process Communication.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Process Communication.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Process Communication as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of Python OS basics.",
+          "evidenceBounds": [
+            [
+              42,
+              465
+            ]
+          ],
+          "summaryContext": "...S, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security. Detailed Study Focus: Practical implementation, fundament..."
+        }
+      },
+      {
+        "questionNumber": 3,
+        "slotId": "slot_003_operating_systems",
+        "conceptId": "operating_systems",
+        "conceptLabel": "Operating Systems",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Operating Systems?",
+        "options": [
+          "Executes background compilation of binary dependencies.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Operating Systems.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Operating Systems.",
+        "correctOptionLetter": "C",
+        "explanation": "The source content specifies Operating Systems as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Educational Study Topic: Python OS basics\nOperating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Virtual Memory), Concurrency, Deadlocks, Inter-Process Communication (IPC), File Systems, System Calls, CPU Scheduling, and OS Security.",
+          "evidenceBounds": [
+            [
+              0,
+              318
+            ]
+          ],
+          "summaryContext": "Educational Study Topic: Python OS basics Operating Systems (OS): Process Management, Process Scheduling (FCFS, Round Robin, SJF, Priority), Memory Management (Paging, Segmentation, Vi..."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 70
+  }
+}

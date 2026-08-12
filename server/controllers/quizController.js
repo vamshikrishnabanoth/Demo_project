@@ -16,6 +16,7 @@ const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
 const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
+const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -189,11 +190,10 @@ const extractText = async (filePath) => {
             extracted = fs.readFileSync(filePath, 'utf8');
         }
 
-        // If extracted text is under 100 chars, pad with filename context so pipeline doesn't abort
+        // If extracted text is under 100 chars, expand short topic/filename context
         if (!extracted || extracted.trim().length < 100) {
             const baseName = path.basename(filePath, ext).replace(/[-_]/g, ' ');
-            const padded = `Document Title: ${baseName}\n${extracted || ''}\nThis educational study material details essential technical concepts, operational mechanisms, definitions, and applications for ${baseName}.`;
-            return padded;
+            return expandShortTopicDescription(extracted || baseName);
         }
 
         return extracted;

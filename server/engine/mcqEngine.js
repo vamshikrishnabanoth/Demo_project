@@ -24,6 +24,7 @@ const PipelineTracer = require('./tracing/pipelineTracer');
 const { buildQuestionLineage } = require('./tracing/explainabilityBuilder');
 const { validateStageContract } = require('./contracts/pipelineContracts');
 const { reviewQuizPortfolio } = require('./portfolioReviewer/index');
+const { expandShortTopicDescription } = require('./documentAnalyzer/topicExpander');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -349,15 +350,20 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   }
 
   // Combine valid contents for main generation payload
-  const cleanedContent = validAcademicInputs.map(i => i.content).join('\n\n--- Source Split ---\n\n').trim();
+  let cleanedContent = validAcademicInputs.map(i => i.content).join('\n\n--- Source Split ---\n\n').trim();
 
-  // Stage 1 Minimum Text Guard: Abort if extracted text payload is under 100 characters
+  // Stage 1 Auto-Expansion Guard for Short Topics & Small Descriptions (e.g. "OS", "Python", "Java", "C")
   if (!cleanedContent || cleanedContent.length < 100) {
-    console.error(`[ReqID: ${reqId}] ❌ [EMPTY_DOCUMENT_PAYLOAD] Extracted text length (${cleanedContent?.length || 0}) is under 100 characters.`);
-    const error = new Error("EMPTY_DOCUMENT_PAYLOAD: PDF text extraction failed or document contains no readable text (textLength < 100). Aborting pipeline to prevent loop generation.");
-    error.statusCode = 400;
-    error.code = "EMPTY_DOCUMENT_PAYLOAD";
-    throw error;
+    if (cleanedContent && cleanedContent.length > 0) {
+      console.log(`[ReqID: ${reqId}] ⚡ [SHORT_TOPIC_EXPANSION] Auto-expanding short topic/description (${cleanedContent.length} chars): "${cleanedContent}"`);
+      cleanedContent = expandShortTopicDescription(cleanedContent);
+    } else {
+      console.error(`[ReqID: ${reqId}] ❌ [EMPTY_DOCUMENT_PAYLOAD] Extracted text payload is empty.`);
+      const error = new Error("EMPTY_DOCUMENT_PAYLOAD: Document contains no readable text. Please upload a valid study document or type a topic description.");
+      error.statusCode = 400;
+      error.code = "EMPTY_DOCUMENT_PAYLOAD";
+      throw error;
+    }
   }
 
   // Normalize difficulty string (handles "Balanced", "balanced", "⚖️ Balanced", etc.)

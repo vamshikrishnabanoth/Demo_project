@@ -1,0 +1,615 @@
+{
+  "version": "2.0.0",
+  "requestId": "test_short_topic_java_1786552113568",
+  "timestamp": "2026-08-12T16:28:33.569Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.569Z"
+    },
+    {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.569Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 4,
+      "timestamp": "2026-08-12T16:28:33.573Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.573Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.574Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 53,
+      "timestamp": "2026-08-12T16:28:33.627Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T16:28:33.628Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.628Z"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T16:28:33.629Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T16:28:33.629Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 0.25070000000005166,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_1.5_instructional_document_analyzer": {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "startTimeMs": 0.47180000000025757,
+      "status": "COMPLETED",
+      "inputs": {
+        "documentProfile": {
+          "profileVersion": "3.1",
+          "documentType": "THEORY_TEXTBOOK",
+          "detectedLanguage": "MongoDB",
+          "primaryLanguageFamily": "MongoDB",
+          "confidence": 0.63,
+          "textTriad": {
+            "structuralMetadata": [],
+            "proceduralActions": [],
+            "instructionalConcepts": [
+              "AND"
+            ]
+          },
+          "instructionalConcepts": [
+            "AND"
+          ],
+          "executableConstructs": [
+            "and"
+          ],
+          "proceduralActions": [],
+          "structuralMetadata": [],
+          "learningObjectives": [
+            "Student should understand and correctly execute AND in MongoDB operations."
+          ],
+          "instructionalIntent": "Recall definitions & Describe concepts",
+          "domainProfile": [
+            "and",
+            "java",
+            "programming"
+          ],
+          "allocatedPracticalRatio": 0.2
+        }
+      },
+      "outputs": {
+        "languageFamily": "MongoDB"
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 0.850800000000163,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 281
+      },
+      "outputs": {
+        "activeNodes": 9,
+        "edges": 36
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 4
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 4.626100000000406,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 3,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 3,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 1,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 4.856500000000324,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 3
+      },
+      "outputs": {
+        "promptPayloadsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 5.104200000000219,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 3
+      },
+      "outputs": {
+        "candidateItemsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 53
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 58.3421000000003,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 3
+      },
+      "outputs": {
+        "approved": 3,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 59.40560000000005,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 59.42690000000039,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 3
+      },
+      "outputs": {
+        "finalQuestionsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_9_portfolio-level_reviewer": {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "startTimeMs": 60.06630000000041,
+      "status": "COMPLETED",
+      "inputs": {
+        "finalQuizCount": 3
+      },
+      "outputs": {
+        "approved": true
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_java_virtual_machine",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Java Virtual Machine\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of Java Virtual Machine?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Java Virtual Machine\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nJava Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.\n\"\"\"\nSummary Context:\n\"\"\"\n...amming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collec...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_java_programming_language",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Java Programming Language\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Java Programming Language. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Java Programming Language\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nJava Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.\n\"\"\"\nSummary Context:\n\"\"\"\nJava Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Ma...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_jvm",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"JVM\" (GENERAL_CONCEPT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in JVM. What is the root cause?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand JVM\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nJava Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.\n\"\"\"\nSummary Context:\n\"\"\"\n...t-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Colle...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "In software engineering and domain design, what is the primary role of Java Virtual Machine?",
+      "options": [
+        "Defines the structural model and operational behavior of Java Virtual Machine.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Java Virtual Machine.",
+      "explanation": "The source content specifies Java Virtual Machine as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Java Virtual Machine' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "Java Virtual Machine",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.76,
+          "centralityScore": 0.86
+        },
+        "supportingEvidence": {
+          "textSnippet": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": {
+            "startChar": 130,
+            "endChar": 156
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_001_java_virtual_machine",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Java Virtual Machine\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Java Virtual Machine?\",\n  \"options\": [\n    \"Defines the structural model and operational behavior of Java Virtual Machine.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "In software engineering and domain design, what is the primary role of Java Programming Language?",
+      "options": [
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Java Programming Language.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Java Programming Language.",
+      "explanation": "The source content specifies Java Programming Language as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Java Programming Language' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Java Programming Language",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": {
+            "startChar": 0,
+            "endChar": 25
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_java_programming_language",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Java Virtual Machine\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Java Programming Language?\",\n  \"options\": [\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Java Programming Language.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 3,
+      "questionId": "Q3",
+      "finalStem": "In software engineering and domain design, what is the primary role of JVM?",
+      "options": [
+        "Executes background compilation of binary dependencies.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of JVM.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of JVM.",
+      "explanation": "The source content specifies JVM as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'JVM' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "JVM",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.42,
+          "centralityScore": 0.65
+        },
+        "supportingEvidence": {
+          "textSnippet": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": {
+            "startChar": 152,
+            "endChar": 155
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_jvm",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Java Virtual Machine\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of JVM?\",\n  \"options\": [\n    \"Executes background compilation of binary dependencies.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of JVM.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_test_short_topic_java_1786552113568",
+    "sourceId": "document_upload",
+    "totalQuestions": 3,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "33.0%",
+        "bloomDistribution": {
+          "RECALL": "33%",
+          "APPLY": "33%",
+          "ANALYZE": "33%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 1,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 1,
+          "B": 1,
+          "C": 1,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.33,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 3,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "33.0%",
+      "bloomDistribution": {
+        "RECALL": "33%",
+        "APPLY": "33%",
+        "ANALYZE": "33%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 1,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 0
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_001_java_virtual_machine",
+        "conceptId": "java_virtual_machine",
+        "conceptLabel": "Java Virtual Machine",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Java Virtual Machine?",
+        "options": [
+          "Defines the structural model and operational behavior of Java Virtual Machine.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Java Virtual Machine.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies Java Virtual Machine as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": [
+            [
+              0,
+              281
+            ]
+          ],
+          "summaryContext": "...amming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collec..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_002_java_programming_language",
+        "conceptId": "java_programming_language",
+        "conceptLabel": "Java Programming Language",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Java Programming Language?",
+        "options": [
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Java Programming Language.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Java Programming Language.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Java Programming Language as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": [
+            [
+              0,
+              281
+            ]
+          ],
+          "summaryContext": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Ma..."
+        }
+      },
+      {
+        "questionNumber": 3,
+        "slotId": "slot_003_jvm",
+        "conceptId": "jvm",
+        "conceptLabel": "JVM",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of JVM?",
+        "options": [
+          "Executes background compilation of binary dependencies.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of JVM.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of JVM.",
+        "correctOptionLetter": "C",
+        "explanation": "The source content specifies JVM as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Java Programming Language: Object-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Collection.",
+          "evidenceBounds": [
+            [
+              0,
+              281
+            ]
+          ],
+          "summaryContext": "...t-Oriented Programming (Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation), Java Virtual Machine (JVM), Bytecode, Interfaces, Exception Handling, Collections Framework, Multithreading, Memory Management, and Garbage Colle..."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 60
+  }
+}
