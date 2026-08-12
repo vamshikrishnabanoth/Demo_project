@@ -19,6 +19,9 @@ function buildConsolidatedRepairPrompt(item, hints = [], findings = {}) {
   if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_DUPLICATE_STEM)) {
     instructions.push("- Rephrase the question stem using distinct vocabulary to prevent semantic duplication with existing items.");
   }
+  if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_SELF_CONTAINED_QUESTION)) {
+    instructions.push("- Rephrase the question stem to be 100% self-contained. Completely REMOVE any meta-references such as 'Scenario 1', 'Scenario 2', 'In this document', 'Paragraph X', or 'Assignment 1'. Frame the question as a clear, independent technical domain scenario.");
+  }
 
   if (instructions.length === 0) {
     instructions.push("- Improve distractor plausibility and align wording strictly with source evidence.");

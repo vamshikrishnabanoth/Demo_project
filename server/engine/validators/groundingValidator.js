@@ -38,7 +38,7 @@ function searchText(sourceText, evidenceText, baseOffset = 0) {
 }
 
 /**
- * GATE 2: SAFE GROUNDING VALIDATOR — HARD GATE
+ * GATE 2: SAFE GROUNDING VALIDATOR — HARD GATE (MODULE 7 TELEMETRY FIX)
  */
 function runGroundingValidation(mcqItem, validationContext = {}, signal) {
   if (signal?.aborted) throw new ValidationAbortedError();
@@ -56,13 +56,25 @@ function runGroundingValidation(mcqItem, validationContext = {}, signal) {
     evidenceText = mcqItem.evidence.trim();
   }
 
+  const missingCode = VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE?.code || "GROUND_001";
+  const passCode = VALIDATOR_CONFIG.PASS_CODES?.GROUNDING || "GROUND_PASS";
+
   if (!evidenceText || !cleanedContent) {
     return {
       passed: false,
       matchType: "None",
       repairedOffsets: null,
-      code: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE.code,
-      errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE
+      code: missingCode,
+      errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE,
+      telemetry: {
+        stage: "GROUNDING",
+        validator: "GroundingValidator",
+        code: missingCode,
+        severity: "CRITICAL",
+        status: "FAIL",
+        confidence: 0.0,
+        duration_ms: 0
+      }
     };
   }
 
@@ -82,11 +94,21 @@ function runGroundingValidation(mcqItem, validationContext = {}, signal) {
 
     const primaryResult = searchText(primarySlice, evidenceText, pStart);
     if (primaryResult.matched) {
+      const matchType = `PrimaryWindow_${primaryResult.matchType}`;
       return {
         passed: true,
-        matchType: `PrimaryWindow_${primaryResult.matchType}`,
+        matchType,
         repairedOffsets: primaryResult.offsets,
-        code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
+        code: passCode,
+        telemetry: {
+          stage: "GROUNDING",
+          validator: "GroundingValidator",
+          code: passCode,
+          severity: "INFO",
+          status: "PASS",
+          confidence: 1.0,
+          duration_ms: 0
+        }
       };
     }
 
@@ -97,11 +119,21 @@ function runGroundingValidation(mcqItem, validationContext = {}, signal) {
 
     const expandedResult = searchText(expandedSlice, evidenceText, eStart);
     if (expandedResult.matched) {
+      const matchType = `ExpandedWindow_${expandedResult.matchType}`;
       return {
         passed: true,
-        matchType: `ExpandedWindow_${expandedResult.matchType}`,
+        matchType,
         repairedOffsets: expandedResult.offsets,
-        code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
+        code: passCode,
+        telemetry: {
+          stage: "GROUNDING",
+          validator: "GroundingValidator",
+          code: passCode,
+          severity: "INFO",
+          status: "PASS",
+          confidence: 0.9,
+          duration_ms: 0
+        }
       };
     }
   }
@@ -109,11 +141,21 @@ function runGroundingValidation(mcqItem, validationContext = {}, signal) {
   // Tier 3: Global Document Fallback
   const globalResult = searchText(cleanedContent, evidenceText, 0);
   if (globalResult.matched) {
+    const matchType = `Global_${globalResult.matchType}`;
     return {
       passed: true,
-      matchType: `Global_${globalResult.matchType}`,
+      matchType,
       repairedOffsets: globalResult.offsets,
-      code: VALIDATOR_CONFIG.PASS_CODES.GROUNDING
+      code: passCode,
+      telemetry: {
+        stage: "GROUNDING",
+        validator: "GroundingValidator",
+        code: passCode,
+        severity: "INFO",
+        status: "PASS",
+        confidence: 0.8,
+        duration_ms: 0
+      }
     };
   }
 
@@ -121,8 +163,17 @@ function runGroundingValidation(mcqItem, validationContext = {}, signal) {
     passed: false,
     matchType: "None",
     repairedOffsets: null,
-    code: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE.code,
-    errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE
+    code: missingCode,
+    errorDetail: VALIDATOR_CONFIG.CODES.GROUND_001_MISSING_EVIDENCE,
+    telemetry: {
+      stage: "GROUNDING",
+      validator: "GroundingValidator",
+      code: missingCode,
+      severity: "CRITICAL",
+      status: "FAIL",
+      confidence: 0.0,
+      duration_ms: 0
+    }
   };
 }
 

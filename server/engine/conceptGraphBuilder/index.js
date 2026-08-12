@@ -1,5 +1,6 @@
 const { performance } = require('perf_hooks');
 const registry = require('./registry');
+const { cleanDocument } = require('./utils/documentCleaner');
 const { resolveAliasesAndBuildIndex } = require('./aliasResolver');
 const { calculateAdaptiveRetentionLimit, calculateImportanceScore } = require('./scoring');
 const { inferEdges } = require('./edgeInference');
@@ -29,11 +30,18 @@ function buildConceptGraph(cleanedContent, options = {}) {
     });
   }
 
+  // Pass 0: Module 1 Input Preprocessing (Document Cleaner)
+  const { cleanedText, stats: cleanStats } = cleanDocument(cleanedContent);
+  if (cleanStats.ocrArtifactsRemoved > 0) {
+    console.log(`[PREPROCESS] Removed ${cleanStats.ocrArtifactsRemoved} OCR artifacts / slide headers.`);
+  }
+  const textToProcess = cleanedText || cleanedContent;
+
   // Pass 1: Extractor Registry Execution (Stateless, Exception-Isolated)
-  const rawCandidates = registry.runAll(cleanedContent, diagnostics);
+  const rawCandidates = registry.runAll(textToProcess, diagnostics);
 
   // Pass 2: Deterministic Alias Merging & Inverted Index Construction
-  const { conceptMap, conceptIndex, mergedAliasesCount, filteredNoiseCount } = resolveAliasesAndBuildIndex(rawCandidates, cleanedContent);
+  const { conceptMap, conceptIndex, mergedAliasesCount, filteredNoiseCount } = resolveAliasesAndBuildIndex(rawCandidates, textToProcess);
 
   // Pass 3: Adaptive Node Retention & Importance Scoring
   const candidateCount = conceptMap.size;
@@ -49,7 +57,7 @@ function buildConceptGraph(cleanedContent, options = {}) {
   const retainedCandidateNodes = candidateNodes.slice(0, retainedLimit);
 
   // Pass 4: Clamped Edge Inference
-  const rawEdges = inferEdges(retainedCandidateNodes, cleanedContent);
+  const rawEdges = inferEdges(retainedCandidateNodes, textToProcess);
 
   // Normalization: Conservative Orphan Pruning, Cycle-Resilient Topological Sort, Centrality
   const {
@@ -79,7 +87,7 @@ function buildConceptGraph(cleanedContent, options = {}) {
       buildTimeMs
     },
     diagnostics,
-    fullText: cleanedContent
+    fullText: textToProcess
   });
 }
 

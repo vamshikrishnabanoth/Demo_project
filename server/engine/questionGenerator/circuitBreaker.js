@@ -1,45 +1,66 @@
 const { GENERATOR_CONFIG } = require('../../config/generatorConfig');
 
 /**
- * 3. ISOLATED PROVIDER-ONLY CIRCUIT BREAKER
- * Increments consecutive failures ONLY on transient provider errors (429, 5xx, network timeouts).
- * Does NOT increment for content issues (INSUFFICIENT_EVIDENCE, SCHEMA_MISMATCH).
+ * MODULE 4 — 3-STATE CIRCUIT BREAKER WITH COOLDOWN & AUTO-RECOVERY
+ * States:
+ *   CLOSED   (Normal operation)
+ *   OPEN     (Failures exceeded threshold; requests blocked / routed to fallback)
+ *   HALF_OPEN (Cooldown elapsed; probing provider with next request)
  */
 class ProviderCircuitBreaker {
   constructor() {
+    this.state = 'CLOSED'; // 'CLOSED' | 'OPEN' | 'HALF_OPEN'
     this.consecutiveFailures = 0;
-    this.isCircuitBroken = false;
-    this.maxFailures = GENERATOR_CONFIG.CIRCUIT_BREAKER.MAX_CONSECUTIVE_PROVIDER_FAILURES || 3;
-    this.transientErrors = new Set(GENERATOR_CONFIG.TRANSIENT_PROVIDER_ERRORS);
+    this.maxFailures = GENERATOR_CONFIG.CIRCUIT_BREAKER?.MAX_CONSECUTIVE_PROVIDER_FAILURES || 3;
+    this.cooldownMs = GENERATOR_CONFIG.CIRCUIT_BREAKER?.COOLDOWN_MS || 60000; // 60 seconds
+    this.lastStateChange = Date.now();
+    this.transientErrors = new Set(GENERATOR_CONFIG.TRANSIENT_PROVIDER_ERRORS || [429, 500, 502, 503, 504, 'ETIMEDOUT', 'ECONNREFUSED']);
+  }
+
+  getState() {
+    // If OPEN and cooldown period has elapsed, transition to HALF_OPEN
+    if (this.state === 'OPEN' && (Date.now() - this.lastStateChange) >= this.cooldownMs) {
+      this.state = 'HALF_OPEN';
+      this.lastStateChange = Date.now();
+      console.log('[CIRCUIT] Cooldown period elapsed. Entering HALF_OPEN state for probing.');
+    }
+    return this.state;
   }
 
   isBroken() {
-    return this.isCircuitBroken;
+    const currentState = this.getState();
+    return currentState === 'OPEN';
   }
 
   recordSuccess() {
+    if (this.state === 'HALF_OPEN') {
+      console.log('[CIRCUIT] Provider probe succeeded! Recovered successfully. Returning to CLOSED state.');
+    }
     this.consecutiveFailures = 0;
-    this.isCircuitBroken = false;
+    this.state = 'CLOSED';
+    this.lastStateChange = Date.now();
   }
 
   recordFailure(error) {
     const errStr = String(error?.message || error?.code || error || '').toUpperCase();
-    const isTransient = Array.from(this.transientErrors).some(t => errStr.includes(String(t).toUpperCase()));
+    const isTransient = Array.from(this.transientErrors).some(t => errStr.includes(String(t).toUpperCase())) ||
+                        errStr.includes('429') || errStr.includes('500') || errStr.includes('503') || errStr.includes('TIMEOUT');
 
-    if (isTransient) {
+    if (isTransient || this.state === 'HALF_OPEN') {
       this.consecutiveFailures += 1;
-      if (this.consecutiveFailures >= this.maxFailures) {
-        this.isCircuitBroken = true;
-        console.warn(`[CIRCUIT BREAKER] Provider Circuit Broken! Reached ${this.consecutiveFailures} consecutive provider errors.`);
+
+      if (this.state === 'HALF_OPEN' || this.consecutiveFailures >= this.maxFailures) {
+        this.state = 'OPEN';
+        this.lastStateChange = Date.now();
+        console.warn(`[CIRCUIT] Provider error threshold reached (${this.consecutiveFailures} failures). Entering OPEN state. Cooldown: ${this.cooldownMs / 1000}s.`);
       }
-    } else {
-      // Content errors (INSUFFICIENT_EVIDENCE, SCHEMA_MISMATCH) do NOT trip provider circuit breaker
     }
   }
 
   reset() {
     this.consecutiveFailures = 0;
-    this.isCircuitBroken = false;
+    this.state = 'CLOSED';
+    this.lastStateChange = Date.now();
   }
 }
 

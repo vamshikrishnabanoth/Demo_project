@@ -1,0 +1,456 @@
+{
+  "version": "2.0.0",
+  "requestId": "test_meta_ref_e2e",
+  "timestamp": "2026-08-12T08:20:25.507Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 13,
+      "timestamp": "2026-08-12T08:20:25.521Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:20:25.524Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T08:20:25.525Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T08:20:25.526Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 53,
+      "timestamp": "2026-08-12T08:20:25.579Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:20:25.581Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 57,
+      "timestamp": "2026-08-12T08:20:25.639Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:20:25.640Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 1.04819999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Amazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.\n\nScenario 2 - Premium Product Listing\nThe marketing team is preparing a premium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive.\n\nNetflix Movie Database (movies.json)\nScenario 1 - Trending Movies\nNetflix wants to promote highly rated movies with rating above 8.5."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 13
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 14.013599999999997,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 530
+      },
+      "outputs": {
+        "activeNodes": 6,
+        "edges": 15
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 16.358899999999977,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 3,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 3,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 1,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 17.324799999999982,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 3
+      },
+      "outputs": {
+        "promptPayloadsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 18.57079999999999,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 3
+      },
+      "outputs": {
+        "candidateItemsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 53
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 71.58069999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 3
+      },
+      "outputs": {
+        "approved": 2,
+        "repairQueue": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 73.89929999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 1
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 57
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 131.40519999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 2
+      },
+      "outputs": {
+        "finalQuestionsCount": 2
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_scenario_1",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Scenario 1\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of Scenario 1?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAmazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.\n\nScenario 2 - Premium Product Listing\n\"\"\"\nSummary Context:\n\"\"\"\nAmazon Product Management System (products.json) Scenario 1 - Low Stock Products The warehouse manager wants to restock products that are running low. Display all products whose s...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_amazon_product_management_system",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Amazon Product Management System\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Amazon Product Management System. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAmazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.\n\"\"\"\nSummary Context:\n\"\"\"\nAmazon Product Management System (products.json) Scenario 1 - Low Stock Products The warehouse manager wants to restock products that are running low. D...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_netflix_movie_database",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Netflix Movie Database\" (DATABASE_OBJECT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Netflix Movie Database. What is the root cause?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nThe marketing team is preparing a premium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive.\n\nNetflix Movie Database (movies.json)\nScenario 1 - Trending Movies\nNetflix wants to promote highly rated movies with rating above 8.5.\n\"\"\"\nSummary Context:\n\"\"\"\n...ium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive. Netflix Movie Database (movies.json) Scenario 1 - Trending Movies Netflix wants to promote highly rated movies with rating above 8.5.\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "Which of the following best describes the key function of Amazon Product Management System?",
+      "options": [
+        "Core mechanism governing Amazon Product Management System operations.",
+        "Secondary protocol configuration for external services.",
+        "Legacy database schema table definition.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing Amazon Product Management System operations.",
+      "explanation": "The source content specifies Amazon Product Management System as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Amazon Product Management System' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Amazon Product Management System",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Amazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.",
+          "evidenceBounds": {
+            "startChar": 0,
+            "endChar": 32
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_amazon_product_management_system",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Scenario 1\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- All..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of Amazon Product Management System?\",\n  \"options\": [\n    \"Core mechanism governing Amazon Product Management System operations.\",\n    \"Secondary protocol configuration for external services.\",\n    \"Legacy database schema table definition.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "Which of the following best describes the key function of Netflix Movie Database?",
+      "options": [
+        "Secondary protocol configuration for external services.",
+        "Core mechanism governing Netflix Movie Database operations.",
+        "Legacy database schema table definition.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing Netflix Movie Database operations.",
+      "explanation": "The source content specifies Netflix Movie Database as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Netflix Movie Database' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "Netflix Movie Database",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "The marketing team is preparing a premium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive.\n\nNetflix Movie Database (movies.json)\nScenario 1 - Trending Movies\nNetflix wants to promote highly rated movies with rating above 8.5.",
+          "evidenceBounds": {
+            "startChar": 397,
+            "endChar": 419
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_netflix_movie_database",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Netflix Movie Database\" (DATABASE_OBJECT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculat..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of Netflix Movie Database?\",\n  \"options\": [\n    \"Secondary protocol configuration for external services.\",\n    \"Core mechanism governing Netflix Movie Database operations.\",\n    \"Legacy database schema table definition.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_test_meta_ref_e2e",
+    "sourceId": "document_upload",
+    "totalQuestions": 2,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "50.0%",
+        "bloomDistribution": {
+          "RECALL": "0%",
+          "APPLY": "50%",
+          "ANALYZE": "50%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 0,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.5,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 2,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "50.0%",
+      "bloomDistribution": {
+        "RECALL": "0%",
+        "APPLY": "50%",
+        "ANALYZE": "50%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 0,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 0
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_002_amazon_product_management_system",
+        "conceptId": "amazon_product_management_system",
+        "conceptLabel": "Amazon Product Management System",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of Amazon Product Management System?",
+        "options": [
+          "Core mechanism governing Amazon Product Management System operations.",
+          "Secondary protocol configuration for external services.",
+          "Legacy database schema table definition.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing Amazon Product Management System operations.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies Amazon Product Management System as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "Amazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.",
+          "evidenceBounds": [
+            [
+              0,
+              200
+            ]
+          ],
+          "summaryContext": "Amazon Product Management System (products.json) Scenario 1 - Low Stock Products The warehouse manager wants to restock products that are running low. D..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_003_netflix_movie_database",
+        "conceptId": "netflix_movie_database",
+        "conceptLabel": "Netflix Movie Database",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of Netflix Movie Database?",
+        "options": [
+          "Secondary protocol configuration for external services.",
+          "Core mechanism governing Netflix Movie Database operations.",
+          "Legacy database schema table definition.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing Netflix Movie Database operations.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Netflix Movie Database as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "The marketing team is preparing a premium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive.\n\nNetflix Movie Database (movies.json)\nScenario 1 - Trending Movies\nNetflix wants to promote highly rated movies with rating above 8.5.",
+          "evidenceBounds": [
+            [
+              239,
+              530
+            ]
+          ],
+          "summaryContext": "...ium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive. Netflix Movie Database (movies.json) Scenario 1 - Trending Movies Netflix wants to promote highly rated movies with rating above 8.5."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 133
+  }
+}

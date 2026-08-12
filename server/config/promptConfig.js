@@ -24,7 +24,8 @@ const PROMPT_CONFIG = {
     "5. Sentence Length: Keep stem character length strictly under maxStemLength.",
     "6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.",
     "7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.",
-    "8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line."
+    "8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.",
+    "9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?')."
   ]
 };
 

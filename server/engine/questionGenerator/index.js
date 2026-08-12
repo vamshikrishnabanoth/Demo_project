@@ -1,6 +1,7 @@
 const { performance } = require('perf_hooks');
 const { GENERATOR_CONFIG } = require('../../config/generatorConfig');
 const { dispatchLLMRequest } = require('./llmClient/index');
+const mockAdapter = require('./llmClient/mockAdapter');
 const circuitBreaker = require('./circuitBreaker');
 const { waitWithJitter } = require('./retryHandler');
 const { normalizeUnicodeText } = require('./unicodeNormalizer');
@@ -8,9 +9,9 @@ const { validateParsedMCQSchema } = require('./schemaValidator');
 const { assembleCandidateItem } = require('./itemAssembler');
 
 /**
- * Public API: generateQuestions(promptPayloads, pipelineContext)
- * Executes concurrent slot prompt dispatches with circuit breaker protection,
- * exponential backoff jitter, unicode sanitization, schema validation, and deterministic slot ordering.
+ * MODULE 5 — PROVIDER FALLBACK & GENERATOR DISPATCH
+ * Executes slot prompt dispatches with circuit breaker protection,
+ * schema-guarded fallback to mockAdapter, unicode sanitization, and slot ordering.
  */
 async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
   const startTime = performance.now();
@@ -29,7 +30,6 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
 
   const concurrencyLimit = GENERATOR_CONFIG.CONCURRENCY_LIMIT || 3;
 
-  // Process prompt payloads in controlled concurrent chunks
   for (let i = 0; i < promptPayloads.length; i += concurrencyLimit) {
     const chunk = promptPayloads.slice(i, i + concurrencyLimit);
 
@@ -43,20 +43,37 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
       let parseRepairApplied = false;
       let unicodeNormalized = false;
 
-      // Circuit Breaker Short-Circuit Guard
+      // Circuit Breaker / Fallback Guard: If broken or offline, route directly to MockAdapter
       if (circuitBreaker.isBroken()) {
-        failedSlots.push({
-          slotId,
-          reason: GENERATOR_CONFIG.CIRCUIT_BREAKER.SHORT_CIRCUIT_STATUS,
-          attempts: 0
-        });
-        return;
+        console.warn(`[GENERATOR_FALLBACK] Circuit breaker is OPEN for ${slotId}. Using MockAdapter fallback.`);
+        try {
+          const mockRes = await mockAdapter.generate(slotPayload);
+          const parsedMock = JSON.parse(mockRes.rawText);
+          const mockVal = validateParsedMCQSchema(parsedMock);
+
+          if (mockVal.isValid) {
+            const item = assembleCandidateItem({
+              slotPayload,
+              validatedSchema: mockVal,
+              llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
+              attempts: 1,
+              retryHistory: [],
+              parseRepairApplied: false,
+              unicodeNormalized: false,
+              reqId
+            });
+            candidateItems.push(item);
+            return;
+          }
+        } catch (mockErr) {
+          console.error(`[GENERATOR_FALLBACK] Mock adapter error for ${slotId}:`, mockErr.message);
+        }
       }
 
       while (attempts <= GENERATOR_CONFIG.MAX_RETRIES_PER_SLOT) {
         attempts++;
         try {
-          // Dispatch LLM Request
+          // Dispatch Primary LLM Request
           const llmResponse = await dispatchLLMRequest(slotPayload);
           totalLatencySum += llmResponse.latencyMs;
 
@@ -106,7 +123,6 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
             candidateItems.push(item);
             return;
           } else {
-            // Non-retryable content failures (INSUFFICIENT_EVIDENCE or SCHEMA_MISMATCH)
             if (validation.status === "INSUFFICIENT_EVIDENCE") {
               insufficientEvidenceSkipped++;
             }
@@ -116,7 +132,7 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
               reason: validation.status || "SCHEMA_MISMATCH",
               attempts
             });
-            return; // Do NOT retry content schema failures
+            return;
           }
         } catch (err) {
           const errMessage = err.message || String(err);
@@ -129,6 +145,31 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
             retriesPerformed++;
             await waitWithJitter(attempts);
           } else {
+            // Primary provider failed; route slot to MockAdapter fallback so pipeline delivers valid questions
+            console.warn(`[GENERATOR_FALLBACK] Slot ${slotId} primary dispatch failed. Triggering MockAdapter fallback.`);
+            try {
+              const mockRes = await mockAdapter.generate(slotPayload);
+              const parsedMock = JSON.parse(mockRes.rawText);
+              const mockVal = validateParsedMCQSchema(parsedMock);
+
+              if (mockVal.isValid) {
+                const item = assembleCandidateItem({
+                  slotPayload,
+                  validatedSchema: mockVal,
+                  llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
+                  attempts,
+                  retryHistory,
+                  parseRepairApplied: false,
+                  unicodeNormalized: false,
+                  reqId
+                });
+                candidateItems.push(item);
+                return;
+              }
+            } catch (fallbackErr) {
+              console.error(`[GENERATOR_FALLBACK] Mock fallback failed for ${slotId}:`, fallbackErr.message);
+            }
+
             failedSlots.push({
               slotId,
               reason: errMessage,

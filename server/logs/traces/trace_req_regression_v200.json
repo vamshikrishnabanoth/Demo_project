@@ -1,0 +1,726 @@
+{
+  "version": "2.0.0",
+  "requestId": "req_regression_v200",
+  "timestamp": "2026-08-12T08:03:05.930Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 30,
+      "timestamp": "2026-08-12T08:03:05.961Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 5,
+      "timestamp": "2026-08-12T08:03:05.967Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:03:05.969Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T08:03:05.971Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 122,
+      "timestamp": "2026-08-12T08:03:06.093Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 11,
+      "timestamp": "2026-08-12T08:03:06.104Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T08:03:06.104Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 4,
+      "timestamp": "2026-08-12T08:03:06.108Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 1.641999999999996,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\nChecksum algorithm is used for detecting frame corruption.\nHash indexes provide O(1) average time complexity for exact equality queries."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 30
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 31.739599999999996,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 416
+      },
+      "outputs": {
+        "activeNodes": 9,
+        "edges": 36
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 5
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 37.01299999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 5,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 5,
+        "distribution": {
+          "EASY": 2,
+          "MEDIUM": 2,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 39.446799999999996,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 5
+      },
+      "outputs": {
+        "promptPayloadsCount": 5
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 40.94469999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 5
+      },
+      "outputs": {
+        "candidateItemsCount": 5
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 122
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 163.28109999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 5
+      },
+      "outputs": {
+        "approved": 5,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 11
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 174.15249999999997,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 174.21569999999997,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 5
+      },
+      "outputs": {
+        "finalQuestionsCount": 5
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 4
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_tcp",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of TCP?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\n# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\n\"\"\"\nSummary Context:\n\"\"\"\n# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees re...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_computer_network_protocols_architecture",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Computer Network Protocols & Architecture\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Computer Network Protocols & Architecture. Which design choice best applies?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\n# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\"\"\"\nSummary Context:\n\"\"\"\n# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_architecture_transmission_control_protocol",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Architecture\n\nTransmission Control Protocol\" (PROTOCOL)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Architecture\n\nTransmission Control Protocol. What is the root cause?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\n# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\n\"\"\"\nSummary Context:\n\"\"\"\n# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees rel...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_004_computer_network_protocol",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Computer Network Protocol\" (PROTOCOL)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Trade-Off\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"When evaluating Computer Network Protocol under operational constraints, what is the primary trade-off?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\n# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\"\"\"\nSummary Context:\n\"\"\"\n# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined a...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_005_ack",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"ACK\" (GENERAL_CONCEPT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of ACK?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\nChecksum algorithm is used for detecting frame corruption.\nHash indexes provide O(1) average time complexity for exact equality queries.\n\"\"\"\nSummary Context:\n\"\"\"\n...of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees reliable delivery. An ACK flag is sent by the receiver to confirm packet receipt. Checksum algorithm is used for detecting frame corruption. Hash...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "Which of the following best describes the key function of TCP?",
+      "options": [
+        "Core mechanism governing TCP operations.",
+        "Secondary protocol configuration for external services.",
+        "Legacy database schema table definition.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing TCP operations.",
+      "explanation": "The source content specifies TCP as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'TCP' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "TCP",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.84,
+          "centralityScore": 0.9
+        },
+        "supportingEvidence": {
+          "textSnippet": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.",
+          "evidenceBounds": {
+            "startChar": 76,
+            "endChar": 79
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_001_tcp",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of TCP?\",\n  \"options\": [\n    \"Core mechanism governing TCP operations.\",\n    \"Secondary protocol configuration for external services.\",\n    \"Legacy database schema table definition.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "Which of the following best describes the key function of Computer Network Protocols & Architecture?",
+      "options": [
+        "Core mechanism governing Computer Network Protocols & Architecture operations.",
+        "Secondary protocol configuration for external services.",
+        "Legacy database schema table definition.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing Computer Network Protocols & Architecture operations.",
+      "explanation": "The source content specifies Computer Network Protocols & Architecture as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Computer Network Protocols & Architecture' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "Computer Network Protocols & Architecture",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.56,
+          "centralityScore": 0.74
+        },
+        "supportingEvidence": {
+          "textSnippet": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.",
+          "evidenceBounds": {
+            "startChar": 2,
+            "endChar": 43
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_computer_network_protocols_architecture",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of Computer Network Protocols & Architecture?\",\n  \"options\": [\n    \"Core mechanism governing Computer Network Protocols & Architecture operations.\",\n    \"Secondary protocol configuration for external services.\",\n    \"Legacy database schema table definition.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 3,
+      "questionId": "Q3",
+      "finalStem": "Which of the following best describes the key function of Architecture\n\nTransmission Control Protocol?",
+      "options": [
+        "Secondary protocol configuration for external services.",
+        "Core mechanism governing Architecture\n\nTransmission Control Protocol operations.",
+        "Legacy database schema table definition.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing Architecture\n\nTransmission Control Protocol operations.",
+      "explanation": "The source content specifies Architecture\n\nTransmission Control Protocol as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Architecture\n\nTransmission Control Protocol' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Architecture\n\nTransmission Control Protocol",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.42,
+          "centralityScore": 0.65
+        },
+        "supportingEvidence": {
+          "textSnippet": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.",
+          "evidenceBounds": {
+            "startChar": 31,
+            "endChar": 80
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_architecture_transmission_control_protocol",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of Architecture\\n\\nTransmission Control Protocol?\",\n  \"options\": [\n    \"Secondary protocol configuration for external services.\",\n    \"Core mechanism governing Architecture\\n\\nTransmission Control Protocol operations.\",\n    \"Legacy database schema table definition.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 4,
+      "questionId": "Q4",
+      "finalStem": "Which of the following best describes the key function of Computer Network Protocol?",
+      "options": [
+        "Legacy database schema table definition.",
+        "Secondary protocol configuration for external services.",
+        "Core mechanism governing Computer Network Protocol operations.",
+        "Unrelated background process scheduler."
+      ],
+      "correctAnswer": "Core mechanism governing Computer Network Protocol operations.",
+      "explanation": "The source content specifies Computer Network Protocol as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Computer Network Protocol' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Computer Network Protocol",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.",
+          "evidenceBounds": {
+            "startChar": 2,
+            "endChar": 28
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Trade",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_004_computer_network_protocol",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of Computer Network Protocol?\",\n  \"options\": [\n    \"Legacy database schema table definition.\",\n    \"Secondary protocol configuration for external services.\",\n    \"Core mechanism governing Computer Network Protocol operations.\",\n    \"Unrelated background process scheduler.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 5,
+      "questionId": "Q5",
+      "finalStem": "Which of the following best describes the key function of ACK?",
+      "options": [
+        "Unrelated background process scheduler.",
+        "Secondary protocol configuration for external services.",
+        "Legacy database schema table definition.",
+        "Core mechanism governing ACK operations."
+      ],
+      "correctAnswer": "Core mechanism governing ACK operations.",
+      "explanation": "The source content specifies ACK as a primary component in the overall system architecture.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'ACK' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "ACK",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.42,
+          "centralityScore": 0.65
+        },
+        "supportingEvidence": {
+          "textSnippet": "Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\nChecksum algorithm is used for detecting frame corruption.\nHash indexes provide O(1) average time complexity for exact equality queries.",
+          "evidenceBounds": {
+            "startChar": 220,
+            "endChar": 223
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_005_ack",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"TCP\" (PROTOCOL)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"Which of the following best describes the key function of ACK?\",\n  \"options\": [\n    \"Unrelated background process scheduler.\",\n    \"Secondary protocol configuration for external services.\",\n    \"Legacy database schema table definition.\",\n    \"Core mechanism governing ACK operations.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_req_regression_v200",
+    "sourceId": "document_upload",
+    "totalQuestions": 5,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "56.0%",
+        "bloomDistribution": {
+          "RECALL": "40%",
+          "APPLY": "40%",
+          "ANALYZE": "20%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 3,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 2,
+          "B": 1,
+          "C": 1,
+          "D": 1
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.56,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 5,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "56.0%",
+      "bloomDistribution": {
+        "RECALL": "40%",
+        "APPLY": "40%",
+        "ANALYZE": "20%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 3,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 2,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_001_tcp",
+        "conceptId": "tcp",
+        "conceptLabel": "TCP",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of TCP?",
+        "options": [
+          "Core mechanism governing TCP operations.",
+          "Secondary protocol configuration for external services.",
+          "Legacy database schema table definition.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing TCP operations.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies TCP as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.",
+          "evidenceBounds": [
+            [
+              0,
+              279
+            ]
+          ],
+          "summaryContext": "# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees re..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_002_computer_network_protocols_architecture",
+        "conceptId": "computer_network_protocols_architecture",
+        "conceptLabel": "Computer Network Protocols & Architecture",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of Computer Network Protocols & Architecture?",
+        "options": [
+          "Core mechanism governing Computer Network Protocols & Architecture operations.",
+          "Secondary protocol configuration for external services.",
+          "Legacy database schema table definition.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing Computer Network Protocols & Architecture operations.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies Computer Network Protocols & Architecture as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.",
+          "evidenceBounds": [
+            [
+              0,
+              215
+            ]
+          ],
+          "summaryContext": "# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-..."
+        }
+      },
+      {
+        "questionNumber": 3,
+        "slotId": "slot_003_architecture_transmission_control_protocol",
+        "conceptId": "architecture_transmission_control_protocol",
+        "conceptLabel": "Architecture\n\nTransmission Control Protocol",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of Architecture\n\nTransmission Control Protocol?",
+        "options": [
+          "Secondary protocol configuration for external services.",
+          "Core mechanism governing Architecture\n\nTransmission Control Protocol operations.",
+          "Legacy database schema table definition.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing Architecture\n\nTransmission Control Protocol operations.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Architecture\n\nTransmission Control Protocol as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.",
+          "evidenceBounds": [
+            [
+              0,
+              279
+            ]
+          ],
+          "summaryContext": "# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees rel..."
+        }
+      },
+      {
+        "questionNumber": 4,
+        "slotId": "slot_004_computer_network_protocol",
+        "conceptId": "computer_network_protocol",
+        "conceptLabel": "Computer Network Protocol",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Trade",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of Computer Network Protocol?",
+        "options": [
+          "Legacy database schema table definition.",
+          "Secondary protocol configuration for external services.",
+          "Core mechanism governing Computer Network Protocol operations.",
+          "Unrelated background process scheduler."
+        ],
+        "correctAnswer": "Core mechanism governing Computer Network Protocol operations.",
+        "correctOptionLetter": "C",
+        "explanation": "The source content specifies Computer Network Protocol as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "# Computer Network Protocols & Architecture\n\nTransmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.",
+          "evidenceBounds": [
+            [
+              0,
+              215
+            ]
+          ],
+          "summaryContext": "# Computer Network Protocols & Architecture Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite. TCP is defined a..."
+        }
+      },
+      {
+        "questionNumber": 5,
+        "slotId": "slot_005_ack",
+        "conceptId": "ack",
+        "conceptLabel": "ACK",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "Which of the following best describes the key function of ACK?",
+        "options": [
+          "Unrelated background process scheduler.",
+          "Secondary protocol configuration for external services.",
+          "Legacy database schema table definition.",
+          "Core mechanism governing ACK operations."
+        ],
+        "correctAnswer": "Core mechanism governing ACK operations.",
+        "correctOptionLetter": "D",
+        "explanation": "The source content specifies ACK as a primary component in the overall system architecture.",
+        "sourceEvidence": {
+          "text": "Transmission Control Protocol (TCP) is a core protocol of the Internet protocol suite.\nTCP is defined as a connection-oriented protocol that guarantees reliable delivery.\n\nAn ACK flag is sent by the receiver to confirm packet receipt.\nChecksum algorithm is used for detecting frame corruption.\nHash indexes provide O(1) average time complexity for exact equality queries.",
+          "evidenceBounds": [
+            [
+              45,
+              416
+            ]
+          ],
+          "summaryContext": "...of the Internet protocol suite. TCP is defined as a connection-oriented protocol that guarantees reliable delivery. An ACK flag is sent by the receiver to confirm packet receipt. Checksum algorithm is used for detecting frame corruption. Hash..."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 179
+  }
+}

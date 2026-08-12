@@ -78,6 +78,7 @@ const BASE_VALIDATOR_PROPERTIES = {
     IMPROVE_BLOOM_ALIGNMENT: "IMPROVE_BLOOM_ALIGNMENT",
     REDUCE_OPTION_AMBIGUITY: "REDUCE_OPTION_AMBIGUITY",
     REWRITE_DUPLICATE_STEM: "REWRITE_DUPLICATE_STEM",
+    REWRITE_SELF_CONTAINED_QUESTION: "REWRITE_SELF_CONTAINED_QUESTION",
     FULL_REGENERATE: "FULL_REGENERATE"
   },
   PASS_CODES: {
@@ -96,6 +97,7 @@ const BASE_VALIDATOR_PROPERTIES = {
     EDU_002_BLOOM_MISALIGNMENT: { code: "EDU_002", message: "Question framing and reasoning depth do not match PlannerHints target Bloom level." },
     EDU_003_IMPLAUSIBLE_DISTRACTOR: { code: "EDU_003", message: "Distractors lack domain relevance to lecture concepts." },
     EDU_004_OPTION_AMBIGUITY_TYPO: { code: "EDU_004", message: "Option choices exhibit extreme typographical similarity or subset ambiguity." },
+    EDU_005_META_REFERENCE: { code: "EDU_005", message: "Question contains document-level meta-references (e.g. 'Scenario 1', 'Paragraph X', 'Assignment 1'). Must be rewritten as a self-contained domain question." },
     VAL_000_TIMEOUT_EXCEEDED: { code: "VAL_000", message: "Validation execution time exceeded maximum allowed threshold." },
     VAL_500_INTERNAL_FAILURE: { code: "VAL_500", message: "Unexpected internal exception encountered during validation." }
   }

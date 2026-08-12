@@ -78,7 +78,8 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     scores.duplication = safeScore(1.0 - nearDupes[0].similarity);
     if (scores.duplication < 0.30) {
       rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_DUPLICATE_STEM);
-      findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_001_SEMANTIC_DUPLICATE);
+      const codeStr = VALIDATOR_CONFIG.CODES.EDU_001_SEMANTIC_DUPLICATE?.code || "EDU_001";
+      findings.majorWarnings.push(codeStr);
     }
   }
 
@@ -97,7 +98,8 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
   if (targetBloom && !bloomPassed) {
     scores.bloom = 0.60;
     rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.IMPROVE_BLOOM_ALIGNMENT);
-    findings.minorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_002_BLOOM_MISALIGNMENT);
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_002_BLOOM_MISALIGNMENT?.code || "EDU_002";
+    findings.minorWarnings.push(codeStr);
   }
 
   // 3. Type-Guarded Distractor Plausibility Service
@@ -121,7 +123,8 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
   scores.distractors = safeScore(rawDistractor);
   if (scores.distractors < (VALIDATOR_CONFIG.THRESHOLDS.DISTRACTOR_MIN_SCORE || 0.70)) {
     rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REGENERATE_DISTRACTORS);
-    findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_003_IMPLAUSIBLE_DISTRACTOR);
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_003_IMPLAUSIBLE_DISTRACTOR?.code || "EDU_003";
+    findings.majorWarnings.push(codeStr);
   }
 
   // 4. Type-Guarded Option Ambiguity / Typo Service
@@ -145,16 +148,32 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
   if (minLevenshtein < (VALIDATOR_CONFIG.THRESHOLDS.AMBIGUITY_LEVENSHTEIN_MIN || 0.15)) {
     scores.ambiguity = 0.50;
     rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REDUCE_OPTION_AMBIGUITY);
-    findings.majorWarnings.push(VALIDATOR_CONFIG.CODES.EDU_004_OPTION_AMBIGUITY_TYPO);
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_004_OPTION_AMBIGUITY_TYPO?.code || "EDU_004";
+    findings.majorWarnings.push(codeStr);
+  }
+
+  // 5. Meta-Reference Filter (Meta-Label / Structural Referencing Detection)
+  const META_REF_REGEX = /\b(scenario\s*\d+|paragraph\s*\d+|section\s*\d+|exercise\s*\d+|task\s*\d+|assignment\s*\d+|in\s+(this|the)\s+(document|pdf|docx|file|assignment|section|text))\b/i;
+  const isMetaRef = META_REF_REGEX.test(stem);
+  if (isMetaRef) {
+    scores.metaReference = 0.0;
+    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_SELF_CONTAINED_QUESTION || "REWRITE_SELF_CONTAINED_QUESTION");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_005_META_REFERENCE?.code || "EDU_005";
+    findings.majorWarnings.push(codeStr);
   }
 
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
-  const rawQuality = (
+  let rawQuality = (
     w.BLOOM * scores.bloom +
     w.DISTRACTORS * scores.distractors +
     w.DUPLICATION * scores.duplication +
     w.AMBIGUITY * scores.ambiguity
   );
+
+  // Severe Quality Penalty for Meta-Reference Violation
+  if (isMetaRef) {
+    rawQuality = Math.min(rawQuality, 0.30);
+  }
 
   const qualityScore = safeScore(rawQuality);
   const repairHints = [...new Set(rawRepairHints)];
@@ -170,7 +189,17 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
       educational: qualityScore
     },
     repairHints,
-    findings
+    findings,
+    // Standardized Telemetry Schema (MODULE 6 & MODULE 10)
+    telemetry: {
+      stage: "EDUCATIONAL",
+      validator: "EducationalValidator",
+      code: qualityScore >= minRequired ? "EDU_PASS" : "EDU_WARN",
+      severity: qualityScore >= minRequired ? "INFO" : "WARNING",
+      status: qualityScore >= minRequired ? "PASS" : "FAIL",
+      confidence: qualityScore,
+      duration_ms: 0
+    }
   };
 }
 

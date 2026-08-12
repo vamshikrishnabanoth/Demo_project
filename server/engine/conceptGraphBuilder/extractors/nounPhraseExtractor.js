@@ -1,6 +1,11 @@
 /**
  * Noun Phrase Extractor: Discovers multi-word noun phrases and technical terms
  */
+'use strict';
+
+const { isValidConcept } = require('../utils/conceptSanitizer');
+const { repairConcept } = require('../conceptRepair/index');
+
 function extractNounPhrases(text) {
   const candidates = [];
   if (!text || typeof text !== 'string') return candidates;
@@ -11,13 +16,22 @@ function extractNounPhrases(text) {
 
   while ((match = nounRegex.exec(text)) !== null) {
     const rawTerm = match[1].trim();
-    if (rawTerm.length >= 3 && !rawTerm.includes('\n')) {
-      candidates.push({
-        rawTerm,
-        source: "MULTI_WORD_NOUN_PHRASE",
-        startOffset: match.index,
-        endOffset: match.index + rawTerm.length
-      });
+    if (rawTerm.length >= 2 && !rawTerm.includes('\n')) {
+      // Pass candidate through repair engine & sanitizer
+      const repairRes = repairConcept(rawTerm);
+      const cleanTerm = repairRes.repaired;
+
+      if (cleanTerm && isValidConcept(cleanTerm)) {
+        candidates.push({
+          rawTerm: cleanTerm,
+          originalTerm: rawTerm,
+          source: "MULTI_WORD_NOUN_PHRASE",
+          startOffset: match.index,
+          endOffset: match.index + rawTerm.length,
+          repairStrategy: repairRes.strategy,
+          confidence: repairRes.confidence
+        });
+      }
     }
   }
 

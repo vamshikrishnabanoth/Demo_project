@@ -1047,4 +1047,59 @@ router.post('/import', auth, adminOnly, async (req, res) => {
     }
 });
 
+// ══════════════════════════════════════════════════════════════════════════════
+// PIPELINE OBSERVABILITY & REPLAY FRAMEWORK ENDPOINTS
+// ══════════════════════════════════════════════════════════════════════════════
+const PipelineTracer = require('../engine/tracing/pipelineTracer');
+const { renderTraceDashboard } = require('../engine/tracing/dashboardRenderer');
+const { replayPipeline } = require('../engine/tracing/replayEngine');
+
+// List recent trace logs
+router.get('/traces', async (req, res) => {
+    try {
+        const traces = PipelineTracer.listTraces(30);
+        res.json({ success: true, count: traces.length, traces });
+    } catch (err) {
+        res.status(500).json({ success: false, msg: err.message });
+    }
+});
+
+// Render Visual HTML Trace Dashboard
+router.get('/trace/:requestId', async (req, res) => {
+    try {
+        const trace = PipelineTracer.loadTrace(req.params.requestId);
+        if (!trace) {
+            return res.status(404).send(`<h1>Trace Not Found</h1><p>No trace file found for request ID: ${req.params.requestId}</p>`);
+        }
+        const html = renderTraceDashboard(trace);
+        res.setHeader('Content-Type', 'text/html');
+        res.send(html);
+    } catch (err) {
+        res.status(500).send(`<h1>Dashboard Error</h1><p>${err.message}</p>`);
+    }
+});
+
+// Download Raw Trace JSON
+router.get('/trace/:requestId/json', async (req, res) => {
+    try {
+        const trace = PipelineTracer.loadTrace(req.params.requestId);
+        if (!trace) {
+            return res.status(404).json({ success: false, msg: 'Trace not found' });
+        }
+        res.json(trace);
+    } catch (err) {
+        res.status(500).json({ success: false, msg: err.message });
+    }
+});
+
+// Trigger Pipeline Replay & Drift Analysis
+router.post('/trace/:requestId/replay', async (req, res) => {
+    try {
+        const replayResult = await replayPipeline(req.params.requestId);
+        res.json({ success: true, ...replayResult });
+    } catch (err) {
+        res.status(500).json({ success: false, msg: err.message });
+    }
+});
+
 module.exports = router;

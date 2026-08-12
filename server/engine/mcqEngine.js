@@ -19,6 +19,8 @@ const { processRepairQueue } = require('./repairRouter/index');
 const { REPAIR_CONFIG } = require('../config/repairConfig');
 const { assembleQuizPortfolio } = require('./portfolioAssembly/index');
 const { PORTFOLIO_CONFIG } = require('../config/portfolioConfig');
+const PipelineTracer = require('./tracing/pipelineTracer');
+const { buildQuestionLineage } = require('./tracing/explainabilityBuilder');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -315,6 +317,9 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   // Correlation Request ID Propagation
   const reqId = reqPayload.requestId || reqPayload.reqId || Math.random().toString(36).substring(2, 10);
 
+  const tracer = new PipelineTracer(reqId);
+  tracer.recordStageStart(1, 'Ingestion & Cleaning');
+
   requestedCount = parseInt(requestedCount, 10) || 10;
   if (requestedCount < 1) requestedCount = 1;
   if (requestedCount > 50) requestedCount = 50;
@@ -392,8 +397,10 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   }
   console.log(`  ├─ Code/Syntax Guard: Preserved formatting across ${codeBlocks} detected code block(s).`);
   console.log(`  └─ Cleaned Academic Text Payload: ${cleanedContent.length.toLocaleString()} characters remaining.`);
+  tracer.recordStageComplete(1, 'Ingestion & Cleaning', { rawContent: cleanedContent }, { validSourcesCount: validAcademicInputs.length });
 
   // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH BUILDER v2.6.0 (WITH NAMESPACED CACHING)]
+  tracer.recordStageStart(2, 'Concept Graph Builder');
   const analysisCacheKey = generateAnalysisCacheKey(cleanedContent);
 
   const conceptGraph = await cacheManager.fetchCoalesced(analysisCacheKey, async () => {
@@ -424,6 +431,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Traversal Sequence: Derived ${traversalOrder.length}-step DAG topological order`);
   console.log(`  ├─ Graph Metadata: Avg Confidence: ${meta.averageConfidence || 0.90} | Build Time: ${meta.buildTimeMs || 0}ms`);
   console.log(`  └─ Normalized Concept Graph and Inverted Index attached to context.`);
+  tracer.recordStageComplete(2, 'Concept Graph Builder', { textLength: cleanedContent.length }, { activeNodes: conceptNodes.length, edges: conceptEdges.length });
 
   if (!conceptNodes || conceptNodes.length === 0) {
     console.error(`[ReqID: ${reqId}] ❌ No educational or academic study topics could be extracted from provided documents.`);
@@ -433,6 +441,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   }
 
   // [STEP 3: QUIZ PLANNER ENGINE v1.3.0]
+  tracer.recordStageStart(3, 'Quiz Planner Engine');
   const quizPlan = generateQuizPlan(conceptGraph, {
     requestedCount,
     difficulty: normalizedDifficulty
@@ -450,8 +459,10 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Concept Coverage: ${((pDiag.conceptCoverageRatio || 1.0) * 100).toFixed(1)}% of Graph Nodes Mapped (Avg Imp: ${pDiag.averageConceptImportance || 0.85})`);
   console.log(`  ├─ Anti-Repetition Guard: Enforced (0 Back-to-Back Duplicate Concept Slots)`);
   console.log(`  └─ Quiz Plan blueprint generated and attached to pipeline context.`);
+  tracer.recordStageComplete(3, 'Quiz Planner Engine', { requestedCount, difficulty: normalizedDifficulty }, { slots: quizPlan.slots?.length, distribution: dist });
 
   // [STEP 4: PROMPT BUILDER ENGINE v1.2.0]
+  tracer.recordStageStart(4, 'Prompt Builder Engine');
   const promptPayloads = buildSlotPrompts(quizPlan, {
     cleanedContent,
     conceptGraph,
@@ -466,8 +477,11 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Context Isolation: Sentence/Newline boundary snapped snippets (Avg: ~${avgSnippetLen} chars/slot | Max: 500)`);
   console.log(`  ├─ Safety & Observability: Pipeline evidenceBounds attached | Fallback route 'INSUFFICIENT_EVIDENCE' enabled`);
   console.log(`  └─ Prompt Payloads attached to context for LLM generation.`);
+  tracer.recordStageComplete(4, 'Prompt Builder Engine', { slotCount: quizPlan.slots?.length }, { promptPayloadsCount: promptPayloads.length });
+  promptPayloads.forEach(p => tracer.recordPrompt(p.slotId, p.conceptLabel, p.systemPrompt, p.userPrompt));
 
   // [STEP 5: QUESTION GENERATOR ENGINE v1.2.0 (WITH NAMESPACED QUIZ CACHING)]
+  tracer.recordStageStart(5, 'Question Generator Engine');
   const quizCacheKey = generateQuizCacheKey({
     text: cleanedContent,
     difficulty: normalizedDifficulty,
@@ -522,6 +536,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Resilience: ${pDiagGen.parseRepairCount || 0} JSON Repairs | ${pDiagGen.unicodeNormalizations || 0} Unicode Normalizations | ${pDiagGen.retriesPerformed || 0} Retries (Jittered)`);
   console.log(`  ├─ Provider Circuit Breaker: ${pDiagGen.circuitBreakerTriggered ? '⚠️ TRIGGERED' : '✅ HEALTHY (Provider Availability OK)'}`);
   console.log(`  └─ Candidate Items attached to context for Stage 6 (3-Tier Validation Orchestrator).`);
+  tracer.recordStageComplete(5, 'Question Generator Engine', { promptPayloadsCount: promptPayloads.length }, { candidateItemsCount: candidateItems.length });
 
   // [STEP 6: RECOVERY PARSER GUARDRAIL]
   console.log(`\n[ReqID: ${reqId}] [STEP 6: RECOVERY PARSER GUARDRAIL]`);
@@ -529,6 +544,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  └─ Recovery Action: ${candidateItems.length} candidate item(s) available for validation.`);
 
   // [STEP 7: 3-TIER VALIDATOR ORCHESTRATOR v5.8.0]
+  tracer.recordStageStart(6, '3-Tier Validator Orchestrator');
   const pipelineContext = {
     reqId,
     cleanedContent,
@@ -548,8 +564,10 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Pass Rates: ${batchSummary.approvedCount || 0} Approved | ${batchSummary.repairRequiredCount || 0} Routed to Repair | ${batchSummary.hardGateFailures || 0} Hard-Gate Rejections`);
   console.log(`  ├─ Pipeline Context Assigned: pipelineContext.approvedItems (${pipelineContext.approvedItems?.length || 0}) | pipelineContext.repairQueue (${pipelineContext.repairQueue?.length || 0})`);
   console.log(`  └─ Approved items saved to context; items requiring repair routed to Stage 7.`);
+  tracer.recordStageComplete(6, '3-Tier Validator Orchestrator', { candidateItemsCount: candidateItems.length }, { approved: pipelineContext.approvedItems?.length, repairQueue: pipelineContext.repairQueue?.length });
 
   // [STEP 8: TARGETED REPAIR ROUTER ENGINE v1.2.0]
+  tracer.recordStageStart(7, 'Targeted Repair Router');
   let repairResult = null;
   if (pipelineContext.repairQueue && pipelineContext.repairQueue.length > 0) {
     console.log(`\n[ReqID: ${reqId}] [STEP 7: TARGETED REPAIR ROUTER v${REPAIR_CONFIG.VERSION}]`);
@@ -562,8 +580,10 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   } else {
     console.log(`\n[ReqID: ${reqId}] [STEP 7: TARGETED REPAIR ROUTER v${REPAIR_CONFIG.VERSION}] ──► No items in repair queue; skipping.`);
   }
+  tracer.recordStageComplete(7, 'Targeted Repair Router', { repairQueueLength: pipelineContext.repairQueue?.length || 0 }, { repairedCount: repairResult?.batchSummary?.successfullyRepaired || 0 });
 
   // [STEP 9: PORTFOLIO ASSEMBLY ENGINE v1.8.1]
+  tracer.recordStageStart(8, 'Portfolio Assembly Engine');
   console.log(`\n[ReqID: ${reqId}] [STEP 8: PORTFOLIO ASSEMBLY ENGINE v${PORTFOLIO_CONFIG.VERSION}]`);
   const { finalQuiz, portfolioSummary } = await assembleQuizPortfolio(pipelineContext.approvedItems, pipelineContext);
 
@@ -576,9 +596,22 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
 
   const finalQuestions = finalQuiz.questions.map(q => ({
     ...q,
-    question: q.stem,
-    questionText: q.stem
+    question: q.stem || q.question || q.questionText,
+    questionText: q.stem || q.question || q.questionText,
+    qualityScore: q.qualityScore ?? q.quality_score ?? 1.0
   }));
+
+  // Complete Pipeline Trace & Question Explainability Lineage Mapping
+  tracer.recordStageComplete(8, 'Portfolio Assembly Engine', { approvedPoolSize: pipelineContext.approvedItems?.length }, { finalQuestionsCount: finalQuestions.length });
+  const questionLineage = buildQuestionLineage(finalQuestions, {
+    conceptGraph,
+    quizPlan,
+    promptPayloads,
+    candidateItems,
+    approvedItems: pipelineContext.approvedItems
+  });
+  tracer.setQuestionLineage(questionLineage);
+  const traceData = tracer.finalizeTrace(finalQuiz);
 
   const executionTimeMs = Date.now() - startTime;
   const isPartial = finalQuestions.length < requestedCount;
@@ -599,6 +632,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     success: true,
     status: finalStatusStr,
     requestId: reqId,
+    questions: finalQuestions,
     conceptGraph,
     conceptIndex,
     quizPlan,

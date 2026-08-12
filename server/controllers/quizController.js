@@ -247,37 +247,67 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
 };
 
 
+// MODULE 8 — RICH AI SERVICE HEALTH CACHE
+let AI_SERVICE_HEALTH_CACHE = {
+    online: false,
+    lastChecked: 0,
+    latency: 0,
+    reason: 'UNINITIALIZED'
+};
+const HEALTH_CACHE_TTL_MS = 30000; // 30 seconds
+
 const checkAiServiceOnline = async (url) => {
+    const now = Date.now();
+    const elapsedSec = Math.round((now - AI_SERVICE_HEALTH_CACHE.lastChecked) / 1000);
+
+    if (AI_SERVICE_HEALTH_CACHE.lastChecked > 0 && (now - AI_SERVICE_HEALTH_CACHE.lastChecked) < HEALTH_CACHE_TTL_MS) {
+        console.log(`[HEALTH CACHE] Using cached AI availability (online: ${AI_SERVICE_HEALTH_CACHE.online}, reason: ${AI_SERVICE_HEALTH_CACHE.reason}, checked: ${elapsedSec} sec ago)`);
+        return AI_SERVICE_HEALTH_CACHE.online;
+    }
+
+    const startProbe = Date.now();
     try {
         console.log(`🔍 Probing local AI Service at ${url}...`);
         const res = await axios.get(url, { 
             headers: { 'Bypass-Tunnel-Reminder': 'true' },
             timeout: 1500 
         });
-        return res.status === 200;
+        const latency = Date.now() - startProbe;
+        const isOnline = res.status === 200;
+        AI_SERVICE_HEALTH_CACHE = {
+            online: isOnline,
+            lastChecked: now,
+            latency,
+            reason: isOnline ? 'HTTP_200_OK' : `HTTP_${res.status}`
+        };
+        return isOnline;
     } catch (err) {
+        const latency = Date.now() - startProbe;
+        let reason = err.code || err.message || 'PROBE_FAILED';
+
         if (err.response) {
             console.log(`ℹ️ AI Service replied with HTTP status ${err.response.status}`);
-            // If the response is a 404, check if it's FastAPI's default 404 or an Ngrok tunnel error.
-            // FastAPI returns JSON: {"detail":"Not Found"}. Ngrok returns an HTML warning page.
             if (err.response.status === 404) {
                 const isFastApiJson = err.response.headers['content-type']?.includes('application/json') &&
                                      err.response.data && 
                                      (err.response.data.detail === 'Not Found' || err.response.data.detail === 'Method Not Allowed');
                 if (isFastApiJson) {
+                    AI_SERVICE_HEALTH_CACHE = { online: true, lastChecked: now, latency, reason: 'FASTAPI_404_VALID' };
                     return true;
                 }
-                console.log(`⚠️ AI Service tunnel is offline or not found (HTTP 404 from Ngrok).`);
-                return false;
+                reason = 'NGROK_404_NOT_FOUND';
+            } else if ([502, 503, 504].includes(err.response.status)) {
+                reason = `HTTP_${err.response.status}_GATEWAY_DOWN`;
             }
-            // 502/503/504 errors mean the Ngrok/Localhost tunnel is up but the local service itself is stopped
-            if ([502, 503, 504].includes(err.response.status)) {
-                console.log(`⚠️ AI Service tunnel is active but the local Python service is completely stopped.`);
-                return false;
-            }
-            return true;
         }
-        console.log(`❌ AI Service probe failed: ${err.message}`);
+        
+        AI_SERVICE_HEALTH_CACHE = {
+            online: false,
+            lastChecked: now,
+            latency,
+            reason
+        };
+        console.log(`❌ AI Service probe failed (${reason}). Caching offline state for 30s.`);
         return false;
     }
 };
