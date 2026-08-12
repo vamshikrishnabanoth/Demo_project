@@ -41,23 +41,23 @@ const DEFAULT_CONFIG = {
  * 1. ACADEMIC RELEVANCE GUARDRAIL (Per-Input Noise Filtering)
  * Evaluates academic and technical density of individual source inputs (0.00 to 1.00)
  */
-function computeAcademicDensityScore(text, sourceName = "Source") {
-  if (!text || typeof text !== 'string' || text.trim().length < 10) {
+function computeAcademicDensityScore(text, sourceName = '') {
+  if (!text || typeof text !== 'string' || text.trim().length < 5) {
     return { score: 0.0, isAcademic: false };
   }
 
   const cleaned = text.trim();
   const words = cleaned.split(/\s+/).filter(Boolean);
-  if (words.length < 5) {
+  if (words.length < 3) {
     return { score: 0.0, isAcademic: false };
   }
 
-  // Technical & academic domain term patterns
-  const techRegex = /\b(git|commit|branch|merge|repository|push|pull|rebase|remote|checkout|stash|algorithm|function|database|protocol|interface|class|object|method|structure|query|architecture|system|optimization|complexity|thread|memory|pointer|latency|bandwidth|equation|theorem|reaction|molecule|hypothesis|analysis|property|variable|constant|model|dataset|matrix|vector|derivative|integral|cell|gene|protein|organism|network|quantum|entropy|compiler|cache|schema|index|async|await|event|loop|logic|proof|definition|lemma|corollary)\b|`[^`]+`/gi;
+  // Technical & academic domain term patterns (including DB, assignments, scenarios, systems)
+  const techRegex = /\b(git|commit|branch|merge|repository|push|pull|rebase|remote|checkout|stash|algorithm|function|database|protocol|interface|class|object|method|structure|query|architecture|system|optimization|complexity|thread|memory|pointer|latency|bandwidth|equation|theorem|reaction|molecule|hypothesis|analysis|property|variable|constant|model|dataset|matrix|vector|derivative|integral|cell|gene|protein|organism|network|quantum|entropy|compiler|cache|schema|index|async|await|event|loop|logic|proof|definition|lemma|corollary|scenario|product|management|order|patient|treatment|delivery|rating|stock|price|movie|restaurant|collection|hospital|customer|sql|table|key|id|filter|crud|assignment|exercise|task|quiz|module|topic)\b|`[^`]+`/gi;
   const techMatches = (cleaned.match(techRegex) || []).length;
 
   // Administrative / syllabus noise patterns
-  const noiseRegex = /\b(syllabus|office hours|grading|attendance|midterm|final exam|homework|zoom|classroom|schedule|instructor|email|due date|late policy|prerequisites|welcome|office|location|contact|phone)\b/gi;
+  const noiseRegex = /\b(office hours|zoom link|late submission policy|contact phone)\b/gi;
   const noiseMatches = (cleaned.match(noiseRegex) || []).length;
 
   const techRatio = techMatches / Math.max(1, words.length);
@@ -65,17 +65,16 @@ function computeAcademicDensityScore(text, sourceName = "Source") {
 
   let score = (techRatio * 5.0) - (noiseRatio * 4.0);
 
-  // Boost for code snippets or math formulas
   if (cleaned.includes('```') || /[=+\-*/<>{}\\]/.test(cleaned)) {
     score += 0.25;
   }
 
-  if (words.length >= 30 && techMatches >= 2 && noiseMatches === 0) {
-    score += 0.20;
+  if (words.length >= 5) {
+    score += 0.30;
   }
 
   const finalScore = Number(Math.min(1.0, Math.max(0.0, score)).toFixed(2));
-  const isAcademic = finalScore >= 0.20 || (words.length >= 15 && noiseMatches === 0);
+  const isAcademic = words.length >= 3 && (noiseMatches < 3 || finalScore >= 0.10);
 
   return { score: finalScore, isAcademic };
 }
