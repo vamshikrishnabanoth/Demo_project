@@ -1,64 +1,64 @@
 {
   "version": "2.0.0",
   "requestId": "test_meta_ref_e2e",
-  "timestamp": "2026-08-12T08:20:25.507Z",
+  "timestamp": "2026-08-12T08:25:02.204Z",
   "environment": "development",
   "provider": "mock",
   "timeline": [
     {
       "stageNumber": 1,
       "stageName": "Ingestion & Cleaning",
-      "durationMs": 13,
-      "timestamp": "2026-08-12T08:20:25.521Z"
+      "durationMs": 17,
+      "timestamp": "2026-08-12T08:25:02.222Z"
     },
     {
       "stageNumber": 2,
       "stageName": "Concept Graph Builder",
-      "durationMs": 2,
-      "timestamp": "2026-08-12T08:20:25.524Z"
+      "durationMs": 3,
+      "timestamp": "2026-08-12T08:25:02.225Z"
     },
     {
       "stageNumber": 3,
       "stageName": "Quiz Planner Engine",
       "durationMs": 1,
-      "timestamp": "2026-08-12T08:20:25.525Z"
+      "timestamp": "2026-08-12T08:25:02.226Z"
     },
     {
       "stageNumber": 4,
       "stageName": "Prompt Builder Engine",
       "durationMs": 1,
-      "timestamp": "2026-08-12T08:20:25.526Z"
+      "timestamp": "2026-08-12T08:25:02.227Z"
     },
     {
       "stageNumber": 5,
       "stageName": "Question Generator Engine",
-      "durationMs": 53,
-      "timestamp": "2026-08-12T08:20:25.579Z"
+      "durationMs": 55,
+      "timestamp": "2026-08-12T08:25:02.283Z"
     },
     {
       "stageNumber": 6,
       "stageName": "3-Tier Validator Orchestrator",
-      "durationMs": 2,
-      "timestamp": "2026-08-12T08:20:25.581Z"
+      "durationMs": 7,
+      "timestamp": "2026-08-12T08:25:02.290Z"
     },
     {
       "stageNumber": 7,
       "stageName": "Targeted Repair Router",
-      "durationMs": 57,
-      "timestamp": "2026-08-12T08:20:25.639Z"
+      "durationMs": 52,
+      "timestamp": "2026-08-12T08:25:02.342Z"
     },
     {
       "stageNumber": 8,
       "stageName": "Portfolio Assembly Engine",
       "durationMs": 2,
-      "timestamp": "2026-08-12T08:20:25.640Z"
+      "timestamp": "2026-08-12T08:25:02.344Z"
     }
   ],
   "stages": {
     "stage_1_ingestion_&_cleaning": {
       "stageNumber": 1,
       "stageName": "Ingestion & Cleaning",
-      "startTimeMs": 1.04819999999998,
+      "startTimeMs": 0.9191000000000003,
       "status": "COMPLETED",
       "inputs": {
         "rawContent": "Amazon Product Management System (products.json)\nScenario 1 - Low Stock Products\nThe warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20.\n\nScenario 2 - Premium Product Listing\nThe marketing team is preparing a premium product catalogue. Display all products costing more than ₹10,000 arranged from most expensive to least expensive.\n\nNetflix Movie Database (movies.json)\nScenario 1 - Trending Movies\nNetflix wants to promote highly rated movies with rating above 8.5."
@@ -68,12 +68,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 13
+      "durationMs": 17
     },
     "stage_2_concept_graph_builder": {
       "stageNumber": 2,
       "stageName": "Concept Graph Builder",
-      "startTimeMs": 14.013599999999997,
+      "startTimeMs": 17.542699999999996,
       "status": "COMPLETED",
       "inputs": {
         "textLength": 530
@@ -84,12 +84,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     "stage_3_quiz_planner_engine": {
       "stageNumber": 3,
       "stageName": "Quiz Planner Engine",
-      "startTimeMs": 16.358899999999977,
+      "startTimeMs": 21.046899999999994,
       "status": "COMPLETED",
       "inputs": {
         "requestedCount": 3,
@@ -110,7 +110,7 @@
     "stage_4_prompt_builder_engine": {
       "stageNumber": 4,
       "stageName": "Prompt Builder Engine",
-      "startTimeMs": 17.324799999999982,
+      "startTimeMs": 22.0402,
       "status": "COMPLETED",
       "inputs": {
         "slotCount": 3
@@ -125,7 +125,7 @@
     "stage_5_question_generator_engine": {
       "stageNumber": 5,
       "stageName": "Question Generator Engine",
-      "startTimeMs": 18.57079999999999,
+      "startTimeMs": 23.23729999999999,
       "status": "COMPLETED",
       "inputs": {
         "promptPayloadsCount": 3
@@ -135,12 +135,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 53
+      "durationMs": 55
     },
     "stage_6_3-tier_validator_orchestrator": {
       "stageNumber": 6,
       "stageName": "3-Tier Validator Orchestrator",
-      "startTimeMs": 71.58069999999998,
+      "startTimeMs": 78.6555,
       "status": "COMPLETED",
       "inputs": {
         "candidateItemsCount": 3
@@ -151,12 +151,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 2
+      "durationMs": 7
     },
     "stage_7_targeted_repair_router": {
       "stageNumber": 7,
       "stageName": "Targeted Repair Router",
-      "startTimeMs": 73.89929999999998,
+      "startTimeMs": 85.5049,
       "status": "COMPLETED",
       "inputs": {
         "repairQueueLength": 1
@@ -166,12 +166,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 57
+      "durationMs": 52
     },
     "stage_8_portfolio_assembly_engine": {
       "stageNumber": 8,
       "stageName": "Portfolio Assembly Engine",
-      "startTimeMs": 131.40519999999998,
+      "startTimeMs": 137.8945,
       "status": "COMPLETED",
       "inputs": {
         "approvedPoolSize": 2
@@ -451,6 +451,6 @@
     ]
   },
   "metadata": {
-    "totalDurationMs": 133
+    "totalDurationMs": 140
   }
 }

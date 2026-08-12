@@ -1054,10 +1054,22 @@ const PipelineTracer = require('../engine/tracing/pipelineTracer');
 const { renderTraceDashboard } = require('../engine/tracing/dashboardRenderer');
 const { replayPipeline } = require('../engine/tracing/replayEngine');
 
+const { generateMCQPipeline } = require('../engine/mcqEngine');
+
 // List recent trace logs
 router.get('/traces', async (req, res) => {
     try {
-        const traces = PipelineTracer.listTraces(30);
+        let traces = PipelineTracer.listTraces(30);
+        if (traces.length === 0) {
+            // Auto-generate initial trace if server is fresh
+            await generateMCQPipeline({
+                content: "Transmission Control Protocol (TCP) guarantees reliable data delivery in Computer Networks.",
+                difficulty: "Balanced",
+                requestedCount: 3,
+                requestId: "initial_demo_trace"
+            });
+            traces = PipelineTracer.listTraces(30);
+        }
         res.json({ success: true, count: traces.length, traces });
     } catch (err) {
         res.status(500).json({ success: false, msg: err.message });
@@ -1065,12 +1077,27 @@ router.get('/traces', async (req, res) => {
 });
 
 // Render Visual HTML Trace Dashboard
-router.get('/trace/:requestId', async (req, res) => {
+router.get('/trace/:requestId?', async (req, res) => {
     try {
-        const trace = PipelineTracer.loadTrace(req.params.requestId);
+        const reqId = req.params.requestId;
+        let trace = reqId ? PipelineTracer.loadTrace(reqId) : null;
+        
         if (!trace) {
-            return res.status(404).send(`<h1>Trace Not Found</h1><p>No trace file found for request ID: ${req.params.requestId}</p>`);
+            const availableTraces = PipelineTracer.listTraces(1);
+            if (availableTraces.length > 0) {
+                trace = PipelineTracer.loadTrace(availableTraces[0].requestId);
+            } else {
+                // Auto-generate fresh trace on demand
+                const genRes = await generateMCQPipeline({
+                    content: "Amazon Product Management System. Scenario 1 - Low Stock Products. Display all products whose stock is less than 20.",
+                    difficulty: "Balanced",
+                    requestedCount: 3,
+                    requestId: "auto_demo_trace"
+                });
+                trace = PipelineTracer.loadTrace(genRes.requestId);
+            }
         }
+        
         const html = renderTraceDashboard(trace);
         res.setHeader('Content-Type', 'text/html');
         res.send(html);

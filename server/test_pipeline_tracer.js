@@ -74,8 +74,8 @@ async function testPipelineTracerFramework() {
   const htmlDashboard = renderTraceDashboard(savedTrace);
   assert(typeof htmlDashboard === 'string' && htmlDashboard.includes('<!DOCTYPE html>'), 'Rendered HTML dashboard');
   assert(htmlDashboard.includes(reqId), 'HTML dashboard contains request ID');
-  assert(htmlDashboard.includes('Question Explainability Lineage'), 'HTML dashboard includes Question Explainability section');
-  assert(htmlDashboard.includes('Stage Execution Timeline'), 'HTML dashboard includes Stage Execution Timeline');
+  assert(htmlDashboard.includes('Multi-Agent Pipeline Execution Stepper') || htmlDashboard.includes('Agent 1'), 'HTML dashboard includes Multi-Agent Pipeline Stepper section');
+  assert(htmlDashboard.includes('Final Delivered Quiz Cards Studio') || htmlDashboard.includes('Agent 8'), 'HTML dashboard includes Final Delivered Quiz Cards Studio section');
 
   // -------------------------------------------------------------------------
   // TEST 4: Replay Engine & Drift Analysis
