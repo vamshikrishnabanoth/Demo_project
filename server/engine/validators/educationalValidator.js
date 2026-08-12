@@ -230,6 +230,33 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     findings.majorWarnings.push(codeStr);
   }
 
+  // 11. Stage 5 Grounding Contract Guard (EDU_012_UNGROUNDED_EXECUTABLE)
+  const approvedConstructs = new Set(
+    (validationContext.documentProfile?.executableConstructs || []).map(c => c.toLowerCase())
+  );
+  const rawText = (validationContext.cleanedContent || validationContext.sourceEvidence?.text || '').toLowerCase();
+
+  const hasUngroundedConstruct = options.some(opt => {
+    const str = String(opt);
+    // Extract object key operators (e.g. {$group, {$unwind, {$lookup)
+    const codeOperators = str.match(/\{\s*\$([a-zA-Z0-9_]+)/g)?.map(m => m.replace(/^\{\s*/, '')) || [];
+    return codeOperators.some(op => {
+      const lowerOp = op.toLowerCase();
+      const bareOp = lowerOp.replace(/^\$/, '');
+      // Must exist in approvedConstructs OR appear in rawText (checking with or without $)
+      const inProfile = approvedConstructs.has(lowerOp) || approvedConstructs.has(bareOp);
+      const inRawText = rawText.includes(lowerOp) || rawText.includes(bareOp);
+      return !inProfile && !inRawText;
+    });
+  });
+
+  if (hasUngroundedConstruct) {
+    scores.distractors = 0.0;
+    rawRepairHints.push("REWRITE_UNGROUNDED_EXECUTABLE");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_012_UNGROUNDED_EXECUTABLE?.code || "EDU_012";
+    findings.majorWarnings.push(codeStr);
+  }
+
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
   let rawQuality = (
     w.BLOOM * scores.bloom +

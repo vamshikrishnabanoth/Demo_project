@@ -22,6 +22,8 @@ const { assembleQuizPortfolio } = require('./portfolioAssembly/index');
 const { PORTFOLIO_CONFIG } = require('../config/portfolioConfig');
 const PipelineTracer = require('./tracing/pipelineTracer');
 const { buildQuestionLineage } = require('./tracing/explainabilityBuilder');
+const { validateStageContract } = require('./contracts/pipelineContracts');
+const { reviewQuizPortfolio } = require('./portfolioReviewer/index');
 
 const DEFAULT_CONFIG = {
   maxRepairAttempts: 2,
@@ -602,6 +604,17 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     questionText: q.stem || q.question || q.questionText,
     qualityScore: q.qualityScore ?? q.quality_score ?? 1.0
   }));
+
+  // [STEP 9: PORTFOLIO-LEVEL REVIEWER v3.0.0]
+  tracer.recordStageStart(9, 'Portfolio-Level Reviewer');
+  const reviewResult = reviewQuizPortfolio(finalQuiz, pipelineContext);
+  const portfolioReviewSummary = reviewResult.portfolioReviewSummary;
+  console.log(`\n[ReqID: ${reqId}] [STEP 9: PORTFOLIO-LEVEL REVIEWER v3.0.0]`);
+  console.log(`  ├─ Portfolio Status: ${portfolioReviewSummary.approved ? 'APPROVED ✅' : 'WARNINGS ⚠️'} (Score: ${portfolioReviewSummary.score})`);
+  console.log(`  ├─ Syntax vs. Theory Ratio: ${portfolioReviewSummary.syntaxVsTheoryRatio}`);
+  console.log(`  ├─ Bloom Ramp Verified: ${portfolioReviewSummary.bloomDistribution?.join(' ──► ')}`);
+  console.log(`  └─ End-to-End Lineage Citations: ${portfolioReviewSummary.lineageCount} MCQs mapped to source evidence.`);
+  tracer.recordStageComplete(9, 'Portfolio-Level Reviewer', { finalQuizCount: finalQuiz.questions.length }, { approved: portfolioReviewSummary.approved });
 
   // Complete Pipeline Trace & Question Explainability Lineage Mapping
   tracer.recordStageComplete(8, 'Portfolio Assembly Engine', { approvedPoolSize: pipelineContext.approvedItems?.length }, { finalQuestionsCount: finalQuestions.length });

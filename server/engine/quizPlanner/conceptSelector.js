@@ -123,11 +123,15 @@ function allocateConceptSlots(conceptGraph, requestedCount = 10) {
     finalSequence.push(selected);
   }
 
-  // Calculate coverage metrics
+  // Calculate coverage metrics (Weighted Concept Coverage)
   const mappedConceptIds = new Set(finalSequence.map(n => n.id));
   const uncoveredConceptIds = nodes.filter(n => !mappedConceptIds.has(n.id)).map(n => n.id);
   const conceptCoverageRatio = Number((mappedConceptIds.size / Math.max(1, nodes.length)).toFixed(2));
   
+  const totalImportance = nodes.reduce((acc, n) => acc + (n.importanceScore || 0.5), 0);
+  const coveredImportance = nodes.filter(n => mappedConceptIds.has(n.id)).reduce((acc, n) => acc + (n.importanceScore || 0.5), 0);
+  const weightedConceptCoverage = Number((coveredImportance / Math.max(0.1, totalImportance)).toFixed(2));
+
   const avgImp = finalSequence.reduce((acc, n) => acc + (n.importanceScore || 0.5), 0) / Math.max(1, finalSequence.length);
   const averageConceptImportance = Number(avgImp.toFixed(2));
 
@@ -135,6 +139,7 @@ function allocateConceptSlots(conceptGraph, requestedCount = 10) {
     allocatedSlots: finalSequence,
     uncoveredConceptIds,
     conceptCoverageRatio,
+    weightedConceptCoverage,
     averageConceptImportance
   };
 }

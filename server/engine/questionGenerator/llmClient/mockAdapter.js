@@ -19,17 +19,22 @@ class MockAdapter {
 
     let mockResponse;
     if (isAggregation) {
-      const stageName = conceptLabel.startsWith('$') ? conceptLabel : `$${conceptLabel.toLowerCase()}`;
+      const validOps = ['group', 'unwind', 'lookup', 'addfields', 'switch', 'match', 'collscan', 'ixscan'];
+      const rawClean = conceptLabel.toLowerCase().replace(/[^a-z0-9_$]/g, '');
+      let stageName = rawClean.startsWith('$') ? rawClean : `$${rawClean}`;
+      if (!validOps.some(v => stageName.includes(v)) || stageName.includes('aggregation') || stageName.includes('indexing')) {
+        stageName = '$group';
+      }
       mockResponse = {
         status: "SUCCESS",
         stem: `Which query correctly constructs an aggregation pipeline stage using ${conceptLabel}?`,
         options: [
-          `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine", count: { $sum: 1 } } } ])`,
-          `db.restaurants.aggregate([ { $match: { rating: { $gt: 4 } } } ])`,
-          `db.restaurants.find({ category: "Italian" })`,
-          `db.restaurants.createIndex({ cuisine: 1 })`
+          `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine" } } ])`,
+          `db.restaurants.aggregate([ { $unwind: "$grades" } ])`,
+          `db.restaurants.aggregate([ { $addFields: { normalizedScore: 1 } } ])`,
+          `db.restaurants.aggregate([ { $lookup: { from: "reviews", localField: "_id", foreignField: "restaurant_id", as: "rev" } } ])`
         ],
-        correctAnswer: `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine", count: { $sum: 1 } } } ])`,
+        correctAnswer: `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine" } } ])`,
         explanation: `The source material specifies ${conceptLabel} as a core aggregation pipeline operator in MongoDB.`
       };
     } else if (isDb) {
