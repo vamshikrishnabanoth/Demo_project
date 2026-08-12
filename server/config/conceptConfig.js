@@ -27,7 +27,8 @@ const CONCEPT_CONFIG = {
   },
   NOISE_STOPWORDS: [
     "chapter", "lecture", "slide", "page", "section", "overview", "introduction",
-    "summary", "conclusion", "example", "exercise", "homework", "professor", "university"
+    "summary", "conclusion", "example", "exercise", "homework", "professor", "university",
+    "cse", "csm", "csd", "it", "ece", "eee", "rkr21", "rkr", "unit", "topic", "software engineering"
   ],
   CONCEPT_TYPES: [
     "PROTOCOL", "ALGORITHM", "DATA_STRUCTURE", "API", "CLASS", "METHOD",

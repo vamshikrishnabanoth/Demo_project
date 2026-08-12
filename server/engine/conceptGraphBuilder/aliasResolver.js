@@ -1,4 +1,5 @@
 const { CONCEPT_CONFIG } = require('../../config/conceptConfig');
+const { isValidConcept } = require('./utils/conceptSanitizer');
 
 /**
  * Deterministic Alias Resolver & Inverted Index Construction
@@ -13,6 +14,11 @@ function resolveAliasesAndBuildIndex(candidates, text) {
   for (const item of candidates) {
     const rawTerm = item.rawTerm ? String(item.rawTerm).trim() : '';
     if (!rawTerm) continue;
+
+    if (!isValidConcept(rawTerm)) {
+      filteredNoiseCount++;
+      continue;
+    }
 
     const normKey = rawTerm.toLowerCase().replace(/[^a-z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
     if (!normKey || normKey.length < 2) continue;

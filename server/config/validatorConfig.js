@@ -79,6 +79,8 @@ const BASE_VALIDATOR_PROPERTIES = {
     REDUCE_OPTION_AMBIGUITY: "REDUCE_OPTION_AMBIGUITY",
     REWRITE_DUPLICATE_STEM: "REWRITE_DUPLICATE_STEM",
     REWRITE_SELF_CONTAINED_QUESTION: "REWRITE_SELF_CONTAINED_QUESTION",
+    REWRITE_DOMAIN_SPECIFIC_DISTRACTORS: "REWRITE_DOMAIN_SPECIFIC_DISTRACTORS",
+    REWRITE_ROTATED_FRAMING: "REWRITE_ROTATED_FRAMING",
     FULL_REGENERATE: "FULL_REGENERATE"
   },
   PASS_CODES: {
@@ -98,6 +100,8 @@ const BASE_VALIDATOR_PROPERTIES = {
     EDU_003_IMPLAUSIBLE_DISTRACTOR: { code: "EDU_003", message: "Distractors lack domain relevance to lecture concepts." },
     EDU_004_OPTION_AMBIGUITY_TYPO: { code: "EDU_004", message: "Option choices exhibit extreme typographical similarity or subset ambiguity." },
     EDU_005_META_REFERENCE: { code: "EDU_005", message: "Question contains document-level meta-references (e.g. 'Scenario 1', 'Paragraph X', 'Assignment 1'). Must be rewritten as a self-contained domain question." },
+    EDU_006_BOILERPLATE_LEAK: { code: "EDU_006", message: "Options contain fallback boilerplate distractor strings (e.g., 'Core mechanism governing...'). Must rewrite using domain-specific facts." },
+    EDU_007_STEM_MONOTONY: { code: "EDU_007", message: "Multiple questions share the exact same lead-in stem phrase. Must use 5D rotated framing styles." },
     VAL_000_TIMEOUT_EXCEEDED: { code: "VAL_000", message: "Validation execution time exceeded maximum allowed threshold." },
     VAL_500_INTERNAL_FAILURE: { code: "VAL_500", message: "Unexpected internal exception encountered during validation." }
   }

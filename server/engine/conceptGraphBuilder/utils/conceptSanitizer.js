@@ -95,6 +95,11 @@ function normalizeTechnicalTerms(str) {
   return str;
 }
 
+const ACRONYM_BLACKLIST = new Set([
+  'CSE', 'CSM', 'CSD', 'IT', 'ECE', 'EEE', 'RKR21', 'RKR', 'PAGE', 'UNIT',
+  'SOFTWARE ENGINEERING', 'UNIT-1', 'UNIT-2', 'UNIT-3', 'UNIT-4', 'UNIT-5'
+]);
+
 /**
  * Check if candidate concept string is valid
  */
@@ -105,6 +110,9 @@ function isValidConcept(str) {
     // Only single-char concepts allowed are specific technical notations like O(1) or C
     if (!['C', 'R', 'K'].includes(trimmed)) return false;
   }
+
+  // Reject blacklisted academic header acronyms (CSE, CSM, CSD, IT, etc.)
+  if (ACRONYM_BLACKLIST.has(trimmed.toUpperCase())) return false;
 
   // Reject if it contains raw markdown hashes or line breaks
   if (/#|\n|\r/.test(trimmed)) return false;

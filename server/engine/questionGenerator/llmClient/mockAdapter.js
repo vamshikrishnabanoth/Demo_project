@@ -32,15 +32,15 @@ class MockAdapter {
     } else {
       mockResponse = {
         status: "SUCCESS",
-        stem: `Which of the following best describes the key function of ${conceptLabel}?`,
+        stem: `In software engineering and domain design, what is the primary role of ${conceptLabel}?`,
         options: [
-          `Core mechanism governing ${conceptLabel} operations.`,
-          `Secondary protocol configuration for external services.`,
-          `Legacy database schema table definition.`,
-          `Unrelated background process scheduler.`
+          `Defines the structural model and operational behavior of ${conceptLabel}.`,
+          `Specifies low-level hardware memory allocation routines.`,
+          `Executes background compilation of binary dependencies.`,
+          `Schedules network packet transmission across physical interfaces.`
         ],
-        correctAnswer: `Core mechanism governing ${conceptLabel} operations.`,
-        explanation: `The source content specifies ${conceptLabel} as a primary component in the overall system architecture.`
+        correctAnswer: `Defines the structural model and operational behavior of ${conceptLabel}.`,
+        explanation: `The source content specifies ${conceptLabel} as a primary structural element in the system model.`
       };
     }
 

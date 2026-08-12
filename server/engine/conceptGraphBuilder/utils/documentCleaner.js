@@ -44,8 +44,9 @@ function cleanDocument(rawText) {
   for (let line of lines) {
     let trimmed = line.trim();
 
-    // 1. Skip Page Numbers & Slide Headers (e.g., "Page 1 of 12", "Slide 5", "--- Page 3 ---")
-    if (/^(?:page\s+\d+(?:\s+of\s+\d+)?|slide\s+\d+|-+\s*page\s*\d+\s*-+)$/i.test(trimmed)) {
+    // 1. Skip Page Numbers, Slide Headers & Academic Header Metadata (e.g., "Page 1 of 12", "CSE", "CSM", "UNIT-3")
+    const HEADER_METADATA_REGEX = /^(?:page\s+\d+(?:\s+of\s+\d+)?|slide\s+\d+|-+\s*page\s*\d+\s*-+|(?:CSE|IT|CSM|CSD|ECE|EEE|RKR\d+|SOFTWARE ENGINEERING|UNIT\s*-\s*\d+|TOPIC\s*-\s*\d+|PAGE\s*\d+)\b)/i;
+    if (HEADER_METADATA_REGEX.test(trimmed)) {
       ocrArtifactsRemoved++;
       continue;
     }

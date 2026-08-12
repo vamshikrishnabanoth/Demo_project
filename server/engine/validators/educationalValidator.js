@@ -162,6 +162,39 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     findings.majorWarnings.push(codeStr);
   }
 
+  // 6. Boilerplate Distractor Filter (EDU_006_BOILERPLATE_LEAK)
+  const BOILERPLATE_PATTERNS = [
+    /core mechanism governing/i,
+    /secondary protocol configuration/i,
+    /legacy database schema/i,
+    /unrelated background process/i
+  ];
+  const hasBoilerplateLeak = options.some(opt => 
+    BOILERPLATE_PATTERNS.some(pat => pat.test(String(opt)))
+  );
+  if (hasBoilerplateLeak) {
+    scores.distractors = 0.20;
+    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_DOMAIN_SPECIFIC_DISTRACTORS || "REWRITE_DOMAIN_SPECIFIC_DISTRACTORS");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_006_BOILERPLATE_LEAK?.code || "EDU_006";
+    findings.criticalFailures.push(codeStr);
+  }
+
+  // 7. Stem Monotony Guard (EDU_007_STEM_MONOTONY)
+  const LEADIN_PHRASE_REGEX = /^(which of the following best describes|which of the following|what is the primary|what is the key|how does the)/i;
+  const currentLeadInMatch = stem.match(LEADIN_PHRASE_REGEX);
+  if (currentLeadInMatch && Array.isArray(validationContext.acceptedStems)) {
+    const leadInStr = currentLeadInMatch[0].toLowerCase();
+    const matchingCount = validationContext.acceptedStems.filter(prevStem => 
+      String(prevStem).toLowerCase().startsWith(leadInStr)
+    ).length;
+    if (matchingCount >= 2) {
+      scores.duplication = 0.30;
+      rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_ROTATED_FRAMING || "REWRITE_ROTATED_FRAMING");
+      const codeStr = VALIDATOR_CONFIG.CODES.EDU_007_STEM_MONOTONY?.code || "EDU_007";
+      findings.majorWarnings.push(codeStr);
+    }
+  }
+
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
   let rawQuality = (
     w.BLOOM * scores.bloom +
@@ -170,9 +203,9 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     w.AMBIGUITY * scores.ambiguity
   );
 
-  // Severe Quality Penalty for Meta-Reference Violation
-  if (isMetaRef) {
-    rawQuality = Math.min(rawQuality, 0.30);
+  // Severe Quality Penalty for Meta-Reference or Boilerplate Violations
+  if (isMetaRef || hasBoilerplateLeak) {
+    rawQuality = Math.min(rawQuality, 0.20);
   }
 
   const qualityScore = safeScore(rawQuality);

@@ -22,6 +22,12 @@ function buildConsolidatedRepairPrompt(item, hints = [], findings = {}) {
   if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_SELF_CONTAINED_QUESTION)) {
     instructions.push("- Rephrase the question stem to be 100% self-contained. Completely REMOVE any meta-references such as 'Scenario 1', 'Scenario 2', 'In this document', 'Paragraph X', or 'Assignment 1'. Frame the question as a clear, independent technical domain scenario.");
   }
+  if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_DOMAIN_SPECIFIC_DISTRACTORS)) {
+    instructions.push("- Completely REMOVE all boilerplate fallback option strings (such as 'Core mechanism governing...', 'Secondary protocol configuration...', 'Legacy database schema...'). Rewrite all 4 option choices using ONLY specific technical facts and domain terminology from the retrieved source snippet.");
+  }
+  if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_ROTATED_FRAMING)) {
+    instructions.push("- Rephrase the question stem using a 5D rotated framing style (Scenario, Diagnostic, Conceptual, or Trade-Off) to prevent repetitive lead-in stem phrasing.");
+  }
 
   if (instructions.length === 0) {
     instructions.push("- Improve distractor plausibility and align wording strictly with source evidence.");
