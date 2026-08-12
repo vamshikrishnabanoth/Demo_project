@@ -1,7 +1,8 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
+import AuthContext from '../context/AuthContext';
 import { 
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X, Award,
@@ -20,22 +21,32 @@ import {
 import { createTimerWorker } from '../utils/timerWorker';
 
 export default function CreateQuizTopic() {
+    const { user } = useContext(AuthContext);
+    const userId = user?.id || 'guest';
+    const storageKey = `quiz_docket_inputs_${userId}`;
+
     // ── 3 Inputs Only ──────────────────────────────────────────────────────────
     // 1. Source Content (Ingested files, recordings, or text prompts)
-    const [inputs, setInputs] = useState(() => {
+    const [inputs, setInputs] = useState([]);
+
+    useEffect(() => {
         try {
-            const saved = localStorage.getItem('quiz_docket_inputs');
+            const saved = localStorage.getItem(storageKey);
             if (saved) {
                 const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setInputs(parsed);
+                    return;
+                }
             }
         } catch (e) {
             console.error('Failed to load docket inputs:', e);
         }
-        return [];
-    });
+        setInputs([]);
+    }, [storageKey]);
 
     useEffect(() => {
+        if (!user) return;
         try {
             const serializable = inputs.map(inp => {
                 const { file, ...rest } = inp;
@@ -47,11 +58,11 @@ export default function CreateQuizTopic() {
                     schemaVersion: 2
                 };
             });
-            localStorage.setItem('quiz_docket_inputs', JSON.stringify(serializable));
+            localStorage.setItem(storageKey, JSON.stringify(serializable));
         } catch (e) {
             console.error('Failed to save docket inputs:', e);
         }
-    }, [inputs]);
+    }, [inputs, storageKey, user]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');

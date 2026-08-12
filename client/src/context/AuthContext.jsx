@@ -115,7 +115,21 @@ export const AuthProvider = ({ children }) => {
             socket.emit('logout', user.id);
             socket.disconnect();
         }
-        localStorage.removeItem('token');
+
+        // ── Strict Account Isolation & Data Privacy Purge ─────────────────────
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('quiz_docket_inputs');
+            if (user?.id) {
+                localStorage.removeItem(`quiz_docket_inputs_${user.id}`);
+            }
+            if (window.indexedDB) {
+                window.indexedDB.deleteDatabase('pending_audio_recordings');
+            }
+        } catch (e) {
+            console.error('Failed to purge client session storage on logout:', e);
+        }
+
         setUser(null);
     }, [user]);
 
