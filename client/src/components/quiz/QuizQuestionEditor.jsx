@@ -34,24 +34,40 @@ const kahootSelectedBorders = [
     'ring-4 ring-pink-500/50 !border-pink-500 shadow-md shadow-pink-500/20',
 ];
 
-// Auto-resize textarea helper for multiline questions & code blocks
+// Auto-resize textarea helper so long questions & options are 100% visible
 function AutoTextarea({ value, onChange, placeholder, style, className }) {
     const ref = useRef(null);
-    useEffect(() => {
+
+    const adjustHeight = () => {
         if (ref.current) {
             ref.current.style.height = 'auto';
-            ref.current.style.height = Math.max(80, ref.current.scrollHeight) + 'px';
+            ref.current.style.height = `${Math.max(48, ref.current.scrollHeight)}px`;
         }
+    };
+
+    useEffect(() => {
+        adjustHeight();
+        const timer = setTimeout(adjustHeight, 50);
+        return () => clearTimeout(timer);
     }, [value]);
+
+    useEffect(() => {
+        window.addEventListener('resize', adjustHeight);
+        return () => window.removeEventListener('resize', adjustHeight);
+    }, []);
+
     return (
         <textarea
             ref={ref}
-            rows={3}
+            rows={1}
             value={value}
-            onChange={onChange}
+            onChange={(e) => {
+                onChange(e);
+                adjustHeight();
+            }}
             placeholder={placeholder}
             className={className}
-            style={{ ...style, resize: 'vertical' }}
+            style={{ ...style, overflow: 'hidden', resize: 'none' }}
         />
     );
 }
@@ -129,7 +145,7 @@ export default function QuizQuestionEditor({
                             placeholder="Enter question prompt or paste multi-line source code here..."
                             value={question.questionText}
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
-                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-primary)] font-mono text-sm tracking-wide focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
+                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl p-4 font-sans font-bold text-base text-[#1f2937] leading-relaxed focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
                         />
 
                         {question.sourceEvidence && Array.isArray(question.sourceEvidence) && question.sourceEvidence.length > 0 && question.sourceEvidence[0]?.text && (
