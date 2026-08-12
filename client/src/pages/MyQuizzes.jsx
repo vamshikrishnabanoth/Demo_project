@@ -67,6 +67,32 @@ export default function MyQuizzes() {
         });
     };
 
+    const handlePreviewQuiz = async (quiz) => {
+        let questionsList = quiz.questions;
+        if (!questionsList || !Array.isArray(questionsList) || questionsList.length === 0) {
+            const toastId = toast.loading('Fetching quiz details...');
+            try {
+                const res = await api.get(`/quiz/${quiz.id}`);
+                questionsList = res.data?.questions || [];
+                toast.dismiss(toastId);
+            } catch (err) {
+                toast.error('Failed to load quiz questions.', { id: toastId });
+                return;
+            }
+        }
+        navigate('/create-quiz/text', {
+            state: {
+                questions: questionsList,
+                title: quiz.title,
+                duration: quiz.duration || 10,
+                timerPerQuestion: quiz.timerPerQuestion || 30,
+                isAssessment: quiz.isAssessment || false,
+                source: 'quiz',
+                isTemplate: true
+            }
+        });
+    };
+
     // Section Broadcast Modal state
     const [broadcastModal, setBroadcastModal] = useState({
         isOpen: false,
@@ -399,6 +425,16 @@ export default function MyQuizzes() {
 
                                             {/* Action Buttons */}
                                             <div className="flex items-center gap-3 w-full sm:w-auto">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePreviewQuiz(quiz)}
+                                                    className="flex-1 sm:flex-none bg-amber-500 !text-white border border-amber-600 px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all hover:bg-amber-600 active:scale-95 flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
+                                                    style={{ color: '#ffffff' }}
+                                                    title="Preview quiz questions and structure"
+                                                >
+                                                    <Eye size={18} /> Preview
+                                                </button>
+
                                                 {quiz.isAssessment ? (
                                                     <>
                                                         {quiz.isActive ? (

@@ -2669,7 +2669,8 @@ exports.getLiveQuizzes = async (req, res) => {
                 } catch (_) {}
             }
 
-            // Strip raw questions column for security against sniffing
+            // Strip raw questions column for students (security against sniffing), but keep for teachers/admins
+            const isTeacherOrAdmin = req.user && ['teacher', 'admin'].includes(req.user.role);
             const { questions, ...quizData } = quiz;
 
             // wasLiveCompleted: true when this quiz was a live session that has now finished.
@@ -2678,6 +2679,7 @@ exports.getLiveQuizzes = async (req, res) => {
 
             return {
                 ...quizData,
+                ...(isTeacherOrAdmin ? { questions } : {}),
                 isAttempted: !!result,
                 score: result ? result.score : 0,
                 totalQuestions: totalQ,
