@@ -1,0 +1,623 @@
+{
+  "version": "2.0.0",
+  "requestId": "test_doc_store_1786529173235",
+  "timestamp": "2026-08-12T10:06:13.236Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 20,
+      "timestamp": "2026-08-12T10:06:13.257Z"
+    },
+    {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "durationMs": 3,
+      "timestamp": "2026-08-12T10:06:13.260Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 10,
+      "timestamp": "2026-08-12T10:06:13.270Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T10:06:13.271Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T10:06:13.273Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 2475,
+      "timestamp": "2026-08-12T10:06:15.747Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 11,
+      "timestamp": "2026-08-12T10:06:15.759Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T10:06:15.759Z"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T10:06:15.762Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 3,
+      "timestamp": "2026-08-12T10:06:15.762Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 1.3569999999999993,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n3. Observer Pattern: Defines a one-to-many dependency between objects.\n4. Strategy Pattern: Enables selecting an algorithm's behavior at runtime."
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 20
+    },
+    "stage_1.5_instructional_document_analyzer": {
+      "stageNumber": 1.5,
+      "stageName": "Instructional Document Analyzer",
+      "startTimeMs": 21.368399999999994,
+      "status": "COMPLETED",
+      "inputs": {
+        "documentProfile": {
+          "profileVersion": "3.1",
+          "documentType": "PROGRAMMING_ASSIGNMENT",
+          "detectedLanguage": "MongoDB",
+          "primaryLanguageFamily": "MongoDB",
+          "confidence": 0.63,
+          "textTriad": {
+            "structuralMetadata": [
+              "Unit-3 Software Engineering & Architectural Patterns",
+              "Strategy Pattern: Enables selecting an algorithm's behavior at runtime"
+            ],
+            "proceduralActions": [],
+            "instructionalConcepts": [
+              "AND"
+            ]
+          },
+          "instructionalConcepts": [
+            "AND"
+          ],
+          "executableConstructs": [
+            "and"
+          ],
+          "proceduralActions": [],
+          "structuralMetadata": [
+            "Unit-3 Software Engineering & Architectural Patterns",
+            "Strategy Pattern: Enables selecting an algorithm's behavior at runtime"
+          ],
+          "learningObjectives": [
+            "Student should understand and correctly execute AND in MongoDB operations."
+          ],
+          "instructionalIntent": "Write queries & Apply operators",
+          "domainProfile": [
+            "and",
+            "pattern",
+            "one",
+            "defines",
+            "objects"
+          ],
+          "allocatedPracticalRatio": 0.7
+        }
+      },
+      "outputs": {
+        "languageFamily": "MongoDB"
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 3
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 24.129100000000008,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 380
+      },
+      "outputs": {
+        "activeNodes": 7,
+        "edges": 21
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 10
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 33.8403,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 3,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 3,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 1,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 35.320200000000014,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 3
+      },
+      "outputs": {
+        "promptPayloadsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 36.50019999999999,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 3
+      },
+      "outputs": {
+        "candidateItemsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2475
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 2511.3808,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 3
+      },
+      "outputs": {
+        "approved": 3,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 11
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 2522.8618,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 2522.8874,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 3
+      },
+      "outputs": {
+        "finalQuestionsCount": 3
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 3
+    },
+    "stage_9_portfolio-level_reviewer": {
+      "stageNumber": 9,
+      "stageName": "Portfolio-Level Reviewer",
+      "startTimeMs": 2525.1382,
+      "status": "COMPLETED",
+      "inputs": {
+        "finalQuizCount": 3
+      },
+      "outputs": {
+        "approved": true
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_singleton_pattern",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Singleton Pattern\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of Singleton Pattern?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Singleton Pattern\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nUnit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n\"\"\"\nSummary Context:\n\"\"\"\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interf...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_ensures_a_class",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Ensures a class\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Ensures a class. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Ensures a class\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nUnit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n\"\"\"\nSummary Context:\n\"\"\"\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interface for creating obje...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_factory_method_pattern",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Factory Method Pattern\" (GENERAL_CONCEPT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Factory Method Pattern. What is the root cause?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Factory Method Pattern\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nUnit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n3. Observer Pattern: Defines a one-to-many dependency between objects.\n\"\"\"\nSummary Context:\n\"\"\"\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interface for creating objects in a superclass. 3. Observer Pattern: Defines a one-to-many dependency betwe...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [
+    {
+      "questionNumber": 1,
+      "questionId": "Q1",
+      "finalStem": "In software engineering and domain design, what is the primary role of Singleton Pattern?",
+      "options": [
+        "Defines the structural model and operational behavior of Singleton Pattern.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Singleton Pattern.",
+      "explanation": "The source content specifies Singleton Pattern as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Singleton Pattern' at Bloom depth [RECALL | EASY].",
+        "targetConcept": {
+          "label": "Singleton Pattern",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.",
+          "evidenceBounds": {
+            "startChar": 3,
+            "endChar": 20
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "RECALL",
+          "targetDifficulty": "EASY",
+          "framingStyle": "Conceptual",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_001_singleton_pattern",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Singleton Pattern\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: N..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Singleton Pattern?\",\n  \"options\": [\n    \"Defines the structural model and operational behavior of Singleton Pattern.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 2,
+      "questionId": "Q2",
+      "finalStem": "In software engineering and domain design, what is the primary role of Ensures a class?",
+      "options": [
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Ensures a class.",
+        "Executes background compilation of binary dependencies.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Ensures a class.",
+      "explanation": "The source content specifies Ensures a class as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Ensures a class' at Bloom depth [APPLY | MEDIUM].",
+        "targetConcept": {
+          "label": "Ensures a class",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.",
+          "evidenceBounds": {
+            "startChar": 22,
+            "endChar": 41
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "APPLY",
+          "targetDifficulty": "MEDIUM",
+          "framingStyle": "Scenario",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_002_ensures_a_class",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Singleton Pattern\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: N..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Ensures a class?\",\n  \"options\": [\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Ensures a class.\",\n    \"Executes background compilation of binary dependencies.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    },
+    {
+      "questionNumber": 3,
+      "questionId": "Q3",
+      "finalStem": "In software engineering and domain design, what is the primary role of Factory Method Pattern?",
+      "options": [
+        "Executes background compilation of binary dependencies.",
+        "Specifies low-level hardware memory allocation routines.",
+        "Defines the structural model and operational behavior of Factory Method Pattern.",
+        "Schedules network packet transmission across physical interfaces."
+      ],
+      "correctAnswer": "Defines the structural model and operational behavior of Factory Method Pattern.",
+      "explanation": "The source content specifies Factory Method Pattern as a primary structural element in the system model.",
+      "lineage": {
+        "generatedBecause": "Selected during Stage 3 Quiz Planning to evaluate 'Factory Method Pattern' at Bloom depth [ANALYZE | HARD].",
+        "targetConcept": {
+          "label": "Factory Method Pattern",
+          "category": "CORE_CONCEPT",
+          "importanceScore": 0.34,
+          "centralityScore": 0.6
+        },
+        "supportingEvidence": {
+          "textSnippet": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n3. Observer Pattern: Defines a one-to-many dependency between objects.",
+          "evidenceBounds": {
+            "startChar": 99,
+            "endChar": 121
+          }
+        },
+        "plannerDecision": {
+          "targetBloom": "ANALYZE",
+          "targetDifficulty": "HARD",
+          "framingStyle": "Diagnostic",
+          "distractorStrategy": "peer_concept"
+        },
+        "promptSection": {
+          "slotId": "slot_003_factory_method_pattern",
+          "userPromptSnippet": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Singleton Pattern\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: N..."
+        },
+        "rawLlmOutput": {
+          "rawTextSnippet": "{\n  \"stem\": \"In software engineering and domain design, what is the primary role of Factory Method Pattern?\",\n  \"options\": [\n    \"Executes background compilation of binary dependencies.\",\n    \"Specifies low-level hardware memory allocation routines.\",\n    \"Defines the structural model and operational behavior of Factory Method Pattern.\",\n    \"Schedules network packet transmission across physical interfaces.\"\n  ]\n}",
+          "model": "mock-mcq-engine-v1",
+          "attempts": 1
+        },
+        "postProcessing": {
+          "repaired": false,
+          "unicodeNormalized": false,
+          "optionShuffled": true
+        },
+        "validatorScores": {
+          "qualityScore": 1,
+          "structuralValid": true,
+          "groundingMatch": "Exact",
+          "educationalPass": true
+        }
+      }
+    }
+  ],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_test_doc_store_1786529173235",
+    "sourceId": "document_upload",
+    "totalQuestions": 3,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "43.0%",
+        "bloomDistribution": {
+          "RECALL": "33%",
+          "APPLY": "33%",
+          "ANALYZE": "33%"
+        },
+        "framingDistribution": {
+          "Scenario": 1,
+          "Diagnostic": 1,
+          "Conceptual": 1,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 1,
+          "B": 1,
+          "C": 1,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.43,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 3,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "43.0%",
+      "bloomDistribution": {
+        "RECALL": "33%",
+        "APPLY": "33%",
+        "ANALYZE": "33%"
+      },
+      "framingDistribution": {
+        "Scenario": 1,
+        "Diagnostic": 1,
+        "Conceptual": 1,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 0
+      }
+    },
+    "questions": [
+      {
+        "questionNumber": 1,
+        "slotId": "slot_001_singleton_pattern",
+        "conceptId": "singleton_pattern",
+        "conceptLabel": "Singleton Pattern",
+        "targetDifficulty": "EASY",
+        "targetBloom": "RECALL",
+        "bloomLevel": "RECALL",
+        "framingStyle": "Conceptual",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Singleton Pattern?",
+        "options": [
+          "Defines the structural model and operational behavior of Singleton Pattern.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Singleton Pattern.",
+        "correctOptionLetter": "A",
+        "explanation": "The source content specifies Singleton Pattern as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.",
+          "evidenceBounds": [
+            [
+              0,
+              234
+            ]
+          ],
+          "summaryContext": "1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interf..."
+        }
+      },
+      {
+        "questionNumber": 2,
+        "slotId": "slot_002_ensures_a_class",
+        "conceptId": "ensures_a_class",
+        "conceptLabel": "Ensures a class",
+        "targetDifficulty": "MEDIUM",
+        "targetBloom": "APPLY",
+        "bloomLevel": "APPLY",
+        "framingStyle": "Scenario",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Ensures a class?",
+        "options": [
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Ensures a class.",
+          "Executes background compilation of binary dependencies.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Ensures a class.",
+        "correctOptionLetter": "B",
+        "explanation": "The source content specifies Ensures a class as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.",
+          "evidenceBounds": [
+            [
+              0,
+              234
+            ]
+          ],
+          "summaryContext": "1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interface for creating obje..."
+        }
+      },
+      {
+        "questionNumber": 3,
+        "slotId": "slot_003_factory_method_pattern",
+        "conceptId": "factory_method_pattern",
+        "conceptLabel": "Factory Method Pattern",
+        "targetDifficulty": "HARD",
+        "targetBloom": "ANALYZE",
+        "bloomLevel": "ANALYZE",
+        "framingStyle": "Diagnostic",
+        "stemPattern": "",
+        "stem": "In software engineering and domain design, what is the primary role of Factory Method Pattern?",
+        "options": [
+          "Executes background compilation of binary dependencies.",
+          "Specifies low-level hardware memory allocation routines.",
+          "Defines the structural model and operational behavior of Factory Method Pattern.",
+          "Schedules network packet transmission across physical interfaces."
+        ],
+        "correctAnswer": "Defines the structural model and operational behavior of Factory Method Pattern.",
+        "correctOptionLetter": "C",
+        "explanation": "The source content specifies Factory Method Pattern as a primary structural element in the system model.",
+        "sourceEvidence": {
+          "text": "Unit-3 Software Engineering & Architectural Patterns\n1. Singleton Pattern: Ensures a class has only one instance and provides a global access point.\n2. Factory Method Pattern: Defines an interface for creating objects in a superclass.\n3. Observer Pattern: Defines a one-to-many dependency between objects.",
+          "evidenceBounds": [
+            [
+              0,
+              305
+            ]
+          ],
+          "summaryContext": "1. Singleton Pattern: Ensures a class has only one instance and provides a global access point. 2. Factory Method Pattern: Defines an interface for creating objects in a superclass. 3. Observer Pattern: Defines a one-to-many dependency betwe..."
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "totalDurationMs": 2526
+  }
+}

@@ -15,6 +15,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
 const { resolveCorrectOptionText } = require('../utils/grading');
+const documentStore = require('../storage/documentStore');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -563,11 +564,19 @@ exports.getFileMetadata = async (req, res) => {
             extractedText = fs.readFileSync(filePath, 'utf8');
         }
 
+        const savedDoc = documentStore.saveDocument({
+            filename: req.file.originalname,
+            ext,
+            totalPages: totalCount,
+            textContent: extractedText
+        });
+
         // Clean up the file immediately after metadata extraction
         try { fs.unlinkSync(filePath); } catch (_) {}
 
         return res.json({
             success: true,
+            documentId: savedDoc.documentId,
             totalCount,
             type,
             name: req.file.originalname,
@@ -1996,6 +2005,23 @@ exports.generateQuizQuestions = async (req, res) => {
                         fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
                     } catch (e) {
                         console.error('Error parsing file_configs:', e);
+                    }
+                }
+
+                if (fileConfigs && fileConfigs.length > 0) {
+                    for (const cfg of fileConfigs) {
+                        if (cfg.documentId) {
+                            const docData = documentStore.getScopedText(cfg.documentId, cfg.startPage, cfg.endPage);
+                            if (docData && docData.scopedText) {
+                                parsedInputs.push({
+                                    type: docData.filename.endsWith('.pdf') ? 'pdf' : 'document',
+                                    content: docData.scopedText,
+                                    source_name: docData.filename,
+                                    startPage: cfg.startPage || 1,
+                                    endPage: cfg.endPage || docData.totalPages
+                                });
+                            }
+                        }
                     }
                 }
 

@@ -39,7 +39,13 @@ export default function CreateQuizTopic() {
         try {
             const serializable = inputs.map(inp => {
                 const { file, ...rest } = inp;
-                return rest;
+                if (inp.documentId) {
+                    delete rest.content;
+                }
+                return {
+                    ...rest,
+                    schemaVersion: 2
+                };
             });
             localStorage.setItem('quiz_docket_inputs', JSON.stringify(serializable));
         } catch (e) {
@@ -230,9 +236,11 @@ export default function CreateQuizTopic() {
                     if (res.data && res.data.totalCount) {
                         setInputs(prev => prev.map(item => item.id === id ? {
                             ...item,
+                            documentId: res.data.documentId,
                             maxPages: res.data.totalCount,
                             endPage: res.data.totalCount,
                             content: res.data.extractedText || '',
+                            schemaVersion: 2,
                             fetchingMetadata: false
                         } : item));
                     }
@@ -528,8 +536,9 @@ export default function CreateQuizTopic() {
             formData.append('files', inp.file);
         });
 
-        const fileConfigs = fileInputs.map(inp => ({
+        const fileConfigs = inputs.filter(inp => inp.type !== 'text').map(inp => ({
             name: inp.source_name,
+            documentId: inp.documentId,
             startPage: inp.startPage || 1,
             endPage: inp.endPage || 999
         }));
