@@ -162,37 +162,46 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     findings.majorWarnings.push(codeStr);
   }
 
-  // 6. Boilerplate Distractor Filter (EDU_006_BOILERPLATE_LEAK)
-  const BOILERPLATE_PATTERNS = [
-    /core mechanism governing/i,
-    /secondary protocol configuration/i,
-    /legacy database schema/i,
-    /unrelated background process/i
+  // 6. Out-of-Domain Distractor Filter (EDU_006_OUT_OF_DOMAIN)
+  const OUT_OF_DOMAIN_PATTERNS = [
+    /compiler internals/i,
+    /packet transmission/i,
+    /kernel scheduling/i,
+    /binary dependencies/i,
+    /hardware memory allocation/i,
+    /network socket listeners/i
   ];
-  const hasBoilerplateLeak = options.some(opt => 
-    BOILERPLATE_PATTERNS.some(pat => pat.test(String(opt)))
+  const isDatabaseDoc = /mongodb|sql|database|query|crud|update|delete|find/i.test(String(validationContext.content || ""));
+  const hasOutOfDomainLeak = isDatabaseDoc && options.some(opt => 
+    OUT_OF_DOMAIN_PATTERNS.some(pat => pat.test(String(opt)))
   );
-  if (hasBoilerplateLeak) {
+  if (hasOutOfDomainLeak) {
     scores.distractors = 0.20;
-    rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_DOMAIN_SPECIFIC_DISTRACTORS || "REWRITE_DOMAIN_SPECIFIC_DISTRACTORS");
-    const codeStr = VALIDATOR_CONFIG.CODES.EDU_006_BOILERPLATE_LEAK?.code || "EDU_006";
+    rawRepairHints.push("REWRITE_DOMAIN_SPECIFIC_DISTRACTORS");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_006_OUT_OF_DOMAIN?.code || "EDU_006";
     findings.criticalFailures.push(codeStr);
   }
 
-  // 7. Stem Monotony Guard (EDU_007_STEM_MONOTONY)
-  const LEADIN_PHRASE_REGEX = /^(which of the following best describes|which of the following|what is the primary|what is the key|how does the)/i;
-  const currentLeadInMatch = stem.match(LEADIN_PHRASE_REGEX);
-  if (currentLeadInMatch && Array.isArray(validationContext.acceptedStems)) {
-    const leadInStr = currentLeadInMatch[0].toLowerCase();
-    const matchingCount = validationContext.acceptedStems.filter(prevStem => 
-      String(prevStem).toLowerCase().startsWith(leadInStr)
-    ).length;
-    if (matchingCount >= 2) {
-      scores.duplication = 0.30;
-      rawRepairHints.push(VALIDATOR_CONFIG.REPAIR_HINTS.REWRITE_ROTATED_FRAMING || "REWRITE_ROTATED_FRAMING");
-      const codeStr = VALIDATOR_CONFIG.CODES.EDU_007_STEM_MONOTONY?.code || "EDU_007";
-      findings.majorWarnings.push(codeStr);
-    }
+  // 7. Educational Alignment Check (EDU_008_LOW_ALIGNMENT)
+  const isExecutableSlot = mcqItem?.executable || mcqItem?.canGenerateSyntaxQuestion;
+  const isPureDefinitionQuestion = /what is the definition|what does the acronym|what is the role of/i.test(stem);
+  if (isExecutableSlot && isPureDefinitionQuestion) {
+    scores.bloom = 0.30;
+    rawRepairHints.push("REWRITE_PRACTICAL_SYNTAX_QUESTION");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_008_LOW_ALIGNMENT?.code || "EDU_008";
+    findings.majorWarnings.push(codeStr);
+  }
+
+  // 8. Practical Utility Score Check (EDU_009_LOW_PRACTICALITY)
+  const isPracticalDoc = validationContext.docType === "DATABASE_QUERY_DOCUMENT" || validationContext.docType === "PROGRAMMING_ASSIGNMENT" || isDatabaseDoc;
+  const hasSyntaxInOptions = options.some(opt => /[\{\}\$\[\]\(\)=><]|\b(find|update|delete|select|where)\b/i.test(String(opt)));
+  const practicalUtilityScore = isPracticalDoc ? (hasSyntaxInOptions ? 0.95 : 0.40) : 0.85;
+
+  if (isPracticalDoc && practicalUtilityScore < 0.70) {
+    scores.distractors = Math.min(scores.distractors, 0.40);
+    rawRepairHints.push("REWRITE_PRACTICAL_SYNTAX_QUESTION");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_009_LOW_PRACTICALITY?.code || "EDU_009";
+    findings.majorWarnings.push(codeStr);
   }
 
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
@@ -203,8 +212,8 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     w.AMBIGUITY * scores.ambiguity
   );
 
-  // Severe Quality Penalty for Meta-Reference or Boilerplate Violations
-  if (isMetaRef || hasBoilerplateLeak) {
+  // Severe Quality Penalty for Meta-Reference or Out-of-Domain Violations
+  if (isMetaRef || hasOutOfDomainLeak) {
     rawQuality = Math.min(rawQuality, 0.20);
   }
 

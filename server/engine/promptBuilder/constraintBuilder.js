@@ -34,8 +34,13 @@ function buildConstraintText(slot) {
   lines.push(`- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.`);
   lines.push(`- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.`);
 
-  if (hints.prerequisiteIds && hints.prerequisiteIds.length > 0) {
-    lines.push(`- Prerequisite Concepts: ${hints.prerequisiteIds.join(', ')}`);
+  if (slot.executable || slot.canGenerateSyntaxQuestion) {
+    lines.push(`- EXECUTABLE SYNTAX DIRECTIVE: Construct a practical query, command execution, or syntax correctness question (e.g. 'Which query correctly...', 'Which statement updates...', 'What will this operator produce?').`);
+    lines.push(`- SYNTACTICALLY PLAUSIBLE DISTRACTORS: All 4 options MUST be syntactically plausible, domain-relevant executable syntax or query choices. Avoid abstract non-executable definitions.`);
+  }
+
+  if (slot.learningObjective) {
+    lines.push(`- TARGET LEARNING OBJECTIVE: "${slot.learningObjective}"`);
   }
 
   return lines.join('\n');

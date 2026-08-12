@@ -27,6 +27,7 @@ async function validateCandidateBatch(candidateItems = [], pipelineContext = {})
       try {
         results[task.index] = await validateMCQWithTimeout(task.item, pipelineContext);
       } catch (err) {
+        console.error("VALIDATOR EXCEPTION:", err);
         results[task.index] = {
           validatorVersion: VALIDATOR_CONFIG.VERSIONS.VALIDATOR,
           pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,

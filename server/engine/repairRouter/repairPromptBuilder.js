@@ -28,6 +28,12 @@ function buildConsolidatedRepairPrompt(item, hints = [], findings = {}) {
   if (hints.includes(REPAIR_CONFIG.HINTS.REWRITE_ROTATED_FRAMING)) {
     instructions.push("- Rephrase the question stem using a 5D rotated framing style (Scenario, Diagnostic, Conceptual, or Trade-Off) to prevent repetitive lead-in stem phrasing.");
   }
+  if (hints.includes("REWRITE_PRACTICAL_SYNTAX_QUESTION") || hints.includes(REPAIR_CONFIG.HINTS.REWRITE_PRACTICAL_SYNTAX_QUESTION)) {
+    instructions.push("- REWRITE AS A PRACTICAL EXECUTABLE QUESTION: Frame the stem to test practical query construction, operator semantics, or command execution (e.g. 'Which query correctly...', 'Which statement updates...'). Ensure all 4 options are syntactically realistic code/query snippets.");
+  }
+  if (hints.includes("REWRITE_LEARNING_OBJECTIVE_ALIGNMENT") || hints.includes(REPAIR_CONFIG.HINTS.REWRITE_LEARNING_OBJECTIVE_ALIGNMENT)) {
+    instructions.push("- ALIGN WITH LEARNING OBJECTIVE: Ensure the question directly tests student mastery of operational execution rather than a generic definition.");
+  }
 
   if (instructions.length === 0) {
     instructions.push("- Improve distractor plausibility and align wording strictly with source evidence.");

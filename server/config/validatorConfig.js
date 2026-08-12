@@ -100,8 +100,10 @@ const BASE_VALIDATOR_PROPERTIES = {
     EDU_003_IMPLAUSIBLE_DISTRACTOR: { code: "EDU_003", message: "Distractors lack domain relevance to lecture concepts." },
     EDU_004_OPTION_AMBIGUITY_TYPO: { code: "EDU_004", message: "Option choices exhibit extreme typographical similarity or subset ambiguity." },
     EDU_005_META_REFERENCE: { code: "EDU_005", message: "Question contains document-level meta-references (e.g. 'Scenario 1', 'Paragraph X', 'Assignment 1'). Must be rewritten as a self-contained domain question." },
-    EDU_006_BOILERPLATE_LEAK: { code: "EDU_006", message: "Options contain fallback boilerplate distractor strings (e.g., 'Core mechanism governing...'). Must rewrite using domain-specific facts." },
-    EDU_007_STEM_MONOTONY: { code: "EDU_007", message: "Multiple questions share the exact same lead-in stem phrase. Must use 5D rotated framing styles." },
+    EDU_006_OUT_OF_DOMAIN: { code: "EDU_006", message: "Options contain out-of-domain technical distractors unrelated to the uploaded document domain." },
+    EDU_007_LOW_CONCEPT_COVERAGE: { code: "EDU_007", message: "Portfolio weighted concept coverage is below required 70% threshold." },
+    EDU_008_LOW_ALIGNMENT: { code: "EDU_008", message: "Question framing lacks alignment with target practical learning objective." },
+    EDU_009_LOW_PRACTICALITY: { code: "EDU_009", message: "Question practical utility score is below required 0.70 threshold for practical assignment." },
     VAL_000_TIMEOUT_EXCEEDED: { code: "VAL_000", message: "Validation execution time exceeded maximum allowed threshold." },
     VAL_500_INTERNAL_FAILURE: { code: "VAL_500", message: "Unexpected internal exception encountered during validation." }
   }

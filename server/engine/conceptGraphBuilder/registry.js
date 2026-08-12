@@ -3,6 +3,7 @@ const codeMathExtractor = require('./extractors/codeMathExtractor');
 const acronymExtractor = require('./extractors/acronymExtractor');
 const definitionExtractor = require('./extractors/definitionExtractor');
 const nounPhraseExtractor = require('./extractors/nounPhraseExtractor');
+const typedConceptExtractor = require('./extractors/typedConceptExtractor');
 
 /**
  * 3. STATELESS EXTRACTOR REGISTRY WITH ISOLATION
@@ -15,7 +16,8 @@ class ExtractorRegistry {
       codeMathExtractor,
       acronymExtractor,
       definitionExtractor,
-      nounPhraseExtractor
+      nounPhraseExtractor,
+      typedConceptExtractor
     ]);
   }
 

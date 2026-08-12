@@ -14,9 +14,23 @@ class MockAdapter {
 
     const conceptLabel = promptPayload.userPrompt.match(/Target Concept:\s*"([^"]+)"/)?.[1] || "Concept";
     const isGit = /git|commit|branch|merge|push|pull|repository|remote/i.test(conceptLabel);
+    const isDb = /crud|mongodb|sql|query|push|gt|lt|update|delete|find|products|stock|manager/i.test(conceptLabel) || promptPayload.userPrompt.includes('DATABASE_QUERY_DOCUMENT');
 
     let mockResponse;
-    if (isGit) {
+    if (isDb) {
+      mockResponse = {
+        status: "SUCCESS",
+        stem: `Which query correctly uses the ${conceptLabel} operator to filter or update database records?`,
+        options: [
+          `db.products.updateMany({}, { ${conceptLabel}: { stock: 20 } })`,
+          `db.products.find({ price: { $gt: 10000 } })`,
+          `db.users.deleteMany({ status: "inactive" })`,
+          `db.customers.updateOne({ id: 101 }, { $push: { cart: "Laptop" } })`
+        ],
+        correctAnswer: `db.products.updateMany({}, { ${conceptLabel}: { stock: 20 } })`,
+        explanation: `The source content specifies ${conceptLabel} as a primary database query operator.`
+      };
+    } else if (isGit) {
       mockResponse = {
         status: "SUCCESS",
         stem: `In version control workflows, what is the primary role of ${conceptLabel}?`,

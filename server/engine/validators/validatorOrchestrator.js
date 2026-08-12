@@ -105,6 +105,7 @@ async function validateMCQWithTimeout(mcqItem, validationContext = {}) {
       });
 
       if (!groundRes.passed) {
+        console.warn(`[VALIDATOR_FAIL] Grounding failed for item ${mcqItem?.slotId}:`, groundRes.code, groundRes.errorDetail);
         return {
           validatorVersion: version,
           pipelineVersion: VALIDATOR_CONFIG.VERSIONS.PIPELINE,

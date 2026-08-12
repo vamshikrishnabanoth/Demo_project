@@ -1,5 +1,6 @@
 const { CONCEPT_CONFIG } = require('../../config/conceptConfig');
 const { isValidConcept } = require('./utils/conceptSanitizer');
+const { inferLearningObjective } = require('./extractors/objectiveExtractor');
 
 /**
  * Deterministic Alias Resolver & Inverted Index Construction
@@ -40,6 +41,11 @@ function resolveAliasesAndBuildIndex(candidates, text) {
         evidenceOffsets: [],
         frequency: 0,
         hasCodeOrMath: !!item.hasCodeOrMath,
+        category: item.category || "DOMAIN_CONCEPT",
+        executable: !!item.executable,
+        canGenerateSyntaxQuestion: !!item.canGenerateSyntaxQuestion,
+        importanceScore: item.importanceScore || 0.85,
+        learningObjective: inferLearningObjective(rawTerm, item.category, text),
         firstOffset: item.startOffset || 0
       });
       conceptIndex[conceptId] = [];

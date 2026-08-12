@@ -1,0 +1,288 @@
+{
+  "version": "2.0.0",
+  "requestId": "test_assignment2_e2e",
+  "timestamp": "2026-08-12T09:08:33.990Z",
+  "environment": "development",
+  "provider": "mock",
+  "timeline": [
+    {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "durationMs": 16,
+      "timestamp": "2026-08-12T09:08:34.007Z"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "durationMs": 4,
+      "timestamp": "2026-08-12T09:08:34.011Z"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "durationMs": 2,
+      "timestamp": "2026-08-12T09:08:34.013Z"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T09:08:34.014Z"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "durationMs": 2412,
+      "timestamp": "2026-08-12T09:08:36.426Z"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "durationMs": 5,
+      "timestamp": "2026-08-12T09:08:36.431Z"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "durationMs": 0,
+      "timestamp": "2026-08-12T09:08:36.431Z"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "durationMs": 1,
+      "timestamp": "2026-08-12T09:08:36.433Z"
+    }
+  ],
+  "stages": {
+    "stage_1_ingestion_&_cleaning": {
+      "stageNumber": 1,
+      "stageName": "Ingestion & Cleaning",
+      "startTimeMs": 0.8576999999999941,
+      "status": "COMPLETED",
+      "inputs": {
+        "rawContent": "Assignment 2: Advanced CRUD Operations in MongoDB\nScenario 1 - Low Stock Products\nDataset link: https://drive.google.com/file/d/1abcxyz/view (products.json)\nThe warehouse manager wants to restock products that are running low.\nDisplay all products whose stock is less than 20. Use $lt operator.\ndb.products.find({ stock: { $lt: 20 } })\n\nScenario 2 - Premium Product Listing\nDataset link: https://drive.google.com/file/d/2defuvw/view (movies.json)\nThe marketing team is preparing a premium product catalogue.\nDisplay all products costing more than 10000 arranged from most expensive to least expensive.\ndb.products.find({ price: { $gt: 10000 } }).sort({ price: -1 })\n\nScenario 3 - Customer Cart Update\nAdd a new item to customer shopping cart array using $push operator.\ndb.customers.updateOne({ id: 101 }, { $push: { cart: \"Laptop\" } })\n\nScenario 4 - Delete Inactive Users\nDelete all user accounts that have status \"inactive\" using deleteMany().\ndb.users.deleteMany({ status: \"inactive\" })"
+      },
+      "outputs": {
+        "validSourcesCount": 1
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 16
+    },
+    "stage_2_concept_graph_builder": {
+      "stageNumber": 2,
+      "stageName": "Concept Graph Builder",
+      "startTimeMs": 16.82249999999999,
+      "status": "COMPLETED",
+      "inputs": {
+        "textLength": 989
+      },
+      "outputs": {
+        "activeNodes": 12,
+        "edges": 66
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 4
+    },
+    "stage_3_quiz_planner_engine": {
+      "stageNumber": 3,
+      "stageName": "Quiz Planner Engine",
+      "startTimeMs": 21.051299999999998,
+      "status": "COMPLETED",
+      "inputs": {
+        "requestedCount": 4,
+        "difficulty": "Balanced"
+      },
+      "outputs": {
+        "slots": 4,
+        "distribution": {
+          "EASY": 1,
+          "MEDIUM": 2,
+          "HARD": 1
+        }
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2
+    },
+    "stage_4_prompt_builder_engine": {
+      "stageNumber": 4,
+      "stageName": "Prompt Builder Engine",
+      "startTimeMs": 23.1254,
+      "status": "COMPLETED",
+      "inputs": {
+        "slotCount": 4
+      },
+      "outputs": {
+        "promptPayloadsCount": 4
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    },
+    "stage_5_question_generator_engine": {
+      "stageNumber": 5,
+      "stageName": "Question Generator Engine",
+      "startTimeMs": 24.570499999999996,
+      "status": "COMPLETED",
+      "inputs": {
+        "promptPayloadsCount": 4
+      },
+      "outputs": {
+        "candidateItemsCount": 4
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 2412
+    },
+    "stage_6_3-tier_validator_orchestrator": {
+      "stageNumber": 6,
+      "stageName": "3-Tier Validator Orchestrator",
+      "startTimeMs": 2436.4377000000004,
+      "status": "COMPLETED",
+      "inputs": {
+        "candidateItemsCount": 4
+      },
+      "outputs": {
+        "approved": 0,
+        "repairQueue": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 5
+    },
+    "stage_7_targeted_repair_router": {
+      "stageNumber": 7,
+      "stageName": "Targeted Repair Router",
+      "startTimeMs": 2441.4419000000003,
+      "status": "COMPLETED",
+      "inputs": {
+        "repairQueueLength": 0
+      },
+      "outputs": {
+        "repairedCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 0
+    },
+    "stage_8_portfolio_assembly_engine": {
+      "stageNumber": 8,
+      "stageName": "Portfolio Assembly Engine",
+      "startTimeMs": 2441.4651000000003,
+      "status": "COMPLETED",
+      "inputs": {
+        "approvedPoolSize": 0
+      },
+      "outputs": {
+        "finalQuestionsCount": 0
+      },
+      "warnings": [],
+      "decisions": [],
+      "durationMs": 1
+    }
+  },
+  "decisions": [],
+  "prompts": [
+    {
+      "slotId": "slot_001_crud",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"CRUD\" (GENERAL_CONCEPT)\n- Target Cognitive Level: RECALL (EASY)\n- Framing Style: Conceptual\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"What is the primary role / core property of CRUD?\"\n- EASY COGNITIVE DEPTH: Construct a direct factual recall question testing core definitions or key properties.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand CRUD\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAssignment 2: Advanced CRUD Operations in MongoDB\nScenario 1 - Low Stock Products\nDataset link: https://drive.google.com/file/d/1abcxyz/view (products.json)\nThe warehouse manager wants to restock products that are running low.\n\"\"\"\nSummary Context:\n\"\"\"\n: Advanced CRUD Operations in MongoDB - Low Stock Products : () The warehouse manager wants to restock products that are running low. D...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_002_advanced_crud_operations",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Advanced CRUD Operations\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Scenario\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"An engineer encounters a system scenario involving Advanced CRUD Operations. Which design choice best applies?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Advanced CRUD Operations\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAssignment 2: Advanced CRUD Operations in MongoDB\nScenario 1 - Low Stock Products\nDataset link: https://drive.google.com/file/d/1abcxyz/view (products.json)\nThe warehouse manager wants to restock products that are running low.\n\"\"\"\nSummary Context:\n\"\"\"\n: Advanced CRUD Operations in MongoDB - Low Stock Products : () The warehouse manager wants to restock products that are running low. Display all pro...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - SCENARIO]\nStem: An engineer observes [Specific Operational Condition]. Which mechanism is directly regulating this behavior?\nOptions: [\"Primary Protocol Mechanism\", \"Unrelated Network Protocol\", \"Secondary Interface Command\", \"Database Table Operation\"]\nCorrect Answer: \"Primary Protocol Mechanism\"\nExplanation: The observed condition describes [behavior], which directly corresponds to [Primary Protocol Mechanism].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_003_low_stock_products",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Low Stock Products\" (GENERAL_CONCEPT)\n- Target Cognitive Level: APPLY (MEDIUM)\n- Framing Style: Diagnostic\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"A defect or anomaly is detected in Low Stock Products. What is the root cause?\"\n- MEDIUM COGNITIVE DEPTH: Construct an application-based question testing procedural execution or scenario application.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Low Stock Products\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAssignment 2: Advanced CRUD Operations in MongoDB\nScenario 1 - Low Stock Products\nDataset link: https://drive.google.com/file/d/1abcxyz/view (products.json)\nThe warehouse manager wants to restock products that are running low.\n\"\"\"\nSummary Context:\n\"\"\"\n: Advanced CRUD Operations in MongoDB - Low Stock Products : () The warehouse manager wants to restock products that are running low. Display all products whose stock is less tha...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    },
+    {
+      "slotId": "slot_004_warehouse_manager_wants",
+      "systemPrompt": "You are an expert academic assessment specialist. Generate a precise, grounded multiple-choice question (MCQ) based EXCLUSIVELY on the provided source text snippet. Do NOT use outside knowledge, speculate, or introduce concepts not explicitly present in the source snippet.",
+      "userPrompt": "\nSTRICT PROMPT CONSTRAINTS:\n- Target Concept: \"Warehouse Manager Wants\" (GENERAL_CONCEPT)\n- Target Cognitive Level: ANALYZE (HARD)\n- Framing Style: Trade-Off\n- Max Stem Length: 150 characters\n- Distractor Strategy: peer_concept\n- Allow Numerical Data: NO\n- Allow Code Snippets: NO\n- Requires Calculation: NO\n- Allow Negation (\"Which is NOT...\"): NO\n- Stem Blueprint Pattern: \"When evaluating Warehouse Manager Wants under operational constraints, what is the primary trade-off?\"\n- HARD COGNITIVE DEPTH: Construct a question requiring multi-step deduction or cause-and-effect reasoning using ONLY the provided evidence snippet. Depth is measured by scenario constraints and analytical options, NOT word count.\n- STRICT TRANSCRIPT GROUNDING: Every option and explanation MUST be strictly derived from the provided Source Context. Do NOT introduce outside frameworks (e.g. Object-Oriented Programming, external CS paradigms) unless explicitly present in the source snippet.\n- STRICT ANTI-META-REFERENCE: Never use document structural labels like 'Scenario 1', 'Scenario 2', 'Paragraph X', 'Assignment 1', or 'In this document'. Frame questions as independent, self-contained technical/domain scenarios.\n- TARGET LEARNING OBJECTIVE: \"Student should understand Warehouse Manager Wants\"\n\nSOURCE CONTEXT:\nPrimary Evidence Snippet:\n\"\"\"\nAssignment 2: Advanced CRUD Operations in MongoDB\nScenario 1 - Low Stock Products\nDataset link: https://drive.google.com/file/d/1abcxyz/view (products.json)\nThe warehouse manager wants to restock products that are running low.\nDisplay all products whose stock is less than 20.\n\"\"\"\nSummary Context:\n\"\"\"\n: Advanced CRUD Operations in MongoDB - Low Stock Products : () The warehouse manager wants to restock products that are running low. Display all products whose stock is less than 20. Use $lt operator. db.produc...\n\"\"\"\n\nFORMATTING GUIDANCE:\n\n[FORMAT EXAMPLE - DEFINITION]\nStem: Which of the following best defines the primary purpose of [Concept]?\nOptions: [\"A [category] mechanism that [verbatim function].\", \"A [peer category] protocol used for [alternative].\", \"A [related term] algorithm for [different role].\", \"A [component] used to [unrelated action].\"]\nCorrect Answer: \"A [category] mechanism that [verbatim function].\"\nExplanation: The text defines [Concept] as a [category] mechanism for [verbatim function].\n\n\nGENERATION RULES:\n1. Grounding: The correct answer and explanation MUST be explicitly supported by the source snippet.\n2. Fallback Route: If the source snippet lacks sufficient information to build a valid question under these constraints, set 'status' to 'INSUFFICIENT_EVIDENCE' and leave question fields empty.\n3. Distractors: Distractor choices MUST be plausible domain concepts derived from the specified distractorStyle.\n4. No Meta-Choices: NEVER use meta-options like 'All of the above', 'None of the above', or 'Both A and B'.\n5. Sentence Length: Keep stem character length strictly under maxStemLength.\n6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.\n7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.\n8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.\n9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').\n\nOUTPUT FORMAT CONTRACT:\nReturn ONLY a raw, valid JSON object with the following structure:\n{\n  \"status\": \"SUCCESS\",\n  \"stem\": \"Question string...\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n  \"correctAnswer\": \"Exact verbatim matching option string...\",\n  \"explanation\": \"Explanation quoting source snippet...\"\n}\n",
+      "metadata": {}
+    }
+  ],
+  "validators": [],
+  "questionLineage": [],
+  "finalQuiz": {
+    "portfolioVersion": "1.8.1",
+    "quizId": "quiz_test_assignment2_e2e",
+    "sourceId": "document_upload",
+    "totalQuestions": 0,
+    "telemetry": {
+      "userPayload": {
+        "conceptCoverage": "33.0%",
+        "bloomDistribution": {
+          "RECALL": "0%",
+          "APPLY": "0%",
+          "ANALYZE": "0%"
+        },
+        "framingDistribution": {
+          "Scenario": 0,
+          "Diagnostic": 0,
+          "Conceptual": 0,
+          "Trade-Off": 0
+        },
+        "answerKeyBalance": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        }
+      },
+      "systemLogs": {
+        "provider": "Groq (Llama-3.3-70b-versatile)",
+        "requestedDifficulty": "BALANCED",
+        "providerLatencyMs": 320,
+        "promptTokens": 1450,
+        "completionTokens": 620,
+        "validatorFailureReasons": [],
+        "repairAttempts": 0,
+        "slotReruns": 0,
+        "qualityMetrics": {
+          "groundingScore": 0.96,
+          "averageConceptCoverage": 0.33,
+          "difficultyMatchScore": 0.98,
+          "5dDiversityScore": 0.94
+        },
+        "repairStats": {
+          "initialPassCount": 0,
+          "itemsRepaired": 0,
+          "repairAttempts": 0,
+          "finalPassRate": "100%"
+        }
+      },
+      "conceptCoverage": "33.0%",
+      "bloomDistribution": {
+        "RECALL": "0%",
+        "APPLY": "0%",
+        "ANALYZE": "0%"
+      },
+      "framingDistribution": {
+        "Scenario": 0,
+        "Diagnostic": 0,
+        "Conceptual": 0,
+        "Trade-Off": 0
+      },
+      "answerKeyBalance": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      }
+    },
+    "questions": []
+  },
+  "metadata": {
+    "totalDurationMs": 2443
+  }
+}

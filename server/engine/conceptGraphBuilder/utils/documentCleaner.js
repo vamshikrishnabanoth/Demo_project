@@ -51,6 +51,14 @@ function cleanDocument(rawText) {
       continue;
     }
 
+    // 1b. Strip inline URLs, Google Drive links, dataset references, and structural assignment labels
+    if (/\bhttps?:\/\/[^\s]+/i.test(trimmed)) {
+      trimmed = trimmed.replace(/\bhttps?:\/\/[^\s]+/gi, '');
+      ocrArtifactsRemoved++;
+    }
+    trimmed = trimmed.replace(/\b(?:link\s+for\s+dataset|dataset\s+link|scenario\s*\d+|assignment\s*\d+|exercise\s*\d+|part\s*[a-z]|question\s*\d+|task\s*\d+|products\.json|movies\.json)\b/gi, '').trim();
+    if (!trimmed) continue;
+
     // 2. Skip Table of Contents dot leaders (e.g., "Chapter 1 .......... 14")
     if (/\.{4,}\s*\d+$/.test(trimmed)) {
       ocrArtifactsRemoved++;

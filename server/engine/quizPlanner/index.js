@@ -4,6 +4,7 @@ const { allocateConceptSlots } = require('./conceptSelector');
 const { mapBloomAndDifficulty } = require('./bloomMapper');
 const { rotateFramingStyles } = require('./framingRotator');
 const { buildPlanSlots } = require('./planBuilder');
+const { classifyDocumentAndIntent } = require('./documentClassifier');
 
 /**
  * Public API: generateQuizPlan(conceptGraph, userConfig)
@@ -14,6 +15,9 @@ function generateQuizPlan(conceptGraph = {}, userConfig = {}) {
 
   const requestedCount = parseInt(userConfig.requestedCount || userConfig.count, 10) || 10;
   const userDifficulty = userConfig.difficulty || userConfig.targetDifficulty || "Balanced";
+
+  // Document Type & Intent Classification
+  const classification = classifyDocumentAndIntent(conceptGraph, userConfig.content || "");
 
   // Pass 1: Weighted Concept Allocation & Hamilton Rounding
   const {
@@ -43,6 +47,17 @@ function generateQuizPlan(conceptGraph = {}, userConfig = {}) {
     slotDistributions,
     slotFramings,
     conceptGraph
+  }).map((slot, idx) => {
+    const conceptObj = (conceptGraph.nodes || []).find(n => (n.label || n.id) === (slot.conceptLabel || slot.conceptId)) || {};
+    return {
+      ...slot,
+      category: conceptObj.category || "DOMAIN_CONCEPT",
+      executable: !!conceptObj.executable,
+      canGenerateSyntaxQuestion: !!conceptObj.canGenerateSyntaxQuestion,
+      learningObjective: conceptObj.learningObjective || `Student should understand ${slot.conceptLabel}`,
+      docType: classification.docType,
+      primaryIntent: classification.primaryIntent
+    };
   });
 
   const buildTimeMs = Math.round(performance.now() - startTime);
