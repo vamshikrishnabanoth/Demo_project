@@ -116,18 +116,15 @@ export const AuthProvider = ({ children }) => {
             socket.disconnect();
         }
 
-        // ── Strict Account Isolation & Data Privacy Purge ─────────────────────
+        // ── Strict Account Isolation & Session Security ─────────────────────────
         try {
             localStorage.removeItem('token');
-            localStorage.removeItem('quiz_docket_inputs');
-            if (user?.id) {
-                localStorage.removeItem(`quiz_docket_inputs_${user.id}`);
-            }
+            localStorage.removeItem('quiz_docket_inputs'); // Clean legacy un-scoped key
             if (window.indexedDB) {
                 window.indexedDB.deleteDatabase('pending_audio_recordings');
             }
         } catch (e) {
-            console.error('Failed to purge client session storage on logout:', e);
+            console.error('Failed to purge un-scoped session storage on logout:', e);
         }
 
         setUser(null);

@@ -90,6 +90,46 @@ export default function CreateQuizTopic() {
     const currentSessionIdRef = useRef(null);
     const chunkIndexRef = useRef(0);
     const timerWorkerRef = useRef(null);
+    const wakeLockRef = useRef(null);
+    const [wakeLockActive, setWakeLockActive] = useState(false);
+
+    // ── Screen Wake Lock API to prevent laptop lock/sleep during lecture recording ──
+    const requestWakeLock = useCallback(async () => {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLockRef.current = await navigator.wakeLock.request('screen');
+                setWakeLockActive(true);
+                console.log('💡 Screen Wake Lock ACTIVE during lecture recording.');
+            }
+        } catch (err) {
+            console.warn('Screen Wake Lock request failed:', err.message);
+        }
+    }, []);
+
+    const releaseWakeLock = useCallback(async () => {
+        try {
+            if (wakeLockRef.current) {
+                await wakeLockRef.current.release();
+                wakeLockRef.current = null;
+                setWakeLockActive(false);
+                console.log('💡 Screen Wake Lock RELEASED.');
+            }
+        } catch (err) {
+            console.warn('Screen Wake Lock release failed:', err.message);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleVisibilityChange = async () => {
+            if (document.visibilityState === 'visible' && recording) {
+                await requestWakeLock();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [recording, requestWakeLock]);
 
     const fileInputRef = useRef(null);
 
@@ -291,6 +331,9 @@ export default function CreateQuizTopic() {
         currentSessionIdRef.current = newSessionId;
         chunkIndexRef.current = 0;
 
+        // Prevent screen dimming / lock during recording
+        await requestWakeLock();
+
         // Initialize recording session in IndexedDB
         await createSessionRecord(newSessionId, { title: 'Lecture Recording' });
 
@@ -331,6 +374,7 @@ export default function CreateQuizTopic() {
 
             recorder.onstop = async () => {
                 stream.getTracks().forEach(t => t.stop());
+                await releaseWakeLock();
 
                 if (timerWorkerRef.current) {
                     timerWorkerRef.current.postMessage({ command: 'stop' });
@@ -733,10 +777,17 @@ export default function CreateQuizTopic() {
                                 </div>
                             ) : recording ? (
                                 <div className="flex flex-col items-center gap-3 py-1">
-                                    <div className="flex items-center gap-2 font-mono font-bold text-xs text-amber-900 bg-amber-100/80 px-3 py-1 rounded-full border border-amber-300">
-                                        <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                                        <span>{recordingPaused ? 'RECORDING PAUSED' : 'RECORDING LECTURE'}</span>
-                                        <span className="font-mono font-black text-slate-800">({formatTime(recordingDuration)})</span>
+                                    <div className="flex flex-wrap items-center justify-center gap-2 font-mono font-bold text-xs">
+                                        <span className="flex items-center gap-1.5 text-amber-900 bg-amber-100/80 px-3 py-1 rounded-full border border-amber-300">
+                                            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                            <span>{recordingPaused ? 'RECORDING PAUSED' : 'RECORDING LECTURE'}</span>
+                                            <span className="font-mono font-black text-slate-800">({formatTime(recordingDuration)})</span>
+                                        </span>
+                                        {wakeLockActive && (
+                                            <span className="flex items-center gap-1 text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 font-sans font-bold text-[10px]">
+                                                💡 Screen Keep-Alive Active (Laptop won't lock)
+                                            </span>
+                                        )}
                                     </div>
 
                                     {/* Tactile Voice Control Buttons */}
