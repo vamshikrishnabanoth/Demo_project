@@ -286,24 +286,12 @@ setInterval(() => {
 const jwt = require('jsonwebtoken');
 io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
-    
-    // Support load test student bots
-    const botUser = socket.handshake.auth?.user;
-    if (botUser && (botUser.username?.startsWith('Student_') || botUser.username?.startsWith('bot_') || socket.handshake.auth?.isBot)) {
-        socket.user = {
-            id: botUser.id || botUser._id || `bot_${socket.id}`,
-            username: botUser.username || `Student_${socket.id.slice(0, 5)}`,
-            role: 'student'
-        };
-        return next();
-    }
-
     if (!token) {
         // SECURITY: No fallback to client-provided user — require valid JWT
         return next(new Error('Authentication failed: Missing token'));
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
