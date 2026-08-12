@@ -232,6 +232,7 @@ export default function CreateQuizTopic() {
                             ...item,
                             maxPages: res.data.totalCount,
                             endPage: res.data.totalCount,
+                            content: res.data.extractedText || '',
                             fetchingMetadata: false
                         } : item));
                     }
@@ -521,7 +522,7 @@ export default function CreateQuizTopic() {
 
         const formData = new FormData();
         const fileInputs = inputs.filter(inp => inp.file);
-        const textInputs = inputs.filter(inp => !inp.file);
+        const textInputs = inputs.filter(inp => !inp.file && inp.content);
 
         fileInputs.forEach(inp => {
             formData.append('files', inp.file);
@@ -538,7 +539,22 @@ export default function CreateQuizTopic() {
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
-        formData.append('text_prompts', JSON.stringify(textInputs.map(t => t.content)));
+
+        const textPromptsList = textInputs.map(t => {
+            if (t.type !== 'text' && t.startPage && t.endPage && t.content) {
+                const lines = t.content.split('\n');
+                const totalLines = lines.length;
+                const totalPages = t.maxPages || 1;
+                const linesPerPage = Math.max(1, Math.ceil(totalLines / totalPages));
+                const s = Math.max(0, (t.startPage - 1) * linesPerPage);
+                const e = Math.min(totalLines, (t.endPage || totalPages) * linesPerPage);
+                const sliced = lines.slice(s, e).join('\n');
+                return `Document Source: ${t.source_name} (Pages ${t.startPage}-${t.endPage || totalPages})\n${sliced}`;
+            }
+            return t.content;
+        }).filter(Boolean);
+
+        formData.append('text_prompts', JSON.stringify(textPromptsList));
 
         try {
             const res = await api.post('/quiz/generate', formData, {
@@ -854,7 +870,7 @@ export default function CreateQuizTopic() {
                                                 </div>
                                             )}
 
-                                            {inp.file && !['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image'].includes(inp.type) && (
+                                            {!['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image', 'text'].includes(inp.type) && (
                                                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]/60 bg-slate-50 p-2.5 rounded-xl">
                                                      <div className="flex items-center gap-2">
                                                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Start Page:</span>

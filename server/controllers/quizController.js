@@ -232,6 +232,7 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
             if (start > total) start = total;
             if (end > total) end = total;
             const s = Math.max(0, start - 1);
+            const e = Math.min(total, end);
             let extractedRange = pagesText.slice(s, e).join('\n\n');
             if (!extractedRange || extractedRange.trim().length < 100) {
                 const baseName = path.basename(filePath, ext).replace(/[-_]/g, ' ');
@@ -529,18 +530,21 @@ exports.getFileMetadata = async (req, res) => {
     try {
         let totalCount = 1;
         let type = 'pages';
+        let extractedText = '';
 
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
             const data = await pdfParse(dataBuffer);
             totalCount = data.numpages || 1;
             type = 'pages';
+            extractedText = data.text || '';
         } else if (ext === '.docx') {
             const result = await mammoth.extractRawText({ path: filePath });
             const lines = result.value.split('\n');
             const linesPerPage = 30;
             totalCount = Math.max(1, Math.ceil(lines.length / linesPerPage));
             type = 'pages';
+            extractedText = result.value || '';
         } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             const parsedText = await new Promise((resolve, reject) => {
                 officeParser.parseOffice(filePath, (data, err) => {
@@ -552,9 +556,11 @@ exports.getFileMetadata = async (req, res) => {
             const chunksPerSlide = 15;
             totalCount = Math.max(1, Math.ceil(chunks.length / chunksPerSlide));
             type = 'slides';
+            extractedText = parsedText || '';
         } else {
             totalCount = 1;
             type = 'pages';
+            extractedText = fs.readFileSync(filePath, 'utf8');
         }
 
         // Clean up the file immediately after metadata extraction
@@ -564,7 +570,8 @@ exports.getFileMetadata = async (req, res) => {
             success: true,
             totalCount,
             type,
-            name: req.file.originalname
+            name: req.file.originalname,
+            extractedText
         });
     } catch (err) {
         console.error('Error extracting file metadata:', err);
