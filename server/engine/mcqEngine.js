@@ -369,6 +369,15 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   // Combine valid contents for main generation payload
   const cleanedContent = validAcademicInputs.map(i => i.content).join('\n\n--- Source Split ---\n\n').trim();
 
+  // Stage 1 Minimum Text Guard: Abort if extracted text payload is under 100 characters
+  if (!cleanedContent || cleanedContent.length < 100) {
+    console.error(`[ReqID: ${reqId}] ❌ [EMPTY_DOCUMENT_PAYLOAD] Extracted text length (${cleanedContent?.length || 0}) is under 100 characters.`);
+    const error = new Error("EMPTY_DOCUMENT_PAYLOAD: PDF text extraction failed or document contains no readable text (textLength < 100). Aborting pipeline to prevent loop generation.");
+    error.statusCode = 400;
+    error.code = "EMPTY_DOCUMENT_PAYLOAD";
+    throw error;
+  }
+
   // Normalize difficulty string (handles "Balanced", "balanced", "⚖️ Balanced", etc.)
   const cleanDiffStr = String(difficulty).replace(/[^a-zA-Z]/g, '').toLowerCase();
   let isBalanced = cleanDiffStr.includes('balanced');

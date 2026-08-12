@@ -585,10 +585,13 @@ exports.createQuiz = async (req, res) => {
         } else if (req.file) {
             const absolutePath = path.resolve(req.file.path);
             const extractedText = await extractText(absolutePath);
-            if (extractedText) {
+            if (extractedText && extractedText.trim().length >= 100) {
                 finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
             } else {
-                finalQuestions = await generateQuestions(type, absolutePath, questionCount, difficulty);
+                return res.status(400).json({
+                    msg: "EMPTY_DOCUMENT_PAYLOAD: PDF text extraction failed or document contains no readable text (textLength < 100). Please upload a valid text-searchable PDF.",
+                    code: "EMPTY_DOCUMENT_PAYLOAD"
+                });
             }
         } else if (content || topic) {
             finalQuestions = await generateQuestions('topic', content || topic, questionCount, difficulty);

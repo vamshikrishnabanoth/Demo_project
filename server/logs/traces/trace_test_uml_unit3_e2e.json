@@ -1,64 +1,64 @@
 {
   "version": "2.0.0",
   "requestId": "test_uml_unit3_e2e",
-  "timestamp": "2026-08-12T08:46:49.717Z",
+  "timestamp": "2026-08-12T08:51:00.222Z",
   "environment": "development",
   "provider": "mock",
   "timeline": [
     {
       "stageNumber": 1,
       "stageName": "Ingestion & Cleaning",
-      "durationMs": 13,
-      "timestamp": "2026-08-12T08:46:49.731Z"
+      "durationMs": 16,
+      "timestamp": "2026-08-12T08:51:00.240Z"
     },
     {
       "stageNumber": 2,
       "stageName": "Concept Graph Builder",
-      "durationMs": 3,
-      "timestamp": "2026-08-12T08:46:49.735Z"
+      "durationMs": 5,
+      "timestamp": "2026-08-12T08:51:00.245Z"
     },
     {
       "stageNumber": 3,
       "stageName": "Quiz Planner Engine",
       "durationMs": 2,
-      "timestamp": "2026-08-12T08:46:49.736Z"
+      "timestamp": "2026-08-12T08:51:00.247Z"
     },
     {
       "stageNumber": 4,
       "stageName": "Prompt Builder Engine",
-      "durationMs": 1,
-      "timestamp": "2026-08-12T08:46:49.737Z"
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:51:00.248Z"
     },
     {
       "stageNumber": 5,
       "stageName": "Question Generator Engine",
-      "durationMs": 2068,
-      "timestamp": "2026-08-12T08:46:51.805Z"
+      "durationMs": 2561,
+      "timestamp": "2026-08-12T08:51:02.810Z"
     },
     {
       "stageNumber": 6,
       "stageName": "3-Tier Validator Orchestrator",
-      "durationMs": 5,
-      "timestamp": "2026-08-12T08:46:51.810Z"
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:51:02.812Z"
     },
     {
       "stageNumber": 7,
       "stageName": "Targeted Repair Router",
       "durationMs": 0,
-      "timestamp": "2026-08-12T08:46:51.811Z"
+      "timestamp": "2026-08-12T08:51:02.812Z"
     },
     {
       "stageNumber": 8,
       "stageName": "Portfolio Assembly Engine",
-      "durationMs": 3,
-      "timestamp": "2026-08-12T08:46:51.814Z"
+      "durationMs": 2,
+      "timestamp": "2026-08-12T08:51:02.814Z"
     }
   ],
   "stages": {
     "stage_1_ingestion_&_cleaning": {
       "stageNumber": 1,
       "stageName": "Ingestion & Cleaning",
-      "startTimeMs": 0.9271999999999991,
+      "startTimeMs": 1.867599999999996,
       "status": "COMPLETED",
       "inputs": {
         "rawContent": "UNIT - 3\nSOFTWARE ENGINEERING (RKR21)\nDEPARTMENT OF CSE / CSM / CSD / IT\nPAGE 1 OF 45\n\nConceptual Model of UML\nThe Unified Modeling Language (UML) consists of three major building blocks: Things, Relationships, and Diagrams.\n1. Structural Things: Class Diagram, Use Case Diagram, Component Diagram, Node Diagram.\n2. Behavioral Things: Interactions, State Machines, Activity Diagrams.\n3. Relationships: Dependency, Association, Generalization, Realization.\n\nA Class Diagram illustrates system classes, attributes, operations, and relationships between objects.\nA Use Case Diagram captures system functionality and actor interactions.\nA Sequence Diagram illustrates dynamic interactions between objects over time using lifeline messages.\nA Component Diagram models physical software components, executables, and libraries."
@@ -68,12 +68,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 13
+      "durationMs": 16
     },
     "stage_2_concept_graph_builder": {
       "stageNumber": 2,
       "stageName": "Concept Graph Builder",
-      "startTimeMs": 14.161000000000001,
+      "startTimeMs": 18.081699999999998,
       "status": "COMPLETED",
       "inputs": {
         "textLength": 820
@@ -84,12 +84,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 3
+      "durationMs": 5
     },
     "stage_3_quiz_planner_engine": {
       "stageNumber": 3,
       "stageName": "Quiz Planner Engine",
-      "startTimeMs": 17.5214,
+      "startTimeMs": 23.6113,
       "status": "COMPLETED",
       "inputs": {
         "requestedCount": 3,
@@ -110,7 +110,7 @@
     "stage_4_prompt_builder_engine": {
       "stageNumber": 4,
       "stageName": "Prompt Builder Engine",
-      "startTimeMs": 19.20049999999999,
+      "startTimeMs": 25.176500000000004,
       "status": "COMPLETED",
       "inputs": {
         "slotCount": 3
@@ -120,12 +120,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     "stage_5_question_generator_engine": {
       "stageNumber": 5,
       "stageName": "Question Generator Engine",
-      "startTimeMs": 20.248999999999995,
+      "startTimeMs": 26.841399999999993,
       "status": "COMPLETED",
       "inputs": {
         "promptPayloadsCount": 3
@@ -135,12 +135,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 2068
+      "durationMs": 2561
     },
     "stage_6_3-tier_validator_orchestrator": {
       "stageNumber": 6,
       "stageName": "3-Tier Validator Orchestrator",
-      "startTimeMs": 2088.2641999999996,
+      "startTimeMs": 2587.8541999999998,
       "status": "COMPLETED",
       "inputs": {
         "candidateItemsCount": 3
@@ -151,12 +151,12 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 5
+      "durationMs": 2
     },
     "stage_7_targeted_repair_router": {
       "stageNumber": 7,
       "stageName": "Targeted Repair Router",
-      "startTimeMs": 2093.2578,
+      "startTimeMs": 2589.9487,
       "status": "COMPLETED",
       "inputs": {
         "repairQueueLength": 0
@@ -171,7 +171,7 @@
     "stage_8_portfolio_assembly_engine": {
       "stageNumber": 8,
       "stageName": "Portfolio Assembly Engine",
-      "startTimeMs": 2093.4121999999998,
+      "startTimeMs": 2589.986,
       "status": "COMPLETED",
       "inputs": {
         "approvedPoolSize": 3
@@ -181,7 +181,7 @@
       },
       "warnings": [],
       "decisions": [],
-      "durationMs": 3
+      "durationMs": 2
     }
   },
   "decisions": [],
@@ -537,6 +537,6 @@
     ]
   },
   "metadata": {
-    "totalDurationMs": 2097
+    "totalDurationMs": 2593
   }
 }
