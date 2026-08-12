@@ -13,11 +13,26 @@ class MockAdapter {
     console.warn("⚠️ [MockAdapter] Running in offline mock mode. Set GROQ_API_KEY in server/.env to activate live Llama-3 AI generation.");
 
     const conceptLabel = promptPayload.userPrompt.match(/Target Concept:\s*"([^"]+)"/)?.[1] || "Concept";
+    const isAggregation = /\$group|\$unwind|\$lookup|\$addFields|\$switch|\$facet|ixscan|collscan|aggregation|index/i.test(conceptLabel) || promptPayload.userPrompt.includes('$group') || promptPayload.userPrompt.includes('IXSCAN');
     const isGit = /git|commit|branch|merge|push|pull|repository|remote/i.test(conceptLabel);
-    const isDb = /crud|mongodb|sql|query|push|gt|lt|update|delete|find|products|stock|manager/i.test(conceptLabel) || promptPayload.userPrompt.includes('DATABASE_QUERY_DOCUMENT');
+    const isDb = isAggregation || /crud|mongodb|sql|query|push|gt|lt|update|delete|find|products|stock|manager|restaurants|aggregation|index|collscan|ixscan/i.test(conceptLabel) || promptPayload.userPrompt.includes('DATABASE_QUERY_DOCUMENT');
 
     let mockResponse;
-    if (isDb) {
+    if (isAggregation) {
+      const stageName = conceptLabel.startsWith('$') ? conceptLabel : `$${conceptLabel.toLowerCase()}`;
+      mockResponse = {
+        status: "SUCCESS",
+        stem: `Which query correctly constructs an aggregation pipeline stage using ${conceptLabel}?`,
+        options: [
+          `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine", count: { $sum: 1 } } } ])`,
+          `db.restaurants.aggregate([ { $match: { rating: { $gt: 4 } } } ])`,
+          `db.restaurants.find({ category: "Italian" })`,
+          `db.restaurants.createIndex({ cuisine: 1 })`
+        ],
+        correctAnswer: `db.restaurants.aggregate([ { ${stageName}: { _id: "$cuisine", count: { $sum: 1 } } } ])`,
+        explanation: `The source material specifies ${conceptLabel} as a core aggregation pipeline operator in MongoDB.`
+      };
+    } else if (isDb) {
       mockResponse = {
         status: "SUCCESS",
         stem: `Which query correctly uses the ${conceptLabel} operator to filter or update database records?`,

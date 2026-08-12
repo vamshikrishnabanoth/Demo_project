@@ -114,6 +114,12 @@ function isValidConcept(str) {
   // Reject blacklisted academic header acronyms (CSE, CSM, CSD, IT, etc.)
   if (ACRONYM_BLACKLIST.has(trimmed.toUpperCase())) return false;
 
+  // Reject procedural imperative phrases ("Sort the output", "Only include", "Compare execution statistics between")
+  const lower = trimmed.toLowerCase();
+  if (/^(sort|display|only include|show|write a|calculate the|find all|arrange|retrieve|compare execution statistics|the warehouse manager|the marketing team)\b/.test(lower)) {
+    return false;
+  }
+
   // Reject if it contains raw markdown hashes or line breaks
   if (/#|\n|\r/.test(trimmed)) return false;
 

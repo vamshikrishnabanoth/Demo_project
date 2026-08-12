@@ -10,6 +10,7 @@ const { createValidationContext } = require('./validators/validationContext');
 const { validateCandidateBatch } = require('./validators/index');
 const { VALIDATOR_CONFIG } = require('../config/validatorConfig');
 const { buildConceptGraph } = require('./conceptGraphBuilder/index');
+const { analyzeInstructionalDocument } = require('./documentAnalyzer/index');
 const { generateQuizPlan } = require('./quizPlanner/index');
 const { buildSlotPrompts } = require('./promptBuilder/index');
 const { PROMPT_CONFIG } = require('../config/promptConfig');
@@ -385,6 +386,17 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   console.log(`  ├─ Code/Syntax Guard: Preserved formatting across ${codeBlocks} detected code block(s).`);
   console.log(`  └─ Cleaned Academic Text Payload: ${cleanedContent.length.toLocaleString()} characters remaining.`);
   tracer.recordStageComplete(1, 'Ingestion & Cleaning', { rawContent: cleanedContent }, { validSourcesCount: validAcademicInputs.length });
+
+  // [STEP 1.5: INSTRUCTIONAL DOCUMENT ANALYZER v2.5.0]
+  tracer.recordStageStart(1.5, 'Instructional Document Analyzer');
+  const documentProfile = analyzeInstructionalDocument(cleanedContent, reqPayload);
+  console.log(`\n[ReqID: ${reqId}] [STEP 1.5: INSTRUCTIONAL DOCUMENT ANALYZER v2.5.0]`);
+  console.log(`  ├─ Document Type: ${documentProfile.documentType}`);
+  console.log(`  ├─ Language Family: ${documentProfile.primaryLanguageFamily} (Confidence: ${documentProfile.confidence})`);
+  console.log(`  ├─ Structural Metadata Stripped: ${documentProfile.structuralMetadata.length} items`);
+  console.log(`  ├─ Procedural Actions Stripped: ${documentProfile.proceduralActions.length} items`);
+  console.log(`  └─ Instructional Concepts Retained: ${documentProfile.instructionalConcepts.length} items`);
+  tracer.recordStageComplete(1.5, 'Instructional Document Analyzer', { documentProfile }, { languageFamily: documentProfile.primaryLanguageFamily });
 
   // [STEP 2: FEATURE ANALYSIS & CONCEPT GRAPH BUILDER v2.6.0 (WITH NAMESPACED CACHING)]
   tracer.recordStageStart(2, 'Concept Graph Builder');

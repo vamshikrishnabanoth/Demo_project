@@ -204,6 +204,19 @@ async function runEducationalValidation(mcqItem, validationContext = {}, signal)
     findings.majorWarnings.push(codeStr);
   }
 
+  // 9. Executable Syntax Gate (EDU_010_INVALID_EXECUTABLE_SYNTAX)
+  const hasInventedTextKeys = options.some(opt => {
+    const str = String(opt);
+    return /\{\s*[A-Z][a-z]+\s+[A-Z][a-z]+\s*:/i.test(str) && !/\b(updateMany|aggregate|find|\$group|\$unwind|\$lookup|\$addFields)\b/.test(str);
+  });
+
+  if (hasInventedTextKeys) {
+    scores.distractors = 0.20;
+    rawRepairHints.push("REWRITE_PRACTICAL_SYNTAX_QUESTION");
+    const codeStr = VALIDATOR_CONFIG.CODES.EDU_010_INVALID_EXECUTABLE_SYNTAX?.code || "EDU_010";
+    findings.majorWarnings.push(codeStr);
+  }
+
   const w = VALIDATOR_CONFIG.QUALITY_WEIGHTS;
   let rawQuality = (
     w.BLOOM * scores.bloom +
