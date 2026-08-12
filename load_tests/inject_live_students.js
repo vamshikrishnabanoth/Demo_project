@@ -10,12 +10,11 @@
  *  - Listens to teacher question transitions (quiz_started, change_question, timer_update)
  *  - Automatically answers questions with realistic delays (1–4s)
  *  - Keeps connections alive with heartbeats
- *  - Supports local server (http://localhost:5000) or deployed backend (Render)
+ *  - Defaults to deployed Render backend (https://quiz-backend-qgro.onrender.com)
  *
  * Usage:
  *   node load_tests/inject_live_students.js --pin <6_DIGIT_PIN_OR_QUIZ_ID> --count 500
- *   node load_tests/inject_live_students.js --pin 123456 --count 500 --url http://localhost:5000
- *   node load_tests/inject_live_students.js --pin 123456 --count 100 --url https://your-backend.onrender.com
+ *   node load_tests/inject_live_students.js --pin 123456 --count 500 --local
  */
 
 'use strict';
@@ -33,19 +32,21 @@ function getArg(key, defaultValue) {
     return defaultValue;
 }
 
+const isLocal = args.includes('--local') || args.includes('-l');
+const DEFAULT_URL = isLocal ? 'http://localhost:5000' : 'https://quiz-backend-qgro.onrender.com';
+
 const PIN_OR_QUIZ_ID = getArg('--pin', getArg('-p', ''));
 const STUDENT_COUNT  = parseInt(getArg('--count', getArg('-c', '500')), 10);
-const SERVER_URL     = getArg('--url', getArg('-u', 'http://localhost:5000'));
+const SERVER_URL     = getArg('--url', getArg('-u', DEFAULT_URL));
 const CONCURRENT_BATCH = 50; // Connect in batches of 50 to avoid network congestion
 
 if (!PIN_OR_QUIZ_ID) {
     console.log('\n❌ ERROR: Missing required --pin argument!\n');
     console.log('Usage:');
-    console.log('  node load_tests/inject_live_students.js --pin <PIN_OR_QUIZ_ID> [--count 500] [--url http://localhost:5000]\n');
+    console.log('  node load_tests/inject_live_students.js --pin <PIN_OR_QUIZ_ID> [--count 500]\n');
     console.log('Examples:');
-    console.log('  node load_tests/inject_live_students.js --pin 829104 --count 100');
-    console.log('  node load_tests/inject_live_students.js --pin 829104 --count 500 --url http://localhost:5000');
-    console.log('  node load_tests/inject_live_students.js --pin 829104 --count 500 --url https://your-app.onrender.com\n');
+    console.log('  node load_tests/inject_live_students.js --pin 815422 --count 500');
+    console.log('  node load_tests/inject_live_students.js --pin 815422 --count 100 --local\n');
     process.exit(1);
 }
 
@@ -74,11 +75,19 @@ function createStudentBot(index) {
     const username = `Student_${studentNum}`;
 
     const socket = io(SERVER_URL, {
-        transports: ['websocket'],
+        transports: ['websocket', 'polling'],
+        auth: {
+            user: {
+                id: studentId,
+                _id: studentId,
+                username: username,
+                role: 'student'
+            }
+        },
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-        timeout: 10000
+        timeout: 15000
     });
 
     const bot = {
@@ -111,6 +120,12 @@ function createStudentBot(index) {
                 socket.emit('heartbeat', { quizId: PIN_OR_QUIZ_ID, userId: studentId });
             }
         }, 5000);
+    });
+
+    socket.on('connect_error', (err) => {
+        if (index === 0) {
+            console.warn(`\n⚠️ Connection diagnostic (Bot 1): ${err.message}`);
+        }
     });
 
     socket.on('disconnect', () => {
