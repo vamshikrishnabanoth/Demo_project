@@ -2032,8 +2032,9 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                 }
 
-                if (req.files && req.files.length > 0) {
-                    for (const file of req.files) {
+                const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+                if (allUploadedFiles.length > 0) {
+                    for (const file of allUploadedFiles) {
                         const filePath = path.resolve(file.path);
                         const ext = path.extname(file.originalname).toLowerCase();
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };

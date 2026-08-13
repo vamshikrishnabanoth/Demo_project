@@ -166,10 +166,11 @@ const verifyUploadedFile = (req, res, next) => {
 };
 
 const verifyUploadedFiles = (req, res, next) => {
-    if (!req.files || req.files.length === 0) return next();
+    const files = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+    if (files.length === 0) return next();
     
     const fs = require('fs');
-    for (const file of req.files) {
+    for (const file of files) {
         const ext = path.extname(file.originalname).toLowerCase();
         const filePath = path.resolve(file.path);
         

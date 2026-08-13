@@ -379,6 +379,7 @@ export default function CreateQuizPDF() {
         setSubmitting(true);
         try {
             const formData = new FormData();
+            formData.append('files', file);
             formData.append('file', file);
             formData.append('type', 'file');
             formData.append('questionCount', questionCount.toString());
