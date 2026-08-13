@@ -6,7 +6,7 @@
 const PROMPT_CONFIG = {
   VERSION: "1.2.0",
   LLM_PARAMS: {
-    TEMPERATURE: 0.2,
+    TEMPERATURE: 0.35,
     TOP_P: 0.9,
     MAX_TOKENS: 700
   },
@@ -25,7 +25,8 @@ const PROMPT_CONFIG = {
     "6. Explanation Citation: The explanation MUST directly quote or reference verbatim source evidence.",
     "7. Do NOT generate character offsets or byte ranges. The system will attach evidence bounds automatically.",
     "8. Multiline & Code Formatting: When generating code snippets, SQL, formulas, or multi-line questions, preserve explicit newlines (\\n) and indentation. Never flatten code or multi-line stems into a single line.",
-    "9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?')."
+    "9. Self-Contained Stems & Anti-Meta-Reference: Stems MUST NEVER reference document structure, layout, or meta-labels (e.g. 'Scenario 1', 'Scenario 2', 'In this document', 'In paragraph X', 'Assignment 1'). Write ONLY fully self-contained domain questions (e.g. 'In a product management database, which query displays products with stock less than 20?').",
+    "10. Stem Opening Diversity: Vary stem phrasing dynamically. Avoid repetitive openings like 'Which of the following...' or 'What is...'. Use diverse problem-based, diagnostic, scenario, and conceptual phrasing tailored to the target framing style."
   ]
 };
 
