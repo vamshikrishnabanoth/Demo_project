@@ -6,7 +6,7 @@
 const GENERATOR_CONFIG = {
   VERSION: "1.2.0",
   ACTIVE_PROVIDER: process.env.LLM_PROVIDER || "groq", // "groq" | "openai" | "ollama" | "mock"
-  CONCURRENCY_LIMIT: parseInt(process.env.GENERATOR_CONCURRENCY || "10", 10),
+  CONCURRENCY_LIMIT: parseInt(process.env.GENERATOR_CONCURRENCY || "2", 10),
   REQUESTS_PER_MINUTE: parseInt(process.env.GENERATOR_RPM || "60", 10),
   REQUEST_TIMEOUT_MS: parseInt(process.env.GENERATOR_TIMEOUT_MS || "30000", 10),
   MAX_RETRIES_PER_SLOT: 2,

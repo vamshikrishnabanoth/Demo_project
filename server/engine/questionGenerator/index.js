@@ -31,6 +31,9 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
   const concurrencyLimit = GENERATOR_CONFIG.CONCURRENCY_LIMIT || 3;
 
   for (let i = 0; i < promptPayloads.length; i += concurrencyLimit) {
+    if (i > 0) {
+      await new Promise(r => setTimeout(r, 400));
+    }
     const chunk = promptPayloads.slice(i, i + concurrencyLimit);
 
     const chunkPromises = chunk.map(async (slotPayload, chunkIdx) => {
