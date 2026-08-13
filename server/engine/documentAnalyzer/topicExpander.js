@@ -34,7 +34,14 @@ const DOMAIN_EXPANSION_MAP = {
   "docker": "Docker Containerization: Containers, Images, Dockerfile, Docker Compose, Volume Mounting, Port Forwarding, Networking, and Container Registry.",
   "git": "Git Version Control System: Commits, Branching, Merging, Rebase, Remote Repositories, Pull Requests, Merge Conflicts, and Staging Area.",
 
-  // Fundamentals & AI
+  // Fundamentals, Deep Learning & AI
+  "rnn": "Recurrent Neural Networks (RNN): Sequential Data Processing, Hidden State (h_t), Backpropagation Through Time (BPTT), Vanishing & Exploding Gradient Problems, Long Short-Term Memory (LSTM), Gated Recurrent Units (GRU), Sequence-to-Sequence Models, and Recurrent Architecture.",
+  "recurrent neural network": "Recurrent Neural Networks (RNN): Sequential Data Processing, Hidden State (h_t), Backpropagation Through Time (BPTT), Vanishing Gradient Problem, Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU).",
+  "recurrent neural networks": "Recurrent Neural Networks (RNN): Sequential Data Processing, Hidden State (h_t), Backpropagation Through Time (BPTT), Vanishing Gradient Problem, Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU).",
+  "lstm": "Long Short-Term Memory (LSTM) Networks: Cell State (c_t), Hidden State (h_t), Forget Gate, Input Gate, Output Gate, Vanishing Gradient Resolution, and Sequential Memory Mechanisms.",
+  "gru": "Gated Recurrent Units (GRU): Update Gate, Reset Gate, Candidate Hidden State, Sequence Modeling, and Recurrent Gating Mechanisms.",
+  "cnn": "Convolutional Neural Networks (CNN): Convolutional Layers, Pooling Layers (Max Pooling, Average Pooling), Feature Maps, Kernel Filters, Stride, Padding, and Image Classification.",
+  "deep learning": "Deep Learning Architecture: Artificial Neural Networks (ANN), Convolutional Neural Networks (CNN), Recurrent Neural Networks (RNN), Activation Functions (ReLU, Sigmoid, Tanh), Loss Functions, Optimization (Adam, SGD), Backpropagation, and Overfitting Mitigation.",
   "ai": "Artificial Intelligence (AI): Search Algorithms, Knowledge Representation, Expert Systems, Machine Learning Foundations, Neural Networks, Natural Language Processing, Computer Vision, and Problem Solving.",
   "ml": "Machine Learning (ML): Supervised Learning, Unsupervised Learning, Classification, Regression, Decision Trees, Neural Networks, Model Training, Overfitting, Loss Functions, and Hyperparameter Tuning.",
   "ds": "Data Structures & Algorithms: Arrays, Linked Lists, Stacks, Queues, Binary Trees, B-Trees, Hash Tables, Graphs, Sorting Algorithms, Searching Algorithms, and Big O Complexity Analysis.",
@@ -55,11 +62,13 @@ function expandShortTopicDescription(input) {
     return DOMAIN_EXPANSION_MAP[lower];
   }
 
-  // 2. Contains Keyword Match (e.g., "Python OS basics", "Java OOP")
-  for (const [key, expansion] of Object.entries(DOMAIN_EXPANSION_MAP)) {
+  // 2. Contains Keyword Match (sorted by length descending so specific terms like 'rnn' match before generic 'ai')
+  const sortedKeys = Object.keys(DOMAIN_EXPANSION_MAP).sort((a, b) => b.length - a.length);
+
+  for (const key of sortedKeys) {
     const wordBoundary = new RegExp(`\\b${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
     if (wordBoundary.test(trimmed)) {
-      return `Educational Study Topic: ${trimmed}\n${expansion}\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of ${trimmed}.`;
+      return `Educational Study Topic: ${trimmed}\n${DOMAIN_EXPANSION_MAP[key]}\nDetailed Study Focus: Practical implementation, fundamental definitions, key mechanisms, syntax rules, and domain application of ${trimmed}.`;
     }
   }
 
