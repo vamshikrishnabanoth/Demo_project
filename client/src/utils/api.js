@@ -1,5 +1,5 @@
 // High-performance Native Fetch API wrapper (replaces Axios dependency completely)
-const PRODUCTION_API_URL = 'https://quiz-backend-qgro.onrender.com/api';
+const PRODUCTION_API_URL = 'https://demoproject-production-1ef2.up.railway.app/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
     (import.meta.env.PROD ? PRODUCTION_API_URL : 'http://localhost:5000/api');

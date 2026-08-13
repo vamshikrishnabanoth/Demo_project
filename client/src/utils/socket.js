@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const PRODUCTION_SOCKET_URL = 'https://quiz-backend-qgro.onrender.com';
+const PRODUCTION_SOCKET_URL = 'https://demoproject-production-1ef2.up.railway.app';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL ||
     (import.meta.env.PROD ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');

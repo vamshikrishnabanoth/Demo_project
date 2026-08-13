@@ -185,7 +185,11 @@ if (!fs.existsSync(uploadDir)) {
 // Routes
 const errorMiddleware = require('./middleware/errorMiddleware');
 
-// Health Check Endpoint (Monitors DB and system status)
+// Root & Health Check Endpoint
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'online', service: 'KMIT Quiz Backend', timestamp: new Date().toISOString() });
+});
+
 app.get('/api/health', async (req, res) => {
     try {
         await prisma.$queryRaw`SELECT 1`;
