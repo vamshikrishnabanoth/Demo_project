@@ -1641,8 +1641,8 @@ prisma.user.updateMany({
     console.error('[Startup Error] Failed to reset user online statuses:', err.message);
 });
 
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} (0.0.0.0)`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
     // Environment-aware Prisma Database Initialization
