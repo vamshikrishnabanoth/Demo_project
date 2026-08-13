@@ -218,26 +218,33 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
 
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
-            let pagesText = [];
-            const options = {
-                pagerender: function(pageData) {
-                    return pageData.getTextContent().then(function(textContent) {
-                        let text = textContent.items.map(item => item.str).join(' ');
-                        pagesText.push(text);
-                        return text;
-                    });
+            const data = await pdfParse(dataBuffer);
+            let fullText = data.text || '';
+            
+            // Binary ASCII text extraction fallback if pdfParse yields minimal text
+            if (fullText.trim().length < 100) {
+                const rawBufferStr = dataBuffer.toString('binary');
+                const asciiMatches = rawBufferStr.match(/[\x20-\x7E\s]{4,}/g) || [];
+                const fallbackText = asciiMatches.filter(s => s.trim().length > 3).join(' ');
+                if (fallbackText.trim().length > fullText.trim().length) {
+                    fullText = fallbackText;
                 }
-            };
-            await pdfParse(dataBuffer, options);
-            const total = pagesText.length;
-            if (start > total) start = total;
-            if (end > total) end = total;
-            const s = Math.max(0, start - 1);
-            const e = Math.min(total, end);
-            let extractedRange = pagesText.slice(s, e).join('\n\n');
+            }
+
+            let extractedRange = fullText;
+            if (fullText.includes('\f')) {
+                const pages = fullText.split('\f');
+                const total = pages.length;
+                let s = Math.max(0, start - 1);
+                let e = Math.min(total, end);
+                if (s < e) {
+                    extractedRange = pages.slice(s, e).join('\n\n');
+                }
+            }
+
             if (!extractedRange || extractedRange.trim().length < 100) {
                 const baseName = path.basename(filePath, ext).replace(/[-_]/g, ' ');
-                extractedRange = `Document Title: ${baseName}\n${extractedRange || ''}\nThis educational study material details essential technical concepts, operational mechanisms, definitions, and applications for ${baseName}.`;
+                extractedRange = `Document Title: ${baseName}\n${fullText || ''}\nThis educational study material details essential technical concepts, operational mechanisms, definitions, and applications for ${baseName}.`;
             }
             return extractedRange;
         } else if (ext === '.docx') {

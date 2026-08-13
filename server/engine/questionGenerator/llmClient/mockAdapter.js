@@ -63,18 +63,18 @@ class MockAdapter {
         correctAnswer: `Manages commit history and working tree states for ${conceptLabel}.`,
         explanation: `The source material defines ${conceptLabel} as a core version control mechanism for tracking repository changes.`
       };
-    } else if (/rnn|cnn|ann|neural|lstm|gru|deep learning|sequential|weight|matrix|gradient|loss|backprop/i.test(conceptLabel)) {
+    } else if (/rnn|cnn|ann|neural|lstm|gru|deep learning|sequential|weight|matrix|gradient|loss|backprop|intelligence|ai|ml|learning|model|algorithm|representation|vision|nlp|search/i.test(conceptLabel)) {
       mockResponse = {
         status: "SUCCESS",
-        stem: `In deep learning architecture and sequential modeling, what is the key characteristic of ${conceptLabel}?`,
+        stem: `In artificial intelligence and deep learning architecture, what is the primary role of ${conceptLabel}?`,
         options: [
-          `Maintains contextual representations and parameter operations for ${conceptLabel}.`,
-          `Executes direct hardware register swapping without hidden layers.`,
-          `Converts non-relational database schemas into flat key-value pairs.`,
-          `Filters network bandwidth packets at the physical OSI transport layer.`
+          `Maintains feature representations and computational mechanisms for ${conceptLabel}.`,
+          `Processes linear matrix transformations for feedforward state evaluation.`,
+          `Applies non-linear activation bounds to regulate gradient magnitude.`,
+          `Stores historical context weights across sequential time steps.`
         ],
-        correctAnswer: `Maintains contextual representations and parameter operations for ${conceptLabel}.`,
-        explanation: `The source document highlights ${conceptLabel} as a fundamental neural network mechanism for pattern representation.`
+        correctAnswer: `Maintains feature representations and computational mechanisms for ${conceptLabel}.`,
+        explanation: `The source document specifies ${conceptLabel} as a fundamental AI mechanism for concept modeling.`
       };
     } else {
       const stemVariations = [
@@ -89,9 +89,9 @@ class MockAdapter {
         stem: selectedStem,
         options: [
           `Defines the structural model and domain behavior of ${conceptLabel}.`,
-          `Manages low-level hardware memory allocation routines.`,
-          `Executes background binary compilation tasks.`,
-          `Controls physical network packet transmission interfaces.`
+          `Provides operational constraints and boundary definitions for ${conceptLabel}.`,
+          `Manages data integration and interface synchronization for ${conceptLabel}.`,
+          `Evaluates performance metrics and execution flow for ${conceptLabel}.`
         ],
         correctAnswer: `Defines the structural model and domain behavior of ${conceptLabel}.`,
         explanation: `The source content specifies ${conceptLabel} as a primary structural element in the domain model.`
