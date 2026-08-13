@@ -117,7 +117,7 @@ class LLMProvider {
             { role: "system", content: systemMessage },
             { role: "user", content: prompt }
           ],
-          model: "llama-3.1-8b-instant",
+          model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
           response_format: { type: "json_object" },
           temperature: PROMPT_CONFIG.LLM_PARAMS.TEMPERATURE,
           top_p: PROMPT_CONFIG.LLM_PARAMS.TOP_P,
@@ -539,7 +539,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
   const sampleDiag = candidateItems[0]?.providerDiagnostics || {};
 
   console.log(`\n[ReqID: ${reqId}] [STEP 5: QUESTION GENERATOR ENGINE v1.2.0]`);
-  console.log(`  ├─ Provider & Model: ${sampleDiag.provider || GENERATOR_CONFIG.ACTIVE_PROVIDER} (${sampleDiag.model || 'llama-3.1-8b-instant'})`);
+  console.log(`  ├─ Provider & Model: ${sampleDiag.provider || GENERATOR_CONFIG.ACTIVE_PROVIDER} (${sampleDiag.model || process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'})`);
   console.log(`  ├─ Batch Execution: ${bSum.totalSlotsProcessed || promptPayloads.length} Slots (Concurrency:${GENERATOR_CONFIG.CONCURRENCY_LIMIT})`);
   console.log(`  ├─ Success Rate: ${bSum.successfulGenerations || candidateItems.length}/${bSum.totalSlotsProcessed || promptPayloads.length} Candidate MCQs Generated (${bSum.totalGenerationTimeMs || 0}ms)`);
   console.log(`  ├─ Resilience: ${pDiagGen.parseRepairCount || 0} JSON Repairs | ${pDiagGen.unicodeNormalizations || 0} Unicode Normalizations | ${pDiagGen.retriesPerformed || 0} Retries (Jittered)`);

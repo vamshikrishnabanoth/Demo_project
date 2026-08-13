@@ -2,7 +2,7 @@ const Groq = require('groq-sdk');
 
 class GroqAdapter {
   constructor() {
-    this.defaultModel = "llama-3.1-8b-instant";
+    this.defaultModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
     this.capabilities = {
       supportsJSONMode: true,
       maxContextTokens: 8192
