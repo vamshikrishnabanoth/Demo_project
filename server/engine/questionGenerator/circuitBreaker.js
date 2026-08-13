@@ -12,7 +12,7 @@ class ProviderCircuitBreaker {
     this.state = 'CLOSED'; // 'CLOSED' | 'OPEN' | 'HALF_OPEN'
     this.consecutiveFailures = 0;
     this.maxFailures = GENERATOR_CONFIG.CIRCUIT_BREAKER?.MAX_CONSECUTIVE_PROVIDER_FAILURES || 3;
-    this.cooldownMs = GENERATOR_CONFIG.CIRCUIT_BREAKER?.COOLDOWN_MS || 60000; // 60 seconds
+    this.cooldownMs = GENERATOR_CONFIG.CIRCUIT_BREAKER?.COOLDOWN_MS || 3000; // 3 seconds fast recovery
     this.lastStateChange = Date.now();
     this.transientErrors = new Set(GENERATOR_CONFIG.TRANSIENT_PROVIDER_ERRORS || [429, 500, 502, 503, 504, 'ETIMEDOUT', 'ECONNREFUSED']);
   }
