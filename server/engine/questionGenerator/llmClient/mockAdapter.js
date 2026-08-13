@@ -63,18 +63,38 @@ class MockAdapter {
         correctAnswer: `Manages commit history and working tree states for ${conceptLabel}.`,
         explanation: `The source material defines ${conceptLabel} as a core version control mechanism for tracking repository changes.`
       };
-    } else {
+    } else if (/rnn|cnn|ann|neural|lstm|gru|deep learning|sequential|weight|matrix|gradient|loss|backprop/i.test(conceptLabel)) {
       mockResponse = {
         status: "SUCCESS",
-        stem: `In software engineering and domain design, what is the primary role of ${conceptLabel}?`,
+        stem: `In deep learning architecture and sequential modeling, what is the key characteristic of ${conceptLabel}?`,
         options: [
-          `Defines the structural model and operational behavior of ${conceptLabel}.`,
-          `Specifies low-level hardware memory allocation routines.`,
-          `Executes background compilation of binary dependencies.`,
-          `Schedules network packet transmission across physical interfaces.`
+          `Maintains contextual representations and parameter operations for ${conceptLabel}.`,
+          `Executes direct hardware register swapping without hidden layers.`,
+          `Converts non-relational database schemas into flat key-value pairs.`,
+          `Filters network bandwidth packets at the physical OSI transport layer.`
         ],
-        correctAnswer: `Defines the structural model and operational behavior of ${conceptLabel}.`,
-        explanation: `The source content specifies ${conceptLabel} as a primary structural element in the system model.`
+        correctAnswer: `Maintains contextual representations and parameter operations for ${conceptLabel}.`,
+        explanation: `The source document highlights ${conceptLabel} as a fundamental neural network mechanism for pattern representation.`
+      };
+    } else {
+      const stemVariations = [
+        `What is the primary function of ${conceptLabel} within the system domain?`,
+        `How does ${conceptLabel} contribute to core operational functionality?`,
+        `In architectural analysis, which statement best characterizes ${conceptLabel}?`,
+        `When evaluating system design, what role does ${conceptLabel} perform?`
+      ];
+      const selectedStem = stemVariations[Math.floor(Math.random() * stemVariations.length)];
+      mockResponse = {
+        status: "SUCCESS",
+        stem: selectedStem,
+        options: [
+          `Defines the structural model and domain behavior of ${conceptLabel}.`,
+          `Manages low-level hardware memory allocation routines.`,
+          `Executes background binary compilation tasks.`,
+          `Controls physical network packet transmission interfaces.`
+        ],
+        correctAnswer: `Defines the structural model and domain behavior of ${conceptLabel}.`,
+        explanation: `The source content specifies ${conceptLabel} as a primary structural element in the domain model.`
       };
     }
 
