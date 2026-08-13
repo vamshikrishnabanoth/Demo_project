@@ -69,13 +69,14 @@ app.use(cors({
         // Allow requests with no origin (mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
         const allowed = [
+            'https://kmit-kahoot.vercel.app',
             'https://kmit-khaoot.vercel.app',
             'http://localhost:5173',
             'http://127.0.0.1:5173',
         ];
-        // SECURITY: Only allow preview URLs matching the project name pattern
-        const isVercelPreview = /^https:\/\/kmit-khaoot(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
-        if (allowed.includes(origin) || isVercelPreview) {
+        // Allow all Vercel preview and production URLs for this project
+        const isVercel = /^https:\/\/kmit-(kahoot|khaoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
+        if (allowed.includes(origin) || isVercel) {
             callback(null, true);
         } else {
             console.warn(`[CORS] Blocked origin: ${origin}`);
@@ -96,7 +97,7 @@ app.use(helmet({
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
             imgSrc: ["'self'", "data:", "blob:", "https:"],
-            connectSrc: ["'self'", "https://kmit-khaoot.vercel.app", "https://quiz-backend-qgro.onrender.com", "wss:", "ws:", "http://localhost:5000", "http://localhost:5173"],
+            connectSrc: ["'self'", "https://kmit-kahoot.vercel.app", "https://kmit-khaoot.vercel.app", "https://demoproject-production-1ef2.up.railway.app", "wss:", "ws:", "http://localhost:5000", "http://localhost:5173"],
             frameSrc: ["'none'"],
             objectSrc: ["'none'"],
             baseUri: ["'self'"],
