@@ -1645,34 +1645,19 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT} (0.0.0.0)`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
-    // Environment-aware Prisma Database Initialization
+    // Automatic Prisma Database Schema Synchronization
     setImmediate(() => {
         try {
-            if (process.env.NODE_ENV === 'production') {
-                console.log('🔄 [Production] Deploying database migrations via prisma migrate deploy...');
-                exec('npx prisma migrate deploy', (error, stdout, stderr) => {
-                    if (error) {
-                        console.error('❌ [Production] Failed to apply migrations:', error.message);
-                        return;
-                    }
-                    console.log('✅ [Production] Migration complete!');
-                    if (stdout) console.log(`[Prisma Migrate]: ${stdout}`);
-                    if (stderr) console.error(`[Prisma Migrate Err]: ${stderr}`);
-                });
-            } else {
-                console.log('🔄 [Dev] Syncing database schema via db push...');
-                exec('npx prisma db push', (error, stdout, stderr) => {
-                    if (error) {
-                        console.error('❌ [Dev] Failed to push schema:', error.message);
-                        return;
-                    }
-                    console.log('[Dev] Database schema synced via db push.');
-                    if (stdout) console.log(`[Prisma DB Push]: ${stdout}`);
-                    if (stderr) console.error(`[Prisma DB Push Err]: ${stderr}`);
-                });
-            }
+            console.log('🔄 Syncing database schema via prisma db push...');
+            exec('npx prisma db push --skip-generate', (error, stdout, stderr) => {
+                if (error) {
+                    console.warn('⚠️ [Prisma Sync Note]:', error.message);
+                    return;
+                }
+                console.log('✅ [Prisma DB]: Database schema is in sync with schema.prisma.');
+            });
         } catch (err) {
-            console.error('❌ Failed to initiate database sync:', err.message);
+            console.warn('⚠️ Failed to initiate database sync:', err.message);
         }
     });
 });
