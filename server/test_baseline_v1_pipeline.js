@@ -5,7 +5,7 @@
  * Tests:
  * 1. Evidence Packager & Dual-Source Authority Division
  * 2. Agent 1 Assessment Planner & Target Reserve Pool ($N + M$)
- * 3. Agent 2 MCQ Generator via Universal LLM Router (Mock / Ollama fallback)
+ * 3. Agent 2 MCQ Generator via Universal LLM Router (Groq Cloud / Ollama / Mock)
  * 4. Deterministic Pre-Checks & Post-Checks
  * 5. Agent 3 Dual-Mode Evaluator
  * 6. Deterministic Calculation Engine
@@ -13,6 +13,9 @@
  */
 
 'use strict';
+
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const pipelineOrchestrator = require('./engine/pipelineOrchestrator');
 
@@ -44,11 +47,13 @@ async function runTest() {
 
     console.log('\n--- PIPELINE EXECUTION SUMMARY ---');
     console.log(`Session ID: ${result.sessionId}`);
+    console.log(`Pipeline Status: ${result.pipelineStatus}`);
+    console.log(`Quiz Quality Status: ${result.quizQualityStatus}`);
     console.log(`Subject: ${result.subject}`);
     console.log(`Main Topic: ${result.quizTitle}`);
     console.log(`TC Score: ${result.tcScore?.overallScore}/100 (${result.tcScore?.coverageDepth})`);
     console.log(`Delivered Questions: ${result.questions.length}/${result.telemetry.requestedCount}`);
-    console.log(`Total Duration: ${result.telemetry.durationMs}ms`);
+    console.log(`Total Duration: ${result.telemetry.totalDurationMs}ms`);
 
     console.log('\n--- VERIFYING DELIVERED MCQS ---');
     result.questions.forEach((q, idx) => {

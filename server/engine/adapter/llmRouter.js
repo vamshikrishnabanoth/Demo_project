@@ -10,6 +10,9 @@
 
 'use strict';
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
 const axios = require('axios');
 
 class LLMRouter {
@@ -18,7 +21,7 @@ class LLMRouter {
     this.aiServiceUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
     this.ollamaUrl = process.env.OLLAMA_URL || 'http://127.0.0.1:11434/api/generate';
     this.vllmUrl = process.env.VLLM_URL || null;
-    this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'mock'); // Fast default
+    this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
   }
 
   /**
@@ -26,6 +29,10 @@ class LLMRouter {
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model }
    */
   async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null }) {
+    if (!this.groqApiKey && process.env.GROQ_API_KEY) {
+      this.groqApiKey = process.env.GROQ_API_KEY;
+    }
+
     const providerOrder = [this.activeProvider, 'groq', 'local_ollama', 'mock'];
     const tried = new Set();
 
@@ -37,18 +44,17 @@ class LLMRouter {
         if (provider === 'local_ollama') {
           return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert' });
         } else if (provider === 'groq') {
-          return await this._callGroq({ prompt, systemPrompt, temperature, model: model || 'llama-3.3-70b-versatile' });
+          return await this._callGroq({ prompt, systemPrompt, temperature, model });
         } else if (provider === 'vllm') {
           return await this._callVLLM({ prompt, systemPrompt, temperature });
         } else if (provider === 'mock') {
           return this._getMockResponse(prompt, systemPrompt);
         }
       } catch (err) {
-        // Fast failover silently
+        console.warn(`⚠️ [LLMRouter] Provider '${provider}' failed: ${err.message}. Trying next fallback...`);
       }
     }
 
-    // Ultimate fallback
     return this._getMockResponse(prompt, systemPrompt);
   }
 
@@ -59,7 +65,7 @@ class LLMRouter {
         topic: prompt,
         count: 5,
         difficulty: 'Medium'
-      }, { timeout: 1500 });
+      }, { timeout: 3000 });
 
       if (resp.data && resp.data.questions) {
         return JSON.stringify(resp.data.questions);
@@ -67,11 +73,11 @@ class LLMRouter {
     } catch (e) {
       const fullPrompt = `${systemPrompt}\n\n${prompt}`;
       const resp = await axios.post(this.ollamaUrl, {
-        model: model,
+        model: model || 'quiz-expert',
         prompt: fullPrompt,
         stream: false,
         options: { temperature: temperature }
-      }, { timeout: 2000 });
+      }, { timeout: 4000 });
 
       if (resp.data && resp.data.response) {
         return resp.data.response;
@@ -82,12 +88,16 @@ class LLMRouter {
 
   /** Call Groq Cloud API */
   async _callGroq({ prompt, systemPrompt, temperature, model }) {
-    if (!this.groqApiKey) throw new Error('GROQ_API_KEY is missing');
+    const key = this.groqApiKey || process.env.GROQ_API_KEY;
+    if (!key) throw new Error('GROQ_API_KEY is missing');
+
+    // Map local model names to Groq cloud equivalents if needed
+    const groqModel = (model && model !== 'quiz-expert') ? model : 'llama-3.3-70b-versatile';
 
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: model,
+        model: groqModel,
         messages: [
           ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
           { role: 'user', content: prompt }
@@ -97,10 +107,10 @@ class LLMRouter {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.groqApiKey}`,
+          Authorization: `Bearer ${key}`,
           'Content-Type': 'application/json'
         },
-        timeout: 10000
+        timeout: 25000
       }
     );
 
