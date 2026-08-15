@@ -353,10 +353,34 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
+        let voiceText = '';
+        let docTexts = [];
+        let codeSnippets = '';
+
+        if (Array.isArray(inputs) && inputs.length > 0) {
+            inputs.forEach(inp => {
+                if (inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript') {
+                    voiceText += (inp.content || '') + '\n';
+                } else if (inp.type === 'code') {
+                    codeSnippets += (inp.content || '') + '\n';
+                } else if (inp.content) {
+                    docTexts.push(inp.content);
+                }
+            });
+        } else if (typeof content === 'string') {
+            if (type === 'voice' || type === 'audio') {
+                voiceText = content;
+            } else if (type === 'code') {
+                codeSnippets = content;
+            } else {
+                docTexts.push(content);
+            }
+        }
+
         const sessionInputs = {
-            voiceTranscript: typeof content === 'string' ? content : '',
-            documentTexts: typeof content === 'string' ? [content] : [],
-            codeSnippets: '',
+            voiceTranscript: voiceText,
+            documentTexts: docTexts,
+            codeSnippets: codeSnippets,
             difficulty: difficulty,
             count: parseInt(count)
         };
