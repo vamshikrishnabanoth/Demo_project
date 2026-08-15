@@ -346,9 +346,30 @@ const checkAiServiceOnline = async (url) => {
     }
 };
 
-// LOCAL/CLOUD AI Generation - Using Your Fine-Tuned Llama-3 Brain
-// Priority: Fine-Tuned Model first → Groq Cloud Fallback if offline/unavailable
+// LOCAL/CLOUD AI Generation - Architecture Baseline v1.0 (Three-Agent Assessment Pipeline)
+const pipelineOrchestrator = require('../engine/pipelineOrchestrator');
+
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED') => {
+    try {
+        console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
+
+        const sessionInputs = {
+            voiceTranscript: typeof content === 'string' ? content : '',
+            documentTexts: typeof content === 'string' ? [content] : [],
+            codeSnippets: '',
+            difficulty: difficulty,
+            count: parseInt(count)
+        };
+
+        const result = await pipelineOrchestrator.runPipeline(sessionInputs);
+        if (result && result.questions && result.questions.length > 0) {
+            console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
+            return result.questions;
+        }
+    } catch (err) {
+        console.warn(`⚠️ [Baseline v1.0] Pipeline fallback trigger: ${err.message}`);
+    }
+
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
     const getFallbackContent = () => {
