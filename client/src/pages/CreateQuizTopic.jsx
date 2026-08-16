@@ -1042,6 +1042,7 @@ export default function CreateQuizTopic() {
                                                          />
                                                      </div>
                                                 </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
