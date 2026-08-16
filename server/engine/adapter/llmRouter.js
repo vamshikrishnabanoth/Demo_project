@@ -1,11 +1,12 @@
 /**
  * server/engine/adapter/llmRouter.js
  *
- * Universal LLM Router supporting zero-downtime hot-swapping between:
- * 1. Local Fine-Tuned Llama 3 8B (Ollama 'quiz-expert' / FastAPI ai_service :8000)
- * 2. Groq Cloud (llama-3.3-70b-versatile / llama-3.1-8b-instant)
- * 3. Local vLLM Endpoint
- * 4. Offline Mock Fallback
+ * Universal LLM Router supporting multi-tier Groq failover and strict production safety:
+ * 1. Tier-1 Groq Cloud: llama-3.3-70b-versatile (High Quality)
+ * 2. Tier-2 Groq Cloud: llama-3.1-8b-instant (High Throughput / 30x higher RPM limit on 429)
+ * 3. Local Fine-Tuned Llama 3 8B: Ollama 'quiz-expert' / FastAPI ai_service :8000
+ * 4. Local vLLM Endpoint
+ * 5. Production Rule: No Provider -> Throw NO_LLM_PROVIDER_AVAILABLE (Zero fabricated MCQs in production).
  */
 
 'use strict';
@@ -24,8 +25,13 @@ class LLMRouter {
     this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
   }
 
+  /** Sleep helper for exponential backoff on rate limits */
+  _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   /**
-   * Route completion request to active LLM provider with failover.
+   * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model }
    */
   async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null }) {
@@ -33,29 +39,99 @@ class LLMRouter {
       this.groqApiKey = process.env.GROQ_API_KEY;
     }
 
-    const providerOrder = [this.activeProvider, 'groq', 'local_ollama', 'mock'];
-    const tried = new Set();
+    const errors = [];
 
-    for (const provider of providerOrder) {
-      if (tried.has(provider)) continue;
-      tried.add(provider);
-
+    // 1. Try Primary Groq Cloud (70B model with fallback to 8B on 429)
+    if (this.groqApiKey) {
       try {
-        if (provider === 'local_ollama') {
-          return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert' });
-        } else if (provider === 'groq') {
-          return await this._callGroq({ prompt, systemPrompt, temperature, model });
-        } else if (provider === 'vllm') {
-          return await this._callVLLM({ prompt, systemPrompt, temperature });
-        } else if (provider === 'mock') {
-          return this._getMockResponse(prompt, systemPrompt);
-        }
+        return await this._callGroqWithRetry({
+          prompt,
+          systemPrompt,
+          temperature,
+          primaryModel: (model && model !== 'quiz-expert') ? model : 'llama-3.3-70b-versatile',
+          fallbackModel: 'llama-3.1-8b-instant'
+        });
       } catch (err) {
-        console.warn(`⚠️ [LLMRouter] Provider '${provider}' failed: ${err.message}. Trying next fallback...`);
+        errors.push(`Groq (${err.message})`);
+        console.warn(`⚠️ [LLMRouter] Groq provider failed: ${err.message}. Trying local AI...`);
       }
     }
 
-    return this._getMockResponse(prompt, systemPrompt);
+    // 2. Try Local Ollama / FastAPI AI service
+    try {
+      return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert' });
+    } catch (err) {
+      errors.push(`Local Ollama (${err.message})`);
+    }
+
+    // 3. Try Local vLLM if configured
+    if (this.vllmUrl) {
+      try {
+        return await this._callVLLM({ prompt, systemPrompt, temperature });
+      } catch (err) {
+        errors.push(`vLLM (${err.message})`);
+      }
+    }
+
+    // 4. Check for mock test mode ONLY if explicitly enabled for unit tests
+    if (process.env.ALLOW_MOCK_FALLBACK === 'true' || process.env.NODE_ENV === 'test') {
+      console.warn('⚠️ [LLMRouter] Using test mock fallback because ALLOW_MOCK_FALLBACK is enabled.');
+      return this._getMockResponse(prompt, systemPrompt);
+    }
+
+    // 5. PRODUCTION SAFETY RULE: No provider -> Fail honestly! NEVER return fabricated mock MCQs!
+    const errMsg = `NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [${errors.join('; ')}]. Please verify your API key or try again in a few moments.`;
+    console.error(`❌ [LLMRouter] ${errMsg}`);
+    const fatalError = new Error(errMsg);
+    fatalError.code = 'NO_LLM_PROVIDER_AVAILABLE';
+    throw fatalError;
+  }
+
+  /** Call Groq Cloud API with multi-model failover and rate-limit backoff */
+  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel }) {
+    const key = this.groqApiKey || process.env.GROQ_API_KEY;
+    if (!key) throw new Error('GROQ_API_KEY is missing');
+
+    const modelsToTry = [primaryModel, fallbackModel].filter(Boolean);
+
+    for (let i = 0; i < modelsToTry.length; i++) {
+      const currentModel = modelsToTry[i];
+      try {
+        const response = await axios.post(
+          'https://api.groq.com/openai/v1/chat/completions',
+          {
+            model: currentModel,
+            messages: [
+              ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+              { role: 'user', content: prompt }
+            ],
+            temperature: temperature,
+            response_format: { type: 'json_object' }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${key}`,
+              'Content-Type': 'application/json'
+            },
+            timeout: 25000
+          }
+        );
+
+        return response.data.choices[0].message.content;
+      } catch (err) {
+        const isRateLimit = err.response && (err.response.status === 429 || (err.message || '').includes('429'));
+        
+        if (isRateLimit && i < modelsToTry.length - 1) {
+          console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429). Backing off 1.5s and switching to high-throughput model '${fallbackModel}'...`);
+          await this._sleep(1500);
+          continue; // Try fallback model (llama-3.1-8b-instant)
+        }
+        
+        if (i === modelsToTry.length - 1) {
+          throw err;
+        }
+      }
+    }
   }
 
   /** Call local FastAPI / Ollama backend */
@@ -86,37 +162,6 @@ class LLMRouter {
     }
   }
 
-  /** Call Groq Cloud API */
-  async _callGroq({ prompt, systemPrompt, temperature, model }) {
-    const key = this.groqApiKey || process.env.GROQ_API_KEY;
-    if (!key) throw new Error('GROQ_API_KEY is missing');
-
-    // Map local model names to Groq cloud equivalents if needed
-    const groqModel = (model && model !== 'quiz-expert') ? model : 'llama-3.3-70b-versatile';
-
-    const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        model: groqModel,
-        messages: [
-          ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-          { role: 'user', content: prompt }
-        ],
-        temperature: temperature,
-        response_format: { type: 'json_object' }
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${key}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 25000
-      }
-    );
-
-    return response.data.choices[0].message.content;
-  }
-
   /** Call local vLLM API */
   async _callVLLM({ prompt, systemPrompt, temperature }) {
     if (!this.vllmUrl) throw new Error('VLLM_URL is missing');
@@ -128,61 +173,30 @@ class LLMRouter {
     return resp.data.choices[0].text;
   }
 
-  /** Deterministic Mock Response for Agent 1, Agent 2, or Agent 3 */
+  /** Deterministic Mock Response ONLY for unit testing */
   _getMockResponse(prompt = '', systemPrompt = '') {
     const combined = (systemPrompt + ' ' + prompt).toLowerCase();
 
     if (combined.includes('agent 1') || combined.includes('assessmentplan')) {
       return JSON.stringify({
-        subject: 'Database Systems',
-        mainTopic: 'MongoDB Aggregation Pipelines',
-        subtopics: ['$match filtering', '$group aggregation', '$project shaping'],
+        subject: 'Computer Science',
+        mainTopic: 'Core Lecture Topic',
+        subtopics: ['Concept A', 'Concept B'],
         teachingEmphasis: { conceptual: 'HIGH', application: 'HIGH', syntax: 'MEDIUM', calculation: 'LOW' },
         targetCount: 3,
         assessmentTargets: [
           {
             targetId: 'T01',
-            concept: 'Pipeline Optimization with $match',
-            dimension: 'Application',
-            cognitiveLevel: 'Apply',
-            targetDifficulty: 'Medium',
-            evidenceType: 'VOICE + CODE',
-            requiresExactArtifact: false,
-            instruction: 'Test positioning of $match early in a pipeline.'
-          },
-          {
-            targetId: 'T02',
-            concept: 'Grouping and Aggregating Data with $group',
+            concept: 'Primary Concept Analysis',
             dimension: 'Conceptual',
             cognitiveLevel: 'Understand',
-            targetDifficulty: 'Easy',
+            targetDifficulty: 'Medium',
             evidenceType: 'VOICE + DOCUMENT',
             requiresExactArtifact: false,
-            instruction: 'Test understanding of accumulator operators in $group.'
-          },
-          {
-            targetId: 'T03',
-            concept: 'Reshaping Documents with $project',
-            dimension: 'Code Tracing',
-            cognitiveLevel: 'Apply',
-            targetDifficulty: 'Medium',
-            evidenceType: 'CODE',
-            requiresExactArtifact: true,
-            instruction: 'Test field projection syntax and inclusion/exclusion.'
+            instruction: 'Test primary understanding.'
           }
         ],
-        reserveTargets: [
-          {
-            targetId: 'R01',
-            concept: 'Indexing Constraints on $sort',
-            dimension: 'Complexity Reasoning',
-            cognitiveLevel: 'Analyze',
-            targetDifficulty: 'Hard',
-            evidenceType: 'DOCUMENT',
-            requiresExactArtifact: false,
-            instruction: 'Reserve target for memory limits on $sort.'
-          }
-        ]
+        reserveTargets: []
       });
     }
 
@@ -195,21 +209,20 @@ class LLMRouter {
       });
     }
 
-    // Default Agent 2 candidate MCQ mock
     return JSON.stringify({
       targetId: 'T01',
-      questionText: 'When optimizing a MongoDB aggregation pipeline for a dataset with 1,000,000 documents, where should the $match stage be placed?',
+      questionText: 'Which statement accurately reflects the lecture concept?',
       options: [
-        'At the beginning of the pipeline to filter documents before processing',
-        'Immediately after the $group stage to filter aggregated results',
-        'At the very end of the pipeline after all transformations',
-        'Inside the $project stage as a parameter'
+        'The primary definition presented in the session evidence',
+        'An unsupported contradictory claim',
+        'An unrelated alternative',
+        'A superficial misconception'
       ],
-      correctAnswer: 'At the beginning of the pipeline to filter documents before processing',
-      explanation: 'Placing $match at the beginning utilizes indexes and reduces the number of documents passed to subsequent stages.',
+      correctAnswer: 'The primary definition presented in the session evidence',
+      explanation: 'Supported directly by session evidence.',
       metadata: {
-        dimension: 'Application',
-        cognitiveLevel: 'Apply',
+        dimension: 'Conceptual',
+        cognitiveLevel: 'Understand',
         targetDifficulty: 'Medium'
       }
     });

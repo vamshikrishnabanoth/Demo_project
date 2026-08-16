@@ -407,8 +407,12 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
             return result.questions;
         }
+        if (result && result.pipelineStatus === 'FAILED') {
+            throw new Error(result.error || 'Pipeline generation failed: All AI providers unavailable.');
+        }
     } catch (err) {
-        console.warn(`⚠️ [Baseline v1.0] Pipeline fallback trigger: ${err.message}`);
+        console.warn(`⚠️ [Baseline v1.0] Pipeline notice: ${err.message}`);
+        throw err;
     }
 
     const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
@@ -2560,7 +2564,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
 
             let agentReport = { verdict: 'approved', avgScore: 95, questionsChanged: 0, fallback: false, perQuestion: [], questionDiffs: [] };
-            console.log(`✅ [8-Stage MCQ Engine] Questions delivered directly from Stage 8 Portfolio Assembly Engine v1.8.1 (Count: ${finalQuestions.length}).`);
+            console.log(`✅ [Baseline v1.0] Questions delivered directly from Architecture Baseline v1.0 Pipeline (Count: ${finalQuestions.length}).`);
 
             console.log(`\n[Final Validation] Running final quiz validator...`);
             updateTaskStage(taskId, 3, 'Preparing Final Quiz');

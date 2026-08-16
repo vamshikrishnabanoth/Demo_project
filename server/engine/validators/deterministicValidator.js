@@ -1,8 +1,9 @@
 /**
  * server/engine/validators/deterministicValidator.js
  *
- * Deterministic Pre-Checks & Post-Checks:
+ * Deterministic Pre-Checks, Post-Checks & Duplicate Question Detection:
  * - Pre-Checks: JSON schema parsing, 4 options check, option string deduplication, correct answer existence.
+ * - Duplicate Detection: Jaccard word-set similarity against already accepted questions (>0.70 rejected).
  * - Post-Checks: Final payload integrity and answer position randomization (A/B/C/D split ~25%).
  */
 
@@ -45,6 +46,56 @@ class DeterministicValidator {
       isValid: errors.length === 0,
       errors: errors
     };
+  }
+
+  /**
+   * Check for duplicate / near-duplicate questions in the same session.
+   * Computes Jaccard word-set similarity against already accepted questions.
+   * @param {Object} candidateMCQ
+   * @param {Array} existingQuestions
+   * @param {Number} threshold - max similarity threshold (default 0.70)
+   * @returns {Object} { isDuplicate: boolean, similarity: number, duplicateWith: string }
+   */
+  checkDuplicateQuestion(candidateMCQ, existingQuestions = [], threshold = 0.70) {
+    if (!candidateMCQ || !candidateMCQ.questionText || !Array.isArray(existingQuestions) || existingQuestions.length === 0) {
+      return { isDuplicate: false, similarity: 0 };
+    }
+
+    const tokenize = (text) => {
+      return new Set(
+        text
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter(w => w.length > 2 && !['the', 'and', 'for', 'which', 'what', 'that', 'with', 'this'].includes(w))
+      );
+    };
+
+    const candidateTokens = tokenize(candidateMCQ.questionText);
+    if (candidateTokens.size === 0) return { isDuplicate: false, similarity: 0 };
+
+    for (const existing of existingQuestions) {
+      const existingTokens = tokenize(existing.questionText || '');
+      if (existingTokens.size === 0) continue;
+
+      let intersectionCount = 0;
+      candidateTokens.forEach(token => {
+        if (existingTokens.has(token)) intersectionCount++;
+      });
+
+      const unionCount = new Set([...candidateTokens, ...existingTokens]).size;
+      const jaccardSimilarity = unionCount > 0 ? (intersectionCount / unionCount) : 0;
+
+      if (jaccardSimilarity >= threshold) {
+        return {
+          isDuplicate: true,
+          similarity: Number(jaccardSimilarity.toFixed(3)),
+          duplicateWith: existing.questionText
+        };
+      }
+    }
+
+    return { isDuplicate: false, similarity: 0 };
   }
 
   /**

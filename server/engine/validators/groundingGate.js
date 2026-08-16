@@ -4,7 +4,7 @@
  * FINAL GROUNDING GATE:
  * Verification run immediately before final quiz delivery.
  * Verifies that every question's options and correct answer can be justified
- * strictly from session evidence without relying on hallucinated facts.
+ * strictly from session evidence without relying on hallucinated facts or foreign topic contamination.
  */
 
 'use strict';
@@ -25,13 +25,13 @@ class GroundingGate {
       const qText = (q.questionText || '').toLowerCase();
       const ansText = (q.correctAnswer || '').toLowerCase();
 
-      // Basic semantic keywords overlap verification against raw session content
-      const isJustified = this._checkJustification(qText, ansText, rawContent);
+      // Semantic keywords overlap verification against raw session content
+      const { isJustified, reason } = this._checkJustification(qText, ansText, rawContent);
 
       if (isJustified) {
         validated.push(q);
       } else {
-        console.warn(`⚠️ [Grounding Gate] Rejected question due to insufficient session evidence: "${q.questionText}"`);
+        console.warn(`⚠️ [Grounding Gate] REJECTED question due to: ${reason} | Question: "${q.questionText}"`);
         rejectedCount++;
       }
     }
@@ -45,21 +45,48 @@ class GroundingGate {
   }
 
   _checkJustification(qText, ansText, rawContent) {
-    // If raw content is minimal or fallback mode, accept if question is internally coherent
-    if (!rawContent || rawContent.length < 50) return true;
+    if (!rawContent || rawContent.length < 50) {
+      return { isJustified: true, reason: 'Minimal raw content' };
+    }
 
-    // Extract significant key words from question and answer (>3 chars)
+    // Stopwords list
+    const stopwords = new Set([
+      'which', 'what', 'where', 'when', 'after', 'before', 'during', 'should',
+      'between', 'their', 'there', 'about', 'using', 'would', 'could', 'because',
+      'primary', 'following', 'statement', 'correct', 'accurately', 'context',
+      'system', 'program', 'process', 'result', 'inside', 'dataset', 'placed'
+    ]);
+
+    // Extract content keywords (>3 chars, not in stopwords)
     const keywords = `${qText} ${ansText}`
-      .split(/\W+/)
-      .filter(w => w.length > 4);
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 3 && !stopwords.has(w));
 
-    if (keywords.length === 0) return true;
+    if (keywords.length === 0) {
+      return { isJustified: true, reason: 'No significant keywords' };
+    }
 
-    // Check if at least some key terms exist in session evidence
-    const matchCount = keywords.filter(kw => rawContent.includes(kw)).length;
-    const matchRatio = matchCount / keywords.length;
+    // Check if key terms exist in session evidence
+    const matched = keywords.filter(kw => rawContent.includes(kw));
+    const matchRatio = matched.length / keywords.length;
 
-    return matchRatio >= 0.15; // At least 15% key term presence in session evidence
+    // Check for foreign domain intrusion: if question has technical terms that appear 0 times in lecture
+    const foreignIndicators = ['$match', '$group', '$project', 'mongodb', 'mongoose', 'nosql'];
+    const hasForeignIndicator = foreignIndicators.some(f => (qText + ' ' + ansText).includes(f) && !rawContent.includes(f));
+
+    if (hasForeignIndicator) {
+      return { isJustified: false, reason: 'FOREIGN_TOPIC_CONTAMINATION: Detected domain terms absent from lecture' };
+    }
+
+    if (matchRatio < 0.15 && matched.length < 2) {
+      return {
+        isJustified: false,
+        reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matched.length}/${keywords.length} terms in evidence)`
+      };
+    }
+
+    return { isJustified: true, reason: `Grounded: ${(matchRatio * 100).toFixed(1)}% overlap` };
   }
 }
 

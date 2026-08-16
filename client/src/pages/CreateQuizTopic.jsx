@@ -991,7 +991,7 @@ export default function CreateQuizTopic() {
                                                 </div>
                                             )}
 
-                                            {!['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'image', 'text'].includes(inp.type) && (
+                                            {['pdf', 'docx', 'pptx', 'document'].includes(inp.type) && (
                                                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]/60 bg-slate-50 p-2.5 rounded-xl">
                                                      <div className="flex items-center gap-2">
                                                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Start Page:</span>
