@@ -1,9 +1,10 @@
 /**
  * server/engine/validators/deterministicValidator.js
  *
- * Deterministic Pre-Checks, Post-Checks & Duplicate Question Detection:
+ * Deterministic Pre-Checks, Post-Checks & Semantic Redundancy Detection:
  * - Pre-Checks: JSON schema parsing, 4 options check, option string deduplication, correct answer existence.
- * - Duplicate Detection: Jaccard word-set similarity against already accepted questions (>0.70 rejected).
+ * - Duplicate & Concept Redundancy Detection: Pairwise token/concept similarity (>0.60 rejected during generation).
+ * - Redundancy Matrix: Analyzes whole-quiz pairwise redundancy for Mode 2 Quiz Evaluation.
  * - Post-Checks: Final payload integrity and answer position randomization (A/B/C/D split ~25%).
  */
 
@@ -49,33 +50,43 @@ class DeterministicValidator {
   }
 
   /**
-   * Check for duplicate / near-duplicate questions in the same session.
-   * Computes Jaccard word-set similarity against already accepted questions.
+   * Tokenize text into meaningful content words (stripping generic question stopwords).
+   */
+  _tokenize(text = '') {
+    const stopwords = new Set([
+      'the', 'and', 'for', 'which', 'what', 'that', 'with', 'this', 'from',
+      'into', 'during', 'after', 'before', 'where', 'when', 'should', 'would',
+      'could', 'about', 'their', 'there', 'having', 'being', 'does', 'primary',
+      'following', 'statement', 'accurately', 'context'
+    ]);
+
+    return new Set(
+      text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2 && !stopwords.has(w))
+    );
+  }
+
+  /**
+   * Check for duplicate or conceptually redundant questions during target generation.
+   * Threshold = 0.60 catches reworded variations of the same learning question.
    * @param {Object} candidateMCQ
    * @param {Array} existingQuestions
-   * @param {Number} threshold - max similarity threshold (default 0.70)
+   * @param {Number} threshold - max similarity threshold (default 0.60)
    * @returns {Object} { isDuplicate: boolean, similarity: number, duplicateWith: string }
    */
-  checkDuplicateQuestion(candidateMCQ, existingQuestions = [], threshold = 0.70) {
+  checkDuplicateQuestion(candidateMCQ, existingQuestions = [], threshold = 0.60) {
     if (!candidateMCQ || !candidateMCQ.questionText || !Array.isArray(existingQuestions) || existingQuestions.length === 0) {
       return { isDuplicate: false, similarity: 0 };
     }
 
-    const tokenize = (text) => {
-      return new Set(
-        text
-          .toLowerCase()
-          .replace(/[^a-z0-9\s]/g, ' ')
-          .split(/\s+/)
-          .filter(w => w.length > 2 && !['the', 'and', 'for', 'which', 'what', 'that', 'with', 'this'].includes(w))
-      );
-    };
-
-    const candidateTokens = tokenize(candidateMCQ.questionText);
+    const candidateTokens = this._tokenize(candidateMCQ.questionText);
     if (candidateTokens.size === 0) return { isDuplicate: false, similarity: 0 };
 
     for (const existing of existingQuestions) {
-      const existingTokens = tokenize(existing.questionText || '');
+      const existingTokens = this._tokenize(existing.questionText || '');
       if (existingTokens.size === 0) continue;
 
       let intersectionCount = 0;
@@ -96,6 +107,49 @@ class DeterministicValidator {
     }
 
     return { isDuplicate: false, similarity: 0 };
+  }
+
+  /**
+   * Compute pairwise redundancy matrix across the aggregated set of quiz questions.
+   * @param {Array} quizQuestions
+   * @param {Number} threshold - default 0.60
+   * @returns {Object} { highSimilarityPairs: [], totalRedundantPairs: number }
+   */
+  computeRedundancyMatrix(quizQuestions = [], threshold = 0.60) {
+    const highSimilarityPairs = [];
+
+    for (let i = 0; i < quizQuestions.length; i++) {
+      for (let j = i + 1; j < quizQuestions.length; j++) {
+        const t1 = this._tokenize(quizQuestions[i].questionText || '');
+        const t2 = this._tokenize(quizQuestions[j].questionText || '');
+
+        if (t1.size === 0 || t2.size === 0) continue;
+
+        let intersection = 0;
+        t1.forEach(token => {
+          if (t2.has(token)) intersection++;
+        });
+
+        const union = new Set([...t1, ...t2]).size;
+        const sim = union > 0 ? Number((intersection / union).toFixed(3)) : 0;
+
+        if (sim >= threshold) {
+          highSimilarityPairs.push({
+            pair: `Q${i + 1} ↔ Q${j + 1}`,
+            q1Index: i + 1,
+            q2Index: j + 1,
+            similarity: sim,
+            q1Text: quizQuestions[i].questionText,
+            q2Text: quizQuestions[j].questionText
+          });
+        }
+      }
+    }
+
+    return {
+      highSimilarityPairs,
+      totalRedundantPairs: highSimilarityPairs.length
+    };
   }
 
   /**

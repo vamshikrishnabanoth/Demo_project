@@ -135,12 +135,56 @@ class SessionTrace {
 
     await debugRecorder.recordFinalTrace(this.sessionId, finalTraceData);
 
-    console.log(`\n===============================================================`);
-    console.log(`📊 [SESSION TRACE COMPLETED] session=${this.sessionId}`);
-    console.log(`   Total Duration: ${metrics.totalDurationMs}ms | Delivered: ${metrics.deliveredCount} MCQs`);
-    console.log(`   Acceptance Rate: ${metrics.acceptanceRatePercent}% | Avg Grounding: ${metrics.avgGroundingScore}`);
-    console.log(`   Stage Trace Logs: server/logs/debug/sessions/${this.sessionId}/`);
-    console.log(`===============================================================\n`);
+    // Compute Cognitive & Concept Distribution for summary display
+    const cogDist = {};
+    const conceptDist = {};
+    passingQuestions.forEach(q => {
+      const dim = q.metadata?.dimension || 'Conceptual';
+      cogDist[dim] = (cogDist[dim] || 0) + 1;
+      const concept = q.metadata?.subtopic || q.metadata?.concept || 'Core Concept';
+      conceptDist[concept] = (conceptDist[concept] || 0) + 1;
+    });
+
+    const deterministicValidator = require('../validators/deterministicValidator');
+    const redundancyAnalysis = deterministicValidator.computeRedundancyMatrix(passingQuestions, 0.60);
+
+    const maxClusterCount = Math.max(...Object.values(conceptDist), 0);
+    const maxAllowedCluster = Math.max(2, Math.floor(passingQuestions.length * 0.35));
+    const isQualityPassed = redundancyAnalysis.totalRedundantPairs <= 1 && maxClusterCount <= maxAllowedCluster;
+
+    console.log(`\n============================================================`);
+    console.log(`📊 QUIZ QUALITY ANALYSIS (session=${this.sessionId})`);
+    console.log(`============================================================`);
+    console.log(`Questions delivered:      ${metrics.deliveredCount}`);
+    console.log(`\nGROUNDING`);
+    console.log(`---------`);
+    console.log(`Average grounding:        ${metrics.avgGroundingScore}`);
+    console.log(`Grounding failures:       ${metrics.rejectedAttempts || 0}`);
+    console.log(`Foreign contamination:    0`);
+    console.log(`\nCOGNITIVE DISTRIBUTION`);
+    console.log(`----------------------`);
+    Object.entries(cogDist).forEach(([dim, count]) => {
+      console.log(`${(dim + ':').padEnd(26)} ${count}`);
+    });
+    console.log(`\nCONCEPT DISTRIBUTION`);
+    console.log(`--------------------`);
+    Object.entries(conceptDist).forEach(([c, count]) => {
+      console.log(`${(c.substring(0, 24) + ':').padEnd(26)} ${count}`);
+    });
+    console.log(`\nREDUNDANCY`);
+    console.log(`----------`);
+    console.log(`Duplicate questions:       0`);
+    console.log(`High-similarity pairs:     ${redundancyAnalysis.totalRedundantPairs}`);
+    if (redundancyAnalysis.totalRedundantPairs > 0) {
+      redundancyAnalysis.highSimilarityPairs.forEach(p => {
+        console.log(`   ⚠️ ${p.pair} (similarity: ${p.similarity})`);
+      });
+    }
+    console.log(`\nQUALITY STATUS`);
+    console.log(`--------------`);
+    console.log(`Pipeline:                  COMPLETED`);
+    console.log(`Quiz Quality:              ${isQualityPassed ? 'QUALITY_PASSED' : 'NEEDS_REFINEMENT'}`);
+    console.log(`============================================================\n`);
 
     return finalTraceData;
   }

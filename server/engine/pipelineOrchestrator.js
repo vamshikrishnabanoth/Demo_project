@@ -260,6 +260,8 @@ class PipelineOrchestrator {
 
             candidateMCQ.metadata = {
               ...candidateMCQ.metadata,
+              subtopic: currentTarget.subtopic || 'Core Mechanism',
+              concept: currentTarget.concept,
               dimension: currentTarget.dimension,
               cognitiveLevel: currentTarget.cognitiveLevel,
               groundingScore: evalDecision.groundingScore || 0.95,
@@ -280,6 +282,7 @@ class PipelineOrchestrator {
               calculations: { groundingScore: evalDecision.groundingScore || 0.95 },
               decisions: [
                 `Target ${currentTarget.targetId} PASSED on attempt ${attempts}`,
+                `Subtopic: "${currentTarget.subtopic || 'Core Mechanism'}" | Concept: "${currentTarget.concept}"`,
                 `Grounding justification score: ${evalDecision.groundingScore || 0.95}`,
                 `Distractors evaluated plausible, distinct, and free of superficial hallucinations`
               ],
@@ -347,22 +350,36 @@ class PipelineOrchestrator {
       // ──────────────────────────────────────────────────────────────────────────
       const t5 = Date.now();
       const quizEval = agent3Evaluator.evaluateQuizSet(passingQuestions, plan);
+      const decisionsList = [
+        `Quiz coverage evaluated at ${quizEval.coverageScore}%`,
+        `Cognitive dimension diversity: ${quizEval.uniqueDimensionsCount} unique dimensions (${Object.keys(quizEval.cognitiveDistribution || {}).join(', ')})`,
+        `Concept / Subtopic coverage: ${Object.keys(quizEval.conceptDistribution || {}).length} unique subtopics`,
+        `Pairwise semantic redundancy: ${quizEval.redundancy?.totalRedundantPairs || 0} high-similarity pairs`,
+        `Quiz Quality Status: ${quizEval.quizQualityStatus}`
+      ];
+
+      if (quizEval.concentrationWarning) {
+        decisionsList.push(`⚠️ CONCENTRATION WARNING: ${quizEval.concentrationWarning}`);
+      }
+      if (quizEval.suggestion) {
+        decisionsList.push(`💡 SUGGESTION: ${quizEval.suggestion}`);
+      }
+
       await trace.recordStage({
         stageOrder: '05',
         stageName: 'AGENT_3_QUIZ_EVAL',
         input: { passingCount: passingQuestions.length, requestedCount },
-        processing: { operations: ['Coverage analysis', 'Cognitive dimension diversity analysis', 'Repetition check'] },
+        processing: { operations: ['Coverage analysis', 'Cognitive dimension diversity analysis', 'Subtopic concentration analysis', 'Pairwise redundancy matrix check'] },
         calculations: {
           coverageScore: quizEval.coverageScore,
           uniqueDimensions: quizEval.uniqueDimensionsCount,
-          totalQuestions: quizEval.totalQuestions
+          totalQuestions: quizEval.totalQuestions,
+          redundantPairsCount: quizEval.redundancy?.totalRedundantPairs || 0,
+          cognitiveDistribution: quizEval.cognitiveDistribution,
+          conceptDistribution: quizEval.conceptDistribution
         },
-        decisions: [
-          `Quiz coverage evaluated at ${quizEval.coverageScore}%`,
-          `Cognitive dimension diversity: ${quizEval.uniqueDimensionsCount} unique dimensions detected (${quizEval.detectedDimensions.join(', ')})`,
-          `Quiz Quality Status: ${quizEval.quizQualityStatus}`
-        ],
-        rulesApplied: ['Whole-Quiz Pedagogical Balance & Diversity Rule'],
+        decisions: decisionsList,
+        rulesApplied: ['Whole-Quiz Pedagogical Balance, Subtopic Diversity & Concentration Limit Rule (<=30% max concentration)'],
         evidenceUsed: ['All passing candidate MCQs'],
         output: quizEval,
         validation: {

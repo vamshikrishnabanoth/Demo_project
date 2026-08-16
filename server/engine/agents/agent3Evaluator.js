@@ -3,7 +3,7 @@
  *
  * AGENT 3: Dual-Mode Evaluator & Refiner.
  * Mode 1: Question-Level Evaluation (Grounding, Target Alignment, Distractor Quality, Solvability).
- * Mode 2: Quiz-Level Evaluation (Topic Coverage, Cognitive Balance, Over-Concentration).
+ * Mode 2: Quiz-Level Evaluation (Concept Distribution, Cognitive Balance, Cluster Concentration & Redundancy Matrix).
  *
  * Explicitly separates:
  *   PIPELINE_STATUS: COMPLETED | FAILED
@@ -13,6 +13,7 @@
 'use strict';
 
 const llmRouter = require('../adapter/llmRouter');
+const deterministicValidator = require('../validators/deterministicValidator');
 
 class Agent3Evaluator {
   /**
@@ -72,26 +73,80 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
 
   /**
    * Mode 2: Quiz-Level Evaluation across the aggregated set of passing MCQs.
-   * Separates PIPELINE_STATUS vs QUIZ_QUALITY_STATUS.
+   * Analyzes Concept Distribution, Cognitive Balance, and Pairwise Redundancy.
    */
   evaluateQuizSet(quizQuestions = [], plan = {}) {
     const count = quizQuestions.length;
-    const requestedCount = plan.requestedCount || count;
+    const requestedCount = plan.requestedCount || plan.targetCount || count;
 
-    const dimensionsFound = new Set(quizQuestions.map(q => q.metadata?.dimension || 'Conceptual'));
-    const isBalanced = dimensionsFound.size >= Math.min(2, count);
+    // 1. Cognitive Distribution
+    const cognitiveDistribution = {};
+    quizQuestions.forEach(q => {
+      const dim = q.metadata?.dimension || 'Conceptual';
+      cognitiveDistribution[dim] = (cognitiveDistribution[dim] || 0) + 1;
+    });
 
-    const quizQualityStatus = isBalanced ? 'QUALITY_PASSED' : 'NEEDS_REFINEMENT';
+    // 2. Concept / Subtopic Distribution
+    const conceptDistribution = {};
+    quizQuestions.forEach(q => {
+      const subtopic = q.metadata?.subtopic || q.metadata?.targetConcept || q.concept || (q.metadata?.traceabilityAudit?.["3_agent1AssessmentReasoning"]?.whyAssessed ? 'Assessed Concept' : 'Core Mechanism');
+      conceptDistribution[subtopic] = (conceptDistribution[subtopic] || 0) + 1;
+    });
+
+    // 3. Pairwise Semantic / Concept Redundancy Matrix
+    const redundancyAnalysis = deterministicValidator.computeRedundancyMatrix(quizQuestions, 0.60);
+
+    // 4. Cluster Concentration Detection (>30% max ceiling per subtopic)
+    const maxAllowedPerCluster = Math.max(2, Math.floor(count * 0.30));
+    let topClusterName = null;
+    let topClusterCount = 0;
+
+    Object.entries(conceptDistribution).forEach(([name, num]) => {
+      if (num > topClusterCount) {
+        topClusterCount = num;
+        topClusterName = name;
+      }
+    });
+
+    const hasExcessiveConcentration = topClusterCount > maxAllowedPerCluster && count >= 5;
+    const hasHighRedundancy = redundancyAnalysis.totalRedundantPairs > 1;
+
+    let quizQualityStatus = 'QUALITY_PASSED';
+    let concentrationWarning = null;
+    let suggestion = null;
+
+    if (hasExcessiveConcentration || hasHighRedundancy) {
+      quizQualityStatus = 'NEEDS_REFINEMENT';
+
+      if (hasExcessiveConcentration) {
+        const percent = Math.round((topClusterCount / count) * 100);
+        concentrationWarning = `Cluster concentration detected: "${topClusterName}" accounts for ${topClusterCount}/${count} questions (${percent}%). Allowed maximum is 30%.`;
+        suggestion = `Replace ${topClusterCount - maxAllowedPerCluster} question(s) from the "${topClusterName}" cluster with reserve targets covering other session-supported concepts.`;
+      } else if (hasHighRedundancy) {
+        concentrationWarning = `Semantic redundancy detected: ${redundancyAnalysis.totalRedundantPairs} question pairs have high semantic similarity (${redundancyAnalysis.highSimilarityPairs.map(p => p.pair).join(', ')}).`;
+        suggestion = `Regenerate redundant question stems to evaluate distinct mechanisms.`;
+      }
+    }
+
+    const uniqueDims = Object.keys(cognitiveDistribution).length;
+    const isBalanced = uniqueDims >= Math.min(2, count) && quizQualityStatus === 'QUALITY_PASSED';
 
     return {
-      quizQualityStatus: quizQualityStatus,
-      isBalanced: isBalanced,
+      quizQualityStatus,
+      isBalanced,
       totalQuestions: count,
-      requestedCount: requestedCount,
-      uniqueDimensionsCount: dimensionsFound.size,
-      detectedDimensions: Array.from(dimensionsFound),
+      requestedCount,
+      uniqueDimensionsCount: uniqueDims,
+      cognitiveDistribution,
+      conceptDistribution,
+      redundancy: {
+        totalRedundantPairs: redundancyAnalysis.totalRedundantPairs,
+        highSimilarityPairs: redundancyAnalysis.highSimilarityPairs
+      },
+      concentrationWarning,
+      suggestion,
       coverageScore: count >= requestedCount ? 100 : Math.round((count / requestedCount) * 100),
-      recommendations: isBalanced ? [] : ['Cognitive diversity is low. Consider refining targets to include Application, Code Tracing, and Scenario dimensions.']
+      recommendations: suggestion ? [suggestion] : []
     };
   }
 }

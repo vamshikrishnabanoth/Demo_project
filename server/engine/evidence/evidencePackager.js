@@ -5,6 +5,7 @@
  * Applies Dual-Source Authority Division:
  * - Voice Authority -> Teaching Intent, Verbal Emphasis, Difficulty Expectations, Explicit Instructions.
  * - Structured Material Authority (Code/PPT/PDF/Image) -> Exact Factual Artifacts, Syntax Definitions, Formulas.
+ * - Hard Zero Weight Enforcement: Zeroes out categories unsupported by evidence (e.g. Formulas = 0% if 0 formulas).
  */
 
 'use strict';
@@ -28,6 +29,11 @@ class EvidencePackager {
     // Extract exact artifacts from Code / PPT / PDF / Board Images
     const exactArtifacts = this._extractExactArtifacts(codeText, docsText, imageText);
 
+    const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${docsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
+
+    // Compute evidence-driven category weights with strict Hard Zero enforcement
+    const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
+
     // Build structured Evidence Package
     const packageData = {
       sessionId: sessionInputs.sessionId || 'session_' + Date.now(),
@@ -37,16 +43,57 @@ class EvidencePackager {
       },
       voiceEmphasis: voiceEmphasisSignals,
       artifacts: exactArtifacts,
+      categoryWeights: categoryWeights,
       ragChunksSummary: ragChunks.map(c => ({
         id: c.id,
         sourceType: c.sourceType,
         sourceId: c.sourceId,
         snippet: (c.content || '').substring(0, 150)
       })),
-      unifiedRawContent: `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${docsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`
+      unifiedRawContent: rawContent
     };
 
     return packageData;
+  }
+
+  /**
+   * Strictly enforce Hard Zero and compute dynamic category weights based on session evidence.
+   */
+  _computeCategoryWeights(artifacts, voiceSignals, rawContent) {
+    const weights = {
+      CONCEPTS_AND_DEFINITIONS: 0.35,
+      COMPARISONS_AND_TRADEOFFS: 0.25,
+      CASE_STUDIES_AND_SCENARIOS: 0.40,
+      FORMULAS_AND_CALCULATIONS: 0.0,
+      PRACTICAL_AND_LAB_TASKS: 0.0
+    };
+
+    // 1. Hard Zero for Formulas & Calculations
+    if (artifacts.formulasDetected && artifacts.formulasDetected.length > 0) {
+      weights.FORMULAS_AND_CALCULATIONS = 0.20;
+    } else {
+      weights.FORMULAS_AND_CALCULATIONS = 0.0; // STRICT HARD ZERO
+    }
+
+    // 2. Hard Zero for Practical & Lab Tasks if no code / lab steps exist
+    const hasLabSteps = rawContent.toLowerCase().includes('lab task') || rawContent.toLowerCase().includes('terminal command');
+    if (artifacts.hasCode || hasLabSteps) {
+      weights.PRACTICAL_AND_LAB_TASKS = 0.20;
+    } else {
+      weights.PRACTICAL_AND_LAB_TASKS = 0.0; // STRICT HARD ZERO
+    }
+
+    // 3. Renormalize active non-zero weights so they sum to exactly 1.0 (100%)
+    const activeKeys = Object.keys(weights).filter(k => weights[k] > 0);
+    const currentSum = activeKeys.reduce((sum, k) => sum + weights[k], 0);
+
+    if (currentSum > 0) {
+      activeKeys.forEach(k => {
+        weights[k] = Number((weights[k] / currentSum).toFixed(3));
+      });
+    }
+
+    return weights;
   }
 
   /** Extract verbal emphasis signals from Voice transcript */
