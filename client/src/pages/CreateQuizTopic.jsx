@@ -297,16 +297,24 @@ export default function CreateQuizTopic() {
                     const res = await api.post('/quiz/file-metadata', formData, {
                         headers: { 'Content-Type': 'multipart/form-data' }
                     });
-                    if (res.data && res.data.totalCount) {
-                        setInputs(prev => prev.map(item => item.id === id ? {
-                            ...item,
-                            documentId: res.data.documentId,
-                            maxPages: res.data.totalCount,
-                            endPage: res.data.totalCount,
-                            content: res.data.extractedText || '',
-                            schemaVersion: 2,
-                            fetchingMetadata: false
-                        } : item));
+                    if (res.data) {
+                        if (res.data.isAcademic === false) {
+                            toast.error(`⚠️ "${file.name}" contains no academic instructional content and was not added.`, { duration: 5000 });
+                            setInputs(prev => prev.filter(item => item.id !== id));
+                            continue;
+                        }
+
+                        if (res.data.totalCount) {
+                            setInputs(prev => prev.map(item => item.id === id ? {
+                                ...item,
+                                documentId: res.data.documentId,
+                                maxPages: res.data.totalCount,
+                                endPage: res.data.totalCount,
+                                content: res.data.extractedText || '',
+                                schemaVersion: 2,
+                                fetchingMetadata: false
+                            } : item));
+                        }
                     }
                 } catch (err) {
                     console.error('Metadata fetch error:', err);
@@ -317,13 +325,24 @@ export default function CreateQuizTopic() {
         e.target.value = '';
     };
 
-    const handleAddTextInput = () => {
-        if (!textInputContent.trim()) return;
+    const handleAddTextInput = async () => {
+        const text = textInputContent.trim();
+        if (!text) return;
+
+        // Verify academic content before adding to docket
+        try {
+            const res = await api.post('/quiz/analyze-depth', { text });
+            if (res.data && res.data.isAcademic === false) {
+                toast.error('⚠️ Entered text contains no academic instructional content and was not added.', { duration: 5000 });
+                return;
+            }
+        } catch (_) {}
+
         const newInput = {
             id: Math.random().toString(),
             type: 'text',
-            content: textInputContent,
-            source_name: textModalType === 'description' ? 'Topic Description' : `Context Prompt (${textInputContent.slice(0, 20)}...)`
+            content: text,
+            source_name: textModalType === 'description' ? 'Topic Description' : `Context Prompt (${text.slice(0, 20)}...)`
         };
         setInputs(prev => [...prev, newInput]);
         setTextInputContent('');
@@ -431,17 +450,29 @@ export default function CreateQuizTopic() {
                     formData.append('file', audioBlob, 'lecture_recording.webm');
 
                     let transcriptText = '';
+                    let isAcademic = true;
+
                     try {
                         const localRes = await api.post('http://localhost:8000/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' },
                             timeout: 30000
                         });
                         transcriptText = localRes.data.text;
+                        const depthRes = await api.post('/quiz/analyze-depth', { text: transcriptText });
+                        isAcademic = depthRes.data?.isAcademic !== false;
                     } catch (_) {
                         const transcribeRes = await api.post('/quiz/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' }
                         });
                         transcriptText = transcribeRes.data.text;
+                        isAcademic = transcribeRes.data?.isAcademic !== false;
+                    }
+
+                    if (!isAcademic) {
+                        toast.error('⚠️ Voice recording contains no academic instructional content and was not added.', { id: toastId, duration: 5000 });
+                        await markSessionCompleted(newSessionId);
+                        await deleteSessionRecord(newSessionId);
+                        return;
                     }
 
                     if (transcriptText && transcriptText.trim().length > 5) {

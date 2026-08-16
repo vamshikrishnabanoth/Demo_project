@@ -3232,6 +3232,68 @@ Return ONLY a clean JSON object conforming strictly to this format:
     }
 };
 
+exports.getFileMetadata = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ msg: 'No file uploaded' });
+    }
+
+    const absolutePath = path.resolve(req.file.path);
+    try {
+        const ext = path.extname(req.file.originalname).toLowerCase();
+        let totalCount = 1;
+        let extractedText = '';
+
+        if (ext === '.pdf') {
+            const dataBuffer = fs.readFileSync(absolutePath);
+            const data = await pdfParse(dataBuffer);
+            totalCount = data.numpages || 1;
+            extractedText = data.text || '';
+        } else if (['.docx'].includes(ext)) {
+            const result = await mammoth.extractRawText({ path: absolutePath });
+            extractedText = result.value || '';
+            totalCount = Math.max(1, Math.ceil(extractedText.split(/\s+/).length / 300));
+        } else if (['.pptx'].includes(ext)) {
+            try {
+                extractedText = await officeParser.parseOfficeAsync(absolutePath);
+                totalCount = Math.max(1, Math.ceil(extractedText.split(/\s+/).length / 100));
+            } catch (_) {
+                extractedText = '';
+                totalCount = 1;
+            }
+        }
+
+        // Store in documentStore for page-scoped retrieval
+        let docEntry = null;
+        if (extractedText && extractedText.trim().length > 0) {
+            docEntry = documentStore.saveDocument({
+                filename: req.file.originalname,
+                ext,
+                totalPages: totalCount,
+                textContent: extractedText
+            });
+        }
+
+        // Academic content analysis on document text
+        const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText);
+
+        try { fs.unlinkSync(absolutePath); } catch (_) {}
+
+        return res.json({
+            documentId: docEntry ? docEntry.documentId : null,
+            filename: req.file.originalname,
+            totalCount,
+            extractedText: extractedText.substring(0, 5000),
+            isAcademic: depthAnalysis.isAcademic,
+            reason: depthAnalysis.reason,
+            lectureDepth: depthAnalysis.lectureDepth
+        });
+    } catch (err) {
+        console.error('Error in getFileMetadata:', err);
+        try { fs.unlinkSync(absolutePath); } catch (_) {}
+        return res.status(500).json({ msg: 'Failed to extract file metadata' });
+    }
+};
+
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 
 exports.analyzeDepth = async (req, res) => {

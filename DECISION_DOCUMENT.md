@@ -3,7 +3,7 @@
 ## 🔴 Current Problem
 
 **What students see:** "Could not process the YouTube video" error
-**Why it happens:** Video doesn't have captions AND doesn't have a good description
+**Why it happens:** Video doesn't have captions AND doesn't have a good desacription
 **Current success rate:** ~80% (only works with captions or descriptions)
 
 ## 📊 What We Know (Testing Results)
