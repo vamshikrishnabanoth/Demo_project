@@ -30,7 +30,7 @@ if (process.env.GROQ_API_KEY) {
 
 
 /**
- * Transcribes audio file locally using Python faster-whisper with cloud fallback
+ * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
  */
 const transcribeAudio = async (filePath) => {
     try {
@@ -48,7 +48,8 @@ const transcribeAudio = async (filePath) => {
                 ...formData.getHeaders()
             },
             maxContentLength: Infinity,
-            maxBodyLength: Infinity
+            maxBodyLength: Infinity,
+            timeout: 5000
         });
 
         if (response.data && response.data.status === 'success') {
@@ -56,23 +57,39 @@ const transcribeAudio = async (filePath) => {
             return response.data.text;
         }
     } catch (err) {
-        console.error('❌ Local Speech-to-Text failed or offline:', err.message);
+        console.log('ℹ️ Local Speech-to-Text unavailable. Falling back to Groq Cloud Whisper...');
     }
     
-    // Cloud fallback to Groq Whisper if local is offline
-    if (process.env.GROQ_API_KEY && groq) {
+    // Cloud fallback to Groq Whisper API (whisper-large-v3)
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey) {
         try {
-            console.log('🎙️ Local Whisper offline/failed. Falling back to Groq Cloud Whisper...');
-            const transcription = await groq.audio.transcriptions.create({
-                file: fs.createReadStream(filePath),
-                model: "whisper-large-v3",
-                prompt: "This is a transcript of a classroom lecture. Focus on educational concepts. Ignore classroom management talk like 'sit down' or 'be quiet'.",
-                response_format: "text",
+            console.log('🎙️ Calling Groq Cloud Whisper API (whisper-large-v3)...');
+            const FormData = require('form-data');
+            const form = new FormData();
+            form.append('file', fs.createReadStream(filePath), path.basename(filePath));
+            form.append('model', 'whisper-large-v3');
+            form.append('response_format', 'text');
+            form.append('prompt', "This is a transcript of a classroom lecture. Focus on educational concepts.");
+
+            const groqResp = await axios.post('https://api.groq.com/openai/v1/audio/transcriptions', form, {
+                headers: {
+                    'Authorization': `Bearer ${groqKey}`,
+                    ...form.getHeaders()
+                },
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                timeout: 60000
             });
-            return transcription;
+
+            const transcriptText = typeof groqResp.data === 'string' ? groqResp.data : (groqResp.data.text || '');
+            console.log(`✅ Groq Cloud Whisper successful! Text: "${transcriptText.substring(0, 80)}..."`);
+            return transcriptText;
         } catch (groqErr) {
-            console.error('❌ Groq Cloud Transcription Fallback Error:', groqErr.message);
+            console.error('❌ Groq Cloud Transcription Error:', groqErr.response?.data || groqErr.message);
         }
+    } else {
+        console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
     }
     
     return null;
