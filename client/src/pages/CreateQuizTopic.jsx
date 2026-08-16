@@ -709,31 +709,81 @@ export default function CreateQuizTopic() {
                     </div>
                 )}
 
-                {/* CRASH RECOVERY BANNER */}
+                {/* CRASH RECOVERY BANNER WITH DETAILED TIMESTAMPS & DISCARD */}
                 {pendingRecoverySessions.length > 0 && (
-                    <div className="mx-4 lg:mx-6 mt-4 p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
-                        <div className="flex items-center gap-3">
-                            <RefreshCw className="text-amber-600 animate-spin" size={20} />
-                            <div>
-                                <p className="text-xs font-black text-amber-900 uppercase tracking-wider">
-                                    Unsaved Recording Session Detected ({pendingRecoverySessions.length})
-                                </p>
-                                <p className="text-[10px] font-bold text-amber-700">
-                                    Recover previous recording session saved in IndexedDB from a prior crash or tab closure.
-                                </p>
+                    <div className="mx-4 lg:mx-6 mt-4 p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl flex flex-col gap-3 shadow-md">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-amber-500/20 pb-2.5">
+                            <div className="flex items-center gap-2.5">
+                                <RefreshCw className="text-amber-600 animate-spin" size={18} />
+                                <div>
+                                    <p className="text-xs font-black text-amber-900 uppercase tracking-wider">
+                                        Unsaved Recording Session{pendingRecoverySessions.length > 1 ? 's' : ''} Detected ({pendingRecoverySessions.length})
+                                    </p>
+                                    <p className="text-[10px] font-bold text-amber-700">
+                                        Saved in your browser's local IndexedDB from a previous recording session (prior crash, tab closure, or network interruption).
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {pendingRecoverySessions.map(sess => (
+                            {pendingRecoverySessions.length > 1 && (
                                 <button
-                                    key={sess.sessionId}
                                     type="button"
-                                    onClick={() => handleRecoverSession(sess)}
-                                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                    onClick={async () => {
+                                        for (const sess of pendingRecoverySessions) {
+                                            await deleteSessionRecord(sess.sessionId);
+                                        }
+                                        setPendingRecoverySessions([]);
+                                        toast('All unsaved recordings discarded', { icon: '🗑️' });
+                                    }}
+                                    className="text-[11px] font-bold text-amber-800 hover:text-red-600 hover:underline cursor-pointer transition-all self-end sm:self-auto"
                                 >
-                                    Recover Session
+                                    Discard All
                                 </button>
-                            ))}
+                            )}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2.5 items-center">
+                            {pendingRecoverySessions.map((sess, idx) => {
+                                const dateObj = sess.createdAt ? new Date(sess.createdAt) : new Date();
+                                const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                                const dateStr = dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+                                return (
+                                    <div 
+                                        key={sess.sessionId} 
+                                        className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs shadow-sm"
+                                    >
+                                        <div className="flex flex-col">
+                                            <span className="font-black text-amber-950 text-[11px]">
+                                                🎙️ Recording #{idx + 1}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-amber-800">
+                                                {dateStr} at {timeStr}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 ml-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRecoverSession(sess)}
+                                                className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                            >
+                                                Recover
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    await deleteSessionRecord(sess.sessionId);
+                                                    setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
+                                                    toast('Recording discarded', { icon: '🗑️' });
+                                                }}
+                                                title="Discard this recording"
+                                                className="p-1 hover:bg-red-500/20 text-amber-800 hover:text-red-600 rounded-lg text-xs font-black transition-all cursor-pointer"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
