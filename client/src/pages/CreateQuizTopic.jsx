@@ -70,8 +70,9 @@ export default function CreateQuizTopic() {
     // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
 
-    // Dynamic Lecture Depth Rating
+    // Dynamic Lecture Depth & Detected Focus
     const [lectureDepth, setLectureDepth] = useState(null);
+    const [detectedFocus, setDetectedFocus] = useState([]);
 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -192,22 +193,34 @@ export default function CreateQuizTopic() {
         checkRecovery();
     }, []);
 
-    // Calculate lecture depth whenever text content in docket changes
+    // Fetch unified pedagogical lecture depth whenever text content in docket changes
     useEffect(() => {
         const combinedText = inputs
             .map(inp => inp.content || '')
             .join(' ');
         
-        if (combinedText.length > 20) {
-            const words = combinedText.trim().split(/\s+/).length;
-            let score = Math.min(100, Math.max(15, Math.floor(words / 15) + (combinedText.includes('```') ? 25 : 0)));
-            let band = 'Low';
-            if (score >= 86) band = 'Very High';
-            else if (score >= 61) band = 'High';
-            else if (score >= 31) band = 'Moderate';
-            setLectureDepth({ score, band });
+        if (combinedText.length > 25) {
+            const timer = setTimeout(async () => {
+                try {
+                    const res = await api.post('/quiz/analyze-depth', { text: combinedText });
+                    if (res.data && res.data.isAcademic) {
+                        setLectureDepth(res.data.lectureDepth);
+                        setDetectedFocus(res.data.detectedFocus || []);
+                    } else if (res.data && !res.data.isAcademic) {
+                        setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
+                        setDetectedFocus([]);
+                    }
+                } catch (_) {
+                    // Local fallback
+                    const words = combinedText.trim().split(/\s+/).length;
+                    const rating = words > 150 ? 'Comprehensive' : (words > 50 ? 'Developing' : 'Introductory');
+                    setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Moderate', reasoning: 'Present' } });
+                }
+            }, 600);
+            return () => clearTimeout(timer);
         } else {
             setLectureDepth(null);
+            setDetectedFocus([]);
         }
     }, [inputs]);
 
@@ -1029,12 +1042,53 @@ export default function CreateQuizTopic() {
                                                          />
                                                      </div>
                                                 </div>
-                                            )}
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
+
+                        {/* 4. LECTURE PROFILE & DEPTH CARD */}
+                        {lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
+                            <div className="p-4 bg-purple-50/70 border-2 border-purple-200 rounded-2xl space-y-2.5 shadow-xs transition-all">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-purple-900 uppercase tracking-widest flex items-center gap-1.5">
+                                        <Sparkles size={14} className="text-purple-600" />
+                                        Lecture Profile: <span className="font-bold text-purple-700">{lectureDepth.rating}</span>
+                                    </span>
+                                    <span className="text-[10px] font-mono font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-300">
+                                        Depth: {lectureDepth.score}/100
+                                    </span>
+                                </div>
+
+                                {detectedFocus && detectedFocus.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5 pt-1">
+                                        {detectedFocus.map((f, i) => (
+                                            <span key={i} className="text-[9px] font-bold text-slate-700 bg-white px-2 py-0.5 rounded-lg border border-purple-200">
+                                                • {f}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {lectureDepth.characteristics && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 text-[9px] font-bold text-slate-600">
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Concepts: <span className="font-black text-purple-800">{lectureDepth.characteristics.conceptExplanation || 'Developing'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Reasoning: <span className="font-black text-purple-800">{lectureDepth.characteristics.reasoning || 'Present'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Examples: <span className="font-black text-purple-800">{lectureDepth.characteristics.examples || 'Light'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Procedures: <span className="font-black text-purple-800">{lectureDepth.characteristics.procedures || 'Light'}</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration (40% Desktop Width -> lg:col-span-5) */}

@@ -1,11 +1,11 @@
 /**
  * server/engine/agents/agent1Planner.js
  *
- * AGENT 1: Assessment Planner & Curriculum Strategist.
- * - Extracts natural subtopics supported by evidence (no artificial caps).
- * - Calibrates target difficulty against evidence teaching depth.
- * - Allocates targets across distinct cognitive dimensions and derivability tiers.
- * - Generates Primary Targets ($N$) and Reserve Pool ($M$).
+ * AGENT 1: Assessment Planner & Curriculum Strategist (v1.2).
+ * - Extracts natural subtopics supported by evidence (no artificial caps or minimums).
+ * - Generates targets across 9 Cognitive Dimensions to fulfill requested question count ($N$).
+ * - Calibrates difficulty to reasoning complexity over taught concepts without introducing un-taught advanced knowledge.
+ * - Generates Primary Targets ($N$) and Reserve Targets ($M$).
  */
 
 'use strict';
@@ -24,29 +24,33 @@ class Agent1Planner {
     const rawContent = evidencePackage.unifiedRawContent || '';
     const voiceEmphasis = evidencePackage.voiceEmphasis || {};
     const categoryWeights = evidencePackage.categoryWeights || {};
-    const evidenceDepth = evidencePackage.evidenceDepth || { depthScore: 65, rating: 'MODERATE', maxLegitimateDifficulty: 'Medium' };
-    const capacity = evidencePackage.evidenceCapacity || { totalCapacity: 20 };
+    const lectureDepth = evidencePackage.lectureDepth || { score: 65, rating: 'Developing' };
+    const detectedFocus = evidencePackage.detectedFocus || [];
 
     // 1. Calculate TC (Teaching Coverage) Score
-    const tcScoreReport = this._computeTCScore(rawContent, voiceEmphasis, evidenceDepth);
+    const tcScoreReport = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth);
 
     // 2. Build prompt for Agent 1 Planning
     const systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
 Analyze the session evidence and generate an Assessment Plan in valid JSON format.
-You must plan ${requestedCount} primary assessment targets AND ${Math.max(1, Math.ceil(requestedCount * 0.3))} pre-generated reserve targets.
+You must plan ${requestedCount} primary assessment targets AND ${Math.max(1, Math.ceil(requestedCount * 0.3))} reserve targets.
 
-POLICY GUIDELINES:
-1. NATURAL SUBTOPIC EXTRACTION: Extract ALL distinct, assessable subtopics actually supported by the session content. Do NOT artificially cap or force an arbitrary count.
-2. DIVERSITY VIA COGNITIVE OPERATIONS: When the requested question count (${requestedCount}) exceeds the number of subtopics, diversify across cognitive operations:
+CENTRAL PRINCIPLES:
+1. NATURAL SUBTOPIC EXTRACTION: Extract all natural, assessable concepts actually supported by the session content (whether 2, 5, or 15).
+2. MULTI-DIMENSIONAL EXPANSION: Fulfill the requested question count (${requestedCount}) by distributing targets across diverse cognitive dimensions:
    - "Conceptual": Core definitions & fundamental mechanism principles.
-   - "Scenario Analysis": Applied problem scenarios in context.
-   - "Comparison/Tradeoff": Contrasting alternatives (e.g. Interrupts vs Polling, or Stage A vs Stage B).
-   - "Application": Concrete use-case implementation or configuration.
-   - "Flow/Trace": Step-by-step execution sequencing, register/state saving.
-   - "Foundational Prerequisite": Essential baseline domain facts (only if directly relevant to understanding the session).
-3. DEPTH-CALIBRATED DIFFICULTY: The evidence teaching depth is "${evidenceDepth.rating}" (Score: ${evidenceDepth.depthScore}/100).
-   - Calibrate questions to legitimate teaching depth.
-   - Do NOT introduce un-taught advanced algorithms if teaching depth is Shallow.
+   - "Cause / Effect": Why things happen, consequences of actions.
+   - "Comparison / Tradeoff": Contrasting alternatives, tradeoffs.
+   - "Scenario Analysis": Applied problem scenarios in context ("A processor is waiting...").
+   - "Application": Implementation, setup, or configuration.
+   - "Prediction": What will happen when a condition changes.
+   - "Flow / Trace": Step-by-step execution sequencing, register/state saving.
+   - "Foundational Prerequisite": Basic knowledge necessary to understand the topic.
+   - "Evidence-Derived Inference": Logical conclusions derived from taught material.
+3. DIFFICULTY POLICY:
+   - The teaching depth of this session is "${lectureDepth.rating}" (Score: ${lectureDepth.score}/100).
+   - Calibrate difficulty to reasoning complexity over taught principles.
+   - Do NOT introduce un-taught advanced algorithms if teaching depth is Introductory.
 
 JSON SCHEMA:
 {
@@ -65,7 +69,7 @@ JSON SCHEMA:
       "targetId": "T01",
       "subtopic": "...",
       "concept": "Specific, unique learning objective",
-      "dimension": "Conceptual|Scenario Analysis|Comparison/Tradeoff|Application|Flow/Trace|Foundational Prerequisite",
+      "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference",
       "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate",
       "targetDifficulty": "Easy|Medium|Hard",
       "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT",
@@ -92,8 +96,8 @@ JSON SCHEMA:
 
     const userPrompt = `
 [TEACHING EVIDENCE PACKAGE]
-Evidence Depth Rating: ${evidenceDepth.rating} (Score: ${evidenceDepth.depthScore}/100)
-Evidence Capacity: ${capacity.totalCapacity} legitimate questions
+Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
+Detected Focus Areas: ${detectedFocus.join(', ')}
 Voice Emphasis: Syntax=${voiceEmphasis.syntaxEmphasis}, Conceptual=${voiceEmphasis.conceptualEmphasis}
 Explicit Instructions: ${(voiceEmphasis.explicitInstructions || []).join('; ')}
 Evidence-Driven Category Weights: ${JSON.stringify(categoryWeights)}
@@ -132,12 +136,11 @@ ${rawContent.substring(0, 3500)}
       planData = {
         subject: parsed.subject || 'Computer Science',
         mainTopic: parsed.mainTopic || parsed.topic || 'Core Lecture Topic',
-        subtopics: parsed.subtopics || [],
+        subtopics: parsed.subtopics || detectedFocus || [],
         teachingEmphasis: parsed.teachingEmphasis || { conceptual: 'HIGH', application: 'HIGH', syntax: 'MEDIUM', calculation: 'LOW' },
         targetCount: parsed.targetCount || requestedCount,
         categoryWeights: categoryWeights,
-        evidenceDepth: evidenceDepth,
-        evidenceCapacity: capacity,
+        lectureDepth: lectureDepth,
         assessmentTargets: rawTargets.map((t, idx) => ({
           targetId: t.targetId || `T0${idx + 1}`,
           subtopic: t.subtopic || parsed.subtopics[idx % (parsed.subtopics.length || 1)] || 'General Concept',
@@ -164,58 +167,68 @@ ${rawContent.substring(0, 3500)}
         }))
       };
     } catch (err) {
-      console.warn(`⚠️ [Agent 1 Planner] LLM call failed: ${err.message}. Using fallback plan.`);
-      planData = this._buildFallbackPlan(rawContent, requestedDifficulty, requestedCount, categoryWeights, evidenceDepth, capacity);
+      console.warn(`⚠️ [Agent 1 Planner] LLM call notice: ${err.message}. Building adaptive fallback plan.`);
+      planData = this._buildFallbackPlan(rawContent, requestedDifficulty, requestedCount, categoryWeights, lectureDepth, detectedFocus);
     }
 
     planData.tcScore = tcScoreReport;
     return planData;
   }
 
-  _computeTCScore(rawContent, voiceEmphasis, evidenceDepth) {
-    const depthScore = evidenceDepth.depthScore || 70;
+  _computeTCScore(rawContent, voiceEmphasis, lectureDepth) {
+    const score = lectureDepth.score || 70;
     return {
-      overallScore: depthScore,
-      rating: depthScore >= 85 ? 'Comprehensive' : (depthScore >= 50 ? 'Moderate' : 'Shallow'),
+      overallScore: score,
+      rating: score >= 75 ? 'Comprehensive' : (score >= 50 ? 'Developing' : 'Introductory'),
       breakdown: {
-        conceptCoverage: `${Math.min(25, Math.round(depthScore * 0.25))}/25`,
-        applicationCoverage: `${Math.min(25, Math.round(depthScore * 0.24))}/25`,
-        artifactCoverage: `${Math.min(20, Math.round(depthScore * 0.18))}/20`,
+        conceptCoverage: `${Math.min(25, Math.round(score * 0.25))}/25`,
+        applicationCoverage: `${Math.min(25, Math.round(score * 0.24))}/25`,
+        artifactCoverage: `${Math.min(20, Math.round(score * 0.18))}/20`,
         teacherEmphasis: '14/15',
-        depth: `${Math.min(15, Math.round(depthScore * 0.15))}/15`,
-        total: `${depthScore}/100`
+        depth: `${Math.min(15, Math.round(score * 0.15))}/15`,
+        total: `${score}/100`
       }
     };
   }
 
-  _buildFallbackPlan(rawContent, difficulty, count, categoryWeights = {}, evidenceDepth = {}, capacity = {}) {
+  _buildFallbackPlan(rawContent, difficulty, count, categoryWeights = {}, lectureDepth = {}, detectedFocus = []) {
     const targets = [];
-    const dimensions = ['Conceptual', 'Scenario Analysis', 'Comparison/Tradeoff', 'Application', 'Flow/Trace'];
+    const dimensions = [
+      'Conceptual',
+      'Cause / Effect',
+      'Comparison / Tradeoff',
+      'Scenario Analysis',
+      'Application',
+      'Prediction',
+      'Flow / Trace',
+      'Foundational Prerequisite',
+      'Evidence-Derived Inference'
+    ];
 
     for (let i = 1; i <= count; i++) {
+      const subtopic = detectedFocus[i % (detectedFocus.length || 1)] || `Topic Concept ${i}`;
       targets.push({
         targetId: `T0${i}`,
-        subtopic: `Subtopic 0${Math.ceil(i / 2)}`,
-        concept: `Key Concept ${i} from Session Content`,
+        subtopic: subtopic,
+        concept: `${subtopic} - Aspect ${i}`,
         dimension: dimensions[(i - 1) % dimensions.length],
         cognitiveLevel: i % 2 === 0 ? 'Apply' : 'Understand',
         targetDifficulty: difficulty,
         evidenceType: 'VOICE + DOCUMENT',
         sourceChunks: ['chunk_01'],
         requiresExactArtifact: false,
-        instruction: `Assess specific concept ${i}`
+        instruction: `Assess understanding and application of ${subtopic}`
       });
     }
 
     return {
       subject: 'Computer Science',
-      mainTopic: 'Core Lecture Topic',
-      subtopics: ['Core Definitions', 'Mechanism Sequence', 'Registers & Flags', 'Performance Impact'],
+      mainTopic: detectedFocus[0] || 'Core Lecture Topic',
+      subtopics: detectedFocus.length > 0 ? detectedFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'],
       teachingEmphasis: { conceptual: 'HIGH', application: 'HIGH', syntax: 'MEDIUM', calculation: 'LOW' },
       targetCount: count,
       categoryWeights,
-      evidenceDepth,
-      evidenceCapacity: capacity,
+      lectureDepth,
       assessmentTargets: targets,
       reserveTargets: [
         {

@@ -104,11 +104,18 @@ class PipelineOrchestrator {
         output: {
           voiceEmphasis,
           artifactsSummary: evidencePackage.artifacts,
+          isAcademic: evidencePackage.isAcademic,
+          lectureDepth: evidencePackage.lectureDepth,
           unifiedLength: (evidencePackage.unifiedRawContent || '').length
         },
         validation: { status: 'PASS', checks: ['Evidence package assembled', 'Artifacts extracted'] },
         durationMs: Date.now() - t1
       });
+
+      // Academic Content Gate: Honest failure if non-academic content
+      if (!evidencePackage.isAcademic) {
+        throw new Error('INSUFFICIENT_ACADEMIC_CONTENT: The provided recording or material does not contain meaningful academic instructional content.');
+      }
 
       // ──────────────────────────────────────────────────────────────────────────
       // Stage 03: AGENT 1 — ASSESSMENT PLANNING & TC ANALYSIS
@@ -471,16 +478,29 @@ class PipelineOrchestrator {
         durationMs: Date.now() - t7
       });
 
+      const deliveredCount = groundingResult.validatedQuestions.length;
+      let pipelineStatus = 'COMPLETED';
+      let notice = null;
+
+      if (deliveredCount < requestedCount) {
+        pipelineStatus = 'COMPLETED_WITH_PARTIAL_FULFILLMENT';
+        notice = `${deliveredCount} high-confidence questions were generated from the available instructional content. Additional questions would require introducing information not supported by the lecture.`;
+      }
+
       // Finalize Session Trace & Persist final_session_trace.json
-      const finalTraceData = await trace.finalize(groundingResult.validatedQuestions, plan.tcScore, evidencePackage, plan);
+      const finalTraceData = await trace.finalize(groundingResult.validatedQuestions, plan.tcScore, evidencePackage, plan, pipelineStatus);
 
       return {
         sessionId: sessionId,
-        pipelineStatus: 'COMPLETED',
+        pipelineStatus: pipelineStatus,
         evidenceSafety: evidenceSafety,
         quizQualityStatus: quizEval.quizQualityStatus,
         quizTitle: plan.mainTopic || 'AI Generated Quiz',
         subject: plan.subject,
+        requestedCount,
+        deliveredCount,
+        notice,
+        lectureDepth: evidencePackage.lectureDepth,
         questions: groundingResult.validatedQuestions,
         questionDecisionLedger: groundingResult.validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
         tcScore: plan.tcScore,

@@ -3232,6 +3232,25 @@ Return ONLY a clean JSON object conforming strictly to this format:
     }
 };
 
+const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
+
+exports.analyzeDepth = async (req, res) => {
+    try {
+        const { text } = req.body;
+        const analysis = depthAnalyzer.analyzeLecture(text || '');
+        return res.json({
+            success: true,
+            isAcademic: analysis.isAcademic,
+            reason: analysis.reason,
+            lectureDepth: analysis.lectureDepth,
+            detectedFocus: analysis.detectedFocus
+        });
+    } catch (err) {
+        console.error('Error in analyzeDepth controller:', err.message);
+        res.status(500).json({ error: 'Depth analysis failed', details: err.message });
+    }
+};
+
 exports.transcribe = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ msg: 'No audio file uploaded' });
@@ -3248,7 +3267,14 @@ exports.transcribe = async (req, res) => {
             return res.status(422).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
         }
 
-        res.json({ text: transcript });
+        const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
+
+        res.json({
+            text: transcript,
+            isAcademic: depthAnalysis.isAcademic,
+            lectureDepth: depthAnalysis.lectureDepth,
+            detectedFocus: depthAnalysis.detectedFocus
+        });
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
         try { fs.unlinkSync(absolutePath); } catch (_) {}

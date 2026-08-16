@@ -197,6 +197,34 @@ class DeterministicValidator {
   }
 
   /**
+   * Evaluate a single pair for pedagogical redundancy vs cognitive variation.
+   */
+  checkPedagogicalPairRedundancy(q1, q2) {
+    const sim = this.calculateSimilarity(q1.questionText || '', q2.questionText || '');
+    const dim1 = q1.metadata?.dimension || 'Conceptual';
+    const dim2 = q2.metadata?.dimension || 'Conceptual';
+    const sameDimension = dim1 === dim2;
+
+    const ans1 = (q1.correctAnswer || '').trim().toLowerCase();
+    const ans2 = (q2.correctAnswer || '').trim().toLowerCase();
+    const sameAnswer = ans1.length > 0 && ans1 === ans2;
+
+    if (sim >= 0.80) {
+      return { verdict: 'REJECT_REDUNDANT', similarity: sim, reason: 'Verbatim duplicate' };
+    }
+
+    if (sim >= 0.30 && sameDimension && sameAnswer) {
+      return { verdict: 'REJECT_REDUNDANT', similarity: sim, reason: 'Identical cognitive operation and answer' };
+    }
+
+    if (sim >= 0.30 && !sameDimension) {
+      return { verdict: 'KEEP_COGNITIVE_VARIATION', similarity: sim, reason: 'Different cognitive dimension (e.g. Conceptual vs Scenario)' };
+    }
+
+    return { verdict: 'KEEP_DISTINCT', similarity: sim, reason: 'Low similarity distinct question' };
+  }
+
+  /**
    * Run Deterministic Post-Checks & Option Randomization.
    * @param {Array} quizQuestions - Array of passing MCQ objects
    * @returns {Array} Shuffled & normalized MCQs

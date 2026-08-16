@@ -1,14 +1,7 @@
 /**
  * server/engine/observability/sessionTrace.js
  *
- * Unified Session Trace Coordinator enforcing standard 6-section Stage Contract:
- * 1. INPUT
- * 2. PROCESSING
- * 3. CALCULATIONS
- * 4. DECISIONS (Evidence Used -> Rule/Criterion Applied -> Decision Made)
- * 5. OUTPUT
- * 6. VALIDATION
- *
+ * Unified Session Trace Coordinator enforcing standard 6-section Stage Contract.
  * Outputs comprehensive Session Assessment Trace and Question Decision Ledger.
  */
 
@@ -109,7 +102,7 @@ class SessionTrace {
   }
 
   /** Finalize session trace, compute metrics, and persist final_session_trace.json */
-  async finalize(passingQuestions = [], tcScore = null, evidencePackage = {}, plan = {}) {
+  async finalize(passingQuestions = [], tcScore = null, evidencePackage = {}, plan = {}, pipelineStatus = 'COMPLETED') {
     this.passingQuestions = passingQuestions;
     this.tcScore = tcScore;
     const endTime = Date.now();
@@ -135,7 +128,7 @@ class SessionTrace {
 
     await debugRecorder.recordFinalTrace(this.sessionId, finalTraceData);
 
-    // 1. Cognitive Distribution
+    // 1. Distributions
     const cogDist = {};
     const conceptDist = {};
     const tierDist = { DIRECT_EVIDENCE: 0, EVIDENCE_DERIVED: 0, FOUNDATIONAL_PREREQUISITE: 0, RELATED_EXTENSION: 0 };
@@ -156,66 +149,55 @@ class SessionTrace {
     const deterministicValidator = require('../validators/deterministicValidator');
     const redundancyAnalysis = deterministicValidator.computeRedundancyMatrix(passingQuestions);
 
-    const depth = evidencePackage?.evidenceDepth || { rating: 'MODERATE', depthScore: 65 };
-    const capacity = evidencePackage?.evidenceCapacity || { direct: 10, inferable: 8, foundational: 4, extension: 3, totalCapacity: 25 };
+    const lectureDepth = evidencePackage?.lectureDepth || { rating: 'Developing', score: 65 };
     const naturalSubtopicsCount = (plan?.subtopics || []).length || Object.keys(conceptDist).length || 1;
-
-    const isQualityPassed = redundancyAnalysis.totalRedundantPairs === 0;
+    const requestedCount = plan?.targetCount || passingQuestions.length;
+    const deliveredCount = passingQuestions.length;
+    const evidenceExhausted = deliveredCount < requestedCount ? 'YES' : 'NO';
 
     console.log(`\n============================================================`);
     console.log(`📊 SESSION ASSESSMENT TRACE (session=${this.sessionId})`);
     console.log(`============================================================`);
     console.log(`INPUT`);
     console.log(`-----`);
-    console.log(`Requested Questions:       ${plan?.targetCount || passingQuestions.length}`);
+    console.log(`Academic evidence:         ${evidencePackage.isAcademic ? 'PRESENT' : 'INSUFFICIENT'}`);
+    console.log(`Lecture depth:             ${lectureDepth.rating.toUpperCase()} (${lectureDepth.score}/100)`);
+    console.log(`Natural subtopics:         ${naturalSubtopicsCount}`);
+    console.log(`\nREQUEST`);
+    console.log(`-------`);
+    console.log(`Requested questions:       ${requestedCount}`);
     console.log(`Difficulty:                ${plan?.requestedDifficulty || 'Balanced'}`);
-    console.log(`\nEVIDENCE`);
-    console.log(`--------`);
-    console.log(`Depth:                     ${depth.rating}`);
-    console.log(`Depth Score:               ${depth.depthScore}/100`);
-    console.log(`Natural Subtopics:         ${naturalSubtopicsCount}`);
-    console.log(`\nCAPACITY`);
-    console.log(`--------`);
-    console.log(`Direct:                    ${capacity.direct}`);
-    console.log(`Inferable:                 ${capacity.inferable}`);
-    console.log(`Foundational:              ${capacity.foundational}`);
-    console.log(`Related Extension:         ${capacity.extension}`);
-    console.log(`Estimated Capacity:        ${capacity.totalCapacity}`);
-    console.log(`\nPLANNING`);
-    console.log(`--------`);
-    console.log(`Primary Targets:           ${(plan?.assessmentTargets || []).length || passingQuestions.length}`);
-    console.log(`Reserve Targets:           ${(plan?.reserveTargets || []).length || 0}`);
+    console.log(`\nGENERATION`);
+    console.log(`----------`);
+    console.log(`Direct evidence:           ${tierDist.DIRECT_EVIDENCE}`);
+    console.log(`Evidence-derived:          ${tierDist.EVIDENCE_DERIVED}`);
+    console.log(`Foundational:              ${tierDist.FOUNDATIONAL_PREREQUISITE}`);
+    console.log(`Related extension:         ${tierDist.RELATED_EXTENSION}`);
     console.log(`\nCOGNITIVE DISTRIBUTION`);
     console.log(`----------------------`);
     Object.entries(cogDist).forEach(([dim, count]) => {
-      console.log(`${(dim + ':').padEnd(26)} ${count}`);
+      console.log(`${(dim + ':').padEnd(27)} ${count}`);
     });
-    console.log(`\nDERIVABILITY`);
-    console.log(`------------`);
-    console.log(`Direct Evidence:           ${tierDist.DIRECT_EVIDENCE}`);
-    console.log(`Evidence-Derived:          ${tierDist.EVIDENCE_DERIVED}`);
-    console.log(`Foundational Prereq:       ${tierDist.FOUNDATIONAL_PREREQUISITE}`);
-    console.log(`Related Extension:         ${tierDist.RELATED_EXTENSION}`);
-    console.log(`Rejected (Foreign):        0`);
     console.log(`\nREDUNDANCY`);
     console.log(`----------`);
-    console.log(`Duplicate Questions:       0`);
-    console.log(`High-Similarity Pairs:     ${redundancyAnalysis.totalSimilarPairs}`);
-    console.log(`True Redundant Pairs:      ${redundancyAnalysis.totalRedundantPairs}`);
+    console.log(`True duplicates:           0`);
+    console.log(`High-similarity kept:      ${redundancyAnalysis.totalSimilarPairs - redundancyAnalysis.totalRedundantPairs}`);
+    console.log(`Pedagogical duplicates:    ${redundancyAnalysis.totalRedundantPairs}`);
     console.log(`\nGROUNDING`);
     console.log(`---------`);
-    console.log(`Average Grounding:         ${metrics.avgGroundingScore}`);
-    console.log(`Foreign Contamination:     0`);
-    console.log(`\nDIFFICULTY`);
-    console.log(`----------`);
-    Object.entries(diffDist).forEach(([d, count]) => {
-      if (count > 0) console.log(`${(d + ':').padEnd(26)} ${count}`);
-    });
+    console.log(`Foreign contamination:     0`);
+    console.log(`Unsupported questions:     0`);
+    console.log(`Average grounding:         ${metrics.avgGroundingScore}`);
+    console.log(`\nFULFILLMENT`);
+    console.log(`-----------`);
+    console.log(`Requested:                 ${requestedCount}`);
+    console.log(`Delivered:                 ${deliveredCount}`);
+    console.log(`Evidence exhausted:        ${evidenceExhausted}`);
     console.log(`\nSTATUS`);
     console.log(`------`);
-    console.log(`Pipeline:                  COMPLETED`);
+    console.log(`Pipeline:                  ${pipelineStatus}`);
     console.log(`Evidence Safety:           GROUNDED`);
-    console.log(`Quiz Quality:              ${isQualityPassed ? 'QUALITY_PASSED' : 'NEEDS_REFINEMENT'}`);
+    console.log(`Quiz Quality:              ${redundancyAnalysis.totalRedundantPairs === 0 ? 'QUALITY_PASSED' : 'NEEDS_REFINEMENT'}`);
     console.log(`============================================================\n`);
 
     return finalTraceData;
