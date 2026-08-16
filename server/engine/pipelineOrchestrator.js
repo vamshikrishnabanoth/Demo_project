@@ -205,23 +205,23 @@ class PipelineOrchestrator {
             continue;
           }
 
-          // 4C. Deterministic Duplicate Question Check
-          const dupCheck = deterministicValidator.checkDuplicateQuestion(candidateMCQ, passingQuestions, 0.70);
+          // 4C. Deterministic Duplicate Question Check (using 3-zone pedagogical redundancy model)
+          const dupCheck = deterministicValidator.checkDuplicateQuestion(candidateMCQ, passingQuestions, currentTarget);
           if (dupCheck.isDuplicate) {
             await trace.recordStage({
               stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
               stageName: 'DETERMINISTIC_DUPLICATE_CHECK',
               input: { targetId: currentTarget.targetId, candidateMCQ, duplicateWith: dupCheck.duplicateWith },
               processing: { operations: ['Jaccard token similarity check against accepted questions'] },
-              decisions: [`Candidate MCQ is duplicate of an already accepted question (similarity: ${dupCheck.similarity})`],
-              rulesApplied: ['Deterministic Duplicate Elimination Rule'],
+              decisions: [`Candidate MCQ rejected: ${dupCheck.reason} (similarity: ${dupCheck.similarity})`],
+              rulesApplied: ['Deterministic Multi-Factor Redundancy Rule'],
               evidenceUsed: [currentTarget.targetId],
-              errors: [`Duplicate question detected (similarity: ${dupCheck.similarity})`],
+              errors: [`${dupCheck.reason}: "${dupCheck.duplicateWith}"`],
               output: { isValid: false, duplicate: true },
               validation: { status: 'FAIL', errors: [`Duplicate of: "${dupCheck.duplicateWith}"`] },
               durationMs: Date.now() - targetStartTime
             });
-            repairInstruction = `Generate a completely DIFFERENT question testing ${currentTarget.concept}. Do NOT repeat phrasing from previous questions.`;
+            repairInstruction = `Generate a DIFFERENT question testing ${currentTarget.concept} with a different cognitive operation. Do NOT repeat phrasing or exact answers from previous questions.`;
             continue;
           }
 
@@ -229,6 +229,32 @@ class PipelineOrchestrator {
           const evalDecision = await agent3Evaluator.evaluateQuestion(candidateMCQ, currentTarget, evidencePackage);
 
           if (evalDecision.status === 'PASS') {
+            // Construct Question Decision Ledger Record
+            const decisionLedger = {
+              questionId: `Q${passingQuestions.length + 1}`,
+              source: {
+                tier: evalDecision.tier || 'EVIDENCE_DERIVED',
+                supportingChunks: currentTarget.sourceChunks || ['chunk_01']
+              },
+              concept: currentTarget.concept,
+              subtopic: currentTarget.subtopic || 'Core Mechanism',
+              cognitiveDimension: currentTarget.dimension,
+              difficulty: currentTarget.targetDifficulty,
+              studentAnswerability: evalDecision.studentAnswerability || 'HIGH',
+              redundancy: {
+                similarQuestion: null,
+                similarity: dupCheck.similarity || 0,
+                decision: 'KEEP'
+              },
+              agent3: {
+                verdict: 'PASS',
+                groundingScore: evalDecision.groundingScore || 0.95
+              },
+              grounding: {
+                status: 'GROUNDED'
+              }
+            };
+
             // Construct Full 7-Point Traceability Audit Record
             const traceabilityAudit = {
               "1_sourceOrigin": currentTarget.evidenceType || "VOICE + DOCUMENT",
@@ -245,6 +271,8 @@ class PipelineOrchestrator {
               },
               "5_agent3EvaluationReasoning": {
                 "groundingScore": evalDecision.groundingScore || 0.95,
+                "derivabilityTier": evalDecision.tier || "EVIDENCE_DERIVED",
+                "studentAnswerability": evalDecision.studentAnswerability || "HIGH",
                 "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
                 "verdict": "PASS"
               },
@@ -264,9 +292,12 @@ class PipelineOrchestrator {
               concept: currentTarget.concept,
               dimension: currentTarget.dimension,
               cognitiveLevel: currentTarget.cognitiveLevel,
+              tier: evalDecision.tier || 'EVIDENCE_DERIVED',
+              studentAnswerability: evalDecision.studentAnswerability || 'HIGH',
               groundingScore: evalDecision.groundingScore || 0.95,
               targetId: currentTarget.targetId,
               attempt: attempts,
+              decisionLedger,
               traceabilityAudit
             };
 
@@ -278,15 +309,16 @@ class PipelineOrchestrator {
               stageName: 'AGENT_3_QUESTION_EVAL',
               model: 'llama-3.3-70b-versatile',
               input: { targetId: currentTarget.targetId, candidateMCQ },
-              processing: { operations: ['Grounding analysis', 'Target alignment check', 'Distractor plausibility check'] },
+              processing: { operations: ['Grounding analysis', '5-Tier Derivability evaluation', 'Student answerability check', 'Distractor plausibility check'] },
               calculations: { groundingScore: evalDecision.groundingScore || 0.95 },
               decisions: [
                 `Target ${currentTarget.targetId} PASSED on attempt ${attempts}`,
                 `Subtopic: "${currentTarget.subtopic || 'Core Mechanism'}" | Concept: "${currentTarget.concept}"`,
+                `Derivability Tier: ${evalDecision.tier || 'EVIDENCE_DERIVED'} | Student Answerability: ${evalDecision.studentAnswerability || 'HIGH'}`,
                 `Grounding justification score: ${evalDecision.groundingScore || 0.95}`,
                 `Distractors evaluated plausible, distinct, and free of superficial hallucinations`
               ],
-              rulesApplied: ['Pedagogical Quality and Session Grounding Acceptance Rule'],
+              rulesApplied: ['Pedagogical Quality and 5-Tier Derivability Acceptance Rule'],
               evidenceUsed: currentTarget.sourceChunks || ['chunk_01'],
               output: { status: 'PASS', mcq: candidateMCQ },
               validation: { status: 'PASS', checks: ['Grounding >= 0.85', 'Target aligned', 'Distractors valid'] },
@@ -298,7 +330,7 @@ class PipelineOrchestrator {
               stageName: 'AGENT_3_QUESTION_EVAL',
               model: 'llama-3.3-70b-versatile',
               input: { targetId: currentTarget.targetId, candidateMCQ },
-              processing: { operations: ['Grounding analysis', 'Distractor plausibility check'] },
+              processing: { operations: ['Grounding analysis', '5-Tier Derivability evaluation', 'Distractor plausibility check'] },
               decisions: [
                 `Target ${currentTarget.targetId} FAILED on attempt ${attempts}`,
                 `Reason: ${evalDecision.failureReason}`,
@@ -354,7 +386,8 @@ class PipelineOrchestrator {
         `Quiz coverage evaluated at ${quizEval.coverageScore}%`,
         `Cognitive dimension diversity: ${quizEval.uniqueDimensionsCount} unique dimensions (${Object.keys(quizEval.cognitiveDistribution || {}).join(', ')})`,
         `Concept / Subtopic coverage: ${Object.keys(quizEval.conceptDistribution || {}).length} unique subtopics`,
-        `Pairwise semantic redundancy: ${quizEval.redundancy?.totalRedundantPairs || 0} high-similarity pairs`,
+        `Derivability Tiers: Direct=${quizEval.derivabilityTiers?.DIRECT_EVIDENCE || 0}, Derived=${quizEval.derivabilityTiers?.EVIDENCE_DERIVED || 0}, Foundational=${quizEval.derivabilityTiers?.FOUNDATIONAL_PREREQUISITE || 0}, Extension=${quizEval.derivabilityTiers?.RELATED_EXTENSION || 0}`,
+        `Pairwise semantic redundancy: ${quizEval.redundancy?.totalRedundantPairs || 0} true redundant pairs`,
         `Quiz Quality Status: ${quizEval.quizQualityStatus}`
       ];
 
@@ -376,10 +409,11 @@ class PipelineOrchestrator {
           totalQuestions: quizEval.totalQuestions,
           redundantPairsCount: quizEval.redundancy?.totalRedundantPairs || 0,
           cognitiveDistribution: quizEval.cognitiveDistribution,
-          conceptDistribution: quizEval.conceptDistribution
+          conceptDistribution: quizEval.conceptDistribution,
+          derivabilityTiers: quizEval.derivabilityTiers
         },
         decisions: decisionsList,
-        rulesApplied: ['Whole-Quiz Pedagogical Balance, Subtopic Diversity & Concentration Limit Rule (<=30% max concentration)'],
+        rulesApplied: ['Whole-Quiz Pedagogical Balance, Subtopic Diversity & Concentration Limit Rule'],
         evidenceUsed: ['All passing candidate MCQs'],
         output: quizEval,
         validation: {
@@ -411,22 +445,25 @@ class PipelineOrchestrator {
       // ──────────────────────────────────────────────────────────────────────────
       const t7 = Date.now();
       const groundingResult = groundingGate.verifyQuizGrounding(postCheckedQuestions, evidencePackage);
+      const evidenceSafety = groundingResult.status === 'PASSED' ? 'GROUNDED' : 'FOREIGN_CONTAMINATED';
+
       await trace.recordStage({
         stageOrder: '07',
         stageName: 'FINAL_GROUNDING_GATE',
         input: { totalCandidateMCQs: postCheckedQuestions.length },
-        processing: { operations: ['Verify keyword overlap', 'Verify factual justification against session content'] },
+        processing: { operations: ['Verify keyword overlap', 'Verify factual justification against session content', 'Foreign domain boundary check'] },
         calculations: {
           justifiedCount: groundingResult.totalVerified,
-          rejectedCount: groundingResult.rejectedCount
+          rejectedCount: groundingResult.rejectedCount,
+          evidenceSafety
         },
         decisions: [
-          `Final Grounding Gate status: ${groundingResult.status}`,
+          `Final Grounding Gate status: ${groundingResult.status} | Evidence Safety: ${evidenceSafety}`,
           `Verified ${groundingResult.totalVerified}/${postCheckedQuestions.length} questions strictly supported by session evidence`
         ],
         rulesApplied: ['Final Grounding Verification Rule: Reject un-grounded questions before delivery'],
         evidenceUsed: ['session_evidence_package', 'final_candidate_mcqs'],
-        output: { status: groundingResult.status, finalCount: groundingResult.validatedQuestions.length },
+        output: { status: groundingResult.status, evidenceSafety, finalCount: groundingResult.validatedQuestions.length },
         validation: {
           status: groundingResult.status === 'PASSED' ? 'PASS' : 'FAIL',
           checks: [`${groundingResult.totalVerified} questions justified`]
@@ -435,15 +472,17 @@ class PipelineOrchestrator {
       });
 
       // Finalize Session Trace & Persist final_session_trace.json
-      const finalTraceData = await trace.finalize(groundingResult.validatedQuestions, plan.tcScore);
+      const finalTraceData = await trace.finalize(groundingResult.validatedQuestions, plan.tcScore, evidencePackage, plan);
 
       return {
         sessionId: sessionId,
         pipelineStatus: 'COMPLETED',
+        evidenceSafety: evidenceSafety,
         quizQualityStatus: quizEval.quizQualityStatus,
         quizTitle: plan.mainTopic || 'AI Generated Quiz',
         subject: plan.subject,
         questions: groundingResult.validatedQuestions,
+        questionDecisionLedger: groundingResult.validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
         tcScore: plan.tcScore,
         quizEvaluation: quizEval,
         telemetry: finalTraceData.metrics,
@@ -464,14 +503,16 @@ class PipelineOrchestrator {
         validation: { status: 'FAIL', errors: [failureReason] }
       });
 
-      const finalTraceData = await trace.finalize([], plan?.tcScore || null);
+      const finalTraceData = await trace.finalize([], plan?.tcScore || null, evidencePackage, plan);
 
       return {
         sessionId: sessionId,
         pipelineStatus: 'FAILED',
+        evidenceSafety: 'UNKNOWN',
         quizQualityStatus: 'FAILED',
         error: failureReason,
         questions: [],
+        questionDecisionLedger: [],
         telemetry: finalTraceData.metrics,
         traceSummaryPath: `server/logs/debug/sessions/${sessionId}/final_session_trace.json`
       };

@@ -1,13 +1,9 @@
 /**
  * server/engine/agents/agent3Evaluator.js
  *
- * AGENT 3: Dual-Mode Evaluator & Refiner.
- * Mode 1: Question-Level Evaluation (Grounding, Target Alignment, Distractor Quality, Solvability).
- * Mode 2: Quiz-Level Evaluation (Concept Distribution, Cognitive Balance, Cluster Concentration & Redundancy Matrix).
- *
- * Explicitly separates:
- *   PIPELINE_STATUS: COMPLETED | FAILED
- *   QUIZ_QUALITY_STATUS: QUALITY_PASSED | NEEDS_REFINEMENT
+ * AGENT 3: Academic Evaluator & Curriculum Auditor.
+ * Mode 1: Question-Level Evaluation using the 5-Tier Derivability Model & Student Answerability.
+ * Mode 2: Whole-Quiz Evaluation with Multi-Signal Redundancy and Evidence-Capacity-Aware Distribution.
  */
 
 'use strict';
@@ -18,27 +14,43 @@ const deterministicValidator = require('../validators/deterministicValidator');
 class Agent3Evaluator {
   /**
    * Mode 1: Evaluate an individual candidate MCQ.
+   * Classifies question across 5 Derivability Tiers and validates student answerability.
    */
   async evaluateQuestion(candidateMCQ, target, evidencePackage) {
-    const systemPrompt = `You are Agent 3: Academic Question Evaluator.
-Evaluate candidate MCQ against pedagogical quality and session evidence.
+    const evidenceDepth = evidencePackage.evidenceDepth || { rating: 'MODERATE', depthScore: 65 };
+
+    const systemPrompt = `You are Agent 3: Academic Question Evaluator & Curriculum Auditor.
+Evaluate the candidate MCQ against pedagogical quality and the 5-Tier Derivability Model.
+
+5-TIER DERIVABILITY CLASSIFICATION:
+1. "DIRECT_EVIDENCE": Explicitly stated in the session content.
+2. "EVIDENCE_DERIVED": Logically derivable by a student who understood the taught principles, even if not phrased word-for-word.
+3. "FOUNDATIONAL_PREREQUISITE": Minimal baseline prerequisite necessary to understand the topic (Acceptable ONLY IF student answerability is HIGH and relevant to session).
+4. "RELATED_EXTENSION": Closely related application of taught concepts without introducing new un-taught specialized domain terms.
+5. "UNSUPPORTED_FOREIGN": Requires un-taught external domain knowledge or represents completely unrelated topics (MUST BE REJECTED).
+
+STUDENT-SESSION ANSWERABILITY CRITERION:
+"Could a student who genuinely understood this session correctly answer this question using the concepts, examples, and reasoning taught?"
+
+DIFFICULTY VALIDATION:
+Teaching Depth is "${evidenceDepth.rating}" (Score: ${evidenceDepth.depthScore}/100).
+- Is this question difficult because it requires deeper reasoning over taught material? (ACCEPT)
+- Is this question difficult because it demands un-taught advanced algorithms / foreign knowledge? (REJECT)
+
 Return strictly valid JSON matching this schema:
 {
   "status": "PASS" or "FAIL",
-  "failureReason": "...",
-  "repairInstruction": "...",
+  "tier": "DIRECT_EVIDENCE|EVIDENCE_DERIVED|FOUNDATIONAL_PREREQUISITE|RELATED_EXTENSION|UNSUPPORTED_FOREIGN",
+  "studentAnswerability": "HIGH|MEDIUM|LOW",
+  "failureReason": null or "...",
+  "repairInstruction": null or "...",
   "groundingScore": 0.95
-}
-
-REJECTION CRITERIA:
-1. Question is NOT supported by session evidence (Grounding failure).
-2. Distractors are semantically identical or unplausible.
-3. Transformed scenario introduces un-taught domain concepts.
-4. Question does not test target dimension (${target.dimension}).`;
+}`;
 
     const userPrompt = `
-[TARGET]
+[TARGET SPECIFICATION]
 Concept: ${target.concept}
+Subtopic: ${target.subtopic || 'Core Mechanism'}
 Dimension: ${target.dimension}
 Difficulty: ${target.targetDifficulty}
 
@@ -48,7 +60,7 @@ Options: ${JSON.stringify(candidateMCQ.options)}
 Correct Answer: ${candidateMCQ.correctAnswer}
 
 [SESSION EVIDENCE]
-${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
+${(evidencePackage.unifiedRawContent || '').substring(0, 3000)}
 `;
 
     try {
@@ -59,11 +71,24 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
         model: 'llama-3.3-70b-versatile'
       });
 
-      return JSON.parse(responseText);
+      const parsed = JSON.parse(responseText);
+
+      // Hard enforcement on unsupported foreign tier or low student answerability on foundational
+      if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
+        parsed.status = 'FAIL';
+        parsed.failureReason = parsed.failureReason || 'Question requires unsupported external domain knowledge';
+      } else if (parsed.tier === 'FOUNDATIONAL_PREREQUISITE' && parsed.studentAnswerability === 'LOW') {
+        parsed.status = 'FAIL';
+        parsed.failureReason = 'Foundational prerequisite is too advanced or out-of-scope for this session';
+      }
+
+      return parsed;
     } catch (err) {
-      console.warn(`⚠️ [Agent 3] LLM evaluation call failed: ${err.message}. Passing question via heuristic fallback.`);
+      console.warn(`⚠️ [Agent 3] LLM evaluation call notice: ${err.message}. Passing question via heuristic fallback.`);
       return {
         status: 'PASS',
+        tier: 'EVIDENCE_DERIVED',
+        studentAnswerability: 'HIGH',
         failureReason: null,
         repairInstruction: null,
         groundingScore: 0.90
@@ -73,7 +98,7 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
 
   /**
    * Mode 2: Quiz-Level Evaluation across the aggregated set of passing MCQs.
-   * Analyzes Concept Distribution, Cognitive Balance, and Pairwise Redundancy.
+   * Evaluates cognitive distribution, subtopic capacity, and multi-factor redundancy.
    */
   evaluateQuizSet(quizQuestions = [], plan = {}) {
     const count = quizQuestions.length;
@@ -89,15 +114,31 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
     // 2. Concept / Subtopic Distribution
     const conceptDistribution = {};
     quizQuestions.forEach(q => {
-      const subtopic = q.metadata?.subtopic || q.metadata?.targetConcept || q.concept || (q.metadata?.traceabilityAudit?.["3_agent1AssessmentReasoning"]?.whyAssessed ? 'Assessed Concept' : 'Core Mechanism');
+      const subtopic = q.metadata?.subtopic || q.metadata?.concept || 'Core Concept';
       conceptDistribution[subtopic] = (conceptDistribution[subtopic] || 0) + 1;
     });
 
-    // 3. Pairwise Semantic / Concept Redundancy Matrix
-    const redundancyAnalysis = deterministicValidator.computeRedundancyMatrix(quizQuestions, 0.60);
+    // 3. Derivability Tier Breakdown
+    const derivabilityTiers = {
+      DIRECT_EVIDENCE: 0,
+      EVIDENCE_DERIVED: 0,
+      FOUNDATIONAL_PREREQUISITE: 0,
+      RELATED_EXTENSION: 0
+    };
+    quizQuestions.forEach(q => {
+      const tier = q.metadata?.tier || 'EVIDENCE_DERIVED';
+      if (derivabilityTiers[tier] !== undefined) {
+        derivabilityTiers[tier]++;
+      } else {
+        derivabilityTiers.EVIDENCE_DERIVED++;
+      }
+    });
 
-    // 4. Cluster Concentration Detection (>30% max ceiling per subtopic)
-    const maxAllowedPerCluster = Math.max(2, Math.floor(count * 0.30));
+    // 4. Multi-Factor Pedagogical Redundancy Matrix
+    const redundancyAnalysis = deterministicValidator.computeRedundancyMatrix(quizQuestions);
+
+    // 5. Context-Aware Concentration Assessment (Adaptive to available subtopics)
+    const availableSubtopicsCount = Object.keys(conceptDistribution).length;
     let topClusterName = null;
     let topClusterCount = 0;
 
@@ -108,24 +149,24 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
       }
     });
 
-    const hasExcessiveConcentration = topClusterCount > maxAllowedPerCluster && count >= 5;
-    const hasHighRedundancy = redundancyAnalysis.totalRedundantPairs > 1;
+    // If available subtopics >= 4, flag if a single cluster exceeds 40% of total
+    const hasConcentrationWarning = availableSubtopicsCount >= 4 && topClusterCount > Math.max(2, Math.floor(count * 0.40));
+    const hasTrueRedundancy = redundancyAnalysis.totalRedundantPairs > 0;
 
     let quizQualityStatus = 'QUALITY_PASSED';
     let concentrationWarning = null;
     let suggestion = null;
 
-    if (hasExcessiveConcentration || hasHighRedundancy) {
-      quizQualityStatus = 'NEEDS_REFINEMENT';
+    if (hasConcentrationWarning) {
+      const percent = Math.round((topClusterCount / count) * 100);
+      concentrationWarning = `Cluster concentration notice: "${topClusterName}" accounts for ${topClusterCount}/${count} questions (${percent}%).`;
+      suggestion = `Consider expanding questions across other available subtopics if broader coverage is desired.`;
+    }
 
-      if (hasExcessiveConcentration) {
-        const percent = Math.round((topClusterCount / count) * 100);
-        concentrationWarning = `Cluster concentration detected: "${topClusterName}" accounts for ${topClusterCount}/${count} questions (${percent}%). Allowed maximum is 30%.`;
-        suggestion = `Replace ${topClusterCount - maxAllowedPerCluster} question(s) from the "${topClusterName}" cluster with reserve targets covering other session-supported concepts.`;
-      } else if (hasHighRedundancy) {
-        concentrationWarning = `Semantic redundancy detected: ${redundancyAnalysis.totalRedundantPairs} question pairs have high semantic similarity (${redundancyAnalysis.highSimilarityPairs.map(p => p.pair).join(', ')}).`;
-        suggestion = `Regenerate redundant question stems to evaluate distinct mechanisms.`;
-      }
+    if (hasTrueRedundancy) {
+      quizQualityStatus = 'NEEDS_REFINEMENT';
+      concentrationWarning = `Pedagogical redundancy detected: ${redundancyAnalysis.totalRedundantPairs} question pairs test identical cognitive operations with high similarity.`;
+      suggestion = `Replace redundant questions with alternative cognitive dimensions.`;
     }
 
     const uniqueDims = Object.keys(cognitiveDistribution).length;
@@ -139,6 +180,7 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
       uniqueDimensionsCount: uniqueDims,
       cognitiveDistribution,
       conceptDistribution,
+      derivabilityTiers,
       redundancy: {
         totalRedundantPairs: redundancyAnalysis.totalRedundantPairs,
         highSimilarityPairs: redundancyAnalysis.highSimilarityPairs

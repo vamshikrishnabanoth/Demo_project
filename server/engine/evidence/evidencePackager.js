@@ -5,7 +5,9 @@
  * Applies Dual-Source Authority Division:
  * - Voice Authority -> Teaching Intent, Verbal Emphasis, Difficulty Expectations, Explicit Instructions.
  * - Structured Material Authority (Code/PPT/PDF/Image) -> Exact Factual Artifacts, Syntax Definitions, Formulas.
- * - Hard Zero Weight Enforcement: Zeroes out categories unsupported by evidence (e.g. Formulas = 0% if 0 formulas).
+ * - Multi-Signal Evidence Depth Score (Concepts, Explanations, Relations, Examples, Procedures, Artifacts).
+ * - Evidence Capacity Estimator (Direct, Inferable, Foundational, Extension).
+ * - Hard Zero Weight Enforcement.
  */
 
 'use strict';
@@ -31,7 +33,13 @@ class EvidencePackager {
 
     const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${docsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
 
-    // Compute evidence-driven category weights with strict Hard Zero enforcement
+    // 1. Multi-Signal Evidence Depth Assessment
+    const evidenceDepth = this._calculateMultiSignalDepth(rawContent, voiceEmphasisSignals, exactArtifacts);
+
+    // 2. Evidence-Supported Question Capacity Estimation
+    const evidenceCapacity = this._estimateQuestionCapacity(evidenceDepth, rawContent);
+
+    // 3. Evidence-driven category weights with strict Hard Zero enforcement
     const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
 
     // Build structured Evidence Package
@@ -43,6 +51,8 @@ class EvidencePackager {
       },
       voiceEmphasis: voiceEmphasisSignals,
       artifacts: exactArtifacts,
+      evidenceDepth: evidenceDepth,
+      evidenceCapacity: evidenceCapacity,
       categoryWeights: categoryWeights,
       ragChunksSummary: ragChunks.map(c => ({
         id: c.id,
@@ -54,6 +64,91 @@ class EvidencePackager {
     };
 
     return packageData;
+  }
+
+  /**
+   * Multi-Signal Evidence Depth Calculation (Not relying on word count alone).
+   * Evaluates: Concepts, Explanations, Relations, Examples, Procedures, Artifacts, Length.
+   */
+  _calculateMultiSignalDepth(rawContent, voiceSignals, artifacts) {
+    const contentLower = rawContent.toLowerCase();
+    const words = rawContent.trim().split(/\s+/).length;
+
+    // Signal 1: Concepts & Key Terms (0 - 25 pts)
+    const technicalKeywords = [
+      'interrupt', 'pipeline', 'aggregation', 'schema', 'register', 'stack', 'instruction',
+      'vector', 'routine', 'handler', 'memory', 'cpu', 'processor', 'asynchronous', 'polling',
+      'query', 'index', 'document', 'database', 'node', 'tree', 'function', 'class', 'method'
+    ];
+    const techMatches = technicalKeywords.filter(kw => contentLower.includes(kw)).length;
+    const conceptScore = Math.min(25, Math.max(5, (techMatches * 3) + (words > 80 ? 6 : 2)));
+
+    // Signal 2: Explanation Richness (0 - 20 pts)
+    const explanationKeywords = ['because', 'therefore', 'which means', 'in order to', 'allows', 'enables', 'reason', 'why', 'how', 'purpose'];
+    const explanationMatches = explanationKeywords.filter(kw => contentLower.includes(kw)).length;
+    const explanationScore = Math.min(20, Math.max(3, explanationMatches * 3.5));
+
+    // Signal 3: Relationships & Cause-Effect (0 - 15 pts)
+    const relationKeywords = ['causes', 'leads to', 'compared to', 'instead of', 'triggers', 'initiates', 'results in', 'affects', 'depends on'];
+    const relationMatches = relationKeywords.filter(kw => contentLower.includes(kw)).length;
+    const relationScore = Math.min(15, Math.max(2, relationMatches * 3.5));
+
+    // Signal 4: Examples & Scenarios (0 - 15 pts)
+    const exampleKeywords = ['for example', 'for instance', 'consider', 'suppose', 'case where', 'scenario', 'such as', 'like when', 'while'];
+    const exampleMatches = exampleKeywords.filter(kw => contentLower.includes(kw)).length;
+    const exampleScore = Math.min(15, Math.max(2, exampleMatches * 3.5));
+
+    // Signal 5: Procedures & Steps (0 - 10 pts)
+    const stepKeywords = ['first', 'second', 'then', 'after', 'before', 'finally', 'step', 'phase', 'sequence', 'resumes', 'finishes', 'saves', 'loads'];
+    const stepMatches = stepKeywords.filter(kw => contentLower.includes(kw)).length;
+    const procedureScore = Math.min(10, Math.max(2, stepMatches * 2));
+
+    // Signal 6: Artifacts & Code/Formulas (0 - 15 pts)
+    let artifactScore = 0;
+    if (artifacts && artifacts.hasCode) artifactScore += 8;
+    if (artifacts && artifacts.formulasDetected && artifacts.formulasDetected.length > 0) artifactScore += 7;
+
+    const totalDepthScore = Math.min(100, Math.round(conceptScore + explanationScore + relationScore + exampleScore + procedureScore + artifactScore));
+
+    let rating = 'MODERATE';
+    if (totalDepthScore < 45) rating = 'SHALLOW';
+    else if (totalDepthScore >= 75) rating = 'DEEP';
+
+    return {
+      depthScore: totalDepthScore,
+      rating: rating,
+      breakdown: {
+        concepts: `${conceptScore}/25`,
+        explanations: `${explanationScore}/20`,
+        relationships: `${relationScore}/15`,
+        examples: `${exampleScore}/15`,
+        procedures: `${procedureScore}/10`,
+        artifacts: `${artifactScore}/15`
+      },
+      maxLegitimateDifficulty: rating === 'SHALLOW' ? 'Medium' : (rating === 'DEEP' ? 'Hard' : 'Medium')
+    };
+  }
+
+  /**
+   * Estimate Legitimate Question Capacity across Derivability Tiers.
+   */
+  _estimateQuestionCapacity(evidenceDepth, rawContent) {
+    const score = evidenceDepth.depthScore;
+    
+    let directCap = Math.max(3, Math.floor(score * 0.20));
+    let inferableCap = Math.max(3, Math.floor(score * 0.18));
+    let foundationalCap = Math.max(2, Math.floor(score * 0.10));
+    let extensionCap = Math.max(2, Math.floor(score * 0.08));
+
+    const totalLegitimateCapacity = directCap + inferableCap + foundationalCap + extensionCap;
+
+    return {
+      direct: directCap,
+      inferable: inferableCap,
+      foundational: foundationalCap,
+      extension: extensionCap,
+      totalCapacity: totalLegitimateCapacity
+    };
   }
 
   /**

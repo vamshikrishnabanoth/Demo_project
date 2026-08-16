@@ -1,10 +1,10 @@
 /**
  * server/engine/validators/deterministicValidator.js
  *
- * Deterministic Pre-Checks, Post-Checks & Semantic Redundancy Detection:
+ * Deterministic Pre-Checks, Post-Checks & Pedagogical Redundancy Detection:
  * - Pre-Checks: JSON schema parsing, 4 options check, option string deduplication, correct answer existence.
- * - Duplicate & Concept Redundancy Detection: Pairwise token/concept similarity (>0.60 rejected during generation).
- * - Redundancy Matrix: Analyzes whole-quiz pairwise redundancy for Mode 2 Quiz Evaluation.
+ * - Similarity Signal: Token similarity with basic stemming flags candidates for pedagogical investigation.
+ * - Multi-Factor Redundancy: Rejects only if High Similarity + Same Concept + Same Cognitive Dimension + Same Answer.
  * - Post-Checks: Final payload integrity and answer position randomization (A/B/C/D split ~25%).
  */
 
@@ -49,15 +49,25 @@ class DeterministicValidator {
     };
   }
 
+  _stem(word) {
+    if (word.endsWith('ies')) return word.slice(0, -3) + 'y';
+    if (word.endsWith('es')) return word.slice(0, -2);
+    if (word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1);
+    if (word.endsWith('ing') && word.length > 5) return word.slice(0, -3);
+    if (word.endsWith('ed') && word.length > 4) return word.slice(0, -2);
+    return word;
+  }
+
   /**
-   * Tokenize text into meaningful content words (stripping generic question stopwords).
+   * Tokenize text into meaningful content words with basic stemming.
    */
   _tokenize(text = '') {
     const stopwords = new Set([
       'the', 'and', 'for', 'which', 'what', 'that', 'with', 'this', 'from',
       'into', 'during', 'after', 'before', 'where', 'when', 'should', 'would',
       'could', 'about', 'their', 'there', 'having', 'being', 'does', 'primary',
-      'following', 'statement', 'accurately', 'context'
+      'following', 'statement', 'accurately', 'context', 'main', 'basic', 'how',
+      'why', 'can', 'are', 'were'
     ]);
 
     return new Set(
@@ -66,41 +76,70 @@ class DeterministicValidator {
         .replace(/[^a-z0-9\s]/g, ' ')
         .split(/\s+/)
         .filter(w => w.length > 2 && !stopwords.has(w))
+        .map(w => this._stem(w))
     );
   }
 
   /**
-   * Check for duplicate or conceptually redundant questions during target generation.
-   * Threshold = 0.60 catches reworded variations of the same learning question.
-   * @param {Object} candidateMCQ
-   * @param {Array} existingQuestions
-   * @param {Number} threshold - max similarity threshold (default 0.60)
-   * @returns {Object} { isDuplicate: boolean, similarity: number, duplicateWith: string }
+   * Calculate Jaccard word-set similarity between two texts.
    */
-  checkDuplicateQuestion(candidateMCQ, existingQuestions = [], threshold = 0.60) {
+  calculateSimilarity(textA = '', textB = '') {
+    const t1 = this._tokenize(textA);
+    const t2 = this._tokenize(textB);
+    if (t1.size === 0 || t2.size === 0) return 0;
+
+    let intersection = 0;
+    t1.forEach(token => {
+      if (t2.has(token)) intersection++;
+    });
+
+    const union = new Set([...t1, ...t2]).size;
+    return union > 0 ? Number((intersection / union).toFixed(3)) : 0;
+  }
+
+  /**
+   * Pedagogical Redundancy Check:
+   * Similarity is an investigation signal. A question is rejected ONLY if:
+   * - Extreme verbatim similarity (>= 0.80) OR
+   * - High similarity (>= 0.35) AND same concept AND same cognitive dimension AND same answer.
+   * Questions testing the same concept across DIFFERENT cognitive dimensions (e.g. Definition vs Scenario) are KEPT!
+   */
+  checkDuplicateQuestion(candidateMCQ, existingQuestions = [], currentTarget = {}) {
     if (!candidateMCQ || !candidateMCQ.questionText || !Array.isArray(existingQuestions) || existingQuestions.length === 0) {
       return { isDuplicate: false, similarity: 0 };
     }
 
-    const candidateTokens = this._tokenize(candidateMCQ.questionText);
-    if (candidateTokens.size === 0) return { isDuplicate: false, similarity: 0 };
-
     for (const existing of existingQuestions) {
-      const existingTokens = this._tokenize(existing.questionText || '');
-      if (existingTokens.size === 0) continue;
+      const sim = this.calculateSimilarity(candidateMCQ.questionText, existing.questionText || '');
 
-      let intersectionCount = 0;
-      candidateTokens.forEach(token => {
-        if (existingTokens.has(token)) intersectionCount++;
-      });
+      const candidateDim = candidateMCQ.metadata?.dimension || currentTarget.dimension || 'Conceptual';
+      const existingDim = existing.metadata?.dimension || 'Conceptual';
+      const sameDimension = candidateDim === existingDim;
 
-      const unionCount = new Set([...candidateTokens, ...existingTokens]).size;
-      const jaccardSimilarity = unionCount > 0 ? (intersectionCount / unionCount) : 0;
+      const candidateConcept = candidateMCQ.metadata?.concept || currentTarget.concept || '';
+      const existingConcept = existing.metadata?.concept || '';
+      const sameConcept = candidateConcept.toLowerCase() === existingConcept.toLowerCase();
 
-      if (jaccardSimilarity >= threshold) {
+      const candidateAns = (candidateMCQ.correctAnswer || '').trim().toLowerCase();
+      const existingAns = (existing.correctAnswer || '').trim().toLowerCase();
+      const sameAnswer = candidateAns.length > 0 && candidateAns === existingAns;
+
+      // 1. Extreme verbatim duplicate
+      if (sim >= 0.80) {
         return {
           isDuplicate: true,
-          similarity: Number(jaccardSimilarity.toFixed(3)),
+          similarity: sim,
+          reason: 'VERBATIM_DUPLICATE: Text similarity exceeds 0.80',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 2. Pedagogical duplicate: same concept + same cognitive operation + same answer
+      if (sameDimension && (sameConcept || sameAnswer) && sim >= 0.30) {
+        return {
+          isDuplicate: true,
+          similarity: sim,
+          reason: 'PEDAGOGICAL_REDUNDANCY: High similarity testing identical cognitive operation and answer',
           duplicateWith: existing.questionText
         };
       }
@@ -110,45 +149,50 @@ class DeterministicValidator {
   }
 
   /**
-   * Compute pairwise redundancy matrix across the aggregated set of quiz questions.
-   * @param {Array} quizQuestions
-   * @param {Number} threshold - default 0.60
-   * @returns {Object} { highSimilarityPairs: [], totalRedundantPairs: number }
+   * Compute whole-quiz pairwise redundancy matrix.
    */
-  computeRedundancyMatrix(quizQuestions = [], threshold = 0.60) {
+  computeRedundancyMatrix(quizQuestions = []) {
     const highSimilarityPairs = [];
 
     for (let i = 0; i < quizQuestions.length; i++) {
       for (let j = i + 1; j < quizQuestions.length; j++) {
-        const t1 = this._tokenize(quizQuestions[i].questionText || '');
-        const t2 = this._tokenize(quizQuestions[j].questionText || '');
+        const q1 = quizQuestions[i];
+        const q2 = quizQuestions[j];
+        const sim = this.calculateSimilarity(q1.questionText || '', q2.questionText || '');
 
-        if (t1.size === 0 || t2.size === 0) continue;
+        if (sim >= 0.35) {
+          const dim1 = q1.metadata?.dimension || 'Conceptual';
+          const dim2 = q2.metadata?.dimension || 'Conceptual';
+          const sameDimension = dim1 === dim2;
 
-        let intersection = 0;
-        t1.forEach(token => {
-          if (t2.has(token)) intersection++;
-        });
+          const concept1 = (q1.metadata?.concept || '').toLowerCase();
+          const concept2 = (q2.metadata?.concept || '').toLowerCase();
+          const sameConcept = concept1.length > 0 && concept1 === concept2;
 
-        const union = new Set([...t1, ...t2]).size;
-        const sim = union > 0 ? Number((intersection / union).toFixed(3)) : 0;
+          const isTrueRedundant = sim >= 0.75 || (sim >= 0.35 && sameDimension && sameConcept);
 
-        if (sim >= threshold) {
           highSimilarityPairs.push({
             pair: `Q${i + 1} ↔ Q${j + 1}`,
             q1Index: i + 1,
             q2Index: j + 1,
             similarity: sim,
-            q1Text: quizQuestions[i].questionText,
-            q2Text: quizQuestions[j].questionText
+            sameDimension,
+            sameConcept,
+            isTrueRedundant,
+            decision: isTrueRedundant ? 'REDUNDANT' : 'KEEP (Different Dimension)',
+            q1Text: q1.questionText,
+            q2Text: q2.questionText
           });
         }
       }
     }
 
+    const trueRedundantCount = highSimilarityPairs.filter(p => p.isTrueRedundant).length;
+
     return {
       highSimilarityPairs,
-      totalRedundantPairs: highSimilarityPairs.length
+      totalRedundantPairs: trueRedundantCount,
+      totalSimilarPairs: highSimilarityPairs.length
     };
   }
 
