@@ -34,6 +34,7 @@ class PipelineOrchestrator {
     // Initialize Session Trace Coordinator
     const trace = new SessionTrace(sessionId, progressCallback);
     let plan = null;
+    let evidencePackage = null;
 
     try {
       // ──────────────────────────────────────────────────────────────────────────
@@ -71,7 +72,7 @@ class PipelineOrchestrator {
       // Stage 02: CONTENT UNIFICATION & EVIDENCE PACKAGING
       // ──────────────────────────────────────────────────────────────────────────
       const t1 = Date.now();
-      const evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
+      evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
       await trace.recordStage({

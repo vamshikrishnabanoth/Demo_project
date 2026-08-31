@@ -105,7 +105,7 @@ Requested Difficulty: ${requestedDifficulty}
 Requested Question Count: ${requestedCount}
 
 [SESSION CONTENT]
-${rawContent.substring(0, 3500)}
+${rawContent.substring(0, 50000)}
 `;
 
     let planData;

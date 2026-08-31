@@ -62,66 +62,48 @@ Instruction: ${target.instruction}
 ${calculatedData ? '[COMPUTED ARITHMETIC ANSWER]: ' + calculatedData.expectedAnswer : ''}
 
 [SESSION EVIDENCE]
-${(evidencePackage.unifiedRawContent || '').substring(0, 2000)}
+${(evidencePackage.unifiedRawContent || '').substring(0, 16000)}
 `;
 
+    let responseText = '';
     try {
-      const responseText = await llmRouter.complete({
+      responseText = await llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.3,
-        model: 'quiz-expert'
+        model: 'llama-3.3-70b-versatile'
       });
-
-      const parsedMCQ = JSON.parse(responseText);
-
-      // Enforce calculated answer if arithmetic target
-      if (calculatedData && calculatedData.expectedAnswer) {
-        parsedMCQ.correctAnswer = calculatedData.expectedAnswer;
-        if (!parsedMCQ.options.includes(calculatedData.expectedAnswer)) {
-          parsedMCQ.options[0] = calculatedData.expectedAnswer;
-        }
-      }
-
-      parsedMCQ.targetId = target.targetId;
-      parsedMCQ.metadata = {
-        ...(parsedMCQ.metadata || {}),
-        dimension: target.dimension || 'Conceptual',
-        cognitiveLevel: target.cognitiveLevel || 'Understand',
-        targetDifficulty: target.targetDifficulty || 'Medium',
-        concept: target.concept
-      };
-
-      return parsedMCQ;
     } catch (err) {
-      console.warn(`⚠️ [Agent 2] Generation failed or returned malformed JSON: ${err.message}. Building fallback MCQ.`);
-      return this._buildFallbackMCQ(target, calculatedData);
+      console.warn(`⚠️ [Agent 2] Primary model failed: ${err.message}. Retrying with llama-3.1-8b-instant...`);
+      responseText = await llmRouter.complete({
+        prompt: userPrompt,
+        systemPrompt: systemPrompt,
+        temperature: 0.2,
+        model: 'llama-3.1-8b-instant'
+      });
     }
-  }
 
-  /** Fallback MCQ builder if LLM fails */
-  _buildFallbackMCQ(target, calculatedData) {
-    const correctAnswer = calculatedData ? calculatedData.expectedAnswer : 'At the beginning of the pipeline';
-    const options = [
-      correctAnswer,
-      'Inside the $group stage',
-      'At the very end of the pipeline',
-      'Inside the $project stage'
-    ];
+    const cleanJson = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const parsedMCQ = JSON.parse(cleanJson);
 
-    return {
-      targetId: target.targetId,
-      questionText: `Which approach correctly addresses: ${target.concept}?`,
-      options: options,
-      correctAnswer: correctAnswer,
-      explanation: `Correct choice directly satisfies ${target.concept}.`,
-      metadata: {
-        dimension: target.dimension || 'Conceptual',
-        cognitiveLevel: target.cognitiveLevel || 'Understand',
-        targetDifficulty: target.targetDifficulty || 'Medium',
-        concept: target.concept
+    // Enforce calculated answer if arithmetic target
+    if (calculatedData && calculatedData.expectedAnswer) {
+      parsedMCQ.correctAnswer = calculatedData.expectedAnswer;
+      if (!parsedMCQ.options.includes(calculatedData.expectedAnswer)) {
+        parsedMCQ.options[0] = calculatedData.expectedAnswer;
       }
+    }
+
+    parsedMCQ.targetId = target.targetId;
+    parsedMCQ.metadata = {
+      ...(parsedMCQ.metadata || {}),
+      dimension: target.dimension || 'Conceptual',
+      cognitiveLevel: target.cognitiveLevel || 'Understand',
+      targetDifficulty: target.targetDifficulty || 'Medium',
+      concept: target.concept
     };
+
+    return parsedMCQ;
   }
 }
 

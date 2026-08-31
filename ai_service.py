@@ -3,6 +3,7 @@ import re
 import random
 import os
 import sys
+import time
 import base64
 import uuid
 import psycopg2
@@ -109,19 +110,22 @@ embed_model = SentenceTransformer('all-MiniLM-L6-v2')
 print("Loading OCR Engine...")
 ocr_reader = easyocr.Reader(['en'])
 
-# Initialize Whisper model locally (using 'base' optimized for CUDA/CPU)
+# Initialize Whisper model locally (optimized with int8 quantization)
 whisper_model = None
 try:
-    print("Loading Local Whisper Engine...")
+    print("Loading Local Faster-Whisper Engine (large-v3-turbo / base int8)...")
     from faster_whisper import WhisperModel
+    model_size = os.getenv("WHISPER_MODEL_SIZE", "large-v3-turbo")
     try:
-        # Enforce int8 quantization for 4x faster CPU execution
+        whisper_model = WhisperModel(model_size, device="auto", compute_type="int8")
+        print(f"Faster-Whisper ({model_size} int8) loaded successfully!")
+    except Exception as turbo_err:
+        print(f"Loading fallback Whisper base int8: {turbo_err}")
         whisper_model = WhisperModel("base", device="auto", compute_type="int8")
-    except Exception:
-        whisper_model = WhisperModel("base", device="auto", compute_type="default")
-    print("Local Whisper Engine loaded successfully!")
+        print("Local Whisper (base int8) Engine loaded successfully!")
 except Exception as e:
     print(f"⚠️ Warning: Could not initialize local Whisper: {e}. Voice transcription will fall back to cloud/mock.")
+
 
 # -----------------------------
 # 2. DATABASE & RAG CORE LOGIC
@@ -2705,6 +2709,106 @@ def run_generation_task(req: GeneratorRequest):
             print(f"[Error {cb_err}]")
             print(f"======================================================================\n")
 
+# -------------------------------------------------------------
+# ARCHITECTURE E v2.0 PRODUCTION ASSESSMENT PIPELINE INTEGRATION
+# -------------------------------------------------------------
+SPEECH_TO_TEXT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Speech_To_Text"))
+if SPEECH_TO_TEXT_DIR not in sys.path:
+    sys.path.insert(0, SPEECH_TO_TEXT_DIR)
+
+arch_e_v2_engine = None
+
+
+def get_arch_e_engine():
+    global arch_e_v2_engine
+    if arch_e_v2_engine is None:
+        try:
+            from production_engine.core_engine_v2 import AdaptiveAssessmentEngineV2
+            arch_e_v2_engine = AdaptiveAssessmentEngineV2(provider="groq", model="qwen/qwen3.8-27b", temperature=0.2)
+            print("✅ Architecture E v2.0 Adaptive Assessment Engine initialized successfully!")
+        except Exception as e:
+            print(f"⚠️ Architecture E v2.0 Engine initialization error: {e}")
+    return arch_e_v2_engine
+
+
+class AssessmentV2Request(BaseModel):
+    title: Optional[str] = "Classroom Assessment"
+    audio_path: Optional[str] = None
+    slide_path: Optional[str] = None
+    raw_content: Optional[str] = None
+    slide_content: Optional[str] = None
+    requested_count: int = 5
+    difficulty: str = "MIXED"
+    input_id: Optional[str] = None
+
+
+@app.post("/api/v2/generate-assessment")
+async def generate_assessment_v2(req: AssessmentV2Request):
+    """
+    Architecture E v2.0 Production Endpoint:
+    Executes Adaptive Bloom-calibrated planning, dense cross-material alignment,
+    whole-quiz semantic deduplication, and surgical patch repair.
+    """
+    engine = get_arch_e_engine()
+    if engine is None:
+        raise HTTPException(status_code=500, detail="Architecture E v2.0 engine unavailable.")
+
+    try:
+        from production_engine.ingestion.content_processor import ProductionContentProcessor
+        from production_engine.schemas import ProductionAssessmentSuite
+
+        input_id = req.input_id or f"input_{int(time.time()*1000)}"
+        input_type = "VOICE_PLUS_PPT" if (req.audio_path and req.slide_path) or (req.raw_content and req.slide_content) else ("VOICE_ONLY" if req.audio_path else "NOTES")
+
+        canonical = ProductionContentProcessor.process_raw_input(
+            input_id=input_id,
+            title=req.title or "Lecture Content",
+            input_type=input_type,
+            content_style="THEORY",
+            raw_text=req.raw_content or "",
+            supporting_text=req.slide_content
+        )
+
+        suite: ProductionAssessmentSuite = engine.generate_assessment(
+            canonical=canonical,
+            requested_count=req.requested_count,
+            difficulty=req.difficulty
+        )
+
+        formatted_questions = []
+        for idx, q in enumerate(suite.questions):
+            options = [q.option_a, q.option_b, q.option_c, q.option_d]
+            opt_idx = {"A": 0, "B": 1, "C": 2, "D": 3}.get(q.correct_option, 0)
+            formatted_questions.append({
+                "question": q.question_text,
+                "options": options,
+                "answer": opt_idx,
+                "correctAnswer": q.correct_option,
+                "explanation": q.explanation,
+                "cognitive_level": q.cognitive_level,
+                "difficulty_level": q.difficulty_level,
+                "metadata": {
+                    "what_taught": q.what_taught,
+                    "why_assessed": q.why_assessed,
+                    "evidence_refs": q.evidence_refs,
+                    "misconception_rationale": q.misconception_rationale,
+                    "target_concept": q.target_concept
+                }
+            })
+
+        return {
+            "status": "success",
+            "representation_used": suite.representation_used,
+            "validation_status": suite.validation_status,
+            "requested_count": suite.requested_count,
+            "final_question_count": suite.final_question_count,
+            "questions": formatted_questions,
+            "metadata": suite.generation_metadata
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Assessment generation error: {str(e)}")
+
+
 @app.post("/generate")
 async def generate_questions(req: GeneratorRequest, background_tasks: BackgroundTasks):
     if req.callback_url:
@@ -2715,7 +2819,9 @@ async def generate_questions(req: GeneratorRequest, background_tasks: Background
     # Otherwise synchronous execution
     return execute_generation_logic(req)
 
+
 if __name__ == "__main__":
     print(f"AI Service starting on port 8000 using local model: {MODEL_NAME}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 

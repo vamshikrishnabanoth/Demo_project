@@ -42,7 +42,9 @@ class DepthAnalyzer {
       'register', 'array', 'variable', 'object', 'class', 'interface', 'protocol', 'layer',
       'hardware', 'software', 'operation', 'execution', 'result', 'because', 'therefore',
       'difference', 'compare', 'example', 'instance', 'step', 'phase', 'stage', 'table',
-      'token', 'tokenizer', 'vector', 'neural', 'weights', 'loss', 'training', 'feature'
+      'token', 'tokenizer', 'vector', 'neural', 'weights', 'loss', 'training', 'feature',
+      'async', 'sync', 'callback', 'promise', 'event', 'listener', 'emitter', 'microtask',
+      'closure', 'scope', 'handler', 'rest', 'http', 'api', 'endpoint', 'json', 'middleware'
     ];
 
     const casualIndicators = [
@@ -77,10 +79,11 @@ class DepthAnalyzer {
     // 2. Extract Detected Focus Terms
     const focusCandidates = raw.match(/\b[A-Z][a-zA-Z0-9_]{2,}\b/g) || [];
     const technicalKeywords = [
+      'Async', 'Sync', 'Callback', 'Promise', 'EventEmitter', 'Event Loop', 'Microtask', 'EventListener',
       'Interrupt', 'Polling', 'ISR', 'Stack', 'Register', 'Vector Table', 'Pipeline',
       'Aggregation', 'Indexing', 'NoSQL', 'Document', 'Tokenization', 'Vocabulary', 'Schema',
       'Recursion', 'Binary Tree', 'Dijkstra', 'Sorting', 'Graph', 'Memory', 'CPU', 'Thread',
-      'Tokenizer', 'Neural Network', 'Vector'
+      'Tokenizer', 'Neural Network', 'Vector', 'Closure', 'Middleware', 'REST API'
     ];
 
     const foundTechnical = technicalKeywords.filter(k => lower.includes(k.toLowerCase()));

@@ -92,46 +92,61 @@ class LLMRouter {
     const key = this.groqApiKey || process.env.GROQ_API_KEY;
     if (!key) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = [primaryModel, fallbackModel].filter(Boolean);
+    let modelsToTry = [primaryModel, fallbackModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'groq/compound'].filter(Boolean);
+    
+    // Map legacy or unavailable model names to active working Groq models
+    modelsToTry = modelsToTry.map(m => {
+      if (m.includes('llama') || m === 'quiz-expert') return 'openai/gpt-oss-120b';
+      return m;
+    });
 
-    for (let i = 0; i < modelsToTry.length; i++) {
-      const currentModel = modelsToTry[i];
-      try {
-        const response = await axios.post(
-          'https://api.groq.com/openai/v1/chat/completions',
-          {
-            model: currentModel,
-            messages: [
-              ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-              { role: 'user', content: prompt }
-            ],
-            temperature: temperature,
-            response_format: { type: 'json_object' }
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${key}`,
-              'Content-Type': 'application/json'
+    // Deduplicate
+    modelsToTry = Array.from(new Set(modelsToTry));
+
+    let lastErr = null;
+    for (const currentModel of modelsToTry) {
+      let attempts = 0;
+      while (attempts < 3) {
+        attempts++;
+        try {
+          const response = await axios.post(
+            'https://api.groq.com/openai/v1/chat/completions',
+            {
+              model: currentModel,
+              messages: [
+                ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+                { role: 'user', content: prompt }
+              ],
+              temperature: temperature,
+              response_format: { type: 'json_object' }
             },
-            timeout: 25000
-          }
-        );
+            {
+              headers: {
+                Authorization: `Bearer ${key}`,
+                'Content-Type': 'application/json'
+              },
+              timeout: 30000
+            }
+          );
 
-        return response.data.choices[0].message.content;
-      } catch (err) {
-        const isRateLimit = err.response && (err.response.status === 429 || (err.message || '').includes('429'));
-        
-        if (isRateLimit && i < modelsToTry.length - 1) {
-          console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429). Backing off 1.5s and switching to high-throughput model '${fallbackModel}'...`);
-          await this._sleep(1500);
-          continue; // Try fallback model (llama-3.1-8b-instant)
-        }
-        
-        if (i === modelsToTry.length - 1) {
-          throw err;
+          return response.data.choices[0].message.content;
+        } catch (err) {
+          lastErr = err;
+          const status = err.response?.status;
+          const isRateLimit = status === 429 || (err.message || '').includes('429');
+
+          if (isRateLimit) {
+            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429, attempt ${attempts}/3). Sleeping 3.5s...`);
+            await this._sleep(3500);
+          } else {
+            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' failed (${status || err.message}). Switching model...`);
+            await this._sleep(500);
+            break; // Try next model
+          }
         }
       }
     }
+    throw lastErr || new Error('All Groq models failed');
   }
 
   /** Call local FastAPI / Ollama backend */

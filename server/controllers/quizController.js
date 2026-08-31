@@ -49,7 +49,7 @@ const transcribeAudio = async (filePath) => {
             },
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
-            timeout: 5000
+            timeout: 120000 // 2 minutes for local Whisper execution
         });
 
         if (response.data && response.data.status === 'success') {
