@@ -32,11 +32,11 @@ if (process.env.GROQ_API_KEY) {
 /**
  * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
  */
-const transcribeAudio = async (filePath) => {
+const transcribeAudioWithTimestamps = async (filePath) => {
+    // 1. Try local Python faster-whisper service
     try {
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-        console.log(`🎙️ Transcribing audio locally via Python Whisper service: ${AI_SERVICE_URL}/transcribe`);
-        
+        console.log(`🎙️ Transcribing audio with timestamps via Python Whisper: ${AI_SERVICE_URL}/transcribe`);
         const FormData = require('form-data');
         const formData = new FormData();
         formData.append('file', fs.createReadStream(filePath), {
@@ -53,24 +53,31 @@ const transcribeAudio = async (filePath) => {
         });
 
         if (response.data && response.data.status === 'success') {
-            console.log(`✅ Local transcription successful! Text: "${response.data.text.substring(0, 60)}..."`);
-            return response.data.text;
+            console.log(`✅ Local timestamped transcription successful! (${response.data.segments?.length || 0} segments)`);
+            return {
+                text: response.data.text || '',
+                rawText: response.data.raw_text || response.data.text || '',
+                segments: response.data.segments || [],
+                duration: response.data.duration || 0,
+                duration_formatted: response.data.duration_formatted || '00:00:00',
+                language: response.data.language || 'en'
+            };
         }
     } catch (err) {
-        console.log('ℹ️ Local Speech-to-Text unavailable. Falling back to Groq Cloud Whisper...');
+        console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Groq Cloud Whisper...');
     }
-    
-    // Cloud fallback to Groq Whisper API (whisper-large-v3)
+
+    // 2. Cloud fallback to Groq Whisper API (whisper-large-v3) with verbose_json for timestamps
     const groqKey = process.env.GROQ_API_KEY;
     if (groqKey) {
         try {
-            console.log('🎙️ Calling Groq Cloud Whisper API (whisper-large-v3)...');
+            console.log('🎙️ Calling Groq Cloud Whisper (whisper-large-v3, verbose_json)...');
             const FormData = require('form-data');
             const form = new FormData();
             form.append('file', fs.createReadStream(filePath), path.basename(filePath));
             form.append('model', 'whisper-large-v3');
-            form.append('response_format', 'text');
-            form.append('prompt', "This is a transcript of a classroom lecture. Focus on educational concepts.");
+            form.append('response_format', 'verbose_json');
+            form.append('prompt', 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.');
 
             const groqResp = await axios.post('https://api.groq.com/openai/v1/audio/transcriptions', form, {
                 headers: {
@@ -82,17 +89,50 @@ const transcribeAudio = async (filePath) => {
                 timeout: 60000
             });
 
-            const transcriptText = typeof groqResp.data === 'string' ? groqResp.data : (groqResp.data.text || '');
-            console.log(`✅ Groq Cloud Whisper successful! Text: "${transcriptText.substring(0, 80)}..."`);
-            return transcriptText;
+            const data = groqResp.data;
+            const fullText = data.text || '';
+            const rawSegs = Array.isArray(data.segments) ? data.segments : [];
+            const duration = data.duration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
+
+            const formatTs = (s) => {
+                const total = Math.floor(Math.max(0, s || 0));
+                const h = Math.floor(total / 3600);
+                const m = Math.floor((total % 3600) / 60);
+                const sc = total % 60;
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
+            };
+
+            const segments = rawSegs.map((seg, idx) => ({
+                id: `seg_${idx + 1}`,
+                start: seg.start,
+                end: seg.end,
+                timestamp: formatTs(seg.start),
+                timestamp_end: formatTs(seg.end),
+                text: (seg.text || '').trim(),
+                speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
+            }));
+
+            return {
+                text: fullText,
+                rawText: fullText,
+                segments: segments,
+                duration: duration,
+                duration_formatted: formatTs(duration),
+                language: data.language || 'en'
+            };
         } catch (groqErr) {
             console.error('❌ Groq Cloud Transcription Error:', groqErr.response?.data || groqErr.message);
         }
     } else {
         console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
     }
-    
+
     return null;
+};
+
+const transcribeAudio = async (filePath) => {
+    const result = await transcribeAudioWithTimestamps(filePath);
+    return result ? result.text : null;
 };
 
 // Mock AI Generation for fallback
@@ -3522,3 +3562,179 @@ exports.getSuspiciousActivities = async (req, res) => {
         res.status(500).json({ msg: 'Server error fetching suspicious activities' });
     }
 };
+
+/**
+ * ── LECTURE AUDIO CLEANING & PEDAGOGICAL RECONSTRUCTION CONTROLLERS ──────────
+ * Executes the Two-Task Lecture Processing Workflow:
+ * Task 1: Content Cleaning & Segment Classification (Filter non-academic chatter, retain student Q&A)
+ * Task 2: Pedagogical Lecture Reconstruction (Topic, Motivation, Definitions, Analogies, Source Attribution)
+ */
+exports.analyzeLectureRecording = async (req, res) => {
+    const hasFile = !!req.file;
+    const rawText = req.body.text || '';
+
+    if (!hasFile && (!rawText || rawText.trim().length < 5)) {
+        return res.status(400).json({ msg: 'Please upload an audio recording or provide a lecture transcript.' });
+    }
+
+    const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
+    const lectureAnalyzer = require('../engine/evidence/lectureAnalyzer');
+    const taskId = createTask();
+
+    res.json({ taskId, status: 'PROCESSING', message: 'Lecture analysis started successfully.' });
+
+    setImmediate(async () => {
+        let absolutePath = null;
+        if (hasFile) {
+            absolutePath = path.resolve(req.file.path);
+        }
+
+        try {
+            console.log(`\n🎙️ [STAGE 0: Task ${taskId}] Inspecting & Transcribing Audio Recording...`);
+            updateTaskStage(taskId, 0, 'Inspecting & Transcribing Audio Recording');
+            let transcriptionData = null;
+
+            if (absolutePath) {
+                transcriptionData = await transcribeAudioWithTimestamps(absolutePath);
+                try { fs.unlinkSync(absolutePath); } catch (_) {}
+            } else {
+                const parsedSegs = lectureAnalyzer.parseTranscriptIntoSegments(rawText);
+                transcriptionData = {
+                    text: rawText,
+                    rawText: rawText,
+                    segments: parsedSegs,
+                    duration: parsedSegs.length > 0 ? parsedSegs[parsedSegs.length - 1].end : 120,
+                    duration_formatted: lectureAnalyzer.formatTimestamp(parsedSegs.length > 0 ? parsedSegs[parsedSegs.length - 1].end : 120),
+                    language: 'en'
+                };
+            }
+
+            if (!transcriptionData || (!transcriptionData.text && (!transcriptionData.segments || transcriptionData.segments.length === 0))) {
+                failTask(taskId, 'Could not extract intelligible speech from audio recording. Please ensure clear audio.');
+                return;
+            }
+
+            console.log(`🎙️ [STAGE 1: Task ${taskId}] Classifying Segments & Removing Non-Academic Clutter...`);
+            updateTaskStage(taskId, 1, 'Classifying Segments & Removing Non-Academic Clutter');
+
+            const analysisResult = await lectureAnalyzer.analyzeLecture({
+                rawText: transcriptionData.text,
+                segments: transcriptionData.segments,
+                audioMetadata: {
+                    duration: transcriptionData.duration,
+                    duration_formatted: transcriptionData.duration_formatted,
+                    language: transcriptionData.language
+                }
+            });
+
+            console.log(`🎙️ [STAGE 2: Task ${taskId}] Reconstructing Pedagogical Sequence & Explanations...`);
+            updateTaskStage(taskId, 2, 'Reconstructing Pedagogical Sequence & Explanations');
+
+            console.log(`🎙️ [STAGE 3: Task ${taskId}] Finalizing Evidence-Backed Study Suite...`);
+            updateTaskStage(taskId, 3, 'Finalizing Evidence-Backed Study Suite');
+
+            completeTask(taskId, {
+                status: 'COMPLETED',
+                analysis: analysisResult,
+                transcription: transcriptionData,
+                title: analysisResult?.pedagogical_reconstruction?.main_topic || `Lecture Recording (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`
+            });
+            console.log(`✅ [Task ${taskId}] Lecture Analysis Completed Successfully.`);
+        } catch (err) {
+            console.error(`❌ [Task ${taskId}] Lecture Analysis Error:`, err.message);
+            if (absolutePath) {
+                try { fs.unlinkSync(absolutePath); } catch (_) {}
+            }
+            failTask(taskId, err.message || 'Failed to analyze lecture recording.');
+        }
+    });
+};
+
+exports.getLectureAnalysisStatus = async (req, res) => {
+    const { taskId } = req.params;
+    const { getTask } = require('../services/taskManager');
+    const task = getTask(taskId);
+    if (!task) {
+        return res.status(404).json({ status: 'EXPIRED', msg: 'Task not found or expired.' });
+    }
+    res.json(task);
+};
+
+exports.generateQuizFromCleanedLecture = async (req, res) => {
+    try {
+        const { cleanedTranscript, concepts, title, questionCount = 5, difficulty = 'Medium', questionStyle = 'MIXED' } = req.body;
+
+        let sourceContent = cleanedTranscript || '';
+        if (Array.isArray(concepts) && concepts.length > 0) {
+            const conceptSummaries = concepts.map(c => `- ${c.concept_name}: ${c.definition} (Why needed: ${c.why_needed || ''})`).join('\n');
+            sourceContent = `CORE CONCEPTS:\n${conceptSummaries}\n\nLECTURE TRANSCRIPT:\n${sourceContent}`;
+        }
+
+        if (!sourceContent || sourceContent.trim().length < 10) {
+            return res.status(400).json({ msg: 'Insufficient cleaned lecture content to generate quiz.' });
+        }
+
+        const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
+        const taskId = createTask();
+        res.json({ taskId });
+
+        setImmediate(async () => {
+            try {
+                updateTaskStage(taskId, 0, 'Generating Questions from Cleaned Lecture');
+                const draftQuestions = await generateQuestions(
+                    'topic',
+                    sourceContent,
+                    questionCount || 5,
+                    difficulty || 'Medium',
+                    null,
+                    null,
+                    null,
+                    null,
+                    taskId,
+                    null,
+                    null,
+                    questionStyle || 'MIXED'
+                );
+
+                updateTaskStage(taskId, 1, 'Refining Pedagogical Grounding');
+
+                let finalQuestions = draftQuestions;
+                let agentReport = null;
+                try {
+                    const agentGroq = process.env.GROQ_API_KEY && groq ? groq : null;
+                    const pipelineResult = await runAgentPipeline({
+                        draftQuestions,
+                        groqClient: agentGroq,
+                        difficulty: difficulty || 'Medium',
+                        topic: title || 'Cleaned Lecture',
+                        timeoutMs: 60000,
+                        onProgress: (stage, label) => updateTaskStage(taskId, stage, label)
+                    });
+                    finalQuestions = pipelineResult.questions;
+                    agentReport = pipelineResult.agentReport;
+                } catch (pipeErr) {
+                    console.warn('⚠️ Agent pipeline fallback in lecture quiz:', pipeErr.message);
+                }
+
+                updateTaskStage(taskId, 3, 'Finalizing Assessment');
+                const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
+
+                completeTask(taskId, {
+                    questions: finalQuestions,
+                    title: title || `Lecture Quiz (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`,
+                    transcript: sourceContent,
+                    agentReport,
+                    finalValidation: validation,
+                    isVoice: true
+                });
+            } catch (err) {
+                console.error('❌ Lecture Quiz Gen Error:', err.message);
+                failTask(taskId, err.message);
+            }
+        });
+    } catch (err) {
+        console.error('Error generating quiz from lecture:', err);
+        res.status(500).json({ msg: 'Server error generating quiz from cleaned lecture.' });
+    }
+};
+

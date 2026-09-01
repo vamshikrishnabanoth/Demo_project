@@ -207,6 +207,18 @@ router.post('/file-metadata', auth, upload.single('file'), verifyUploadedFile, q
 // @desc    Transcribe audio and generate quiz questions
 router.post('/generate-voice', auth, upload.single('file'), verifyUploadedFile, quizController.generateQuizFromVoice);
 
+// @route   POST api/quiz/analyze-lecture
+// @desc    Two-Task Lecture Understanding: Clean non-academic content & Reconstruct pedagogical structure
+router.post('/analyze-lecture', auth, upload.single('file'), verifyUploadedFile, quizController.analyzeLectureRecording);
+
+// @route   GET api/quiz/lecture-analysis/:taskId
+// @desc    Poll status for two-task lecture analysis
+router.get('/lecture-analysis/:taskId', auth, quizController.getLectureAnalysisStatus);
+
+// @route   POST api/quiz/generate-from-lecture
+// @desc    Generate quiz from cleaned lecture concepts & transcript
+router.post('/generate-from-lecture', auth, teacherOrAdmin, quizController.generateQuizFromCleanedLecture);
+
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
 router.post('/create', auth, teacherOrAdmin, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);
