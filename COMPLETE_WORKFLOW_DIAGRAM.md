@@ -353,3 +353,334 @@ DATABASE:                          STORAGE:
 - Instant answer feedback
 - Live leaderboards
 - Real-time student monitoring
+
+
+============================================================
+              GIT COMMANDS – EXAM CHEAT SHEET
+============================================================
+
+1. CLONE REPOSITORY
+-------------------
+git clone <REPOSITORY-URL>
+cd <PROJECT-FOLDER>
+
+
+2. CHECK REMOTE REPOSITORY
+--------------------------
+git remote -v
+
+
+3. CHECK CURRENT STATUS
+-----------------------
+git status
+
+
+4. CREATE + SWITCH TO NEW BRANCH
+---------------------------------
+git checkout -b feature/branch-name
+
+OR (modern Git):
+git switch -c feature/branch-name
+
+
+5. VIEW ALL BRANCHES + CURRENT BRANCH
+-------------------------------------
+git branch -a
+
+OR:
+git branch -av
+
+
+6. ADD ONE SPECIFIC FILE
+------------------------
+git add <file-path>
+
+Example:
+git add src/main/webapp/index.jsp
+
+
+7. ADD ALL CHANGES
+------------------
+git add .
+
+
+8. COMMIT CHANGES
+-----------------
+git commit -m "Meaningful commit message"
+
+Example:
+git commit -m "Add player registration servlet"
+
+
+9. VERIFY COMMITS / HISTORY
+---------------------------
+git log
+
+Compact:
+git log --oneline
+
+
+10. ADD MISSED FILE TO LAST COMMIT
+----------------------------------
+git add <file-path>
+git commit --amend --no-edit
+
+
+11. GET REMOTE CHANGES WITHOUT
+    CHANGING WORKING FILES
+-------------------------------
+git fetch origin
+
+
+12. CHECK WHETHER LOCAL BRANCH
+    IS BEHIND REMOTE
+--------------------------------
+git fetch origin
+git status
+
+
+13. GET + MERGE REMOTE CHANGES
+------------------------------
+git pull origin main
+
+
+14. UPDATE LOCAL MAIN
+---------------------
+git checkout main
+git pull origin main
+
+
+15. MERGE MAIN INTO CURRENT FEATURE
+-----------------------------------
+git merge main
+
+
+16. REBASE FEATURE ON UPDATED MAIN
+----------------------------------
+git fetch origin
+git rebase origin/main
+
+OR:
+git checkout main
+git pull origin main
+git checkout feature/branch-name
+git rebase main
+
+
+17. REBASE CONFLICT – CHECK FILES
+---------------------------------
+git status
+
+
+18. AFTER FIXING CONFLICT
+-------------------------
+git add <resolved-file>
+git rebase --continue
+
+
+19. CANCEL REBASE COMPLETELY
+----------------------------
+git rebase --abort
+
+
+20. SEE DIFFERENCES IN A FILE
+-----------------------------
+git diff feature/branch-name main -- <file-path>
+
+Example:
+git diff feature/player-registration main -- src/main/webapp/index.jsp
+
+
+21. SEE ALL UNCOMMITTED DIFFERENCES
+-----------------------------------
+git diff
+
+
+22. SEE STAGED DIFFERENCES
+--------------------------
+git diff --staged
+
+
+23. VISUAL COMPACT BRANCH HISTORY
+---------------------------------
+git log --oneline --graph --all --decorate
+
+
+24. UNDO A COMMIT SAFELY
+    (KEEP HISTORY)
+--------------------------------
+git revert <commit-id>
+
+
+25. UNDO LAST COMMIT
+    KEEP CHANGES STAGED
+--------------------------------
+git reset --soft HEAD~1
+
+
+26. REMOVE FILE FROM GIT BUT
+    KEEP IT ON LOCAL COMPUTER
+--------------------------------
+git rm --cached <file-path>
+
+Example:
+git rm --cached src/main/resources/db-config.env
+
+
+27. SAVE UNCOMMITTED WORK
+    WITHOUT COMMIT
+--------------------------------
+git stash
+
+
+28. VIEW SAVED STASHES
+----------------------
+git stash list
+
+
+29. RESTORE SAVED STASH
+-----------------------
+git stash pop
+
+
+30. SWITCH BRANCH
+-----------------
+git checkout <branch-name>
+
+OR:
+git switch <branch-name>
+
+
+31. MERGE FEATURE INTO MAIN
+---------------------------
+git checkout main
+git merge feature/branch-name
+
+
+32. PUSH MAIN TO GITHUB
+-----------------------
+git push origin main
+
+
+33. VERIFY LOCAL + REMOTE
+    ARE SYNCHRONIZED
+--------------------------------
+git fetch origin
+git status
+
+
+34. PUSH NEW FEATURE BRANCH
+---------------------------
+git push -u origin feature/branch-name
+
+
+35. CHECK COMMIT DETAILS
+------------------------
+git show <commit-id>
+
+
+36. CHECK FILE HISTORY
+----------------------
+git log -- <file-path>
+
+
+37. FIND MISSING CHANGES / HISTORY
+----------------------------------
+git log --oneline --all
+git reflog
+
+
+38. SSH KEY – GENERATE
+----------------------
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+
+39. TEST GITHUB SSH CONNECTION
+------------------------------
+ssh -T git@github.com
+
+
+40. PUSH AFTER REBASE
+---------------------
+git push --force-with-lease origin feature/branch-name
+
+
+============================================================
+                 MOST IMPORTANT FLOW
+============================================================
+
+git clone <URL>
+        ↓
+cd <project>
+        ↓
+git status
+        ↓
+git remote -v
+        ↓
+git checkout -b feature/branch
+        ↓
+EDIT FILE
+        ↓
+git diff
+        ↓
+git add <file>
+        ↓
+git commit -m "message"
+        ↓
+git fetch origin
+        ↓
+git pull origin main
+        ↓
+git rebase origin/main
+        ↓
+FIX CONFLICTS if any
+        ↓
+git add <file>
+git rebase --continue
+        ↓
+git checkout main
+        ↓
+git merge feature/branch
+        ↓
+git push origin main
+        ↓
+git fetch origin
+git status
+
+
+============================================================
+              EMERGENCY COMMANDS TO REMEMBER
+============================================================
+
+Conflict during rebase:
+    git status
+    [edit conflict]
+    git add <file>
+    git rebase --continue
+
+Cancel rebase:
+    git rebase --abort
+
+Undo commit but KEEP history:
+    git revert <commit-id>
+
+Undo last commit, KEEP changes STAGED:
+    git reset --soft HEAD~1
+
+Remove file from Git but KEEP local file:
+    git rm --cached <file>
+
+Temporarily save unfinished work:
+    git stash
+
+See saved work:
+    git stash list
+
+Restore saved work:
+    git stash pop
+
+After rebase:
+    git push --force-with-lease origin <branch>
+
+
+============================================================
