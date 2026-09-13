@@ -45,3 +45,4 @@ load_tests/results/
 *.sqlite
 production_engine/outputs/checkpoints/
 production_engine/outputs/staging/
+production_engine/cache/store/
