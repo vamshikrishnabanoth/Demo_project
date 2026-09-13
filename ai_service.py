@@ -935,6 +935,20 @@ async def get_stage_b_blueprint(req: StageBPlannerRequest):
         raise HTTPException(status_code=422, detail=str(e))
 
 
+def format_timestamp_py(seconds):
+    if seconds is None:
+        return "00:00:00"
+    total_secs = int(max(0, seconds))
+    hrs = total_secs // 3600
+    mins = (total_secs % 3600) // 60
+    secs = total_secs % 60
+    return f"{hrs:02d}:{mins:02d}:{secs:02d}"
+
+class LectureAnalyzeRequest(BaseModel):
+    text: Optional[str] = None
+    segments: Optional[List[dict]] = None
+    duration: Optional[float] = None
+
 @app.post("/transcribe")
 async def transcribe_audio_file(file: UploadFile = File(...)):
     if not whisper_model:
@@ -947,23 +961,34 @@ async def transcribe_audio_file(file: UploadFile = File(...)):
             tmp.write(content)
             tmp_path = tmp.name
             
-        print(f"🎙️ Transcribing local file: {tmp_path} using Whisper base...")
-        segments, info = whisper_model.transcribe(tmp_path, beam_size=5)
-        text = " ".join([segment.text for segment in segments])
+        print(f"🎙️ Transcribing local file: {tmp_path} using Whisper base with timestamps...")
+        segment_generator, info = whisper_model.transcribe(tmp_path, beam_size=5)
         
-        raw_text = text.strip()
+        extracted_segments = []
+        raw_text_parts = []
+        
+        for idx, seg in enumerate(segment_generator):
+            seg_text = seg.text.strip()
+            if seg_text:
+                raw_text_parts.append(seg_text)
+                extracted_segments.append({
+                    "id": f"seg_{idx + 1}",
+                    "start": seg.start,
+                    "end": seg.end,
+                    "timestamp": format_timestamp_py(seg.start),
+                    "timestamp_end": format_timestamp_py(seg.end),
+                    "text": seg_text,
+                    "speaker": "Teacher" if not seg_text.lower().startswith("student:") and not seg_text.lower().startswith("sir,") else "Student"
+                })
+        
+        raw_text = " ".join(raw_text_parts)
         
         print("\n" + "="*60)
-        print("🎙️ [STEP 1: WHISPER TRANSCRIPTION RAW OUTPUT]")
-        print(f"Content: {raw_text}")
+        print("🎙️ [STEP 1: WHISPER TRANSCRIPTION RAW OUTPUT WITH TIMESTAMPS]")
+        print(f"Segments Count: {len(extracted_segments)} | Total Duration: {format_timestamp_py(info.duration)}")
         print("="*60 + "\n")
         
         cleaned_text = sanitize_source_text(raw_text)
-        
-        print("\n" + "="*60)
-        print("🧹 [STEP 2: SANITIZED TEXT PAYLOAD]")
-        print(f"Content: {cleaned_text}")
-        print("="*60 + "\n")
         
         try:
             os.remove(tmp_path)
@@ -973,12 +998,109 @@ async def transcribe_audio_file(file: UploadFile = File(...)):
         return {
             "status": "success",
             "text": cleaned_text,
+            "raw_text": raw_text,
             "language": info.language,
-            "duration": info.duration
+            "duration": info.duration,
+            "duration_formatted": format_timestamp_py(info.duration),
+            "segments": extracted_segments
         }
     except Exception as e:
         print(f"❌ Local Transcription Error: {e}")
         raise HTTPException(status_code=500, detail=f"Local transcription failed: {str(e)}")
+
+@app.post("/analyze-lecture-voice")
+async def analyze_lecture_voice(req: LectureAnalyzeRequest):
+    """
+    FastAPI endpoint for Two-Phase Lecture Audio Analysis & Pedagogical Reconstruction.
+    Phase 1: Content Cleaning & Segment Classification (filters jokes, administrative chatter, retains student Q&A).
+    Phase 2: Pedagogical Lecture Reconstruction (Topic, Motivation, Definitions, Analogies, Source Attribution).
+    """
+    raw_text = req.text or ""
+    segments = req.segments or []
+    duration = req.duration or 0.0
+    
+    if not raw_text and not segments:
+        raise HTTPException(status_code=400, detail="No transcript or audio segments provided for lecture analysis.")
+        
+    context_text = raw_text
+    if segments:
+        context_text = "\n".join([f"[{s.get('timestamp', '00:00:00')}] {s.get('speaker', 'Teacher')}: {s.get('text', '')}" for s in segments[:80]])
+        
+    prompt = (
+        f"Analyze this lecture recording transcript:\n\n"
+        f"TRANSCRIPT:\n{context_text}\n\n"
+        "Return a JSON object conforming to:\n"
+        "{\n"
+        '  "inspection": {\n'
+        f'    "duration_seconds": {int(duration)},\n'
+        f'    "duration_formatted": "{format_timestamp_py(duration)}",\n'
+        f'    "total_segments": {len(segments)},\n'
+        '    "estimated_speakers": ["Teacher", "Student"],\n'
+        '    "audio_clarity": "High",\n'
+        '    "lecture_start_timestamp": "00:00:00",\n'
+        f'    "lecture_end_timestamp": "{format_timestamp_py(duration)}"\n'
+        "  },\n"
+        '  "segment_classifications": [\n'
+        '    {\n'
+        '      "segment_id": "seg_1",\n'
+        '      "timestamp": "00:00:00",\n'
+        '      "speaker": "Teacher",\n'
+        '      "original_text": "...",\n'
+        '      "cleaned_text": "...",\n'
+        '      "category": "actual_lecture",\n'
+        '      "is_academic": true,\n'
+        '      "keep_in_clean_transcript": true,\n'
+        '      "reason": "..."\n'
+        '    }\n'
+        '  ],\n'
+        '  "pedagogical_reconstruction": {\n'
+        '    "main_topic": "...",\n'
+        '    "topic_hierarchy": ["Category", "Core Topic"],\n'
+        '    "learning_objective": "...",\n'
+        '    "core_problem_and_motivation": "...",\n'
+        '    "logical_learning_flow": [\n'
+        '      { "step": 1, "phase": "Motivation", "title": "...", "description": "...", "timestamp": "00:00:00" }\n'
+        '    ],\n'
+        '    "concepts": [\n'
+        '      {\n'
+        '        "concept_name": "...",\n'
+        '        "definition": "...",\n'
+        '        "why_needed": "...",\n'
+        '        "lecturers_example": { "text": "...", "timestamp": "00:00:00", "is_transient_analogy": false },\n'
+        '        "simpler_intuitive_example": "...",\n'
+        '        "key_takeaway": "...",\n'
+        '        "common_confusion": "...",\n'
+        '        "source_attributions": [\n'
+        '          { "type": "from_lecture", "text": "...", "timestamp": "00:00:00" },\n'
+        '          { "type": "inferred", "text": "..." },\n'
+        '          { "type": "ai_supplement", "text": "..." }\n'
+        '        ]\n'
+        '      }\n'
+        '    ],\n'
+        '    "student_qa_register": [\n'
+        '      { "question": "...", "asked_by": "Student", "answer": "...", "answered_by": "Teacher", "timestamp": "00:00:00", "importance_level": "High" }\n'
+        '    ],\n'
+        '    "misconceptions_corrected": [\n'
+        '      { "misconception": "...", "correction": "...", "timestamp": "00:00:00" }\n'
+        '    ],\n'
+        '    "teacher_emphases": [\n'
+        '      { "point": "...", "frequency_or_emphasis": "...", "timestamp": "00:00:00" }\n'
+        '    ],\n'
+        '    "revision_notes": [\n'
+        '      { "heading": "...", "bullet_points": ["..."], "key_formula_or_rule": "..." }\n'
+        '    ]\n'
+        '  },\n'
+        '  "cleaned_transcript": "..."\n'
+        "}"
+    )
+    
+    try:
+        raw_res = call_groq_fallback(prompt, json_mode=True)
+        data = robust_json_loads(raw_res)
+        return data
+    except Exception as err:
+        print(f"⚠️ Groq analysis error in analyze_lecture_voice: {err}")
+        raise HTTPException(status_code=500, detail=f"Lecture analysis failed: {str(err)}")
 
 def robust_json_loads(text):
     text = text.strip()
