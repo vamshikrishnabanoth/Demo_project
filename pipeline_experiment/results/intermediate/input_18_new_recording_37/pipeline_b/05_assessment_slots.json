@@ -1,0 +1,72 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Define the core components of an algorithm (input, output, steps) and distinguish them from a general program or script.",
+    "misconception_target": "Confusing an algorithm with a specific implementation or code syntax rather than the abstract logical procedure.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Explain the concept of algorithmic efficiency in terms of time and space complexity relative to input size.",
+    "misconception_target": "Believing that efficiency is determined solely by the speed of the hardware or the programming language used, ignoring the algorithmic structure.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the properties of correctness (termination, definiteness, effectiveness) that distinguish a valid algorithm from an invalid procedure.",
+    "misconception_target": "Assuming that any set of instructions that produces an output is a valid algorithm, ignoring the requirement for guaranteed termination.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Differentiate between a brute-force approach and an optimized algorithmic approach based on problem constraints.",
+    "misconception_target": "Viewing brute-force methods as inherently 'wrong' rather than a baseline that may be acceptable for small inputs but inefficient for large ones.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Describe the role of pseudocode in communicating algorithmic logic independent of specific programming languages.",
+    "misconception_target": "Thinking that pseudocode is just informal notes that cannot be rigorously analyzed or converted to code, rather than a structured intermediate representation.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

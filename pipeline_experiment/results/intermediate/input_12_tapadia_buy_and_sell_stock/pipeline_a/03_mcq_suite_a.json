@@ -1,0 +1,107 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_12_tapadia_buy_and_sell_stock",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the 'Single Transaction' stock trading problem, what is the primary algorithmic strategy used to maximize profit in O(N) time?",
+      "option_a": "Sort the price array to find the global minimum and maximum values.",
+      "option_b": "Iterate through the array while maintaining a running minimum price and updating the maximum profit if the current price minus the minimum price exceeds the current maximum.",
+      "option_c": "Use dynamic programming to calculate the maximum profit for every possible subarray of the price array.",
+      "option_d": "Sum all positive differences between consecutive days to determine the total potential profit.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the single transaction constraint requires finding the maximum difference between a selling price and a preceding buying price. The optimal O(N) solution involves a single pass where a 'min_price' variable tracks the lowest price seen so far, and 'max_profit' is updated whenever (current_price - min_price) is greater than the current max_profit. Option A is incorrect because sorting changes the temporal order of prices, which is invalid for stock trading (you cannot sell before you buy). Option C is incorrect because it describes an O(N^2) or O(N^3) approach, whereas the material specifies an O(N) linear scan. Option D describes the strategy for the 'Infinite Transactions' problem, not the single transaction problem.",
+      "target_concept": "Single Transaction Algorithm Logic",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The linear scan algorithm tracking min_price and max_profit for single transaction constraints.",
+      "why_assessed": "To verify the student understands the specific state variables and update logic required for the single transaction variant.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[0]",
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect common errors: ignoring temporal order (A), using inefficient brute-force/DP methods (C), and confusing the single transaction logic with the infinite transaction greedy logic (D)."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "For the 'Infinite Transactions' problem, what is the optimal greedy strategy to maximize profit?",
+      "option_a": "Identify the global minimum price and the global maximum price, then execute one buy and one sell.",
+      "option_b": "Add the difference between consecutive days to the total profit whenever the next day's price is higher than the current day's price.",
+      "option_c": "Buy on the first day and sell on the last day, regardless of intermediate price fluctuations.",
+      "option_d": "Only execute a transaction if the price increases by more than 10% between two consecutive days.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the material states that for infinite transactions, the optimal strategy is to capture every upward trend. This is achieved by summing all positive differences between consecutive days (prices[i+1] - prices[i] if prices[i] < prices[i+1]). This is mathematically equivalent to buying at the start of any rising sequence and selling at the end. Option A is incorrect because it describes the single transaction strategy, which is suboptimal when multiple transactions are allowed. Option C is incorrect because it ignores the possibility of selling during dips to avoid losses or capture smaller gains, and it assumes a monotonic increase. Option D introduces an arbitrary threshold (10%) not present in the problem definition.",
+      "target_concept": "Infinite Transactions Greedy Strategy",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The greedy approach of summing positive consecutive differences for unlimited transactions.",
+      "why_assessed": "To ensure the student can distinguish between the single-transaction global min/max approach and the infinite-transaction local greedy approach.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[1]",
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect confusion between problem variants (A), naive assumptions about market trends (C), and arbitrary rule-making (D)."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Given the input array [7, 1, 5, 3, 6, 4] for the 'Infinite Transactions' problem, what is the calculated maximum profit?",
+      "option_a": "3",
+      "option_b": "4",
+      "option_c": "7",
+      "option_d": "9",
+      "correct_option": "C",
+      "explanation": "Option C is correct. Following the infinite transactions logic: \n1. Day 0 to 1: 1 < 7, no profit.\n2. Day 1 to 2: 5 > 1, profit += (5 - 1) = 4.\n3. Day 2 to 3: 3 < 5, no profit.\n4. Day 3 to 4: 6 > 3, profit += (6 - 3) = 3.\n5. Day 4 to 5: 4 < 6, no profit.\nTotal Profit = 4 + 3 = 7. This corresponds to buying at 1, selling at 5, buying at 3, and selling at 6. Option A is incorrect as it only accounts for the second transaction. Option B is incorrect as it only accounts for the first transaction. Option D is incorrect as it likely sums all absolute differences or makes an arithmetic error.",
+      "target_concept": "Application of Infinite Transactions Algorithm",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Examples and Code Patterns",
+      "what_taught": "Calculating profit for a specific array [7, 1, 5, 3, 6, 4] using the greedy sum of positive differences.",
+      "why_assessed": "To test the student's ability to manually trace the algorithm on a provided example to verify computational accuracy.",
+      "evidence_refs": [
+        "examples_and_code_patterns[0]"
+      ],
+      "misconception_rationale": "Distractors represent partial calculations (missing one of the two profitable segments) or incorrect summation methods."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In the C++ implementation for the 'Single Transaction' problem, what is the standard initialization value for the 'min_price' variable before the iteration begins?",
+      "option_a": "0",
+      "option_b": "prices[0]",
+      "option_c": "INT_MAX",
+      "option_d": "prices[n-1]",
+      "correct_option": "C",
+      "explanation": "Option C is correct. The material explicitly mentions the code pattern uses 'INT_MAX' initialization for min_price. This ensures that the first price encountered in the array will be smaller than the initial min_price, thus correctly setting the baseline for the minimum price tracking. Option A is incorrect because stock prices are positive, and starting at 0 would prevent the algorithm from ever updating min_price to a valid price (since price - 0 would be the profit, but min_price would never update to the actual first price if the logic is `if (price < min_price) min_price = price`). Option B is a valid alternative implementation strategy (initializing with the first element and starting the loop at index 1), but the material specifically cites the INT_MAX pattern. Option D is incorrect as it uses the last price, which is irrelevant for finding the minimum preceding price.",
+      "target_concept": "Code Implementation Details (Initialization)",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Examples and Code Patterns",
+      "what_taught": "The specific initialization of state variables in the C++ code pattern for single transaction.",
+      "why_assessed": "To check recall of specific implementation details discussed in the lecture/code walkthrough.",
+      "evidence_refs": [
+        "examples_and_code_patterns[2]"
+      ],
+      "misconception_rationale": "Distractors reflect common initialization errors (0) or alternative valid but untaught patterns (prices[0]), testing strict adherence to the taught material."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Why is the 'Infinite Transactions' strategy of summing all positive consecutive differences mathematically equivalent to buying at the start of a rising sequence and selling at the end?",
+      "option_a": "Because the stock market always trends upward over time.",
+      "option_b": "Because the sum of small positive increments over a continuous rising period equals the difference between the final price and the initial price of that period.",
+      "option_c": "Because it minimizes the number of transactions required to maximize profit.",
+      "option_d": "Because it ensures that the trader never holds a stock during a price drop.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. Mathematically, if prices rise from P_start to P_end over consecutive days, the sum of daily differences (P1-P0) + (P2-P1) + ... + (Pn-Pn-1) telescopes to Pn - P0. This is exactly the profit from buying at P0 and selling at Pn. Option A is factually incorrect and not a mathematical justification. Option C is incorrect because the greedy method actually maximizes the number of transactions (one per day of rise), not minimizes them. Option D is a consequence of the strategy (you sell before a drop), but it is not the mathematical reason for the equivalence to a single buy/sell pair over the rising segment.",
+      "target_concept": "Mathematical Justification of Greedy Approach",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The telescoping sum property that justifies the greedy approach for infinite transactions.",
+      "why_assessed": "To assess deeper understanding of why the greedy algorithm works, moving beyond just 'how' to 'why'.",
+      "evidence_refs": [
+        "factual_summary",
+        "examples_and_code_patterns[1]"
+      ],
+      "misconception_rationale": "Distractors reflect logical fallacies (A), confusion about transaction count (C), and confusing a side effect with the core mathematical proof (D)."
+    }
+  ]
+}

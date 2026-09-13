@@ -1,0 +1,84 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Singly Linked List Operations",
+    "subtopics": [
+      "Node creation",
+      "Insertion at end",
+      "Deletion of a node",
+      "Traversal/display",
+      "Length calculation"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Doubly Linked List Operations",
+    "subtopics": [
+      "Node with prev and next pointers",
+      "Insertion at end",
+      "Deletion of a node",
+      "Forward traversal",
+      "Reverse traversal"
+    ],
+    "associated_chunk_ids": [
+      "C05",
+      "C06",
+      "C07"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Circular Linked List Operations",
+    "subtopics": [
+      "Tail pointer management",
+      "Insertion at end",
+      "Deletion handling (including single node case)",
+      "Traversal of circular list"
+    ],
+    "associated_chunk_ids": [
+      "C08",
+      "C09",
+      "C10"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Stack Implementation using Array",
+    "subtopics": [
+      "Array storage",
+      "Top index management",
+      "Push operation",
+      "Pop operation",
+      "Peek operation",
+      "Empty check",
+      "Display stack"
+    ],
+    "associated_chunk_ids": [
+      "C11",
+      "C12"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Stack Implementation using Singly Linked List",
+    "subtopics": [
+      "Node as stack element",
+      "Push (insert at beginning)",
+      "Pop (delete from beginning)",
+      "Peek (top element)",
+      "Empty check",
+      "Display stack"
+    ],
+    "associated_chunk_ids": [
+      "C13",
+      "C14",
+      "C15"
+    ]
+  }
+]

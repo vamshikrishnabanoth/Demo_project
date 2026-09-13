@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_16_new_1_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the provided summary, what is the primary reason a factual summary of the lecture content could not be generated?",
+      "option_a": "The lecture was too short to contain meaningful information.",
+      "option_b": "The input consisted solely of a title and metadata without a transcript or text data.",
+      "option_c": "The audio recording was corrupted and unreadable.",
+      "option_d": "The lecture covered topics outside the scope of core computer science.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the input consists solely of a title and metadata indicating a voice-only theory lecture without accompanying transcript or text data, which is why no factual summary could be generated. The other options are not supported by the provided text.",
+      "target_concept": "Data Availability and Processing",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The necessity of textual or transcribed data for generating factual summaries from audio-only inputs.",
+      "why_assessed": "To ensure students understand the limitations of processing voice-only inputs without accompanying text data.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions about why data processing might fail, such as assuming audio corruption or content irrelevance."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the summary, what type of input was provided for the lecture titled 'Core Computer Science Principles'?",
+      "option_a": "A fully transcribed text document.",
+      "option_b": "A voice-only theory lecture without accompanying text data.",
+      "option_c": "A combination of video and audio recordings.",
+      "option_d": "A set of lecture slides with speaker notes.",
+      "correct_option": "B",
+      "explanation": "The summary clearly indicates that the input is a voice-only theory lecture without accompanying transcript or text data. The other options are not mentioned in the provided summary.",
+      "target_concept": "Input Data Types",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Input Metadata",
+      "what_taught": "Identification of input data types based on metadata.",
+      "why_assessed": "To test the ability to recall specific details about the input format from the provided summary.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors represent other common input formats that students might confuse with the actual input type described."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What does the summary indicate about the presence of concepts, definitions, mechanisms, formulas, or code patterns in the provided content?",
+      "option_a": "They are present but not detailed in the summary.",
+      "option_b": "They are absent because the input lacks transcript or text data.",
+      "option_c": "They are present but only in the audio portion.",
+      "option_d": "They are present but require additional processing to extract.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the provided source content contains no educational material, concepts, definitions, mechanisms, formulas, or code patterns due to the lack of transcript or text data. The other options are not supported by the summary.",
+      "target_concept": "Content Extraction Limitations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Concepts and Definitions",
+      "what_taught": "The relationship between input data availability and the ability to extract educational content.",
+      "why_assessed": "To ensure students understand why certain educational elements are missing from the summary.",
+      "evidence_refs": [
+        "concepts_and_definitions",
+        "mechanisms_and_formulas",
+        "examples_and_code_patterns"
+      ],
+      "misconception_rationale": "Distractors reflect misconceptions about the presence of educational content in audio-only inputs."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "What is the primary limitation of the provided input that prevents the generation of a factual summary?",
+      "option_a": "The absence of a transcript or text data.",
+      "option_b": "The lack of visual aids or diagrams.",
+      "option_c": "The absence of speaker identification.",
+      "option_d": "The lack of a clear lecture structure.",
+      "correct_option": "A",
+      "explanation": "The summary explicitly states that the absence of a transcript or text data is the reason a factual summary could not be generated. The other options are not mentioned as limitations in the provided text.",
+      "target_concept": "Data Processing Constraints",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Identifying the primary constraint in data processing based on the provided summary.",
+      "why_assessed": "To test the ability to analyze and identify the main limitation in the input data.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors represent other potential limitations that are not mentioned in the summary."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What can be inferred about the content of the lecture based on the provided summary?",
+      "option_a": "The lecture covered advanced topics in computer science.",
+      "option_b": "The content of the lecture cannot be determined from the provided summary.",
+      "option_c": "The lecture was focused on practical coding exercises.",
+      "option_d": "The lecture included detailed explanations of core principles.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that no factual summary of the presented content can be generated due to the lack of transcript or text data. Therefore, the content of the lecture cannot be determined from the provided summary. The other options are not supported by the summary.",
+      "target_concept": "Inference from Limited Data",
+      "cognitive_level": "EVALUATE",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The ability to evaluate the limitations of inference from limited data.",
+      "why_assessed": "To test the ability to evaluate what can and cannot be inferred from the provided summary.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect common assumptions about lecture content that are not supported by the provided summary."
+    }
+  ]
+}

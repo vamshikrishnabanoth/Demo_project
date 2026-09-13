@@ -1,0 +1,88 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Identify and correct the off-by-one error that causes the algorithm to miss the last common character when scanning strings for LCP.",
+    "misconception_target": "Assuming the loop terminates correctly when encountering a mismatch, ignoring the need to check the last character.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C06",
+      "E_C09",
+      "E_C10",
+      "E_C11",
+      "E_C12"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "String Scanning Optimization",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Optimize the string scanning loop to reduce time complexity from O(n*m) to O(n) by using early exit and minimal comparisons.",
+    "misconception_target": "Believing that scanning each string fully for each character is necessary.",
+    "evidence_refs": [
+      "E_C02",
+      "E_C04",
+      "E_C06"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Model",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Explain how Java's memory model affects visibility of the LCP result in a multi-threaded environment.",
+    "misconception_target": "Assuming that local variables are automatically thread-safe without synchronization.",
+    "evidence_refs": [
+      "E_C07",
+      "E_C08"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization & Refactoring",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Refactor the LCP algorithm to use a divide-and-conquer approach and analyze its impact on time and space complexity.",
+    "misconception_target": "Thinking that recursion always increases time complexity.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05",
+      "E_C07",
+      "E_C08",
+      "E_C15"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization & Refactoring",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Demonstrate how to apply memoization to avoid redundant comparisons in the LCP algorithm.",
+    "misconception_target": "Assuming memoization is only useful for dynamic programming problems.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05",
+      "E_C07",
+      "E_C08",
+      "E_C15"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "request_id": "REQ-1788032539971-CASE_D_S",
+  "timestamp": "2026-08-29T19:46:30Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.05,
+  "cache_telemetry": {
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE"
+  ],
+  "initial_generated_count": 4,
+  "first_pass_validated_count": 4,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 4,
+  "total_latency_ms": 250037.28,
+  "status": "PARTIAL",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct core concepts from the available 9. To ensure non-redundancy and pedagogical breadth, each target focuses on a different operator or fundamental principle ($match, $unwind, $lookup, $group, and Pipeline Optimization/Ordering). The assessment facets were chosen to align with the 'EASY' difficulty level, prioritizing CONCEPT_UNDERSTANDING and THEORETICAL_RATIONALE to verify foundational knowledge and basic mechanical understanding without requiring complex code synthesis or advanced debugging."
+}

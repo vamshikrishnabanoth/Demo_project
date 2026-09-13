@@ -1,0 +1,24 @@
+{
+  "input_id": "ASSIGNMENT",
+  "title": "MongoDB CRUD Operations: Amazon Product Management System Queries",
+  "concepts_and_definitions": [
+    "CRUD Operations (Create, Read, Update, Delete) in MongoDB",
+    "Filtering (Querying) documents based on field values",
+    "Sorting (Ordering) results in ascending or descending order",
+    "Projection (Selecting specific fields to display)",
+    "String Pattern Matching (e.g., prefix search)"
+  ],
+  "mechanisms_and_formulas": [
+    "Comparison Operators: Using < (less than) and > (greater than) to filter numeric fields like stock levels and prices.",
+    "Sorting Mechanism: Applying sort operations to arrange documents by a specific field (e.g., price) in descending order.",
+    "Projection Mechanism: Restricting the output to specific fields (e.g., Product ID, Name, Stock) rather than returning the entire document.",
+    "String Matching: Utilizing regex or prefix matching to find documents where a string field begins with a specific character."
+  ],
+  "examples_and_code_patterns": [
+    "Querying products with stock < 20 and projecting specific fields (ID, Name, Stock, Brand).",
+    "Filtering products with price > 10,000 and sorting results by price in descending order.",
+    "Retrieving restaurant records where the name starts with the letter 'P'.",
+    "Filtering patient records by age > 40 and projecting name, age, disease, and doctor details."
+  ],
+  "factual_summary_text": "The provided material outlines a set of problem-solving exercises focused on MongoDB CRUD operations, specifically 'Read' queries, applied to two distinct datasets: an Amazon Product Management System and a Hospital Management System. The core concepts involve filtering documents based on numeric comparisons (e.g., stock levels, prices, ages, bills) and string patterns (e.g., names starting with a specific letter). The exercises emphasize the use of projection to limit the output to relevant fields, such as displaying only the Product ID, Name, Stock, and Brand for low-stock items, or the patient's name, age, disease, and doctor for senior patients.\n\nAdditionally, the content covers sorting mechanisms to arrange results in specific orders, such as displaying premium products from most to least expensive or identifying expensive treatments from highest to lowest bill. The scenarios require the application of comparison operators (less than, greater than) and string matching techniques to retrieve specific subsets of data from JSON-based collections, demonstrating practical applications of database querying in inventory and medical record management contexts."
+}

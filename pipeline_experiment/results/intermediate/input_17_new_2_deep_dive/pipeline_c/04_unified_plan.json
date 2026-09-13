@@ -1,0 +1,25 @@
+{
+  "input_id": "input_17_new_2_deep_dive",
+  "title": "Classroom Lecture: Advanced Technical Discussion & Q&A (Audio Recording New 2)",
+  "total_requested_questions": 5,
+  "total_available_targets": 1,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Overview",
+      "what_taught_summary": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed_pedagogy": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.",
+        "Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.",
+        "Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+      ],
+      "allocated_question_count": 5,
+      "evidence_chunk_refs": [
+        "E_C01"
+      ],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

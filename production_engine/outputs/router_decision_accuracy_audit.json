@@ -1,0 +1,108 @@
+{
+  "benchmark": "3-Way Representation Router Accuracy & Sensitivity",
+  "total_evaluated": 10,
+  "correct_decisions": 10,
+  "accuracy_percentage": 100.0,
+  "evaluations": [
+    {
+      "id": "CORPUS_01",
+      "title": "DAA: Binary Search on Median of Two Sort...",
+      "modality": "VOICE_ONLY",
+      "pdi_score": 0.7,
+      "predicted": "BLUEPRINT",
+      "ground_truth": "BLUEPRINT",
+      "correct": true,
+      "rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint."
+    },
+    {
+      "id": "CORPUS_02",
+      "title": "Deep Learning: Variational Autoencoders ...",
+      "modality": "VOICE_PLUS_PPT",
+      "pdi_score": 1.0,
+      "predicted": "UNIFIED",
+      "ground_truth": "UNIFIED",
+      "correct": true,
+      "rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=1.000): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY)."
+    },
+    {
+      "id": "CORPUS_03",
+      "title": "Web Technologies: DOM Manipulation & Eve...",
+      "modality": "VOICE_ONLY",
+      "pdi_score": 0.623,
+      "predicted": "BLUEPRINT",
+      "ground_truth": "BLUEPRINT",
+      "correct": true,
+      "rationale": "High Pedagogical Delivery Index (PDI=0.623 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint."
+    },
+    {
+      "id": "CORPUS_04",
+      "title": "Data Structures: Binary Trees & Traversa...",
+      "modality": "VOICE_PLUS_PPT",
+      "pdi_score": 0.969,
+      "predicted": "UNIFIED",
+      "ground_truth": "UNIFIED",
+      "correct": true,
+      "rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=0.969): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY)."
+    },
+    {
+      "id": "CORPUS_05",
+      "title": "AI: Autoencoders Fashion-MNIST Lab (AI 2...",
+      "modality": "VOICE_ONLY",
+      "pdi_score": 0.7,
+      "predicted": "BLUEPRINT",
+      "ground_truth": "BLUEPRINT",
+      "correct": true,
+      "rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint."
+    },
+    {
+      "id": "CORPUS_06",
+      "title": "Machine Learning: Supervised Model Train...",
+      "modality": "VOICE_ONLY",
+      "pdi_score": 0.5,
+      "predicted": "SUMMARY",
+      "ground_truth": "SUMMARY",
+      "correct": true,
+      "rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+    },
+    {
+      "id": "CORPUS_07",
+      "title": "Computer Vision: Faster R-CNN vs YOLO Ha...",
+      "modality": "PDF",
+      "pdi_score": 0.055,
+      "predicted": "SUMMARY",
+      "ground_truth": "SUMMARY",
+      "correct": true,
+      "rationale": "PDI=0.055 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+    },
+    {
+      "id": "CORPUS_08",
+      "title": "Database Systems: MongoDB Command Refere...",
+      "modality": "NOTES",
+      "pdi_score": -0.113,
+      "predicted": "SUMMARY",
+      "ground_truth": "SUMMARY",
+      "correct": true,
+      "rationale": "PDI=-0.113 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+    },
+    {
+      "id": "CORPUS_09",
+      "title": "DAA: Unit II Dynamic Programming Notes...",
+      "modality": "PDF",
+      "pdi_score": -0.036,
+      "predicted": "SUMMARY",
+      "ground_truth": "SUMMARY",
+      "correct": true,
+      "rationale": "PDI=-0.036 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+    },
+    {
+      "id": "CORPUS_10",
+      "title": "Stock Profit Optimization & Dynamic Prog...",
+      "modality": "VOICE_PLUS_PPT",
+      "pdi_score": 0.967,
+      "predicted": "UNIFIED",
+      "ground_truth": "UNIFIED",
+      "correct": true,
+      "rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=0.967): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY)."
+    }
+  ]
+}

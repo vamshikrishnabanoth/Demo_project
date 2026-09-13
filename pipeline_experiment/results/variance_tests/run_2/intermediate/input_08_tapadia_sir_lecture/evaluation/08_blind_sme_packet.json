@@ -1,0 +1,197 @@
+{
+  "input_id": "input_08_tapadia_sir_lecture",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "Consider the following Java method that attempts to find the longest common prefix (LCP) among an array of strings. The current implementation incorrectly omits the last common character when a mismatch is found. Which single change will fix the off\u2011by\u2011one error so that the method returns the correct LCP?",
+      "options": {
+        "A": "Change the loop condition to `j <= prefix.length() && j <= strs[i].length()`.",
+        "B": "Replace `prefix = prefix.substring(0, j-1);` with `prefix = prefix.substring(0, j);`.",
+        "C": "Increment `j` after the loop instead of inside the loop.",
+        "D": "Initialize `prefix` with the first string's first character only."
+      },
+      "correct_option": "B",
+      "explanation": "The bug is caused by subtracting one from the index when updating the prefix, which removes the last matched character. Changing the substring call to use `j` instead of `j-1` preserves all matched characters. Option A incorrectly extends the loop bounds and would cause an IndexOutOfBoundsException. Option C changes the logic of the loop but still leaves the off\u2011by\u2011one error. Option D changes the initial prefix and does not address the bug."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Why is binary search an appropriate technique for solving the Cocoa Eating Bananas problem?",
+      "options": {
+        "A": "Because the required eating speed and the total time needed have a monotonic relationship",
+        "B": "Because banana piles are sorted in descending order",
+        "C": "Because the eating speed must be an integer power of two",
+        "D": "Because the number of bananas changes randomly over time"
+      },
+      "correct_option": "A",
+      "explanation": "Binary search works when a predicate is monotonic: as the eating speed increases, the time required never increases. This monotonicity lets us narrow the feasible speed range. Option B is irrelevant; the piles need not be sorted. Option C imposes an unnecessary constraint. Option D contradicts the static nature of the problem input."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "Which data structure is employed in the hash\u2011set solution to count how many strings share the same character at a given position?",
+      "options": {
+        "A": "HashSet",
+        "B": "HashMap",
+        "C": "ArrayList",
+        "D": "Stack"
+      },
+      "correct_option": "B",
+      "explanation": "The solution maps each character to its occurrence count at a specific index, which requires a key\u2011value association; a HashMap provides this functionality. A HashSet only stores unique elements without counts, so it cannot track frequencies (Option A). An ArrayList is an ordered list, not suited for constant\u2011time key lookup (Option C). A Stack is a LIFO structure and irrelevant here (Option D)."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "A divide\u2011and\u2011conquer version of the LCP algorithm splits the array of strings into two halves, recursively finds the LCP of each half, and then merges the two prefixes. What is the time complexity of this approach compared to the standard linear scan?",
+      "options": {
+        "A": "O(n log m) where n is number of strings and m is average string length.",
+        "B": "O(n + m) \u2013 the same as the linear scan.",
+        "C": "O(n log n) \u2013 worse than the linear scan.",
+        "D": "O(n) \u2013 better than the linear scan."
+      },
+      "correct_option": "B",
+      "explanation": "Both the linear scan and the divide\u2011and\u2011conquer approach examine each character of each string once, leading to O(n + m) time. The divide\u2011and\u2011conquer does not add extra logarithmic factors because the merge step is linear in the length of the prefixes. Option A incorrectly mixes string length into the log factor. Option C overestimates the cost. Option D incorrectly claims a better complexity."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "In Java, when does an object become eligible for garbage collection?",
+      "options": {
+        "A": "When there are no live references to it",
+        "B": "When the programmer calls a delete function",
+        "C": "When the program terminates",
+        "D": "When the object is assigned to a null variable"
+      },
+      "correct_option": "A",
+      "explanation": "Java's garbage collector reclaims memory for objects that are no longer reachable from any live thread; i.e., no references exist. Option B describes manual memory management in languages like C++. Option C is true but not the primary eligibility condition; objects become eligible earlier. Option D is a specific way to remove a reference, but the object becomes eligible only after *all* references are gone, not merely after one variable is set to null."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "The following code scans each string in the array for every character of the current prefix, resulting in O(n*m) time. Which modification will reduce the time complexity to O(n) by allowing early exit when a mismatch is found?",
+      "options": {
+        "A": "Move the `prefix = prefix.substring(0, j);` line outside the inner loop.",
+        "B": "Add a `break;` statement immediately after updating the prefix inside the inner loop.",
+        "C": "Replace the inner loop with a recursive call.",
+        "D": "Remove the outer loop entirely."
+      },
+      "correct_option": "B",
+      "explanation": "Adding a `break;` after updating the prefix stops the inner loop as soon as a mismatch is detected, preventing unnecessary comparisons and reducing the overall complexity to O(n). Option A keeps the inner loop running to completion. Option C introduces unnecessary recursion. Option D eliminates the algorithm entirely."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "In a multi\u2011threaded Java program, thread A computes the longest common prefix and stores it in a local variable `result`. Thread B later reads `result` to print it. According to the Java Memory Model, which statement is true about the visibility of `result` between the threads?",
+      "options": {
+        "A": "`result` is automatically visible to thread B without any synchronization because it is a local variable.",
+        "B": "Thread B may see a stale value of `result` unless the variable is declared `volatile` or accessed within a synchronized block.",
+        "C": "The Java Memory Model guarantees that all threads see the most recent value of any local variable after the method returns.",
+        "D": "Visibility is not a concern for local variables; only static fields require synchronization."
+      },
+      "correct_option": "B",
+      "explanation": "Local variables are stored on the thread\u2019s stack and are not shared; however, if the value is passed to another thread via a shared reference, visibility rules apply. Without `volatile` or synchronization, thread B may see a stale value. Option A incorrectly assumes automatic visibility. Option C misstates the memory model. Option D ignores the possibility of passing the value through shared objects."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "In the binary\u2011search based LCP algorithm, what does the variable 'mid' represent during each iteration?",
+      "options": {
+        "A": "A candidate prefix length to be tested",
+        "B": "The index of the current string being examined",
+        "C": "The total number of strings",
+        "D": "The frequency count of a character at a position"
+      },
+      "correct_option": "A",
+      "explanation": "Binary search treats the possible prefix lengths as a search space. 'mid' is computed as (low+high)/2 and denotes the length of the prefix being checked for commonality. Option B confuses 'mid' with a string index. Option C is unrelated to the binary\u2011search bounds. Option D describes a count used in the hash\u2011set method, not binary search."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "Suppose we want to avoid redundant character comparisons in the LCP algorithm by memoizing the longest common prefix of every pair of strings encountered. Which of the following best describes how memoization would affect the algorithm's performance?",
+      "options": {
+        "A": "It would increase time complexity to O(n^2) but reduce space complexity.",
+        "B": "It would reduce the number of comparisons to O(n*m) while using additional O(n^2) space.",
+        "C": "It would eliminate all comparisons after the first run, making subsequent calls O(1).",
+        "D": "It would not change the asymptotic time complexity but could improve constant factors for repeated calls."
+      },
+      "correct_option": "D",
+      "explanation": "Memoization stores previously computed prefixes, so repeated comparisons are avoided, but the overall asymptotic complexity remains O(n*m). It improves constant factors, especially for repeated calls. Option A incorrectly states a time increase. Option B misstates the comparison count. Option C overstates the benefit, implying all future calls are constant time."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "What is the time complexity of the naive longest common prefix (LCP) algorithm that compares characters one by one across all strings?",
+      "options": {
+        "A": "O(n*m)",
+        "B": "O(n*log m)",
+        "C": "O(m*log n)",
+        "D": "O(n^2)"
+      },
+      "correct_option": "A",
+      "explanation": "The naive LCP scans each character position until a mismatch is found. If there are n strings and the average length is m, each position may be examined across all n strings, giving O(n*m). Option B describes the binary\u2011search approach, not the naive scan. Option C mixes the variables incorrectly. Option D would be correct only for a quadratic algorithm on n strings, which is not the case here."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Time Complexity of Naive LCP",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Binary Search on Prefix Length",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Hash Set Frequency Counting",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Monotonic Property for Binary Search",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Garbage Collection in Java",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Longest Common Prefix",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "String Scanning Optimization",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Java Memory Model",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Divide\u2011and\u2011Conquer LCP",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "target_concept": "Memoization in LCP",
+      "cognitive_level": "ANALYZE"
+    }
+  }
+}

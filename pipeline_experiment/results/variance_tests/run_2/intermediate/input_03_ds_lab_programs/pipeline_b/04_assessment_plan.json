@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_03_ds_lab_programs",
+  "input_id": "input_03_ds_lab_programs",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Singly Linked List Operations",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Doubly Linked List Operations",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Circular Linked List Operations",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Stack Implementation using Array",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Stack Implementation using Singly Linked List",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "input_id": "input_test_178",
+  "title": "Assessment for Job test_178",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 1,
+  "requested_difficulty": "EASY",
+  "defensible_capacity": 1,
+  "final_question_count": 1,
+  "questions": [
+    {
+      "question_id": "Q_01",
+      "question_text": "In the context of Assessment, which statement accurately reflects its core operational principle?",
+      "stem": "In the context of Assessment, which statement accurately reflects its core operational principle?",
+      "option_a": "It performs Definition of assessment as a systematic process of collecti.",
+      "option_b": "It bypasses Assessment execution during query processing.",
+      "option_c": "It converts Assessment directly into unindexed linear searches.",
+      "option_d": "It permanently mutates source records without returning document streams.",
+      "correct_option": "A",
+      "explanation": "Option A is correct: Definition of assessment as a systematic process of collecting, analyzing, and interpreting information to inform instructional decisions.",
+      "target_concept": "Assessment",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "EASY",
+      "what_taught": "Definition of assessment as a systematic process of collecting, analyzing, and interpreting information to inform instructional decisions.",
+      "why_assessed": "Ensures students grasp the foundational definition before applying assessment practices.",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors represent misconceptions regarding Assessment mutability and indexing."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1789242076360-input_te",
+    "trace": {
+      "request_id": "REQ-1789242076360-input_te",
+      "timestamp": "2026-09-12T19:43:08Z",
+      "input_id": "input_test_178",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.5,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "HIT",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "HIT"
+      },
+      "selected_facets": [
+        "CONCEPT_UNDERSTANDING"
+      ],
+      "initial_generated_count": 1,
+      "first_pass_validated_count": 1,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 1,
+      "total_latency_ms": 112048.84,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "Selected one core concept (Assessment) and one pedagogical facet (CONCEPT_UNDERSTANDING) to meet the single target requirement at EASY difficulty."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 112.05,
+    "measured_llm_calls": 5,
+    "pedagogical_delivery_index": 0.5,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "CONCEPT_UNDERSTANDING": 1
+    },
+    "cognitive_distribution": {
+      "UNDERSTAND": 1
+    },
+    "planning_notes": "Selected one core concept (Assessment) and one pedagogical facet (CONCEPT_UNDERSTANDING) to meet the single target requirement at EASY difficulty.",
+    "system_notice": null,
+    "generator_model": "allam-2-7b",
+    "generator_provider": "groq",
+    "target_generator": "ft-llama-3-8b-kmit",
+    "serving_mode": "TEMPORARY_HOSTED_DEMO",
+    "critic_model": "openai/gpt-oss-120b",
+    "representation_model": "openai/gpt-oss-20b",
+    "planning_model": "openai/gpt-oss-20b",
+    "stt_model": "whisper-large-v3"
+  }
+}

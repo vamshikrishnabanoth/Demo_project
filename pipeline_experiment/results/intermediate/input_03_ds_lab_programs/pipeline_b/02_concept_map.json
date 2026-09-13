@@ -1,0 +1,82 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Singly Linked List Operations",
+    "subtopics": [
+      "Node Creation",
+      "Insertion at End",
+      "Deletion of Node",
+      "Traversal/Display",
+      "Length Calculation"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Doubly Linked List Operations",
+    "subtopics": [
+      "Node Structure with Prev/Next",
+      "Insertion at End",
+      "Deletion with Pointer Adjustment",
+      "Forward Traversal",
+      "Reverse Traversal"
+    ],
+    "associated_chunk_ids": [
+      "C04",
+      "C05",
+      "C06",
+      "C07"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Circular Linked List Operations",
+    "subtopics": [
+      "Tail Pointer Management",
+      "Insertion in Circular Structure",
+      "Deletion Handling Tail Node",
+      "Circular Traversal"
+    ],
+    "associated_chunk_ids": [
+      "C08",
+      "C09",
+      "C10"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Stack Implementation (Array-based)",
+    "subtopics": [
+      "Array Initialization",
+      "Push Operation",
+      "Pop Operation",
+      "Peek Operation",
+      "Empty Check"
+    ],
+    "associated_chunk_ids": [
+      "C11",
+      "C12"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Stack Implementation (Linked List-based)",
+    "subtopics": [
+      "Linked Node Structure",
+      "Push (Insert at Head)",
+      "Pop (Delete from Head)",
+      "Peek (Access Head)",
+      "Display Stack Elements"
+    ],
+    "associated_chunk_ids": [
+      "C13",
+      "C14",
+      "C15"
+    ]
+  }
+]

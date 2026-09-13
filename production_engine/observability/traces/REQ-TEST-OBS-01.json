@@ -1,0 +1,30 @@
+{
+  "request_id": "REQ-TEST-OBS-01",
+  "timestamp": "2026-08-29T18:12:08Z",
+  "input_id": "VAE_TEST",
+  "selected_representation": "UNIFIED",
+  "pedagogical_delivery_index": 0.85,
+  "cache_telemetry": {
+    "tier1_stt": "HIT",
+    "tier4_cross_modal": "MISS"
+  },
+  "selected_facets": [
+    "THEORETICAL_RATIONALE",
+    "ERROR_DIAGNOSIS"
+  ],
+  "initial_generated_count": 10,
+  "first_pass_validated_count": 9,
+  "critic_repairs_count": 1,
+  "final_delivered_count": 10,
+  "total_latency_ms": 0.0,
+  "status": "PASSED",
+  "repair_actions": [
+    {
+      "target_id": "T01",
+      "defect_field": "option_b",
+      "action": "SURGICAL_PATCH",
+      "success": true
+    }
+  ],
+  "planning_notes": "Balanced plan"
+}

@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is the time complexity of the naive longest common prefix algorithm that compares characters across all strings in the list?",
+      "option_a": "O(n*m)",
+      "option_b": "O(n log m)",
+      "option_c": "O(m log n)",
+      "option_d": "O(n+m)",
+      "correct_option": "A",
+      "explanation": "The naive algorithm iterates over each character position (m) for each string (n), resulting in O(n*m). Option B and C involve logarithmic factors that do not appear in the straightforward comparison. Option D would be linear in the total length of all strings, which is not the case for the nested loops used in the naive approach.",
+      "target_concept": "Longest Common Prefix",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the binary search for the minimum banana\u2011eating speed, which condition causes the upper bound (high) to be decreased?",
+      "option_a": "If total hours <= h, set high = mid - 1",
+      "option_b": "If total hours > h, set high = mid - 1",
+      "option_c": "If total hours <= h, set low = mid + 1",
+      "option_d": "If total hours > h, set low = mid + 1",
+      "correct_option": "A",
+      "explanation": "When the computed hours are within the allowed limit (<= h), the current speed is sufficient, so we try a smaller speed by decreasing high. Option B incorrectly decreases high when the speed is too slow. Options C and D adjust the lower bound, which is done when the speed is too fast.",
+      "target_concept": "Binary Search",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Which data structure is used in the lecture to achieve O(1) average\u2011time membership checks when counting character occurrences for the longest common prefix?",
+      "option_a": "Hash Set",
+      "option_b": "ArrayList",
+      "option_c": "LinkedList",
+      "option_d": "TreeSet",
+      "correct_option": "A",
+      "explanation": "A hash set provides constant\u2011time average membership checks, making it ideal for counting occurrences. ArrayList and LinkedList require linear scans, and TreeSet offers O(log n) operations, not O(1).",
+      "target_concept": "Hash Set",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In the provided Java method for longest common prefix, what causes the inner while loop to terminate early?",
+      "option_a": "The prefix becomes empty",
+      "option_b": "A mismatch is found between the current prefix and a string",
+      "option_c": "All strings have been processed",
+      "option_d": "The prefix length reaches zero",
+      "correct_option": "B",
+      "explanation": "The loop exits when strs[i].indexOf(prefix)!=0, meaning the current prefix is not a prefix of strs[i]; this indicates a mismatch. The prefix may still be non\u2011empty, so options A and D are not the primary cause. Option C refers to outer loop termination, not the inner loop.",
+      "target_concept": "Loop Termination",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What greedy strategy is employed in the banana\u2011eating problem to minimize the number of hours?",
+      "option_a": "Always choose the maximum possible speed",
+      "option_b": "Always choose the minimum possible speed",
+      "option_c": "Choose the locally optimal speed that reduces hours",
+      "option_d": "Choose an average speed across all piles",
+      "correct_option": "C",
+      "explanation": "The greedy approach selects the speed that immediately reduces the total hours, aiming for the minimal feasible speed. Choosing maximum or minimum speeds arbitrarily does not guarantee optimality, and averaging speeds is not part of the greedy strategy.",
+      "target_concept": "Greedy Strategy",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

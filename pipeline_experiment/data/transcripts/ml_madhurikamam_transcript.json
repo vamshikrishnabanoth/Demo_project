@@ -1,0 +1,1545 @@
+{
+  "audio_file": "Audio/only voice/ML_MadhurikaMam.mp4",
+  "language": "en",
+  "language_probability": 0.5407998561859131,
+  "duration_seconds": 611.88,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 10.0,
+      "text": "So, last thing what we have done is we have called a sequence."
+    },
+    {
+      "id": 2,
+      "start": 10.0,
+      "end": 18.0,
+      "text": "We want the sequences, we go add dot, then dot, then dot, add, you finish cutting."
+    },
+    {
+      "id": 3,
+      "start": 18.0,
+      "end": 22.0,
+      "text": "But here you cannot create your model like that."
+    },
+    {
+      "id": 4,
+      "start": 22.0,
+      "end": 28.0,
+      "text": "Instead, first of all you have to create a template of your model by calling it a class."
+    },
+    {
+      "id": 5,
+      "start": 28.0,
+      "end": 33.0,
+      "text": "So, you create a class, that is why I am going to create a class in my own."
+    },
+    {
+      "id": 6,
+      "start": 33.0,
+      "end": 38.0,
+      "text": "The same way you create a class, and you give a gate to your class."
+    },
+    {
+      "id": 7,
+      "start": 38.0,
+      "end": 47.0,
+      "text": "Okay, and once this class is forward, then it will automatically create the class."
+    },
+    {
+      "id": 8,
+      "start": 47.0,
+      "end": 53.0,
+      "text": "So, you are writing to put dot in it so that once this model is forward by something else,"
+    },
+    {
+      "id": 9,
+      "start": 53.0,
+      "end": 57.0,
+      "text": "it will automatically eventually shape."
+    },
+    {
+      "id": 10,
+      "start": 57.0,
+      "end": 61.0,
+      "text": "So, what I am going to do here is check it."
+    },
+    {
+      "id": 11,
+      "start": 61.0,
+      "end": 66.0,
+      "text": "I am creating a class to put the candidate here."
+    },
+    {
+      "id": 12,
+      "start": 66.0,
+      "end": 70.0,
+      "text": "Okay, what I am going to do is the class to put the candidate here."
+    },
+    {
+      "id": 13,
+      "start": 70.0,
+      "end": 74.0,
+      "text": "I am the class to call for input variables."
+    },
+    {
+      "id": 14,
+      "start": 74.0,
+      "end": 80.0,
+      "text": "Exunders for training dot shape of one is something by my input features."
+    },
+    {
+      "id": 15,
+      "start": 80.0,
+      "end": 83.0,
+      "text": "Okay, how many input features I have?"
+    },
+    {
+      "id": 16,
+      "start": 83.0,
+      "end": 85.0,
+      "text": "I have 20 columns."
+    },
+    {
+      "id": 17,
+      "start": 85.0,
+      "end": 88.0,
+      "text": "Say, I have 12 input features."
+    },
+    {
+      "id": 18,
+      "start": 88.0,
+      "end": 90.0,
+      "text": "So, this class to 1 will be perfect."
+    },
+    {
+      "id": 19,
+      "start": 90.0,
+      "end": 96.0,
+      "text": "That time, you can get 215 steam neurons off my class to the candidate."
+    },
+    {
+      "id": 20,
+      "start": 96.0,
+      "end": 98.0,
+      "text": "I just have 10 minutes."
+    },
+    {
+      "id": 21,
+      "start": 98.0,
+      "end": 104.0,
+      "text": "And then in my model, create the class to put the candidate,"
+    },
+    {
+      "id": 22,
+      "start": 104.0,
+      "end": 109.0,
+      "text": "how you have to create making input features, how many other features are there."
+    },
+    {
+      "id": 23,
+      "start": 109.0,
+      "end": 112.0,
+      "text": "And I get to the class to the candidate here."
+    },
+    {
+      "id": 24,
+      "start": 112.0,
+      "end": 115.0,
+      "text": "I get to the class to the candidate here."
+    },
+    {
+      "id": 25,
+      "start": 115.0,
+      "end": 118.0,
+      "text": "That's 16."
+    },
+    {
+      "id": 26,
+      "start": 121.0,
+      "end": 124.0,
+      "text": "I get to the class to the candidate here."
+    },
+    {
+      "id": 27,
+      "start": 124.0,
+      "end": 126.0,
+      "text": "That's 16."
+    },
+    {
+      "id": 28,
+      "start": 126.0,
+      "end": 131.0,
+      "text": "And for example, if my input features are well,"
+    },
+    {
+      "id": 29,
+      "start": 131.0,
+      "end": 136.0,
+      "text": "well input features will be in the candidate to 16."
+    },
+    {
+      "id": 30,
+      "start": 136.0,
+      "end": 138.0,
+      "text": "Okay."
+    },
+    {
+      "id": 31,
+      "start": 138.0,
+      "end": 142.0,
+      "text": "Next, I get to the candidate here."
+    },
+    {
+      "id": 32,
+      "start": 142.0,
+      "end": 145.0,
+      "text": "That is after the class to the candidate here,"
+    },
+    {
+      "id": 33,
+      "start": 145.0,
+      "end": 147.0,
+      "text": "create one more unit feature,"
+    },
+    {
+      "id": 34,
+      "start": 147.0,
+      "end": 150.0,
+      "text": "where the output of the previous one,"
+    },
+    {
+      "id": 35,
+      "start": 150.0,
+      "end": 155.0,
+      "text": "that is, 360 neurons must be connected to the next 8 units."
+    },
+    {
+      "id": 36,
+      "start": 155.0,
+      "end": 160.0,
+      "text": "And then, I get to the candidate here,"
+    },
+    {
+      "id": 37,
+      "start": 160.0,
+      "end": 164.0,
+      "text": "where the previous 8 neurons must be connected to one signal,"
+    },
+    {
+      "id": 38,
+      "start": 164.0,
+      "end": 166.0,
+      "text": "which is the output unit."
+    },
+    {
+      "id": 39,
+      "start": 166.0,
+      "end": 167.0,
+      "text": "Okay."
+    },
+    {
+      "id": 40,
+      "start": 167.0,
+      "end": 171.0,
+      "text": "And I also tell you, use the activation functions,"
+    },
+    {
+      "id": 41,
+      "start": 171.0,
+      "end": 174.0,
+      "text": "redo and signal."
+    },
+    {
+      "id": 42,
+      "start": 174.0,
+      "end": 177.0,
+      "text": "Now, where I have to use that app to tell them,"
+    },
+    {
+      "id": 43,
+      "start": 177.0,
+      "end": 179.0,
+      "text": "now is the next one I'm telling,"
+    },
+    {
+      "id": 44,
+      "start": 179.0,
+      "end": 184.0,
+      "text": "how should my data move in the forward class?"
+    },
+    {
+      "id": 45,
+      "start": 184.0,
+      "end": 187.0,
+      "text": "Please see this very carefully."
+    },
+    {
+      "id": 46,
+      "start": 187.0,
+      "end": 191.0,
+      "text": "I am creating one method for this forward."
+    },
+    {
+      "id": 47,
+      "start": 191.0,
+      "end": 193.0,
+      "text": "What I am going to do is that forward,"
+    },
+    {
+      "id": 48,
+      "start": 193.0,
+      "end": 197.0,
+      "text": "I'm telling how all of our front patients will have it."
+    },
+    {
+      "id": 49,
+      "start": 197.0,
+      "end": 199.0,
+      "text": "How it should happen?"
+    },
+    {
+      "id": 50,
+      "start": 199.0,
+      "end": 202.0,
+      "text": "I'm telling the data input next."
+    },
+    {
+      "id": 51,
+      "start": 202.0,
+      "end": 204.0,
+      "text": "Okay."
+    },
+    {
+      "id": 52,
+      "start": 204.0,
+      "end": 209.0,
+      "text": "Send me to the class to the candidate here."
+    },
+    {
+      "id": 53,
+      "start": 209.0,
+      "end": 210.0,
+      "text": "Okay."
+    },
+    {
+      "id": 54,
+      "start": 210.0,
+      "end": 213.0,
+      "text": "And now, play redo activation function."
+    },
+    {
+      "id": 55,
+      "start": 213.0,
+      "end": 217.0,
+      "text": "Then I'm telling the output of this,"
+    },
+    {
+      "id": 56,
+      "start": 217.0,
+      "end": 220.0,
+      "text": "play as input and send it to the next two,"
+    },
+    {
+      "id": 57,
+      "start": 220.0,
+      "end": 224.0,
+      "text": "leave the data here, and I'll play redo."
+    },
+    {
+      "id": 58,
+      "start": 224.0,
+      "end": 227.0,
+      "text": "I'm getting the output of this step too."
+    },
+    {
+      "id": 59,
+      "start": 227.0,
+      "end": 229.0,
+      "text": "Send it to the next two, leave the data,"
+    },
+    {
+      "id": 60,
+      "start": 229.0,
+      "end": 233.0,
+      "text": "but this time I'll play something called as signal."
+    },
+    {
+      "id": 61,
+      "start": 233.0,
+      "end": 236.0,
+      "text": "So, this is how you have to specifically mention,"
+    },
+    {
+      "id": 62,
+      "start": 236.0,
+      "end": 239.0,
+      "text": "how your data should move from one page to another,"
+    },
+    {
+      "id": 63,
+      "start": 239.0,
+      "end": 243.0,
+      "text": "leave the, and which activation function you have to use."
+    },
+    {
+      "id": 64,
+      "start": 244.0,
+      "end": 247.0,
+      "text": "Now, my template is ready."
+    },
+    {
+      "id": 65,
+      "start": 247.0,
+      "end": 251.0,
+      "text": "This template, I have to convert it as a model."
+    },
+    {
+      "id": 66,
+      "start": 251.0,
+      "end": 252.0,
+      "text": "Okay."
+    },
+    {
+      "id": 67,
+      "start": 252.0,
+      "end": 257.0,
+      "text": "So, what I have to know, I can convert model equal to k and then model."
+    },
+    {
+      "id": 68,
+      "start": 257.0,
+      "end": 259.0,
+      "text": "What is the same model?"
+    },
+    {
+      "id": 69,
+      "start": 259.0,
+      "end": 261.0,
+      "text": "It's the last set to complete."
+    },
+    {
+      "id": 70,
+      "start": 261.0,
+      "end": 264.0,
+      "text": "That I'm assigning to a minimum model."
+    },
+    {
+      "id": 71,
+      "start": 264.0,
+      "end": 266.0,
+      "text": "So, whenever I see model,"
+    },
+    {
+      "id": 72,
+      "start": 266.0,
+      "end": 269.0,
+      "text": "automatically the class will be initiated,"
+    },
+    {
+      "id": 73,
+      "start": 269.0,
+      "end": 272.0,
+      "text": "and all the neurons may be active."
+    },
+    {
+      "id": 74,
+      "start": 272.0,
+      "end": 274.0,
+      "text": "Okay. Next."
+    },
+    {
+      "id": 75,
+      "start": 274.0,
+      "end": 276.0,
+      "text": "The next step is,"
+    },
+    {
+      "id": 76,
+      "start": 276.0,
+      "end": 279.0,
+      "text": "giving the class functions and optimizations."
+    },
+    {
+      "id": 77,
+      "start": 279.0,
+      "end": 281.0,
+      "text": "Inality."
+    },
+    {
+      "id": 78,
+      "start": 281.0,
+      "end": 283.0,
+      "text": "So, I'm telling you,"
+    },
+    {
+      "id": 79,
+      "start": 283.0,
+      "end": 287.0,
+      "text": "use YTB cross-endroti as the class function."
+    },
+    {
+      "id": 80,
+      "start": 287.0,
+      "end": 289.0,
+      "text": "Okay."
+    },
+    {
+      "id": 81,
+      "start": 289.0,
+      "end": 292.0,
+      "text": "And I have to optimize the use model,"
+    },
+    {
+      "id": 82,
+      "start": 292.0,
+      "end": 294.0,
+      "text": "in background creation,"
+    },
+    {
+      "id": 83,
+      "start": 294.0,
+      "end": 300.0,
+      "text": "and make sure that the only thing is how much we don't want to do."
+    },
+    {
+      "id": 84,
+      "start": 300.0,
+      "end": 301.0,
+      "text": "Right."
+    },
+    {
+      "id": 85,
+      "start": 301.0,
+      "end": 303.0,
+      "text": "Now, playing the model."
+    },
+    {
+      "id": 86,
+      "start": 303.0,
+      "end": 305.0,
+      "text": "How will I play the model?"
+    },
+    {
+      "id": 87,
+      "start": 305.0,
+      "end": 307.0,
+      "text": "First of all, I have to create a pose."
+    },
+    {
+      "id": 88,
+      "start": 307.0,
+      "end": 311.0,
+      "text": "How do a pose I'm going to be?"
+    },
+    {
+      "id": 89,
+      "start": 311.0,
+      "end": 313.0,
+      "text": "100 airpods."
+    },
+    {
+      "id": 90,
+      "start": 313.0,
+      "end": 315.0,
+      "text": "And I'm creating one MTS,"
+    },
+    {
+      "id": 91,
+      "start": 315.0,
+      "end": 317.0,
+      "text": "which is called as losses."
+    },
+    {
+      "id": 92,
+      "start": 317.0,
+      "end": 319.0,
+      "text": "That means, for every airport,"
+    },
+    {
+      "id": 93,
+      "start": 319.0,
+      "end": 321.0,
+      "text": "I will do all the optimizations,"
+    },
+    {
+      "id": 94,
+      "start": 321.0,
+      "end": 322.0,
+      "text": "calculate loss,"
+    },
+    {
+      "id": 95,
+      "start": 322.0,
+      "end": 324.0,
+      "text": "background rotation."
+    },
+    {
+      "id": 96,
+      "start": 324.0,
+      "end": 326.0,
+      "text": "So, by each and all what will happen is,"
+    },
+    {
+      "id": 97,
+      "start": 326.0,
+      "end": 328.0,
+      "text": "I'm saving the loss."
+    },
+    {
+      "id": 98,
+      "start": 328.0,
+      "end": 331.0,
+      "text": "So, that I can create the pose."
+    },
+    {
+      "id": 99,
+      "start": 331.0,
+      "end": 334.0,
+      "text": "If I'm not doing, if I'm not saving the losses,"
+    },
+    {
+      "id": 100,
+      "start": 334.0,
+      "end": 335.0,
+      "text": "but each airport,"
+    },
+    {
+      "id": 101,
+      "start": 335.0,
+      "end": 337.0,
+      "text": "whatever loss is calculated,"
+    },
+    {
+      "id": 102,
+      "start": 337.0,
+      "end": 339.0,
+      "text": "that we get it is."
+    },
+    {
+      "id": 103,
+      "start": 339.0,
+      "end": 341.0,
+      "text": "And I guess it's hard to save the loss."
+    },
+    {
+      "id": 104,
+      "start": 341.0,
+      "end": 342.0,
+      "text": "You know,"
+    },
+    {
+      "id": 105,
+      "start": 342.0,
+      "end": 343.0,
+      "text": "for each airport,"
+    },
+    {
+      "id": 106,
+      "start": 343.0,
+      "end": 345.0,
+      "text": "how much loss I'm going to be."
+    },
+    {
+      "id": 107,
+      "start": 345.0,
+      "end": 346.0,
+      "text": "Right."
+    },
+    {
+      "id": 108,
+      "start": 346.0,
+      "end": 347.0,
+      "text": "Now, I'm telling you,"
+    },
+    {
+      "id": 109,
+      "start": 347.0,
+      "end": 349.0,
+      "text": "I'll give you all the examples."
+    },
+    {
+      "id": 110,
+      "start": 349.0,
+      "end": 350.0,
+      "text": "First,"
+    },
+    {
+      "id": 111,
+      "start": 350.0,
+      "end": 351.0,
+      "text": "playing the model."
+    },
+    {
+      "id": 112,
+      "start": 351.0,
+      "end": 352.0,
+      "text": "You can see here,"
+    },
+    {
+      "id": 113,
+      "start": 352.0,
+      "end": 355.0,
+      "text": "I'm calling for forward propagation,"
+    },
+    {
+      "id": 114,
+      "start": 355.0,
+      "end": 357.0,
+      "text": "I'm calling for loss,"
+    },
+    {
+      "id": 115,
+      "start": 357.0,
+      "end": 358.0,
+      "text": "calculation."
+    },
+    {
+      "id": 116,
+      "start": 358.0,
+      "end": 359.0,
+      "text": "Okay."
+    },
+    {
+      "id": 117,
+      "start": 359.0,
+      "end": 360.0,
+      "text": "Then I'm saying,"
+    },
+    {
+      "id": 118,
+      "start": 360.0,
+      "end": 362.0,
+      "text": "you move the optimizer"
+    },
+    {
+      "id": 119,
+      "start": 362.0,
+      "end": 364.0,
+      "text": "and calculate the radius."
+    },
+    {
+      "id": 120,
+      "start": 364.0,
+      "end": 365.0,
+      "text": "But, you know,"
+    },
+    {
+      "id": 121,
+      "start": 365.0,
+      "end": 366.0,
+      "text": "calculating the radius"
+    },
+    {
+      "id": 122,
+      "start": 366.0,
+      "end": 367.0,
+      "text": "for the whole airport"
+    },
+    {
+      "id": 123,
+      "start": 367.0,
+      "end": 368.0,
+      "text": "function model,"
+    },
+    {
+      "id": 124,
+      "start": 368.0,
+      "end": 369.0,
+      "text": "you know, there's more variance."
+    },
+    {
+      "id": 125,
+      "start": 369.0,
+      "end": 370.0,
+      "text": "That means,"
+    },
+    {
+      "id": 126,
+      "start": 370.0,
+      "end": 371.0,
+      "text": "previous cycle,"
+    },
+    {
+      "id": 127,
+      "start": 371.0,
+      "end": 372.0,
+      "text": "one of the radius,"
+    },
+    {
+      "id": 128,
+      "start": 372.0,
+      "end": 374.0,
+      "text": "how then, you need to go straight."
+    },
+    {
+      "id": 129,
+      "start": 374.0,
+      "end": 376.0,
+      "text": "Calculate the rest straight."
+    },
+    {
+      "id": 130,
+      "start": 376.0,
+      "end": 378.0,
+      "text": "Then, to backward propagation,"
+    },
+    {
+      "id": 131,
+      "start": 378.0,
+      "end": 380.0,
+      "text": "update the radius,"
+    },
+    {
+      "id": 132,
+      "start": 380.0,
+      "end": 382.0,
+      "text": "and whatever loss is there,"
+    },
+    {
+      "id": 133,
+      "start": 382.0,
+      "end": 383.0,
+      "text": "that you are,"
+    },
+    {
+      "id": 134,
+      "start": 383.0,
+      "end": 384.0,
+      "text": "to the list,"
+    },
+    {
+      "id": 135,
+      "start": 384.0,
+      "end": 385.0,
+      "text": "what has lost,"
+    },
+    {
+      "id": 136,
+      "start": 385.0,
+      "end": 386.0,
+      "text": "that you're not doing."
+    },
+    {
+      "id": 137,
+      "start": 386.0,
+      "end": 388.0,
+      "text": "Finally, after this is completed,"
+    },
+    {
+      "id": 138,
+      "start": 388.0,
+      "end": 389.0,
+      "text": "quickly,"
+    },
+    {
+      "id": 139,
+      "start": 389.0,
+      "end": 390.0,
+      "text": "airport loss,"
+    },
+    {
+      "id": 140,
+      "start": 390.0,
+      "end": 391.0,
+      "text": "I mean,"
+    },
+    {
+      "id": 141,
+      "start": 391.0,
+      "end": 393.0,
+      "text": "quickly lost for each airport."
+    },
+    {
+      "id": 142,
+      "start": 393.0,
+      "end": 394.0,
+      "text": "You can see here,"
+    },
+    {
+      "id": 143,
+      "start": 394.0,
+      "end": 395.0,
+      "text": "I'll do it."
+    },
+    {
+      "id": 144,
+      "start": 395.0,
+      "end": 396.0,
+      "text": "But, you know it,"
+    },
+    {
+      "id": 145,
+      "start": 396.0,
+      "end": 397.0,
+      "text": "therefore,"
+    },
+    {
+      "id": 146,
+      "start": 397.0,
+      "end": 398.0,
+      "text": "this is the loss,"
+    },
+    {
+      "id": 147,
+      "start": 398.0,
+      "end": 399.0,
+      "text": "and then, I don't do the loss."
+    },
+    {
+      "id": 148,
+      "start": 399.0,
+      "end": 401.0,
+      "text": "So, for each airport,"
+    },
+    {
+      "id": 149,
+      "start": 401.0,
+      "end": 402.0,
+      "text": "what I'm doing is,"
+    },
+    {
+      "id": 150,
+      "start": 402.0,
+      "end": 403.0,
+      "text": "losses, that is,"
+    },
+    {
+      "id": 151,
+      "start": 403.0,
+      "end": 405.0,
+      "text": "repeat it."
+    },
+    {
+      "id": 152,
+      "start": 405.0,
+      "end": 406.0,
+      "text": "Right."
+    },
+    {
+      "id": 153,
+      "start": 406.0,
+      "end": 407.0,
+      "text": "Now, what we have to do"
+    },
+    {
+      "id": 154,
+      "start": 407.0,
+      "end": 409.0,
+      "text": "is traffic research."
+    },
+    {
+      "id": 155,
+      "start": 409.0,
+      "end": 411.0,
+      "text": "So, this visualization is simple."
+    },
+    {
+      "id": 156,
+      "start": 411.0,
+      "end": 412.0,
+      "text": "But, we're making a"
+    },
+    {
+      "id": 157,
+      "start": 412.0,
+      "end": 414.0,
+      "text": "rapture."
+    },
+    {
+      "id": 158,
+      "start": 414.0,
+      "end": 416.0,
+      "text": "It will be airport loss."
+    },
+    {
+      "id": 159,
+      "start": 416.0,
+      "end": 418.0,
+      "text": "This is how you get lower."
+    },
+    {
+      "id": 160,
+      "start": 418.0,
+      "end": 420.0,
+      "text": "Okay."
+    },
+    {
+      "id": 161,
+      "start": 420.0,
+      "end": 421.0,
+      "text": "Then, you have to"
+    },
+    {
+      "id": 162,
+      "start": 421.0,
+      "end": 422.0,
+      "text": "evaluate your model."
+    },
+    {
+      "id": 163,
+      "start": 422.0,
+      "end": 424.0,
+      "text": "What is evaluation?"
+    },
+    {
+      "id": 164,
+      "start": 424.0,
+      "end": 426.0,
+      "text": "Metrics used."
+    },
+    {
+      "id": 165,
+      "start": 426.0,
+      "end": 428.0,
+      "text": "Basically, your model is now"
+    },
+    {
+      "id": 166,
+      "start": 428.0,
+      "end": 429.0,
+      "text": "to prediction."
+    },
+    {
+      "id": 167,
+      "start": 429.0,
+      "end": 431.0,
+      "text": "What is prediction?"
+    },
+    {
+      "id": 168,
+      "start": 431.0,
+      "end": 433.0,
+      "text": "It will give values."
+    },
+    {
+      "id": 169,
+      "start": 433.0,
+      "end": 434.0,
+      "text": "It is the rate of"
+    },
+    {
+      "id": 170,
+      "start": 434.0,
+      "end": 435.0,
+      "text": "zero to one."
+    },
+    {
+      "id": 171,
+      "start": 435.0,
+      "end": 437.0,
+      "text": "It might be two,"
+    },
+    {
+      "id": 172,
+      "start": 437.0,
+      "end": 438.0,
+      "text": "two point A."
+    },
+    {
+      "id": 173,
+      "start": 438.0,
+      "end": 439.0,
+      "text": "It might be two,"
+    },
+    {
+      "id": 174,
+      "start": 439.0,
+      "end": 440.0,
+      "text": "zero point two."
+    },
+    {
+      "id": 175,
+      "start": 440.0,
+      "end": 442.0,
+      "text": "It is prediction."
+    },
+    {
+      "id": 176,
+      "start": 442.0,
+      "end": 443.0,
+      "text": "That prediction."
+    },
+    {
+      "id": 177,
+      "start": 443.0,
+      "end": 444.0,
+      "text": "You have to take a"
+    },
+    {
+      "id": 178,
+      "start": 444.0,
+      "end": 445.0,
+      "text": "threshold value."
+    },
+    {
+      "id": 179,
+      "start": 445.0,
+      "end": 446.0,
+      "text": "One point A,"
+    },
+    {
+      "id": 180,
+      "start": 446.0,
+      "end": 447.0,
+      "text": "two point A,"
+    },
+    {
+      "id": 181,
+      "start": 447.0,
+      "end": 448.0,
+      "text": "zero point one."
+    },
+    {
+      "id": 182,
+      "start": 448.0,
+      "end": 450.0,
+      "text": "You have a threshold."
+    },
+    {
+      "id": 183,
+      "start": 450.0,
+      "end": 451.0,
+      "text": "So, what is the threshold"
+    },
+    {
+      "id": 184,
+      "start": 451.0,
+      "end": 452.0,
+      "text": "and you think,"
+    },
+    {
+      "id": 185,
+      "start": 452.0,
+      "end": 453.0,
+      "text": "zero point one?"
+    },
+    {
+      "id": 186,
+      "start": 453.0,
+      "end": 454.0,
+      "text": "Zero point one."
+    },
+    {
+      "id": 187,
+      "start": 454.0,
+      "end": 455.0,
+      "text": "So, I'm telling you,"
+    },
+    {
+      "id": 188,
+      "start": 455.0,
+      "end": 457.0,
+      "text": "if the value predicted,"
+    },
+    {
+      "id": 189,
+      "start": 457.0,
+      "end": 459.0,
+      "text": "actually is equal to zero point five,"
+    },
+    {
+      "id": 190,
+      "start": 459.0,
+      "end": 461.0,
+      "text": "take the open type one."
+    },
+    {
+      "id": 191,
+      "start": 461.0,
+      "end": 463.0,
+      "text": "Otherwise, take the open type."
+    },
+    {
+      "id": 192,
+      "start": 463.0,
+      "end": 465.0,
+      "text": "Okay."
+    },
+    {
+      "id": 193,
+      "start": 465.0,
+      "end": 467.0,
+      "text": "What is the happiness here?"
+    },
+    {
+      "id": 194,
+      "start": 467.0,
+      "end": 470.0,
+      "text": "100% happiness."
+    },
+    {
+      "id": 195,
+      "start": 470.0,
+      "end": 472.0,
+      "text": "And finally,"
+    },
+    {
+      "id": 196,
+      "start": 472.0,
+      "end": 473.0,
+      "text": "today,"
+    },
+    {
+      "id": 197,
+      "start": 473.0,
+      "end": 475.0,
+      "text": "I'm going to share my"
+    },
+    {
+      "id": 198,
+      "start": 475.0,
+      "end": 477.0,
+      "text": "experience."
+    },
+    {
+      "id": 199,
+      "start": 477.0,
+      "end": 479.0,
+      "text": "This seems to be very"
+    },
+    {
+      "id": 200,
+      "start": 479.0,
+      "end": 481.0,
+      "text": "very complicated,"
+    },
+    {
+      "id": 201,
+      "start": 481.0,
+      "end": 483.0,
+      "text": "but all things here"
+    },
+    {
+      "id": 202,
+      "start": 483.0,
+      "end": 486.0,
+      "text": "is not to get anything now."
+    },
+    {
+      "id": 203,
+      "start": 486.0,
+      "end": 488.0,
+      "text": "Sequential order, proper order,"
+    },
+    {
+      "id": 204,
+      "start": 488.0,
+      "end": 490.0,
+      "text": "on here."
+    },
+    {
+      "id": 205,
+      "start": 490.0,
+      "end": 492.0,
+      "text": "What am I now?"
+    },
+    {
+      "id": 206,
+      "start": 492.0,
+      "end": 494.0,
+      "text": "So, I'm going to share my"
+    },
+    {
+      "id": 207,
+      "start": 494.0,
+      "end": 495.0,
+      "text": "goal."
+    },
+    {
+      "id": 208,
+      "start": 495.0,
+      "end": 497.0,
+      "text": "And that is this."
+    },
+    {
+      "id": 209,
+      "start": 497.0,
+      "end": 498.0,
+      "text": "After that goal,"
+    },
+    {
+      "id": 210,
+      "start": 498.0,
+      "end": 499.0,
+      "text": "to the media,"
+    },
+    {
+      "id": 211,
+      "start": 499.0,
+      "end": 501.0,
+      "text": "and to say it,"
+    },
+    {
+      "id": 212,
+      "start": 501.0,
+      "end": 502.0,
+      "text": "but that is what,"
+    },
+    {
+      "id": 213,
+      "start": 502.0,
+      "end": 503.0,
+      "text": "the goal is,"
+    },
+    {
+      "id": 214,
+      "start": 503.0,
+      "end": 504.0,
+      "text": "this is what,"
+    },
+    {
+      "id": 215,
+      "start": 504.0,
+      "end": 505.0,
+      "text": "which other,"
+    },
+    {
+      "id": 216,
+      "start": 505.0,
+      "end": 507.0,
+      "text": "you're comfortable with."
+    },
+    {
+      "id": 217,
+      "start": 507.0,
+      "end": 509.0,
+      "text": "Any doubts now?"
+    },
+    {
+      "id": 218,
+      "start": 509.0,
+      "end": 510.0,
+      "text": "Please,"
+    },
+    {
+      "id": 219,
+      "start": 510.0,
+      "end": 511.0,
+      "text": "practice the exercise."
+    },
+    {
+      "id": 220,
+      "start": 511.0,
+      "end": 512.0,
+      "text": "Only then,"
+    },
+    {
+      "id": 221,
+      "start": 512.0,
+      "end": 513.0,
+      "text": "you'll be able to complete"
+    },
+    {
+      "id": 222,
+      "start": 513.0,
+      "end": 515.0,
+      "text": "your non-vegetary exercise"
+    },
+    {
+      "id": 223,
+      "start": 515.0,
+      "end": 516.0,
+      "text": "or Monday."
+    },
+    {
+      "id": 224,
+      "start": 516.0,
+      "end": 518.0,
+      "text": "Monday is the next lesson."
+    },
+    {
+      "id": 225,
+      "start": 518.0,
+      "end": 520.0,
+      "text": "Okay?"
+    },
+    {
+      "id": 226,
+      "start": 521.0,
+      "end": 522.0,
+      "text": "How much is it?"
+    },
+    {
+      "id": 227,
+      "start": 522.0,
+      "end": 523.0,
+      "text": "Oh, it's a lot."
+    },
+    {
+      "id": 228,
+      "start": 523.0,
+      "end": 524.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 229,
+      "start": 524.0,
+      "end": 525.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 230,
+      "start": 525.0,
+      "end": 526.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 231,
+      "start": 526.0,
+      "end": 528.0,
+      "text": "Okay."
+    },
+    {
+      "id": 232,
+      "start": 528.0,
+      "end": 530.0,
+      "text": "How much is it?"
+    },
+    {
+      "id": 233,
+      "start": 530.0,
+      "end": 532.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 234,
+      "start": 534.0,
+      "end": 536.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 235,
+      "start": 536.0,
+      "end": 538.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 236,
+      "start": 538.0,
+      "end": 540.0,
+      "text": "Is it the number of times?"
+    },
+    {
+      "id": 237,
+      "start": 540.0,
+      "end": 541.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 238,
+      "start": 541.0,
+      "end": 542.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 239,
+      "start": 542.0,
+      "end": 543.0,
+      "text": "It's a lot."
+    },
+    {
+      "id": 240,
+      "start": 546.0,
+      "end": 548.0,
+      "text": "What are we doing now?"
+    },
+    {
+      "id": 241,
+      "start": 548.0,
+      "end": 549.0,
+      "text": "We're doing,"
+    },
+    {
+      "id": 242,
+      "start": 551.0,
+      "end": 552.0,
+      "text": "how much is it?"
+    },
+    {
+      "id": 243,
+      "start": 553.0,
+      "end": 555.0,
+      "text": "It's the same."
+    },
+    {
+      "id": 244,
+      "start": 555.0,
+      "end": 557.0,
+      "text": "Is this a lovey noodle?"
+    },
+    {
+      "id": 245,
+      "start": 557.0,
+      "end": 559.0,
+      "text": "No, it is not."
+    },
+    {
+      "id": 246,
+      "start": 559.0,
+      "end": 561.0,
+      "text": "No, it is not."
+    },
+    {
+      "id": 247,
+      "start": 561.0,
+      "end": 563.0,
+      "text": "No, it is not."
+    },
+    {
+      "id": 248,
+      "start": 563.0,
+      "end": 565.0,
+      "text": "It is not."
+    },
+    {
+      "id": 249,
+      "start": 565.0,
+      "end": 567.0,
+      "text": "It is not."
+    },
+    {
+      "id": 250,
+      "start": 567.0,
+      "end": 569.0,
+      "text": "What is the name of that noodle?"
+    },
+    {
+      "id": 251,
+      "start": 569.0,
+      "end": 571.0,
+      "text": "Lovey's."
+    },
+    {
+      "id": 252,
+      "start": 571.0,
+      "end": 573.0,
+      "text": "I think it is lovey."
+    },
+    {
+      "id": 253,
+      "start": 573.0,
+      "end": 575.0,
+      "text": "Lovey's."
+    },
+    {
+      "id": 254,
+      "start": 575.0,
+      "end": 577.0,
+      "text": "Lovey's."
+    },
+    {
+      "id": 255,
+      "start": 577.0,
+      "end": 579.0,
+      "text": "No, it is not."
+    },
+    {
+      "id": 256,
+      "start": 579.0,
+      "end": 581.0,
+      "text": "I will introduce it to you later."
+    }
+  ],
+  "raw_text": "So, last thing what we have done is we have called a sequence. We want the sequences, we go add dot, then dot, then dot, add, you finish cutting. But here you cannot create your model like that. Instead, first of all you have to create a template of your model by calling it a class. So, you create a class, that is why I am going to create a class in my own. The same way you create a class, and you give a gate to your class. Okay, and once this class is forward, then it will automatically create the class. So, you are writing to put dot in it so that once this model is forward by something else, it will automatically eventually shape. So, what I am going to do here is check it. I am creating a class to put the candidate here. Okay, what I am going to do is the class to put the candidate here. I am the class to call for input variables. Exunders for training dot shape of one is something by my input features. Okay, how many input features I have? I have 20 columns. Say, I have 12 input features. So, this class to 1 will be perfect. That time, you can get 215 steam neurons off my class to the candidate. I just have 10 minutes. And then in my model, create the class to put the candidate, how you have to create making input features, how many other features are there. And I get to the class to the candidate here. I get to the class to the candidate here. That's 16. I get to the class to the candidate here. That's 16. And for example, if my input features are well, well input features will be in the candidate to 16. Okay. Next, I get to the candidate here. That is after the class to the candidate here, create one more unit feature, where the output of the previous one, that is, 360 neurons must be connected to the next 8 units. And then, I get to the candidate here, where the previous 8 neurons must be connected to one signal, which is the output unit. Okay. And I also tell you, use the activation functions, redo and signal. Now, where I have to use that app to tell them, now is the next one I'm telling, how should my data move in the forward class? Please see this very carefully. I am creating one method for this forward. What I am going to do is that forward, I'm telling how all of our front patients will have it. How it should happen? I'm telling the data input next. Okay. Send me to the class to the candidate here. Okay. And now, play redo activation function. Then I'm telling the output of this, play as input and send it to the next two, leave the data here, and I'll play redo. I'm getting the output of this step too. Send it to the next two, leave the data, but this time I'll play something called as signal. So, this is how you have to specifically mention, how your data should move from one page to another, leave the, and which activation function you have to use. Now, my template is ready. This template, I have to convert it as a model. Okay. So, what I have to know, I can convert model equal to k and then model. What is the same model? It's the last set to complete. That I'm assigning to a minimum model. So, whenever I see model, automatically the class will be initiated, and all the neurons may be active. Okay. Next. The next step is, giving the class functions and optimizations. Inality. So, I'm telling you, use YTB cross-endroti as the class function. Okay. And I have to optimize the use model, in background creation, and make sure that the only thing is how much we don't want to do. Right. Now, playing the model. How will I play the model? First of all, I have to create a pose. How do a pose I'm going to be? 100 airpods. And I'm creating one MTS, which is called as losses. That means, for every airport, I will do all the optimizations, calculate loss, background rotation. So, by each and all what will happen is, I'm saving the loss. So, that I can create the pose. If I'm not doing, if I'm not saving the losses, but each airport, whatever loss is calculated, that we get it is. And I guess it's hard to save the loss. You know, for each airport, how much loss I'm going to be. Right. Now, I'm telling you, I'll give you all the examples. First, playing the model. You can see here, I'm calling for forward propagation, I'm calling for loss, calculation. Okay. Then I'm saying, you move the optimizer and calculate the radius. But, you know, calculating the radius for the whole airport function model, you know, there's more variance. That means, previous cycle, one of the radius, how then, you need to go straight. Calculate the rest straight. Then, to backward propagation, update the radius, and whatever loss is there, that you are, to the list, what has lost, that you're not doing. Finally, after this is completed, quickly, airport loss, I mean, quickly lost for each airport. You can see here, I'll do it. But, you know it, therefore, this is the loss, and then, I don't do the loss. So, for each airport, what I'm doing is, losses, that is, repeat it. Right. Now, what we have to do is traffic research. So, this visualization is simple. But, we're making a rapture. It will be airport loss. This is how you get lower. Okay. Then, you have to evaluate your model. What is evaluation? Metrics used. Basically, your model is now to prediction. What is prediction? It will give values. It is the rate of zero to one. It might be two, two point A. It might be two, zero point two. It is prediction. That prediction. You have to take a threshold value. One point A, two point A, zero point one. You have a threshold. So, what is the threshold and you think, zero point one? Zero point one. So, I'm telling you, if the value predicted, actually is equal to zero point five, take the open type one. Otherwise, take the open type. Okay. What is the happiness here? 100% happiness. And finally, today, I'm going to share my experience. This seems to be very very complicated, but all things here is not to get anything now. Sequential order, proper order, on here. What am I now? So, I'm going to share my goal. And that is this. After that goal, to the media, and to say it, but that is what, the goal is, this is what, which other, you're comfortable with. Any doubts now? Please, practice the exercise. Only then, you'll be able to complete your non-vegetary exercise or Monday. Monday is the next lesson. Okay? How much is it? Oh, it's a lot. It's a lot. It's a lot. It's a lot. Okay. How much is it? It's a lot. It's a lot. It's a lot. Is it the number of times? It's a lot. It's a lot. It's a lot. What are we doing now? We're doing, how much is it? It's the same. Is this a lovey noodle? No, it is not. No, it is not. No, it is not. It is not. It is not. What is the name of that noodle? Lovey's. I think it is lovey. Lovey's. Lovey's. No, it is not. I will introduce it to you later."
+}

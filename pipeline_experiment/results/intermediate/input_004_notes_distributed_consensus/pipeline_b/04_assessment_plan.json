@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_004_notes_distributed_consensus",
+  "input_id": "input_004_notes_distributed_consensus",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "CAP Theorem",
+      "question_count": 2,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Consistency Models",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Partition Tolerance",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Raft Consensus Protocol",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    }
+  ]
+}

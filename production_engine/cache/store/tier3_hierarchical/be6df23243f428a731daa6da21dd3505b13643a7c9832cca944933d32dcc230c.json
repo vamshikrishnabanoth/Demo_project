@@ -1,0 +1,940 @@
+{
+  "input_id": "CASE_A_MONOLOGUE",
+  "title": "Supervised Learning: Neural Net Training (Prof. Madhurika)",
+  "parents": [
+    {
+      "parent_id": "P_01",
+      "evidence_id": "E_PARENT_01",
+      "title": "Lecture Segment 1 (0m00s - 3m04s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 184.0
+      },
+      "full_text": "So, last thing what we have done is we have called a sequence. We want the sequences, we go add dot, then dot, then dot, add, you finish cutting. But here you cannot create your model like that. Instead, first of all you have to create a template of your model by calling it a class. So, you create a class, that is why I am going to create a class in my own. The same way you create a class, and you give a gate to your class. Okay, and once this class is forward, then it will automatically create the class. So, you are writing to put dot in it so that once this model is forward by something else, it will automatically eventually shape. So, what I am going to do here is check it. I am creating a class to put the candidate here. Okay, what I am going to do is the class to put the candidate here. I am the class to call for input variables. Exunders for training dot shape of one is something by my input features. Okay, how many input features I have? I have 20 columns. Say, I have 12 input features. So, this class to 1 will be perfect. That time, you can get 215 steam neurons off my class to the candidate. I just have 10 minutes. And then in my model, create the class to put the candidate, how you have to create making input features, how many other features are there. And I get to the class to the candidate here. I get to the class to the candidate here. That's 16. I get to the class to the candidate here. That's 16. And for example, if my input features are well, well input features will be in the candidate to 16. Okay. Next, I get to the candidate here. That is after the class to the candidate here, create one more unit feature, where the output of the previous one, that is, 360 neurons must be connected to the next 8 units. And then, I get to the candidate here, where the previous 8 neurons must be connected to one signal, which is the output unit. Okay. And I also tell you, use the activation functions, redo and signal. Now, where I have to use that app to tell them, now is the next one I'm telling, how should my data move in the forward class?",
+      "word_count": 411,
+      "child_ids": [
+        "E_CHILD_001",
+        "E_CHILD_002",
+        "E_CHILD_003",
+        "E_CHILD_004",
+        "E_CHILD_005"
+      ]
+    },
+    {
+      "parent_id": "P_02",
+      "evidence_id": "E_PARENT_02",
+      "title": "Lecture Segment 2 (3m04s - 6m22s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 184.0,
+        "end": 382.0
+      },
+      "full_text": "Please see this very carefully. I am creating one method for this forward. What I am going to do is that forward, I'm telling how all of our front patients will have it. How it should happen? I'm telling the data input next. Okay. Send me to the class to the candidate here. Okay. And now, play redo activation function. Then I'm telling the output of this, play as input and send it to the next two, leave the data here, and I'll play redo. I'm getting the output of this step too. Send it to the next two, leave the data, but this time I'll play something called as signal. So, this is how you have to specifically mention, how your data should move from one page to another, leave the, and which activation function you have to use. Now, my template is ready. This template, I have to convert it as a model. Okay. So, what I have to know, I can convert model equal to k and then model. What is the same model? It's the last set to complete. That I'm assigning to a minimum model. So, whenever I see model, automatically the class will be initiated, and all the neurons may be active. Okay. Next. The next step is, giving the class functions and optimizations. Inality. So, I'm telling you, use YTB cross-endroti as the class function. Okay. And I have to optimize the use model, in background creation, and make sure that the only thing is how much we don't want to do. Right. Now, playing the model. How will I play the model? First of all, I have to create a pose. How do a pose I'm going to be? 100 airpods. And I'm creating one MTS, which is called as losses. That means, for every airport, I will do all the optimizations, calculate loss, background rotation. So, by each and all what will happen is, I'm saving the loss. So, that I can create the pose. If I'm not doing, if I'm not saving the losses, but each airport, whatever loss is calculated, that we get it is. And I guess it's hard to save the loss. You know, for each airport, how much loss I'm going to be. Right. Now, I'm telling you, I'll give you all the examples. First, playing the model. You can see here, I'm calling for forward propagation, I'm calling for loss, calculation. Okay. Then I'm saying, you move the optimizer and calculate the radius. But, you know, calculating the radius for the whole airport function model, you know, there's more variance. That means, previous cycle, one of the radius, how then, you need to go straight. Calculate the rest straight. Then, to backward propagation, update the radius, and whatever loss is there,",
+      "word_count": 466,
+      "child_ids": [
+        "E_CHILD_006",
+        "E_CHILD_007",
+        "E_CHILD_008",
+        "E_CHILD_009",
+        "E_CHILD_010",
+        "E_CHILD_011"
+      ]
+    },
+    {
+      "parent_id": "P_03",
+      "evidence_id": "E_PARENT_03",
+      "title": "Lecture Segment 3 (6m22s - 9m41s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 382.0,
+        "end": 581.0
+      },
+      "full_text": "that you are, to the list, what has lost, that you're not doing. Finally, after this is completed, quickly, airport loss, I mean, quickly lost for each airport. You can see here, I'll do it. But, you know it, therefore, this is the loss, and then, I don't do the loss. So, for each airport, what I'm doing is, losses, that is, repeat it. Right. Now, what we have to do is traffic research. So, this visualization is simple. But, we're making a rapture. It will be airport loss. This is how you get lower. Okay. Then, you have to evaluate your model. What is evaluation? Metrics used. Basically, your model is now to prediction. What is prediction? It will give values. It is the rate of zero to one. It might be two, two point A. It might be two, zero point two. It is prediction. That prediction. You have to take a threshold value. One point A, two point A, zero point one. You have a threshold. So, what is the threshold and you think, zero point one? Zero point one. So, I'm telling you, if the value predicted, actually is equal to zero point five, take the open type one. Otherwise, take the open type. Okay. What is the happiness here? 100% happiness. And finally, today, I'm going to share my experience. This seems to be very very complicated, but all things here is not to get anything now. Sequential order, proper order, on here. What am I now? So, I'm going to share my goal. And that is this. After that goal, to the media, and to say it, but that is what, the goal is, this is what, which other, you're comfortable with. Any doubts now? Please, practice the exercise. Only then, you'll be able to complete your non-vegetary exercise or Monday. Monday is the next lesson. Okay? How much is it? Oh, it's a lot. It's a lot. It's a lot. It's a lot. Okay. How much is it? It's a lot. It's a lot. It's a lot. Is it the number of times? It's a lot. It's a lot. It's a lot. What are we doing now? We're doing, how much is it? It's the same. Is this a lovey noodle? No, it is not. No, it is not. No, it is not. It is not. It is not. What is the name of that noodle? Lovey's. I think it is lovey. Lovey's. Lovey's. No, it is not. I will introduce it to you later.",
+      "word_count": 422,
+      "child_ids": [
+        "E_CHILD_012",
+        "E_CHILD_013",
+        "E_CHILD_014",
+        "E_CHILD_015",
+        "E_CHILD_016",
+        "E_CHILD_017"
+      ]
+    }
+  ],
+  "children": [
+    {
+      "child_id": "C_001",
+      "evidence_id": "E_CHILD_001",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 38.0
+      },
+      "text": "So, last thing what we have done is we have called a sequence. We want the sequences, we go add dot, then dot, then dot, add, you finish cutting. But here you cannot create your model like that. Instead, first of all you have to create a template of your model by calling it a class. So, you create a class, that is why I am going to create a class in my own. The same way you create a class, and you give a gate to your class.",
+      "word_count": 89,
+      "keywords": [
+        "give",
+        "your",
+        "template",
+        "cutting",
+        "create",
+        "here",
+        "class",
+        "gate",
+        "cannot",
+        "last"
+      ]
+    },
+    {
+      "child_id": "C_002",
+      "evidence_id": "E_CHILD_002",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 38.0,
+        "end": 74.0
+      },
+      "text": "Okay, and once this class is forward, then it will automatically create the class. So, you are writing to put dot in it so that once this model is forward by something else, it will automatically eventually shape. So, what I am going to do here is check it. I am creating a class to put the candidate here. Okay, what I am going to do is the class to put the candidate here. I am the class to call for input variables.",
+      "word_count": 83,
+      "keywords": [
+        "create",
+        "forward",
+        "here",
+        "class",
+        "input",
+        "okay",
+        "once",
+        "then",
+        "candidate",
+        "creating"
+      ]
+    },
+    {
+      "child_id": "C_003",
+      "evidence_id": "E_CHILD_003",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 74.0,
+        "end": 109.0
+      },
+      "text": "Exunders for training dot shape of one is something by my input features. Okay, how many input features I have? I have 20 columns. Say, I have 12 input features. So, this class to 1 will be perfect. That time, you can get 215 steam neurons off my class to the candidate. I just have 10 minutes. And then in my model, create the class to put the candidate, how you have to create making input features, how many other features are there.",
+      "word_count": 83,
+      "keywords": [
+        "steam",
+        "create",
+        "class",
+        "input",
+        "exunders",
+        "okay",
+        "candidate",
+        "then",
+        "columns",
+        "making"
+      ]
+    },
+    {
+      "child_id": "C_004",
+      "evidence_id": "E_CHILD_004",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 109.0,
+        "end": 150.0
+      },
+      "text": "And I get to the class to the candidate here. I get to the class to the candidate here. That's 16. I get to the class to the candidate here. That's 16. And for example, if my input features are well, well input features will be in the candidate to 16. Okay. Next, I get to the candidate here. That is after the class to the candidate here, create one more unit feature, where the output of the previous one,",
+      "word_count": 80,
+      "keywords": [
+        "features",
+        "unit",
+        "previous",
+        "candidate",
+        "well",
+        "example",
+        "create",
+        "after",
+        "here",
+        "more"
+      ]
+    },
+    {
+      "child_id": "C_005",
+      "evidence_id": "E_CHILD_005",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 150.0,
+        "end": 184.0
+      },
+      "text": "that is, 360 neurons must be connected to the next 8 units. And then, I get to the candidate here, where the previous 8 neurons must be connected to one signal, which is the output unit. Okay. And I also tell you, use the activation functions, redo and signal. Now, where I have to use that app to tell them, now is the next one I'm telling, how should my data move in the forward class?",
+      "word_count": 76,
+      "keywords": [
+        "must",
+        "units",
+        "forward",
+        "here",
+        "next",
+        "class",
+        "okay",
+        "output",
+        "connected",
+        "them"
+      ]
+    },
+    {
+      "child_id": "C_006",
+      "evidence_id": "E_CHILD_006",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 184.0,
+        "end": 220.0
+      },
+      "text": "Please see this very carefully. I am creating one method for this forward. What I am going to do is that forward, I'm telling how all of our front patients will have it. How it should happen? I'm telling the data input next. Okay. Send me to the class to the candidate here. Okay. And now, play redo activation function. Then I'm telling the output of this, play as input and send it to the next two,",
+      "word_count": 77,
+      "keywords": [
+        "carefully",
+        "please",
+        "play",
+        "forward",
+        "here",
+        "next",
+        "class",
+        "input",
+        "okay",
+        "output"
+      ]
+    },
+    {
+      "child_id": "C_007",
+      "evidence_id": "E_CHILD_007",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 220.0,
+        "end": 251.0
+      },
+      "text": "leave the data here, and I'll play redo. I'm getting the output of this step too. Send it to the next two, leave the data, but this time I'll play something called as signal. So, this is how you have to specifically mention, how your data should move from one page to another, leave the, and which activation function you have to use. Now, my template is ready. This template, I have to convert it as a model.",
+      "word_count": 78,
+      "keywords": [
+        "your",
+        "template",
+        "play",
+        "here",
+        "next",
+        "leave",
+        "output",
+        "getting",
+        "activation",
+        "model"
+      ]
+    },
+    {
+      "child_id": "C_008",
+      "evidence_id": "E_CHILD_008",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 251.0,
+        "end": 287.0
+      },
+      "text": "Okay. So, what I have to know, I can convert model equal to k and then model. What is the same model? It's the last set to complete. That I'm assigning to a minimum model. So, whenever I see model, automatically the class will be initiated, and all the neurons may be active. Okay. Next. The next step is, giving the class functions and optimizations. Inality. So, I'm telling you, use YTB cross-endroti as the class function.",
+      "word_count": 77,
+      "keywords": [
+        "know",
+        "next",
+        "class",
+        "equal",
+        "complete",
+        "okay",
+        "minimum",
+        "last",
+        "then",
+        "giving"
+      ]
+    },
+    {
+      "child_id": "C_009",
+      "evidence_id": "E_CHILD_009",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 287.0,
+        "end": 321.0
+      },
+      "text": "Okay. And I have to optimize the use model, in background creation, and make sure that the only thing is how much we don't want to do. Right. Now, playing the model. How will I play the model? First of all, I have to create a pose. How do a pose I'm going to be? 100 airpods. And I'm creating one MTS, which is called as losses. That means, for every airport, I will do all the optimizations,",
+      "word_count": 78,
+      "keywords": [
+        "optimize",
+        "pose",
+        "play",
+        "create",
+        "only",
+        "background",
+        "airport",
+        "much",
+        "make",
+        "okay"
+      ]
+    },
+    {
+      "child_id": "C_010",
+      "evidence_id": "E_CHILD_010",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 321.0,
+        "end": 349.0
+      },
+      "text": "calculate loss, background rotation. So, by each and all what will happen is, I'm saving the loss. So, that I can create the pose. If I'm not doing, if I'm not saving the losses, but each airport, whatever loss is calculated, that we get it is. And I guess it's hard to save the loss. You know, for each airport, how much loss I'm going to be. Right. Now, I'm telling you, I'll give you all the examples.",
+      "word_count": 78,
+      "keywords": [
+        "hard",
+        "give",
+        "whatever",
+        "pose",
+        "create",
+        "know",
+        "background",
+        "airport",
+        "much",
+        "saving"
+      ]
+    },
+    {
+      "child_id": "C_011",
+      "evidence_id": "E_CHILD_011",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 349.0,
+        "end": 382.0
+      },
+      "text": "First, playing the model. You can see here, I'm calling for forward propagation, I'm calling for loss, calculation. Okay. Then I'm saying, you move the optimizer and calculate the radius. But, you know, calculating the radius for the whole airport function model, you know, there's more variance. That means, previous cycle, one of the radius, how then, you need to go straight. Calculate the rest straight. Then, to backward propagation, update the radius, and whatever loss is there,",
+      "word_count": 78,
+      "keywords": [
+        "propagation",
+        "whatever",
+        "forward",
+        "here",
+        "know",
+        "whole",
+        "more",
+        "calculating",
+        "need",
+        "backward"
+      ]
+    },
+    {
+      "child_id": "C_012",
+      "evidence_id": "E_CHILD_012",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 382.0,
+        "end": 411.0
+      },
+      "text": "that you are, to the list, what has lost, that you're not doing. Finally, after this is completed, quickly, airport loss, I mean, quickly lost for each airport. You can see here, I'll do it. But, you know it, therefore, this is the loss, and then, I don't do the loss. So, for each airport, what I'm doing is, losses, that is, repeat it. Right. Now, what we have to do is traffic research. So, this visualization is simple.",
+      "word_count": 79,
+      "keywords": [
+        "completed",
+        "here",
+        "know",
+        "visualization",
+        "airport",
+        "then",
+        "simple",
+        "losses",
+        "mean",
+        "traffic"
+      ]
+    },
+    {
+      "child_id": "C_013",
+      "evidence_id": "E_CHILD_013",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 411.0,
+        "end": 444.0
+      },
+      "text": "But, we're making a rapture. It will be airport loss. This is how you get lower. Okay. Then, you have to evaluate your model. What is evaluation? Metrics used. Basically, your model is now to prediction. What is prediction? It will give values. It is the rate of zero to one. It might be two, two point A. It might be two, zero point two. It is prediction. That prediction. You have to take a",
+      "word_count": 75,
+      "keywords": [
+        "give",
+        "your",
+        "airport",
+        "okay",
+        "then",
+        "making",
+        "evaluate",
+        "model",
+        "used",
+        "might"
+      ]
+    },
+    {
+      "child_id": "C_014",
+      "evidence_id": "E_CHILD_014",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 444.0,
+        "end": 479.0
+      },
+      "text": "threshold value. One point A, two point A, zero point one. You have a threshold. So, what is the threshold and you think, zero point one? Zero point one. So, I'm telling you, if the value predicted, actually is equal to zero point five, take the open type one. Otherwise, take the open type. Okay. What is the happiness here? 100% happiness. And finally, today, I'm going to share my experience. This seems to be very",
+      "word_count": 76,
+      "keywords": [
+        "think",
+        "actually",
+        "open",
+        "otherwise",
+        "here",
+        "equal",
+        "predicted",
+        "okay",
+        "very",
+        "threshold"
+      ]
+    },
+    {
+      "child_id": "C_015",
+      "evidence_id": "E_CHILD_015",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 479.0,
+        "end": 515.0
+      },
+      "text": "very complicated, but all things here is not to get anything now. Sequential order, proper order, on here. What am I now? So, I'm going to share my goal. And that is this. After that goal, to the media, and to say it, but that is what, the goal is, this is what, which other, you're comfortable with. Any doubts now? Please, practice the exercise. Only then, you'll be able to complete your non-vegetary exercise",
+      "word_count": 75,
+      "keywords": [
+        "your",
+        "please",
+        "doubts",
+        "here",
+        "exercise",
+        "only",
+        "things",
+        "complete",
+        "very",
+        "vegetary"
+      ]
+    },
+    {
+      "child_id": "C_016",
+      "evidence_id": "E_CHILD_016",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 515.0,
+        "end": 559.0
+      },
+      "text": "or Monday. Monday is the next lesson. Okay? How much is it? Oh, it's a lot. It's a lot. It's a lot. It's a lot. Okay. How much is it? It's a lot. It's a lot. It's a lot. Is it the number of times? It's a lot. It's a lot. It's a lot. What are we doing now? We're doing, how much is it? It's the same. Is this a lovey noodle? No, it is not.",
+      "word_count": 77,
+      "keywords": [
+        "noodle",
+        "times",
+        "same",
+        "lesson",
+        "next",
+        "lovey",
+        "much",
+        "doing",
+        "number",
+        "okay"
+      ]
+    },
+    {
+      "child_id": "C_017",
+      "evidence_id": "E_CHILD_017",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 559.0,
+        "end": 581.0
+      },
+      "text": "No, it is not. No, it is not. It is not. It is not. What is the name of that noodle? Lovey's. I think it is lovey. Lovey's. Lovey's. No, it is not. I will introduce it to you later.",
+      "word_count": 40,
+      "keywords": [
+        "noodle",
+        "think",
+        "later",
+        "lovey",
+        "introduce",
+        "name",
+        "will"
+      ]
+    }
+  ],
+  "parent_map": {
+    "E_PARENT_01": {
+      "parent_id": "P_01",
+      "evidence_id": "E_PARENT_01",
+      "title": "Lecture Segment 1 (0m00s - 3m04s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 184.0
+      },
+      "full_text": "So, last thing what we have done is we have called a sequence. We want the sequences, we go add dot, then dot, then dot, add, you finish cutting. But here you cannot create your model like that. Instead, first of all you have to create a template of your model by calling it a class. So, you create a class, that is why I am going to create a class in my own. The same way you create a class, and you give a gate to your class. Okay, and once this class is forward, then it will automatically create the class. So, you are writing to put dot in it so that once this model is forward by something else, it will automatically eventually shape. So, what I am going to do here is check it. I am creating a class to put the candidate here. Okay, what I am going to do is the class to put the candidate here. I am the class to call for input variables. Exunders for training dot shape of one is something by my input features. Okay, how many input features I have? I have 20 columns. Say, I have 12 input features. So, this class to 1 will be perfect. That time, you can get 215 steam neurons off my class to the candidate. I just have 10 minutes. And then in my model, create the class to put the candidate, how you have to create making input features, how many other features are there. And I get to the class to the candidate here. I get to the class to the candidate here. That's 16. I get to the class to the candidate here. That's 16. And for example, if my input features are well, well input features will be in the candidate to 16. Okay. Next, I get to the candidate here. That is after the class to the candidate here, create one more unit feature, where the output of the previous one, that is, 360 neurons must be connected to the next 8 units. And then, I get to the candidate here, where the previous 8 neurons must be connected to one signal, which is the output unit. Okay. And I also tell you, use the activation functions, redo and signal. Now, where I have to use that app to tell them, now is the next one I'm telling, how should my data move in the forward class?",
+      "word_count": 411,
+      "child_ids": [
+        "E_CHILD_001",
+        "E_CHILD_002",
+        "E_CHILD_003",
+        "E_CHILD_004",
+        "E_CHILD_005"
+      ]
+    },
+    "E_PARENT_02": {
+      "parent_id": "P_02",
+      "evidence_id": "E_PARENT_02",
+      "title": "Lecture Segment 2 (3m04s - 6m22s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 184.0,
+        "end": 382.0
+      },
+      "full_text": "Please see this very carefully. I am creating one method for this forward. What I am going to do is that forward, I'm telling how all of our front patients will have it. How it should happen? I'm telling the data input next. Okay. Send me to the class to the candidate here. Okay. And now, play redo activation function. Then I'm telling the output of this, play as input and send it to the next two, leave the data here, and I'll play redo. I'm getting the output of this step too. Send it to the next two, leave the data, but this time I'll play something called as signal. So, this is how you have to specifically mention, how your data should move from one page to another, leave the, and which activation function you have to use. Now, my template is ready. This template, I have to convert it as a model. Okay. So, what I have to know, I can convert model equal to k and then model. What is the same model? It's the last set to complete. That I'm assigning to a minimum model. So, whenever I see model, automatically the class will be initiated, and all the neurons may be active. Okay. Next. The next step is, giving the class functions and optimizations. Inality. So, I'm telling you, use YTB cross-endroti as the class function. Okay. And I have to optimize the use model, in background creation, and make sure that the only thing is how much we don't want to do. Right. Now, playing the model. How will I play the model? First of all, I have to create a pose. How do a pose I'm going to be? 100 airpods. And I'm creating one MTS, which is called as losses. That means, for every airport, I will do all the optimizations, calculate loss, background rotation. So, by each and all what will happen is, I'm saving the loss. So, that I can create the pose. If I'm not doing, if I'm not saving the losses, but each airport, whatever loss is calculated, that we get it is. And I guess it's hard to save the loss. You know, for each airport, how much loss I'm going to be. Right. Now, I'm telling you, I'll give you all the examples. First, playing the model. You can see here, I'm calling for forward propagation, I'm calling for loss, calculation. Okay. Then I'm saying, you move the optimizer and calculate the radius. But, you know, calculating the radius for the whole airport function model, you know, there's more variance. That means, previous cycle, one of the radius, how then, you need to go straight. Calculate the rest straight. Then, to backward propagation, update the radius, and whatever loss is there,",
+      "word_count": 466,
+      "child_ids": [
+        "E_CHILD_006",
+        "E_CHILD_007",
+        "E_CHILD_008",
+        "E_CHILD_009",
+        "E_CHILD_010",
+        "E_CHILD_011"
+      ]
+    },
+    "E_PARENT_03": {
+      "parent_id": "P_03",
+      "evidence_id": "E_PARENT_03",
+      "title": "Lecture Segment 3 (6m22s - 9m41s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 382.0,
+        "end": 581.0
+      },
+      "full_text": "that you are, to the list, what has lost, that you're not doing. Finally, after this is completed, quickly, airport loss, I mean, quickly lost for each airport. You can see here, I'll do it. But, you know it, therefore, this is the loss, and then, I don't do the loss. So, for each airport, what I'm doing is, losses, that is, repeat it. Right. Now, what we have to do is traffic research. So, this visualization is simple. But, we're making a rapture. It will be airport loss. This is how you get lower. Okay. Then, you have to evaluate your model. What is evaluation? Metrics used. Basically, your model is now to prediction. What is prediction? It will give values. It is the rate of zero to one. It might be two, two point A. It might be two, zero point two. It is prediction. That prediction. You have to take a threshold value. One point A, two point A, zero point one. You have a threshold. So, what is the threshold and you think, zero point one? Zero point one. So, I'm telling you, if the value predicted, actually is equal to zero point five, take the open type one. Otherwise, take the open type. Okay. What is the happiness here? 100% happiness. And finally, today, I'm going to share my experience. This seems to be very very complicated, but all things here is not to get anything now. Sequential order, proper order, on here. What am I now? So, I'm going to share my goal. And that is this. After that goal, to the media, and to say it, but that is what, the goal is, this is what, which other, you're comfortable with. Any doubts now? Please, practice the exercise. Only then, you'll be able to complete your non-vegetary exercise or Monday. Monday is the next lesson. Okay? How much is it? Oh, it's a lot. It's a lot. It's a lot. It's a lot. Okay. How much is it? It's a lot. It's a lot. It's a lot. Is it the number of times? It's a lot. It's a lot. It's a lot. What are we doing now? We're doing, how much is it? It's the same. Is this a lovey noodle? No, it is not. No, it is not. No, it is not. It is not. It is not. What is the name of that noodle? Lovey's. I think it is lovey. Lovey's. Lovey's. No, it is not. I will introduce it to you later.",
+      "word_count": 422,
+      "child_ids": [
+        "E_CHILD_012",
+        "E_CHILD_013",
+        "E_CHILD_014",
+        "E_CHILD_015",
+        "E_CHILD_016",
+        "E_CHILD_017"
+      ]
+    }
+  },
+  "child_map": {
+    "E_CHILD_001": {
+      "child_id": "C_001",
+      "evidence_id": "E_CHILD_001",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 38.0
+      },
+      "text": "So, last thing what we have done is we have called a sequence. We want the sequences, we go add dot, then dot, then dot, add, you finish cutting. But here you cannot create your model like that. Instead, first of all you have to create a template of your model by calling it a class. So, you create a class, that is why I am going to create a class in my own. The same way you create a class, and you give a gate to your class.",
+      "word_count": 89,
+      "keywords": [
+        "give",
+        "your",
+        "template",
+        "cutting",
+        "create",
+        "here",
+        "class",
+        "gate",
+        "cannot",
+        "last"
+      ]
+    },
+    "E_CHILD_002": {
+      "child_id": "C_002",
+      "evidence_id": "E_CHILD_002",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 38.0,
+        "end": 74.0
+      },
+      "text": "Okay, and once this class is forward, then it will automatically create the class. So, you are writing to put dot in it so that once this model is forward by something else, it will automatically eventually shape. So, what I am going to do here is check it. I am creating a class to put the candidate here. Okay, what I am going to do is the class to put the candidate here. I am the class to call for input variables.",
+      "word_count": 83,
+      "keywords": [
+        "create",
+        "forward",
+        "here",
+        "class",
+        "input",
+        "okay",
+        "once",
+        "then",
+        "candidate",
+        "creating"
+      ]
+    },
+    "E_CHILD_003": {
+      "child_id": "C_003",
+      "evidence_id": "E_CHILD_003",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 74.0,
+        "end": 109.0
+      },
+      "text": "Exunders for training dot shape of one is something by my input features. Okay, how many input features I have? I have 20 columns. Say, I have 12 input features. So, this class to 1 will be perfect. That time, you can get 215 steam neurons off my class to the candidate. I just have 10 minutes. And then in my model, create the class to put the candidate, how you have to create making input features, how many other features are there.",
+      "word_count": 83,
+      "keywords": [
+        "steam",
+        "create",
+        "class",
+        "input",
+        "exunders",
+        "okay",
+        "candidate",
+        "then",
+        "columns",
+        "making"
+      ]
+    },
+    "E_CHILD_004": {
+      "child_id": "C_004",
+      "evidence_id": "E_CHILD_004",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 109.0,
+        "end": 150.0
+      },
+      "text": "And I get to the class to the candidate here. I get to the class to the candidate here. That's 16. I get to the class to the candidate here. That's 16. And for example, if my input features are well, well input features will be in the candidate to 16. Okay. Next, I get to the candidate here. That is after the class to the candidate here, create one more unit feature, where the output of the previous one,",
+      "word_count": 80,
+      "keywords": [
+        "features",
+        "unit",
+        "previous",
+        "candidate",
+        "well",
+        "example",
+        "create",
+        "after",
+        "here",
+        "more"
+      ]
+    },
+    "E_CHILD_005": {
+      "child_id": "C_005",
+      "evidence_id": "E_CHILD_005",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 150.0,
+        "end": 184.0
+      },
+      "text": "that is, 360 neurons must be connected to the next 8 units. And then, I get to the candidate here, where the previous 8 neurons must be connected to one signal, which is the output unit. Okay. And I also tell you, use the activation functions, redo and signal. Now, where I have to use that app to tell them, now is the next one I'm telling, how should my data move in the forward class?",
+      "word_count": 76,
+      "keywords": [
+        "must",
+        "units",
+        "forward",
+        "here",
+        "next",
+        "class",
+        "okay",
+        "output",
+        "connected",
+        "them"
+      ]
+    },
+    "E_CHILD_006": {
+      "child_id": "C_006",
+      "evidence_id": "E_CHILD_006",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 184.0,
+        "end": 220.0
+      },
+      "text": "Please see this very carefully. I am creating one method for this forward. What I am going to do is that forward, I'm telling how all of our front patients will have it. How it should happen? I'm telling the data input next. Okay. Send me to the class to the candidate here. Okay. And now, play redo activation function. Then I'm telling the output of this, play as input and send it to the next two,",
+      "word_count": 77,
+      "keywords": [
+        "carefully",
+        "please",
+        "play",
+        "forward",
+        "here",
+        "next",
+        "class",
+        "input",
+        "okay",
+        "output"
+      ]
+    },
+    "E_CHILD_007": {
+      "child_id": "C_007",
+      "evidence_id": "E_CHILD_007",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 220.0,
+        "end": 251.0
+      },
+      "text": "leave the data here, and I'll play redo. I'm getting the output of this step too. Send it to the next two, leave the data, but this time I'll play something called as signal. So, this is how you have to specifically mention, how your data should move from one page to another, leave the, and which activation function you have to use. Now, my template is ready. This template, I have to convert it as a model.",
+      "word_count": 78,
+      "keywords": [
+        "your",
+        "template",
+        "play",
+        "here",
+        "next",
+        "leave",
+        "output",
+        "getting",
+        "activation",
+        "model"
+      ]
+    },
+    "E_CHILD_008": {
+      "child_id": "C_008",
+      "evidence_id": "E_CHILD_008",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 251.0,
+        "end": 287.0
+      },
+      "text": "Okay. So, what I have to know, I can convert model equal to k and then model. What is the same model? It's the last set to complete. That I'm assigning to a minimum model. So, whenever I see model, automatically the class will be initiated, and all the neurons may be active. Okay. Next. The next step is, giving the class functions and optimizations. Inality. So, I'm telling you, use YTB cross-endroti as the class function.",
+      "word_count": 77,
+      "keywords": [
+        "know",
+        "next",
+        "class",
+        "equal",
+        "complete",
+        "okay",
+        "minimum",
+        "last",
+        "then",
+        "giving"
+      ]
+    },
+    "E_CHILD_009": {
+      "child_id": "C_009",
+      "evidence_id": "E_CHILD_009",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 287.0,
+        "end": 321.0
+      },
+      "text": "Okay. And I have to optimize the use model, in background creation, and make sure that the only thing is how much we don't want to do. Right. Now, playing the model. How will I play the model? First of all, I have to create a pose. How do a pose I'm going to be? 100 airpods. And I'm creating one MTS, which is called as losses. That means, for every airport, I will do all the optimizations,",
+      "word_count": 78,
+      "keywords": [
+        "optimize",
+        "pose",
+        "play",
+        "create",
+        "only",
+        "background",
+        "airport",
+        "much",
+        "make",
+        "okay"
+      ]
+    },
+    "E_CHILD_010": {
+      "child_id": "C_010",
+      "evidence_id": "E_CHILD_010",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 321.0,
+        "end": 349.0
+      },
+      "text": "calculate loss, background rotation. So, by each and all what will happen is, I'm saving the loss. So, that I can create the pose. If I'm not doing, if I'm not saving the losses, but each airport, whatever loss is calculated, that we get it is. And I guess it's hard to save the loss. You know, for each airport, how much loss I'm going to be. Right. Now, I'm telling you, I'll give you all the examples.",
+      "word_count": 78,
+      "keywords": [
+        "hard",
+        "give",
+        "whatever",
+        "pose",
+        "create",
+        "know",
+        "background",
+        "airport",
+        "much",
+        "saving"
+      ]
+    },
+    "E_CHILD_011": {
+      "child_id": "C_011",
+      "evidence_id": "E_CHILD_011",
+      "parent_id": "E_PARENT_02",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 349.0,
+        "end": 382.0
+      },
+      "text": "First, playing the model. You can see here, I'm calling for forward propagation, I'm calling for loss, calculation. Okay. Then I'm saying, you move the optimizer and calculate the radius. But, you know, calculating the radius for the whole airport function model, you know, there's more variance. That means, previous cycle, one of the radius, how then, you need to go straight. Calculate the rest straight. Then, to backward propagation, update the radius, and whatever loss is there,",
+      "word_count": 78,
+      "keywords": [
+        "propagation",
+        "whatever",
+        "forward",
+        "here",
+        "know",
+        "whole",
+        "more",
+        "calculating",
+        "need",
+        "backward"
+      ]
+    },
+    "E_CHILD_012": {
+      "child_id": "C_012",
+      "evidence_id": "E_CHILD_012",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 382.0,
+        "end": 411.0
+      },
+      "text": "that you are, to the list, what has lost, that you're not doing. Finally, after this is completed, quickly, airport loss, I mean, quickly lost for each airport. You can see here, I'll do it. But, you know it, therefore, this is the loss, and then, I don't do the loss. So, for each airport, what I'm doing is, losses, that is, repeat it. Right. Now, what we have to do is traffic research. So, this visualization is simple.",
+      "word_count": 79,
+      "keywords": [
+        "completed",
+        "here",
+        "know",
+        "visualization",
+        "airport",
+        "then",
+        "simple",
+        "losses",
+        "mean",
+        "traffic"
+      ]
+    },
+    "E_CHILD_013": {
+      "child_id": "C_013",
+      "evidence_id": "E_CHILD_013",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 411.0,
+        "end": 444.0
+      },
+      "text": "But, we're making a rapture. It will be airport loss. This is how you get lower. Okay. Then, you have to evaluate your model. What is evaluation? Metrics used. Basically, your model is now to prediction. What is prediction? It will give values. It is the rate of zero to one. It might be two, two point A. It might be two, zero point two. It is prediction. That prediction. You have to take a",
+      "word_count": 75,
+      "keywords": [
+        "give",
+        "your",
+        "airport",
+        "okay",
+        "then",
+        "making",
+        "evaluate",
+        "model",
+        "used",
+        "might"
+      ]
+    },
+    "E_CHILD_014": {
+      "child_id": "C_014",
+      "evidence_id": "E_CHILD_014",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 444.0,
+        "end": 479.0
+      },
+      "text": "threshold value. One point A, two point A, zero point one. You have a threshold. So, what is the threshold and you think, zero point one? Zero point one. So, I'm telling you, if the value predicted, actually is equal to zero point five, take the open type one. Otherwise, take the open type. Okay. What is the happiness here? 100% happiness. And finally, today, I'm going to share my experience. This seems to be very",
+      "word_count": 76,
+      "keywords": [
+        "think",
+        "actually",
+        "open",
+        "otherwise",
+        "here",
+        "equal",
+        "predicted",
+        "okay",
+        "very",
+        "threshold"
+      ]
+    },
+    "E_CHILD_015": {
+      "child_id": "C_015",
+      "evidence_id": "E_CHILD_015",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 479.0,
+        "end": 515.0
+      },
+      "text": "very complicated, but all things here is not to get anything now. Sequential order, proper order, on here. What am I now? So, I'm going to share my goal. And that is this. After that goal, to the media, and to say it, but that is what, the goal is, this is what, which other, you're comfortable with. Any doubts now? Please, practice the exercise. Only then, you'll be able to complete your non-vegetary exercise",
+      "word_count": 75,
+      "keywords": [
+        "your",
+        "please",
+        "doubts",
+        "here",
+        "exercise",
+        "only",
+        "things",
+        "complete",
+        "very",
+        "vegetary"
+      ]
+    },
+    "E_CHILD_016": {
+      "child_id": "C_016",
+      "evidence_id": "E_CHILD_016",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 515.0,
+        "end": 559.0
+      },
+      "text": "or Monday. Monday is the next lesson. Okay? How much is it? Oh, it's a lot. It's a lot. It's a lot. It's a lot. Okay. How much is it? It's a lot. It's a lot. It's a lot. Is it the number of times? It's a lot. It's a lot. It's a lot. What are we doing now? We're doing, how much is it? It's the same. Is this a lovey noodle? No, it is not.",
+      "word_count": 77,
+      "keywords": [
+        "noodle",
+        "times",
+        "same",
+        "lesson",
+        "next",
+        "lovey",
+        "much",
+        "doing",
+        "number",
+        "okay"
+      ]
+    },
+    "E_CHILD_017": {
+      "child_id": "C_017",
+      "evidence_id": "E_CHILD_017",
+      "parent_id": "E_PARENT_03",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 559.0,
+        "end": 581.0
+      },
+      "text": "No, it is not. No, it is not. It is not. It is not. What is the name of that noodle? Lovey's. I think it is lovey. Lovey's. Lovey's. No, it is not. I will introduce it to you later.",
+      "word_count": 40,
+      "keywords": [
+        "noodle",
+        "think",
+        "later",
+        "lovey",
+        "introduce",
+        "name",
+        "will"
+      ]
+    }
+  }
+}

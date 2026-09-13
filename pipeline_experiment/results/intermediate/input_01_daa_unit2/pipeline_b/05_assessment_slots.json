@@ -1,0 +1,82 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Binary Search Algorithm",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_DEMONSTRATION",
+    "assessment_goal": "Explain the logical basis for halving the search space in binary search and identify the correct invariant maintained during the algorithm's execution.",
+    "misconception_target": "Believing that binary search works by comparing the target with the first and last elements only, or misunderstanding that the array must be sorted for the algorithm to be valid.",
+    "evidence_refs": [
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Binary Search Algorithm",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_DEMONSTRATION",
+    "assessment_goal": "Demonstrate the step-by-step reduction of the search interval in a specific binary search trace to justify the O(log n) time complexity.",
+    "misconception_target": "Confusing the number of comparisons with the number of elements remaining, or incorrectly calculating the midpoint index leading to an off-by-one error in the trace.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C06",
+      "E_C07"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Median of Two Sorted Arrays",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_DEMONSTRATION",
+    "assessment_goal": "Apply the divide-and-conquer strategy to determine the correct partition indices for two sorted arrays such that the left and right halves contain equal elements and satisfy the median condition.",
+    "misconception_target": "Assuming the median is simply the average of the medians of the two individual arrays, or failing to account for the boundary conditions when one array is empty.",
+    "evidence_refs": [
+      "E_C08",
+      "E_C09",
+      "E_C10"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Median of Two Sorted Arrays",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_DEMONSTRATION",
+    "assessment_goal": "Evaluate the validity of a proposed partition in the median of two sorted arrays problem by checking if the maximum of the left partition is less than or equal to the minimum of the right partition.",
+    "misconception_target": "Only checking if the elements at the partition points are equal, or ignoring the cross-array comparison requirement (max(left1) <= min(right2) and max(left2) <= min(right1)).",
+    "evidence_refs": [
+      "E_C11",
+      "E_C12"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_03",
+    "topic_name": "Fixed Point Problem",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_DEMONSTRATION",
+    "assessment_goal": "Apply binary search to a monotonic function to locate the fixed point (where f(i) = i) by correctly adjusting the search bounds based on whether f(mid) is greater than or less than mid.",
+    "misconception_target": "Treating the fixed point problem as a standard value search (looking for a specific target value) rather than a relationship search (comparing index and value), or assuming the function must be strictly increasing without considering the monotonicity requirement.",
+    "evidence_refs": [
+      "E_C08",
+      "E_C13",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

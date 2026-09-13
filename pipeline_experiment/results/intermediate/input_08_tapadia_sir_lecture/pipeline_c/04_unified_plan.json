@@ -1,0 +1,119 @@
+{
+  "input_id": "input_08_tapadia_sir_lecture",
+  "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+  "total_requested_questions": 5,
+  "total_available_targets": 5,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Longest Common Prefix Algorithm",
+      "what_taught_summary": "Implement the Longest Common Prefix algorithm by iterating through characters up to the length of the shortest string, breaking on mismatch, and handling edge cases where the array is empty or the prefix is empty.",
+      "why_assessed_pedagogy": "To ensure students can translate the linear scanning logic into working code and correctly manage loop termination conditions and boundary checks.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Assuming the prefix length can exceed the length of the shortest string in the array.",
+        "Failing to break the loop immediately when a character mismatch is found, leading to incorrect prefix accumulation.",
+        "Not handling the edge case where the input array is empty or contains a single string."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C04",
+        "E_C05",
+        "E_C06"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 208.6s]",
+        "[208.6s - 398.0s]",
+        "[599.4s - 796.6s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Java Memory Management and Garbage Collection",
+      "what_taught_summary": "Distinguish between stack-based reference variables and heap-based object instances in Java, specifically clarifying that declaring a reference (e.g., `Set set;`) does not allocate heap memory until instantiation (e.g., `set = new HashSet<>()`).",
+      "why_assessed_pedagogy": "To build a foundational mental model of Java memory management that prevents common runtime errors related to null pointers and memory allocation timing.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Believing that declaring a variable (e.g., `Set set;`) immediately allocates memory for the object on the heap.",
+        "Confusing the location of the reference variable (stack) with the location of the object it points to (heap).",
+        "Assuming that garbage collection explicitly deallocates memory in a deterministic manner similar to C++ `delete`."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C07",
+        "E_C08"
+      ],
+      "source_timestamps_or_slides": [
+        "[1255.7s - 1505.1s]",
+        "[1506.3s - 1719.2s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Hash Map Based Common Prefix Solution",
+      "what_taught_summary": "Explain the conceptual role of hash-based data structures in string processing, focusing on the distinction between reference declaration and object instantiation in the context of initializing collections for prefix verification.",
+      "why_assessed_pedagogy": "To reinforce the understanding of how data structure initialization impacts memory usage and to clarify the syntactic requirements for using collections in Java solutions.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Thinking that a hash map or set is automatically populated with data upon declaration without explicit instantiation.",
+        "Confusing the purpose of a hash set (uniqueness) with a hash map (key-value pairing) in the context of prefix storage.",
+        "Assuming that the order of elements in a hash-based collection is preserved, which is not guaranteed for standard implementations."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C09"
+      ],
+      "source_timestamps_or_slides": [
+        "[1720.2s - 1989.7s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Binary Search for Longest Common Prefix",
+      "what_taught_summary": "Analyze the binary search approach for LCP by defining the search space as the prefix length (0 to min_length), using a helper function to verify if a candidate length is a valid common prefix, and adjusting low/high pointers based on the verification result.",
+      "why_assessed_pedagogy": "To develop the ability to decompose a linear problem into a binary search on the answer space, comparing the efficiency of this approach against brute-force linear scanning.",
+      "target_bloom_level": "ANALYZE",
+      "misconception_distractor_hints": [
+        "Setting the high bound of the binary search to the length of the longest string instead of the shortest string.",
+        "Updating `low = mid` instead of `low = mid + 1` when a valid prefix is found, potentially causing an infinite loop or missing the optimal length.",
+        "Failing to use a helper function to verify the prefix, instead trying to perform the check inline within the binary search loop logic."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C10",
+        "E_C11",
+        "E_C12"
+      ],
+      "source_timestamps_or_slides": [
+        "[1990.8s - 2253.6s]",
+        "[2253.8s - 2521.4s]",
+        "[2522.6s - 2773.2s]"
+      ]
+    },
+    {
+      "target_id": "TGT_05",
+      "topic_name": "Binary Search on Answer Space (Koko Eating Bananas)",
+      "what_taught_summary": "Apply binary search on the answer space to the 'Koko Eating Bananas' problem by calculating the total time required to eat all piles at a given speed using the formula `ceil(pile_size / speed)` and finding the minimum speed that satisfies the time limit.",
+      "why_assessed_pedagogy": "To practice the transfer of the binary search on answer space pattern from string problems to numerical optimization problems, emphasizing the correct calculation of time complexity and boundary conditions.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Using integer division `pile_size / speed` instead of ceiling division, leading to underestimation of the time required.",
+        "Setting the low bound of the binary search to 0 instead of 1, which is invalid as speed must be at least 1.",
+        "Assuming the optimal speed is always the maximum pile size, ignoring the possibility that a lower speed might still satisfy the time constraint."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[2773.8s - 3044.7s]",
+        "[3046.0s - 3353.3s]",
+        "[3353.3s - 3614.4s]"
+      ]
+    }
+  ]
+}

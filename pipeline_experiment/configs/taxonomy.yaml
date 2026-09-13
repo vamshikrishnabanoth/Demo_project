@@ -1,0 +1,19 @@
+# Heterogeneous Input Taxonomy Definitions
+input_types:
+  VOICE_ONLY: "Raw spoken lecture recording with no slides or visual media"
+  VOICE_PLUS_PPT: "Spoken lecture audio synchronized with a slide deck (PDF/PPTX)"
+  PDF: "Static textbook excerpt, research paper, or formatted handout"
+  NOTES: "Raw unformatted or Markdown-formatted dumped lecture/reading notes"
+  CODE: "Pure standalone Python/source code scripts or modules"
+  COLAB: "Jupyter / Google Colab notebook (.ipynb) containing code cells and execution outputs"
+  ASSIGNMENT: "Formal student problem specification / query assignment"
+  PROBLEM_SOLVING: "Step-by-step algorithmic or mathematical derivation session"
+
+content_styles:
+  THEORY: "Conceptual definitions, architectural motivations, and trade-offs"
+  CODE: "Programming language syntax, API definitions, and structural patterns"
+  CONCEPTUAL: "Intuitive explanations and high-level domain mechanics"
+  PROCEDURAL: "Step-by-step workflow guidelines and operational sequences"
+  DEBUGGING: "Error diagnosis, tracebacks, shape mismatch analysis, and bug fixing"
+  MATHEMATICAL: "Formal algebraic derivations, equation applications, and calculations"
+  PROBLEM_SOLVING: "Applied scenario modeling, algorithm design, and query construction"

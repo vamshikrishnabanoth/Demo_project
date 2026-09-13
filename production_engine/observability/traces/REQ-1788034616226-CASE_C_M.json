@@ -1,0 +1,19 @@
+{
+  "request_id": "REQ-1788034616226-CASE_C_M",
+  "timestamp": "2026-08-29T20:16:56Z",
+  "input_id": "CASE_C_MULTIMODAL",
+  "selected_representation": "UNIFIED",
+  "pedagogical_delivery_index": 1.0,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "HIT"
+  },
+  "selected_facets": [],
+  "initial_generated_count": 0,
+  "first_pass_validated_count": 0,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 51.56,
+  "status": "CACHED_DELIVERED",
+  "repair_actions": [],
+  "planning_notes": ""
+}

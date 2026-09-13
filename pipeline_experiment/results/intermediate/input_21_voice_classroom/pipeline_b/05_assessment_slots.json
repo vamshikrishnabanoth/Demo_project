@@ -1,0 +1,72 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the primary objective of the live engineering exposition as introduced in the lecture.",
+    "misconception_target": "Confusing the general topic of engineering with the specific purpose of the exposition (e.g., thinking it is about solving a specific problem rather than demonstrating a process).",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific format or medium of the lecture delivery mentioned in the title (Live Engineering Exposition).",
+    "misconception_target": "Assuming the lecture is a recorded video or a text-based case study rather than a live audio exposition.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the input type constraint specified for the assessment context (VOICE_ONLY).",
+    "misconception_target": "Believing that visual aids or diagrams are required to understand the procedural content.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recognize the content style of the lecture as PROCEDURAL.",
+    "misconception_target": "Misclassifying the content as theoretical or conceptual rather than step-by-step procedural.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific instructional act associated with this topic (INTRODUCE).",
+    "misconception_target": "Thinking the lecture is meant to evaluate or create new knowledge rather than introduce foundational concepts.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "input_id": "input_18_new_recording_37",
+  "title": "Classroom Lecture: Algorithmic Review & Clarifications (Audio Recording 37)",
+  "total_requested_questions": 5,
+  "total_available_targets": 1,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Overview",
+      "what_taught_summary": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed_pedagogy": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming the algorithm's output is deterministic without considering input variability.",
+        "Confusing the high-level conceptual flow with specific implementation details or syntax.",
+        "Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+      ],
+      "allocated_question_count": 5,
+      "evidence_chunk_refs": [
+        "E_C01"
+      ],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

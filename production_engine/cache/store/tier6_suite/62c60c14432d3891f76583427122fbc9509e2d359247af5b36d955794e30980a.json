@@ -1,0 +1,164 @@
+{
+  "input_id": "CASE_B_INTERACTIVE",
+  "title": "DAA: Binary Search on Median of Two Sorted Arrays",
+  "representation_used": "BLUEPRINT",
+  "routing_rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+  "requested_count": 5,
+  "requested_difficulty": "HARD",
+  "defensible_capacity": 5,
+  "final_question_count": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the binary search algorithm for finding the median of two sorted arrays, we partition the smaller array to ensure O(log(min(m,n))) complexity. Consider a step where the current search space for the partition index in the smaller array is defined by pointers `low` and `high`. The algorithm calculates `mid = low + (high - low) / 2`. If the condition `A[mid] > B[partition_B - 1]` is true (indicating the partition in A is too far to the right), which of the following pointer updates is required to maintain the search invariant and prevent an infinite loop?",
+      "option_a": "Set `high = mid`",
+      "option_b": "Set `high = mid - 1`",
+      "option_c": "Set `low = mid + 1`",
+      "option_d": "Set `low = mid`",
+      "correct_option": "B",
+      "explanation": "The correct answer is B. When `A[mid] > B[partition_B - 1]`, it means the current partition in A is too large (contains elements that should be in the right partition of B). We must move the partition to the left, meaning we need a smaller index in A. Therefore, the new search space must be strictly to the left of `mid`. Setting `high = mid - 1` ensures that `mid` is excluded from the next iteration. Option A (`high = mid`) is a common off-by-one error; if `low` and `high` converge on `mid`, the loop may never terminate because `mid` will be recalculated to the same value. Option C moves the partition to the right, which is the opposite of what is needed. Option D (`low = mid`) is also incorrect directionally and risks infinite loops.",
+      "target_concept": "Binary Search Partitioning Strategy",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "HARD",
+      "what_taught": "The specific logic for calculating the mid-point and adjusting the search space (low/high pointers) to maintain the invariant that the left partition contains elements <= the pivot and the right partition contains elements > the pivot.",
+      "why_assessed": "HARD difficulty requires identifying subtle off-by-one errors in partition boundaries. Students often struggle with whether to use `mid` or `mid+1` for the new low/high pointers, which directly impacts termination conditions and correctness.",
+      "evidence_refs": [
+        "E_CHILD_008",
+        "E_CHILD_010"
+      ],
+      "misconception_rationale": "Option A represents the classic 'infinite loop' bug where the search space does not shrink strictly. Option C represents a logical inversion error (moving the wrong way). Option D represents another variant of the non-shrinking search space error."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the execution of the median-of-two-sorted-arrays algorithm, a student's implementation fails to converge and returns an incorrect median. Upon tracing the execution, it is observed that at a specific iteration, the maximum element in the left partition of array A is greater than the minimum element in the right partition of array B. According to the partition boundary properties taught in class, what is the primary implication of this observation?",
+      "option_a": "The partition invariant was violated at this step, indicating that the current partition index in A is too large and must be decreased.",
+      "option_b": "The partition invariant only needs to hold at the final step, so this intermediate violation is acceptable as long as the final median is correct.",
+      "option_c": "The comparison operator used for checking the boundary condition was inverted, but the pointer adjustment logic is correct.",
+      "option_d": "The arrays were not initially sorted, which is the only cause for such a boundary violation.",
+      "correct_option": "A",
+      "explanation": "The correct answer is A. The core invariant of the binary search partitioning strategy is that all elements in the left partition must be less than or equal to all elements in the right partition. Specifically, `max(left_A) <= min(right_B)` and `max(left_B) <= min(right_A)`. If `max(left_A) > min(right_B)`, the invariant is broken. This specific violation implies that the partition in A is too far to the right (it includes elements that are larger than some elements in the right partition of B). Therefore, the partition index in A must be decreased (search left). Option B is incorrect because the invariant must hold at every valid partition step for the binary search logic to be sound. Option C is a distractor; while operator inversion can cause issues, the observation of the specific value relationship directly points to the partition position being wrong, not necessarily the operator logic itself (which would likely cause a different pattern of failure). Option D is incorrect because the problem statement assumes sorted arrays as a precondition.",
+      "target_concept": "Partition Boundary Properties",
+      "cognitive_level": "EVALUATE",
+      "difficulty_level": "HARD",
+      "what_taught": "The invariant that must hold at every step of the binary search: all elements in the left partition are less than or equal to the pivot, and all elements in the right partition are greater than the pivot.",
+      "why_assessed": "Diagnosing why a binary search implementation fails often stems from a violation of the partition invariant. This facet tests the ability to trace a failing execution and identify the exact step where the boundary property was broken.",
+      "evidence_refs": [
+        "E_CHILD_010",
+        "E_CHILD_123"
+      ],
+      "misconception_rationale": "Option B targets the misconception that invariants are only final-state checks. Option C targets the misconception that boundary violations are always due to syntax/operator errors rather than logical pointer positioning. Option D targets the assumption that input validity is the primary cause of algorithmic logic failures."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the binary search algorithm for finding the median of two sorted arrays A and B, let `m` be the length of A and `n` be the length of B. We partition A at index `i` and B at index `j` such that `i + j = (m + n + 1) // 2`. If the total number of elements `(m + n)` is even, how is the median calculated using the partition values `A[i-1]`, `A[i]`, `B[j-1]`, and `B[j]`?",
+      "option_a": "The median is the average of `max(A[i-1], B[j-1])` and `min(A[i], B[j])`.",
+      "option_b": "The median is the element at index `(m + n) // 2` in the merged conceptual array, which is always `A[i]` if `i < m`.",
+      "option_c": "The median is the average of `A[i-1]` and `B[j-1]`, assuming the partition always splits the left half into the two largest left-side elements.",
+      "option_d": "The median is `min(A[i], B[j])` because the right half always contains the larger elements, so the smallest of the right half is the median.",
+      "correct_option": "A",
+      "explanation": "When the total length is even, the median is the average of the two middle elements. In the partitioning scheme, the two middle elements are the largest element on the left side (`max(A[i-1], B[j-1])`) and the smallest element on the right side (`min(A[i], B[j])`). Option B is incorrect because it ignores the even-length case and assumes a single middle index. Option C is incorrect because it assumes the two largest left-side elements come from different arrays, which is not guaranteed; they could both be from A or both from B. Option D is incorrect because it ignores the larger of the left-side elements, which is one of the two middle values.",
+      "target_concept": "Median Calculation Logic",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "HARD",
+      "what_taught": "The specific logic for calculating the median when the total number of elements is even (average of two middle elements) versus odd (single middle element), including how this interacts with the partitioning of two sorted arrays.",
+      "why_assessed": "HARD difficulty involves handling edge cases where the partition splits the arrays such that one side is empty or the median falls exactly on the boundary between the two arrays. This requires precise handling of indices and division.",
+      "evidence_refs": [
+        "E_CHILD_050",
+        "E_CHILD_006"
+      ],
+      "misconception_rationale": "Distractors target the common error of treating the median as a single index lookup (Option B) or incorrectly assuming the distribution of elements across the partition boundary (Options C and D)."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the binary search approach to finding the median of two sorted arrays A and B, we partition A at index `i` and B at index `j`. What are the necessary and sufficient conditions to ensure that this partition is valid for calculating the median?",
+      "option_a": "`A[i-1] <= B[j]` and `B[j-1] <= A[i]`",
+      "option_b": "`A[i-1] <= B[j-1]` and `B[j-1] <= A[i]`",
+      "option_c": "`A[i-1] <= B[j]` is sufficient, as the symmetry of sorted arrays guarantees the other condition.",
+      "option_d": "`A[i] <= B[j]` and `A[i-1] <= B[j-1]`",
+      "correct_option": "A",
+      "explanation": "For the partition to be valid, every element in the left partition must be less than or equal to every element in the right partition. Since the arrays are individually sorted, we only need to check the boundary elements. Specifically, the largest element in the left part of A (`A[i-1]`) must be less than or equal to the smallest element in the right part of B (`B[j]`), and the largest element in the left part of B (`B[j-1]`) must be less than or equal to the smallest element in the right part of A (`A[i]`). Option B compares elements within the same side (left-left), which is not the boundary condition. Option C is incorrect because the conditions are not symmetric; one array's left boundary must be checked against the other's right boundary. Option D compares elements within the same side (right-right and left-left), which does not ensure the global ordering across the partition.",
+      "target_concept": "Cross-Array Comparison Conditions",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "HARD",
+      "what_taught": "The conditions under which the partition is considered 'correct' when comparing elements across two different sorted arrays (e.g., `A[i-1] <= B[j]` and `B[j-1] <= A[i]`).",
+      "why_assessed": "Understanding *why* these specific cross-array comparisons are necessary is crucial for generalizing the algorithm. This facet tests the theoretical understanding of how local partitions in two separate arrays combine to form a global median.",
+      "evidence_refs": [
+        "E_CHILD_010",
+        "E_CHILD_006"
+      ],
+      "misconception_rationale": "Distractors target the misconception that only one cross-array check is needed (Option C) or that comparisons should be made within the same side of the partition (Options B and D) rather than across the boundary."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the binary search algorithm for finding the median of two sorted arrays A (length m) and B (length n), where m < n, the instructor emphasized performing the binary search on the partition index of the smaller array A. If we were to incorrectly perform the binary search on the larger array B instead, how would the asymptotic time complexity change, and why is the original strategy preferred?",
+      "option_a": "The complexity remains O(log(m + n)) because the total number of elements is constant, but the original strategy is preferred to ensure the partition indices never exceed the array bounds.",
+      "option_b": "The complexity becomes O(log n) instead of O(log m). The original strategy is preferred because binary searching the smaller array minimizes the number of iterations required to converge on the correct partition, directly reducing the time complexity to O(log(min(m, n))).",
+      "option_c": "The complexity becomes O(n) because searching the larger array requires linear scanning to find the median. The original strategy is preferred to maintain O(1) space complexity.",
+      "option_d": "The complexity remains O(log m) because the pointer adjustment logic is identical regardless of array size. The original strategy is preferred solely to simplify the code implementation by avoiding conditional checks for array lengths.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the binary search operates on the partition index of one array. If we search array B (length n), the number of iterations is proportional to log(n). If we search array A (length m, where m < n), the iterations are proportional to log(m). Since log(m) < log(n), searching the smaller array yields a tighter time complexity bound of O(log(min(m, n))). Option A is incorrect because the complexity is not determined by the sum of lengths in a logarithmic sense for this specific partitioning approach; it is determined by the size of the array being searched. Option C is incorrect because the algorithm is still binary search, not linear scan, so it does not become O(n). Option D is incorrect because the number of iterations in binary search is strictly dependent on the size of the search space (the array length), so searching a larger array increases the iteration count.",
+      "target_concept": "Pointer Adjustment and Search Direction",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "HARD",
+      "what_taught": "The relationship between the pointer adjustment strategy (halving the search space) and the overall time complexity, specifically how binary search on the partition index of the smaller array leads to O(log(min(m, n))) complexity.",
+      "why_assessed": "To verify that students understand the asymptotic impact of choosing the smaller array for binary search, distinguishing it from generic O(log(n)) or O(log(m+n)) misconceptions.",
+      "evidence_refs": [
+        "E_CHILD_008",
+        "E_CHILD_081"
+      ],
+      "misconception_rationale": "Option A targets the misconception that complexity depends on total elements (m+n) or that bounds checking is the primary complexity driver. Option C targets the misconception that searching the larger array degrades the algorithm to linear time. Option D targets the misconception that the algorithm's iteration count is independent of the array size being searched."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1788034416482-CASE_B_I",
+    "trace": {
+      "request_id": "REQ-1788034416482-CASE_B_I",
+      "timestamp": "2026-08-29T20:15:31Z",
+      "input_id": "CASE_B_INTERACTIVE",
+      "selected_representation": "BLUEPRINT",
+      "pedagogical_delivery_index": 0.7,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "HIT",
+        "tier4_cross_modal": "HIT",
+        "tier5_representation": "HIT"
+      },
+      "selected_facets": [
+        "OFF_BY_ONE_ANALYSIS",
+        "ERROR_DIAGNOSIS",
+        "BOUNDARY_EDGE_CASE",
+        "THEORETICAL_RATIONALE",
+        "COMPLEXITY_ANALYSIS"
+      ],
+      "initial_generated_count": 5,
+      "first_pass_validated_count": 5,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 5,
+      "total_latency_ms": 114899.95,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "The request for 5 HARD difficulty targets was fulfilled by selecting 5 distinct concepts from the available pool and assigning them unique, high-order cognitive facets. To ensure non-redundancy and high difficulty, I avoided simple recall (REMEMBER) and focused on facets that require deep analysis, such as OFF_BY_ONE_ANALYSIS for index management, ERROR_DIAGNOSIS for boundary conditions, and THEORETICAL_RATIONALE for partition logic. Each target maps to a specific evidence reference to ensure grounding in the lecture content."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 114.9,
+    "measured_llm_calls": 4,
+    "pedagogical_delivery_index": 0.7,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "OFF_BY_ONE_ANALYSIS": 1,
+      "ERROR_DIAGNOSIS": 1,
+      "BOUNDARY_EDGE_CASE": 1,
+      "THEORETICAL_RATIONALE": 1,
+      "COMPLEXITY_ANALYSIS": 1
+    },
+    "cognitive_distribution": {
+      "ANALYZE": 2,
+      "EVALUATE": 1,
+      "APPLY": 1,
+      "UNDERSTAND": 1
+    },
+    "planning_notes": "The request for 5 HARD difficulty targets was fulfilled by selecting 5 distinct concepts from the available pool and assigning them unique, high-order cognitive facets. To ensure non-redundancy and high difficulty, I avoided simple recall (REMEMBER) and focused on facets that require deep analysis, such as OFF_BY_ONE_ANALYSIS for index management, ERROR_DIAGNOSIS for boundary conditions, and THEORETICAL_RATIONALE for partition logic. Each target maps to a specific evidence reference to ensure grounding in the lecture content.",
+    "system_notice": null
+  }
+}

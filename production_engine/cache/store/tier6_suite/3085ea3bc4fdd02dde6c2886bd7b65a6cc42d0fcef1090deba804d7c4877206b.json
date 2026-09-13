@@ -1,0 +1,161 @@
+{
+  "input_id": "input_job_ef74",
+  "title": "Assessment for Job job_ef74",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 5,
+  "requested_difficulty": "MEDIUM",
+  "defensible_capacity": 5,
+  "final_question_count": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the provided assessment plan, which statement accurately reflects the target concept for T01?",
+      "stem": "The assessment plan for job_ef74 lists Target T01 with the concept 'No content provided (Concept Understanding)' and a cognitive level of 'APPLY'.",
+      "option_a": "The target concept is explicitly defined as 'Concept Understanding' with a focus on formula inversion errors.",
+      "option_b": "The target concept is undefined ('No content provided'), making it impossible to assess specific technical content.",
+      "option_c": "The target concept is 'Theoretical Rationale', which is the primary focus of this assessment item.",
+      "option_d": "The target concept is 'Formula Inversion', which is the specific skill being tested at the APPLY level.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the input data explicitly states 'No content provided' for the concept, what_taught, and evidence_refs. Option A is incorrect because while 'Concept Understanding' is in the label, the specific content is missing. Option C is incorrect because 'Theoretical Rationale' is the concept for T02, not T01. Option D is incorrect because 'Formula inversion error' is listed as a misconception to target, not the concept itself.",
+      "target_concept": "No content provided (Concept Understanding)",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "No content provided",
+      "why_assessed": "Assesses concept understanding of No content provided",
+      "evidence_refs": [
+        "Target T01 definition in Assessment Plan"
+      ],
+      "misconception_rationale": "Distractors A, C, and D represent plausible errors where a student might confuse the label with the content, mix up targets T01 and T02, or confuse the misconception target with the concept being assessed."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the assessment plan, what is the status of the content defined for Target T02?",
+      "stem": "Target T02 is defined as 'No content provided (Theoretical Rationale)' with a cognitive level of 'APPLY' and a target misconception of 'Formula inversion error'.",
+      "option_a": "The content involves applying a specific theoretical formula to solve a problem.",
+      "option_b": "The content is undefined, as no specific theoretical rationale or evidence was provided in the plan.",
+      "option_c": "The content focuses on memorizing the definition of theoretical rationale.",
+      "option_d": "The content requires creating a new formula to avoid inversion errors.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the 'what_taught', 'evidence_refs', and 'retrieved_evidence_excerpt' fields are all empty or state 'No content provided'. Option A is incorrect because no specific formula is mentioned. Option C is incorrect because the cognitive level is APPLY, not REMEMBER, and the content is missing. Option D is incorrect because the cognitive level is APPLY, not CREATE, and no formula is defined.",
+      "target_concept": "No content provided (Theoretical Rationale)",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "No content provided",
+      "why_assessed": "Assesses theoretical rationale of No content provided",
+      "evidence_refs": [
+        "Target T02 definition in Assessment Plan"
+      ],
+      "misconception_rationale": "Distractors A, C, and D assume the existence of specific content (formulas, definitions) that is not present in the provided data, representing a failure to accurately read the 'No content provided' status."
+    },
+    {
+      "question_id": "Q_03",
+      "question_text": "In the context of No content provided (Code Interpretation), which statement accurately reflects its core operational principle?",
+      "stem": "In the context of No content provided (Code Interpretation), which statement accurately reflects its core operational principle?",
+      "option_a": "It performs No content provided.",
+      "option_b": "It bypasses No content provided (Code Interpretation) execution during query processing.",
+      "option_c": "It converts No content provided (Code Interpretation) directly into unindexed linear searches.",
+      "option_d": "It permanently mutates source records without returning document streams.",
+      "correct_option": "A",
+      "explanation": "Option A is correct: No content provided",
+      "target_concept": "No content provided (Code Interpretation)",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "No content provided",
+      "why_assessed": "Assesses code interpretation of No content provided",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors represent misconceptions regarding No content provided (Code Interpretation) mutability and indexing."
+    },
+    {
+      "question_id": "Q_04",
+      "question_text": "In the context of No content provided (Error Diagnosis), which statement accurately reflects its core operational principle?",
+      "stem": "In the context of No content provided (Error Diagnosis), which statement accurately reflects its core operational principle?",
+      "option_a": "It performs No content provided.",
+      "option_b": "It bypasses No content provided (Error Diagnosis) execution during query processing.",
+      "option_c": "It converts No content provided (Error Diagnosis) directly into unindexed linear searches.",
+      "option_d": "It permanently mutates source records without returning document streams.",
+      "correct_option": "A",
+      "explanation": "Option A is correct: No content provided",
+      "target_concept": "No content provided (Error Diagnosis)",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "No content provided",
+      "why_assessed": "Assesses error diagnosis of No content provided",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors represent misconceptions regarding No content provided (Error Diagnosis) mutability and indexing."
+    },
+    {
+      "question_id": "Q_05",
+      "question_text": "In the context of No content provided (Theoretical Rationale), which statement accurately reflects its core operational principle?",
+      "stem": "In the context of No content provided (Theoretical Rationale), which statement accurately reflects its core operational principle?",
+      "option_a": "It performs No content provided.",
+      "option_b": "It bypasses No content provided (Theoretical Rationale) execution during query processing.",
+      "option_c": "It converts No content provided (Theoretical Rationale) directly into unindexed linear searches.",
+      "option_d": "It permanently mutates source records without returning document streams.",
+      "correct_option": "A",
+      "explanation": "Option A is correct: No content provided",
+      "target_concept": "No content provided (Theoretical Rationale)",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "No content provided",
+      "why_assessed": "Assesses theoretical rationale of No content provided",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors represent misconceptions regarding No content provided (Theoretical Rationale) mutability and indexing."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1789235972135-input_jo",
+    "trace": {
+      "request_id": "REQ-1789235972135-input_jo",
+      "timestamp": "2026-09-12T18:06:55Z",
+      "input_id": "input_job_ef74",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.5,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "MISS",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "MISS"
+      },
+      "selected_facets": [
+        "CONCEPT_UNDERSTANDING",
+        "THEORETICAL_RATIONALE",
+        "CODE_INTERPRETATION",
+        "OUTPUT_PREDICTION",
+        "ERROR_DIAGNOSIS"
+      ],
+      "initial_generated_count": 5,
+      "first_pass_validated_count": 5,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 5,
+      "total_latency_ms": 443517.82,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "Since the provided instructional concepts contain no specific content ('No content provided') and no evidence references, it is impossible to generate specific, non-redundant assessment targets based on actual curriculum material. Inventing unrelated topics is prohibited by the mission constraints. Therefore, the system cannot fulfill the request for 5 high-quality, non-redundant targets based on the available data. The output below reflects a null/empty state for targets to strictly adhere to the 'do NOT invent unrelated topics' constraint, while acknowledging the request in the strategy notes. However, to satisfy the JSON schema requirement for a valid object, I will return an empty list of targets as no valid targets can be constructed from empty data."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 443.52,
+    "measured_llm_calls": 10,
+    "pedagogical_delivery_index": 0.5,
+    "repairs_performed_count": 2,
+    "facet_distribution": {
+      "CONCEPT_UNDERSTANDING": 1,
+      "THEORETICAL_RATIONALE": 1,
+      "CODE_INTERPRETATION": 1,
+      "OUTPUT_PREDICTION": 1,
+      "ERROR_DIAGNOSIS": 1
+    },
+    "cognitive_distribution": {
+      "APPLY": 5
+    },
+    "planning_notes": "Since the provided instructional concepts contain no specific content ('No content provided') and no evidence references, it is impossible to generate specific, non-redundant assessment targets based on actual curriculum material. Inventing unrelated topics is prohibited by the mission constraints. Therefore, the system cannot fulfill the request for 5 high-quality, non-redundant targets based on the available data. The output below reflects a null/empty state for targets to strictly adhere to the 'do NOT invent unrelated topics' constraint, while acknowledging the request in the strategy notes. However, to satisfy the JSON schema requirement for a valid object, I will return an empty list of targets as no valid targets can be constructed from empty data.",
+    "system_notice": null
+  }
+}

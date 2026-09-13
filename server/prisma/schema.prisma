@@ -220,3 +220,22 @@ model ActivityLog {
   @@index([adminId])
   @@index([createdAt])
 }
+
+model AssessmentJob {
+  jobId            String    @id @map("job_id") @db.VarChar(64)
+  idempotencyKey   String?   @unique @map("idempotency_key") @db.VarChar(128)
+  status           String    @db.VarChar(32)
+  currentStage     String?   @default("QUEUED") @map("current_stage") @db.VarChar(64)
+  progressPct      Int?      @default(0) @map("progress_pct")
+  inputAudioPath   String?   @map("input_audio_path") @db.Text
+  inputSlidesPath  String?   @map("input_slides_path") @db.Text
+  requestedCount   Int?      @default(5) @map("requested_count")
+  difficulty       String?   @default("MIXED") @db.VarChar(32)
+  resultSuite      Json?     @map("result_suite")
+  errorMessage     String?   @map("error_message") @db.Text
+  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("assessment_jobs")
+}
+

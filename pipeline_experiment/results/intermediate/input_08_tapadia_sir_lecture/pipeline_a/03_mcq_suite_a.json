@@ -1,0 +1,107 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the binary search approach to finding the Longest Common Prefix (LCP) of an array of strings, what are the correct initial values for the search boundaries `low` and `high`?",
+      "option_a": "low = 0, high = length of the longest string in the array",
+      "option_b": "low = 1, high = length of the shortest string in the array",
+      "option_c": "low = 0, high = length of the shortest string in the array",
+      "option_d": "low = 0, high = total number of strings in the array",
+      "correct_option": "C",
+      "explanation": "The correct answer is C. The search space for the length of the common prefix is bounded by the length of the shortest string in the array, as a prefix cannot be longer than the shortest string. The length can be 0 (if no common prefix exists), so `low` starts at 0. Option A is incorrect because the prefix cannot exceed the shortest string's length. Option B is incorrect because a prefix length of 0 is a valid possibility (empty string), so `low` must start at 0. Option D is incorrect because the search space is the length of the prefix, not the count of strings.",
+      "target_concept": "Binary Search on Answer Space for LCP",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas: Binary Search Logic for LCP",
+      "what_taught": "Initialization of binary search boundaries for LCP problem.",
+      "why_assessed": "To verify understanding of the constraint that the LCP length is bounded by the shortest string.",
+      "evidence_refs": [
+        "factual_summary: The instructor emphasizes that the search space is bounded by the length of the shortest string.",
+        "mechanisms_and_formulas: Initialize low=0 and high=min_length."
+      ],
+      "misconception_rationale": "Students often mistakenly use the longest string's length or forget that 0 is a valid prefix length."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the binary search algorithm for the Longest Common Prefix, if the candidate substring of length `mid` is verified to be a common prefix of all strings, how should the search boundaries be updated to find a potentially longer prefix?",
+      "option_a": "low = mid, high = mid - 1",
+      "option_b": "low = mid + 1, high = mid - 1",
+      "option_c": "low = mid - 1, high = mid + 1",
+      "option_d": "low = mid, high = high",
+      "correct_option": "B",
+      "explanation": "The correct answer is B. Since the goal is to find the *longest* common prefix, if a prefix of length `mid` is valid, we know that any length less than or equal to `mid` is also valid. Therefore, we can discard the lower half of the search space (including `mid` itself, as we are looking for a longer one) and search in the upper half. Thus, `low` becomes `mid + 1` and `high` becomes `mid - 1`. Option A is incorrect because it does not advance the lower bound sufficiently to search for a longer prefix. Option C is incorrect because it expands the search space. Option D is incorrect because it does not narrow the search space effectively.",
+      "target_concept": "Binary Search Update Logic for Maximization",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Mechanisms and Formulas: Binary Search Logic for LCP",
+      "what_taught": "Updating low and high pointers when the condition is met in a maximization binary search.",
+      "why_assessed": "To test the ability to apply binary search logic to a maximization problem.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: If the substring of length mid is a common prefix, update low=mid+1 to search for a longer prefix; otherwise, update high=mid-1."
+      ],
+      "misconception_rationale": "Students may confuse this with standard binary search for finding a specific element, where `mid` is often included in the next search range."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "In the 'Koa Eating Bananas' problem, what is the formula used to calculate the time taken to eat a single pile of bananas of size `B` at a speed of `S` bananas per hour?",
+      "option_a": "B / S",
+      "option_b": "floor(B / S)",
+      "option_c": "ceil(B / S)",
+      "option_d": "S / B",
+      "correct_option": "C",
+      "explanation": "The correct answer is C. The time taken to eat a pile is the number of hours required. Since Koa can only eat in whole hours (or the problem implies discrete time steps where partial hours count as full hours for the purpose of the limit), the time is the ceiling of the division `B / S`. For example, if B=10 and S=3, it takes 4 hours (3+3+3+1), not 3.33 hours. Option A is incorrect because it results in a float, which doesn't account for the partial hour needing a full hour slot. Option B is incorrect because it underestimates the time (e.g., 10/3 = 3.33, floor is 3, but it actually takes 4 hours). Option D is incorrect as it inverts the relationship.",
+      "target_concept": "Banana Eating Time Calculation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas: Banana Eating Time Calculation",
+      "what_taught": "Calculating time per pile using ceiling division.",
+      "why_assessed": "To ensure students understand the discrete nature of time in this problem.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: For a given speed S, the time taken for a pile of size B is calculated as ceil(B/S)."
+      ],
+      "misconception_rationale": "Students often forget to use ceiling division, leading to underestimation of time and incorrect speed calculations."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In Java, what is the primary difference between declaring a reference variable (e.g., `Set set;`) and instantiating an object (e.g., `set = new HashSet<>();`) in terms of memory allocation?",
+      "option_a": "Declaring a reference allocates memory on the heap, while instantiation allocates memory on the stack.",
+      "option_b": "Declaring a reference does not allocate heap memory for the object, while instantiation allocates memory on the heap.",
+      "option_c": "Both declaring and instantiation allocate memory on the stack, but instantiation also allocates on the heap.",
+      "option_d": "Declaring a reference allocates memory on the stack, while instantiation allocates memory on the heap.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B. In Java, declaring a reference variable (like `Set set;`) only creates a placeholder on the stack that can hold a reference to an object. It does not allocate memory for the object itself on the heap. Instantiation (`new HashSet<>()`) allocates memory for the object on the heap and assigns its address to the reference variable. Option A is incorrect because references are on the stack, objects on the heap. Option C is incorrect because declaration does not allocate heap memory. Option D is partially correct about the stack for references but implies declaration allocates stack memory in a way that might confuse with object allocation; however, B is the most precise description of the *object* memory allocation difference highlighted in the lecture.",
+      "target_concept": "Java Memory Management: Reference vs. Object",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Concepts and Definitions: Java Memory Management",
+      "what_taught": "Distinction between reference variables (stack) and objects (heap).",
+      "why_assessed": "To clarify a common misconception about when memory is allocated for objects in Java.",
+      "evidence_refs": [
+        "examples_and_code_patterns: Demonstrating the difference between declaring a reference (Set set;) and instantiating an object (set = new HashSet<>()), highlighting that the former does not allocate heap memory.",
+        "factual_summary: The instructor uses code examples to illustrate the difference between declaring a reference variable and instantiating an object on the heap."
+      ],
+      "misconception_rationale": "Students often think that declaring a variable immediately allocates memory for the object it will hold."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the binary search solution for the 'Koa Eating Bananas' problem, what is the search space for the variable `S` (speed)?",
+      "option_a": "From 1 to the total number of bananas",
+      "option_b": "From 1 to the maximum pile size",
+      "option_c": "From 0 to the maximum pile size",
+      "option_d": "From 1 to the number of piles",
+      "correct_option": "B",
+      "explanation": "The correct answer is B. The minimum speed is 1 (eating 1 banana per hour). The maximum speed needed is the size of the largest pile, because if Koa eats at a speed equal to the largest pile size, she can finish that pile in 1 hour, and all other smaller piles in 1 hour as well, minimizing the total time to the number of piles. Any speed higher than the max pile size does not reduce the time below the number of piles (since each pile takes at least 1 hour). Therefore, the search space is [1, max_pile_size]. Option A is incorrect because the total number of bananas is much larger than necessary. Option C is incorrect because speed 0 is not valid (infinite time). Option D is incorrect because the number of piles is not the upper bound for speed.",
+      "target_concept": "Binary Search on Answer Space for Minimum Speed",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Mechanisms and Formulas: Binary Search for Minimum Speed",
+      "what_taught": "Determining the correct bounds for binary search in the Koa Eating Bananas problem.",
+      "why_assessed": "To test the ability to analyze the problem constraints and determine the optimal search space.",
+      "evidence_refs": [
+        "factual_summary: The binary search operates on the range of possible speeds (from 1 to the maximum pile size).",
+        "mechanisms_and_formulas: Search for the minimum speed S such that the total time to eat all bananas is less than or equal to the given hours H."
+      ],
+      "misconception_rationale": "Students might incorrectly assume the upper bound is the total number of bananas or the number of piles."
+    }
+  ]
+}

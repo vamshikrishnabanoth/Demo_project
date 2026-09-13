@@ -1,0 +1,104 @@
+{
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "title": "Hierarchical Data Structures: Binary Trees, Strict Trees & Tree Traversals",
+  "total_requested_questions": 5,
+  "total_available_targets": 4,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Binary Tree Fundamentals and Node Classification",
+      "what_taught_summary": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed_pedagogy": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.",
+        "Believing that a node with only one child is valid in a full binary tree.",
+        "Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Types of Binary Trees",
+      "what_taught_summary": "Students are expected to compare different binary tree types by applying the specific structural constraints of full binary trees, where the number of leaves (l) is always one more than the number of internal nodes (in), i.e., l = in + 1.",
+      "why_assessed_pedagogy": "The pedagogical goal is to develop the ability to differentiate between tree classifications based on their internal structural rules rather than just their visual appearance.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming the relationship l = in + 1 applies to all binary trees, not just full binary trees.",
+        "Thinking that a complete binary tree must be a full binary tree.",
+        "Believing that the minimum height formula floor(log2(n)) applies only to full binary trees."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C03",
+        "E_C04",
+        "E_C07",
+        "E_C10",
+        "E_C14"
+      ],
+      "source_timestamps_or_slides": [
+        "[364.8s - 546.8s]",
+        "[546.8s - 734.8s]",
+        "[1114.8s - 1298.8s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Mathematical Properties and Formulas of Binary Trees",
+      "what_taught_summary": "Students must apply the mathematical properties of full binary trees to calculate total nodes (n = 2*in + 1) and determine the minimum possible height of a binary tree with n nodes using floor(log2(n)).",
+      "why_assessed_pedagogy": "This target assesses the student's ability to translate structural definitions into quantitative calculations, a critical skill for analyzing algorithm efficiency and memory usage.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Using ceil(log2(n)) instead of floor(log2(n)) when calculating minimum height.",
+        "Forgetting that the total node count formula n = 2*in + 1 is exclusive to full binary trees.",
+        "Confusing the number of edges with the number of nodes when calculating height."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C06",
+        "E_C11",
+        "E_C12",
+        "E_C13"
+      ],
+      "source_timestamps_or_slides": [
+        "[918.8s - 1114.8s]",
+        "[1843.8s - 2026.8s]",
+        "[2026.8s - 2208.8s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Tree Construction and Structural Analysis",
+      "what_taught_summary": "Students must analyze the structural integrity of a constructed binary tree by verifying if it meets the criteria for being 'full' or 'complete', specifically checking that nodes are filled left-to-right and that internal nodes have two children.",
+      "why_assessed_pedagogy": "This assessment evaluates the student's capacity to deconstruct a given tree structure and validate its properties against theoretical definitions, moving from passive recognition to active structural analysis.",
+      "target_bloom_level": "ANALYZE",
+      "misconception_distractor_hints": [
+        "Assuming a tree is 'complete' if it is balanced, ignoring the left-to-right filling requirement.",
+        "Misidentifying the height of the tree by counting nodes instead of edges/links.",
+        "Failing to recognize that a node with a right child but no left child violates the definition of a complete binary tree."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C05",
+        "E_C09",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[734.8s - 918.8s]",
+        "[1478.8s - 1660.8s]",
+        "[2419.8s - 2603.8s]"
+      ]
+    }
+  ]
+}

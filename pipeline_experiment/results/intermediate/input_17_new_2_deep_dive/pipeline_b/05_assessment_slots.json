@@ -1,0 +1,72 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the primary definition or core purpose of the main subject introduced in the lecture overview.",
+    "misconception_target": "Confusing the general subject with a specific sub-topic or application mentioned in passing.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the key terminology or foundational concept explicitly defined during the introductory segment.",
+    "misconception_target": "Misattributing a definition to a similar but distinct term discussed in the same context.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific context or background information provided to frame the advanced technical discussion.",
+    "misconception_target": "Assuming the context applies to a different domain or level of complexity than stated.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the main objective or learning outcome stated for the 'Advanced Technical Discussion & Q&A' session.",
+    "misconception_target": "Confusing the session's objective with a prerequisite skill or a secondary topic.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "T01",
+    "topic_name": "Overview",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific example or case study used to illustrate the overview concepts.",
+    "misconception_target": "Mixing up details from the example with general theoretical principles.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

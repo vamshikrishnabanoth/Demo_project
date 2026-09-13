@@ -1,0 +1,107 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_13_wt_event_bubbling",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of DOM event propagation, what is the correct chronological order of the phases an event undergoes?",
+      "option_a": "Bubbling Phase -> Target Phase -> Capturing Phase",
+      "option_b": "Capturing Phase -> Target Phase -> Bubbling Phase",
+      "option_c": "Target Phase -> Capturing Phase -> Bubbling Phase",
+      "option_d": "Capturing Phase -> Bubbling Phase -> Target Phase",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the event propagation lifecycle strictly follows the sequence: Capturing (from root to target), Target (at the element), and Bubbling (from target back to root). Option A is incorrect because it reverses the flow, suggesting bubbling happens first. Option C is incorrect because the target phase occurs between capturing and bubbling, not at the start. Option D is incorrect because the target phase is the middle step, not the final one.",
+      "target_concept": "Event Propagation Lifecycle",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The strict sequence of event flow: Capturing (Root -> Target) -> Target -> Bubbling (Target -> Root).",
+      "why_assessed": "To verify the student's foundational understanding of the temporal order of event handling in the DOM.",
+      "evidence_refs": [
+        "Mechanisms_and_formulas[0]"
+      ],
+      "misconception_rationale": "Distractors reflect common confusion about the directionality of event flow, such as assuming bubbling (the default behavior) happens before capturing or that the target phase is the starting point."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "When using the addEventListener method, what does setting the third argument (useCapture) to true specify?",
+      "option_a": "The listener will only execute during the bubbling phase.",
+      "option_b": "The listener will execute during the capturing phase.",
+      "option_c": "The event will be stopped from propagating further.",
+      "option_d": "The listener will be removed after the first execution.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the third parameter of addEventListener determines the phase in which the listener is active; a value of true activates it during the capturing phase. Option A is incorrect because false (or omitting the argument) is required for the bubbling phase. Option C is incorrect because stopping propagation requires calling event.stopPropagation(), not a registration parameter. Option D is incorrect because the once option or manual removal is required to remove a listener, not the useCapture flag.",
+      "target_concept": "Listener Registration Parameters",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The addEventListener(type, listener, useCapture) method uses the boolean useCapture argument to determine if the listener is active during the capturing or bubbling phase.",
+      "why_assessed": "To ensure students understand how to programmatically control which phase of propagation a listener responds to.",
+      "evidence_refs": [
+        "Mechanisms_and_formulas[1]",
+        "Examples_and_code_patterns[1]"
+      ],
+      "misconception_rationale": "Distractors conflate the registration parameter with event control methods (like stopPropagation) or lifecycle management (like once), which are distinct concepts."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "During the execution of an event listener, what is the difference between event.target and event.currentTarget?",
+      "option_a": "event.target is the element where the listener is currently executing, while event.currentTarget is where the event originated.",
+      "option_b": "event.target is the element where the event originated, while event.currentTarget is the element where the listener is currently executing.",
+      "option_c": "Both properties always refer to the same element, regardless of the propagation phase.",
+      "option_d": "event.target refers to the document root, while event.currentTarget refers to the body element.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because event.target identifies the original source of the event, whereas event.currentTarget identifies the specific element in the DOM tree where the current listener is attached and executing. Option A is incorrect because it swaps the definitions of the two properties. Option C is incorrect because they only refer to the same element when the listener is attached directly to the target element; otherwise, they differ during propagation. Option D is incorrect because these properties are dynamic and do not statically refer to the root or body.",
+      "target_concept": "Event Object Properties",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The event object contains properties such as target (the element where the event originated) and currentTarget (the element where the listener is currently executing).",
+      "why_assessed": "To distinguish between the source of an event and the current context of execution, which is critical for writing robust event handlers in nested DOM structures.",
+      "evidence_refs": [
+        "Mechanisms_and_formulas[2]"
+      ],
+      "misconception_rationale": "Distractors exploit the common confusion between the static origin of an event and the dynamic context of the listener, or the assumption that these properties are always identical."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which method is used to prevent an event from continuing to propagate through the remaining phases of the DOM tree?",
+      "option_a": "event.preventDefault()",
+      "option_b": "event.stopPropagation()",
+      "option_c": "event.stopImmediatePropagation()",
+      "option_d": "event.cancelBubble = true",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because event.stopPropagation() is the standard method described in the material for preventing an event from reaching other listeners in the remaining propagation phases. Option A is incorrect because preventDefault() stops the browser's default action (like submitting a form) but does not stop propagation to other elements. Option C is incorrect because while stopImmediatePropagation() also stops propagation, the specific method highlighted in the lecture summary for halting the journey through the DOM tree is stopPropagation(). Option D is incorrect because cancelBubble is a legacy, non-standard property not mentioned in the provided material.",
+      "target_concept": "Controlling Event Flow",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Examples and Code Patterns",
+      "what_taught": "The use of event.stopPropagation() to halt the event's journey through the DOM tree.",
+      "why_assessed": "To test the student's ability to apply the correct API method for controlling event flow, distinguishing it from preventing default actions.",
+      "evidence_refs": [
+        "Examples_and_code_patterns[3]",
+        "Concepts_and_definitions[4]"
+      ],
+      "misconception_rationale": "Distractors include preventDefault(), which is a common point of confusion as it also involves 'stopping' something, and legacy or more specific methods that are not the primary focus of the lecture."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "If a click event occurs on a button inside a div, and a listener is attached to the div with the useCapture parameter set to false, during which phase will the div's listener execute?",
+      "option_a": "During the capturing phase, before the event reaches the button.",
+      "option_b": "During the target phase, simultaneously with the button's listener.",
+      "option_c": "During the bubbling phase, after the event has reached the button.",
+      "option_d": "The listener will not execute because the event originated on the button.",
+      "correct_option": "C",
+      "explanation": "The correct answer is C because setting useCapture to false (or omitting it) registers the listener for the bubbling phase. Since the event originates on the button (target), it will bubble up to the div after the target phase is complete. Option A is incorrect because capturing requires useCapture to be true. Option B is incorrect because the div is an ancestor, not the target, so its listener does not execute during the target phase. Option D is incorrect because events bubble up through ancestors by default, so the div's listener will execute.",
+      "target_concept": "Event Bubbling Mechanics",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Concepts and Definitions",
+      "what_taught": "Event Bubbling is the propagation phase where an event travels from the target element up through its ancestors to the document root; false (default) indicates bubbling phase.",
+      "why_assessed": "To assess the student's ability to analyze a specific DOM scenario and predict the timing of listener execution based on the propagation phase.",
+      "evidence_refs": [
+        "Concepts_and_definitions[1]",
+        "Examples_and_code_patterns[2]"
+      ],
+      "misconception_rationale": "Distractors test the understanding of the direction of bubbling (upwards vs downwards) and the specific timing relative to the target element, addressing the misconception that listeners on ancestors might fire before the target or not at all."
+    }
+  ]
+}

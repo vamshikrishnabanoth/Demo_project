@@ -1,0 +1,83 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Singly Linked List Operations",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Demonstrate the correct sequence of pointer manipulations required to insert a new node at the head of a singly linked list, ensuring the new node's next pointer references the previous head and the list head pointer is updated.",
+    "misconception_target": "Confusing the order of pointer assignments, specifically failing to update the new node's next pointer before updating the list head, or incorrectly setting the new node's next to NULL.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Doubly Linked List Operations",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Identify the correct set of pointer updates necessary to insert a node between two existing nodes in a doubly linked list, maintaining both forward (next) and backward (prev) link integrity.",
+    "misconception_target": "Neglecting to update the 'prev' pointer of the subsequent node or the 'next' pointer of the preceding node, resulting in a broken bidirectional chain.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C05",
+      "E_C06",
+      "E_C07"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Circular Linked List Operations",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Determine the correct termination condition for a traversal loop in a singly circular linked list to prevent infinite loops, distinguishing it from a standard singly linked list.",
+    "misconception_target": "Using 'node != NULL' as the termination condition instead of 'node != head', which leads to an infinite loop in a circular structure.",
+    "evidence_refs": [
+      "E_C08",
+      "E_C09",
+      "E_C10"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Stack Implementation (Array-based)",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Trace the state of the top pointer and array indices during a sequence of push and pop operations to correctly identify the current top element and detect underflow conditions.",
+    "misconception_target": "Incorrectly managing the top index (e.g., incrementing before assignment or decrementing after access) leading to off-by-one errors or accessing invalid memory locations.",
+    "evidence_refs": [
+      "E_C11",
+      "E_C12"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Stack Implementation (Linked List-based)",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Compare the memory allocation behavior and pointer manipulation differences between array-based and linked-list-based stacks, specifically focusing on how the 'top' pointer is managed during push operations.",
+    "misconception_target": "Assuming that a linked-list stack requires a separate 'size' variable to determine overflow, or confusing the head of the list with the tail, leading to incorrect insertion logic.",
+    "evidence_refs": [
+      "E_C13",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

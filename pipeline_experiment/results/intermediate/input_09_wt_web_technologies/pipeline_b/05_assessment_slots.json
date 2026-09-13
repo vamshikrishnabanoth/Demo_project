@@ -1,0 +1,76 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "File System Operations in Node.js",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Explain the fundamental difference between synchronous and asynchronous file system operations in Node.js, specifically regarding event loop blocking.",
+    "misconception_target": "Believing that synchronous operations do not block the event loop or that asynchronous operations are always faster regardless of I/O overhead.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C06"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "File System Operations in Node.js",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Describe the role of the callback function in asynchronous file system methods and how it handles completion or errors.",
+    "misconception_target": "Assuming the callback executes immediately after the function call rather than after the I/O operation completes.",
+    "evidence_refs": [
+      "E_C08",
+      "E_C09"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_01",
+    "topic_name": "File System Operations in Node.js",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Explain the purpose of the 'flags' parameter in file system open/read/write operations and how it dictates file access modes.",
+    "misconception_target": "Confusing file access flags (e.g., 'r', 'w', 'a') with file permissions or assuming flags only apply to reading.",
+    "evidence_refs": [
+      "E_C10"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Node.js Buffer Management",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Explain the purpose of the Buffer class in Node.js and why it is necessary for handling binary data streams.",
+    "misconception_target": "Believing that standard JavaScript strings can efficiently and safely handle all binary data without encoding issues.",
+    "evidence_refs": [
+      "E_C11",
+      "E_C13"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_02",
+    "topic_name": "Node.js Buffer Management",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Describe the memory allocation behavior of Buffers in Node.js, specifically the difference between allocating a new buffer and reusing a pool.",
+    "misconception_target": "Assuming that every Buffer creation results in a unique, isolated memory allocation that is never reused, leading to incorrect performance assumptions.",
+    "evidence_refs": [
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

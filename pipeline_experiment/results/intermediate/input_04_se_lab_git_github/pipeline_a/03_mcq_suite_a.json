@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_04_se_lab_git_github",
+  "input_type": "NOTES",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "A developer needs to contribute to a public open-source project but does not have direct write access to the original repository. According to the collaborative workflow described, what is the correct initial step to begin this contribution?",
+      "option_a": "Clone the original repository directly and push changes to the main branch.",
+      "option_b": "Create a personal copy of the repository using the 'Fork' mechanism.",
+      "option_c": "Generate a patch file from the original repository and email it to the maintainer.",
+      "option_d": "Request administrative privileges to modify the remote repository configuration.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the material defines 'Forking' as creating a personal copy of an existing public repository to contribute without direct write access. Option A is incorrect because pushing directly to the main branch of a repository without write access is not permitted and bypasses the review process. Option C is incorrect because while patch files are a valid method for sharing changes, the specific workflow for contributing to external projects via GitHub involves forking first. Option D is incorrect because the workflow is designed for users who do not have and do not need administrative privileges.",
+      "target_concept": "Forking Mechanism",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Code Collaboration & Forking",
+      "what_taught": "The definition and purpose of forking a repository for external contributions.",
+      "why_assessed": "To verify the student understands the prerequisite step for contributing to projects where they lack direct write permissions.",
+      "evidence_refs": [
+        "concepts_and_definitions: Forking"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions about access levels (A, D) or confusing the patch workflow with the standard GitHub contribution workflow (C)."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During a merge operation, a developer encounters conflict markers in a source file. Which of the following sequences correctly represents the procedure to resolve these conflicts and complete the merge?",
+      "option_a": "Run 'git merge --abort', then re-run 'git merge main' with the '--force' flag.",
+      "option_b": "Manually edit the file to remove conflict markers, stage the file with 'git add', and commit the changes.",
+      "option_c": "Delete the conflicting file entirely and run 'git checkout -- .' to restore the original version.",
+      "option_d": "Run 'git rebase --abort' and then apply the changes using 'git format-patch'.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the 'Conflict Resolution Workflow' explicitly states that one must identify markers, manually edit the code to resolve discrepancies, remove markers, stage the file with 'git add', and commit. Option A is incorrect because '--abort' reverts the process rather than resolving it, and '--force' is not part of the standard conflict resolution procedure. Option C is incorrect because deleting the file loses data and 'git checkout -- .' would discard local changes, not resolve a merge conflict. Option D is incorrect because it mixes rebase abort procedures with patch generation, which is unrelated to resolving an active merge conflict.",
+      "target_concept": "Merge Conflict Resolution",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Mechanisms: Conflict Resolution Workflow",
+      "what_taught": "The specific command sequence and manual editing steps required to resolve merge conflicts.",
+      "why_assessed": "To assess the student's ability to apply the correct procedural steps when facing a common Git error state.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: Conflict Resolution Workflow",
+        "examples_and_code_patterns: Conflict Marker Pattern"
+      ],
+      "misconception_rationale": "Distractors involve using abort commands (A, D) or destructive file operations (C) which are plausible but incorrect responses to a conflict state."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "A team member wants to share the changes from a single specific commit (hash abc1234) with another developer via email, without requiring a direct repository connection. Which command should be used?",
+      "option_a": "git diff abc1234 > changes.txt",
+      "option_b": "git format-patch -1 abc1234",
+      "option_c": "git log -1 abc1234 --format=patch",
+      "option_d": "git export abc1234 --output=commit.patch",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the material specifies that 'git format-patch' is used to create patch files, and the flag '-1' generates a patch for a single commit. Option A is incorrect because 'git diff' creates a raw difference file, not a standard patch file suitable for 'git am' or similar application tools in the context of the lab. Option C is incorrect because 'git log' is for viewing history, not generating patch files. Option D is incorrect because 'git export' is not a standard Git command for this purpose.",
+      "target_concept": "Patch File Generation",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Mechanisms: Patch Generation",
+      "what_taught": "The specific syntax for generating a patch file for a single commit using 'git format-patch'.",
+      "why_assessed": "To ensure the student can recall the correct command and flag for isolating and sharing specific commit changes.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: Patch Generation",
+        "examples_and_code_patterns: Patch Creation Syntax"
+      ],
+      "misconception_rationale": "Distractors use similar-sounding Git commands ('diff', 'log', 'export') that students might confuse with the specific 'format-patch' utility."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "A developer is working on a 'feature' branch and needs to incorporate the latest changes from the 'main' branch to keep their work up-to-date. What is the correct sequence of commands to synchronize the branches?",
+      "option_a": "git checkout main; git merge feature; git checkout feature",
+      "option_b": "git checkout main; git pull origin main; git checkout feature; git merge main",
+      "option_c": "git pull origin feature; git merge main; git push origin feature",
+      "option_d": "git checkout feature; git pull origin main; git merge main",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the 'Branch Synchronization' mechanism requires switching to main, pulling the latest changes from the remote, switching back to the feature branch, and then merging main into the feature branch. Option A is incorrect because it merges the feature branch into main, which is the opposite of the intended direction (updating the feature branch). Option C is incorrect because it pulls from the feature branch instead of main and does not switch branches correctly. Option D is incorrect because it attempts to pull from main while on the feature branch, which is not the standard synchronization procedure described.",
+      "target_concept": "Branch Synchronization",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Mechanisms: Branch Synchronization",
+      "what_taught": "The procedural steps to update a feature branch with changes from the main branch.",
+      "why_assessed": "To test the student's understanding of branch switching and merge directionality in a collaborative workflow.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: Branch Synchronization"
+      ],
+      "misconception_rationale": "Distractors reverse the merge direction (A) or use incorrect source branches for pulling (C, D), reflecting common errors in branch management."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "If a merge operation results in a state that is too complex to resolve manually, and the developer wishes to revert the repository to its state before the merge was initiated, which command should be used?",
+      "option_a": "git reset --hard HEAD~1",
+      "option_b": "git merge --abort",
+      "option_c": "git checkout -- .",
+      "option_d": "git revert HEAD",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the 'Abort Mechanism' section explicitly states that 'git merge --abort' reverts the process to the pre-merge state. Option A is incorrect because 'git reset --hard' is a destructive command that moves the branch pointer and is not the specific command for aborting a merge in progress. Option C is incorrect because 'git checkout -- .' discards uncommitted changes in the working directory but does not abort the merge state itself. Option D is incorrect because 'git revert' creates a new commit that undoes changes, rather than aborting the current merge process.",
+      "target_concept": "Merge Abort Mechanism",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Mechanisms: Abort Mechanism",
+      "what_taught": "The specific command to safely cancel a merge operation and restore the previous state.",
+      "why_assessed": "To verify the student knows the safe, non-destructive method for canceling a problematic merge.",
+      "evidence_refs": [
+        "mechanisms_and_formulas: Abort Mechanism"
+      ],
+      "misconception_rationale": "Distractors include other Git commands that modify state ('reset', 'checkout', 'revert') which students might confuse with the specific abort functionality."
+    }
+  ]
+}

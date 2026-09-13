@@ -1,0 +1,42 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Course Overview and Lecture Structure",
+    "subtopics": [
+      "Introduction to the lecture series",
+      "Explanation of audio recording format",
+      "Procedural walkthrough methodology"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Conceptual Frameworks",
+    "subtopics": [
+      "Core theoretical concepts",
+      "High-level system architecture",
+      "Design principles"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Code Implementation and Walkthrough",
+    "subtopics": [
+      "Step-by-step code analysis",
+      "Syntax and logic explanation",
+      "Practical coding examples"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Procedural Execution Steps",
+    "subtopics": [
+      "Sequential task breakdown",
+      "Algorithmic flow",
+      "Execution order and dependencies"
+    ],
+    "associated_chunk_ids": []
+  }
+]

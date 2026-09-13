@@ -1,0 +1,25 @@
+{
+  "summary": {
+    "input_id": "MongoDB Command Reference & Query Operations",
+    "title": "MongoDB Command Reference & Query Operations",
+    "concepts_and_definitions": [
+      "Database Context Switching",
+      "Collection Management",
+      "CRUD Operations",
+      "Document Insertion"
+    ],
+    "mechanisms_and_formulas": [
+      "Context switching mechanism: `use database_name` changes the active database session.",
+      "Collection lifecycle mechanism: `db.createCollection('name')` initializes a new collection, while `db.collection.drop()` removes it.",
+      "Data insertion mechanism: `db.collection.insertOne(document)` adds a single document to the specified collection."
+    ],
+    "examples_and_code_patterns": [
+      "Switching databases: `use database_name`",
+      "Listing databases: `show dbs`",
+      "Creating a collection: `db.createCollection('users')`",
+      "Inserting a document: `db.users.insertOne({name: 'Alice', age: 25})`"
+    ],
+    "factual_summary_text": "The material provides a cheatsheet for fundamental MongoDB command-line operations, focusing on database and collection management. It defines the syntax for switching between databases using the `use` command and listing available databases with `show dbs`. Additionally, it covers the lifecycle of collections, including creation via `db.createCollection()` and deletion via the `.drop()` method.\n\nThe content also introduces basic CRUD (Create, Read, Update, Delete) query operations, specifically highlighting the insertion of data. It demonstrates how to insert a single document into a collection using the `insertOne` method, providing a concrete example of inserting a user object with name and age fields. This serves as a foundational reference for executing standard MongoDB shell commands."
+  },
+  "blueprint": null
+}

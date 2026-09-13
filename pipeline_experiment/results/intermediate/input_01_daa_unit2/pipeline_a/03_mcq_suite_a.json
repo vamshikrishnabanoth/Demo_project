@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_01_daa_unit2",
+  "input_type": "PDF",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the Divide and Conquer technique, what is the primary characteristic of the recurrence relation T(n) = T(n/2) + c associated with Binary Search?",
+      "option_a": "It indicates a linear time complexity of O(n) because the problem size is reduced by a constant factor.",
+      "option_b": "It indicates a logarithmic time complexity of O(log n) because the problem size is halved at each step.",
+      "option_c": "It indicates a quadratic time complexity of O(n^2) due to the recursive overhead.",
+      "option_d": "It indicates a constant time complexity of O(1) because the search space is fixed.",
+      "correct_option": "B",
+      "explanation": "The recurrence T(n) = T(n/2) + c describes a process where the problem size is divided by 2 in each recursive call, with a constant amount of work done at each level. This structure leads to a logarithmic number of steps (log base 2 of n), resulting in O(log n) time complexity. Option A is incorrect because halving the size does not lead to linear time. Option C is incorrect as quadratic time arises from nested loops or splitting into two subproblems of size n/2 (T(n) = 2T(n/2) + O(n)). Option D is incorrect because the number of steps depends on n.",
+      "target_concept": "Recurrence Relations and Time Complexity",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Binary Search Recurrence",
+      "what_taught": "T(n) = T(n/2) + c results in O(log n).",
+      "why_assessed": "To verify understanding of how the divide-and-conquer structure translates to time complexity.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[0]"
+      ],
+      "misconception_rationale": "Students often confuse the reduction factor (1/2) with the resulting complexity class, sometimes assuming linear or constant time."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Why is the midpoint in Binary Search calculated as mid = low + (high - low) / 2 instead of mid = (low + high) / 2?",
+      "option_a": "To ensure the midpoint is always an even number.",
+      "option_b": "To prevent integer overflow when low and high are large values.",
+      "option_c": "To prioritize searching the right half of the array first.",
+      "option_d": "To reduce the number of comparisons required in the worst case.",
+      "correct_option": "B",
+      "explanation": "The formula mid = low + (high - low) / 2 is used to avoid integer overflow. If low and high are very large integers, their sum (low + high) might exceed the maximum value representable by the integer data type, causing an overflow. Subtracting low from high first ensures the intermediate value is smaller and safe to add to low. Option A is irrelevant to the calculation logic. Option C is incorrect as the formula does not bias the search direction. Option D is incorrect because both formulas yield the same logical midpoint for valid ranges, so the comparison count is identical.",
+      "target_concept": "Midpoint Calculation Safety",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Midpoint Calculation",
+      "what_taught": "mid = low + (high - low) / 2 prevents overflow.",
+      "why_assessed": "To test practical implementation knowledge regarding data type limitations in algorithmic code.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[1]"
+      ],
+      "misconception_rationale": "Students may not recognize the specific engineering reason for the alternative formula, thinking it is just a stylistic choice or for performance."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Given a sorted array A = [-10, -5, 0, 3, 7], what is the fixed point of this array?",
+      "option_a": "0",
+      "option_b": "3",
+      "option_c": "7",
+      "option_d": "No fixed point exists",
+      "correct_option": "B",
+      "explanation": "A fixed point is an index i such that A[i] = i. Let's check the indices: A[0] = -10 (not 0), A[1] = -5 (not 1), A[2] = 0 (not 2), A[3] = 3 (equals 3), A[4] = 7 (not 4). Therefore, index 3 is the fixed point. Option A is incorrect because A[0] is -10. Option C is incorrect because A[4] is 7, not 4. Option D is incorrect because a fixed point exists at index 3.",
+      "target_concept": "Fixed Point Definition",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Fixed Point Search Logic",
+      "what_taught": "Fixed point is where A[i] == i.",
+      "why_assessed": "To ensure students can apply the definition of a fixed point to a concrete example.",
+      "evidence_refs": [
+        "examples_and_code_patterns[3]"
+      ],
+      "misconception_rationale": "Students might confuse the value of the element with its index or fail to check all indices systematically."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "When finding the median of two sorted arrays where the total number of elements is even, how is the median calculated?",
+      "option_a": "By taking the maximum element of the left half.",
+      "option_b": "By taking the minimum element of the right half.",
+      "option_c": "By averaging the maximum element of the left half and the minimum element of the right half.",
+      "option_d": "By taking the difference between the maximum of the left half and the minimum of the right half.",
+      "correct_option": "C",
+      "explanation": "For an even total length, the median is defined as the average of the two middle elements. In the context of partitioning the combined sorted sequence, these two middle elements are the largest element in the left partition (max(left_half)) and the smallest element in the right partition (min(right_half)). Therefore, median = (max(left_half) + min(right_half)) / 2.0. Options A and B only provide one of the two required values. Option D is mathematically incorrect for calculating a median.",
+      "target_concept": "Median of Two Sorted Arrays Logic",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Median Calculation Logic",
+      "what_taught": "Even length median = (max(left) + min(right)) / 2.0.",
+      "why_assessed": "To verify understanding of the specific boundary conditions for median calculation in divide-and-conquer approaches.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[2]"
+      ],
+      "misconception_rationale": "Students often forget that for even lengths, two values are needed, or they might confuse the median with the mode or range."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the Fixed Point Search algorithm, if the middle element arr[mid] is less than its index mid, which half of the array should be searched next?",
+      "option_a": "The left half (low to mid - 1)",
+      "option_b": "The right half (mid + 1 to high)",
+      "option_c": "Both halves simultaneously",
+      "option_d": "The search should terminate immediately",
+      "correct_option": "B",
+      "explanation": "In a sorted array, if arr[mid] < mid, it implies that for all indices j < mid, arr[j] <= arr[mid] < mid < j is not necessarily true, but specifically, since the array is sorted and strictly increasing (implied for unique fixed points in this context), if arr[mid] < mid, then for any i < mid, arr[i] <= arr[mid] < mid. However, the key logic is that if arr[mid] < mid, the fixed point must be to the right because the values are 'lagging' behind the indices. Conversely, if arr[mid] > mid, the values are 'ahead', so the fixed point must be to the left. Therefore, if arr[mid] < mid, we search the right half. Option A is the logic for arr[mid] > mid. Option C is inefficient and not part of the divide-and-conquer strategy. Option D is incorrect as a solution may still exist.",
+      "target_concept": "Fixed Point Search Logic",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Fixed Point Search Logic",
+      "what_taught": "If arr[mid] < mid, search right; if arr[mid] > mid, search left.",
+      "why_assessed": "To test the logical deduction required to determine the search direction in modified binary search problems.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[3]"
+      ],
+      "misconception_rationale": "Students may reverse the logic, thinking that if the value is smaller, the index must be smaller (left), failing to account for the relationship between value and index in a sorted sequence."
+    }
+  ]
+}

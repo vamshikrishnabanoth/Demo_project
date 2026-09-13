@@ -1,0 +1,203 @@
+{
+  "summary": {
+    "total_categories": 14,
+    "passed_categories": 14,
+    "e2e_integration_passed": true,
+    "verdict": "SAFE TO PUSH TO GIT"
+  },
+  "categories": {
+    "B_STATIC_PDF": {
+      "status": "PASS",
+      "input_id": "input_01_daa_unit2",
+      "representation_used": "SUMMARY",
+      "delivered_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "Explain the purpose of binary search algorithm.",
+        "stem": "Explain the purpose of binary search algorithm.",
+        "option_a": "A binary search algorithm is used when we have a sorted array and want to find a target value efficiently.",
+        "option_b": "A binary search algorithm is used when the array is unsorted.",
+        "option_c": "The midpoint calculation rounds up.",
+        "option_d": "The binary search algorithm does not guarantee an exact match.",
+        "correct_option": "A",
+        "explanation": "Binary search efficiently locates a target value in a sorted array by repeatedly halving the search interval, achieving O(log n) time complexity and guaranteeing an exact match when the target exists.",
+        "target_concept": "Binary Search",
+        "cognitive_level": "REMEMBER",
+        "difficulty_level": "EASY",
+        "what_taught": "Binary Search is a search algorithm for sorted arrays that repeatedly divides the search interval in half, comparing the target value to the middle element and narrowing the interval until the target is found or the interval is empty.",
+        "why_assessed": "The correct answer confirms students' understanding of the algorithm's purpose and the importance of array sorting.",
+        "evidence_refs": [
+          "Cormen, Thomas H., et al. Introduction to Algorithms, 3rd ed., MIT Press, 2009, Section 2.3."
+        ],
+        "misconception_rationale": "Distractors target: Binary search works on unsorted arrays., The midpoint calculation always rounds up."
+      }
+    },
+    "A_VOICE_ONLY": {
+      "status": "PASS",
+      "input_id": "input_07_deepa_madam_lecture",
+      "representation_used": "BLUEPRINT",
+      "delivered_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q_01",
+        "question_text": "In the context of Greatest Common Divisor (GCD) Algorithm, which statement accurately reflects its core operational principle?",
+        "stem": "In the context of Greatest Common Divisor (GCD) Algorithm, which statement accurately reflects its core operational principle?",
+        "option_a": "It performs Step\u2011by\u2011step demonstration of the Euclidean algorithm, traci.",
+        "option_b": "It bypasses Greatest Common Divisor (GCD) Algorithm execution during query processing.",
+        "option_c": "It converts Greatest Common Divisor (GCD) Algorithm directly into unindexed linear searches.",
+        "option_d": "It permanently mutates source records without returning document streams.",
+        "correct_option": "A",
+        "explanation": "Option A is correct: Step\u2011by\u2011step demonstration of the Euclidean algorithm, tracing each modulo operation until the remainder is zero, and computing the final GCD.",
+        "target_concept": "Greatest Common Divisor (GCD) Algorithm",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "Step\u2011by\u2011step demonstration of the Euclidean algorithm, tracing each modulo operation until the remainder is zero, and computing the final GCD.",
+        "why_assessed": "Tracing the algorithm forces students to follow the control flow and arithmetic operations, ensuring they can predict intermediate values and understand why the algorithm terminates.",
+        "evidence_refs": [
+          "EV_CANONICAL_01"
+        ],
+        "misconception_rationale": "Distractors represent misconceptions regarding Greatest Common Divisor (GCD) Algorithm mutability and indexing."
+      }
+    },
+    "C_VOICE_PLUS_SLIDES": {
+      "status": "PASS",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "representation_used": "UNIFIED",
+      "delivered_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q_01",
+        "question_text": "Which of the following statements correctly defines a binary tree?",
+        "stem": "Which of the following statements correctly defines a binary tree?",
+        "option_a": "A hierarchical data structure where each node has at most two children, referred to as the left child and the right child.",
+        "option_b": "A linear sequence of elements stored contiguously in memory.",
+        "option_c": "A cyclic graph where each vertex can connect to an arbitrary number of adjacent vertices.",
+        "option_d": "A set of disjoint nodes with no hierarchical relationships.",
+        "correct_option": "A",
+        "explanation": "Option A is correct: By definition, a binary tree is a tree data structure in which each node has at most two children (left child and right child).",
+        "target_concept": "Binary Trees",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "Binary tree definition, nodes, left/right pointers",
+        "why_assessed": "Core foundation for tree algorithms",
+        "evidence_refs": [
+          "EV_SLIDE_01"
+        ]
+      }
+    },
+    "D_SHORT_LECTURE": {
+      "status": "PASS",
+      "input_id": "input_20_pps_jocks_discussion",
+      "representation_used": "BLUEPRINT",
+      "delivered_count": 2,
+      "validation_status": "PASSED"
+    },
+    "E_LONG_LECTURE": {
+      "status": "PASS",
+      "input_id": "input_12_tapadia_buy_and_sell_stock",
+      "representation_used": "UNIFIED",
+      "delivered_count": 2,
+      "validation_status": "PASSED"
+    },
+    "F_CODE_HEAVY": {
+      "status": "PASS",
+      "input_id": "input_08_tapadia_sir_lecture",
+      "representation_used": "BLUEPRINT",
+      "delivered_count": 2,
+      "validation_status": "PASSED"
+    },
+    "G_NATURAL_SPEECH_DISTRACTIONS": {
+      "status": "PASS",
+      "file": "tapadia_sir_clip1_fan_snr8db.wav",
+      "transcript_length": 558,
+      "transcript_preview": "But the problem is, for those who did not come, you are given a bunch of strings. And what you need to return is the prefix which is common amongst al"
+    },
+    "H_HINDI_CODESWITCHING": {
+      "status": "PASS",
+      "file": "tapadia_sir_clip1_clean.wav",
+      "transcript_length": 557,
+      "transcript_preview": "What the problem is, for those who did not come, you are given a bunch of strings. And what you need to return is the prefix which is common amongst a"
+    },
+    "I_MULTIPLE_COUNTS": {
+      "status": "PASS",
+      "verified_counts": [
+        2,
+        3,
+        5
+      ],
+      "guarantee": "Q_requested == Q_delivered via critic & surgical replenishment"
+    },
+    "J_EASY": {
+      "status": "PASS",
+      "tested_with": "Cat B & Cat D"
+    },
+    "K_MEDIUM": {
+      "status": "PASS",
+      "tested_with": "Cat A"
+    },
+    "L_HARD": {
+      "status": "PASS",
+      "tested_with": "Cat E & Cat F"
+    },
+    "M_MIXED": {
+      "status": "PASS",
+      "tested_with": "Cat C"
+    },
+    "N_FAILURE_STRESS_TESTS": {
+      "status": "PASS",
+      "details": {
+        "N1_NON_ACADEMIC_REJECTION": "PASS",
+        "N2_EXECUTABLE_REJECTION": "PASS",
+        "N3_PATH_TRAVERSAL_REJECTION": "PASS",
+        "N4_VALIDATOR_INTEGRITY": "PASS"
+      }
+    }
+  },
+  "models_used": {
+    "generator_provider": "groq",
+    "generator_model": "allam-2-7b",
+    "generator_target": "ft-llama-3-8b-kmit",
+    "representation_model": "openai/gpt-oss-20b",
+    "critic_model": "openai/gpt-oss-120b",
+    "stt_model": "whisper-large-v3"
+  },
+  "routing_records": [
+    {
+      "input_id": "input_01_daa_unit2",
+      "representation": "SUMMARY",
+      "pdi": -0.035
+    },
+    {
+      "input_id": "input_07_deepa_madam_lecture",
+      "representation": "BLUEPRINT",
+      "pdi": 0.656
+    },
+    {
+      "input_id": "input_20_pps_jocks_discussion",
+      "representation": "BLUEPRINT",
+      "pdi": 0.65
+    },
+    {
+      "input_id": "input_12_tapadia_buy_and_sell_stock",
+      "representation": "UNIFIED",
+      "pdi": 0.988
+    },
+    {
+      "input_id": "input_08_tapadia_sir_lecture",
+      "representation": "BLUEPRINT",
+      "pdi": 0.651
+    }
+  ],
+  "mcq_quality": [],
+  "failure_recovery": [],
+  "regression_checks": {
+    "E2E_WORKER_POSTGRES": {
+      "status": "PASS",
+      "job_id": "reg_1789290836",
+      "db_status": "COMPLETED",
+      "error_message": null
+    }
+  },
+  "telemetry": []
+}

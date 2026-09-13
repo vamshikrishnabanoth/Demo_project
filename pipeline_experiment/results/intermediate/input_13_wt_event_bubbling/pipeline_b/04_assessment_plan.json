@@ -1,0 +1,31 @@
+{
+  "plan_id": "PLAN_input_13_wt_event_bubbling",
+  "input_id": "input_13_wt_event_bubbling",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Event Listeners",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Event Bubbling",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Event Capturing",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

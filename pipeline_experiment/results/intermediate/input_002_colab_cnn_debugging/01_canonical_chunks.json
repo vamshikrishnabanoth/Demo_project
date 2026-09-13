@@ -1,0 +1,176 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "COLAB",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 480.0
+      }
+    ],
+    "text": "Open Google Colab. We import torch and torch.nn as nn. We build SimpleCNN with self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1). Setting padding=1 keeps 32x32 spatial dimensions.",
+    "material_refs": [],
+    "topic_candidates": [
+      "padding"
+    ],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 480.0
+        }
+      ],
+      "dwell_time": 480.0,
+      "repetition_count": 2,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "COLAB",
+    "time_spans": [
+      {
+        "start": 480.0,
+        "end": 1200.0
+      }
+    ],
+    "text": "We add self.pool = nn.MaxPool2d(2, 2) and self.conv2 = nn.Conv2d(16, 32, 3, padding=1). After two convolutions and pools, tensor shape is (B, 32, 8, 8).",
+    "material_refs": [],
+    "topic_candidates": [
+      "padding"
+    ],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 480.0,
+          "end": 1200.0
+        }
+      ],
+      "dwell_time": 720.0,
+      "repetition_count": 1,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "COLAB",
+    "time_spans": [
+      {
+        "start": 1200.0,
+        "end": 2520.0
+      }
+    ],
+    "text": "Run the forward cell: an error occurred! RuntimeError: mat1 and mat2 shapes cannot be multiplied (64x2048 and 1024x10). Why did this happen? After x.view(x.size(0), -1), flattened features are 32*8*8 = 2048. But self.fc1 was written as nn.Linear(1024, 10). To fix this, change in_features to 2048. Never include the batch dimension B in in_features.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1200.0,
+          "end": 2520.0
+        }
+      ],
+      "dwell_time": 1320.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": true,
+      "debugging_event": true,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "COLAB",
+    "time_spans": [
+      {
+        "start": 2520.0,
+        "end": 3300.0
+      }
+    ],
+    "text": "Configure loss = nn.CrossEntropyLoss() and optimizer = optim.Adam(lr=0.001). Inside loop: optimizer.zero_grad() -> forward -> loss -> loss.backward() -> optimizer.step().",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2520.0,
+          "end": 3300.0
+        }
+      ],
+      "dwell_time": 780.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C05",
+    "source_type": "COLAB",
+    "time_spans": [
+      {
+        "start": 3300.0,
+        "end": 3600.0
+      }
+    ],
+    "text": "Training loss drops from 2.14 to 0.42 after 5 epochs. Always verify tensor dimensions at each layer.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C05",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3300.0,
+          "end": 3600.0
+        }
+      ],
+      "dwell_time": 300.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

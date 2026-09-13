@@ -1,0 +1,81 @@
+{
+  "blueprint_id": "BP_input_01_daa_unit2",
+  "input_id": "input_01_daa_unit2",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Binary Search Algorithm",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Sorted Arrays",
+        "Recursion",
+        "Time Complexity Analysis"
+      ],
+      "evidence_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Median of Two Sorted Arrays",
+      "salience_score": 0.35,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Binary Search",
+        "Array Indexing",
+        "Divide and Conquer Strategy"
+      ],
+      "evidence_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10",
+        "E_C11",
+        "E_C12"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Fixed Point Problem",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Binary Search",
+        "Function Properties",
+        "Monotonicity"
+      ],
+      "evidence_refs": [
+        "E_C08",
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_04_se_lab_git_github",
+  "input_type": "NOTES",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "A developer is setting up a new local Git repository for a solo project. They have already installed Git but have not configured their identity for this specific project. Which sequence of commands correctly initializes the repository and sets the user identity locally for this project only?",
+      "option_a": "git clone <url> && git config --global user.name \"Dev\" && git config --global user.email \"dev@example.com\"",
+      "option_b": "git init && git config user.name \"Dev\" && git config user.email \"dev@example.com\"",
+      "option_c": "git init && git config --global user.name \"Dev\" && git config --global user.email \"dev@example.com\"",
+      "option_d": "git new && git config user.name \"Dev\" && git config user.email \"dev@example.com\"",
+      "correct_option": "B",
+      "explanation": "Option B is correct because 'git init' creates a new local repository, and 'git config' without the '--global' flag sets the configuration for the current repository only. Option A is incorrect because 'git clone' is used to copy an existing remote repository, not to initialize a new local one, and '--global' affects all repositories on the machine. Option C is incorrect because using '--global' sets the identity for all projects on the system, not just the current one. Option D is incorrect because 'git new' is not a valid Git command.",
+      "target_concept": "Git & GitHub Environment Setup",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Sequence of commands for local repo initialization and local user configuration.",
+      "why_assessed": "To ensure students distinguish between local and global configuration scopes and correct initialization commands.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the confusion between 'init' and 'clone' and the scope of configuration flags (--global vs local)."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In a team environment using GitHub, a developer pushes changes to a feature branch and opens a Pull Request (PR) to the main branch. What is the primary purpose of this PR workflow compared to pushing directly to main?",
+      "option_a": "It automatically merges the code into the main branch immediately upon creation to save time.",
+      "option_b": "It serves as a mechanism for code review, discussion, and approval before changes are integrated into the main branch.",
+      "option_c": "It transfers the files from the developer's local machine to the GitHub server without any version control history.",
+      "option_d": "It creates a permanent backup of the feature branch that cannot be deleted or modified.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the core purpose of a Pull Request is to facilitate code review, discussion, and quality assurance before merging. Option A is incorrect because PRs do not auto-merge by default; they require explicit approval and a merge action. Option C is incorrect because PRs are part of the version control workflow and preserve history; they are not simple file transfers. Option D is incorrect because PRs are temporary objects that are closed after merging or rejection; they are not permanent backups.",
+      "target_concept": "Collaborative Workflows & Pull Requests",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The role of Pull Requests in code review and integration safety.",
+      "why_assessed": "To verify understanding of the collaborative aspect of Git and the safety mechanisms provided by PRs.",
+      "evidence_refs": [
+        "E_C03",
+        "E_C04"
+      ],
+      "misconception_rationale": "Distractors address the misconception that PRs are automated merge tools or simple file transfers, ignoring the human review component."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "You are merging a feature branch into main and encounter a merge conflict in 'app.js'. You have manually edited 'app.js' to resolve the conflict by removing the conflict markers and keeping the desired code. What is the correct next sequence of commands to complete the merge?",
+      "option_a": "git commit -m \"Merge feature\" && git push origin main",
+      "option_b": "git add app.js && git commit -m \"Resolve merge conflict\"",
+      "option_c": "git merge --abort && git checkout main",
+      "option_d": "git stash && git commit -m \"Resolve merge conflict\"",
+      "correct_option": "B",
+      "explanation": "Option B is correct because after manually resolving a conflict, the file must be staged with 'git add' before it can be committed. Option A is incorrect because 'git commit' will fail if the conflicted file is not staged first. Option C is incorrect because 'git merge --abort' cancels the merge process entirely, reverting to the pre-merge state, which is not the goal if the conflict has been resolved. Option D is incorrect because 'git stash' is used to save uncommitted changes temporarily, not to finalize a merge resolution.",
+      "target_concept": "Merge Conflict Resolution",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03",
+      "what_taught": "The specific command sequence required to finalize a merge after manual conflict resolution.",
+      "why_assessed": "To test the practical application of Git commands in a common error state (merge conflict).",
+      "evidence_refs": [
+        "E_C05"
+      ],
+      "misconception_rationale": "Distractors reflect the common error of forgetting to stage the file before committing or using abort/stash commands inappropriately."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "You are analyzing a patch file generated by 'git diff'. The patch contains lines starting with '+' and '-'. What do these symbols represent in the context of applying the patch?",
+      "option_a": "They are literal characters that must be added to or removed from the target file.",
+      "option_b": "They indicate lines to be added ('+') and lines to be removed ('-') from the target file.",
+      "option_c": "They represent binary data that must be decoded before application.",
+      "option_d": "They are comments that are ignored by the 'git apply' command.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because in a unified diff format, '+' denotes lines to be added and '-' denotes lines to be removed. Option A is incorrect because these are control characters for the diff algorithm, not literal content to be inserted. Option C is incorrect because standard text patches use ASCII markers, not binary data. Option D is incorrect because these symbols are essential for the patch application logic and are not ignored.",
+      "target_concept": "Patch Creation and Application",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S04",
+      "what_taught": "Interpretation of unified diff syntax in patch files.",
+      "why_assessed": "To ensure students can read and understand the structure of patch files before applying them.",
+      "evidence_refs": [
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors target the misconception that diff symbols are literal content or binary data, rather than structural indicators."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "You attempt to apply a patch to a file, but 'git apply' fails with an error indicating that the context lines do not match. The file exists, but it has been modified since the patch was created. What is the most appropriate strategy to handle this situation?",
+      "option_a": "Use 'git apply --force' to overwrite the current file with the patch content regardless of context.",
+      "option_b": "Manually review the patch and the current file, resolve the differences, and apply the changes manually or with a 3-way merge.",
+      "option_c": "Delete the file and re-clone the repository to reset the state, then apply the patch.",
+      "option_d": "Ignore the error and proceed, as 'git apply' will automatically guess the correct context.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because context mismatches require manual intervention or a 3-way merge to safely integrate changes without losing data. Option A is incorrect because 'git apply' does not have a simple '--force' flag that blindly overwrites; it requires specific flags like '--3way' or manual resolution. Option C is incorrect because deleting and re-cloning is an extreme measure that may lose local changes and is not the standard procedure for context mismatches. Option D is incorrect because 'git apply' does not guess context; it fails strictly if the context does not match.",
+      "target_concept": "Patch Creation and Application",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Diagnosing and resolving patch application failures due to context mismatches.",
+      "why_assessed": "To test the ability to diagnose common patch application errors and select safe recovery strategies.",
+      "evidence_refs": [
+        "E_C07"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that patches can be forced blindly or that the tool will auto-correct context errors."
+    }
+  ]
+}

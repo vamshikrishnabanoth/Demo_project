@@ -1,0 +1,107 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_05_assignment_mongodb_crud",
+  "input_type": "ASSIGNMENT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the Amazon Product Management System, which MongoDB query operation is primarily used to retrieve only the Product ID, Name, Stock, and Brand fields for products with a stock level less than 20?",
+      "option_a": "Sorting",
+      "option_b": "Projection",
+      "option_c": "Aggregation",
+      "option_d": "Indexing",
+      "correct_option": "B",
+      "explanation": "The correct option is B (Projection). Projection is the mechanism used in MongoDB to restrict the output to specific fields, preventing the return of the entire document. In this scenario, the requirement to display only 'Product ID, Name, Stock, and Brand' explicitly calls for projection. Option A (Sorting) is incorrect because sorting arranges documents in a specific order (e.g., ascending/descending) but does not limit which fields are displayed. Option C (Aggregation) is incorrect as it involves processing data records through a pipeline for calculations or transformations, which is not the primary goal here. Option D (Indexing) is incorrect because it is a performance optimization technique for faster data retrieval, not a method for selecting specific fields in the output.",
+      "target_concept": "Projection Mechanism",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Projection Mechanism",
+      "what_taught": "Restricting output to specific fields (e.g., Product ID, Name, Stock) rather than returning the entire document.",
+      "why_assessed": "To verify the student's understanding of how to limit query results to relevant data fields, a key aspect of efficient database querying.",
+      "evidence_refs": [
+        "Projection Mechanism: Restricting the output to specific fields (e.g., Product ID, Name, Stock) rather than returning the entire document."
+      ],
+      "misconception_rationale": "Students often confuse the purpose of sorting (ordering) with projection (field selection) or assume that standard queries always return all fields unless specified otherwise."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "When filtering products in the Amazon system to find items with a price greater than 10,000 and displaying them from most to least expensive, which combination of operations is required?",
+      "option_a": "Filtering with < operator and Sorting in ascending order",
+      "option_b": "Filtering with > operator and Sorting in descending order",
+      "option_c": "Filtering with > operator and Sorting in ascending order",
+      "option_d": "Filtering with < operator and Sorting in descending order",
+      "correct_option": "B",
+      "explanation": "The correct option is B. The condition 'price greater than 10,000' requires the use of the greater than (>) comparison operator. The requirement to display items 'from most to least expensive' necessitates sorting the results in descending order. Option A is incorrect because it uses the less than (<) operator and ascending sort, which would find cheap items and list them from lowest to highest price. Option C is incorrect because while it uses the correct operator, ascending sort would list the most expensive items last. Option D is incorrect because it uses the wrong operator (<) for the price condition.",
+      "target_concept": "Comparison Operators and Sorting",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Comparison Operators and Sorting",
+      "what_taught": "Using > to filter numeric fields and applying sort operations to arrange documents by a specific field in descending order.",
+      "why_assessed": "To assess the ability to correctly map natural language requirements ('greater than', 'most to least') to specific MongoDB operators and sort parameters.",
+      "evidence_refs": [
+        "Filtering products with price > 10,000 and sorting results by price in descending order.",
+        "Comparison Operators: Using < (less than) and > (greater than) to filter numeric fields like stock levels and prices."
+      ],
+      "misconception_rationale": "Common errors include confusing ascending and descending order or mixing up the direction of the comparison operator (e.g., using < instead of >)."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "To retrieve restaurant records where the name starts with the letter 'P', which string matching technique is most appropriately applied in MongoDB?",
+      "option_a": "Numeric comparison using the > operator",
+      "option_b": "Regex or prefix matching",
+      "option_c": "Full document equality check",
+      "option_d": "Sorting by name in ascending order",
+      "correct_option": "B",
+      "explanation": "The correct option is B (Regex or prefix matching). The material explicitly states that string matching utilizes regex or prefix matching to find documents where a string field begins with a specific character. Option A is incorrect because numeric operators cannot be applied to string fields for pattern matching. Option C is incorrect because an equality check would only find names that are exactly 'P', not those starting with 'P'. Option D is incorrect because sorting organizes data but does not filter it based on a specific pattern.",
+      "target_concept": "String Pattern Matching",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "String Pattern Matching",
+      "what_taught": "Utilizing regex or prefix matching to find documents where a string field begins with a specific character.",
+      "why_assessed": "To ensure students can identify the correct method for handling partial string matches, a common requirement in search functionalities.",
+      "evidence_refs": [
+        "String Matching: Utilizing regex or prefix matching to find documents where a string field begins with a specific character.",
+        "Retrieving restaurant records where the name starts with the letter 'P'."
+      ],
+      "misconception_rationale": "Students may mistakenly believe that standard equality operators work for partial matches or that sorting can be used as a filtering mechanism."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In the Hospital Management System scenario, which fields are specifically projected when filtering patient records by age greater than 40?",
+      "option_a": "Patient ID, Address, and Phone Number",
+      "option_b": "Name, Age, Disease, and Doctor details",
+      "option_c": "All available fields in the patient document",
+      "option_d": "Age and Bill amount only",
+      "correct_option": "B",
+      "explanation": "The correct option is B. The factual summary and examples explicitly state that for senior patients (age > 40), the projection includes the patient's name, age, disease, and doctor details. Option A is incorrect as these fields are not mentioned in the context of the age > 40 query. Option C is incorrect because the exercise emphasizes using projection to limit output, not returning the entire document. Option D is incorrect because it omits the name, disease, and doctor details which are part of the specified projection.",
+      "target_concept": "Projection in Hospital Context",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Hospital Management System Queries",
+      "what_taught": "Filtering patient records by age > 40 and projecting name, age, disease, and doctor details.",
+      "why_assessed": "To test recall of specific field selections associated with particular query scenarios in the provided material.",
+      "evidence_refs": [
+        "Filtering patient records by age > 40 and projecting name, age, disease, and doctor details."
+      ],
+      "misconception_rationale": "Students might guess common patient fields (like address) or assume that all fields are returned by default, failing to recall the specific projection list provided in the examples."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following best describes the primary purpose of the 'Read' operations demonstrated in the Amazon and Hospital management system exercises?",
+      "option_a": "To insert new product and patient records into the database",
+      "option_b": "To modify existing stock levels and patient ages",
+      "option_c": "To retrieve specific subsets of data based on numeric and string criteria",
+      "option_d": "To delete obsolete product and patient records",
+      "correct_option": "C",
+      "explanation": "The correct option is C. The material focuses on 'Read' queries, which involve filtering documents based on numeric comparisons (stock, price, age) and string patterns (names). This process retrieves specific subsets of data. Option A describes 'Create' operations. Option B describes 'Update' operations. Option D describes 'Delete' operations. The exercises do not involve modifying or removing data, only querying it.",
+      "target_concept": "CRUD Operations - Read",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "CRUD Operations",
+      "what_taught": "CRUD Operations (Create, Read, Update, Delete) in MongoDB, specifically focusing on Read queries for filtering and projection.",
+      "why_assessed": "To ensure students can distinguish between different CRUD operations and correctly identify the nature of the queries being performed (retrieval vs. modification).",
+      "evidence_refs": [
+        "CRUD Operations (Create, Read, Update, Delete) in MongoDB",
+        "The provided material outlines a set of problem-solving exercises focused on MongoDB CRUD operations, specifically 'Read' queries"
+      ],
+      "misconception_rationale": "Students may confuse the act of querying data with modifying it, or fail to recognize that filtering and projecting are components of the 'Read' phase of CRUD."
+    }
+  ]
+}

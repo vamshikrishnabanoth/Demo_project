@@ -1,0 +1,88 @@
+{
+  "blueprint_id": "BP_input_09_wt_web_technologies",
+  "input_id": "input_09_wt_web_technologies",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "File System Operations in Node.js",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPOSITION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "File System Basics",
+        "Node.js Runtime Environment",
+        "Asynchronous Programming"
+      ],
+      "evidence_refs": [
+        "E_C05",
+        "E_C06",
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Node.js Buffer Management",
+      "salience_score": 0.24,
+      "instructional_acts": [
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPOSITION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Binary Data Representation",
+        "Memory Management in Node.js",
+        "Data Types"
+      ],
+      "evidence_refs": [
+        "E_C11",
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Web Technologies Fundamentals",
+      "salience_score": 0.059,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Client-Server Architecture",
+        "HTTP Protocol"
+      ],
+      "evidence_refs": [
+        "E_C03"
+      ],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Network Data Transfer",
+      "salience_score": 0.059,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Network Sockets",
+        "Data Serialization",
+        "TCP/IP Basics"
+      ],
+      "evidence_refs": [
+        "E_C12"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

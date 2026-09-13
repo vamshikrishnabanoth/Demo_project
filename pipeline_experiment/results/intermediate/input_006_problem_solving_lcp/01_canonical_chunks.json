@@ -1,0 +1,138 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "PROBLEM_SOLVING",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 480.0
+      }
+    ],
+    "text": "In string algorithms, finding the Longest Common Prefix (LCP) across N strings has four standard algorithmic paradigms. Method 1: Horizontal Scanning. LCP(S1...Sn) = LCP(LCP(LCP(S1, S2), S3)...Sn). If at any point the running prefix becomes empty, we break immediately.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 480.0
+        }
+      ],
+      "dwell_time": 480.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "PROBLEM_SOLVING",
+    "time_spans": [
+      {
+        "start": 480.0,
+        "end": 1200.0
+      }
+    ],
+    "text": "Method 2: Vertical Scanning. Compare character by character at index i across all N strings simultaneously. This is superior when an early mismatch occurs in string 2, avoiding scanning the remaining strings completely.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 480.0,
+          "end": 1200.0
+        }
+      ],
+      "dwell_time": 720.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": true,
+      "debugging_event": true,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "PROBLEM_SOLVING",
+    "time_spans": [
+      {
+        "start": 1200.0,
+        "end": 1920.0
+      }
+    ],
+    "text": "Method 3: Binary Search on Prefix Length. Find minimum string length L_min. Binary search the prefix length from 1 to L_min, checking if all strings match prefix of length mid in O(N * mid) time. Total complexity is O(N * min_len * log(min_len)).",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1200.0,
+          "end": 1920.0
+        }
+      ],
+      "dwell_time": 720.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "PROBLEM_SOLVING",
+    "time_spans": [
+      {
+        "start": 1920.0,
+        "end": 2400.0
+      }
+    ],
+    "text": "In exams, remember: Trie-based LCP works by inserting all strings into a Trie and traversing from root as long as each node has exactly one child and is not an end-of-word marker.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1920.0,
+          "end": 2400.0
+        }
+      ],
+      "dwell_time": 480.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

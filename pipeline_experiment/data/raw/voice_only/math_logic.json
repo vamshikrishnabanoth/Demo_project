@@ -1,0 +1,5 @@
+{
+  "title": "Interactive Arithmetic Logic: GCD, LCM & Euclidean Modulo",
+  "instructor": "Prof. Deepa / KMIT CSE",
+  "raw_content": "[00:00 - 05:00] Look at this logic carefully. If we want to compute LCM of two numbers A and B, remember the relation: LCM(A, B) * GCD(A, B) = A * B. Therefore LCM is simply (A * B) / GCD(A, B).\n[05:00 - 15:00] Now how do we compute GCD efficiently? Do not use subtraction repeatedly. We use the Euclidean algorithm: while B is not zero, remainder R = A % B, set A = B, and set B = R. When B becomes zero, A is our GCD. Why modulo? Because modulo reduces the larger number exponentially in logarithmic time O(log(min(A, B))).\n[15:00 - 25:00] Student asks: what if A < B initially? Excellent question. If A=12 and B=18, in iteration 1: 12 % 18 is 12! So A becomes 18 and B becomes 12, naturally swapping them without needing an explicit swap variable!\n[25:00 - 30:00] Always watch out for integer overflow: when calculating (A * B) / GCD, do (A / GCD) * B first to prevent integer overflow in C++/Java."
+}

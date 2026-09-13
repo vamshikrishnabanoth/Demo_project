@@ -1,0 +1,71 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Data Import and Export",
+    "subtopics": [
+      "mongoimport (JSON/CSV)",
+      "mongoexport (CSV/JSON)",
+      "Local vs Atlas CLI usage",
+      "Field selection and filtering"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C03"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Backup and Restore",
+    "subtopics": [
+      "mongorestore",
+      "Local file restoration",
+      "Atlas URI restoration"
+    ],
+    "associated_chunk_ids": [
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Query Operators and Array Updates",
+    "subtopics": [
+      "Comparison operators ($in, $nin, $all)",
+      "Array update operators ($set, $unset, $push)",
+      "Basic CRUD operations (find, updateOne)"
+    ],
+    "associated_chunk_ids": [
+      "C05",
+      "C06"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Aggregation Pipeline",
+    "subtopics": [
+      "$group stage",
+      "$push and $sum accumulators",
+      "$limit stage",
+      "Joining collections with $lookup",
+      "Flattening arrays with $unwind"
+    ],
+    "associated_chunk_ids": [
+      "C07",
+      "C08",
+      "C09"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Indexing and Schema Validation",
+    "subtopics": [
+      "Creating indexes (unique, sparse)",
+      "Query performance analysis (explain)",
+      "JSON Schema validation (bsonType)"
+    ],
+    "associated_chunk_ids": [
+      "C10",
+      "C11"
+    ]
+  }
+]

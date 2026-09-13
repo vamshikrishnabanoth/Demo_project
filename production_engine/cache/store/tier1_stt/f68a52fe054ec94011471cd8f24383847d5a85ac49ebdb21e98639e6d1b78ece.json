@@ -1,0 +1,17 @@
+{
+  "text": "Variational Autoencoders use the reparameterization trick to allow backpropagation through stochastic latent variables.",
+  "segments": [
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 0.0,
+      "end": 15.0,
+      "text": "Variational Autoencoders use reparameterization.",
+      "tokens": [],
+      "temperature": 0.0,
+      "avg_logprob": -0.2,
+      "compression_ratio": 1.1,
+      "no_speech_prob": 0.01
+    }
+  ]
+}

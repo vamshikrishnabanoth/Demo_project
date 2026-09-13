@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_005_assignment_mongodb",
+  "input_id": "input_005_assignment_mongodb",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "MongoDB Aggregation Pipeline Fundamentals",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Aggregation Operators and Stages",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Performance Tuning for Aggregations",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "E\u2011commerce Data Modeling in MongoDB",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Business Metrics Derived from Aggregations",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    }
+  ]
+}

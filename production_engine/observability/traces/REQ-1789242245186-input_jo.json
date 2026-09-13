@@ -1,0 +1,24 @@
+{
+  "request_id": "REQ-1789242245186-input_jo",
+  "timestamp": "2026-09-12T19:46:18Z",
+  "input_id": "input_job_a147",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "COMPLEXITY_ANALYSIS"
+  ],
+  "initial_generated_count": 1,
+  "first_pass_validated_count": 1,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 1,
+  "total_latency_ms": 133764.3,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "With only one core concept available, the target was designed to span multiple pedagogical facets by focusing on complexity analysis. This single target integrates conceptual understanding of algorithmic efficiency, theoretical rationale for performance trade‑offs, code interpretation of loop structures, output prediction of runtime for varying input sizes, and practical application to the specific job (job_a147)."
+}

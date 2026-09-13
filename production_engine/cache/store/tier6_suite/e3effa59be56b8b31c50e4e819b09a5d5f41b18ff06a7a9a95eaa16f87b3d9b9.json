@@ -1,0 +1,81 @@
+{
+  "input_id": "input_job_a147",
+  "title": "Assessment for Job job_a147",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 1,
+  "requested_difficulty": "MEDIUM",
+  "defensible_capacity": 1,
+  "final_question_count": 1,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is the time complexity of the binary search algorithm when searching a sorted array of size n using a sentinel approach?",
+      "stem": "What is the time complexity of the binary search algorithm when searching a sorted array of size n using a sentinel approach?",
+      "option_a": "O(log(n)",
+      "option_b": "O(n)",
+      "option_c": "O(n log(n)",
+      "option_d": "O(n^2)",
+      "correct_option": "A",
+      "explanation": "Option A is correct: ",
+      "target_concept": "Core Methodology",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The time and space complexity of the core methodology used in job_a147, including Big‑O notation and the impact of input size on performance.",
+      "why_assessed": "To assess students' ability to apply Big O notation to analyze algorithm performance",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors target: Assuming all operations are O(1), Confusing average‑case with worst‑case complexity, Neglecting constant factors in Big‑O analysis"
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1789242245186-input_jo",
+    "trace": {
+      "request_id": "REQ-1789242245186-input_jo",
+      "timestamp": "2026-09-12T19:46:18Z",
+      "input_id": "input_job_a147",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.5,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "MISS",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "MISS"
+      },
+      "selected_facets": [
+        "COMPLEXITY_ANALYSIS"
+      ],
+      "initial_generated_count": 1,
+      "first_pass_validated_count": 1,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 1,
+      "total_latency_ms": 133764.3,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "With only one core concept available, the target was designed to span multiple pedagogical facets by focusing on complexity analysis. This single target integrates conceptual understanding of algorithmic efficiency, theoretical rationale for performance trade‑offs, code interpretation of loop structures, output prediction of runtime for varying input sizes, and practical application to the specific job (job_a147)."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 133.76,
+    "measured_llm_calls": 6,
+    "pedagogical_delivery_index": 0.5,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "COMPLEXITY_ANALYSIS": 1
+    },
+    "cognitive_distribution": {
+      "ANALYZE": 1
+    },
+    "planning_notes": "With only one core concept available, the target was designed to span multiple pedagogical facets by focusing on complexity analysis. This single target integrates conceptual understanding of algorithmic efficiency, theoretical rationale for performance trade‑offs, code interpretation of loop structures, output prediction of runtime for varying input sizes, and practical application to the specific job (job_a147).",
+    "system_notice": null,
+    "generator_model": "allam-2-7b",
+    "generator_provider": "groq",
+    "target_generator": "ft-llama-3-8b-kmit",
+    "serving_mode": "TEMPORARY_HOSTED_DEMO",
+    "critic_model": "openai/gpt-oss-120b",
+    "representation_model": "openai/gpt-oss-20b",
+    "planning_model": "openai/gpt-oss-20b",
+    "stt_model": "whisper-large-v3"
+  }
+}

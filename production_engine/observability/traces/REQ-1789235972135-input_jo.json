@@ -1,0 +1,28 @@
+{
+  "request_id": "REQ-1789235972135-input_jo",
+  "timestamp": "2026-09-12T18:06:55Z",
+  "input_id": "input_job_ef74",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "CODE_INTERPRETATION",
+    "OUTPUT_PREDICTION",
+    "ERROR_DIAGNOSIS"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 443517.82,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "Since the provided instructional concepts contain no specific content ('No content provided') and no evidence references, it is impossible to generate specific, non-redundant assessment targets based on actual curriculum material. Inventing unrelated topics is prohibited by the mission constraints. Therefore, the system cannot fulfill the request for 5 high-quality, non-redundant targets based on the available data. The output below reflects a null/empty state for targets to strictly adhere to the 'do NOT invent unrelated topics' constraint, while acknowledging the request in the strategy notes. However, to satisfy the JSON schema requirement for a valid object, I will return an empty list of targets as no valid targets can be constructed from empty data."
+}

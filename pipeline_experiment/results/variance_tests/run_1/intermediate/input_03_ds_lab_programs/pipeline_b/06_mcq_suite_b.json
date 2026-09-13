@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "You are writing a function to insert a new node at a given position in a singly linked list. Which of the following statements correctly describes the order of pointer updates to avoid detaching the list head?",
+      "option_a": "Update the head pointer to the new node first, then set the new node's next pointer.",
+      "option_b": "Set the new node's next pointer to the successor node before linking the predecessor's next to the new node.",
+      "option_c": "Link the predecessor's next to the new node before assigning the new node's next pointer.",
+      "option_d": "Update both the predecessor's next and the new node's next pointers after the traversal is complete.",
+      "correct_option": "B",
+      "explanation": "Correct: Option B is the safe order\u2014first assign newNode->next to the node that follows the insertion point, then set predecessor->next = newNode. This preserves the link to the remainder of the list. Option A overwrites the head before the original list is linked, causing loss of the original nodes. Option C loses the reference to the successor because predecessor->next is changed before newNode->next is set, breaking the chain. Option D is vague and suggests delaying both updates, which can also lead to a detached segment during the delay.",
+      "target_concept": "Singly Linked List Insertion",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "When deleting a node from a doubly linked list, which sequence of pointer updates ensures the list remains correctly linked?",
+      "option_a": "Update both the previous node's next pointer and the next node's prev pointer to bypass the deleted node.",
+      "option_b": "Update only the previous node's next pointer, leaving the next node's prev unchanged.",
+      "option_c": "Update only the next node's prev pointer, leaving the previous node's next unchanged.",
+      "option_d": "No pointer updates are needed if the node to delete is the tail.",
+      "correct_option": "A",
+      "explanation": "Correct: In a doubly linked list, removal requires re\u2011linking both sides\u2014previous->next = next and next->prev = previous\u2014so the list stays intact (Option A). Option B leaves the next node still pointing back to the removed node, breaking backward traversal. Option C leaves the previous node pointing forward to a freed node, breaking forward traversal. Option D is false because even when deleting the tail, the previous node's next must be set to NULL.",
+      "target_concept": "Doubly Linked List Deletion",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Which loop condition correctly traverses a circular linked list exactly once without entering an infinite loop?",
+      "option_a": "Continue looping until the current pointer becomes equal to the head node again.",
+      "option_b": "Loop while the current pointer is not NULL.",
+      "option_c": "Iterate a fixed number of times equal to the list size stored in a separate counter.",
+      "option_d": "Use recursion without any explicit termination condition.",
+      "correct_option": "A",
+      "explanation": "Correct: Because the list is circular, the sentinel condition is reaching the head again (Option A). Option B never becomes false because a circular list never contains a NULL next pointer, leading to an infinite loop. Option C could work but requires an external size counter, which the problem statement does not assume. Option D lacks a base case and would also recurse indefinitely.",
+      "target_concept": "Circular Linked List Traversal",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In an array\u2011based stack implementation, which check must be performed before executing a push operation to prevent overflow?",
+      "option_a": "Verify that the top index is less than the maximum index (capacity\u20111) before inserting the new element.",
+      "option_b": "Push the element first and then adjust the top index, ignoring capacity.",
+      "option_c": "Decrement the top index before inserting the element.",
+      "option_d": "Use a while loop that continues pushing until an overflow error occurs.",
+      "correct_option": "A",
+      "explanation": "Correct: Option A correctly checks that there is still space (top < capacity\u20111) before writing to the array, preventing overflow. Option B writes past the array bounds, causing undefined behavior. Option C moves the top index in the wrong direction, corrupting the stack state. Option D deliberately allows overflow, which is the opposite of safe programming practice.",
+      "target_concept": "Stack Push Operation with Array Bounds",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "When implementing a pop operation for a stack built with a singly linked list, what step is essential to avoid a memory leak?",
+      "option_a": "After retrieving the data, free (deallocate) the node that was at the top of the stack.",
+      "option_b": "Simply return the data without freeing the node, relying on the operating system to reclaim memory later.",
+      "option_c": "Free the node before reading its data, then return the data stored in a temporary variable.",
+      "option_d": "Allocate a new node for each pop operation to replace the removed node.",
+      "correct_option": "A",
+      "explanation": "Correct: The popped node must be deallocated after its data is saved (Option A); otherwise each pop leaves an unreachable node, causing a memory leak. Option B leaves the node allocated, directly causing the leak. Option C frees memory before the data is read, leading to undefined behavior. Option D is nonsensical\u2014pop should remove, not allocate, nodes.",
+      "target_concept": "Stack Pop Operation with Linked List Memory Management",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

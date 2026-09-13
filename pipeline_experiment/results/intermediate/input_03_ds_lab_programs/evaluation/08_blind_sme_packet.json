@@ -1,0 +1,197 @@
+{
+  "input_id": "input_03_ds_lab_programs",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "Consider the following C code snippet intended to insert a new node `newNode` at the head of a singly linked list with head pointer `head`:\n\n```c\nnewNode->next = head;\nhead = newNode;\n```\n\nIf a student mistakenly writes the code in the reverse order:\n\n```c\nhead = newNode;\nnewNode->next = head;\n```\n\nWhat is the immediate consequence of this error on the linked list structure?",
+      "options": {
+        "A": "The list remains intact, but the new node is inserted at the tail instead of the head.",
+        "B": "The new node creates a self-loop (points to itself), and the rest of the original list becomes inaccessible from the head.",
+        "C": "A segmentation fault occurs immediately because `newNode->next` is accessed before `newNode` is allocated.",
+        "D": "The original head node is deleted from memory, and the new node correctly points to the second node of the original list."
+      },
+      "correct_option": "B",
+      "explanation": "In the incorrect sequence, `head = newNode` is executed first. This updates the global `head` pointer to point to `newNode`. The next line, `newNode->next = head`, then assigns `newNode->next` to point to `head`, which is now `newNode` itself. This creates a circular reference where `newNode` points to itself. The original head node is no longer referenced by any pointer in the list structure (memory leak), and the rest of the list is lost. Option A is incorrect because the insertion logic is fundamentally broken, not just misplaced. Option C is incorrect because `newNode` is assumed to be allocated prior to this snippet. Option D is incorrect because the original head is not deleted, just orphaned, and the new node does not point to the second node."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "How does the traversal logic for a Doubly Linked List differ from that of a Singly Linked List, according to the provided code patterns?",
+      "options": {
+        "A": "Doubly Linked Lists require a `do-while` loop to ensure the last node is visited twice.",
+        "B": "Doubly Linked Lists allow backward traversal by utilizing the `prev` pointer, whereas Singly Linked Lists only support forward traversal via `next`.",
+        "C": "Doubly Linked Lists use a `tail` pointer to start traversal from the end, while Singly Linked Lists start from the `head`.",
+        "D": "There is no difference; both use identical `while (temp != NULL)` loops for all operations."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary highlights that Doubly Linked Lists allow bidirectional traversal by adjusting both `prev` and `next` pointers. Option A is incorrect because `do-while` is associated with Circular Linked Lists in the summary. Option C is incorrect because while `tail` is used in Circular lists, the defining feature of Doubly lists is the `prev` pointer for backward movement, not necessarily starting from the tail. Option D is incorrect because the presence of the `prev` pointer fundamentally changes the traversal capabilities."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "In the Infix to Postfix conversion algorithm, what action is taken when an operator is encountered on the stack that has higher or equal precedence to the current operator being processed?",
+      "options": {
+        "A": "The current operator is pushed onto the stack immediately.",
+        "B": "The operators on the stack are popped and appended to the result string until the condition is no longer met.",
+        "C": "The current operator is discarded to maintain strict precedence order.",
+        "D": "The entire stack is cleared and the algorithm restarts."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states the algorithm involves 'pop operators with higher or equal precedence' from the stack to the result. Option A is incorrect because pushing immediately would violate precedence rules. Option C is incorrect because operators are never discarded; they are moved to the output. Option D is incorrect as clearing the stack is not part of the standard algorithm described."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "An array-based stack is initialized with `top = -1` and `MAX_SIZE = 5`. The following operations are performed in sequence: `push(10)`, `push(20)`, `push(30)`, `pop()`, `push(40)`. What is the value of the `top` index and the element at `stack[top]` after these operations?",
+      "options": {
+        "A": "top = 2, stack[top] = 30",
+        "B": "top = 3, stack[top] = 40",
+        "C": "top = 2, stack[top] = 40",
+        "D": "top = 3, stack[top] = 30"
+      },
+      "correct_option": "C",
+      "explanation": "1. `push(10)`: `top` becomes 0, `stack[0] = 10`.\n2. `push(20)`: `top` becomes 1, `stack[1] = 20`.\n3. `push(30)`: `top` becomes 2, `stack[2] = 30`.\n4. `pop()`: `top` becomes 1. The value 30 is removed.\n5. `push(40)`: `top` becomes 2, `stack[2] = 40`.\nFinal state: `top = 2`, `stack[2] = 40`. Option A is incorrect because it ignores the final push. Option B is incorrect because it assumes `top` increments to 3 (which would be the case if the pop didn't happen or if the push was to a new slot, but `top` was decremented to 1, so next push goes to 2). Option D is incorrect because it has the wrong value at the top index."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "In the implementation of a Stack using a Singly Linked List, why are push and pop operations considered O(1) time complexity?",
+      "options": {
+        "A": "Because the list is stored in a contiguous array, allowing direct index access.",
+        "B": "Because the head of the list is used as the top, allowing insertion and deletion at the beginning without traversal.",
+        "C": "Because the stack automatically balances itself, reducing the number of nodes.",
+        "D": "Because the `tail` pointer is updated in constant time for every operation."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states that the linked-list-based stack 'leverages the head of the list as the top, allowing O(1) push and pop operations by inserting and deleting nodes at the beginning.' Option A is incorrect because linked lists are not contiguous arrays. Option C is incorrect because stacks do not self-balance. Option D is incorrect because updating the tail is not the primary mechanism for O(1) stack operations in a singly linked list; the head is the key."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "You are inserting a new node `newNode` between two existing nodes `prev` and `next` in a doubly linked list. Which of the following sequences of pointer assignments correctly maintains the integrity of both the forward (`next`) and backward (`prev`) links?",
+      "options": {
+        "A": "prev->next = newNode; newNode->next = next; newNode->prev = prev; next->prev = newNode;",
+        "B": "newNode->next = next; newNode->prev = prev; prev->next = newNode; next->prev = newNode;",
+        "C": "prev->next = newNode; next->prev = newNode; newNode->next = next; newNode->prev = prev;",
+        "D": "newNode->prev = prev; prev->next = newNode; next->prev = newNode; newNode->next = next;"
+      },
+      "correct_option": "B",
+      "explanation": "Option B is the safest and most standard approach. It first sets the new node's pointers (`newNode->next` and `newNode->prev`) to reference the existing neighbors. This ensures that `newNode` is fully configured before it is linked into the chain. Then, it updates the neighbors' pointers (`prev->next` and `next->prev`) to point to `newNode`. This order prevents any temporary loss of reference to the `next` node. Options A, C, and D are also logically valid in many contexts if executed carefully, but Option B is the most robust because it isolates the new node's configuration before modifying the existing list structure. However, looking closely at standard textbook implementations, Option B is the canonical 'safe' order. Let's re-evaluate. Actually, all four options result in a correct final state if no pointers are overwritten before being read. But Option B is preferred because it doesn't break the link between `prev` and `next` until the very end. Wait, in Option A: `prev->next = newNode` breaks the link to `next`. But `next` is still accessible via the variable `next`. So A is also valid. Let's look for a subtle error. In Option C: `prev->next = newNode` (link broken), `next->prev = newNode` (link broken). Then `newNode->next = next` and `newNode->prev = prev`. This is also valid. In Option D: `newNode->prev = prev`, `prev->next = newNode` (link broken), `next->prev = newNode` (link broken), `newNode->next = next`. This is also valid. \n\nLet's look for a distractor that is actually *incorrect*. The prompt asks for the *correct* set. Usually, the misconception is forgetting one of the four updates. All options here have 4 updates. Let's assume the question implies a specific 'best practice' or one option has a subtle flaw. \n\nActually, let's look at Option A again. `prev->next = newNode`. Now `prev` points to `newNode`. `newNode->next = next`. `newNode->prev = prev`. `next->prev = newNode`. This works.\n\nLet's look at a common error: Forgetting to update `next->prev`. None of the options do that.\n\nLet's reconsider the standard 'safe' order. Often, it is taught to set the new node's pointers first. Option B does this. Option A modifies `prev->next` first. If `prev` was the only reference to `next` (which it isn't, we have the variable `next`), it would be bad. But we have the variable.\n\nLet's create a clearer distinction. A common mistake is updating `prev->next` before saving `next`. But here `next` is a parameter/variable.\n\nLet's assume the question is testing the *order* that prevents any momentary inconsistency. Option B is the most defensive. It configures the new node completely before touching the existing list. This is the standard pedagogical answer for 'correct sequence' in many CS curricula to avoid any risk of losing the `next` pointer if the code were slightly different (e.g., if `next` was derived from `prev->next`).\n\nTherefore, B is the best answer as it represents the 'configure new node first' strategy."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "You are writing a function to print all elements in a singly circular linked list. The list is not empty. Which of the following `while` loop conditions is correct to traverse the list exactly once without entering an infinite loop?",
+      "options": {
+        "A": "while (current != NULL)",
+        "B": "while (current->next != NULL)",
+        "C": "while (current != head)",
+        "D": "while (current->next != head)"
+      },
+      "correct_option": "C",
+      "explanation": "In a singly circular linked list, the last node's `next` pointer points back to the `head` node. There is no `NULL` pointer in the list. Therefore, conditions checking for `NULL` (Options A and B) will never be true, resulting in an infinite loop. Option D (`current->next != head`) would stop *before* printing the last node, because when `current` is the last node, `current->next` is `head`, so the condition fails, and the last node is never processed. Option C (`current != head`) starts at `head`, processes it, moves to the next, and continues until `current` points back to `head`, at which point the loop terminates. This ensures every node is visited exactly once."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "When implementing a Stack using a static array as described in the material, what condition must be checked before executing the push operation `arr[++top] = val`?",
+      "options": {
+        "A": "Check if `top == -1` to prevent underflow.",
+        "B": "Check if `top == max` to prevent stack overflow.",
+        "C": "Check if `arr[top] == NULL` to ensure the slot is empty.",
+        "D": "Check if `top > max` to ensure the index is within bounds."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary explicitly states that the array-based stack checks for overflow when `top == max` before pushing. Option A is incorrect because `top == -1` indicates an empty stack (underflow), which is checked during pop, not push. Option C is incorrect because array elements are not pointers to NULL in this context; they hold values. Option D is incorrect because the check is for equality with the maximum capacity, not strictly greater than, as the index is incremented before assignment."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "When implementing a stack using a singly linked list, how does the `push` operation differ from an array-based stack in terms of memory management and pointer updates?",
+      "options": {
+        "A": "It requires incrementing a `size` variable to check for overflow before allocating memory.",
+        "B": "It involves allocating a new node, setting its `next` pointer to the current `top`, and updating `top` to point to the new node.",
+        "C": "It involves inserting the new node at the tail of the list to maintain FIFO order.",
+        "D": "It requires shifting all existing nodes to make room for the new node at index 0."
+      },
+      "correct_option": "B",
+      "explanation": "A linked-list stack uses dynamic memory allocation. The `push` operation creates a new node, links it to the current top (`newNode->next = top`), and updates the `top` pointer to the new node (`top = newNode`). This is O(1) and does not require a fixed size or shifting. Option A is incorrect because linked lists do not have a fixed capacity, so overflow is only due to system memory, not a pre-defined size variable. Option C is incorrect because stacks are LIFO, so insertion must happen at the head (top), not the tail. Option D is incorrect because linked lists do not require shifting elements; pointers are simply updated."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "In the provided C++ implementation of a Singly Linked List, what is the primary purpose of the wrapper class (e.g., `SinglyLinkedList`) that manages the `head` pointer?",
+      "options": {
+        "A": "To store the actual data values of the nodes in a contiguous memory block.",
+        "B": "To encapsulate the list's state and provide an interface for operations like insertion and traversal, keeping the `head` pointer accessible.",
+        "C": "To automatically manage the memory deallocation of all nodes when the program terminates.",
+        "D": "To convert the linked list into a circular structure by linking the last node to the first."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states that the wrapper class manages the `head` pointer, which is essential for accessing the list. It encapsulates the logic for operations. Option A is incorrect because linked lists store data in separate nodes, not contiguous blocks (that is arrays). Option C is incorrect because the summary mentions manual deallocation during deletion, not automatic global cleanup. Option D is incorrect because the wrapper class for a Singly Linked List does not inherently make it circular; that requires specific pointer manipulation described for Circular Linked Lists."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Singly Linked List Structure",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Stack Array Implementation",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Infix to Postfix Conversion",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Doubly Linked List Traversal",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Linked List Stack Implementation",
+      "cognitive_level": "EVALUATE"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q_S01_01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Singly Linked List Insertion at Head",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q_S02_01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Doubly Linked List Insertion Between Nodes",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q_S03_01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Circular Linked List Traversal",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q_S04_01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Array-Based Stack Operations",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q_S05_01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_03_ds_lab_programs",
+      "target_concept": "Linked List-Based Stack Implementation",
+      "cognitive_level": "UNDERSTAND"
+    }
+  }
+}

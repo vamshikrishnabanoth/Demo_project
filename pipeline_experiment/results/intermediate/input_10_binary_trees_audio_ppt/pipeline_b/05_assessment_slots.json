@@ -1,0 +1,87 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Binary Tree Fundamentals and Node Classification",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_DEFINITION",
+    "assessment_goal": "Distinguish between internal nodes, leaf nodes, and the root node based on their degree and position within a binary tree structure.",
+    "misconception_target": "Confusing the definition of a leaf node (degree 0) with a node that has only one child, or assuming the root must have two children.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C08"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Types of Binary Trees",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CLASSIFICATION_COMPARISON",
+    "assessment_goal": "Differentiate between full, complete, and perfect binary trees by analyzing the occupancy of nodes at each level and the structure of the last level.",
+    "misconception_target": "Assuming that a complete binary tree must be full, or confusing a perfect binary tree with a complete one where the last level is not necessarily full but left-justified.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C04",
+      "E_C07",
+      "E_C10",
+      "E_C14"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Mathematical Properties and Formulas of Binary Trees",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "FORMULA_DERIVATION",
+    "assessment_goal": "Calculate the maximum number of nodes in a binary tree of height h using the formula 2^(h+1) - 1, and verify the relationship between height and node count.",
+    "misconception_target": "Using the formula for the number of nodes at a specific level (2^h) instead of the cumulative total, or off-by-one errors in height indexing (0-based vs 1-based).",
+    "evidence_refs": [
+      "E_C06",
+      "E_C11",
+      "E_C12",
+      "E_C13"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Mathematical Properties and Formulas of Binary Trees",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "FORMULA_DERIVATION",
+    "assessment_goal": "Determine the minimum height of a binary tree given a specific number of nodes, applying the property that a complete binary tree minimizes height for a given node count.",
+    "misconception_target": "Assuming that any binary tree with N nodes has a height of log2(N), ignoring that skewed trees can have height N-1, or failing to round up the logarithmic result correctly for integer heights.",
+    "evidence_refs": [
+      "E_C06",
+      "E_C11",
+      "E_C12",
+      "E_C13"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Tree Construction and Structural Analysis",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "STRUCTURAL_ANALYSIS",
+    "assessment_goal": "Reconstruct the unique binary tree structure from given level-order and in-order traversal sequences, identifying parent-child relationships and left/right subtrees.",
+    "misconception_target": "Incorrectly identifying the root from the level-order sequence, or misassigning left and right subtrees when splitting the in-order sequence based on the root's position.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C09",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "STRUCTURAL_ANALYSIS_SCENARIO",
+    "target_options_count": 4
+  }
+]

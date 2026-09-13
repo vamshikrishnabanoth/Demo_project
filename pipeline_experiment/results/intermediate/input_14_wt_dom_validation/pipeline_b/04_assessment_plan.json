@@ -1,0 +1,23 @@
+{
+  "plan_id": "PLAN_input_14_wt_dom_validation",
+  "input_id": "input_14_wt_dom_validation",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "DOM Tree Traversal",
+      "question_count": 3,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Form Validation",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

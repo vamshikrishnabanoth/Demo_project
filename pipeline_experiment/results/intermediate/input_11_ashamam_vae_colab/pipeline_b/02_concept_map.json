@@ -1,0 +1,52 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Variational Autoencoder (VAE) Architecture",
+    "subtopics": [
+      "Encoder Network",
+      "Decoder Network",
+      "Latent Space Representation"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Latent Sampling Techniques",
+    "subtopics": [
+      "Reparameterization Trick",
+      "Gaussian Distribution Sampling",
+      "Mean and Log-Variance Parameters"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "VAE Loss Functions",
+    "subtopics": [
+      "Reconstruction Loss",
+      "KL Divergence Loss",
+      "Total Loss Calculation"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Fashion-MNIST Dataset Application",
+    "subtopics": [
+      "Dataset Preprocessing",
+      "Image Normalization",
+      "Data Loading"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Model Training and Evaluation",
+    "subtopics": [
+      "Training Loop",
+      "Loss Monitoring",
+      "Generated Sample Visualization"
+    ],
+    "associated_chunk_ids": []
+  }
+]

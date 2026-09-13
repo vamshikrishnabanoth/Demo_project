@@ -1,0 +1,25 @@
+{
+  "input_id": "001",
+  "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+  "concepts_and_definitions": [
+    "Longest Common Prefix (LCP) \u2013 the longest string that is a prefix of all strings in a set",
+    "Binary Search \u2013 divide\u2011and\u2011conquer technique to find a boundary in a sorted or monotonic space",
+    "HashSet \u2013 collection that stores unique elements, used to count character occurrences",
+    "String Scanning \u2013 iterating over characters of strings to compare prefixes",
+    "Time Complexity \u2013 analysis of algorithmic steps relative to input size",
+    "Space Complexity \u2013 amount of memory used by an algorithm"
+  ],
+  "mechanisms_and_formulas": [
+    "Binary search update rules: low = mid + 1 if prefix common, high = mid - 1 otherwise",
+    "Prefix check: all strings share same character at position i \u2192 prefix length i+1 is common",
+    "HashMap counting: if count of a character equals number of strings, it is common at that position",
+    "Time complexity of linear scan LCP: O(n * m) where n is number of strings and m is min length"
+  ],
+  "examples_and_code_patterns": [
+    "Java loop for LCP: for (int i=0; i<minLen; i++) { char c = strs[0].charAt(i); for (int j=1; j<strs.length; j++) if (strs[j].charAt(i)!=c) return sb.toString(); sb.append(c); }",
+    "HashSet approach: for each position, add character to set; if set size >1 break;",
+    "Binary search LCP: while (low <= high) { mid = (low+high)/2; if (isCommonPrefix(mid)) { result=mid; low=mid+1; } else high=mid-1; }",
+    "Cocoa eating bananas example: binary search on speed to find minimal hours <= H"
+  ],
+  "factual_summary_text": "The session reviewed two algorithmic problems: the Longest Common Prefix (LCP) and the Cocoa Eating Bananas problem. For LCP, students examined a straightforward linear scan that compares characters position by position across all strings, stopping when a mismatch occurs. The class also explored a HashSet-based method that counts character occurrences at each position to determine commonality, and a binary search strategy that treats the prefix length as a search space, halving the interval based on whether a candidate length is valid. Discussions highlighted Java memory management nuances, such as object allocation, reference handling, and garbage collection, contrasting them with C++\u2019s explicit delete/free semantics. The Cocoa Eating Bananas problem was introduced as a classic binary search application: given piles of bananas and a time limit, the goal is to find the minimal eating speed that allows all bananas to be consumed within the allotted hours. Students practiced brute\u2011force enumeration of speeds and then moved to a binary search over speed values, computing the total hours needed for each candidate speed. Throughout, the instructor emphasized clean code practices, the importance of breaking loops correctly, and the need to clear data structures between iterations to avoid stale counts."
+}

@@ -1,0 +1,53 @@
+{
+  "input_id": "input_13_wt_event_bubbling",
+  "title": "Web Technologies Lecture 2: Event Listeners, Event Bubbling & Event Capturing",
+  "total_requested_questions": 5,
+  "total_available_targets": 3,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Event Listeners",
+      "what_taught_summary": "An event listener is a function registered to a DOM element using addEventListener(type, listener, useCapture) that executes in response to a specific event. The useCapture boolean argument determines whether the listener is active during the capturing or bubbling phase.",
+      "why_assessed_pedagogy": "This assessment verifies that students can recall the fundamental syntax and definition of event listeners, establishing the baseline vocabulary necessary for understanding complex event flow mechanisms.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Believing that addEventListener only accepts two arguments and ignoring the useCapture parameter.",
+        "Confusing the event listener function with the event object itself.",
+        "Assuming that listeners are automatically attached to the document root rather than the specific element."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Event Bubbling",
+      "what_taught_summary": "Event bubbling is the propagation phase where an event travels from the target element up through its ancestors to the document root. It is the second phase in the strict sequence: Capturing (Root -> Target) -> Target -> Bubbling (Target -> Root).",
+      "why_assessed_pedagogy": "This target ensures students can identify the direction of event propagation in the bubbling phase, which is critical for predicting the order of execution in nested DOM structures.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Thinking that bubbling travels from the document root down to the target element.",
+        "Assuming that bubbling stops at the immediate parent element rather than continuing to the root.",
+        "Confusing the bubbling phase with the capturing phase direction."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Event Capturing",
+      "what_taught_summary": "Event capturing is the initial propagation phase where an event travels from the document root down to the target element. Listeners registered with the useCapture argument set to true are active during this phase.",
+      "why_assessed_pedagogy": "This assessment checks if students can distinguish the capturing phase from bubbling, ensuring they understand the full lifecycle of event propagation from root to target.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Believing that capturing is the default phase for all listeners unless specified otherwise.",
+        "Thinking that capturing travels from the target element up to the root.",
+        "Assuming that the useCapture argument only affects the target phase and not the propagation path."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

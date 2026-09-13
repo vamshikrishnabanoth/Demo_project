@@ -1,0 +1,23 @@
+{
+  "plan_id": "PLAN_input_05_assignment_mongodb_crud",
+  "input_id": "input_05_assignment_mongodb_crud",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "MongoDB Querying and Filtering",
+      "question_count": 3,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Domain-Specific Data Modeling",
+      "question_count": 2,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    }
+  ]
+}

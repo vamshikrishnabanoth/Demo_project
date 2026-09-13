@@ -1,0 +1,146 @@
+{
+  "input_id": "PROD_E2E_VAE",
+  "title": "Variational Autoencoder Fundamentals",
+  "parents": [
+    {
+      "parent_id": "P_01",
+      "evidence_id": "E_PARENT_01",
+      "title": "Lecture Segment 1 (0m00s - 0m30s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 30.0
+      },
+      "full_text": "In a Variational Autoencoder, the encoder predicts mu and log-variance. We use the reparameterization trick z = mu + sigma * epsilon to allow backpropagation through stochastic nodes.",
+      "word_count": 28,
+      "child_ids": [
+        "E_CHILD_001"
+      ]
+    },
+    {
+      "parent_id": "P_SLIDE_1",
+      "evidence_id": "E_PARENT_SLIDE_1",
+      "title": "Slide 1 Full Context",
+      "source_type": "SLIDE",
+      "time_span": null,
+      "full_text": "VAE Loss: Loss = Reconstruction_Loss + KL_Divergence\nSampling: z = mu + tf.exp(0.5 * log_var) * eps",
+      "word_count": 17,
+      "child_ids": [
+        "E_SLIDE_1"
+      ]
+    }
+  ],
+  "children": [
+    {
+      "child_id": "C_001",
+      "evidence_id": "E_CHILD_001",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 30.0
+      },
+      "text": "In a Variational Autoencoder, the encoder predicts mu and log-variance. We use the reparameterization trick z = mu + sigma * epsilon to allow backpropagation through stochastic nodes.",
+      "word_count": 28,
+      "keywords": [
+        "variance",
+        "predicts",
+        "stochastic",
+        "reparameterization",
+        "through",
+        "nodes",
+        "sigma",
+        "trick",
+        "backpropagation",
+        "encoder"
+      ]
+    },
+    {
+      "child_id": "C_SLIDE_1",
+      "evidence_id": "E_SLIDE_1",
+      "parent_id": "E_PARENT_SLIDE_1",
+      "source_type": "SLIDE",
+      "time_span": null,
+      "text": "VAE Loss: Loss = Reconstruction_Loss + KL_Divergence\nSampling: z = mu + tf.exp(0.5 * log_var) * eps",
+      "word_count": 17,
+      "keywords": [
+        "reconstruction_loss",
+        "kl_divergence",
+        "log_var",
+        "sampling",
+        "loss"
+      ]
+    }
+  ],
+  "parent_map": {
+    "E_PARENT_01": {
+      "parent_id": "P_01",
+      "evidence_id": "E_PARENT_01",
+      "title": "Lecture Segment 1 (0m00s - 0m30s)",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 30.0
+      },
+      "full_text": "In a Variational Autoencoder, the encoder predicts mu and log-variance. We use the reparameterization trick z = mu + sigma * epsilon to allow backpropagation through stochastic nodes.",
+      "word_count": 28,
+      "child_ids": [
+        "E_CHILD_001"
+      ]
+    },
+    "E_PARENT_SLIDE_1": {
+      "parent_id": "P_SLIDE_1",
+      "evidence_id": "E_PARENT_SLIDE_1",
+      "title": "Slide 1 Full Context",
+      "source_type": "SLIDE",
+      "time_span": null,
+      "full_text": "VAE Loss: Loss = Reconstruction_Loss + KL_Divergence\nSampling: z = mu + tf.exp(0.5 * log_var) * eps",
+      "word_count": 17,
+      "child_ids": [
+        "E_SLIDE_1"
+      ]
+    }
+  },
+  "child_map": {
+    "E_CHILD_001": {
+      "child_id": "C_001",
+      "evidence_id": "E_CHILD_001",
+      "parent_id": "E_PARENT_01",
+      "source_type": "TRANSCRIPT",
+      "time_span": {
+        "start": 0.0,
+        "end": 30.0
+      },
+      "text": "In a Variational Autoencoder, the encoder predicts mu and log-variance. We use the reparameterization trick z = mu + sigma * epsilon to allow backpropagation through stochastic nodes.",
+      "word_count": 28,
+      "keywords": [
+        "variance",
+        "predicts",
+        "stochastic",
+        "reparameterization",
+        "through",
+        "nodes",
+        "sigma",
+        "trick",
+        "backpropagation",
+        "encoder"
+      ]
+    },
+    "E_SLIDE_1": {
+      "child_id": "C_SLIDE_1",
+      "evidence_id": "E_SLIDE_1",
+      "parent_id": "E_PARENT_SLIDE_1",
+      "source_type": "SLIDE",
+      "time_span": null,
+      "text": "VAE Loss: Loss = Reconstruction_Loss + KL_Divergence\nSampling: z = mu + tf.exp(0.5 * log_var) * eps",
+      "word_count": 17,
+      "keywords": [
+        "reconstruction_loss",
+        "kl_divergence",
+        "log_var",
+        "sampling",
+        "loss"
+      ]
+    }
+  }
+}

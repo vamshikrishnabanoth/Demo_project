@@ -1,0 +1,32 @@
+{
+  "input_id": "assignment_001",
+  "title": "MongoDB Multi-Stage Aggregation Pipeline Query Assignment",
+  "concepts_and_definitions": [
+    "MongoDB aggregation pipeline",
+    "$match stage",
+    "$unwind stage",
+    "$lookup stage",
+    "$group stage",
+    "$sort stage",
+    "$project stage",
+    "anti\u2011pattern (unwind before match)",
+    "indexing for pipeline optimization",
+    "e\u2011commerce collections: orders, products, users",
+    "items array within orders",
+    "product category field",
+    "unit price vs product cost"
+  ],
+  "mechanisms_and_formulas": [
+    "total_revenue = $sum( $multiply( items.quantity , items.unit_price ) )",
+    "average_item_margin = $avg( $subtract( items.unit_price , products.cost ) )",
+    "$match filters documents by status='DELIVERED' and orderDate within 2024",
+    "$unwind deconstructs the items array so each element becomes a separate pipeline document",
+    "$lookup joins orders with products on items.product_id = products._id",
+    "$sort orders results by total_revenue descending",
+    "$project removes _id and formats revenue to two decimal places"
+  ],
+  "examples_and_code_patterns": [
+    "db.orders.aggregate([\n  { $match: { status: 'DELIVERED', orderDate: { $gte: ISODate('2024-01-01'), $lt: ISODate('2025-01-01') } } },\n  { $unwind: '$items' },\n  { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'productInfo' } },\n  { $unwind: '$productInfo' },\n  { $group: {\n      _id: '$productInfo.category',\n      total_revenue: { $sum: { $multiply: [ '$items.quantity', '$items.unit_price' ] } },\n      average_item_margin: { $avg: { $subtract: [ '$items.unit_price', '$productInfo.cost' ] } }\n    }\n  },\n  { $sort: { total_revenue: -1 } },\n  { $project: { _id: 0, category: '$_id', total_revenue: { $round: [ '$total_revenue', 2 ] }, average_item_margin: 1 } }\n])"
+  ],
+  "factual_summary_text": "The assignment asks students to build a multi\u2011stage MongoDB aggregation pipeline that extracts business metrics from an e\u2011commerce database containing orders, products, and users. The pipeline must begin with a $match stage that selects only orders whose status is DELIVERED and whose orderDate falls within the calendar year 2024. Next, a $unwind stage deconstructs the items array so each product line can be processed individually. A $lookup stage then joins each unwound item to the products collection using items.product_id and the product _id, bringing in category and cost information. The $group stage aggregates by product category, calculating total_revenue as the sum of quantity multiplied by unit_price and average_item_margin as the average of unit_price minus product cost. Results are ordered in descending total_revenue with a $sort stage, and a final $project stage removes the internal _id field and rounds revenue values to two decimal places. The problem also highlights an anti\u2011pattern: placing $unwind before $match, which would cause unnecessary memory consumption, and stresses the importance of indexing the fields used in the initial $match for optimal pipeline performance."
+}

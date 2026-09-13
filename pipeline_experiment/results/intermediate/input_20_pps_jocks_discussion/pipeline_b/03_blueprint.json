@@ -1,0 +1,54 @@
+{
+  "blueprint_id": "BP_input_20_pps_jocks_discussion",
+  "input_id": "input_20_pps_jocks_discussion",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Python Problem Solving",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Basic Python Syntax",
+        "Problem Decomposition"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Interactive Learning Methods",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Active Learning Strategies",
+        "Student Engagement"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Code Implementation",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Python Variables",
+        "Control Flow"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

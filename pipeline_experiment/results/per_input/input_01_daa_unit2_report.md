@@ -1,0 +1,90 @@
+# Level 1 Report: Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method
+**Input ID**: `input_01_daa_unit2` | **Input Type**: `PDF` | **Content Style**: `THEORY`
+
+## 1. Quantitative Metrics Comparison
+
+| Evaluation Dimension | Pipeline A (Summary) | Pipeline B (Blueprint) | Metric Interpretation |
+| :--- | :---: | :---: | :--- |
+| **Source Grounding** | 86.8% | 84.2% | Grounding in source chunks |
+| **Source Answerability** | 69.9% | 66.4% | Answerable from provided material |
+| **Average Bloom's Level** | 2.8 / 6.0 | 2.5 / 6.0 | Cognitive depth demand |
+| **Material Specificity** | 4.48 / 5.0 | 4.36 / 5.0 | Reflection of specific treatment |
+| **Genericness Index** | 1.0 / 5.0 | 1.0 / 5.0 | Lower = More uniquely tailored |
+| **Question Diversity** | 0.889 | 0.832 | Intra-suite conceptual variety |
+| **Composite Quality (Q)** | **0.799** | **0.762** | Standardized Quality Score |
+
+### **DECISION: EQUIVALENT / INCONCLUSIVE**
+> Composite quality difference (|delta|=0.037) is within the indifference threshold (0.05).
+
+## 2. Experiment B1: Blueprint Validity Assessment
+- **Topics Grounded in Source**: 100.0%
+- **Salience Alignment Score**: 4.5 / 5.0
+- **Instructional Act Accuracy**: 100.0%
+- **Overall Blueprint Validity**: **83.3%**
+
+## 3. Actual Generated Questions
+
+### Pipeline A Questions (Summary)
+**Q1 (UNDERSTAND)**: In the context of the Divide and Conquer technique, what is the primary characteristic of the recurrence relation T(n) = T(n/2) + c associated with Binary Search?
+- A: It indicates a linear time complexity of O(n) because the problem size is reduced by a constant factor.
+- B: It indicates a logarithmic time complexity of O(log n) because the problem size is halved at each step.
+- C: It indicates a quadratic time complexity of O(n^2) due to the recursive overhead.
+- D: It indicates a constant time complexity of O(1) because the search space is fixed.
+- *Correct*: **B** | *Explanation*: The recurrence T(n) = T(n/2) + c describes a process where the problem size is divided by 2 in each recursive call, with a constant amount of work done at each level. This structure leads to a logarithmic number of steps (log base 2 of n), resulting in O(log n) time complexity. Option A is incorrect because halving the size does not lead to linear time. Option C is incorrect as quadratic time arises from nested loops or splitting into two subproblems of size n/2 (T(n) = 2T(n/2) + O(n)). Option D is incorrect because the number of steps depends on n.
+
+**Q2 (APPLY)**: Why is the midpoint in Binary Search calculated as mid = low + (high - low) / 2 instead of mid = (low + high) / 2?
+- A: To ensure the midpoint is always an even number.
+- B: To prevent integer overflow when low and high are large values.
+- C: To prioritize searching the right half of the array first.
+- D: To reduce the number of comparisons required in the worst case.
+- *Correct*: **B** | *Explanation*: The formula mid = low + (high - low) / 2 is used to avoid integer overflow. If low and high are very large integers, their sum (low + high) might exceed the maximum value representable by the integer data type, causing an overflow. Subtracting low from high first ensures the intermediate value is smaller and safe to add to low. Option A is irrelevant to the calculation logic. Option C is incorrect as the formula does not bias the search direction. Option D is incorrect because both formulas yield the same logical midpoint for valid ranges, so the comparison count is identical.
+
+**Q3 (APPLY)**: Given a sorted array A = [-10, -5, 0, 3, 7], what is the fixed point of this array?
+- A: 0
+- B: 3
+- C: 7
+- D: No fixed point exists
+- *Correct*: **B** | *Explanation*: A fixed point is an index i such that A[i] = i. Let's check the indices: A[0] = -10 (not 0), A[1] = -5 (not 1), A[2] = 0 (not 2), A[3] = 3 (equals 3), A[4] = 7 (not 4). Therefore, index 3 is the fixed point. Option A is incorrect because A[0] is -10. Option C is incorrect because A[4] is 7, not 4. Option D is incorrect because a fixed point exists at index 3.
+
+**Q4 (UNDERSTAND)**: When finding the median of two sorted arrays where the total number of elements is even, how is the median calculated?
+- A: By taking the maximum element of the left half.
+- B: By taking the minimum element of the right half.
+- C: By averaging the maximum element of the left half and the minimum element of the right half.
+- D: By taking the difference between the maximum of the left half and the minimum of the right half.
+- *Correct*: **C** | *Explanation*: For an even total length, the median is defined as the average of the two middle elements. In the context of partitioning the combined sorted sequence, these two middle elements are the largest element in the left partition (max(left_half)) and the smallest element in the right partition (min(right_half)). Therefore, median = (max(left_half) + min(right_half)) / 2.0. Options A and B only provide one of the two required values. Option D is mathematically incorrect for calculating a median.
+
+**Q5 (ANALYZE)**: In the Fixed Point Search algorithm, if the middle element arr[mid] is less than its index mid, which half of the array should be searched next?
+- A: The left half (low to mid - 1)
+- B: The right half (mid + 1 to high)
+- C: Both halves simultaneously
+- D: The search should terminate immediately
+- *Correct*: **B** | *Explanation*: In a sorted array, if arr[mid] < mid, it implies that for all indices j < mid, arr[j] <= arr[mid] < mid < j is not necessarily true, but specifically, since the array is sorted and strictly increasing (implied for unique fixed points in this context), if arr[mid] < mid, then for any i < mid, arr[i] <= arr[mid] < mid. However, the key logic is that if arr[mid] < mid, the fixed point must be to the right because the values are 'lagging' behind the indices. Conversely, if arr[mid] > mid, the values are 'ahead', so the fixed point must be to the left. Therefore, if arr[mid] < mid, we search the right half. Option A is the logic for arr[mid] > mid. Option C is inefficient and not part of the divide-and-conquer strategy. Option D is incorrect as a solution may still exist.
+
+### Pipeline B Questions (Blueprint)
+**Q1 (UNDERSTAND)**: In the context of the Binary Search algorithm, what is the fundamental logical invariant that must hold true for the algorithm to correctly discard half of the search space at each step?
+- A: The target element must be smaller than the first element and larger than the last element of the current subarray.
+- B: The array segment being searched must be sorted, ensuring that if the target is not at the midpoint, it must lie entirely in either the left or the right half.
+- C: The midpoint index must always be an even number to ensure the search space is divided into two equal integer-sized parts.
+- D: The target element must be present in the array; otherwise, the algorithm cannot determine which half to discard.
+- *Correct*: **B** | *Explanation*: Option B is correct because the validity of binary search relies on the sorted order of the array. This order establishes a monotonic relationship, allowing the algorithm to infer that if target < A[mid], the target (if present) must be in the left half, and if target > A[mid], it must be in the right half. Option A is incorrect because the target is compared to the midpoint, not the boundaries, to determine the direction. Option C is incorrect because the midpoint index parity is irrelevant to the logic; integer division handles the split. Option D is incorrect because binary search is designed to handle the case where the target is absent by eventually exhausting the search space.
+
+**Q2 (UNDERSTAND)**: Consider a sorted array of 1,024 elements. In the worst-case scenario for Binary Search, how many times must the search interval be halved (i.e., how many iterations of the loop) to reduce the search space to a single element?
+- A: 10
+- B: 11
+- C: 12
+- D: 1,024
+- *Correct*: **A** | *Explanation*: Option A is correct. The number of iterations required to reduce a problem of size $n$ to size 1 using binary search is $\log_2 n$. For $n = 1024$, $\log_2 1024 = 10$ because $2^{10} = 1024$. Each iteration halves the search space: $1024 \to 512 \to 256 \to 128 \to 64 \to 32 \to 16 \to 8 \to 4 \to 2 \to 1$. Option B is incorrect as it represents $\log_2 2048$. Option C is incorrect as it represents $\log_2 4096$. Option D is incorrect as it represents the linear search complexity $O(n)$, not the logarithmic reduction of the search space.
+
+**Q3 (APPLY)**: When applying the divide-and-conquer strategy to find the median of two sorted arrays of lengths $m$ and $n$ (where $m < n$), why is it standard practice to perform the binary search on the smaller array?
+- A: To ensure that the median is always an integer rather than a floating-point number.
+- B: To guarantee that the partition index in the larger array remains within its valid bounds, preventing out-of-bounds access errors.
+- C: Because the median of two arrays is always located in the smaller array.
+- D: To simplify the calculation of the average of the two individual medians.
+- *Correct*: **B** | *Explanation*: Option B is correct. In the standard O(log(min(m,n))) algorithm, we binary search on the smaller array to find a partition $i$. The corresponding partition $j$ in the larger array is calculated as $j = (m + n + 1) / 2 - i$. If we searched on the larger array, $i$ could be large, causing $j$ to become negative or exceed the length of the smaller array, leading to invalid indices. By searching on the smaller array, we ensure $j$ stays within the valid range of the larger array. Option A is incorrect because the median type depends on the total count parity, not the search array. Option C is incorrect because the median can be in either array. Option D is incorrect because the median is not the average of the individual medians.
+
+**Q4 (APPLY)**: In the Median of Two Sorted Arrays problem, a valid partition is found when the elements are split into left and right halves. Which condition must be satisfied for the partition to be valid?
+- A: The maximum element of the left half of Array 1 must be less than or equal to the minimum element of the right half of Array 2, AND the maximum element of the left half of Array 2 must be less than or equal to the minimum element of the right half of Array 1.
+- B: The maximum element of the left half of Array 1 must be equal to the maximum element of the left half of Array 2.
+- C: The minimum element of the right half of Array 1 must be greater than the minimum element of the right half of Array 2.
+- D: The sum of the elements in the left halves must be equal to the sum of the elements in the right halves.
+- *Correct*: **A** | *Explanation*: Option A is correct. For the combined left halves to contain the smallest elements and the combined right halves to contain the largest elements, the largest element in the left part of one array must not exceed the smallest element in the right part of the other array. Specifically, $A[i-1] \le B[j]$ and $B[j-1] \le A[i]$. Option B is incorrect because equality is not required, and comparing maxes of the same side is not the validity condition. Option C is incorrect because it only compares the right halves, ignoring the cross-array constraint with the left halves. Option D is incorrect because the sums of elements are irrelevant to the ordering required for the median.

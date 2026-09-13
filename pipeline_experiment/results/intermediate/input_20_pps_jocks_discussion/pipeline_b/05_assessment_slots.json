@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Python Problem Solving",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the fundamental steps involved in the Python problem-solving process, such as decomposition and algorithm design.",
+    "misconception_target": "Confusing the execution of code with the planning and decomposition phase of problem solving.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Python Problem Solving",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the role of pseudocode or flowcharts in the initial stages of solving a programming problem in Python.",
+    "misconception_target": "Believing that pseudocode is a valid executable syntax in Python.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Interactive Learning Methods",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Define key characteristics of interactive learning methods in a classroom setting, such as real-time feedback and student participation.",
+    "misconception_target": "Equating interactive learning solely with the use of digital technology, ignoring verbal and collaborative aspects.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Interactive Learning Methods",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify specific strategies used to maintain student engagement during interactive coding sessions.",
+    "misconception_target": "Assuming that passive listening to code explanations constitutes an interactive learning method.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_03",
+    "topic_name": "Code Implementation",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recognize the correct translation of a logical algorithm into Python syntax using basic variables and control flow structures.",
+    "misconception_target": "Misapplying control flow logic (e.g., using 'if' instead of 'while' for a known number of iterations) during implementation.",
+    "evidence_refs": [],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  }
+]

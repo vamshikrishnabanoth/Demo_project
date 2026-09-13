@@ -1,0 +1,65 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Algorithm",
+    "subtopics": [
+      "Binary search technique for LCP",
+      "Partitioning string halves",
+      "Checking prefix existence across strings",
+      "Time complexity analysis",
+      "Brute force approach comparison"
+    ],
+    "associated_chunk_ids": [
+      "C09",
+      "C10",
+      "C11",
+      "C12",
+      "C14",
+      "C15"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "String Scanning and Character Comparison Optimization",
+    "subtopics": [
+      "Early termination based on string length",
+      "Character-by-character comparison",
+      "Loop control and mid-point adjustments",
+      "Avoiding unnecessary processing"
+    ],
+    "associated_chunk_ids": [
+      "C02",
+      "C04",
+      "C06",
+      "C15"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Model and Garbage Collection",
+    "subtopics": [
+      "Stack vs Heap",
+      "Object references and assignment",
+      "Garbage collection eligibility",
+      "Memory management concepts"
+    ],
+    "associated_chunk_ids": [
+      "C07",
+      "C08"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization and Refactoring Practices",
+    "subtopics": [
+      "Improving code readability",
+      "Variable naming and clarity",
+      "Loop optimization",
+      "Avoiding unnecessary code"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C05"
+    ]
+  }
+]

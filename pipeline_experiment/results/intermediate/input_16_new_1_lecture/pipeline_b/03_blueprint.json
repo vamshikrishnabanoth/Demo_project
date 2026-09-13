@@ -1,0 +1,53 @@
+{
+  "blueprint_id": "BP_input_16_new_1_lecture",
+  "input_id": "input_16_new_1_lecture",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Fundamentals of Computer Science",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Basic logic",
+        "Binary representation"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Theoretical Foundations",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Mathematical notation",
+        "Set theory basics"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Classroom Lecture Structure",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "METACOGNITIVE_FRAMING",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Academic study skills"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

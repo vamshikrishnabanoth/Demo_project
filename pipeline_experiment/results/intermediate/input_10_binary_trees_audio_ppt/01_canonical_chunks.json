@@ -1,0 +1,7842 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 8.9
+      },
+      {
+        "start": 8.9,
+        "end": 13.8
+      },
+      {
+        "start": 13.8,
+        "end": 17.8
+      },
+      {
+        "start": 17.8,
+        "end": 27.0
+      },
+      {
+        "start": 27.0,
+        "end": 33.6
+      },
+      {
+        "start": 33.6,
+        "end": 35.3
+      },
+      {
+        "start": 35.3,
+        "end": 37.0
+      },
+      {
+        "start": 37.0,
+        "end": 45.0
+      },
+      {
+        "start": 45.0,
+        "end": 51.0
+      },
+      {
+        "start": 51.0,
+        "end": 54.8
+      },
+      {
+        "start": 54.8,
+        "end": 59.8
+      },
+      {
+        "start": 59.8,
+        "end": 60.8
+      },
+      {
+        "start": 60.8,
+        "end": 64.8
+      },
+      {
+        "start": 64.8,
+        "end": 67.8
+      },
+      {
+        "start": 67.8,
+        "end": 69.8
+      },
+      {
+        "start": 69.8,
+        "end": 70.8
+      },
+      {
+        "start": 70.8,
+        "end": 74.8
+      },
+      {
+        "start": 74.8,
+        "end": 76.8
+      },
+      {
+        "start": 76.8,
+        "end": 78.8
+      },
+      {
+        "start": 78.8,
+        "end": 80.8
+      },
+      {
+        "start": 80.8,
+        "end": 82.8
+      },
+      {
+        "start": 82.8,
+        "end": 88.8
+      },
+      {
+        "start": 88.8,
+        "end": 91.8
+      },
+      {
+        "start": 91.8,
+        "end": 98.8
+      },
+      {
+        "start": 98.8,
+        "end": 102.8
+      },
+      {
+        "start": 102.8,
+        "end": 106.8
+      },
+      {
+        "start": 106.8,
+        "end": 110.8
+      },
+      {
+        "start": 110.8,
+        "end": 113.8
+      },
+      {
+        "start": 113.8,
+        "end": 115.8
+      },
+      {
+        "start": 115.8,
+        "end": 121.8
+      },
+      {
+        "start": 121.8,
+        "end": 122.8
+      },
+      {
+        "start": 122.8,
+        "end": 127.8
+      },
+      {
+        "start": 127.8,
+        "end": 130.8
+      },
+      {
+        "start": 130.8,
+        "end": 132.8
+      },
+      {
+        "start": 132.8,
+        "end": 134.8
+      },
+      {
+        "start": 134.8,
+        "end": 136.8
+      },
+      {
+        "start": 136.8,
+        "end": 145.8
+      },
+      {
+        "start": 145.8,
+        "end": 148.8
+      },
+      {
+        "start": 148.8,
+        "end": 154.8
+      },
+      {
+        "start": 154.8,
+        "end": 159.8
+      },
+      {
+        "start": 159.8,
+        "end": 163.8
+      },
+      {
+        "start": 163.8,
+        "end": 173.8
+      },
+      {
+        "start": 173.8,
+        "end": 175.8
+      },
+      {
+        "start": 175.8,
+        "end": 180.8
+      }
+    ],
+    "text": "Yesterday, or in the last class, a boy asked me, ma'am, if there is only one root node, is it a tree? I am asking you that question. If I have only one over here, is it still a tree, yes, it is a tree. That is the height of that tree. So it depends. What are you considering the height? Are you considering the nodes as height or are you considering the links as height? 90% of online platforms consider links as heights. Links is what connection between two nodes. So if I have only root node in my tree, what is my height? 0. What is my depth? 0. Okay, height is 0. Depth is 0. Leaves are 1. Parent is 1. Root node is 1. Are we clear? Everything is 1. Now, what is the difference between a binary tree and a normal tree? You have read this, right? Tell me the difference between a normal tree and a binary tree. We studied trees in the last class, correct? Today we will step further and study about binary trees. What is the difference between the two? Every tree will have a root node? Yes. That is one common thing, second thing. Very good. In a normal tree, it contains more than two children. What about binary tree? At most means what? Can it contain 0? 1, 2. What is the subtree in this? Can there be a subtree in a binary tree also? Tell me the subtree in this. 7, 2, 6, 5, 11 is 1 subtree. 6, 5, 11 is another subtree. 9, 9, 5, 9, 5, these are all the subtrees listed in this particular binary tree. So, the major difference is what? In a normal tree, you can have n number of children in a binary tree,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 8.9
+        },
+        {
+          "start": 8.9,
+          "end": 13.8
+        },
+        {
+          "start": 13.8,
+          "end": 17.8
+        },
+        {
+          "start": 17.8,
+          "end": 27.0
+        },
+        {
+          "start": 27.0,
+          "end": 33.6
+        },
+        {
+          "start": 33.6,
+          "end": 35.3
+        },
+        {
+          "start": 35.3,
+          "end": 37.0
+        },
+        {
+          "start": 37.0,
+          "end": 45.0
+        },
+        {
+          "start": 45.0,
+          "end": 51.0
+        },
+        {
+          "start": 51.0,
+          "end": 54.8
+        },
+        {
+          "start": 54.8,
+          "end": 59.8
+        },
+        {
+          "start": 59.8,
+          "end": 60.8
+        },
+        {
+          "start": 60.8,
+          "end": 64.8
+        },
+        {
+          "start": 64.8,
+          "end": 67.8
+        },
+        {
+          "start": 67.8,
+          "end": 69.8
+        },
+        {
+          "start": 69.8,
+          "end": 70.8
+        },
+        {
+          "start": 70.8,
+          "end": 74.8
+        },
+        {
+          "start": 74.8,
+          "end": 76.8
+        },
+        {
+          "start": 76.8,
+          "end": 78.8
+        },
+        {
+          "start": 78.8,
+          "end": 80.8
+        },
+        {
+          "start": 80.8,
+          "end": 82.8
+        },
+        {
+          "start": 82.8,
+          "end": 88.8
+        },
+        {
+          "start": 88.8,
+          "end": 91.8
+        },
+        {
+          "start": 91.8,
+          "end": 98.8
+        },
+        {
+          "start": 98.8,
+          "end": 102.8
+        },
+        {
+          "start": 102.8,
+          "end": 106.8
+        },
+        {
+          "start": 106.8,
+          "end": 110.8
+        },
+        {
+          "start": 110.8,
+          "end": 113.8
+        },
+        {
+          "start": 113.8,
+          "end": 115.8
+        },
+        {
+          "start": 115.8,
+          "end": 121.8
+        },
+        {
+          "start": 121.8,
+          "end": 122.8
+        },
+        {
+          "start": 122.8,
+          "end": 127.8
+        },
+        {
+          "start": 127.8,
+          "end": 130.8
+        },
+        {
+          "start": 130.8,
+          "end": 132.8
+        },
+        {
+          "start": 132.8,
+          "end": 134.8
+        },
+        {
+          "start": 134.8,
+          "end": 136.8
+        },
+        {
+          "start": 136.8,
+          "end": 145.8
+        },
+        {
+          "start": 145.8,
+          "end": 148.8
+        },
+        {
+          "start": 148.8,
+          "end": 154.8
+        },
+        {
+          "start": 154.8,
+          "end": 159.8
+        },
+        {
+          "start": 159.8,
+          "end": 163.8
+        },
+        {
+          "start": 163.8,
+          "end": 173.8
+        },
+        {
+          "start": 173.8,
+          "end": 175.8
+        },
+        {
+          "start": 175.8,
+          "end": 180.8
+        }
+      ],
+      "dwell_time": 180.8,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": true,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 180.8,
+        "end": 184.8
+      },
+      {
+        "start": 184.8,
+        "end": 188.8
+      },
+      {
+        "start": 188.8,
+        "end": 192.8
+      },
+      {
+        "start": 193.8,
+        "end": 198.8
+      },
+      {
+        "start": 198.8,
+        "end": 202.8
+      },
+      {
+        "start": 202.8,
+        "end": 210.8
+      },
+      {
+        "start": 210.8,
+        "end": 215.8
+      },
+      {
+        "start": 215.8,
+        "end": 219.8
+      },
+      {
+        "start": 219.8,
+        "end": 224.8
+      },
+      {
+        "start": 224.8,
+        "end": 231.8
+      },
+      {
+        "start": 231.8,
+        "end": 232.8
+      },
+      {
+        "start": 232.8,
+        "end": 241.8
+      },
+      {
+        "start": 241.8,
+        "end": 245.8
+      },
+      {
+        "start": 245.8,
+        "end": 251.8
+      },
+      {
+        "start": 251.8,
+        "end": 257.8
+      },
+      {
+        "start": 257.8,
+        "end": 264.8
+      },
+      {
+        "start": 264.8,
+        "end": 267.8
+      },
+      {
+        "start": 267.8,
+        "end": 273.8
+      },
+      {
+        "start": 273.8,
+        "end": 279.8
+      },
+      {
+        "start": 279.8,
+        "end": 297.8
+      },
+      {
+        "start": 297.8,
+        "end": 304.8
+      },
+      {
+        "start": 304.8,
+        "end": 308.8
+      },
+      {
+        "start": 308.8,
+        "end": 310.8
+      },
+      {
+        "start": 310.8,
+        "end": 317.8
+      },
+      {
+        "start": 317.8,
+        "end": 322.8
+      },
+      {
+        "start": 322.8,
+        "end": 325.8
+      },
+      {
+        "start": 325.8,
+        "end": 327.8
+      },
+      {
+        "start": 327.8,
+        "end": 331.8
+      },
+      {
+        "start": 331.8,
+        "end": 335.8
+      },
+      {
+        "start": 335.8,
+        "end": 338.8
+      },
+      {
+        "start": 338.8,
+        "end": 343.8
+      },
+      {
+        "start": 343.8,
+        "end": 346.8
+      },
+      {
+        "start": 346.8,
+        "end": 349.8
+      },
+      {
+        "start": 349.8,
+        "end": 352.8
+      },
+      {
+        "start": 352.8,
+        "end": 355.8
+      },
+      {
+        "start": 355.8,
+        "end": 356.8
+      },
+      {
+        "start": 356.8,
+        "end": 359.8
+      },
+      {
+        "start": 359.8,
+        "end": 364.8
+      }
+    ],
+    "text": "you can have at most two children only. One is left and one is the right one. How many internal nodes are here? What are internal nodes? How many internal nodes? 1, 7, 6, 9 and 9. Every node which has got children becomes internal node. What is an external node? What are external nodes here? What is the maximum degree of any node in a binary tree? 2. What would be the height of a binary tree? Does it depend on binary tree or any tree? Or could always be the height? Longest distance from the leaf node to the root. So, a binary tree is a special type of tree's data structure in which blah, blah, blah. At most have got two children, left, right. It can be there, it cannot be there. So, there are different types of binary trees, first understand. This is 1, 2, 3, 4, 5, 6, 7. Now, a full binary tree is a tree in which every parent, okay. This is a parent, who else is a parent? This is a parent. Every parent will either have zero or two as children. No parent will have one child, okay. When this is the thing, you will call it as what? It is a full binary. Now, tell me nodes which have got two children here. 1, 2, 5. Tell me which has got zero children. 3, 4, 6, 7. So, what is a full binary tree? Either zero or two children. Suppose I put it over here and say 8. Is it a full binary tree? No. So, if I ask you to create my question to you, would be what an exam create a full binary tree?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 180.8,
+          "end": 184.8
+        },
+        {
+          "start": 184.8,
+          "end": 188.8
+        },
+        {
+          "start": 188.8,
+          "end": 192.8
+        },
+        {
+          "start": 193.8,
+          "end": 198.8
+        },
+        {
+          "start": 198.8,
+          "end": 202.8
+        },
+        {
+          "start": 202.8,
+          "end": 210.8
+        },
+        {
+          "start": 210.8,
+          "end": 215.8
+        },
+        {
+          "start": 215.8,
+          "end": 219.8
+        },
+        {
+          "start": 219.8,
+          "end": 224.8
+        },
+        {
+          "start": 224.8,
+          "end": 231.8
+        },
+        {
+          "start": 231.8,
+          "end": 232.8
+        },
+        {
+          "start": 232.8,
+          "end": 241.8
+        },
+        {
+          "start": 241.8,
+          "end": 245.8
+        },
+        {
+          "start": 245.8,
+          "end": 251.8
+        },
+        {
+          "start": 251.8,
+          "end": 257.8
+        },
+        {
+          "start": 257.8,
+          "end": 264.8
+        },
+        {
+          "start": 264.8,
+          "end": 267.8
+        },
+        {
+          "start": 267.8,
+          "end": 273.8
+        },
+        {
+          "start": 273.8,
+          "end": 279.8
+        },
+        {
+          "start": 279.8,
+          "end": 297.8
+        },
+        {
+          "start": 297.8,
+          "end": 304.8
+        },
+        {
+          "start": 304.8,
+          "end": 308.8
+        },
+        {
+          "start": 308.8,
+          "end": 310.8
+        },
+        {
+          "start": 310.8,
+          "end": 317.8
+        },
+        {
+          "start": 317.8,
+          "end": 322.8
+        },
+        {
+          "start": 322.8,
+          "end": 325.8
+        },
+        {
+          "start": 325.8,
+          "end": 327.8
+        },
+        {
+          "start": 327.8,
+          "end": 331.8
+        },
+        {
+          "start": 331.8,
+          "end": 335.8
+        },
+        {
+          "start": 335.8,
+          "end": 338.8
+        },
+        {
+          "start": 338.8,
+          "end": 343.8
+        },
+        {
+          "start": 343.8,
+          "end": 346.8
+        },
+        {
+          "start": 346.8,
+          "end": 349.8
+        },
+        {
+          "start": 349.8,
+          "end": 352.8
+        },
+        {
+          "start": 352.8,
+          "end": 355.8
+        },
+        {
+          "start": 355.8,
+          "end": 356.8
+        },
+        {
+          "start": 356.8,
+          "end": 359.8
+        },
+        {
+          "start": 359.8,
+          "end": 364.8
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 364.8,
+        "end": 365.8
+      },
+      {
+        "start": 365.8,
+        "end": 368.8
+      },
+      {
+        "start": 368.8,
+        "end": 369.8
+      },
+      {
+        "start": 369.8,
+        "end": 372.8
+      },
+      {
+        "start": 372.8,
+        "end": 375.8
+      },
+      {
+        "start": 375.8,
+        "end": 379.8
+      },
+      {
+        "start": 379.8,
+        "end": 383.8
+      },
+      {
+        "start": 383.8,
+        "end": 387.8
+      },
+      {
+        "start": 387.8,
+        "end": 390.8
+      },
+      {
+        "start": 390.8,
+        "end": 393.8
+      },
+      {
+        "start": 393.8,
+        "end": 395.8
+      },
+      {
+        "start": 395.8,
+        "end": 398.8
+      },
+      {
+        "start": 398.8,
+        "end": 402.8
+      },
+      {
+        "start": 402.8,
+        "end": 403.8
+      },
+      {
+        "start": 403.8,
+        "end": 406.8
+      },
+      {
+        "start": 406.8,
+        "end": 409.8
+      },
+      {
+        "start": 409.8,
+        "end": 414.8
+      },
+      {
+        "start": 414.8,
+        "end": 420.8
+      },
+      {
+        "start": 420.8,
+        "end": 424.8
+      },
+      {
+        "start": 424.8,
+        "end": 427.8
+      },
+      {
+        "start": 428.8,
+        "end": 433.8
+      },
+      {
+        "start": 433.8,
+        "end": 434.8
+      },
+      {
+        "start": 434.8,
+        "end": 436.8
+      },
+      {
+        "start": 436.8,
+        "end": 439.8
+      },
+      {
+        "start": 439.8,
+        "end": 441.8
+      },
+      {
+        "start": 441.8,
+        "end": 442.8
+      },
+      {
+        "start": 442.8,
+        "end": 443.8
+      },
+      {
+        "start": 443.8,
+        "end": 448.8
+      },
+      {
+        "start": 448.8,
+        "end": 454.8
+      },
+      {
+        "start": 454.8,
+        "end": 459.8
+      },
+      {
+        "start": 459.8,
+        "end": 460.8
+      },
+      {
+        "start": 460.8,
+        "end": 463.8
+      },
+      {
+        "start": 463.8,
+        "end": 466.8
+      },
+      {
+        "start": 466.8,
+        "end": 469.8
+      },
+      {
+        "start": 469.8,
+        "end": 470.8
+      },
+      {
+        "start": 470.8,
+        "end": 471.8
+      },
+      {
+        "start": 471.8,
+        "end": 473.8
+      },
+      {
+        "start": 473.8,
+        "end": 475.8
+      },
+      {
+        "start": 475.8,
+        "end": 477.8
+      },
+      {
+        "start": 477.8,
+        "end": 479.8
+      },
+      {
+        "start": 479.8,
+        "end": 483.8
+      },
+      {
+        "start": 483.8,
+        "end": 488.8
+      },
+      {
+        "start": 488.8,
+        "end": 491.8
+      },
+      {
+        "start": 491.8,
+        "end": 496.8
+      },
+      {
+        "start": 496.8,
+        "end": 498.8
+      },
+      {
+        "start": 498.8,
+        "end": 502.8
+      },
+      {
+        "start": 502.8,
+        "end": 504.8
+      },
+      {
+        "start": 504.8,
+        "end": 507.8
+      },
+      {
+        "start": 507.8,
+        "end": 508.8
+      },
+      {
+        "start": 508.8,
+        "end": 509.8
+      },
+      {
+        "start": 509.8,
+        "end": 510.8
+      },
+      {
+        "start": 510.8,
+        "end": 512.8
+      },
+      {
+        "start": 512.8,
+        "end": 515.8
+      },
+      {
+        "start": 515.8,
+        "end": 516.8
+      },
+      {
+        "start": 516.8,
+        "end": 520.8
+      },
+      {
+        "start": 520.8,
+        "end": 524.8
+      },
+      {
+        "start": 524.8,
+        "end": 526.8
+      },
+      {
+        "start": 526.8,
+        "end": 527.8
+      },
+      {
+        "start": 527.8,
+        "end": 528.8
+      },
+      {
+        "start": 528.8,
+        "end": 535.8
+      },
+      {
+        "start": 535.8,
+        "end": 536.8
+      },
+      {
+        "start": 536.8,
+        "end": 541.8
+      },
+      {
+        "start": 541.8,
+        "end": 543.8
+      },
+      {
+        "start": 543.8,
+        "end": 546.8
+      }
+    ],
+    "text": "Okay. So, then you should know what she is asking me to create. Okay. How and what, how the tree should look like? You should have an answer for that. Now, I don't want to talk about this at all, because there are around five to six types of trees. Instead of giving you a formula for each and every one, I will give you a generic formula. You should know what type of tree it is, what are the constraints with the tree, and you apply that formula to all the trees. Let's do that rather than learning formula for each and every tree. Okay. So, this is my full binary tree. Perfect binary tree. Perfect binary tree tells you what? Or every internal node will have two child nodes, and all the leaf nodes would be at same level. It's a perfect binary tree. You are not leaving anything here at anybody's mercy. Okay. If there are three levels, can I count the total number of leaves if I know the levels in a binary tree? Yes. Okay. So, perfect binary tree means I will have a node. Every node, I will make sure have got two children. So, I will have zero children to fund over here at all. Okay. And all because here also, suppose this four has got two. Does this become a complete binary tree? No. Why? Five does not have anything. Five, if I put here, still it does not have anything. Are we clear? So, full binary tree tells you what? Zero or one children to all the internal nodes. Perfect binary tree tells you what? All internal nodes should have two child, and all of them should end. All the leaf nodes should be at the same level. So, you tell me one thing. Is tree one a perfect binary? Yes. Why? One node only. No children at all. Is tree two a perfect binary? Yes. One root node exactly two children. Third one, teeth. Third tree. Yes. Okay. So, why do we need all these things is when we do a traversing? Okay. Or when we are doing any kind of problems based on what kind of a binary tree it is? I will know how many times I have to jump.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 364.8,
+          "end": 365.8
+        },
+        {
+          "start": 365.8,
+          "end": 368.8
+        },
+        {
+          "start": 368.8,
+          "end": 369.8
+        },
+        {
+          "start": 369.8,
+          "end": 372.8
+        },
+        {
+          "start": 372.8,
+          "end": 375.8
+        },
+        {
+          "start": 375.8,
+          "end": 379.8
+        },
+        {
+          "start": 379.8,
+          "end": 383.8
+        },
+        {
+          "start": 383.8,
+          "end": 387.8
+        },
+        {
+          "start": 387.8,
+          "end": 390.8
+        },
+        {
+          "start": 390.8,
+          "end": 393.8
+        },
+        {
+          "start": 393.8,
+          "end": 395.8
+        },
+        {
+          "start": 395.8,
+          "end": 398.8
+        },
+        {
+          "start": 398.8,
+          "end": 402.8
+        },
+        {
+          "start": 402.8,
+          "end": 403.8
+        },
+        {
+          "start": 403.8,
+          "end": 406.8
+        },
+        {
+          "start": 406.8,
+          "end": 409.8
+        },
+        {
+          "start": 409.8,
+          "end": 414.8
+        },
+        {
+          "start": 414.8,
+          "end": 420.8
+        },
+        {
+          "start": 420.8,
+          "end": 424.8
+        },
+        {
+          "start": 424.8,
+          "end": 427.8
+        },
+        {
+          "start": 428.8,
+          "end": 433.8
+        },
+        {
+          "start": 433.8,
+          "end": 434.8
+        },
+        {
+          "start": 434.8,
+          "end": 436.8
+        },
+        {
+          "start": 436.8,
+          "end": 439.8
+        },
+        {
+          "start": 439.8,
+          "end": 441.8
+        },
+        {
+          "start": 441.8,
+          "end": 442.8
+        },
+        {
+          "start": 442.8,
+          "end": 443.8
+        },
+        {
+          "start": 443.8,
+          "end": 448.8
+        },
+        {
+          "start": 448.8,
+          "end": 454.8
+        },
+        {
+          "start": 454.8,
+          "end": 459.8
+        },
+        {
+          "start": 459.8,
+          "end": 460.8
+        },
+        {
+          "start": 460.8,
+          "end": 463.8
+        },
+        {
+          "start": 463.8,
+          "end": 466.8
+        },
+        {
+          "start": 466.8,
+          "end": 469.8
+        },
+        {
+          "start": 469.8,
+          "end": 470.8
+        },
+        {
+          "start": 470.8,
+          "end": 471.8
+        },
+        {
+          "start": 471.8,
+          "end": 473.8
+        },
+        {
+          "start": 473.8,
+          "end": 475.8
+        },
+        {
+          "start": 475.8,
+          "end": 477.8
+        },
+        {
+          "start": 477.8,
+          "end": 479.8
+        },
+        {
+          "start": 479.8,
+          "end": 483.8
+        },
+        {
+          "start": 483.8,
+          "end": 488.8
+        },
+        {
+          "start": 488.8,
+          "end": 491.8
+        },
+        {
+          "start": 491.8,
+          "end": 496.8
+        },
+        {
+          "start": 496.8,
+          "end": 498.8
+        },
+        {
+          "start": 498.8,
+          "end": 502.8
+        },
+        {
+          "start": 502.8,
+          "end": 504.8
+        },
+        {
+          "start": 504.8,
+          "end": 507.8
+        },
+        {
+          "start": 507.8,
+          "end": 508.8
+        },
+        {
+          "start": 508.8,
+          "end": 509.8
+        },
+        {
+          "start": 509.8,
+          "end": 510.8
+        },
+        {
+          "start": 510.8,
+          "end": 512.8
+        },
+        {
+          "start": 512.8,
+          "end": 515.8
+        },
+        {
+          "start": 515.8,
+          "end": 516.8
+        },
+        {
+          "start": 516.8,
+          "end": 520.8
+        },
+        {
+          "start": 520.8,
+          "end": 524.8
+        },
+        {
+          "start": 524.8,
+          "end": 526.8
+        },
+        {
+          "start": 526.8,
+          "end": 527.8
+        },
+        {
+          "start": 527.8,
+          "end": 528.8
+        },
+        {
+          "start": 528.8,
+          "end": 535.8
+        },
+        {
+          "start": 535.8,
+          "end": 536.8
+        },
+        {
+          "start": 536.8,
+          "end": 541.8
+        },
+        {
+          "start": 541.8,
+          "end": 543.8
+        },
+        {
+          "start": 543.8,
+          "end": 546.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 546.8,
+        "end": 549.8
+      },
+      {
+        "start": 549.8,
+        "end": 554.8
+      },
+      {
+        "start": 554.8,
+        "end": 555.8
+      },
+      {
+        "start": 555.8,
+        "end": 557.8
+      },
+      {
+        "start": 557.8,
+        "end": 560.8
+      },
+      {
+        "start": 560.8,
+        "end": 562.8
+      },
+      {
+        "start": 562.8,
+        "end": 563.8
+      },
+      {
+        "start": 563.8,
+        "end": 569.8
+      },
+      {
+        "start": 569.8,
+        "end": 572.8
+      },
+      {
+        "start": 572.8,
+        "end": 573.8
+      },
+      {
+        "start": 573.8,
+        "end": 577.8
+      },
+      {
+        "start": 577.8,
+        "end": 579.8
+      },
+      {
+        "start": 579.8,
+        "end": 580.8
+      },
+      {
+        "start": 580.8,
+        "end": 583.8
+      },
+      {
+        "start": 583.8,
+        "end": 586.8
+      },
+      {
+        "start": 586.8,
+        "end": 592.8
+      },
+      {
+        "start": 592.8,
+        "end": 594.8
+      },
+      {
+        "start": 594.8,
+        "end": 595.8
+      },
+      {
+        "start": 595.8,
+        "end": 598.8
+      },
+      {
+        "start": 599.8,
+        "end": 601.8
+      },
+      {
+        "start": 601.8,
+        "end": 603.8
+      },
+      {
+        "start": 603.8,
+        "end": 607.8
+      },
+      {
+        "start": 607.8,
+        "end": 608.8
+      },
+      {
+        "start": 608.8,
+        "end": 612.8
+      },
+      {
+        "start": 612.8,
+        "end": 613.8
+      },
+      {
+        "start": 616.8,
+        "end": 620.8
+      },
+      {
+        "start": 620.8,
+        "end": 623.8
+      },
+      {
+        "start": 623.8,
+        "end": 624.8
+      },
+      {
+        "start": 624.8,
+        "end": 626.8
+      },
+      {
+        "start": 626.8,
+        "end": 631.8
+      },
+      {
+        "start": 631.8,
+        "end": 633.8
+      },
+      {
+        "start": 633.8,
+        "end": 634.8
+      },
+      {
+        "start": 634.8,
+        "end": 639.8
+      },
+      {
+        "start": 639.8,
+        "end": 642.8
+      },
+      {
+        "start": 642.8,
+        "end": 645.8
+      },
+      {
+        "start": 645.8,
+        "end": 649.8
+      },
+      {
+        "start": 649.8,
+        "end": 652.8
+      },
+      {
+        "start": 652.8,
+        "end": 655.8
+      },
+      {
+        "start": 655.8,
+        "end": 658.8
+      },
+      {
+        "start": 658.8,
+        "end": 659.8
+      },
+      {
+        "start": 659.8,
+        "end": 661.8
+      },
+      {
+        "start": 661.8,
+        "end": 667.8
+      },
+      {
+        "start": 667.8,
+        "end": 668.8
+      },
+      {
+        "start": 668.8,
+        "end": 675.8
+      },
+      {
+        "start": 675.8,
+        "end": 680.8
+      },
+      {
+        "start": 680.8,
+        "end": 684.8
+      },
+      {
+        "start": 684.8,
+        "end": 691.8
+      },
+      {
+        "start": 691.8,
+        "end": 696.8
+      },
+      {
+        "start": 696.8,
+        "end": 702.8
+      },
+      {
+        "start": 702.8,
+        "end": 704.8
+      },
+      {
+        "start": 704.8,
+        "end": 708.8
+      },
+      {
+        "start": 708.8,
+        "end": 711.8
+      },
+      {
+        "start": 711.8,
+        "end": 713.8
+      },
+      {
+        "start": 713.8,
+        "end": 724.8
+      },
+      {
+        "start": 724.8,
+        "end": 729.8
+      },
+      {
+        "start": 729.8,
+        "end": 734.8
+      }
+    ],
+    "text": "I will know how many nodes are there. I will know how am I supposed to traverse through this particular tree. Are we clear? So, that's the reason we should understand. What do you mean by full binary, perfect binary, and all those particular things? Okay. So, very simple, but very verbose it is actually. Complete binary tree. Confusing, yes. But you've got to come up with some kind of tactics to understand. Full, see? Perfect, see? What do you think about a complete binary tree? What do you think it should have? Complete means all levels should be filled. There are how many levels? Three levels. It should not end up here. Okay. All the levels are there. At least one node or at least one leaf to that particular parent, it should be there. Then I will say complete binary tree over here. Okay. Every level must be completely filled. If I want to now add an element here. Okay. I want to add an element to four. I will always start by adding the left leaf. This is always the thing. Okay. Binary search tree may be always add left element first. If elements are left in your array, then you put on to the right arm of it. Otherwise always we will fill up with the left part. So, you're also in a complete binary tree. Suppose now I have two more elements coming in. 11, 13. Okay. Now I take 11. Where do you think I should place 11? 11. Where do you think I should place 13 now? If I do this, is it a complete binary tree? Then how will I put it so that it remains a complete binary tree? Or do I need three elements to make a complete binary tree? Suppose if I have three elements to make it a complete binary tree, where do you think it should be? What is 4? 11. 13. 14. Is this level filled to go to the next level? Guys, every level must be completely filled. It may not be filled to me.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 546.8,
+          "end": 549.8
+        },
+        {
+          "start": 549.8,
+          "end": 554.8
+        },
+        {
+          "start": 554.8,
+          "end": 555.8
+        },
+        {
+          "start": 555.8,
+          "end": 557.8
+        },
+        {
+          "start": 557.8,
+          "end": 560.8
+        },
+        {
+          "start": 560.8,
+          "end": 562.8
+        },
+        {
+          "start": 562.8,
+          "end": 563.8
+        },
+        {
+          "start": 563.8,
+          "end": 569.8
+        },
+        {
+          "start": 569.8,
+          "end": 572.8
+        },
+        {
+          "start": 572.8,
+          "end": 573.8
+        },
+        {
+          "start": 573.8,
+          "end": 577.8
+        },
+        {
+          "start": 577.8,
+          "end": 579.8
+        },
+        {
+          "start": 579.8,
+          "end": 580.8
+        },
+        {
+          "start": 580.8,
+          "end": 583.8
+        },
+        {
+          "start": 583.8,
+          "end": 586.8
+        },
+        {
+          "start": 586.8,
+          "end": 592.8
+        },
+        {
+          "start": 592.8,
+          "end": 594.8
+        },
+        {
+          "start": 594.8,
+          "end": 595.8
+        },
+        {
+          "start": 595.8,
+          "end": 598.8
+        },
+        {
+          "start": 599.8,
+          "end": 601.8
+        },
+        {
+          "start": 601.8,
+          "end": 603.8
+        },
+        {
+          "start": 603.8,
+          "end": 607.8
+        },
+        {
+          "start": 607.8,
+          "end": 608.8
+        },
+        {
+          "start": 608.8,
+          "end": 612.8
+        },
+        {
+          "start": 612.8,
+          "end": 613.8
+        },
+        {
+          "start": 616.8,
+          "end": 620.8
+        },
+        {
+          "start": 620.8,
+          "end": 623.8
+        },
+        {
+          "start": 623.8,
+          "end": 624.8
+        },
+        {
+          "start": 624.8,
+          "end": 626.8
+        },
+        {
+          "start": 626.8,
+          "end": 631.8
+        },
+        {
+          "start": 631.8,
+          "end": 633.8
+        },
+        {
+          "start": 633.8,
+          "end": 634.8
+        },
+        {
+          "start": 634.8,
+          "end": 639.8
+        },
+        {
+          "start": 639.8,
+          "end": 642.8
+        },
+        {
+          "start": 642.8,
+          "end": 645.8
+        },
+        {
+          "start": 645.8,
+          "end": 649.8
+        },
+        {
+          "start": 649.8,
+          "end": 652.8
+        },
+        {
+          "start": 652.8,
+          "end": 655.8
+        },
+        {
+          "start": 655.8,
+          "end": 658.8
+        },
+        {
+          "start": 658.8,
+          "end": 659.8
+        },
+        {
+          "start": 659.8,
+          "end": 661.8
+        },
+        {
+          "start": 661.8,
+          "end": 667.8
+        },
+        {
+          "start": 667.8,
+          "end": 668.8
+        },
+        {
+          "start": 668.8,
+          "end": 675.8
+        },
+        {
+          "start": 675.8,
+          "end": 680.8
+        },
+        {
+          "start": 680.8,
+          "end": 684.8
+        },
+        {
+          "start": 684.8,
+          "end": 691.8
+        },
+        {
+          "start": 691.8,
+          "end": 696.8
+        },
+        {
+          "start": 696.8,
+          "end": 702.8
+        },
+        {
+          "start": 702.8,
+          "end": 704.8
+        },
+        {
+          "start": 704.8,
+          "end": 708.8
+        },
+        {
+          "start": 708.8,
+          "end": 711.8
+        },
+        {
+          "start": 711.8,
+          "end": 713.8
+        },
+        {
+          "start": 713.8,
+          "end": 724.8
+        },
+        {
+          "start": 724.8,
+          "end": 729.8
+        },
+        {
+          "start": 729.8,
+          "end": 734.8
+        }
+      ],
+      "dwell_time": 184.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C05",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 734.8,
+        "end": 735.8
+      },
+      {
+        "start": 735.8,
+        "end": 739.8
+      },
+      {
+        "start": 739.8,
+        "end": 741.8
+      },
+      {
+        "start": 741.8,
+        "end": 743.8
+      },
+      {
+        "start": 743.8,
+        "end": 745.8
+      },
+      {
+        "start": 745.8,
+        "end": 748.8
+      },
+      {
+        "start": 748.8,
+        "end": 750.8
+      },
+      {
+        "start": 750.8,
+        "end": 752.8
+      },
+      {
+        "start": 752.8,
+        "end": 755.8
+      },
+      {
+        "start": 755.8,
+        "end": 762.8
+      },
+      {
+        "start": 762.8,
+        "end": 765.8
+      },
+      {
+        "start": 765.8,
+        "end": 767.8
+      },
+      {
+        "start": 767.8,
+        "end": 768.8
+      },
+      {
+        "start": 768.8,
+        "end": 770.8
+      },
+      {
+        "start": 770.8,
+        "end": 772.8
+      },
+      {
+        "start": 772.8,
+        "end": 775.8
+      },
+      {
+        "start": 775.8,
+        "end": 777.8
+      },
+      {
+        "start": 777.8,
+        "end": 780.8
+      },
+      {
+        "start": 780.8,
+        "end": 782.8
+      },
+      {
+        "start": 782.8,
+        "end": 785.8
+      },
+      {
+        "start": 785.8,
+        "end": 786.8
+      },
+      {
+        "start": 786.8,
+        "end": 789.8
+      },
+      {
+        "start": 789.8,
+        "end": 794.8
+      },
+      {
+        "start": 794.8,
+        "end": 796.8
+      },
+      {
+        "start": 796.8,
+        "end": 797.8
+      },
+      {
+        "start": 797.8,
+        "end": 799.8
+      },
+      {
+        "start": 799.8,
+        "end": 801.8
+      },
+      {
+        "start": 801.8,
+        "end": 804.8
+      },
+      {
+        "start": 804.8,
+        "end": 808.8
+      },
+      {
+        "start": 808.8,
+        "end": 812.8
+      },
+      {
+        "start": 812.8,
+        "end": 813.8
+      },
+      {
+        "start": 813.8,
+        "end": 817.8
+      },
+      {
+        "start": 817.8,
+        "end": 825.8
+      },
+      {
+        "start": 825.8,
+        "end": 826.8
+      },
+      {
+        "start": 826.8,
+        "end": 829.8
+      },
+      {
+        "start": 829.8,
+        "end": 832.8
+      },
+      {
+        "start": 832.8,
+        "end": 833.8
+      },
+      {
+        "start": 833.8,
+        "end": 836.8
+      },
+      {
+        "start": 836.8,
+        "end": 837.8
+      },
+      {
+        "start": 837.8,
+        "end": 842.8
+      },
+      {
+        "start": 842.8,
+        "end": 856.8
+      },
+      {
+        "start": 856.8,
+        "end": 859.8
+      },
+      {
+        "start": 859.8,
+        "end": 867.8
+      },
+      {
+        "start": 867.8,
+        "end": 870.8
+      },
+      {
+        "start": 870.8,
+        "end": 874.8
+      },
+      {
+        "start": 874.8,
+        "end": 878.8
+      },
+      {
+        "start": 878.8,
+        "end": 879.8
+      },
+      {
+        "start": 879.8,
+        "end": 881.8
+      },
+      {
+        "start": 881.8,
+        "end": 883.8
+      },
+      {
+        "start": 883.8,
+        "end": 885.8
+      },
+      {
+        "start": 885.8,
+        "end": 889.8
+      },
+      {
+        "start": 889.8,
+        "end": 892.8
+      },
+      {
+        "start": 892.8,
+        "end": 896.8
+      },
+      {
+        "start": 896.8,
+        "end": 898.8
+      },
+      {
+        "start": 898.8,
+        "end": 904.8
+      },
+      {
+        "start": 904.8,
+        "end": 905.8
+      },
+      {
+        "start": 905.8,
+        "end": 908.8
+      },
+      {
+        "start": 908.8,
+        "end": 912.8
+      },
+      {
+        "start": 912.8,
+        "end": 918.8
+      }
+    ],
+    "text": "Okay. Right now, this is level 1. This is level 2. There are two notes in level 2. Level 3. How many notes in level 3? So, is it okay? Yes, it is okay. But now if another element comes, should I put it here or should I go down? First, you should put it with 3. So, here what will come? 11. 4, what will come? 13. Then, 14. Then, 15. Then, 16. 17. 18. 19. You can leave this empty. Then I would say this is a complete binary tree. Understood? Okay. Levels must be filled means what? All levels should occupy. If I have a 5 here, I can move on to here only if this is complete. I can move on to the next one only if this is complete. Okay. That is called your complete binary tree. The last leaf element might not have a right sibling. Okay. So, only the last element it should not, it is okay if it does not have the right sibling. Okay. So, can I say if there are 5? Okay. How many elements are required to make this tree as a complete binary tree if I introduce one more level? So, complete binary tree is telling you what? What is the difference between a perfect binary tree and a complete binary tree? Perfect means what? Every level should be completely filled and every node should have two only. That is what? Perfect binary tree. What is complete? All levels must be filled. Levels must be filled means what? At zero level, one node. So, at two level how many nodes? Two. At third, second level how many nodes? Four. At third level how many nodes? So, how depending on the number of levels, how our node is increasing to the power of L?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C05",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 734.8,
+          "end": 735.8
+        },
+        {
+          "start": 735.8,
+          "end": 739.8
+        },
+        {
+          "start": 739.8,
+          "end": 741.8
+        },
+        {
+          "start": 741.8,
+          "end": 743.8
+        },
+        {
+          "start": 743.8,
+          "end": 745.8
+        },
+        {
+          "start": 745.8,
+          "end": 748.8
+        },
+        {
+          "start": 748.8,
+          "end": 750.8
+        },
+        {
+          "start": 750.8,
+          "end": 752.8
+        },
+        {
+          "start": 752.8,
+          "end": 755.8
+        },
+        {
+          "start": 755.8,
+          "end": 762.8
+        },
+        {
+          "start": 762.8,
+          "end": 765.8
+        },
+        {
+          "start": 765.8,
+          "end": 767.8
+        },
+        {
+          "start": 767.8,
+          "end": 768.8
+        },
+        {
+          "start": 768.8,
+          "end": 770.8
+        },
+        {
+          "start": 770.8,
+          "end": 772.8
+        },
+        {
+          "start": 772.8,
+          "end": 775.8
+        },
+        {
+          "start": 775.8,
+          "end": 777.8
+        },
+        {
+          "start": 777.8,
+          "end": 780.8
+        },
+        {
+          "start": 780.8,
+          "end": 782.8
+        },
+        {
+          "start": 782.8,
+          "end": 785.8
+        },
+        {
+          "start": 785.8,
+          "end": 786.8
+        },
+        {
+          "start": 786.8,
+          "end": 789.8
+        },
+        {
+          "start": 789.8,
+          "end": 794.8
+        },
+        {
+          "start": 794.8,
+          "end": 796.8
+        },
+        {
+          "start": 796.8,
+          "end": 797.8
+        },
+        {
+          "start": 797.8,
+          "end": 799.8
+        },
+        {
+          "start": 799.8,
+          "end": 801.8
+        },
+        {
+          "start": 801.8,
+          "end": 804.8
+        },
+        {
+          "start": 804.8,
+          "end": 808.8
+        },
+        {
+          "start": 808.8,
+          "end": 812.8
+        },
+        {
+          "start": 812.8,
+          "end": 813.8
+        },
+        {
+          "start": 813.8,
+          "end": 817.8
+        },
+        {
+          "start": 817.8,
+          "end": 825.8
+        },
+        {
+          "start": 825.8,
+          "end": 826.8
+        },
+        {
+          "start": 826.8,
+          "end": 829.8
+        },
+        {
+          "start": 829.8,
+          "end": 832.8
+        },
+        {
+          "start": 832.8,
+          "end": 833.8
+        },
+        {
+          "start": 833.8,
+          "end": 836.8
+        },
+        {
+          "start": 836.8,
+          "end": 837.8
+        },
+        {
+          "start": 837.8,
+          "end": 842.8
+        },
+        {
+          "start": 842.8,
+          "end": 856.8
+        },
+        {
+          "start": 856.8,
+          "end": 859.8
+        },
+        {
+          "start": 859.8,
+          "end": 867.8
+        },
+        {
+          "start": 867.8,
+          "end": 870.8
+        },
+        {
+          "start": 870.8,
+          "end": 874.8
+        },
+        {
+          "start": 874.8,
+          "end": 878.8
+        },
+        {
+          "start": 878.8,
+          "end": 879.8
+        },
+        {
+          "start": 879.8,
+          "end": 881.8
+        },
+        {
+          "start": 881.8,
+          "end": 883.8
+        },
+        {
+          "start": 883.8,
+          "end": 885.8
+        },
+        {
+          "start": 885.8,
+          "end": 889.8
+        },
+        {
+          "start": 889.8,
+          "end": 892.8
+        },
+        {
+          "start": 892.8,
+          "end": 896.8
+        },
+        {
+          "start": 896.8,
+          "end": 898.8
+        },
+        {
+          "start": 898.8,
+          "end": 904.8
+        },
+        {
+          "start": 904.8,
+          "end": 905.8
+        },
+        {
+          "start": 905.8,
+          "end": 908.8
+        },
+        {
+          "start": 908.8,
+          "end": 912.8
+        },
+        {
+          "start": 912.8,
+          "end": 918.8
+        }
+      ],
+      "dwell_time": 184.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C06",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 918.8,
+        "end": 921.8
+      },
+      {
+        "start": 921.8,
+        "end": 925.8
+      },
+      {
+        "start": 925.8,
+        "end": 926.8
+      },
+      {
+        "start": 926.8,
+        "end": 927.8
+      },
+      {
+        "start": 927.8,
+        "end": 931.8
+      },
+      {
+        "start": 931.8,
+        "end": 932.8
+      },
+      {
+        "start": 932.8,
+        "end": 934.8
+      },
+      {
+        "start": 934.8,
+        "end": 935.8
+      },
+      {
+        "start": 935.8,
+        "end": 936.8
+      },
+      {
+        "start": 936.8,
+        "end": 941.8
+      },
+      {
+        "start": 941.8,
+        "end": 945.8
+      },
+      {
+        "start": 945.8,
+        "end": 946.8
+      },
+      {
+        "start": 946.8,
+        "end": 953.8
+      },
+      {
+        "start": 953.8,
+        "end": 957.8
+      },
+      {
+        "start": 957.8,
+        "end": 960.8
+      },
+      {
+        "start": 960.8,
+        "end": 962.8
+      },
+      {
+        "start": 962.8,
+        "end": 966.8
+      },
+      {
+        "start": 966.8,
+        "end": 971.8
+      },
+      {
+        "start": 971.8,
+        "end": 974.8
+      },
+      {
+        "start": 974.8,
+        "end": 975.8
+      },
+      {
+        "start": 975.8,
+        "end": 976.8
+      },
+      {
+        "start": 976.8,
+        "end": 979.8
+      },
+      {
+        "start": 979.8,
+        "end": 981.8
+      },
+      {
+        "start": 981.8,
+        "end": 982.8
+      },
+      {
+        "start": 982.8,
+        "end": 983.8
+      },
+      {
+        "start": 983.8,
+        "end": 988.8
+      },
+      {
+        "start": 988.8,
+        "end": 993.8
+      },
+      {
+        "start": 993.8,
+        "end": 994.8
+      },
+      {
+        "start": 994.8,
+        "end": 1000.8
+      },
+      {
+        "start": 1000.8,
+        "end": 1006.8
+      },
+      {
+        "start": 1006.8,
+        "end": 1007.8
+      },
+      {
+        "start": 1007.8,
+        "end": 1009.8
+      },
+      {
+        "start": 1009.8,
+        "end": 1011.8
+      },
+      {
+        "start": 1011.8,
+        "end": 1013.8
+      },
+      {
+        "start": 1013.8,
+        "end": 1029.8
+      },
+      {
+        "start": 1029.8,
+        "end": 1033.8
+      },
+      {
+        "start": 1033.8,
+        "end": 1034.8
+      },
+      {
+        "start": 1035.8,
+        "end": 1039.8
+      },
+      {
+        "start": 1039.8,
+        "end": 1044.8
+      },
+      {
+        "start": 1044.8,
+        "end": 1047.8
+      },
+      {
+        "start": 1047.8,
+        "end": 1050.8
+      },
+      {
+        "start": 1050.8,
+        "end": 1051.8
+      },
+      {
+        "start": 1051.8,
+        "end": 1057.8
+      },
+      {
+        "start": 1057.8,
+        "end": 1063.8
+      },
+      {
+        "start": 1063.8,
+        "end": 1070.8
+      },
+      {
+        "start": 1070.8,
+        "end": 1071.8
+      },
+      {
+        "start": 1071.8,
+        "end": 1076.8
+      },
+      {
+        "start": 1076.8,
+        "end": 1081.8
+      },
+      {
+        "start": 1081.8,
+        "end": 1090.8
+      },
+      {
+        "start": 1090.8,
+        "end": 1114.8
+      }
+    ],
+    "text": "Two to the power of L. If I have L at zero, two raised to zero is how much? One. One node. Two to the power one is how much? Two. Two to the power two. How many? Four. So, is there any relationship between the level and the number of nodes when you are talking about perfect binary? Yes. So, if somebody tells you how many nodes will a perfect binary tree have if there are four levels, what you should say directly? Two raised to four is the answer. Please note this thing down. Relationship between level and number of nodes. Can you say the same thing for what was the first one? Full binary, Gile. No. Why? Because full binary can have children? It cannot have children. Okay. So, I am not sure. At the maximum, it would be two to the power L. But minimum, I do not know because I do not know whether it will have children or no. Okay. So, when you are talking about a full binary tree, sorry, when you are talking about a perfect binary tree, then depending on the number of levels, can I tell how many nodes are there? Yes. How many nodes would be there? Two to the power of L. Are we clear? How is your complete binary tree different from perfect binary tree? Is there a difference between two? What is the difference? You are also seeing all levels should be complete. But the last one can be left incomplete. So, how many nodes would be there? Two to the power L minus one. Okay. So, that would be for your complete binary tree. Summation of two to the power N, how? At that level, it will give total number of nodes would be summation. Okay. So, this is what we look, this is what we have for our complete binary tree. What is this pathological tree? Now, if I make it like this, what kind of a tree it becomes? Full binary tree means what is it?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C06",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 918.8,
+          "end": 921.8
+        },
+        {
+          "start": 921.8,
+          "end": 925.8
+        },
+        {
+          "start": 925.8,
+          "end": 926.8
+        },
+        {
+          "start": 926.8,
+          "end": 927.8
+        },
+        {
+          "start": 927.8,
+          "end": 931.8
+        },
+        {
+          "start": 931.8,
+          "end": 932.8
+        },
+        {
+          "start": 932.8,
+          "end": 934.8
+        },
+        {
+          "start": 934.8,
+          "end": 935.8
+        },
+        {
+          "start": 935.8,
+          "end": 936.8
+        },
+        {
+          "start": 936.8,
+          "end": 941.8
+        },
+        {
+          "start": 941.8,
+          "end": 945.8
+        },
+        {
+          "start": 945.8,
+          "end": 946.8
+        },
+        {
+          "start": 946.8,
+          "end": 953.8
+        },
+        {
+          "start": 953.8,
+          "end": 957.8
+        },
+        {
+          "start": 957.8,
+          "end": 960.8
+        },
+        {
+          "start": 960.8,
+          "end": 962.8
+        },
+        {
+          "start": 962.8,
+          "end": 966.8
+        },
+        {
+          "start": 966.8,
+          "end": 971.8
+        },
+        {
+          "start": 971.8,
+          "end": 974.8
+        },
+        {
+          "start": 974.8,
+          "end": 975.8
+        },
+        {
+          "start": 975.8,
+          "end": 976.8
+        },
+        {
+          "start": 976.8,
+          "end": 979.8
+        },
+        {
+          "start": 979.8,
+          "end": 981.8
+        },
+        {
+          "start": 981.8,
+          "end": 982.8
+        },
+        {
+          "start": 982.8,
+          "end": 983.8
+        },
+        {
+          "start": 983.8,
+          "end": 988.8
+        },
+        {
+          "start": 988.8,
+          "end": 993.8
+        },
+        {
+          "start": 993.8,
+          "end": 994.8
+        },
+        {
+          "start": 994.8,
+          "end": 1000.8
+        },
+        {
+          "start": 1000.8,
+          "end": 1006.8
+        },
+        {
+          "start": 1006.8,
+          "end": 1007.8
+        },
+        {
+          "start": 1007.8,
+          "end": 1009.8
+        },
+        {
+          "start": 1009.8,
+          "end": 1011.8
+        },
+        {
+          "start": 1011.8,
+          "end": 1013.8
+        },
+        {
+          "start": 1013.8,
+          "end": 1029.8
+        },
+        {
+          "start": 1029.8,
+          "end": 1033.8
+        },
+        {
+          "start": 1033.8,
+          "end": 1034.8
+        },
+        {
+          "start": 1035.8,
+          "end": 1039.8
+        },
+        {
+          "start": 1039.8,
+          "end": 1044.8
+        },
+        {
+          "start": 1044.8,
+          "end": 1047.8
+        },
+        {
+          "start": 1047.8,
+          "end": 1050.8
+        },
+        {
+          "start": 1050.8,
+          "end": 1051.8
+        },
+        {
+          "start": 1051.8,
+          "end": 1057.8
+        },
+        {
+          "start": 1057.8,
+          "end": 1063.8
+        },
+        {
+          "start": 1063.8,
+          "end": 1070.8
+        },
+        {
+          "start": 1070.8,
+          "end": 1071.8
+        },
+        {
+          "start": 1071.8,
+          "end": 1076.8
+        },
+        {
+          "start": 1076.8,
+          "end": 1081.8
+        },
+        {
+          "start": 1081.8,
+          "end": 1090.8
+        },
+        {
+          "start": 1090.8,
+          "end": 1114.8
+        }
+      ],
+      "dwell_time": 195.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C07",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 1114.8,
+        "end": 1123.8
+      },
+      {
+        "start": 1123.8,
+        "end": 1126.8
+      },
+      {
+        "start": 1126.8,
+        "end": 1129.8
+      },
+      {
+        "start": 1129.8,
+        "end": 1131.8
+      },
+      {
+        "start": 1131.8,
+        "end": 1135.8
+      },
+      {
+        "start": 1135.8,
+        "end": 1138.8
+      },
+      {
+        "start": 1138.8,
+        "end": 1143.8
+      },
+      {
+        "start": 1143.8,
+        "end": 1147.8
+      },
+      {
+        "start": 1147.8,
+        "end": 1150.8
+      },
+      {
+        "start": 1150.8,
+        "end": 1153.8
+      },
+      {
+        "start": 1153.8,
+        "end": 1156.8
+      },
+      {
+        "start": 1156.8,
+        "end": 1159.8
+      },
+      {
+        "start": 1159.8,
+        "end": 1162.8
+      },
+      {
+        "start": 1162.8,
+        "end": 1164.8
+      },
+      {
+        "start": 1164.8,
+        "end": 1167.8
+      },
+      {
+        "start": 1167.8,
+        "end": 1171.8
+      },
+      {
+        "start": 1171.8,
+        "end": 1174.8
+      },
+      {
+        "start": 1174.8,
+        "end": 1175.8
+      },
+      {
+        "start": 1175.8,
+        "end": 1179.8
+      },
+      {
+        "start": 1179.8,
+        "end": 1184.8
+      },
+      {
+        "start": 1184.8,
+        "end": 1187.8
+      },
+      {
+        "start": 1187.8,
+        "end": 1189.8
+      },
+      {
+        "start": 1189.8,
+        "end": 1192.8
+      },
+      {
+        "start": 1192.8,
+        "end": 1201.8
+      },
+      {
+        "start": 1201.8,
+        "end": 1203.8
+      },
+      {
+        "start": 1203.8,
+        "end": 1204.8
+      },
+      {
+        "start": 1204.8,
+        "end": 1206.8
+      },
+      {
+        "start": 1206.8,
+        "end": 1209.8
+      },
+      {
+        "start": 1209.8,
+        "end": 1212.8
+      },
+      {
+        "start": 1212.8,
+        "end": 1219.8
+      },
+      {
+        "start": 1219.8,
+        "end": 1225.8
+      },
+      {
+        "start": 1225.8,
+        "end": 1233.8
+      },
+      {
+        "start": 1233.8,
+        "end": 1236.8
+      },
+      {
+        "start": 1236.8,
+        "end": 1240.8
+      },
+      {
+        "start": 1240.8,
+        "end": 1241.8
+      },
+      {
+        "start": 1241.8,
+        "end": 1242.8
+      },
+      {
+        "start": 1242.8,
+        "end": 1244.8
+      },
+      {
+        "start": 1244.8,
+        "end": 1248.8
+      },
+      {
+        "start": 1248.8,
+        "end": 1254.8
+      },
+      {
+        "start": 1254.8,
+        "end": 1262.8
+      },
+      {
+        "start": 1262.8,
+        "end": 1268.8
+      },
+      {
+        "start": 1268.8,
+        "end": 1269.8
+      },
+      {
+        "start": 1269.8,
+        "end": 1277.8
+      },
+      {
+        "start": 1277.8,
+        "end": 1280.8
+      },
+      {
+        "start": 1280.8,
+        "end": 1282.8
+      },
+      {
+        "start": 1282.8,
+        "end": 1284.8
+      },
+      {
+        "start": 1284.8,
+        "end": 1285.8
+      },
+      {
+        "start": 1285.8,
+        "end": 1287.8
+      },
+      {
+        "start": 1287.8,
+        "end": 1291.8
+      },
+      {
+        "start": 1291.8,
+        "end": 1292.8
+      },
+      {
+        "start": 1292.8,
+        "end": 1293.8
+      },
+      {
+        "start": 1293.8,
+        "end": 1298.8
+      }
+    ],
+    "text": "So, what is this? So, what is this? If full binary tree has it? Is this full binary? Why? Full binary says what? Zero or two for all the internal nodes. Perfect binary tree means what? Only two. Complete binary tree means what? Sub two. Last one can be minus one. But instead of two, it can be only one. But one will occur. I left my right my left. So, what kind of a tree is this? This is not even pathological tree. Why? Because pathological tree has got only single child. This one has got two children. So, what kind of a tree is this? Very good. This is a normal binary tree. Very good. What is this? Skewed. Skewed means what? Everything would be on the left or everything would be on the right. This is a skewed. It's left skewed binary tree, right skewed binary tree. When a pathological or a degenerate tree is such that only left is dominated or only right is dominated, then we say it is a left skewed binary tree or a right skewed binary tree. But it's left skewed or right skewed. But can I say it is still a degenerative tree? Yes. Why? Single node, single parent. Single parent, single child, whatever. This is your skewed tree. Tell me the number of nodes, the skewed tree will have. Number of levels equal to number of nodes. Okay. Tell me the height of a skewed tree. Level minus 1. Okay, because level is what? Level 0. Level 1. Level 2. If I start with 0, then what would it be? Levels. Okay. What is the height of the skewed tree?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C07",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1114.8,
+          "end": 1123.8
+        },
+        {
+          "start": 1123.8,
+          "end": 1126.8
+        },
+        {
+          "start": 1126.8,
+          "end": 1129.8
+        },
+        {
+          "start": 1129.8,
+          "end": 1131.8
+        },
+        {
+          "start": 1131.8,
+          "end": 1135.8
+        },
+        {
+          "start": 1135.8,
+          "end": 1138.8
+        },
+        {
+          "start": 1138.8,
+          "end": 1143.8
+        },
+        {
+          "start": 1143.8,
+          "end": 1147.8
+        },
+        {
+          "start": 1147.8,
+          "end": 1150.8
+        },
+        {
+          "start": 1150.8,
+          "end": 1153.8
+        },
+        {
+          "start": 1153.8,
+          "end": 1156.8
+        },
+        {
+          "start": 1156.8,
+          "end": 1159.8
+        },
+        {
+          "start": 1159.8,
+          "end": 1162.8
+        },
+        {
+          "start": 1162.8,
+          "end": 1164.8
+        },
+        {
+          "start": 1164.8,
+          "end": 1167.8
+        },
+        {
+          "start": 1167.8,
+          "end": 1171.8
+        },
+        {
+          "start": 1171.8,
+          "end": 1174.8
+        },
+        {
+          "start": 1174.8,
+          "end": 1175.8
+        },
+        {
+          "start": 1175.8,
+          "end": 1179.8
+        },
+        {
+          "start": 1179.8,
+          "end": 1184.8
+        },
+        {
+          "start": 1184.8,
+          "end": 1187.8
+        },
+        {
+          "start": 1187.8,
+          "end": 1189.8
+        },
+        {
+          "start": 1189.8,
+          "end": 1192.8
+        },
+        {
+          "start": 1192.8,
+          "end": 1201.8
+        },
+        {
+          "start": 1201.8,
+          "end": 1203.8
+        },
+        {
+          "start": 1203.8,
+          "end": 1204.8
+        },
+        {
+          "start": 1204.8,
+          "end": 1206.8
+        },
+        {
+          "start": 1206.8,
+          "end": 1209.8
+        },
+        {
+          "start": 1209.8,
+          "end": 1212.8
+        },
+        {
+          "start": 1212.8,
+          "end": 1219.8
+        },
+        {
+          "start": 1219.8,
+          "end": 1225.8
+        },
+        {
+          "start": 1225.8,
+          "end": 1233.8
+        },
+        {
+          "start": 1233.8,
+          "end": 1236.8
+        },
+        {
+          "start": 1236.8,
+          "end": 1240.8
+        },
+        {
+          "start": 1240.8,
+          "end": 1241.8
+        },
+        {
+          "start": 1241.8,
+          "end": 1242.8
+        },
+        {
+          "start": 1242.8,
+          "end": 1244.8
+        },
+        {
+          "start": 1244.8,
+          "end": 1248.8
+        },
+        {
+          "start": 1248.8,
+          "end": 1254.8
+        },
+        {
+          "start": 1254.8,
+          "end": 1262.8
+        },
+        {
+          "start": 1262.8,
+          "end": 1268.8
+        },
+        {
+          "start": 1268.8,
+          "end": 1269.8
+        },
+        {
+          "start": 1269.8,
+          "end": 1277.8
+        },
+        {
+          "start": 1277.8,
+          "end": 1280.8
+        },
+        {
+          "start": 1280.8,
+          "end": 1282.8
+        },
+        {
+          "start": 1282.8,
+          "end": 1284.8
+        },
+        {
+          "start": 1284.8,
+          "end": 1285.8
+        },
+        {
+          "start": 1285.8,
+          "end": 1287.8
+        },
+        {
+          "start": 1287.8,
+          "end": 1291.8
+        },
+        {
+          "start": 1291.8,
+          "end": 1292.8
+        },
+        {
+          "start": 1292.8,
+          "end": 1293.8
+        },
+        {
+          "start": 1293.8,
+          "end": 1298.8
+        }
+      ],
+      "dwell_time": 184.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C08",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 1298.8,
+        "end": 1302.8
+      },
+      {
+        "start": 1302.8,
+        "end": 1306.8
+      },
+      {
+        "start": 1306.8,
+        "end": 1309.8
+      },
+      {
+        "start": 1309.8,
+        "end": 1310.8
+      },
+      {
+        "start": 1310.8,
+        "end": 1311.8
+      },
+      {
+        "start": 1311.8,
+        "end": 1313.8
+      },
+      {
+        "start": 1313.8,
+        "end": 1316.8
+      },
+      {
+        "start": 1316.8,
+        "end": 1317.8
+      },
+      {
+        "start": 1317.8,
+        "end": 1322.8
+      },
+      {
+        "start": 1322.8,
+        "end": 1324.8
+      },
+      {
+        "start": 1324.8,
+        "end": 1327.8
+      },
+      {
+        "start": 1327.8,
+        "end": 1331.8
+      },
+      {
+        "start": 1331.8,
+        "end": 1335.8
+      },
+      {
+        "start": 1335.8,
+        "end": 1341.8
+      },
+      {
+        "start": 1341.8,
+        "end": 1342.8
+      },
+      {
+        "start": 1342.8,
+        "end": 1349.8
+      },
+      {
+        "start": 1349.8,
+        "end": 1354.8
+      },
+      {
+        "start": 1354.8,
+        "end": 1358.8
+      },
+      {
+        "start": 1358.8,
+        "end": 1359.8
+      },
+      {
+        "start": 1359.8,
+        "end": 1365.8
+      },
+      {
+        "start": 1365.8,
+        "end": 1368.8
+      },
+      {
+        "start": 1368.8,
+        "end": 1374.8
+      },
+      {
+        "start": 1374.8,
+        "end": 1377.8
+      },
+      {
+        "start": 1377.8,
+        "end": 1381.8
+      },
+      {
+        "start": 1381.8,
+        "end": 1385.8
+      },
+      {
+        "start": 1385.8,
+        "end": 1388.8
+      },
+      {
+        "start": 1388.8,
+        "end": 1389.8
+      },
+      {
+        "start": 1389.8,
+        "end": 1393.8
+      },
+      {
+        "start": 1393.8,
+        "end": 1397.8
+      },
+      {
+        "start": 1397.8,
+        "end": 1398.8
+      },
+      {
+        "start": 1398.8,
+        "end": 1399.8
+      },
+      {
+        "start": 1399.8,
+        "end": 1404.8
+      },
+      {
+        "start": 1404.8,
+        "end": 1405.8
+      },
+      {
+        "start": 1405.8,
+        "end": 1406.8
+      },
+      {
+        "start": 1406.8,
+        "end": 1410.8
+      },
+      {
+        "start": 1410.8,
+        "end": 1413.8
+      },
+      {
+        "start": 1413.8,
+        "end": 1416.8
+      },
+      {
+        "start": 1416.8,
+        "end": 1418.8
+      },
+      {
+        "start": 1418.8,
+        "end": 1419.8
+      },
+      {
+        "start": 1419.8,
+        "end": 1420.8
+      },
+      {
+        "start": 1420.8,
+        "end": 1426.8
+      },
+      {
+        "start": 1426.8,
+        "end": 1428.8
+      },
+      {
+        "start": 1428.8,
+        "end": 1430.8
+      },
+      {
+        "start": 1430.8,
+        "end": 1435.8
+      },
+      {
+        "start": 1435.8,
+        "end": 1437.8
+      },
+      {
+        "start": 1437.8,
+        "end": 1438.8
+      },
+      {
+        "start": 1438.8,
+        "end": 1441.8
+      },
+      {
+        "start": 1441.8,
+        "end": 1442.8
+      },
+      {
+        "start": 1442.8,
+        "end": 1445.8
+      },
+      {
+        "start": 1445.8,
+        "end": 1446.8
+      },
+      {
+        "start": 1446.8,
+        "end": 1447.8
+      },
+      {
+        "start": 1447.8,
+        "end": 1448.8
+      },
+      {
+        "start": 1448.8,
+        "end": 1455.8
+      },
+      {
+        "start": 1455.8,
+        "end": 1456.8
+      },
+      {
+        "start": 1456.8,
+        "end": 1457.8
+      },
+      {
+        "start": 1457.8,
+        "end": 1460.8
+      },
+      {
+        "start": 1460.8,
+        "end": 1466.8
+      },
+      {
+        "start": 1466.8,
+        "end": 1471.8
+      },
+      {
+        "start": 1471.8,
+        "end": 1474.8
+      },
+      {
+        "start": 1474.8,
+        "end": 1478.8
+      }
+    ],
+    "text": "Number of levels. What is the depth of a skewed tree? Depth of a, a I told tree note. Correct. Okay. Depth of a tree is what? Again, number of levels. Okay. What is the degree of a node in a skewed tree? Balanced binary tree. Now, what do you mean by a balanced tree? Right now, just observe the tree. Balanced tree mainly is based on the subtrees. Tell me what is the, only look at the left hand side of the tree. Okay. What are the subtrees here? What is the height of a left subtree? I shall first identify the subtree. 2, 4, 5. And this side. 2, 4, 5 is one subtrees. What about on the right hand side? The left side of the right is the tree. So, the right side is the tree. Look at the diagram of the left side. How many subtrees are there? No. How did we start the session today? Is root border tree? Correct. Okay. So, can I say is three a subtrees? Yes or no? Yes. How many subtrees does your left diagram have? What are those? One is 2, 4, 5. Other is what? Three. Understood. What is the height of 2, 4, 5? The height of the subtree. What is the height of a subtree? Who is the node in the subtree here? Subtrees are 2, 4, 5. Okay? Is there root node here? Correct. The height of a subtree here. One. Understood? Okay? What is the height of your right subtree? Zero. Okay? What do you mean by balanced tree? When the height of a left subtree, minus height of the right subtree, is equal to 1. I will say the tree is balanced.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C08",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1298.8,
+          "end": 1302.8
+        },
+        {
+          "start": 1302.8,
+          "end": 1306.8
+        },
+        {
+          "start": 1306.8,
+          "end": 1309.8
+        },
+        {
+          "start": 1309.8,
+          "end": 1310.8
+        },
+        {
+          "start": 1310.8,
+          "end": 1311.8
+        },
+        {
+          "start": 1311.8,
+          "end": 1313.8
+        },
+        {
+          "start": 1313.8,
+          "end": 1316.8
+        },
+        {
+          "start": 1316.8,
+          "end": 1317.8
+        },
+        {
+          "start": 1317.8,
+          "end": 1322.8
+        },
+        {
+          "start": 1322.8,
+          "end": 1324.8
+        },
+        {
+          "start": 1324.8,
+          "end": 1327.8
+        },
+        {
+          "start": 1327.8,
+          "end": 1331.8
+        },
+        {
+          "start": 1331.8,
+          "end": 1335.8
+        },
+        {
+          "start": 1335.8,
+          "end": 1341.8
+        },
+        {
+          "start": 1341.8,
+          "end": 1342.8
+        },
+        {
+          "start": 1342.8,
+          "end": 1349.8
+        },
+        {
+          "start": 1349.8,
+          "end": 1354.8
+        },
+        {
+          "start": 1354.8,
+          "end": 1358.8
+        },
+        {
+          "start": 1358.8,
+          "end": 1359.8
+        },
+        {
+          "start": 1359.8,
+          "end": 1365.8
+        },
+        {
+          "start": 1365.8,
+          "end": 1368.8
+        },
+        {
+          "start": 1368.8,
+          "end": 1374.8
+        },
+        {
+          "start": 1374.8,
+          "end": 1377.8
+        },
+        {
+          "start": 1377.8,
+          "end": 1381.8
+        },
+        {
+          "start": 1381.8,
+          "end": 1385.8
+        },
+        {
+          "start": 1385.8,
+          "end": 1388.8
+        },
+        {
+          "start": 1388.8,
+          "end": 1389.8
+        },
+        {
+          "start": 1389.8,
+          "end": 1393.8
+        },
+        {
+          "start": 1393.8,
+          "end": 1397.8
+        },
+        {
+          "start": 1397.8,
+          "end": 1398.8
+        },
+        {
+          "start": 1398.8,
+          "end": 1399.8
+        },
+        {
+          "start": 1399.8,
+          "end": 1404.8
+        },
+        {
+          "start": 1404.8,
+          "end": 1405.8
+        },
+        {
+          "start": 1405.8,
+          "end": 1406.8
+        },
+        {
+          "start": 1406.8,
+          "end": 1410.8
+        },
+        {
+          "start": 1410.8,
+          "end": 1413.8
+        },
+        {
+          "start": 1413.8,
+          "end": 1416.8
+        },
+        {
+          "start": 1416.8,
+          "end": 1418.8
+        },
+        {
+          "start": 1418.8,
+          "end": 1419.8
+        },
+        {
+          "start": 1419.8,
+          "end": 1420.8
+        },
+        {
+          "start": 1420.8,
+          "end": 1426.8
+        },
+        {
+          "start": 1426.8,
+          "end": 1428.8
+        },
+        {
+          "start": 1428.8,
+          "end": 1430.8
+        },
+        {
+          "start": 1430.8,
+          "end": 1435.8
+        },
+        {
+          "start": 1435.8,
+          "end": 1437.8
+        },
+        {
+          "start": 1437.8,
+          "end": 1438.8
+        },
+        {
+          "start": 1438.8,
+          "end": 1441.8
+        },
+        {
+          "start": 1441.8,
+          "end": 1442.8
+        },
+        {
+          "start": 1442.8,
+          "end": 1445.8
+        },
+        {
+          "start": 1445.8,
+          "end": 1446.8
+        },
+        {
+          "start": 1446.8,
+          "end": 1447.8
+        },
+        {
+          "start": 1447.8,
+          "end": 1448.8
+        },
+        {
+          "start": 1448.8,
+          "end": 1455.8
+        },
+        {
+          "start": 1455.8,
+          "end": 1456.8
+        },
+        {
+          "start": 1456.8,
+          "end": 1457.8
+        },
+        {
+          "start": 1457.8,
+          "end": 1460.8
+        },
+        {
+          "start": 1460.8,
+          "end": 1466.8
+        },
+        {
+          "start": 1466.8,
+          "end": 1471.8
+        },
+        {
+          "start": 1471.8,
+          "end": 1474.8
+        },
+        {
+          "start": 1474.8,
+          "end": 1478.8
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C09",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 1478.8,
+        "end": 1486.8
+      },
+      {
+        "start": 1486.8,
+        "end": 1490.8
+      },
+      {
+        "start": 1490.8,
+        "end": 1494.8
+      },
+      {
+        "start": 1494.8,
+        "end": 1498.8
+      },
+      {
+        "start": 1498.8,
+        "end": 1500.8
+      },
+      {
+        "start": 1500.8,
+        "end": 1501.8
+      },
+      {
+        "start": 1501.8,
+        "end": 1503.8
+      },
+      {
+        "start": 1503.8,
+        "end": 1504.8
+      },
+      {
+        "start": 1504.8,
+        "end": 1507.8
+      },
+      {
+        "start": 1507.8,
+        "end": 1509.8
+      },
+      {
+        "start": 1509.8,
+        "end": 1512.8
+      },
+      {
+        "start": 1512.8,
+        "end": 1515.8
+      },
+      {
+        "start": 1515.8,
+        "end": 1519.8
+      },
+      {
+        "start": 1519.8,
+        "end": 1521.8
+      },
+      {
+        "start": 1521.8,
+        "end": 1522.8
+      },
+      {
+        "start": 1522.8,
+        "end": 1524.8
+      },
+      {
+        "start": 1524.8,
+        "end": 1528.8
+      },
+      {
+        "start": 1528.8,
+        "end": 1531.8
+      },
+      {
+        "start": 1531.8,
+        "end": 1532.8
+      },
+      {
+        "start": 1532.8,
+        "end": 1536.8
+      },
+      {
+        "start": 1536.8,
+        "end": 1539.8
+      },
+      {
+        "start": 1539.8,
+        "end": 1542.8
+      },
+      {
+        "start": 1542.8,
+        "end": 1547.8
+      },
+      {
+        "start": 1547.8,
+        "end": 1552.8
+      },
+      {
+        "start": 1552.8,
+        "end": 1554.8
+      },
+      {
+        "start": 1554.8,
+        "end": 1559.8
+      },
+      {
+        "start": 1559.8,
+        "end": 1568.8
+      },
+      {
+        "start": 1568.8,
+        "end": 1576.8
+      },
+      {
+        "start": 1576.8,
+        "end": 1577.8
+      },
+      {
+        "start": 1577.8,
+        "end": 1578.8
+      },
+      {
+        "start": 1578.8,
+        "end": 1579.8
+      },
+      {
+        "start": 1579.8,
+        "end": 1580.8
+      },
+      {
+        "start": 1580.8,
+        "end": 1588.8
+      },
+      {
+        "start": 1588.8,
+        "end": 1589.8
+      },
+      {
+        "start": 1589.8,
+        "end": 1590.8
+      },
+      {
+        "start": 1590.8,
+        "end": 1591.8
+      },
+      {
+        "start": 1591.8,
+        "end": 1596.8
+      },
+      {
+        "start": 1596.8,
+        "end": 1599.8
+      },
+      {
+        "start": 1599.8,
+        "end": 1600.8
+      },
+      {
+        "start": 1600.8,
+        "end": 1607.8
+      },
+      {
+        "start": 1607.8,
+        "end": 1610.8
+      },
+      {
+        "start": 1610.8,
+        "end": 1611.8
+      },
+      {
+        "start": 1611.8,
+        "end": 1625.8
+      },
+      {
+        "start": 1625.8,
+        "end": 1634.8
+      },
+      {
+        "start": 1634.8,
+        "end": 1654.8
+      },
+      {
+        "start": 1655.8,
+        "end": 1658.8
+      },
+      {
+        "start": 1658.8,
+        "end": 1660.8
+      }
+    ],
+    "text": "First of all, we need to know how to identify a subtree. Then calculate the height of that particular subtree. Now, your height of left subtree is 1. Your height of right subtree is 0. 1 minus 0 is what? 1. So, is it a balanced tree? Yes. Now, let's move to the right diagram. Identify the subtree. Step number 1. The biggest subtree. 2, 4, 5, 6. Right hand side. 3. These are the two subtrees. What is the height of the left subtree? Longest path till the leaf. 2. What is the height of the right subtree? 2 minus 0 is how much? Is it a balanced tree? Now, I will make some changes here. You tell me whether it's a balanced tree or it's not a balanced tree. So, what is a balanced tree? What is the definition of a balanced tree? When the height of the left subtree minus the height of right subtree, if the difference is equal to 1, then I would say that the tree is balanced. Okay? 0 or not? 1. Huh? Either 0 or 1? Yes. I mean, same. Yes. Either it is same or at most it should be 1. It cannot be more than 1, basically. Okay? So, now, has your right side become balanced or low? Why? Okay. I mean, I, because I have space over here. What kind of a tree is this? Now, you have a full, perfect, complete, degenerative, left or right skewed, balanced. And, normal binary. What kind of a tree is this?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C09",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1478.8,
+          "end": 1486.8
+        },
+        {
+          "start": 1486.8,
+          "end": 1490.8
+        },
+        {
+          "start": 1490.8,
+          "end": 1494.8
+        },
+        {
+          "start": 1494.8,
+          "end": 1498.8
+        },
+        {
+          "start": 1498.8,
+          "end": 1500.8
+        },
+        {
+          "start": 1500.8,
+          "end": 1501.8
+        },
+        {
+          "start": 1501.8,
+          "end": 1503.8
+        },
+        {
+          "start": 1503.8,
+          "end": 1504.8
+        },
+        {
+          "start": 1504.8,
+          "end": 1507.8
+        },
+        {
+          "start": 1507.8,
+          "end": 1509.8
+        },
+        {
+          "start": 1509.8,
+          "end": 1512.8
+        },
+        {
+          "start": 1512.8,
+          "end": 1515.8
+        },
+        {
+          "start": 1515.8,
+          "end": 1519.8
+        },
+        {
+          "start": 1519.8,
+          "end": 1521.8
+        },
+        {
+          "start": 1521.8,
+          "end": 1522.8
+        },
+        {
+          "start": 1522.8,
+          "end": 1524.8
+        },
+        {
+          "start": 1524.8,
+          "end": 1528.8
+        },
+        {
+          "start": 1528.8,
+          "end": 1531.8
+        },
+        {
+          "start": 1531.8,
+          "end": 1532.8
+        },
+        {
+          "start": 1532.8,
+          "end": 1536.8
+        },
+        {
+          "start": 1536.8,
+          "end": 1539.8
+        },
+        {
+          "start": 1539.8,
+          "end": 1542.8
+        },
+        {
+          "start": 1542.8,
+          "end": 1547.8
+        },
+        {
+          "start": 1547.8,
+          "end": 1552.8
+        },
+        {
+          "start": 1552.8,
+          "end": 1554.8
+        },
+        {
+          "start": 1554.8,
+          "end": 1559.8
+        },
+        {
+          "start": 1559.8,
+          "end": 1568.8
+        },
+        {
+          "start": 1568.8,
+          "end": 1576.8
+        },
+        {
+          "start": 1576.8,
+          "end": 1577.8
+        },
+        {
+          "start": 1577.8,
+          "end": 1578.8
+        },
+        {
+          "start": 1578.8,
+          "end": 1579.8
+        },
+        {
+          "start": 1579.8,
+          "end": 1580.8
+        },
+        {
+          "start": 1580.8,
+          "end": 1588.8
+        },
+        {
+          "start": 1588.8,
+          "end": 1589.8
+        },
+        {
+          "start": 1589.8,
+          "end": 1590.8
+        },
+        {
+          "start": 1590.8,
+          "end": 1591.8
+        },
+        {
+          "start": 1591.8,
+          "end": 1596.8
+        },
+        {
+          "start": 1596.8,
+          "end": 1599.8
+        },
+        {
+          "start": 1599.8,
+          "end": 1600.8
+        },
+        {
+          "start": 1600.8,
+          "end": 1607.8
+        },
+        {
+          "start": 1607.8,
+          "end": 1610.8
+        },
+        {
+          "start": 1610.8,
+          "end": 1611.8
+        },
+        {
+          "start": 1611.8,
+          "end": 1625.8
+        },
+        {
+          "start": 1625.8,
+          "end": 1634.8
+        },
+        {
+          "start": 1634.8,
+          "end": 1654.8
+        },
+        {
+          "start": 1655.8,
+          "end": 1658.8
+        },
+        {
+          "start": 1658.8,
+          "end": 1660.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C10",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 1660.8,
+        "end": 1664.8
+      },
+      {
+        "start": 1664.8,
+        "end": 1667.8
+      },
+      {
+        "start": 1667.8,
+        "end": 1669.8
+      },
+      {
+        "start": 1669.8,
+        "end": 1670.8
+      },
+      {
+        "start": 1670.8,
+        "end": 1672.8
+      },
+      {
+        "start": 1672.8,
+        "end": 1674.8
+      },
+      {
+        "start": 1674.8,
+        "end": 1675.8
+      },
+      {
+        "start": 1675.8,
+        "end": 1676.8
+      },
+      {
+        "start": 1676.8,
+        "end": 1679.8
+      },
+      {
+        "start": 1680.8,
+        "end": 1683.8
+      },
+      {
+        "start": 1683.8,
+        "end": 1690.8
+      },
+      {
+        "start": 1690.8,
+        "end": 1692.8
+      },
+      {
+        "start": 1692.8,
+        "end": 1701.8
+      },
+      {
+        "start": 1701.8,
+        "end": 1708.8
+      },
+      {
+        "start": 1708.8,
+        "end": 1712.8
+      },
+      {
+        "start": 1712.8,
+        "end": 1713.8
+      },
+      {
+        "start": 1713.8,
+        "end": 1722.8
+      },
+      {
+        "start": 1722.8,
+        "end": 1724.8
+      },
+      {
+        "start": 1724.8,
+        "end": 1726.8
+      },
+      {
+        "start": 1726.8,
+        "end": 1727.8
+      },
+      {
+        "start": 1727.8,
+        "end": 1728.8
+      },
+      {
+        "start": 1728.8,
+        "end": 1730.8
+      },
+      {
+        "start": 1730.8,
+        "end": 1733.8
+      },
+      {
+        "start": 1733.8,
+        "end": 1737.8
+      },
+      {
+        "start": 1738.8,
+        "end": 1740.8
+      },
+      {
+        "start": 1740.8,
+        "end": 1744.8
+      },
+      {
+        "start": 1744.8,
+        "end": 1748.8
+      },
+      {
+        "start": 1748.8,
+        "end": 1751.8
+      },
+      {
+        "start": 1751.8,
+        "end": 1752.8
+      },
+      {
+        "start": 1752.8,
+        "end": 1759.8
+      },
+      {
+        "start": 1759.8,
+        "end": 1764.8
+      },
+      {
+        "start": 1764.8,
+        "end": 1769.8
+      },
+      {
+        "start": 1769.8,
+        "end": 1770.8
+      },
+      {
+        "start": 1770.8,
+        "end": 1773.8
+      },
+      {
+        "start": 1773.8,
+        "end": 1776.8
+      },
+      {
+        "start": 1776.8,
+        "end": 1782.8
+      },
+      {
+        "start": 1782.8,
+        "end": 1785.8
+      },
+      {
+        "start": 1785.8,
+        "end": 1790.8
+      },
+      {
+        "start": 1790.8,
+        "end": 1799.8
+      },
+      {
+        "start": 1799.8,
+        "end": 1811.8
+      },
+      {
+        "start": 1811.8,
+        "end": 1815.8
+      },
+      {
+        "start": 1815.8,
+        "end": 1832.8
+      },
+      {
+        "start": 1832.8,
+        "end": 1833.8
+      },
+      {
+        "start": 1833.8,
+        "end": 1835.8
+      },
+      {
+        "start": 1835.8,
+        "end": 1843.8
+      }
+    ],
+    "text": "Why is it a full? How is it a full? 0 or 2? Correct? How many trees are running? Okay. All right. Okay. Now, Normal. Sure? Balanced. Sure? Balanced, okay? Okay. Balanced? Okay. Balanced is correct. But, what else? Perfect. Perfect? Perfect. What is perfect? All levels, everything, full. Exactly 2. So, in the lower left, everybody should be there. 4 is not left, 7 is not left, 8 is not 3. So, this becomes what? Full. Okay. Now, these are the properties of a binary tree, which I will read out and you people have to note because we will have numerical sums on this. Okay? First property. It's small, so I will write it over here. Total number of edges in any binary tree would be what? If n is the number, Achapala, here, here, here. n equal to number of nodes. H equal to height of a tree. K equal to level index starting from 0. K is level. L is number of leaf nodes. Okay? Now, tell me. You have all the abbreviations in a particular binary tree.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C10",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1660.8,
+          "end": 1664.8
+        },
+        {
+          "start": 1664.8,
+          "end": 1667.8
+        },
+        {
+          "start": 1667.8,
+          "end": 1669.8
+        },
+        {
+          "start": 1669.8,
+          "end": 1670.8
+        },
+        {
+          "start": 1670.8,
+          "end": 1672.8
+        },
+        {
+          "start": 1672.8,
+          "end": 1674.8
+        },
+        {
+          "start": 1674.8,
+          "end": 1675.8
+        },
+        {
+          "start": 1675.8,
+          "end": 1676.8
+        },
+        {
+          "start": 1676.8,
+          "end": 1679.8
+        },
+        {
+          "start": 1680.8,
+          "end": 1683.8
+        },
+        {
+          "start": 1683.8,
+          "end": 1690.8
+        },
+        {
+          "start": 1690.8,
+          "end": 1692.8
+        },
+        {
+          "start": 1692.8,
+          "end": 1701.8
+        },
+        {
+          "start": 1701.8,
+          "end": 1708.8
+        },
+        {
+          "start": 1708.8,
+          "end": 1712.8
+        },
+        {
+          "start": 1712.8,
+          "end": 1713.8
+        },
+        {
+          "start": 1713.8,
+          "end": 1722.8
+        },
+        {
+          "start": 1722.8,
+          "end": 1724.8
+        },
+        {
+          "start": 1724.8,
+          "end": 1726.8
+        },
+        {
+          "start": 1726.8,
+          "end": 1727.8
+        },
+        {
+          "start": 1727.8,
+          "end": 1728.8
+        },
+        {
+          "start": 1728.8,
+          "end": 1730.8
+        },
+        {
+          "start": 1730.8,
+          "end": 1733.8
+        },
+        {
+          "start": 1733.8,
+          "end": 1737.8
+        },
+        {
+          "start": 1738.8,
+          "end": 1740.8
+        },
+        {
+          "start": 1740.8,
+          "end": 1744.8
+        },
+        {
+          "start": 1744.8,
+          "end": 1748.8
+        },
+        {
+          "start": 1748.8,
+          "end": 1751.8
+        },
+        {
+          "start": 1751.8,
+          "end": 1752.8
+        },
+        {
+          "start": 1752.8,
+          "end": 1759.8
+        },
+        {
+          "start": 1759.8,
+          "end": 1764.8
+        },
+        {
+          "start": 1764.8,
+          "end": 1769.8
+        },
+        {
+          "start": 1769.8,
+          "end": 1770.8
+        },
+        {
+          "start": 1770.8,
+          "end": 1773.8
+        },
+        {
+          "start": 1773.8,
+          "end": 1776.8
+        },
+        {
+          "start": 1776.8,
+          "end": 1782.8
+        },
+        {
+          "start": 1782.8,
+          "end": 1785.8
+        },
+        {
+          "start": 1785.8,
+          "end": 1790.8
+        },
+        {
+          "start": 1790.8,
+          "end": 1799.8
+        },
+        {
+          "start": 1799.8,
+          "end": 1811.8
+        },
+        {
+          "start": 1811.8,
+          "end": 1815.8
+        },
+        {
+          "start": 1815.8,
+          "end": 1832.8
+        },
+        {
+          "start": 1832.8,
+          "end": 1833.8
+        },
+        {
+          "start": 1833.8,
+          "end": 1835.8
+        },
+        {
+          "start": 1835.8,
+          "end": 1843.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C11",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 1843.8,
+        "end": 1849.8
+      },
+      {
+        "start": 1849.8,
+        "end": 1854.8
+      },
+      {
+        "start": 1854.8,
+        "end": 1868.8
+      },
+      {
+        "start": 1868.8,
+        "end": 1873.8
+      },
+      {
+        "start": 1873.8,
+        "end": 1876.8
+      },
+      {
+        "start": 1876.8,
+        "end": 1877.8
+      },
+      {
+        "start": 1877.8,
+        "end": 1880.8
+      },
+      {
+        "start": 1880.8,
+        "end": 1882.8
+      },
+      {
+        "start": 1882.8,
+        "end": 1885.8
+      },
+      {
+        "start": 1885.8,
+        "end": 1886.8
+      },
+      {
+        "start": 1886.8,
+        "end": 1891.8
+      },
+      {
+        "start": 1891.8,
+        "end": 1892.8
+      },
+      {
+        "start": 1892.8,
+        "end": 1898.8
+      },
+      {
+        "start": 1898.8,
+        "end": 1901.8
+      },
+      {
+        "start": 1901.8,
+        "end": 1905.8
+      },
+      {
+        "start": 1905.8,
+        "end": 1910.8
+      },
+      {
+        "start": 1910.8,
+        "end": 1911.8
+      },
+      {
+        "start": 1911.8,
+        "end": 1913.8
+      },
+      {
+        "start": 1913.8,
+        "end": 1915.8
+      },
+      {
+        "start": 1915.8,
+        "end": 1918.8
+      },
+      {
+        "start": 1918.8,
+        "end": 1922.8
+      },
+      {
+        "start": 1922.8,
+        "end": 1927.8
+      },
+      {
+        "start": 1927.8,
+        "end": 1931.8
+      },
+      {
+        "start": 1931.8,
+        "end": 1932.8
+      },
+      {
+        "start": 1932.8,
+        "end": 1934.8
+      },
+      {
+        "start": 1934.8,
+        "end": 1944.8
+      },
+      {
+        "start": 1944.8,
+        "end": 1945.8
+      },
+      {
+        "start": 1945.8,
+        "end": 1950.8
+      },
+      {
+        "start": 1950.8,
+        "end": 1959.8
+      },
+      {
+        "start": 1959.8,
+        "end": 1966.8
+      },
+      {
+        "start": 1966.8,
+        "end": 1973.8
+      },
+      {
+        "start": 1973.8,
+        "end": 1985.8
+      },
+      {
+        "start": 1985.8,
+        "end": 1989.8
+      },
+      {
+        "start": 1989.8,
+        "end": 1992.8
+      },
+      {
+        "start": 1992.8,
+        "end": 1993.8
+      },
+      {
+        "start": 1993.8,
+        "end": 1996.8
+      },
+      {
+        "start": 1996.8,
+        "end": 1998.8
+      },
+      {
+        "start": 1998.8,
+        "end": 2003.8
+      },
+      {
+        "start": 2003.8,
+        "end": 2009.8
+      },
+      {
+        "start": 2009.8,
+        "end": 2014.8
+      },
+      {
+        "start": 2014.8,
+        "end": 2018.8
+      },
+      {
+        "start": 2018.8,
+        "end": 2026.8
+      }
+    ],
+    "text": "If n is the number of nodes, what would be the number of edges? n minus 1, write it down properly. What are the maximum number of nodes at level K? 2 to the power K. I am talking about maximum. Okay? Minimum, we don't know. Minimum, tell me actually. How many are minimum? No. Minimum depends on what type of tree it is. Correct? Minimum may, if it is full binary, then what? What is full binary? 0 or 2? So, it is undetermined. Okay? Minimum is undetermined in there. Perfect. Minimum is same as maximum. Complete. 2 to the power of K minus 1 would be minimum. Maximum would be 2 to the power K. Okay? Yeah. The height of a binary tree is H. Okay? H, given to you, height is H over here. Maximum number of nodes in a binary tree if you have the height given. Usually, maximum number of nodes is 2 to the power of L level type. But if I have given the height, keeping in mind whatever the skew thing is in all that particular things, maximum number of nodes in a binary tree of height H would be 2 to the power of H plus 1. So, number of nodes, if you know the level, you will get it. If you know the height also, you will get it. Okay? So, they can give you sometimes the height. They can sometimes give you the depth. Depth is nothing but the level told to you, you have got to find the number of nodes. So, 2 formulas are there for it with level as well as with height. 2 to the power H plus 1 minus 1 over here. Why do you think they have a minus 1 here? Removing it for root node because root node has 2.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C11",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1843.8,
+          "end": 1849.8
+        },
+        {
+          "start": 1849.8,
+          "end": 1854.8
+        },
+        {
+          "start": 1854.8,
+          "end": 1868.8
+        },
+        {
+          "start": 1868.8,
+          "end": 1873.8
+        },
+        {
+          "start": 1873.8,
+          "end": 1876.8
+        },
+        {
+          "start": 1876.8,
+          "end": 1877.8
+        },
+        {
+          "start": 1877.8,
+          "end": 1880.8
+        },
+        {
+          "start": 1880.8,
+          "end": 1882.8
+        },
+        {
+          "start": 1882.8,
+          "end": 1885.8
+        },
+        {
+          "start": 1885.8,
+          "end": 1886.8
+        },
+        {
+          "start": 1886.8,
+          "end": 1891.8
+        },
+        {
+          "start": 1891.8,
+          "end": 1892.8
+        },
+        {
+          "start": 1892.8,
+          "end": 1898.8
+        },
+        {
+          "start": 1898.8,
+          "end": 1901.8
+        },
+        {
+          "start": 1901.8,
+          "end": 1905.8
+        },
+        {
+          "start": 1905.8,
+          "end": 1910.8
+        },
+        {
+          "start": 1910.8,
+          "end": 1911.8
+        },
+        {
+          "start": 1911.8,
+          "end": 1913.8
+        },
+        {
+          "start": 1913.8,
+          "end": 1915.8
+        },
+        {
+          "start": 1915.8,
+          "end": 1918.8
+        },
+        {
+          "start": 1918.8,
+          "end": 1922.8
+        },
+        {
+          "start": 1922.8,
+          "end": 1927.8
+        },
+        {
+          "start": 1927.8,
+          "end": 1931.8
+        },
+        {
+          "start": 1931.8,
+          "end": 1932.8
+        },
+        {
+          "start": 1932.8,
+          "end": 1934.8
+        },
+        {
+          "start": 1934.8,
+          "end": 1944.8
+        },
+        {
+          "start": 1944.8,
+          "end": 1945.8
+        },
+        {
+          "start": 1945.8,
+          "end": 1950.8
+        },
+        {
+          "start": 1950.8,
+          "end": 1959.8
+        },
+        {
+          "start": 1959.8,
+          "end": 1966.8
+        },
+        {
+          "start": 1966.8,
+          "end": 1973.8
+        },
+        {
+          "start": 1973.8,
+          "end": 1985.8
+        },
+        {
+          "start": 1985.8,
+          "end": 1989.8
+        },
+        {
+          "start": 1989.8,
+          "end": 1992.8
+        },
+        {
+          "start": 1992.8,
+          "end": 1993.8
+        },
+        {
+          "start": 1993.8,
+          "end": 1996.8
+        },
+        {
+          "start": 1996.8,
+          "end": 1998.8
+        },
+        {
+          "start": 1998.8,
+          "end": 2003.8
+        },
+        {
+          "start": 2003.8,
+          "end": 2009.8
+        },
+        {
+          "start": 2009.8,
+          "end": 2014.8
+        },
+        {
+          "start": 2014.8,
+          "end": 2018.8
+        },
+        {
+          "start": 2018.8,
+          "end": 2026.8
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C12",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2026.8,
+        "end": 2027.8
+      },
+      {
+        "start": 2027.8,
+        "end": 2033.8
+      },
+      {
+        "start": 2033.8,
+        "end": 2038.8
+      },
+      {
+        "start": 2038.8,
+        "end": 2041.8
+      },
+      {
+        "start": 2041.8,
+        "end": 2044.8
+      },
+      {
+        "start": 2044.8,
+        "end": 2047.8
+      },
+      {
+        "start": 2047.8,
+        "end": 2049.8
+      },
+      {
+        "start": 2049.8,
+        "end": 2056.8
+      },
+      {
+        "start": 2056.8,
+        "end": 2065.8
+      },
+      {
+        "start": 2065.8,
+        "end": 2073.8
+      },
+      {
+        "start": 2073.8,
+        "end": 2076.8
+      },
+      {
+        "start": 2076.8,
+        "end": 2082.8
+      },
+      {
+        "start": 2082.8,
+        "end": 2087.8
+      },
+      {
+        "start": 2087.8,
+        "end": 2088.8
+      },
+      {
+        "start": 2088.8,
+        "end": 2096.8
+      },
+      {
+        "start": 2096.8,
+        "end": 2099.8
+      },
+      {
+        "start": 2099.8,
+        "end": 2100.8
+      },
+      {
+        "start": 2100.8,
+        "end": 2103.8
+      },
+      {
+        "start": 2103.8,
+        "end": 2107.8
+      },
+      {
+        "start": 2107.8,
+        "end": 2116.8
+      },
+      {
+        "start": 2116.8,
+        "end": 2125.8
+      },
+      {
+        "start": 2125.8,
+        "end": 2132.8
+      },
+      {
+        "start": 2132.8,
+        "end": 2138.8
+      },
+      {
+        "start": 2138.8,
+        "end": 2145.8
+      },
+      {
+        "start": 2145.8,
+        "end": 2152.8
+      },
+      {
+        "start": 2152.8,
+        "end": 2159.8
+      },
+      {
+        "start": 2159.8,
+        "end": 2164.8
+      },
+      {
+        "start": 2164.8,
+        "end": 2170.8
+      },
+      {
+        "start": 2170.8,
+        "end": 2175.8
+      },
+      {
+        "start": 2175.8,
+        "end": 2189.8
+      },
+      {
+        "start": 2189.8,
+        "end": 2195.8
+      },
+      {
+        "start": 2195.8,
+        "end": 2203.8
+      },
+      {
+        "start": 2203.8,
+        "end": 2208.8
+      }
+    ],
+    "text": "Okay? So, this is when they give you a height, they ask you to find maximum number of nodes. Many a time, they will only ask you about nodes. If you know the height, you will find the height. If you know the nodes, you will find the level. If you know the level, you will find the nodes. Okay? So, we already know what is a skewed tree? Uh, height of a skewed tree is equal to? Height of a skewed tree is equal to number of nodes minus 1. Okay? Minimum possible height of a binary tree with n nodes. Now, node is the only height find domain. Okay? So, height is equal to, what is this? Floor value. Okay? Floor value of what? Log of n to the base 2. So, if nodes are given, I will find height like this. If height is given, number of nodes equal to when the height is given, h plus 1 minus. Okay? Maximum possible height, if the number of nodes see when you've got to say what is the height? When the number of nodes are given, I am saying it is log 2n. This is a normal tree, but if it is a skewed tree, then it would be n minus 1. Always check with what kind of tree it is asking you the question. Okay? Mostly, they will always ask you to find the number of nodes. In a full binary tree with L leaves, okay? There are 4 leaves over here, in a perfect binary tree, suppose. So, if you have 4 trees over here, then it is asking you in a binary tree with L leaves, okay? L is 4 over here, what are the total number of nodes?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C12",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2026.8,
+          "end": 2027.8
+        },
+        {
+          "start": 2027.8,
+          "end": 2033.8
+        },
+        {
+          "start": 2033.8,
+          "end": 2038.8
+        },
+        {
+          "start": 2038.8,
+          "end": 2041.8
+        },
+        {
+          "start": 2041.8,
+          "end": 2044.8
+        },
+        {
+          "start": 2044.8,
+          "end": 2047.8
+        },
+        {
+          "start": 2047.8,
+          "end": 2049.8
+        },
+        {
+          "start": 2049.8,
+          "end": 2056.8
+        },
+        {
+          "start": 2056.8,
+          "end": 2065.8
+        },
+        {
+          "start": 2065.8,
+          "end": 2073.8
+        },
+        {
+          "start": 2073.8,
+          "end": 2076.8
+        },
+        {
+          "start": 2076.8,
+          "end": 2082.8
+        },
+        {
+          "start": 2082.8,
+          "end": 2087.8
+        },
+        {
+          "start": 2087.8,
+          "end": 2088.8
+        },
+        {
+          "start": 2088.8,
+          "end": 2096.8
+        },
+        {
+          "start": 2096.8,
+          "end": 2099.8
+        },
+        {
+          "start": 2099.8,
+          "end": 2100.8
+        },
+        {
+          "start": 2100.8,
+          "end": 2103.8
+        },
+        {
+          "start": 2103.8,
+          "end": 2107.8
+        },
+        {
+          "start": 2107.8,
+          "end": 2116.8
+        },
+        {
+          "start": 2116.8,
+          "end": 2125.8
+        },
+        {
+          "start": 2125.8,
+          "end": 2132.8
+        },
+        {
+          "start": 2132.8,
+          "end": 2138.8
+        },
+        {
+          "start": 2138.8,
+          "end": 2145.8
+        },
+        {
+          "start": 2145.8,
+          "end": 2152.8
+        },
+        {
+          "start": 2152.8,
+          "end": 2159.8
+        },
+        {
+          "start": 2159.8,
+          "end": 2164.8
+        },
+        {
+          "start": 2164.8,
+          "end": 2170.8
+        },
+        {
+          "start": 2170.8,
+          "end": 2175.8
+        },
+        {
+          "start": 2175.8,
+          "end": 2189.8
+        },
+        {
+          "start": 2189.8,
+          "end": 2195.8
+        },
+        {
+          "start": 2195.8,
+          "end": 2203.8
+        },
+        {
+          "start": 2203.8,
+          "end": 2208.8
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C13",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2208.8,
+        "end": 2218.8
+      },
+      {
+        "start": 2218.8,
+        "end": 2223.8
+      },
+      {
+        "start": 2223.8,
+        "end": 2230.8
+      },
+      {
+        "start": 2230.8,
+        "end": 2237.8
+      },
+      {
+        "start": 2260.8,
+        "end": 2267.8
+      },
+      {
+        "start": 2267.8,
+        "end": 2268.8
+      },
+      {
+        "start": 2268.8,
+        "end": 2273.8
+      },
+      {
+        "start": 2273.8,
+        "end": 2274.8
+      },
+      {
+        "start": 2274.8,
+        "end": 2280.8
+      },
+      {
+        "start": 2280.8,
+        "end": 2286.8
+      },
+      {
+        "start": 2287.8,
+        "end": 2290.8
+      },
+      {
+        "start": 2290.8,
+        "end": 2295.8
+      },
+      {
+        "start": 2295.8,
+        "end": 2298.8
+      },
+      {
+        "start": 2298.8,
+        "end": 2299.8
+      },
+      {
+        "start": 2299.8,
+        "end": 2301.8
+      },
+      {
+        "start": 2301.8,
+        "end": 2306.8
+      },
+      {
+        "start": 2306.8,
+        "end": 2307.8
+      },
+      {
+        "start": 2307.8,
+        "end": 2314.8
+      },
+      {
+        "start": 2314.8,
+        "end": 2318.8
+      },
+      {
+        "start": 2318.8,
+        "end": 2320.8
+      },
+      {
+        "start": 2320.8,
+        "end": 2325.8
+      },
+      {
+        "start": 2325.8,
+        "end": 2327.8
+      },
+      {
+        "start": 2327.8,
+        "end": 2329.8
+      },
+      {
+        "start": 2329.8,
+        "end": 2333.8
+      },
+      {
+        "start": 2333.8,
+        "end": 2336.8
+      },
+      {
+        "start": 2336.8,
+        "end": 2340.8
+      },
+      {
+        "start": 2341.8,
+        "end": 2342.8
+      },
+      {
+        "start": 2342.8,
+        "end": 2344.8
+      },
+      {
+        "start": 2344.8,
+        "end": 2345.8
+      },
+      {
+        "start": 2345.8,
+        "end": 2351.8
+      },
+      {
+        "start": 2351.8,
+        "end": 2354.8
+      },
+      {
+        "start": 2354.8,
+        "end": 2358.8
+      },
+      {
+        "start": 2358.8,
+        "end": 2359.8
+      },
+      {
+        "start": 2359.8,
+        "end": 2361.8
+      },
+      {
+        "start": 2361.8,
+        "end": 2367.8
+      },
+      {
+        "start": 2370.8,
+        "end": 2379.8
+      },
+      {
+        "start": 2379.8,
+        "end": 2382.8
+      },
+      {
+        "start": 2382.8,
+        "end": 2390.8
+      },
+      {
+        "start": 2390.8,
+        "end": 2393.8
+      },
+      {
+        "start": 2394.8,
+        "end": 2400.8
+      },
+      {
+        "start": 2400.8,
+        "end": 2407.8
+      },
+      {
+        "start": 2407.8,
+        "end": 2415.8
+      },
+      {
+        "start": 2415.8,
+        "end": 2419.8
+      }
+    ],
+    "text": "It is 2L minus 1, but this is applicable only in what? Full binary tree. This, I do not want you to do it, I will do it as we go forward. Please go through what you have written. Have you gone through this? Okay? Should I give you some sums to practice right now or you will directly do it in MCQs? Very good. Construction of a binary, now comes programming today, okay? You want to code this or should we go to traversals directly? Missing coding, okay? Construction of a binary tree, how are you going to construct it with the help of node? What is this again? Node. Now your node will have what? Data, left, right? Okay? Before going here and writing your coding, I want you people, we will give you in the exam, create a full binary tree with 3 levels. Means, what will you create? We will even give you nodes. How will you construct it? Tell me, how will you make it? With 3 levels. What is full binary tree? 0 or 2. You have it. And how many levels do you make? 3. So how will you make a tree? How to make a tree? Level 0, level 1, level 2 means 3 levels. Okay? How to make a binary tree? Will you first make left or will you make right? Next one, create a complete binary tree with 3 levels. How many nodes would it have? Complete binary tree. 6 or 5? Create a skewed tree with 5 nodes. Create a skewed tree with 5 nodes. Your words, left skewed, right skewed, your words. Now you are drawing, right?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C13",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2208.8,
+          "end": 2218.8
+        },
+        {
+          "start": 2218.8,
+          "end": 2223.8
+        },
+        {
+          "start": 2223.8,
+          "end": 2230.8
+        },
+        {
+          "start": 2230.8,
+          "end": 2237.8
+        },
+        {
+          "start": 2260.8,
+          "end": 2267.8
+        },
+        {
+          "start": 2267.8,
+          "end": 2268.8
+        },
+        {
+          "start": 2268.8,
+          "end": 2273.8
+        },
+        {
+          "start": 2273.8,
+          "end": 2274.8
+        },
+        {
+          "start": 2274.8,
+          "end": 2280.8
+        },
+        {
+          "start": 2280.8,
+          "end": 2286.8
+        },
+        {
+          "start": 2287.8,
+          "end": 2290.8
+        },
+        {
+          "start": 2290.8,
+          "end": 2295.8
+        },
+        {
+          "start": 2295.8,
+          "end": 2298.8
+        },
+        {
+          "start": 2298.8,
+          "end": 2299.8
+        },
+        {
+          "start": 2299.8,
+          "end": 2301.8
+        },
+        {
+          "start": 2301.8,
+          "end": 2306.8
+        },
+        {
+          "start": 2306.8,
+          "end": 2307.8
+        },
+        {
+          "start": 2307.8,
+          "end": 2314.8
+        },
+        {
+          "start": 2314.8,
+          "end": 2318.8
+        },
+        {
+          "start": 2318.8,
+          "end": 2320.8
+        },
+        {
+          "start": 2320.8,
+          "end": 2325.8
+        },
+        {
+          "start": 2325.8,
+          "end": 2327.8
+        },
+        {
+          "start": 2327.8,
+          "end": 2329.8
+        },
+        {
+          "start": 2329.8,
+          "end": 2333.8
+        },
+        {
+          "start": 2333.8,
+          "end": 2336.8
+        },
+        {
+          "start": 2336.8,
+          "end": 2340.8
+        },
+        {
+          "start": 2341.8,
+          "end": 2342.8
+        },
+        {
+          "start": 2342.8,
+          "end": 2344.8
+        },
+        {
+          "start": 2344.8,
+          "end": 2345.8
+        },
+        {
+          "start": 2345.8,
+          "end": 2351.8
+        },
+        {
+          "start": 2351.8,
+          "end": 2354.8
+        },
+        {
+          "start": 2354.8,
+          "end": 2358.8
+        },
+        {
+          "start": 2358.8,
+          "end": 2359.8
+        },
+        {
+          "start": 2359.8,
+          "end": 2361.8
+        },
+        {
+          "start": 2361.8,
+          "end": 2367.8
+        },
+        {
+          "start": 2370.8,
+          "end": 2379.8
+        },
+        {
+          "start": 2379.8,
+          "end": 2382.8
+        },
+        {
+          "start": 2382.8,
+          "end": 2390.8
+        },
+        {
+          "start": 2390.8,
+          "end": 2393.8
+        },
+        {
+          "start": 2394.8,
+          "end": 2400.8
+        },
+        {
+          "start": 2400.8,
+          "end": 2407.8
+        },
+        {
+          "start": 2407.8,
+          "end": 2415.8
+        },
+        {
+          "start": 2415.8,
+          "end": 2419.8
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [
+        "in the exam"
+      ],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C14",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2419.8,
+        "end": 2422.8
+      },
+      {
+        "start": 2422.8,
+        "end": 2424.8
+      },
+      {
+        "start": 2424.8,
+        "end": 2427.8
+      },
+      {
+        "start": 2427.8,
+        "end": 2433.8
+      },
+      {
+        "start": 2436.8,
+        "end": 2442.8
+      },
+      {
+        "start": 2442.8,
+        "end": 2444.8
+      },
+      {
+        "start": 2444.8,
+        "end": 2451.8
+      },
+      {
+        "start": 2451.8,
+        "end": 2454.8
+      },
+      {
+        "start": 2454.8,
+        "end": 2464.8
+      },
+      {
+        "start": 2464.8,
+        "end": 2469.8
+      },
+      {
+        "start": 2469.8,
+        "end": 2474.8
+      },
+      {
+        "start": 2474.8,
+        "end": 2478.8
+      },
+      {
+        "start": 2478.8,
+        "end": 2482.8
+      },
+      {
+        "start": 2482.8,
+        "end": 2484.8
+      },
+      {
+        "start": 2484.8,
+        "end": 2487.8
+      },
+      {
+        "start": 2487.8,
+        "end": 2497.8
+      },
+      {
+        "start": 2497.8,
+        "end": 2504.8
+      },
+      {
+        "start": 2504.8,
+        "end": 2508.8
+      },
+      {
+        "start": 2508.8,
+        "end": 2513.8
+      },
+      {
+        "start": 2513.8,
+        "end": 2515.8
+      },
+      {
+        "start": 2515.8,
+        "end": 2520.8
+      },
+      {
+        "start": 2520.8,
+        "end": 2522.8
+      },
+      {
+        "start": 2522.8,
+        "end": 2527.8
+      },
+      {
+        "start": 2527.8,
+        "end": 2531.8
+      },
+      {
+        "start": 2531.8,
+        "end": 2534.8
+      },
+      {
+        "start": 2534.8,
+        "end": 2536.8
+      },
+      {
+        "start": 2536.8,
+        "end": 2539.8
+      },
+      {
+        "start": 2539.8,
+        "end": 2543.8
+      },
+      {
+        "start": 2543.8,
+        "end": 2546.8
+      },
+      {
+        "start": 2546.8,
+        "end": 2548.8
+      },
+      {
+        "start": 2548.8,
+        "end": 2552.8
+      },
+      {
+        "start": 2552.8,
+        "end": 2555.8
+      },
+      {
+        "start": 2555.8,
+        "end": 2557.8
+      },
+      {
+        "start": 2557.8,
+        "end": 2561.8
+      },
+      {
+        "start": 2561.8,
+        "end": 2564.8
+      },
+      {
+        "start": 2564.8,
+        "end": 2568.8
+      },
+      {
+        "start": 2568.8,
+        "end": 2575.8
+      },
+      {
+        "start": 2575.8,
+        "end": 2579.8
+      },
+      {
+        "start": 2579.8,
+        "end": 2586.8
+      },
+      {
+        "start": 2586.8,
+        "end": 2591.8
+      },
+      {
+        "start": 2591.8,
+        "end": 2594.8
+      },
+      {
+        "start": 2594.8,
+        "end": 2597.8
+      },
+      {
+        "start": 2597.8,
+        "end": 2599.8
+      },
+      {
+        "start": 2599.8,
+        "end": 2603.8
+      }
+    ],
+    "text": "They will code it. All the trees. Okay? Skewed tree with 5 nodes. Create a balanced tree with 2 levels. Is a complete tree always balanced? Why? Difference can be 0 or 1. No, if it is 0 also it is completely balanced. So complete binary tree in left sub tree is equal to right sub tree's height. Is a complete tree completely balanced? Is a full tree completely balanced? Q. You say it depends on the height. Leave it at that. Is full, complete. Is perfect binary tree balanced? Let's create a complete binary tree with 2 levels. Okay? We will learn traversal, we will do traversal on those trees. Let's start. First we will construct, then we will do a lot of things. Practice lab, we are opening up. I want you people to practice only on decilator. Not your VS code. Did you start at least? Okay? Parent. We don't want that right now because STL has got only single. Yeah, this is better. Yeah, please do it again. Hey, don't do append in all. We will be having methods called as insertion division. What will happen? Now you are just going to make a normal tree. What do you mean by normal tree? I have this node. This is a tree I want to create. So I will create one node. Star root equal to new node 3. Root left equal new node. Root root right equal new node. Suppose there is one more node here. 8 and 9. Then with root only I will go.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C14",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2419.8,
+          "end": 2422.8
+        },
+        {
+          "start": 2422.8,
+          "end": 2424.8
+        },
+        {
+          "start": 2424.8,
+          "end": 2427.8
+        },
+        {
+          "start": 2427.8,
+          "end": 2433.8
+        },
+        {
+          "start": 2436.8,
+          "end": 2442.8
+        },
+        {
+          "start": 2442.8,
+          "end": 2444.8
+        },
+        {
+          "start": 2444.8,
+          "end": 2451.8
+        },
+        {
+          "start": 2451.8,
+          "end": 2454.8
+        },
+        {
+          "start": 2454.8,
+          "end": 2464.8
+        },
+        {
+          "start": 2464.8,
+          "end": 2469.8
+        },
+        {
+          "start": 2469.8,
+          "end": 2474.8
+        },
+        {
+          "start": 2474.8,
+          "end": 2478.8
+        },
+        {
+          "start": 2478.8,
+          "end": 2482.8
+        },
+        {
+          "start": 2482.8,
+          "end": 2484.8
+        },
+        {
+          "start": 2484.8,
+          "end": 2487.8
+        },
+        {
+          "start": 2487.8,
+          "end": 2497.8
+        },
+        {
+          "start": 2497.8,
+          "end": 2504.8
+        },
+        {
+          "start": 2504.8,
+          "end": 2508.8
+        },
+        {
+          "start": 2508.8,
+          "end": 2513.8
+        },
+        {
+          "start": 2513.8,
+          "end": 2515.8
+        },
+        {
+          "start": 2515.8,
+          "end": 2520.8
+        },
+        {
+          "start": 2520.8,
+          "end": 2522.8
+        },
+        {
+          "start": 2522.8,
+          "end": 2527.8
+        },
+        {
+          "start": 2527.8,
+          "end": 2531.8
+        },
+        {
+          "start": 2531.8,
+          "end": 2534.8
+        },
+        {
+          "start": 2534.8,
+          "end": 2536.8
+        },
+        {
+          "start": 2536.8,
+          "end": 2539.8
+        },
+        {
+          "start": 2539.8,
+          "end": 2543.8
+        },
+        {
+          "start": 2543.8,
+          "end": 2546.8
+        },
+        {
+          "start": 2546.8,
+          "end": 2548.8
+        },
+        {
+          "start": 2548.8,
+          "end": 2552.8
+        },
+        {
+          "start": 2552.8,
+          "end": 2555.8
+        },
+        {
+          "start": 2555.8,
+          "end": 2557.8
+        },
+        {
+          "start": 2557.8,
+          "end": 2561.8
+        },
+        {
+          "start": 2561.8,
+          "end": 2564.8
+        },
+        {
+          "start": 2564.8,
+          "end": 2568.8
+        },
+        {
+          "start": 2568.8,
+          "end": 2575.8
+        },
+        {
+          "start": 2575.8,
+          "end": 2579.8
+        },
+        {
+          "start": 2579.8,
+          "end": 2586.8
+        },
+        {
+          "start": 2586.8,
+          "end": 2591.8
+        },
+        {
+          "start": 2591.8,
+          "end": 2594.8
+        },
+        {
+          "start": 2594.8,
+          "end": 2597.8
+        },
+        {
+          "start": 2597.8,
+          "end": 2599.8
+        },
+        {
+          "start": 2599.8,
+          "end": 2603.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C15",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2603.8,
+        "end": 2604.8
+      },
+      {
+        "start": 2604.8,
+        "end": 2605.8
+      },
+      {
+        "start": 2605.8,
+        "end": 2609.8
+      },
+      {
+        "start": 2609.8,
+        "end": 2614.8
+      },
+      {
+        "start": 2614.8,
+        "end": 2616.8
+      },
+      {
+        "start": 2616.8,
+        "end": 2621.8
+      },
+      {
+        "start": 2621.8,
+        "end": 2622.8
+      },
+      {
+        "start": 2622.8,
+        "end": 2624.8
+      },
+      {
+        "start": 2624.8,
+        "end": 2625.8
+      },
+      {
+        "start": 2625.8,
+        "end": 2627.8
+      },
+      {
+        "start": 2627.8,
+        "end": 2629.8
+      },
+      {
+        "start": 2629.8,
+        "end": 2630.8
+      },
+      {
+        "start": 2630.8,
+        "end": 2632.8
+      },
+      {
+        "start": 2632.8,
+        "end": 2638.8
+      },
+      {
+        "start": 2638.8,
+        "end": 2639.8
+      },
+      {
+        "start": 2639.8,
+        "end": 2645.8
+      },
+      {
+        "start": 2645.8,
+        "end": 2654.8
+      },
+      {
+        "start": 2654.8,
+        "end": 2664.8
+      },
+      {
+        "start": 2664.8,
+        "end": 2674.8
+      },
+      {
+        "start": 2674.8,
+        "end": 2680.8
+      },
+      {
+        "start": 2680.8,
+        "end": 2682.8
+      },
+      {
+        "start": 2682.8,
+        "end": 2684.8
+      },
+      {
+        "start": 2684.8,
+        "end": 2687.8
+      },
+      {
+        "start": 2687.8,
+        "end": 2688.8
+      },
+      {
+        "start": 2688.8,
+        "end": 2694.8
+      },
+      {
+        "start": 2694.8,
+        "end": 2697.8
+      },
+      {
+        "start": 2697.8,
+        "end": 2703.8
+      },
+      {
+        "start": 2703.8,
+        "end": 2708.8
+      },
+      {
+        "start": 2709.8,
+        "end": 2713.8
+      },
+      {
+        "start": 2713.8,
+        "end": 2721.8
+      },
+      {
+        "start": 2721.8,
+        "end": 2725.8
+      },
+      {
+        "start": 2725.8,
+        "end": 2732.8
+      },
+      {
+        "start": 2732.8,
+        "end": 2734.8
+      },
+      {
+        "start": 2734.8,
+        "end": 2737.8
+      },
+      {
+        "start": 2737.8,
+        "end": 2741.8
+      },
+      {
+        "start": 2741.8,
+        "end": 2752.8
+      },
+      {
+        "start": 2752.8,
+        "end": 2761.8
+      },
+      {
+        "start": 2761.8,
+        "end": 2763.8
+      },
+      {
+        "start": 2763.8,
+        "end": 2765.8
+      },
+      {
+        "start": 2765.8,
+        "end": 2769.8
+      },
+      {
+        "start": 2769.8,
+        "end": 2772.8
+      },
+      {
+        "start": 2772.8,
+        "end": 2777.8
+      },
+      {
+        "start": 2777.8,
+        "end": 2782.8
+      },
+      {
+        "start": 2782.8,
+        "end": 2788.8
+      }
+    ],
+    "text": "I am lazy. That's what I am doing. That root left k right. I am putting it. Correct? root k left k. Sorry. Here 9 will come. Left k left. I will put what? 8. So can you create? Because you see that it comes up levels. You have to level 2, level 3, level 2, level 3. Okay? 4, 5, 6, 7. So if I want to put 7, I would say root left right equal to new node. 8 equal to new node 7. That will create all the trees that you have created so far in your notebooks. But this root is when you create a new root node. This root has a good name. Full binary root and complete. Because I will be asking you to do with that. Okay? When we do traverse and all I will ask you to pick up that particular tree and do the traversal. Left skewed tree was created. Complete binary, full whatever all those things were here. Full binary, perfect binary, complete binary skewed. And one balanced tree, five trees. I want all of you please use one pointer only. Okay? One pointer is unidirectional. Parents should only point to child. Don't make child point to parent. In all those trees that you have. Can you write some code which will only print leaf notes of that tree? Print the leaf notes of all the old trees say full binary tree leaf notes printed. Complete binary tree printed. Scued printed. Scued may get there. One only. Print the leaf notes of all the trees that you have created so far. If you have access only to one node that is your root node. All the people who have finished creating trees programmatically.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C15",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2603.8,
+          "end": 2604.8
+        },
+        {
+          "start": 2604.8,
+          "end": 2605.8
+        },
+        {
+          "start": 2605.8,
+          "end": 2609.8
+        },
+        {
+          "start": 2609.8,
+          "end": 2614.8
+        },
+        {
+          "start": 2614.8,
+          "end": 2616.8
+        },
+        {
+          "start": 2616.8,
+          "end": 2621.8
+        },
+        {
+          "start": 2621.8,
+          "end": 2622.8
+        },
+        {
+          "start": 2622.8,
+          "end": 2624.8
+        },
+        {
+          "start": 2624.8,
+          "end": 2625.8
+        },
+        {
+          "start": 2625.8,
+          "end": 2627.8
+        },
+        {
+          "start": 2627.8,
+          "end": 2629.8
+        },
+        {
+          "start": 2629.8,
+          "end": 2630.8
+        },
+        {
+          "start": 2630.8,
+          "end": 2632.8
+        },
+        {
+          "start": 2632.8,
+          "end": 2638.8
+        },
+        {
+          "start": 2638.8,
+          "end": 2639.8
+        },
+        {
+          "start": 2639.8,
+          "end": 2645.8
+        },
+        {
+          "start": 2645.8,
+          "end": 2654.8
+        },
+        {
+          "start": 2654.8,
+          "end": 2664.8
+        },
+        {
+          "start": 2664.8,
+          "end": 2674.8
+        },
+        {
+          "start": 2674.8,
+          "end": 2680.8
+        },
+        {
+          "start": 2680.8,
+          "end": 2682.8
+        },
+        {
+          "start": 2682.8,
+          "end": 2684.8
+        },
+        {
+          "start": 2684.8,
+          "end": 2687.8
+        },
+        {
+          "start": 2687.8,
+          "end": 2688.8
+        },
+        {
+          "start": 2688.8,
+          "end": 2694.8
+        },
+        {
+          "start": 2694.8,
+          "end": 2697.8
+        },
+        {
+          "start": 2697.8,
+          "end": 2703.8
+        },
+        {
+          "start": 2703.8,
+          "end": 2708.8
+        },
+        {
+          "start": 2709.8,
+          "end": 2713.8
+        },
+        {
+          "start": 2713.8,
+          "end": 2721.8
+        },
+        {
+          "start": 2721.8,
+          "end": 2725.8
+        },
+        {
+          "start": 2725.8,
+          "end": 2732.8
+        },
+        {
+          "start": 2732.8,
+          "end": 2734.8
+        },
+        {
+          "start": 2734.8,
+          "end": 2737.8
+        },
+        {
+          "start": 2737.8,
+          "end": 2741.8
+        },
+        {
+          "start": 2741.8,
+          "end": 2752.8
+        },
+        {
+          "start": 2752.8,
+          "end": 2761.8
+        },
+        {
+          "start": 2761.8,
+          "end": 2763.8
+        },
+        {
+          "start": 2763.8,
+          "end": 2765.8
+        },
+        {
+          "start": 2765.8,
+          "end": 2769.8
+        },
+        {
+          "start": 2769.8,
+          "end": 2772.8
+        },
+        {
+          "start": 2772.8,
+          "end": 2777.8
+        },
+        {
+          "start": 2777.8,
+          "end": 2782.8
+        },
+        {
+          "start": 2782.8,
+          "end": 2788.8
+        }
+      ],
+      "dwell_time": 184.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C16",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2788.8,
+        "end": 2791.8
+      },
+      {
+        "start": 2791.8,
+        "end": 2794.8
+      },
+      {
+        "start": 2794.8,
+        "end": 2796.8
+      },
+      {
+        "start": 2796.8,
+        "end": 2799.8
+      },
+      {
+        "start": 2799.8,
+        "end": 2803.8
+      },
+      {
+        "start": 2803.8,
+        "end": 2806.8
+      },
+      {
+        "start": 2806.8,
+        "end": 2810.8
+      },
+      {
+        "start": 2810.8,
+        "end": 2812.8
+      },
+      {
+        "start": 2812.8,
+        "end": 2818.8
+      },
+      {
+        "start": 2818.8,
+        "end": 2824.8
+      },
+      {
+        "start": 2824.8,
+        "end": 2826.8
+      },
+      {
+        "start": 2826.8,
+        "end": 2829.8
+      },
+      {
+        "start": 2829.8,
+        "end": 2833.8
+      },
+      {
+        "start": 2833.8,
+        "end": 2840.8
+      },
+      {
+        "start": 2840.8,
+        "end": 2842.8
+      },
+      {
+        "start": 2842.8,
+        "end": 2847.8
+      },
+      {
+        "start": 2847.8,
+        "end": 2848.8
+      },
+      {
+        "start": 2848.8,
+        "end": 2853.8
+      },
+      {
+        "start": 2853.8,
+        "end": 2854.8
+      },
+      {
+        "start": 2854.8,
+        "end": 2855.8
+      },
+      {
+        "start": 2855.8,
+        "end": 2856.8
+      },
+      {
+        "start": 2856.8,
+        "end": 2858.8
+      },
+      {
+        "start": 2858.8,
+        "end": 2860.8
+      },
+      {
+        "start": 2860.8,
+        "end": 2861.8
+      },
+      {
+        "start": 2861.8,
+        "end": 2863.8
+      },
+      {
+        "start": 2863.8,
+        "end": 2866.8
+      },
+      {
+        "start": 2866.8,
+        "end": 2869.8
+      },
+      {
+        "start": 2869.8,
+        "end": 2873.8
+      },
+      {
+        "start": 2873.8,
+        "end": 2877.8
+      },
+      {
+        "start": 2877.8,
+        "end": 2884.8
+      },
+      {
+        "start": 2884.8,
+        "end": 2887.8
+      },
+      {
+        "start": 2887.8,
+        "end": 2891.8
+      },
+      {
+        "start": 2891.8,
+        "end": 2893.8
+      },
+      {
+        "start": 2893.8,
+        "end": 2894.8
+      },
+      {
+        "start": 2894.8,
+        "end": 2898.8
+      },
+      {
+        "start": 2898.8,
+        "end": 2900.8
+      },
+      {
+        "start": 2900.8,
+        "end": 2903.8
+      },
+      {
+        "start": 2903.8,
+        "end": 2905.8
+      },
+      {
+        "start": 2905.8,
+        "end": 2909.8
+      },
+      {
+        "start": 2909.8,
+        "end": 2912.8
+      },
+      {
+        "start": 2912.8,
+        "end": 2915.8
+      },
+      {
+        "start": 2915.8,
+        "end": 2917.8
+      },
+      {
+        "start": 2917.8,
+        "end": 2919.8
+      },
+      {
+        "start": 2919.8,
+        "end": 2926.8
+      },
+      {
+        "start": 2926.8,
+        "end": 2929.8
+      },
+      {
+        "start": 2929.8,
+        "end": 2933.8
+      },
+      {
+        "start": 2933.8,
+        "end": 2937.8
+      },
+      {
+        "start": 2937.8,
+        "end": 2940.8
+      },
+      {
+        "start": 2940.8,
+        "end": 2943.8
+      },
+      {
+        "start": 2943.8,
+        "end": 2949.8
+      },
+      {
+        "start": 2949.8,
+        "end": 2959.8
+      },
+      {
+        "start": 2959.8,
+        "end": 2961.8
+      },
+      {
+        "start": 2961.8,
+        "end": 2964.8
+      },
+      {
+        "start": 2964.8,
+        "end": 2969.8
+      }
+    ],
+    "text": "All the four trees that you have created. Please only print the leaf notes of those trees. What is a leaf node? Both the pointers should be null. If both the pointers are null, it is a leaf node. You have your diagram with you in the book. You can check whether your code is actually working or not. Okay? First of all, you will tell me whether it's possible or not. I want you to hit that thing and tell me, how can I do this? That's why I want you to do it. Can you give me all the leaf notes? It is a data structure which you have created. Okay, are you trying to find the leaf notes? Is it giving you an error? Is it stopping? Is it not working as you planned it to work? Okay. All of you are able to print leaf notes or no? Good. Did I ever... Hey! You have to identify the problem today. Why can't you go ahead? So, what do you think? If you have added double node. So, you will be able to go? If they are double pointers. No, there also you can't go check. Now, how will a computer, if you can't traverse? This is called visiting every node is called as traversal. Basically, let's try to understand what is happening. Now, basically, you have constructed the tree. Can I say tree is constructed? Yes. If I ask you to print the tree, what will you do? How are you going to print the tree? Is it a linear data structure? No. So, if you want to print the tree and you start printing the tree, what will get printed? Suppose, you have root node. I will say it now. Print the entire tree. Print 3, 4, 5, 6, 7. What will happen? Forget about 3, 4, 5, 6, 7. If I want to look for a node, listen to this question then. Forget about traversing and printing it. It's very difficult to print. Suppose, I want to look for a node or I want to test. If I have 7 or no in this particular tree, look, wait a minute. It's a little complex. 8, 9.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C16",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2788.8,
+          "end": 2791.8
+        },
+        {
+          "start": 2791.8,
+          "end": 2794.8
+        },
+        {
+          "start": 2794.8,
+          "end": 2796.8
+        },
+        {
+          "start": 2796.8,
+          "end": 2799.8
+        },
+        {
+          "start": 2799.8,
+          "end": 2803.8
+        },
+        {
+          "start": 2803.8,
+          "end": 2806.8
+        },
+        {
+          "start": 2806.8,
+          "end": 2810.8
+        },
+        {
+          "start": 2810.8,
+          "end": 2812.8
+        },
+        {
+          "start": 2812.8,
+          "end": 2818.8
+        },
+        {
+          "start": 2818.8,
+          "end": 2824.8
+        },
+        {
+          "start": 2824.8,
+          "end": 2826.8
+        },
+        {
+          "start": 2826.8,
+          "end": 2829.8
+        },
+        {
+          "start": 2829.8,
+          "end": 2833.8
+        },
+        {
+          "start": 2833.8,
+          "end": 2840.8
+        },
+        {
+          "start": 2840.8,
+          "end": 2842.8
+        },
+        {
+          "start": 2842.8,
+          "end": 2847.8
+        },
+        {
+          "start": 2847.8,
+          "end": 2848.8
+        },
+        {
+          "start": 2848.8,
+          "end": 2853.8
+        },
+        {
+          "start": 2853.8,
+          "end": 2854.8
+        },
+        {
+          "start": 2854.8,
+          "end": 2855.8
+        },
+        {
+          "start": 2855.8,
+          "end": 2856.8
+        },
+        {
+          "start": 2856.8,
+          "end": 2858.8
+        },
+        {
+          "start": 2858.8,
+          "end": 2860.8
+        },
+        {
+          "start": 2860.8,
+          "end": 2861.8
+        },
+        {
+          "start": 2861.8,
+          "end": 2863.8
+        },
+        {
+          "start": 2863.8,
+          "end": 2866.8
+        },
+        {
+          "start": 2866.8,
+          "end": 2869.8
+        },
+        {
+          "start": 2869.8,
+          "end": 2873.8
+        },
+        {
+          "start": 2873.8,
+          "end": 2877.8
+        },
+        {
+          "start": 2877.8,
+          "end": 2884.8
+        },
+        {
+          "start": 2884.8,
+          "end": 2887.8
+        },
+        {
+          "start": 2887.8,
+          "end": 2891.8
+        },
+        {
+          "start": 2891.8,
+          "end": 2893.8
+        },
+        {
+          "start": 2893.8,
+          "end": 2894.8
+        },
+        {
+          "start": 2894.8,
+          "end": 2898.8
+        },
+        {
+          "start": 2898.8,
+          "end": 2900.8
+        },
+        {
+          "start": 2900.8,
+          "end": 2903.8
+        },
+        {
+          "start": 2903.8,
+          "end": 2905.8
+        },
+        {
+          "start": 2905.8,
+          "end": 2909.8
+        },
+        {
+          "start": 2909.8,
+          "end": 2912.8
+        },
+        {
+          "start": 2912.8,
+          "end": 2915.8
+        },
+        {
+          "start": 2915.8,
+          "end": 2917.8
+        },
+        {
+          "start": 2917.8,
+          "end": 2919.8
+        },
+        {
+          "start": 2919.8,
+          "end": 2926.8
+        },
+        {
+          "start": 2926.8,
+          "end": 2929.8
+        },
+        {
+          "start": 2929.8,
+          "end": 2933.8
+        },
+        {
+          "start": 2933.8,
+          "end": 2937.8
+        },
+        {
+          "start": 2937.8,
+          "end": 2940.8
+        },
+        {
+          "start": 2940.8,
+          "end": 2943.8
+        },
+        {
+          "start": 2943.8,
+          "end": 2949.8
+        },
+        {
+          "start": 2949.8,
+          "end": 2959.8
+        },
+        {
+          "start": 2959.8,
+          "end": 2961.8
+        },
+        {
+          "start": 2961.8,
+          "end": 2964.8
+        },
+        {
+          "start": 2964.8,
+          "end": 2969.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C17",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 2969.8,
+        "end": 2974.8
+      },
+      {
+        "start": 2974.8,
+        "end": 2976.8
+      },
+      {
+        "start": 2976.8,
+        "end": 2981.8
+      },
+      {
+        "start": 2981.8,
+        "end": 2985.8
+      },
+      {
+        "start": 2985.8,
+        "end": 2989.8
+      },
+      {
+        "start": 2989.8,
+        "end": 2992.8
+      },
+      {
+        "start": 2992.8,
+        "end": 2997.8
+      },
+      {
+        "start": 2997.8,
+        "end": 3000.8
+      },
+      {
+        "start": 3000.8,
+        "end": 3002.8
+      },
+      {
+        "start": 3002.8,
+        "end": 3003.8
+      },
+      {
+        "start": 3003.8,
+        "end": 3007.8
+      },
+      {
+        "start": 3007.8,
+        "end": 3009.8
+      },
+      {
+        "start": 3009.8,
+        "end": 3010.8
+      },
+      {
+        "start": 3010.8,
+        "end": 3012.8
+      },
+      {
+        "start": 3012.8,
+        "end": 3014.8
+      },
+      {
+        "start": 3014.8,
+        "end": 3017.8
+      },
+      {
+        "start": 3017.8,
+        "end": 3020.8
+      },
+      {
+        "start": 3020.8,
+        "end": 3022.8
+      },
+      {
+        "start": 3022.8,
+        "end": 3026.8
+      },
+      {
+        "start": 3026.8,
+        "end": 3028.8
+      },
+      {
+        "start": 3028.8,
+        "end": 3030.8
+      },
+      {
+        "start": 3030.8,
+        "end": 3031.8
+      },
+      {
+        "start": 3037.8,
+        "end": 3038.8
+      },
+      {
+        "start": 3038.8,
+        "end": 3039.8
+      },
+      {
+        "start": 3039.8,
+        "end": 3041.8
+      },
+      {
+        "start": 3041.8,
+        "end": 3043.8
+      },
+      {
+        "start": 3043.8,
+        "end": 3044.8
+      },
+      {
+        "start": 3044.8,
+        "end": 3048.8
+      },
+      {
+        "start": 3048.8,
+        "end": 3049.8
+      },
+      {
+        "start": 3049.8,
+        "end": 3052.8
+      },
+      {
+        "start": 3052.8,
+        "end": 3053.8
+      },
+      {
+        "start": 3053.8,
+        "end": 3057.8
+      },
+      {
+        "start": 3058.8,
+        "end": 3061.8
+      },
+      {
+        "start": 3061.8,
+        "end": 3064.8
+      },
+      {
+        "start": 3064.8,
+        "end": 3067.8
+      },
+      {
+        "start": 3067.8,
+        "end": 3068.8
+      },
+      {
+        "start": 3068.8,
+        "end": 3072.8
+      },
+      {
+        "start": 3072.8,
+        "end": 3074.8
+      },
+      {
+        "start": 3074.8,
+        "end": 3076.8
+      },
+      {
+        "start": 3076.8,
+        "end": 3078.8
+      },
+      {
+        "start": 3078.8,
+        "end": 3079.8
+      },
+      {
+        "start": 3079.8,
+        "end": 3084.8
+      },
+      {
+        "start": 3084.8,
+        "end": 3087.8
+      },
+      {
+        "start": 3087.8,
+        "end": 3091.8
+      },
+      {
+        "start": 3091.8,
+        "end": 3095.8
+      },
+      {
+        "start": 3095.8,
+        "end": 3099.8
+      },
+      {
+        "start": 3099.8,
+        "end": 3101.8
+      },
+      {
+        "start": 3101.8,
+        "end": 3105.8
+      },
+      {
+        "start": 3105.8,
+        "end": 3108.8
+      },
+      {
+        "start": 3108.8,
+        "end": 3112.8
+      },
+      {
+        "start": 3112.8,
+        "end": 3117.8
+      },
+      {
+        "start": 3117.8,
+        "end": 3118.8
+      },
+      {
+        "start": 3118.8,
+        "end": 3121.8
+      },
+      {
+        "start": 3121.8,
+        "end": 3126.8
+      },
+      {
+        "start": 3126.8,
+        "end": 3131.8
+      },
+      {
+        "start": 3131.8,
+        "end": 3134.8
+      },
+      {
+        "start": 3134.8,
+        "end": 3137.8
+      },
+      {
+        "start": 3137.8,
+        "end": 3138.8
+      },
+      {
+        "start": 3138.8,
+        "end": 3141.8
+      },
+      {
+        "start": 3141.8,
+        "end": 3143.8
+      },
+      {
+        "start": 3143.8,
+        "end": 3144.8
+      },
+      {
+        "start": 3144.8,
+        "end": 3149.8
+      },
+      {
+        "start": 3149.8,
+        "end": 3153.8
+      },
+      {
+        "start": 3153.8,
+        "end": 3157.8
+      }
+    ],
+    "text": "I want to check whether 9 is there or not in this tree. How will I check? You have only root node. What value do you have? Suppose, I put black paper on it. And you have to find out that 9th node is there. What are you doing? How will you do 1 by 1 check? I am in 3. Where should I go? Left or right? T4 left. Okay. 3 by 4. Where should I go? Left or right? Left, 6 by 1. Where should I go from here? I am stuck. How should I go? What is the point? Down. Where is 9th? I have 5th. I don't have 4. Correct. No. 3 left, 4 left, 6. 6 by 1. 6, I know, is the leaf node. Okay. Now from here, where should I go? Again, I will start. Are you getting the problem? Got the problem? Okay. So, is it a linear data structure to travel next, next, next till the fine time? You don't find null? No. What kind of a problem it is? Non-linear. Non-linear when you need to visit roots or when you need to visit nodes, you should keep one thing in mind. What node did I visit? I should not visit that node again. From this node, where can I go? I had come to this node earlier. Now, I had taken the left part of it. Now, I should take the right part of it. Going through each and every node in a tree is called as traversing a tree. Okay. So, if I say I want to traverse a tree, it means that I will have some mechanism to traverse the tree and I will visit each and every node in the tree. If I visit each and every node in the tree, will I be able to find my 9? Yes. Will I be able to search for a node in a tree? Very easily. Okay. So, now, tree data structure tells you you need to traverse creation of a tree super simple. All of you created 4, 4, 5, 5 trees.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C17",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2969.8,
+          "end": 2974.8
+        },
+        {
+          "start": 2974.8,
+          "end": 2976.8
+        },
+        {
+          "start": 2976.8,
+          "end": 2981.8
+        },
+        {
+          "start": 2981.8,
+          "end": 2985.8
+        },
+        {
+          "start": 2985.8,
+          "end": 2989.8
+        },
+        {
+          "start": 2989.8,
+          "end": 2992.8
+        },
+        {
+          "start": 2992.8,
+          "end": 2997.8
+        },
+        {
+          "start": 2997.8,
+          "end": 3000.8
+        },
+        {
+          "start": 3000.8,
+          "end": 3002.8
+        },
+        {
+          "start": 3002.8,
+          "end": 3003.8
+        },
+        {
+          "start": 3003.8,
+          "end": 3007.8
+        },
+        {
+          "start": 3007.8,
+          "end": 3009.8
+        },
+        {
+          "start": 3009.8,
+          "end": 3010.8
+        },
+        {
+          "start": 3010.8,
+          "end": 3012.8
+        },
+        {
+          "start": 3012.8,
+          "end": 3014.8
+        },
+        {
+          "start": 3014.8,
+          "end": 3017.8
+        },
+        {
+          "start": 3017.8,
+          "end": 3020.8
+        },
+        {
+          "start": 3020.8,
+          "end": 3022.8
+        },
+        {
+          "start": 3022.8,
+          "end": 3026.8
+        },
+        {
+          "start": 3026.8,
+          "end": 3028.8
+        },
+        {
+          "start": 3028.8,
+          "end": 3030.8
+        },
+        {
+          "start": 3030.8,
+          "end": 3031.8
+        },
+        {
+          "start": 3037.8,
+          "end": 3038.8
+        },
+        {
+          "start": 3038.8,
+          "end": 3039.8
+        },
+        {
+          "start": 3039.8,
+          "end": 3041.8
+        },
+        {
+          "start": 3041.8,
+          "end": 3043.8
+        },
+        {
+          "start": 3043.8,
+          "end": 3044.8
+        },
+        {
+          "start": 3044.8,
+          "end": 3048.8
+        },
+        {
+          "start": 3048.8,
+          "end": 3049.8
+        },
+        {
+          "start": 3049.8,
+          "end": 3052.8
+        },
+        {
+          "start": 3052.8,
+          "end": 3053.8
+        },
+        {
+          "start": 3053.8,
+          "end": 3057.8
+        },
+        {
+          "start": 3058.8,
+          "end": 3061.8
+        },
+        {
+          "start": 3061.8,
+          "end": 3064.8
+        },
+        {
+          "start": 3064.8,
+          "end": 3067.8
+        },
+        {
+          "start": 3067.8,
+          "end": 3068.8
+        },
+        {
+          "start": 3068.8,
+          "end": 3072.8
+        },
+        {
+          "start": 3072.8,
+          "end": 3074.8
+        },
+        {
+          "start": 3074.8,
+          "end": 3076.8
+        },
+        {
+          "start": 3076.8,
+          "end": 3078.8
+        },
+        {
+          "start": 3078.8,
+          "end": 3079.8
+        },
+        {
+          "start": 3079.8,
+          "end": 3084.8
+        },
+        {
+          "start": 3084.8,
+          "end": 3087.8
+        },
+        {
+          "start": 3087.8,
+          "end": 3091.8
+        },
+        {
+          "start": 3091.8,
+          "end": 3095.8
+        },
+        {
+          "start": 3095.8,
+          "end": 3099.8
+        },
+        {
+          "start": 3099.8,
+          "end": 3101.8
+        },
+        {
+          "start": 3101.8,
+          "end": 3105.8
+        },
+        {
+          "start": 3105.8,
+          "end": 3108.8
+        },
+        {
+          "start": 3108.8,
+          "end": 3112.8
+        },
+        {
+          "start": 3112.8,
+          "end": 3117.8
+        },
+        {
+          "start": 3117.8,
+          "end": 3118.8
+        },
+        {
+          "start": 3118.8,
+          "end": 3121.8
+        },
+        {
+          "start": 3121.8,
+          "end": 3126.8
+        },
+        {
+          "start": 3126.8,
+          "end": 3131.8
+        },
+        {
+          "start": 3131.8,
+          "end": 3134.8
+        },
+        {
+          "start": 3134.8,
+          "end": 3137.8
+        },
+        {
+          "start": 3137.8,
+          "end": 3138.8
+        },
+        {
+          "start": 3138.8,
+          "end": 3141.8
+        },
+        {
+          "start": 3141.8,
+          "end": 3143.8
+        },
+        {
+          "start": 3143.8,
+          "end": 3144.8
+        },
+        {
+          "start": 3144.8,
+          "end": 3149.8
+        },
+        {
+          "start": 3149.8,
+          "end": 3153.8
+        },
+        {
+          "start": 3153.8,
+          "end": 3157.8
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C18",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 3157.8,
+        "end": 3160.8
+      },
+      {
+        "start": 3160.8,
+        "end": 3161.8
+      },
+      {
+        "start": 3161.8,
+        "end": 3162.8
+      },
+      {
+        "start": 3162.8,
+        "end": 3165.8
+      },
+      {
+        "start": 3165.8,
+        "end": 3170.8
+      },
+      {
+        "start": 3171.8,
+        "end": 3177.8
+      },
+      {
+        "start": 3177.8,
+        "end": 3178.8
+      },
+      {
+        "start": 3178.8,
+        "end": 3181.8
+      },
+      {
+        "start": 3181.8,
+        "end": 3184.8
+      },
+      {
+        "start": 3184.8,
+        "end": 3188.8
+      },
+      {
+        "start": 3188.8,
+        "end": 3190.8
+      },
+      {
+        "start": 3190.8,
+        "end": 3192.8
+      },
+      {
+        "start": 3192.8,
+        "end": 3194.8
+      },
+      {
+        "start": 3194.8,
+        "end": 3197.8
+      },
+      {
+        "start": 3197.8,
+        "end": 3200.8
+      },
+      {
+        "start": 3200.8,
+        "end": 3201.8
+      },
+      {
+        "start": 3201.8,
+        "end": 3202.8
+      },
+      {
+        "start": 3202.8,
+        "end": 3205.8
+      },
+      {
+        "start": 3205.8,
+        "end": 3206.8
+      },
+      {
+        "start": 3206.8,
+        "end": 3209.8
+      },
+      {
+        "start": 3209.8,
+        "end": 3212.8
+      },
+      {
+        "start": 3212.8,
+        "end": 3214.8
+      },
+      {
+        "start": 3214.8,
+        "end": 3217.8
+      },
+      {
+        "start": 3217.8,
+        "end": 3219.8
+      },
+      {
+        "start": 3219.8,
+        "end": 3224.8
+      },
+      {
+        "start": 3224.8,
+        "end": 3225.8
+      },
+      {
+        "start": 3225.8,
+        "end": 3227.8
+      },
+      {
+        "start": 3227.8,
+        "end": 3229.8
+      },
+      {
+        "start": 3229.8,
+        "end": 3232.8
+      },
+      {
+        "start": 3232.8,
+        "end": 3236.8
+      },
+      {
+        "start": 3236.8,
+        "end": 3237.8
+      },
+      {
+        "start": 3237.8,
+        "end": 3240.8
+      },
+      {
+        "start": 3240.8,
+        "end": 3241.8
+      },
+      {
+        "start": 3241.8,
+        "end": 3242.8
+      },
+      {
+        "start": 3242.8,
+        "end": 3250.8
+      },
+      {
+        "start": 3250.8,
+        "end": 3251.8
+      },
+      {
+        "start": 3251.8,
+        "end": 3255.8
+      },
+      {
+        "start": 3255.8,
+        "end": 3262.8
+      },
+      {
+        "start": 3262.8,
+        "end": 3263.8
+      },
+      {
+        "start": 3263.8,
+        "end": 3268.8
+      },
+      {
+        "start": 3268.8,
+        "end": 3270.8
+      },
+      {
+        "start": 3270.8,
+        "end": 3273.8
+      },
+      {
+        "start": 3273.8,
+        "end": 3275.8
+      },
+      {
+        "start": 3275.8,
+        "end": 3279.8
+      },
+      {
+        "start": 3279.8,
+        "end": 3280.8
+      },
+      {
+        "start": 3280.8,
+        "end": 3281.8
+      },
+      {
+        "start": 3281.8,
+        "end": 3284.8
+      },
+      {
+        "start": 3284.8,
+        "end": 3290.8
+      },
+      {
+        "start": 3290.8,
+        "end": 3294.8
+      },
+      {
+        "start": 3294.8,
+        "end": 3297.8
+      },
+      {
+        "start": 3297.8,
+        "end": 3298.8
+      },
+      {
+        "start": 3298.8,
+        "end": 3300.8
+      },
+      {
+        "start": 3300.8,
+        "end": 3303.8
+      },
+      {
+        "start": 3303.8,
+        "end": 3308.8
+      },
+      {
+        "start": 3308.8,
+        "end": 3310.8
+      },
+      {
+        "start": 3310.8,
+        "end": 3314.8
+      },
+      {
+        "start": 3314.8,
+        "end": 3316.8
+      },
+      {
+        "start": 3316.8,
+        "end": 3318.8
+      },
+      {
+        "start": 3318.8,
+        "end": 3320.8
+      },
+      {
+        "start": 3320.8,
+        "end": 3323.8
+      },
+      {
+        "start": 3323.8,
+        "end": 3324.8
+      },
+      {
+        "start": 3324.8,
+        "end": 3326.8
+      },
+      {
+        "start": 3326.8,
+        "end": 3328.8
+      },
+      {
+        "start": 3328.8,
+        "end": 3332.8
+      },
+      {
+        "start": 3332.8,
+        "end": 3335.8
+      },
+      {
+        "start": 3335.8,
+        "end": 3338.8
+      }
+    ],
+    "text": "The difficult part in tree is what? Traversing. Okay. So, there are around four mechanisms of traversing a tree. In order, pre-order, post-order, level order. Okay. Forget about in order, pre-order, post-order, it has got a big algorithm and all that stuff. What do you think would be level order? So, how will I go? First, what would come? Three, four, five, six, seven, eight. No. Okay. This would be the order. Now, a question. This would be the challenge of the day today. I am not going to say according to my thoughts. Okay. Level order. Traversing. Will you do it with stack or will you do it with Q? How? We are thinking here. Class is for thinking right now. What is the system? Now, what will come first in Q? Three. What will come after three? Four. Four, five, four, five. Socho. Three, four, five, how will you get it? Left and right of the one who has already gone into the Q. Correct? So, I have given you a small hint. Are you understanding? Try to work on it. Discuss among yourself. Next class, we will first start with level traversal. Easy way. Q. Let's see how many of you have thought about it. Again, if you check, I don't want you to listen to his solution. You will corrupt your mind. Okay. You will start thinking what he thinks. You can't run your house on what he thinks. No, don't listen to any solution. Try your solution on your own, just like we did in the stack. When you create your own solution, it will always remain with your head. Somebody explaining you solution tomorrow, again, you will forget what the solution was. Clear? So, the answer is, we want to do level, the rest of the preposterous order they are difficult. We will understand how it works in the class itself. Level order is something which you can do it on your own.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C18",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3157.8,
+          "end": 3160.8
+        },
+        {
+          "start": 3160.8,
+          "end": 3161.8
+        },
+        {
+          "start": 3161.8,
+          "end": 3162.8
+        },
+        {
+          "start": 3162.8,
+          "end": 3165.8
+        },
+        {
+          "start": 3165.8,
+          "end": 3170.8
+        },
+        {
+          "start": 3171.8,
+          "end": 3177.8
+        },
+        {
+          "start": 3177.8,
+          "end": 3178.8
+        },
+        {
+          "start": 3178.8,
+          "end": 3181.8
+        },
+        {
+          "start": 3181.8,
+          "end": 3184.8
+        },
+        {
+          "start": 3184.8,
+          "end": 3188.8
+        },
+        {
+          "start": 3188.8,
+          "end": 3190.8
+        },
+        {
+          "start": 3190.8,
+          "end": 3192.8
+        },
+        {
+          "start": 3192.8,
+          "end": 3194.8
+        },
+        {
+          "start": 3194.8,
+          "end": 3197.8
+        },
+        {
+          "start": 3197.8,
+          "end": 3200.8
+        },
+        {
+          "start": 3200.8,
+          "end": 3201.8
+        },
+        {
+          "start": 3201.8,
+          "end": 3202.8
+        },
+        {
+          "start": 3202.8,
+          "end": 3205.8
+        },
+        {
+          "start": 3205.8,
+          "end": 3206.8
+        },
+        {
+          "start": 3206.8,
+          "end": 3209.8
+        },
+        {
+          "start": 3209.8,
+          "end": 3212.8
+        },
+        {
+          "start": 3212.8,
+          "end": 3214.8
+        },
+        {
+          "start": 3214.8,
+          "end": 3217.8
+        },
+        {
+          "start": 3217.8,
+          "end": 3219.8
+        },
+        {
+          "start": 3219.8,
+          "end": 3224.8
+        },
+        {
+          "start": 3224.8,
+          "end": 3225.8
+        },
+        {
+          "start": 3225.8,
+          "end": 3227.8
+        },
+        {
+          "start": 3227.8,
+          "end": 3229.8
+        },
+        {
+          "start": 3229.8,
+          "end": 3232.8
+        },
+        {
+          "start": 3232.8,
+          "end": 3236.8
+        },
+        {
+          "start": 3236.8,
+          "end": 3237.8
+        },
+        {
+          "start": 3237.8,
+          "end": 3240.8
+        },
+        {
+          "start": 3240.8,
+          "end": 3241.8
+        },
+        {
+          "start": 3241.8,
+          "end": 3242.8
+        },
+        {
+          "start": 3242.8,
+          "end": 3250.8
+        },
+        {
+          "start": 3250.8,
+          "end": 3251.8
+        },
+        {
+          "start": 3251.8,
+          "end": 3255.8
+        },
+        {
+          "start": 3255.8,
+          "end": 3262.8
+        },
+        {
+          "start": 3262.8,
+          "end": 3263.8
+        },
+        {
+          "start": 3263.8,
+          "end": 3268.8
+        },
+        {
+          "start": 3268.8,
+          "end": 3270.8
+        },
+        {
+          "start": 3270.8,
+          "end": 3273.8
+        },
+        {
+          "start": 3273.8,
+          "end": 3275.8
+        },
+        {
+          "start": 3275.8,
+          "end": 3279.8
+        },
+        {
+          "start": 3279.8,
+          "end": 3280.8
+        },
+        {
+          "start": 3280.8,
+          "end": 3281.8
+        },
+        {
+          "start": 3281.8,
+          "end": 3284.8
+        },
+        {
+          "start": 3284.8,
+          "end": 3290.8
+        },
+        {
+          "start": 3290.8,
+          "end": 3294.8
+        },
+        {
+          "start": 3294.8,
+          "end": 3297.8
+        },
+        {
+          "start": 3297.8,
+          "end": 3298.8
+        },
+        {
+          "start": 3298.8,
+          "end": 3300.8
+        },
+        {
+          "start": 3300.8,
+          "end": 3303.8
+        },
+        {
+          "start": 3303.8,
+          "end": 3308.8
+        },
+        {
+          "start": 3308.8,
+          "end": 3310.8
+        },
+        {
+          "start": 3310.8,
+          "end": 3314.8
+        },
+        {
+          "start": 3314.8,
+          "end": 3316.8
+        },
+        {
+          "start": 3316.8,
+          "end": 3318.8
+        },
+        {
+          "start": 3318.8,
+          "end": 3320.8
+        },
+        {
+          "start": 3320.8,
+          "end": 3323.8
+        },
+        {
+          "start": 3323.8,
+          "end": 3324.8
+        },
+        {
+          "start": 3324.8,
+          "end": 3326.8
+        },
+        {
+          "start": 3326.8,
+          "end": 3328.8
+        },
+        {
+          "start": 3328.8,
+          "end": 3332.8
+        },
+        {
+          "start": 3332.8,
+          "end": 3335.8
+        },
+        {
+          "start": 3335.8,
+          "end": 3338.8
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C19",
+    "source_type": "VOICE_PLUS_PPT",
+    "time_spans": [
+      {
+        "start": 3338.8,
+        "end": 3341.8
+      },
+      {
+        "start": 3341.8,
+        "end": 3343.8
+      },
+      {
+        "start": 3343.8,
+        "end": 3345.8
+      },
+      {
+        "start": 3345.8,
+        "end": 3348.8
+      },
+      {
+        "start": 3348.8,
+        "end": 3350.8
+      },
+      {
+        "start": 3350.8,
+        "end": 3353.8
+      },
+      {
+        "start": 3353.8,
+        "end": 3355.8
+      },
+      {
+        "start": 3355.8,
+        "end": 3357.8
+      },
+      {
+        "start": 3357.8,
+        "end": 3358.8
+      },
+      {
+        "start": 3358.8,
+        "end": 3361.8
+      },
+      {
+        "start": 3361.8,
+        "end": 3362.8
+      },
+      {
+        "start": 3362.8,
+        "end": 3363.8
+      },
+      {
+        "start": 3363.8,
+        "end": 3365.8
+      }
+    ],
+    "text": "If you try to think a little bit, answer to your question is, how it should get printed, three, four, five, six, seven, eight, and then nine. What kind of data structure would you use to traverse this tree? Q. Two things given to you, and get me an answer. Clear? Okay. That would be all guys for today.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C19",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3338.8,
+          "end": 3341.8
+        },
+        {
+          "start": 3341.8,
+          "end": 3343.8
+        },
+        {
+          "start": 3343.8,
+          "end": 3345.8
+        },
+        {
+          "start": 3345.8,
+          "end": 3348.8
+        },
+        {
+          "start": 3348.8,
+          "end": 3350.8
+        },
+        {
+          "start": 3350.8,
+          "end": 3353.8
+        },
+        {
+          "start": 3353.8,
+          "end": 3355.8
+        },
+        {
+          "start": 3355.8,
+          "end": 3357.8
+        },
+        {
+          "start": 3357.8,
+          "end": 3358.8
+        },
+        {
+          "start": 3358.8,
+          "end": 3361.8
+        },
+        {
+          "start": 3361.8,
+          "end": 3362.8
+        },
+        {
+          "start": 3362.8,
+          "end": 3363.8
+        },
+        {
+          "start": 3363.8,
+          "end": 3365.8
+        }
+      ],
+      "dwell_time": 27.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

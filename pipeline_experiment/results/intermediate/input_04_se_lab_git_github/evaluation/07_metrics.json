@@ -1,0 +1,78 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 72.5,
+    "source_answerability_percentage": 54.5,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.181,
+    "diversity_score": 0.819,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.4,
+      "REMEMBER": 0.4
+    },
+    "specificity_score": 3.95
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 62.4,
+    "source_answerability_percentage": 51.1,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.109,
+    "diversity_score": 0.891,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.8,
+    "bloom_distribution": {
+      "REMEMBER": 0.2,
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.2,
+      "ANALYZE": 0.4
+    },
+    "specificity_score": 3.63
+  },
+  "metrics_unified_pipeline_c": {
+    "source_grounding_percentage": 68.6,
+    "source_answerability_percentage": 56.3,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.119,
+    "diversity_score": 0.881,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.8,
+    "bloom_distribution": {
+      "REMEMBER": 0.2,
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.2,
+      "ANALYZE": 0.4
+    },
+    "specificity_score": 3.84
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_04_se_lab_git_github",
+    "topics_grounded_percentage": 100.0,
+    "salience_alignment_score": 4.5,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 25.0,
+    "overall_validity_percentage": 77.5
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.651,
+    "composite_score_blueprint": 0.636,
+    "quality_delta": -0.015,
+    "rationale": "Composite quality difference (|delta|=0.015) is within the indifference threshold (0.05)."
+  },
+  "three_way_decision": {
+    "winner": "UNIFIED_PIPELINE_C",
+    "q_summary_a": 0.651,
+    "q_blueprint_b": 0.636,
+    "q_unified_c": 0.679,
+    "delta_c_minus_a": 0.028,
+    "delta_c_minus_b": 0.043,
+    "delta_b_minus_a": -0.015,
+    "rationale": "Pipeline C (WHAT + WHY) produced optimal overall quality (Q_C=0.679, Bloom=2.8) combining technical grounding with pedagogical depth."
+  }
+}

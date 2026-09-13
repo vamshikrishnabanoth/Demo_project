@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "input_id": "test_178",
+    "title": "Assessment for Job test_178",
+    "concepts_and_definitions": [
+      "Assessment",
+      "Job Test",
+      "Evaluation Criteria",
+      "Scoring Rubric",
+      "Feedback Mechanism"
+    ],
+    "mechanisms_and_formulas": [
+      "Weighted Scoring Formula: Score = \u03a3 (Weight_i \u00d7 Score_i)",
+      "Time Management Algorithm: Allocate time per section based on difficulty",
+      "Reliability Coefficient: Cronbach's alpha calculation"
+    ],
+    "examples_and_code_patterns": [
+      "Sample multiple\u2011choice question: What is the capital of France? A) Berlin B) Madrid C) Paris D) Rome",
+      "Answer key syntax: {'question_id': 1, 'correct_answer': 'C'}",
+      "Python snippet for scoring: total = sum(w * s for w, s in zip(weights, scores))",
+      "Rubric example: 5\u2011point scale with descriptors for each level"
+    ],
+    "factual_summary_text": "The material presented an overview of how to design, administer, and score a job\u2011related assessment. It defined key terms such as assessment, job test, evaluation criteria, scoring rubric, and feedback mechanism, and explained how these elements interact to produce a fair and reliable measurement of candidate performance. The content also described practical mechanisms, including a weighted scoring formula, a time\u2011management algorithm for test sections, and the calculation of a reliability coefficient to gauge internal consistency. Worked examples illustrated typical test items, answer\u2011key structures, and code snippets for automated scoring, providing concrete guidance for implementing the assessment process."
+  },
+  "blueprint": null
+}

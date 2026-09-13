@@ -1,0 +1,22 @@
+{
+  "input_id": "001",
+  "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+  "concepts_and_definitions": [
+    "Longest Common Prefix (LCP) \u2013 the longest string that is a prefix of all input strings",
+    "Binary Search \u2013 a divide\u2011and\u2011conquer technique used to find the maximum prefix length efficiently",
+    "Hash Set \u2013 a data structure used to count character occurrences across strings for LCP detection",
+    "Time Complexity \u2013 analysis of algorithmic performance, e.g., O(n*m) for naive LCP, O(n*log m) for binary search",
+    "Garbage Collection in Java \u2013 automatic memory management and reference counting concepts discussed in context of string handling"
+  ],
+  "mechanisms_and_formulas": [
+    "Binary Search on prefix length: low=1, high=minLen, mid=(low+high)/2, check if prefix of length mid is common",
+    "Hash Set frequency counting: for each character position, map char->count, common if count==numStrings",
+    "Time complexity of naive LCP: O(n*m) where n is number of strings and m is average string length"
+  ],
+  "examples_and_code_patterns": [
+    "Iterative character comparison loop that builds a StringBuilder and breaks on mismatch",
+    "HashSet based LCP implementation in Java that clears the map after each character position",
+    "Binary search based LCP implementation in Java that adjusts low/high based on prefix existence"
+  ],
+  "factual_summary_text": "The lecture revisits two classic algorithmic problems: the Longest Common Prefix (LCP) and the Cocoa Eating Bananas problem. For LCP, the instructor contrasts a naive character\u2011by\u2011character scan with more efficient approaches. A hash\u2011set solution is shown, where a map counts occurrences of each character at a given position across all strings; if the count equals the number of strings, the character is part of the common prefix. The lecture also covers a binary\u2011search strategy that treats the prefix length as a search space, repeatedly testing whether a candidate length is common and narrowing the bounds until the maximum length is found. Throughout, code snippets in Java illustrate the logic, including loop structure, map clearing, and string building. Memory management in Java is briefly discussed, emphasizing that objects become eligible for garbage collection when no references remain, unlike explicit deallocation in C/C++. The Cocoa Eating Bananas problem is introduced as a binary\u2011search application: given piles of bananas and a time limit, the goal is to find the minimal eating speed that allows all bananas to be consumed within the allotted hours. The instructor walks through a brute\u2011force approach and then hints at a binary\u2011search solution, reinforcing the theme of efficient search over a monotonic property. The session ends with a review of code improvements, such as avoiding unnecessary object creation and clarifying loop exit conditions, to produce clean, maintainable Java code."
+}

@@ -1,0 +1,295 @@
+{
+  "CASE_A_MONOLOGUE_LECTURE": {
+    "dataset_id": "CASE_A_MONOLOGUE_LECTURE",
+    "title": "Supervised Learning: Neural Net Training (Prof. Madhurika)",
+    "modality": "VOICE_ONLY",
+    "pdi_score": 0.5,
+    "router_choice": "SUMMARY",
+    "router_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+    "counterexample_note": "Lecture modality dynamically selecting SUMMARY due to continuous monologue without slides (PDI=0.500 < 0.60).",
+    "summary_results": {
+      "delivered": 5,
+      "mean_bloom": 3.6,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 130.1,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "blueprint_results": {
+      "delivered": 5,
+      "mean_bloom": 3.4,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 100.9,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_results": {
+      "delivered": 5,
+      "mean_bloom": 3.8,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 165.7,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_advantage_analysis": null
+  },
+  "CASE_B_INTERACTIVE_LECTURE": {
+    "dataset_id": "CASE_B_INTERACTIVE_LECTURE",
+    "title": "DAA: Binary Search on Median of Two Sorted Arrays",
+    "modality": "VOICE_ONLY",
+    "pdi_score": 0.7,
+    "router_choice": "BLUEPRINT",
+    "router_rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+    "counterexample_note": "Voice-Only lecture dynamically selecting BLUEPRINT due to high pedagogical dialogue & emphasis markers (PDI=0.700 >= 0.60).",
+    "summary_results": {
+      "delivered": 5,
+      "mean_bloom": 3.6,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 129.7,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "blueprint_results": {
+      "delivered": 5,
+      "mean_bloom": 4.2,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 137.7,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_results": {
+      "delivered": 5,
+      "mean_bloom": 3.4,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 174.1,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_advantage_analysis": null
+  },
+  "CASE_C_MULTIMODAL_CLASSROOM": {
+    "dataset_id": "CASE_C_MULTIMODAL_CLASSROOM",
+    "title": "Deep Learning: Variational Autoencoders (Fashion-MNIST)",
+    "modality": "VOICE_PLUS_PPT",
+    "pdi_score": 1.0,
+    "router_choice": "UNIFIED",
+    "router_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=1.000): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+    "counterexample_note": "Multimodal classroom selecting UNIFIED where neither Summary nor Blueprint alone captures both spoken rationale and slide code.",
+    "summary_results": {
+      "delivered": 5,
+      "mean_bloom": 3.6,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 142.9,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "blueprint_results": {
+      "delivered": 5,
+      "mean_bloom": 4.0,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 157.2,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_results": {
+      "delivered": 5,
+      "mean_bloom": 3.4,
+      "traceability": 100.0,
+      "slide_coverage": 100.0,
+      "latency_seconds": 201.7,
+      "repairs": 0,
+      "sample_question": null
+    },
+    "unified_advantage_analysis": "On Multimodal VAE material, Summary captures definitions (mu, log_var) but misses spoken backpropagation emphasis. Blueprint captures teacher derivation steps but misses exact Keras code syntax. Unified achieves 100% cross-modal coverage, preserving both the formal Keras Sampling layer code and the teacher's rationale."
+  },
+  "CASE_D_STATIC_REFERENCE_NOTES": {
+    "dataset_id": "CASE_D_STATIC_REFERENCE_NOTES",
+    "title": "MongoDB Command Reference & Query Operations",
+    "modality": "NOTES",
+    "pdi_score": -0.1,
+    "router_choice": "SUMMARY",
+    "router_rationale": "PDI=-0.100 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+    "counterexample_note": "Static text selecting SUMMARY due to code density and lack of audio (PDI=-0.113 < 0.60).",
+    "summary_results": {
+      "delivered": 5,
+      "mean_bloom": 1.8,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 30.8,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the MongoDB shell, a student executes the command `use analytics_db`. The database `analytics_db` does not currently exist in the cluster. Which statement accurately describes the state of the database immediately after this command is executed?",
+        "option_a": "The database is created immediately, and a new entry appears in the `admin` database's system collections.",
+        "option_b": "The shell context switches to `analytics_db`, but the database is not physically created until the first write operation (e.g., insert) is performed.",
+        "option_c": "The command fails with an error because the database must be explicitly created using `createDatabase` before it can be used.",
+        "option_d": "The database is created immediately, but it remains empty and invisible to other clients until a `flush` command is issued.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the `use` command only changes the current context in the shell. MongoDB uses lazy initialization for databases; the physical database object is not created until the first document is inserted into a collection within that database. Option A is incorrect because it assumes immediate creation, which is a common misconception. Option C is incorrect because `use` does not require prior explicit creation and does not fail if the DB is missing. Option D is incorrect because there is no `flush` command required to make a database visible, and creation is not immediate.",
+        "target_concept": "Database Context Switching",
+        "cognitive_level": "REMEMBER",
+        "difficulty_level": "EASY",
+        "what_taught": "The `use <database_name>` command switches context but does not create the database immediately; creation happens on the first write.",
+        "why_assessed": "To verify students understand the lazy initialization behavior of MongoDB databases and can distinguish between context switching and physical creation.",
+        "evidence_refs": [
+          "T01"
+        ],
+        "misconception_rationale": "Distractors target the misconception that `use` triggers immediate physical creation (A, D) or that explicit creation is a prerequisite for `use` (C)."
+      }
+    },
+    "blueprint_results": {
+      "delivered": 5,
+      "mean_bloom": 2.0,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 93.3,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In a Node.js application using the official MongoDB driver, you need to switch the active database context from 'production' to 'staging' to run a migration script. Which code snippet correctly executes this context switch?",
+        "option_a": "db.use('staging')",
+        "option_b": "client.db('staging')",
+        "option_c": "db.switch('staging')",
+        "option_d": "client.connect('staging')",
+        "correct_option": "B",
+        "explanation": "Option B is correct because in the MongoDB Node.js driver, the `client` object represents the connection, and calling `.db('databaseName')` returns a new Database instance for that specific context. Option A is incorrect because `use()` is a legacy shell command, not a method on the driver's `db` object. Option C is incorrect because `switch()` is not a valid method in the driver API. Option D is incorrect because `connect()` is used to establish the initial connection to the server, not to switch contexts on an existing client.",
+        "target_concept": "Database Context Management",
+        "cognitive_level": "REMEMBER",
+        "difficulty_level": "EASY",
+        "what_taught": "The specific syntax and method calls required to initialize and switch database contexts within the application framework.",
+        "why_assessed": "To verify that students can correctly recall and apply the basic syntactic structure for managing database connections, which is a foundational prerequisite for any further database interaction.",
+        "evidence_refs": [
+          "T01"
+        ],
+        "misconception_rationale": "Distractors A and C represent common confusion between the interactive MongoDB shell (where `use` is a command) and the programmatic driver API. Distractor D represents a misunderstanding of the connection lifecycle, confusing context switching with connection establishment."
+      }
+    },
+    "unified_results": {
+      "delivered": 5,
+      "mean_bloom": 2.0,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 99.3,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In a Node.js application using the official MongoDB driver, you have an active connection to the 'production' database. You need to switch the context to the 'staging' database to run a migration script. Which code snippet correctly performs this context switch?",
+        "option_a": "const stagingDb = client.db('staging');",
+        "option_b": "client.switchDatabase('staging');",
+        "option_c": "const stagingDb = client.useDatabase('staging');",
+        "option_d": "client.close(); const stagingDb = client.db('staging');",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the MongoDB Node.js driver uses the `.db()` method on the client instance to obtain a handle to a specific database. This does not close the previous connection or require explicit closing of the prior context; it simply returns a new Db object bound to the specified name. Option B is incorrect because `switchDatabase` is not a valid method in the standard driver API. Option C is incorrect because `useDatabase` is not a standard method name (often confused with SQL's `USE` statement or other ORMs). Option D is incorrect because closing the client connection before accessing a new database would result in a 'closed connection' error; the client maintains a pool of connections that can serve multiple databases simultaneously.",
+        "target_concept": "Database Context Management",
+        "cognitive_level": "REMEMBER",
+        "difficulty_level": "EASY",
+        "what_taught": "The correct syntax and method calls required to initialize and switch between different database contexts within the application environment.",
+        "why_assessed": "To verify that students can correctly implement the basic setup and context switching logic without syntax errors, ensuring foundational proficiency in managing the database environment.",
+        "evidence_refs": [
+          "T01"
+        ],
+        "misconception_rationale": "Distractors target common misconceptions: Option B invents a non-existent method name (confusing with other libraries); Option C confuses MongoDB driver methods with SQL syntax or other ORM patterns; Option D reflects the misconception that one must 'close' a context before opening another, which is unnecessary and harmful in connection-pooled environments."
+      }
+    },
+    "unified_advantage_analysis": null
+  },
+  "CASE_E_PROCEDURAL_TUTORIAL_PDF": {
+    "dataset_id": "CASE_E_PROCEDURAL_TUTORIAL_PDF",
+    "title": "DAA: Unit II Dynamic Programming & Matrix Chain Multiplication",
+    "modality": "PDF",
+    "pdi_score": 0.0,
+    "router_choice": "SUMMARY",
+    "router_rationale": "PDI=0.000 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+    "counterexample_note": "Static PDF handout selecting SUMMARY based on dense mathematical notation and static exposition (PDI=-0.036 < 0.60).",
+    "summary_results": {
+      "delivered": 5,
+      "mean_bloom": 3.6,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 301.1,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "Consider a matrix chain with dimensions d = [5, 10, 3, 12]. You are calculating the minimum cost m[1][3] to multiply matrices A1, A2, and A3. If you choose the split point k = 1, what is the total cost computed for this specific subproblem?",
+        "option_a": "1500",
+        "option_b": "1800",
+        "option_c": "600",
+        "option_d": "1200",
+        "correct_option": "A",
+        "explanation": "The recurrence is m[i][j] = min(m[i][k] + m[k+1][j] + d[i-1]*d[k]*d[j]). For i=1, j=3, k=1: The cost is m[1][1] + m[2][3] + d[0]*d[1]*d[3]. m[1][1] is 0 (single matrix). m[2][3] is the cost of multiplying A2 (10x3) and A3 (3x12), which is 10*3*12 = 360. The scalar multiplication cost for combining the result of A1 and (A2*A3) is d[0]*d[1]*d[3] = 5*10*12 = 600. Total = 0 + 360 + 600 = 960? Wait, let's re-evaluate the standard MCM definition. Usually, m[i][j] is the cost to multiply Ai...Aj. If k=1, we split into (A1) and (A2 A3). Cost = m[1][1] + m[2][3] + d[0]*d[1]*d[3]. m[1][1]=0. m[2][3] = d[1]*d[2]*d[3] = 10*3*12 = 360. The term d[i-1]*d[k]*d[j] represents the cost of multiplying the resulting matrix of the left part (dimensions d[i-1] x d[k]) by the resulting matrix of the right part (dimensions d[k] x d[j]). So 5*10*12 = 600. Total = 0 + 360 + 600 = 960. Let me check the options. None match 960. Let's re-read the prompt's specific misconception: 'Using d[i] * d[k] * d[j] instead of d[i-1] * d[k] * d[j]'. Let's calculate the distractors based on common errors. \nOption A (1500): If a student uses d[i]*d[k]*d[j] = d[1]*d[1]*d[3] = 10*10*12 = 1200. Plus m[2][3]=360. Total 1560. No.\nLet's look at the options again. Maybe the question implies a simpler calculation or I should construct the numbers to fit the options.\nLet's adjust the question to ensure a clean integer answer that matches one option and clearly distinguishes the correct formula from the misconception.\nLet's try dimensions d = [2, 3, 4, 5]. i=1, j=3, k=1.\nCorrect: m[1][1] + m[2][3] + d[0]*d[1]*d[3] = 0 + (3*4*5) + (2*3*5) = 60 + 30 = 90.\nMisconception 1 (d[i]*d[k]*d[j]): 0 + 60 + (3*3*5) = 60 + 45 = 105.\nMisconception 2 (Wrong k range or index): Maybe calculating m[1][2] + m[3][3]? No, k=1 is fixed.\nLet's stick to the original dimensions [5, 10, 3, 12] but check my math.\nm[2][3] = 10*3*12 = 360.\nCost of combining = 5*10*12 = 600.\nTotal = 960.\nLet's change the options to reflect 960 and plausible errors.\nOption A: 960 (Correct)\nOption B: 1080 (Using d[i]*d[k]*d[j] = 10*10*12=1200? No, 1200+360=1560. Using d[i-1]*d[k+1]*d[j]? 5*3*12=180. 180+360=540.)\nLet's try a different set of dimensions to make the numbers cleaner for the JSON output.\nDimensions: d = [10, 20, 30, 40]. i=1, j=3, k=1.\nCorrect: m[1][1] + m[2][3] + d[0]*d[1]*d[3] = 0 + (20*30*40) + (10*20*40) = 24000 + 8000 = 32000.\nMisconception (d[i]*d[k]*d[j]): 0 + 24000 + (20*20*40) = 24000 + 16000 = 40000.\nMisconception (d[i-1]*d[k]*d[j+1] - out of bounds or wrong index): Not applicable.\nMisconception (Forgetting m[k+1][j]): 0 + 0 + 8000 = 8000.\nMisconception (Forgetting m[i][k]): 0 + 24000 + 8000 = 32000 (Same as correct if m[i][k] is 0).\nLet's use the [5, 10, 3, 12] example but fix the options to be 960, 1560, 540, 360.\nA: 960\nB: 1560 (Error: d[i]*d[k]*d[j] = 10*10*12=1200. 1200+360=1560)\nC: 540 (Error: d[i-1]*d[k+1]*d[j] = 5*3*12=180. 180+360=540)\nD: 360 (Error: Only calculating m[2][3] and forgetting the combination cost)\nThis works perfectly.",
+        "target_concept": "MCM Recurrence Relation",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The recurrence relation m[i][j] = min_{i <= k < j} (m[i][k] + m[k+1][j] + d[i-1] * d[k] * d[j]) defines the minimum cost to multiply matrices from i to j, where d[] represents the dimensions.",
+        "why_assessed": "Students must correctly apply the index arithmetic and cost formula for a specific subproblem within a larger chain, ensuring they can manually trace the DP table construction without off-by-one errors in dimension indexing.",
+        "evidence_refs": [
+          "T01"
+        ],
+        "misconception_rationale": "Option B represents the common off-by-one error where students use d[i] instead of d[i-1] for the first dimension of the scalar multiplication cost. Option C represents an error in identifying the intermediate dimension (using d[k+1] instead of d[k]). Option D represents the error of forgetting to add the cost of the final scalar multiplication that combines the two sub-results."
+      }
+    },
+    "blueprint_results": {
+      "delivered": 4,
+      "mean_bloom": 3.5,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 98.9,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the Matrix Chain Multiplication problem, we define the cost C[i, j] as the minimum number of scalar multiplications needed to compute the matrix product A_i ... A_j. The recurrence relation is C[i, j] = min_{i <= k < j} (C[i, k] + C[k+1, j] + p_{i-1} * p_k * p_j). Consider a chain of 3 matrices A1, A2, A3 with dimensions p0=10, p1=100, p2=5, p3=6. What is the value of the term (p_{i-1} * p_k * p_j) specifically for the split point k=1 when calculating C[1, 3]?",
+        "option_a": "10 * 100 * 6 = 6000",
+        "option_b": "10 * 5 * 6 = 300",
+        "option_c": "100 * 5 * 6 = 3000",
+        "option_d": "10 * 100 * 5 = 5000",
+        "correct_option": "A",
+        "explanation": "The term p_{i-1} * p_k * p_j represents the cost of multiplying the resulting matrix of the left subchain (A1...Ak) with the resulting matrix of the right subchain (A_{k+1}...Aj). For i=1, j=3, and k=1: The left subchain is A1 (dimensions p0 x p1 = 10x100). The right subchain is A2...A3 (dimensions p1 x p3 = 100x6). The multiplication cost is p0 * p1 * p3 = 10 * 100 * 6 = 6000. Option B uses p2 instead of p1 for the inner dimension. Option C uses p1, p2, p3 which is incorrect indices. Option D uses p0, p1, p2 which ignores the final dimension p_j.",
+        "target_concept": "Matrix Chain Multiplication Recurrence Cost Term",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The specific formula for the scalar multiplication cost in the MCM recurrence: p_{i-1} * p_k * p_j, where i is the start index, j is the end index, and k is the split point.",
+        "why_assessed": "To verify that students can correctly map the abstract indices (i, j, k) to the specific dimension array (p) to calculate the cost of a specific split, a critical step in dynamic programming table filling.",
+        "evidence_refs": [
+          "Unit II Dynamic Programming & Matrix Chain Multiplication: Recurrence Relation Definition"
+        ],
+        "misconception_rationale": "Distractors represent common indexing errors: using the wrong dimension for the 'inner' product (confusing p_k with p_{k+1} or p_j), or misidentifying the start/end dimensions of the subchains."
+      }
+    },
+    "unified_results": {
+      "delivered": 5,
+      "mean_bloom": 3.8,
+      "traceability": 100.0,
+      "slide_coverage": 0.0,
+      "latency_seconds": 185.1,
+      "repairs": 0,
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "Consider a matrix chain with dimensions P = {30, 35, 15, 5, 10, 20, 25}. You are calculating the minimum cost m[2, 4] for the subchain A2, A3, A4. Which of the following expressions correctly represents the cost calculation for the split point k = 3?",
+        "option_a": "m[2, 3] + m[4, 4] + (35 * 15 * 10)",
+        "option_b": "m[2, 3] + m[4, 4] + (30 * 35 * 10)",
+        "option_c": "m[2, 3] + m[4, 4] + (35 * 15 * 20)",
+        "option_d": "m[2, 3] + m[4, 4] + (35 * 15 * 5)",
+        "correct_option": "A",
+        "explanation": "The recurrence relation for the cost of multiplying matrices from i to j with a split at k is m[i,j] = m[i,k] + m[k+1,j] + p_{i-1} * p_k * p_j. For i=2, j=4, and k=3, the dimensions are p_{2-1}=p_1=35, p_3=15, and p_4=10. Thus, the scalar multiplication cost is 35 * 15 * 10. Option B uses p_0 (incorrect index), Option C uses p_5 (incorrect index), and Option D uses p_2 (incorrect index).",
+        "target_concept": "Recurrence Relation for Matrix Chain",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The recurrence relation m[i,j] = min_{i<=k<j} (m[i,k] + m[k+1,j] + p_{i-1}p_k p_j) and the base case m[i,i] = 0.",
+        "why_assessed": "To verify the student can correctly derive and compute the minimum cost for a specific subproblem, ensuring they understand the index boundaries and the multiplication of dimensions p_{i-1}, p_k, and p_j.",
+        "evidence_refs": [
+          "T01"
+        ],
+        "misconception_rationale": "Distractors target common indexing errors: using p_i instead of p_{i-1} (Option B), using p_{j+1} or wrong end dimension (Option C), and using p_k instead of p_{i-1} or confusing the start dimension (Option D)."
+      }
+    },
+    "unified_advantage_analysis": null
+  }
+}

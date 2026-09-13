@@ -1,0 +1,91 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_06_mongodb_commands_reference",
+  "input_type": "NOTES",
+  "content_style": "CODE",
+  "total_questions": 4,
+  "questions": [
+    {
+      "question_id": "Q_S01_01",
+      "question_text": "A developer needs to import a JSON file named `data.json` into the `users` collection of the `app` database. The JSON file contains a single array of objects (e.g., `[{\"name\": \"Alice\"}, {\"name\": \"Bob\"}]`). If the file contains documents with `_id` values that already exist in the collection, the developer wants to skip those duplicates rather than failing the import. Which command correctly achieves this?",
+      "option_a": "mongoimport --db app --collection users --file data.json --jsonArray --ignoreBlanks",
+      "option_b": "mongoimport --db app --collection users --file data.json --jsonArray --mode upsert",
+      "option_c": "mongoimport --db app --collection users --file data.json --jsonArray --mode insert --ignoreBlanks",
+      "option_d": "mongoimport --db app --collection users --file data.json --jsonArray --mode insert --ignoreBlanks --stopOnError=false",
+      "correct_option": "D",
+      "explanation": "Option D is correct because `--jsonArray` is required to parse a JSON array file, `--mode insert` is the default but explicitly stated, and `--stopOnError=false` allows the import to continue past duplicate key errors (skipping them) instead of aborting. Option A is incorrect because `--ignoreBlanks` ignores empty fields, not duplicate keys, and the import would fail on the first duplicate. Option B is incorrect because `--mode upsert` would update existing documents with the same `_id` rather than skipping them. Option C is incorrect because without `--stopOnError=false`, the import process terminates immediately upon encountering the first duplicate key error.",
+      "target_concept": "mongoimport command syntax and flags",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Usage of `--jsonArray` for array-based JSON files and `--stopOnError=false` to handle duplicate keys gracefully.",
+      "why_assessed": "To verify understanding of specific CLI flags for data import scenarios involving duplicate handling.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03"
+      ],
+      "misconception_rationale": "Distractors target common confusion between `--ignoreBlanks` and error handling flags, and the difference between `upsert` and `insert` modes when duplicates exist."
+    },
+    {
+      "question_id": "Q_S02_01",
+      "question_text": "Consider the following MongoDB document: `{ \"_id\": 1, \"tags\": [\"tech\", \"news\"] }`. A developer executes the following update command: `db.collection.updateOne({ _id: 1 }, { $push: { tags: \"tech\" } })`. What is the resulting state of the `tags` array in the document?",
+      "option_a": "[\"tech\", \"news\"]",
+      "option_b": "[\"tech\", \"news\", \"tech\"]",
+      "option_c": "[\"news\", \"tech\"]",
+      "option_d": "The operation fails because \"tech\" already exists in the array.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the `$push` operator appends the specified value to the end of the array regardless of whether it already exists. Since \"tech\" was already in the array, it is added again, resulting in `[\"tech\", \"news\", \"tech\"]`. Option A is incorrect because it assumes the behavior of `$addToSet`, which prevents duplicates. Option C is incorrect because `$push` appends to the end, it does not reorder or replace existing elements. Option D is incorrect because `$push` does not check for uniqueness; it always succeeds in appending the value.",
+      "target_concept": "Array update operators: $push vs $addToSet",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The difference between `$push` (allows duplicates) and `$addToSet` (prevents duplicates).",
+      "why_assessed": "To assess the ability to predict the outcome of array modification operations and identify potential data integrity issues.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that `$push` behaves like `$addToSet` or that array operations automatically enforce uniqueness."
+    },
+    {
+      "question_id": "Q_S03_01",
+      "question_text": "A collection contains documents with a field `categories` that is an array of strings. You need to find all documents where the `categories` array contains at least one of the following values: \"electronics\", \"books\", or \"toys\". Which query operator and syntax correctly implements this logic?",
+      "option_a": "db.collection.find({ categories: { $all: [\"electronics\", \"books\", \"toys\"] } })",
+      "option_b": "db.collection.find({ categories: { $in: [\"electronics\", \"books\", \"toys\"] } })",
+      "option_c": "db.collection.find({ categories: { $eq: [\"electronics\", \"books\", \"toys\"] } })",
+      "option_d": "db.collection.find({ categories: [\"electronics\", \"books\", \"toys\"] })",
+      "correct_option": "B",
+      "explanation": "Option B is correct because `$in` matches documents where the field value is equal to any of the values specified in the array. For array fields, it checks if any element in the field's array matches any element in the `$in` array. Option A is incorrect because `$all` requires the document's array to contain ALL of the specified values. Option C is incorrect because `$eq` with an array checks for exact array equality (order and content), not containment. Option D is incorrect because specifying an array directly in the query without an operator checks for exact array match, not partial containment.",
+      "target_concept": "Query operators for array containment: $in vs $all",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Using `$in` to filter documents based on partial array membership.",
+      "why_assessed": "To distinguish between logical OR (any match) and logical AND (all match) semantics in array queries.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors target the confusion between `$in` (any) and `$all` (all), as well as the misuse of `$eq` or implicit array matching."
+    },
+    {
+      "question_id": "Q_S05_01",
+      "question_text": "A document in the `products` collection has the structure: `{ \"_id\": 1, \"name\": \"Laptop\", \"specs\": [\"16GB RAM\", \"512GB SSD\", \"Intel i7\"] }`. You want to create an aggregation pipeline that outputs one document for each specification, where each output document contains the product name and a single specification string. Which stage must be included in the pipeline to achieve this transformation?",
+      "option_a": "{ $project: { name: 1, specs: 1 } }",
+      "option_b": "{ $unwind: \"$specs\" }",
+      "option_c": "{ $group: { _id: \"$specs\", name: { $first: \"$name\" } } }",
+      "option_d": "{ $match: { specs: { $exists: true } } }",
+      "correct_option": "B",
+      "explanation": "Option B is correct because `$unwind` deconstructs an array field into separate documents. Applying `{ $unwind: \"$specs\" }` to the input document will produce three output documents: `{ \"_id\": 1, \"name\": \"Laptop\", \"specs\": \"16GB RAM\" }`, `{ \"_id\": 1, \"name\": \"Laptop\", \"specs\": \"512GB SSD\" }`, and `{ \"_id\": 1, \"name\": \"Laptop\", \"specs\": \"Intel i7\" }`. Option A is incorrect because `$project` only reshapes the document but keeps `specs` as an array. Option C is incorrect because `$group` aggregates documents based on a key; while it might group by spec, it doesn't inherently deconstruct the array in the same way and requires careful handling of the `_id` to achieve the desired output structure, but `$unwind` is the standard and direct method for this specific transformation. Option D is incorrect because `$match` only filters documents; it does not change the structure of the `specs` field.",
+      "target_concept": "Aggregation $unwind stage",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Using `$unwind` to flatten array fields into individual documents for further processing.",
+      "why_assessed": "To verify understanding of how to transform array data into a row-per-element format within an aggregation pipeline.",
+      "evidence_refs": [
+        "E_C07",
+        "E_C08",
+        "E_C09"
+      ],
+      "misconception_rationale": "Distractors target the misconception that `$project` or `$match` can alter array structure, or that `$group` is the primary tool for deconstructing arrays."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Fundamentals of Computer Science",
+    "subtopics": [
+      "Basic Principles",
+      "Core Concepts"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Theoretical Foundations",
+    "subtopics": [
+      "Theoretical Models",
+      "Abstract Concepts"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Classroom Lecture Structure",
+    "subtopics": [
+      "Lecture Organization",
+      "Audio Recording Format"
+    ],
+    "associated_chunk_ids": []
+  }
+]

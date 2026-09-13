@@ -1,0 +1,82 @@
+{
+  "input_id": "input_01_daa_unit2",
+  "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=-0.035 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 3,
+  "defensible_capacity": 3,
+  "final_question_count": 3,
+  "questions": [
+    {
+      "question_id": "T1_Q1",
+      "question_text": "Consider the following iterative Binary Search implementation for a sorted array `arr` of size `n`:\n\n```java\nint low = 0, high = n - 1;\nwhile (low <= high) {\n    int mid = low + (high - low) / 2;\n    if (arr[mid] == target) return mid;\n    else if (arr[mid] > target) {\n        high = mid; // Line X\n    } else {\n        low = mid + 1;\n    }\n}\nreturn -1;\n```\n\nWhat is the primary consequence of the update `high = mid` in Line X when the target is not present in the array?",
+      "option_a": "The algorithm will terminate immediately with an incorrect index.",
+      "option_b": "The algorithm may enter an infinite loop if the target is smaller than the current mid element.",
+      "option_c": "The algorithm will skip the element at index `mid`, potentially missing the target if it exists there.",
+      "option_d": "The algorithm will throw an ArrayIndexOutOfBoundsException because `high` becomes negative.",
+      "correct_option": "B",
+      "explanation": "In Binary Search, when `arr[mid] > target`, the search space must be restricted to indices strictly less than `mid`. Therefore, `high` must be set to `mid - 1`. If `high` is set to `mid`, and `low` equals `mid` (which happens when `high - low` is 0 or 1 in certain configurations, specifically when `low == mid`), the condition `low <= high` remains true, and `mid` is recalculated to the same value. This creates an infinite loop where the bounds never converge. Option A is incorrect because it doesn't terminate immediately. Option C is incorrect because skipping `mid` is the correct behavior when `arr[mid] > target` (the target cannot be at `mid`), but the error here is failing to exclude `mid` from the *next* search space entirely, not skipping a valid candidate. Option D is incorrect because `high` does not necessarily become negative; it just fails to decrease sufficiently to break the loop.",
+      "target_concept": "Binary Search Space Reduction Logic",
+      "cognitive_level": "APPLY",
+      "what_taught": "The algorithm updates the search interval by calculating mid = low + (high - low) / 2. If target < a[mid], high becomes mid - 1; if target > a[mid], low becomes mid + 1. This ensures the search space is halved each step, leading to O(log n) complexity.",
+      "why_assessed": "This is the core mechanical step of the Divide and Conquer strategy applied to Binary Search. Students must understand exactly how the bounds change to avoid infinite loops or missing the target.",
+      "evidence_refs": [
+        "input_01_daa_unit2:midpoint_calculation",
+        "input_01_daa_unit2:search_space_reduction"
+      ],
+      "misconception_rationale": "Option B targets the specific misconception of setting `high = mid` instead of `mid - 1`, which is a common off-by-one error leading to infinite loops. Option C targets the confusion between excluding the current mid (correct) and excluding future mids (incorrect logic). Option A and D are plausible but incorrect outcomes that test understanding of loop termination conditions and array bounds."
+    },
+    {
+      "question_id": "T2_Q1",
+      "question_text": "A student implements Binary Search in Java using both a recursive function and an iterative `while` loop. Both implementations correctly return the index of the target or -1 if not found. Which of the following statements accurately describes the difference in resource usage between these two approaches?",
+      "option_a": "The recursive version uses O(1) auxiliary space because it does not store sub-problems, while the iterative version uses O(log n) space for the loop variables.",
+      "option_b": "The recursive version uses O(log n) auxiliary space due to the call stack depth, while the iterative version uses O(1) auxiliary space.",
+      "option_c": "Both versions use O(log n) auxiliary space because they both require storing the history of midpoints to backtrack.",
+      "option_d": "The iterative version uses O(n) auxiliary space to store the array indices, while the recursive version uses O(1) space.",
+      "correct_option": "B",
+      "explanation": "Recursive Binary Search makes a function call for each halving of the search space. Since the search space is halved each time, the maximum depth of the recursion tree is log n. Each call frame consumes stack space, resulting in O(log n) auxiliary space. Iterative Binary Search uses a `while` loop with a fixed number of variables (`low`, `high`, `mid`), which consumes constant O(1) auxiliary space regardless of the input size. Option A is incorrect because recursion inherently uses stack space proportional to depth. Option C is incorrect because neither version stores history; they update pointers in place. Option D is incorrect because the iterative version does not store all indices, only the current bounds.",
+      "target_concept": "Recursive vs. Iterative Implementation",
+      "cognitive_level": "ANALYZE",
+      "what_taught": "Recursive Binary Search uses function calls to solve sub-problems with updated low/high bounds, while Iterative Binary Search uses a while loop to adjust pointers until the interval is empty or target is found. Both achieve O(log n) time complexity but differ in stack usage and control flow.",
+      "why_assessed": "Understanding the trade-offs and structural differences between these two implementation paradigms is a fundamental skill in algorithm design, specifically highlighted in the unit's comparison of methods.",
+      "evidence_refs": [
+        "input_01_daa_unit2:recursive_vs_iterative",
+        "input_01_daa_unit2:java_code_patterns"
+      ],
+      "misconception_rationale": "Option A targets the misconception that recursion is 'free' or uses less space than iteration. Option C targets the misconception that algorithms need to store state history. Option D targets the confusion between input size (n) and auxiliary space, assuming iteration requires storing the entire array state."
+    },
+    {
+      "question_id": "T3_Q1",
+      "question_text": "You are implementing the 'Median of Two Sorted Arrays' algorithm using Divide and Conquer (Binary Search on the smaller array). Let `A` and `B` be the two sorted arrays with lengths `m` and `n` respectively, where `m <= n`. The total length `L = m + n` is even. You partition `A` at index `i` and `B` at index `j` such that `i + j = L / 2`. What is the correct formula to calculate the median?",
+      "option_a": "The median is `max(A[i-1], B[j-1])`.",
+      "option_b": "The median is `(max(A[i-1], B[j-1]) + min(A[i], B[j])) / 2.0`.",
+      "option_c": "The median is `(A[i] + B[j]) / 2.0`.",
+      "option_d": "The median is `min(A[i-1], B[j-1])`.",
+      "correct_option": "B",
+      "explanation": "For an even total length, the median is the average of the two middle elements. In the partitioned view, the left half consists of the first `i` elements of `A` and the first `j` elements of `B`. The largest element in the left half is `max(A[i-1], B[j-1])` (handling edge cases where `i=0` or `j=0` by using negative infinity). The right half consists of the remaining elements. The smallest element in the right half is `min(A[i], B[j])` (handling edge cases where `i=m` or `j=n` by using positive infinity). The median is the average of these two values. Option A is incorrect because it only takes the max of the left side, ignoring the right side. Option C is incorrect because it assumes the middle elements are specifically at indices `i` and `j` without considering the max/min logic required to find the true boundary elements. Option D is incorrect because it takes the min of the left side, which is not the boundary element.",
+      "target_concept": "Median of Two Sorted Arrays (Even Length)",
+      "cognitive_level": "APPLY",
+      "what_taught": "For an even-length merged array, the median is the average of the maximum element of the left half and the minimum element of the right half. The algorithm uses binary search to find the correct partition point in the smaller array such that the left and right halves are balanced.",
+      "why_assessed": "This is a complex application of Divide and Conquer that tests the student's ability to apply binary search logic to a non-trivial problem, specifically handling the boundary conditions for even-length arrays.",
+      "evidence_refs": [
+        "input_01_daa_unit2:median_logic_even_length",
+        "input_01_daa_unit2:median_of_two_sorted_arrays"
+      ],
+      "misconception_rationale": "Option A targets the misconception that the median is just the largest element on the left. Option C targets the misconception that the elements at the partition indices are automatically the middle elements without checking neighbors. Option D targets the confusion between the smallest element of the left half and the largest element of the left half."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "total_latency_seconds": 79.49,
+    "total_llm_calls": 3,
+    "pedagogical_delivery_index": -0.035,
+    "features": {
+      "has_audio": false,
+      "has_ppt": false,
+      "code_density": 0.228,
+      "text_length_words": 11844,
+      "pedagogical_marker_density": 0.17,
+      "dialogue_interaction_density": 0.25
+    }
+  }
+}

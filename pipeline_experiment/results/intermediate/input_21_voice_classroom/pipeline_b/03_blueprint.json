@@ -1,0 +1,21 @@
+{
+  "blueprint_id": "BP_input_21_voice_classroom",
+  "input_id": "input_21_voice_classroom",
+  "topics": [
+    {
+      "topic_id": "T01",
+      "topic": "Overview",
+      "salience_score": 0.5,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

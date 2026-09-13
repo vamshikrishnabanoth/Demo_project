@@ -1,0 +1,4976 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 8.7
+      },
+      {
+        "start": 8.7,
+        "end": 20.1
+      },
+      {
+        "start": 20.1,
+        "end": 24.3
+      },
+      {
+        "start": 24.3,
+        "end": 47.2
+      },
+      {
+        "start": 47.2,
+        "end": 54.0
+      },
+      {
+        "start": 54.0,
+        "end": 60.5
+      },
+      {
+        "start": 60.5,
+        "end": 64.5
+      },
+      {
+        "start": 64.5,
+        "end": 84.5
+      },
+      {
+        "start": 84.5,
+        "end": 100.5
+      },
+      {
+        "start": 100.5,
+        "end": 120.5
+      },
+      {
+        "start": 121.5,
+        "end": 138.5
+      },
+      {
+        "start": 139.5,
+        "end": 149.5
+      },
+      {
+        "start": 150.5,
+        "end": 167.5
+      },
+      {
+        "start": 168.5,
+        "end": 181.5
+      },
+      {
+        "start": 181.5,
+        "end": 192.5
+      }
+    ],
+    "text": "So, basically, there are two types of things which are opposite, greatest common divisor, and least common multiple, HCF, JCD, one and the same thing, LCM, separate, okay. JCD is always bigger or LCM is bigger. Okay, so we will try to understand, GCD will come out, LCM will come out, LCM, LCM of what? 12. I am going to do the way I was taught, many new ways would have come, I don't know, but I will do it in my manner. Now, what is the least common multiple among both of them? It is a nice understanding, right? So, we will do the other way around, LCM would be 2 into 2 into 3 for 12, and for 8 it is what? 2 into 2 into 2, so LCM, let's take out the time, how we were taught, this one is 2, this one is 2, this one is 2, this one is 3, this one is 2, this one is 24, LCM, LCM means a number, okay, which will also be available in 8, which will also be available in 12. Understood, okay, so is 24 modulo 8 equal to 0, yes, is 24 modulo 12 equal to 0, yes. So, if I ask you to find a multiple, not using your math, but using your programming language, what will you do? LCM, A, I, B, I, you have to find an I, where I modulo A, you have one either 24, Milathamco. 24 modulo 8 was equal to 0, 24 modulo 12 was equal to 0, so what I have to find in that? I, so I can go from what to what, since it is least, I will not start from 100, I will start from what?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 8.7
+        },
+        {
+          "start": 8.7,
+          "end": 20.1
+        },
+        {
+          "start": 20.1,
+          "end": 24.3
+        },
+        {
+          "start": 24.3,
+          "end": 47.2
+        },
+        {
+          "start": 47.2,
+          "end": 54.0
+        },
+        {
+          "start": 54.0,
+          "end": 60.5
+        },
+        {
+          "start": 60.5,
+          "end": 64.5
+        },
+        {
+          "start": 64.5,
+          "end": 84.5
+        },
+        {
+          "start": 84.5,
+          "end": 100.5
+        },
+        {
+          "start": 100.5,
+          "end": 120.5
+        },
+        {
+          "start": 121.5,
+          "end": 138.5
+        },
+        {
+          "start": 139.5,
+          "end": 149.5
+        },
+        {
+          "start": 150.5,
+          "end": 167.5
+        },
+        {
+          "start": 168.5,
+          "end": 181.5
+        },
+        {
+          "start": 181.5,
+          "end": 192.5
+        }
+      ],
+      "dwell_time": 188.5,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": true,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 192.5,
+        "end": 203.5
+      },
+      {
+        "start": 203.5,
+        "end": 221.5
+      },
+      {
+        "start": 221.5,
+        "end": 239.5
+      },
+      {
+        "start": 239.5,
+        "end": 249.5
+      },
+      {
+        "start": 249.5,
+        "end": 259.5
+      },
+      {
+        "start": 260.5,
+        "end": 266.5
+      },
+      {
+        "start": 266.5,
+        "end": 280.5
+      },
+      {
+        "start": 281.5,
+        "end": 294.5
+      },
+      {
+        "start": 294.5,
+        "end": 304.5
+      },
+      {
+        "start": 305.5,
+        "end": 309.5
+      },
+      {
+        "start": 309.5,
+        "end": 315.5
+      },
+      {
+        "start": 315.5,
+        "end": 323.5
+      },
+      {
+        "start": 323.5,
+        "end": 331.5
+      },
+      {
+        "start": 332.5,
+        "end": 338.5
+      },
+      {
+        "start": 338.5,
+        "end": 345.5
+      },
+      {
+        "start": 345.5,
+        "end": 353.5
+      },
+      {
+        "start": 353.5,
+        "end": 358.5
+      },
+      {
+        "start": 360.5,
+        "end": 364.5
+      },
+      {
+        "start": 364.5,
+        "end": 370.5
+      },
+      {
+        "start": 370.5,
+        "end": 375.5
+      },
+      {
+        "start": 376.5,
+        "end": 382.5
+      }
+    ],
+    "text": "1, okay, I less than, probably 100, I plus plus. Now, what is the condition here I am saying, if I modulo A equal equal to 0 and I modulo B is equal to 0, return what? Return, I, so I will get what, I will get I as 24 of Isku recursion, 4 and 10, you can use recursion, now it is recursion, how to use recursion? This is one way, what other way do you think it can be? 8 is 12 and we know this is LCM 24. So, what will I do? Computers, I am not talking about. Is there any shorter way? For loops you will get it, not a problem. Any other way? 8 at 12 N, sorry 8 plus 8 or 8, 8 into 8 N, 8 plus 8 becomes what? 16, I will check if 16 modulo 12 is equal equal to 0, does not happen, then I will do 8 plus 8 plus 8, what it becomes? 24, 24 modulo 12, is it equal equal to 0? Yes, so what is my answer? My answer is 24. Let us try this to something else also, two ways of doing it. One is I can increment it, until both are equal, this is a faster way of doing it, because I am trying to check the common multiple between both of them. If there is a common multiple between both of them, that means this will, whatever number this guy is capable of producing will be divisible by this guy. Whatever this guy is capable of producing, it would be divisible by the other guy. So, this table will write 8, 8 plus 8, then next step 8 plus 8 plus 8. So, this guy should give me a number which would be divisible by 12. So, let us try and do again, let us do it for 4 and 6. 4 should give me a number which is divisible by 6. So, first I will directly ask, 6, are you divisible by 4? No. Then what will I do? If I am not divisible, I will do 4 plus 4. Is 8 divisible by 4? Yes, no, yes.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 192.5,
+          "end": 203.5
+        },
+        {
+          "start": 203.5,
+          "end": 221.5
+        },
+        {
+          "start": 221.5,
+          "end": 239.5
+        },
+        {
+          "start": 239.5,
+          "end": 249.5
+        },
+        {
+          "start": 249.5,
+          "end": 259.5
+        },
+        {
+          "start": 260.5,
+          "end": 266.5
+        },
+        {
+          "start": 266.5,
+          "end": 280.5
+        },
+        {
+          "start": 281.5,
+          "end": 294.5
+        },
+        {
+          "start": 294.5,
+          "end": 304.5
+        },
+        {
+          "start": 305.5,
+          "end": 309.5
+        },
+        {
+          "start": 309.5,
+          "end": 315.5
+        },
+        {
+          "start": 315.5,
+          "end": 323.5
+        },
+        {
+          "start": 323.5,
+          "end": 331.5
+        },
+        {
+          "start": 332.5,
+          "end": 338.5
+        },
+        {
+          "start": 338.5,
+          "end": 345.5
+        },
+        {
+          "start": 345.5,
+          "end": 353.5
+        },
+        {
+          "start": 353.5,
+          "end": 358.5
+        },
+        {
+          "start": 360.5,
+          "end": 364.5
+        },
+        {
+          "start": 364.5,
+          "end": 370.5
+        },
+        {
+          "start": 370.5,
+          "end": 375.5
+        },
+        {
+          "start": 376.5,
+          "end": 382.5
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 382.5,
+        "end": 389.5
+      },
+      {
+        "start": 389.5,
+        "end": 393.5
+      },
+      {
+        "start": 393.5,
+        "end": 400.5
+      },
+      {
+        "start": 400.5,
+        "end": 412.5
+      },
+      {
+        "start": 412.5,
+        "end": 419.5
+      },
+      {
+        "start": 419.5,
+        "end": 429.5
+      },
+      {
+        "start": 429.5,
+        "end": 436.5
+      },
+      {
+        "start": 436.5,
+        "end": 442.5
+      },
+      {
+        "start": 442.5,
+        "end": 450.5
+      },
+      {
+        "start": 450.5,
+        "end": 455.5
+      },
+      {
+        "start": 455.5,
+        "end": 465.5
+      },
+      {
+        "start": 465.5,
+        "end": 470.5
+      },
+      {
+        "start": 470.5,
+        "end": 474.5
+      },
+      {
+        "start": 474.5,
+        "end": 478.5
+      },
+      {
+        "start": 478.5,
+        "end": 482.5
+      },
+      {
+        "start": 482.5,
+        "end": 485.5
+      },
+      {
+        "start": 485.5,
+        "end": 490.5
+      },
+      {
+        "start": 490.5,
+        "end": 496.5
+      },
+      {
+        "start": 496.5,
+        "end": 507.5
+      },
+      {
+        "start": 507.5,
+        "end": 516.5
+      },
+      {
+        "start": 516.5,
+        "end": 524.5
+      },
+      {
+        "start": 524.5,
+        "end": 530.5
+      },
+      {
+        "start": 530.5,
+        "end": 548.5
+      },
+      {
+        "start": 548.5,
+        "end": 556.5
+      },
+      {
+        "start": 556.5,
+        "end": 565.5
+      }
+    ],
+    "text": "Then what is my, sorry, sorry, 6. It is 6 divisible by 8. What are we doing? 4 and 6, I will see him, 1 minute, 1 minute. I got it wrong. First time, I have to say 4 modules 6, is it equal to 0? No. Then 8 modules 6, is it equal to 0? No, go ahead. 4 plus 4 plus 4. What is this? 12 modules 6, is it equal to 0? Yes. What is my LCM? 12. This is also one way of getting it. If you want to play with 6, you can play with 6 also the other, same way. How will you do it with 6? Checking 6, multiples are divisible by 4 or not. What is 6's first divisible multiplier? 6, ones are 6. So I will take 6 as it is and check over here is 6 modules 4 equal to 0. No. Then I will say till 6, you add to yourself. Let's go to your next number. That is 6 plus 6. 12 modules 4, is it equal to 0? Yes. Who is LCM? 12. Now for both the things, write recursion. For I, I, I will have a thing also and for this guy also. Let's take it here. What do we want to do? LCM, I take A, I take B, I am keeping a 4 and I am keeping a 6 here for you people to understand. For I equal to 1, I less than 100, I plus plus. It can be less than 100 or it can be less than or equal to B, greater number. Because it is a divisor, you keep it 100 right now, you will otherwise go crazy. If loop I modulo A equal equal 0, I modulo B equal equal 0 and condition return I. Convert this into recursion. Okay? I write the other one here too. LCM, A, B.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 382.5,
+          "end": 389.5
+        },
+        {
+          "start": 389.5,
+          "end": 393.5
+        },
+        {
+          "start": 393.5,
+          "end": 400.5
+        },
+        {
+          "start": 400.5,
+          "end": 412.5
+        },
+        {
+          "start": 412.5,
+          "end": 419.5
+        },
+        {
+          "start": 419.5,
+          "end": 429.5
+        },
+        {
+          "start": 429.5,
+          "end": 436.5
+        },
+        {
+          "start": 436.5,
+          "end": 442.5
+        },
+        {
+          "start": 442.5,
+          "end": 450.5
+        },
+        {
+          "start": 450.5,
+          "end": 455.5
+        },
+        {
+          "start": 455.5,
+          "end": 465.5
+        },
+        {
+          "start": 465.5,
+          "end": 470.5
+        },
+        {
+          "start": 470.5,
+          "end": 474.5
+        },
+        {
+          "start": 474.5,
+          "end": 478.5
+        },
+        {
+          "start": 478.5,
+          "end": 482.5
+        },
+        {
+          "start": 482.5,
+          "end": 485.5
+        },
+        {
+          "start": 485.5,
+          "end": 490.5
+        },
+        {
+          "start": 490.5,
+          "end": 496.5
+        },
+        {
+          "start": 496.5,
+          "end": 507.5
+        },
+        {
+          "start": 507.5,
+          "end": 516.5
+        },
+        {
+          "start": 516.5,
+          "end": 524.5
+        },
+        {
+          "start": 524.5,
+          "end": 530.5
+        },
+        {
+          "start": 530.5,
+          "end": 548.5
+        },
+        {
+          "start": 548.5,
+          "end": 556.5
+        },
+        {
+          "start": 556.5,
+          "end": 565.5
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": true,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 565.5,
+        "end": 569.5
+      },
+      {
+        "start": 569.5,
+        "end": 574.5
+      },
+      {
+        "start": 574.5,
+        "end": 576.5
+      },
+      {
+        "start": 576.5,
+        "end": 583.5
+      },
+      {
+        "start": 583.5,
+        "end": 586.5
+      },
+      {
+        "start": 586.5,
+        "end": 590.5
+      },
+      {
+        "start": 590.5,
+        "end": 601.5
+      },
+      {
+        "start": 601.5,
+        "end": 604.5
+      },
+      {
+        "start": 604.5,
+        "end": 607.5
+      },
+      {
+        "start": 607.5,
+        "end": 609.5
+      },
+      {
+        "start": 609.5,
+        "end": 612.5
+      },
+      {
+        "start": 612.5,
+        "end": 613.5
+      },
+      {
+        "start": 613.5,
+        "end": 615.5
+      },
+      {
+        "start": 615.5,
+        "end": 618.5
+      },
+      {
+        "start": 618.5,
+        "end": 620.5
+      },
+      {
+        "start": 620.5,
+        "end": 621.5
+      },
+      {
+        "start": 621.5,
+        "end": 623.5
+      },
+      {
+        "start": 623.5,
+        "end": 629.5
+      },
+      {
+        "start": 629.5,
+        "end": 631.5
+      },
+      {
+        "start": 631.5,
+        "end": 634.5
+      },
+      {
+        "start": 634.5,
+        "end": 635.5
+      },
+      {
+        "start": 635.5,
+        "end": 654.5
+      },
+      {
+        "start": 654.5,
+        "end": 659.5
+      },
+      {
+        "start": 659.5,
+        "end": 661.5
+      },
+      {
+        "start": 661.5,
+        "end": 663.5
+      },
+      {
+        "start": 663.5,
+        "end": 666.5
+      },
+      {
+        "start": 666.5,
+        "end": 667.5
+      },
+      {
+        "start": 667.5,
+        "end": 674.5
+      },
+      {
+        "start": 674.5,
+        "end": 682.5
+      },
+      {
+        "start": 682.5,
+        "end": 703.5
+      },
+      {
+        "start": 703.5,
+        "end": 713.5
+      },
+      {
+        "start": 713.5,
+        "end": 720.5
+      },
+      {
+        "start": 720.5,
+        "end": 727.5
+      },
+      {
+        "start": 727.5,
+        "end": 728.5
+      },
+      {
+        "start": 728.5,
+        "end": 748.5
+      }
+    ],
+    "text": "This is 4 and this is 6. I add while loop. Correct? And what will be written below? This is my LCM in two ways. I, while I, while I, while I. Looking at a while loop, how to convert it into recursion, you can do recursion of any sorts. Do we want to pass a constant value over? Yes. So what should we be working on? Base case. I will help you. What is the base condition? Which one do you want to implement first? For loop. Okay. What is the base condition in this? Should it be 100 or should it be A multiplied by B? Which one will learn? Work shorter A multiplied by B. Okay? So, your condition should be, let's create your int LCM is receiving int A int B. First we will have to write our base condition. Okay? First I am writing one minute. I will just write base condition and testing condition in this only. Okay? If I is, I, I need to take it. I can't have it. It is equals to 0 and I, modulo B is equal to 0, return I. It is equal to I plus plus. Correct? Initially I will send I as 1 because for loop my I is getting initialized to what? 1. So, at the time of sending it LCM, sorry KCM, LCM of 46 initializing the for loop with 1.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 565.5,
+          "end": 569.5
+        },
+        {
+          "start": 569.5,
+          "end": 574.5
+        },
+        {
+          "start": 574.5,
+          "end": 576.5
+        },
+        {
+          "start": 576.5,
+          "end": 583.5
+        },
+        {
+          "start": 583.5,
+          "end": 586.5
+        },
+        {
+          "start": 586.5,
+          "end": 590.5
+        },
+        {
+          "start": 590.5,
+          "end": 601.5
+        },
+        {
+          "start": 601.5,
+          "end": 604.5
+        },
+        {
+          "start": 604.5,
+          "end": 607.5
+        },
+        {
+          "start": 607.5,
+          "end": 609.5
+        },
+        {
+          "start": 609.5,
+          "end": 612.5
+        },
+        {
+          "start": 612.5,
+          "end": 613.5
+        },
+        {
+          "start": 613.5,
+          "end": 615.5
+        },
+        {
+          "start": 615.5,
+          "end": 618.5
+        },
+        {
+          "start": 618.5,
+          "end": 620.5
+        },
+        {
+          "start": 620.5,
+          "end": 621.5
+        },
+        {
+          "start": 621.5,
+          "end": 623.5
+        },
+        {
+          "start": 623.5,
+          "end": 629.5
+        },
+        {
+          "start": 629.5,
+          "end": 631.5
+        },
+        {
+          "start": 631.5,
+          "end": 634.5
+        },
+        {
+          "start": 634.5,
+          "end": 635.5
+        },
+        {
+          "start": 635.5,
+          "end": 654.5
+        },
+        {
+          "start": 654.5,
+          "end": 659.5
+        },
+        {
+          "start": 659.5,
+          "end": 661.5
+        },
+        {
+          "start": 661.5,
+          "end": 663.5
+        },
+        {
+          "start": 663.5,
+          "end": 666.5
+        },
+        {
+          "start": 666.5,
+          "end": 667.5
+        },
+        {
+          "start": 667.5,
+          "end": 674.5
+        },
+        {
+          "start": 674.5,
+          "end": 682.5
+        },
+        {
+          "start": 682.5,
+          "end": 703.5
+        },
+        {
+          "start": 703.5,
+          "end": 713.5
+        },
+        {
+          "start": 713.5,
+          "end": 720.5
+        },
+        {
+          "start": 720.5,
+          "end": 727.5
+        },
+        {
+          "start": 727.5,
+          "end": 728.5
+        },
+        {
+          "start": 728.5,
+          "end": 748.5
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C05",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 748.5,
+        "end": 751.5
+      },
+      {
+        "start": 751.5,
+        "end": 754.5
+      },
+      {
+        "start": 754.5,
+        "end": 762.5
+      },
+      {
+        "start": 762.5,
+        "end": 767.5
+      },
+      {
+        "start": 767.5,
+        "end": 768.5
+      },
+      {
+        "start": 768.5,
+        "end": 776.5
+      },
+      {
+        "start": 776.5,
+        "end": 784.5
+      },
+      {
+        "start": 784.5,
+        "end": 788.5
+      },
+      {
+        "start": 788.5,
+        "end": 800.5
+      },
+      {
+        "start": 800.5,
+        "end": 804.5
+      },
+      {
+        "start": 804.5,
+        "end": 805.5
+      },
+      {
+        "start": 805.5,
+        "end": 807.5
+      },
+      {
+        "start": 807.5,
+        "end": 820.5
+      },
+      {
+        "start": 820.5,
+        "end": 825.5
+      },
+      {
+        "start": 825.5,
+        "end": 840.5
+      },
+      {
+        "start": 840.5,
+        "end": 843.5
+      },
+      {
+        "start": 843.5,
+        "end": 844.5
+      },
+      {
+        "start": 844.5,
+        "end": 845.5
+      },
+      {
+        "start": 845.5,
+        "end": 849.5
+      },
+      {
+        "start": 849.5,
+        "end": 851.5
+      },
+      {
+        "start": 851.5,
+        "end": 854.5
+      },
+      {
+        "start": 854.5,
+        "end": 860.5
+      },
+      {
+        "start": 860.5,
+        "end": 867.5
+      },
+      {
+        "start": 867.5,
+        "end": 869.5
+      },
+      {
+        "start": 869.5,
+        "end": 876.5
+      },
+      {
+        "start": 876.5,
+        "end": 879.5
+      },
+      {
+        "start": 879.5,
+        "end": 884.5
+      },
+      {
+        "start": 884.5,
+        "end": 891.5
+      },
+      {
+        "start": 891.5,
+        "end": 895.5
+      },
+      {
+        "start": 895.5,
+        "end": 910.5
+      },
+      {
+        "start": 910.5,
+        "end": 917.5
+      },
+      {
+        "start": 940.5,
+        "end": 953.5
+      }
+    ],
+    "text": "Okay? I will keep on checking. 1 modulo 4 is equal to 4 or nothing and I will keep on incrementing I, I plus 1. Passing the same A, passing the same B. Okay? And whenever it gets hit and whenever I find my I, I will return back. So, let me check this is the for loop getting created or converted into recursion. Let me see whether this works. 461, I will just run the file. It is giving me 12. Okay? I got my answer 12. If you want to check out with something else, 14 and 6. It's coming 42 LCM. Let's make the LCM for 2 and 8. 8. Okay? Understood? What do you guys do now? 4 loops I showed you, right? Do the LCM for this time. Here, the concept was I was getting incremented. Here the concept is A itself is getting incremented. So, do the right the second one. It will be a base condition in this case. And then you will increment what? A always. Until A does not reach a bigger point where it is getting divided by B. This is your LCM. If you want I will show you recursion in that also in LCM. Stopping condition is what? And now I will call LCM to check whether it's working.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C05",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 748.5,
+          "end": 751.5
+        },
+        {
+          "start": 751.5,
+          "end": 754.5
+        },
+        {
+          "start": 754.5,
+          "end": 762.5
+        },
+        {
+          "start": 762.5,
+          "end": 767.5
+        },
+        {
+          "start": 767.5,
+          "end": 768.5
+        },
+        {
+          "start": 768.5,
+          "end": 776.5
+        },
+        {
+          "start": 776.5,
+          "end": 784.5
+        },
+        {
+          "start": 784.5,
+          "end": 788.5
+        },
+        {
+          "start": 788.5,
+          "end": 800.5
+        },
+        {
+          "start": 800.5,
+          "end": 804.5
+        },
+        {
+          "start": 804.5,
+          "end": 805.5
+        },
+        {
+          "start": 805.5,
+          "end": 807.5
+        },
+        {
+          "start": 807.5,
+          "end": 820.5
+        },
+        {
+          "start": 820.5,
+          "end": 825.5
+        },
+        {
+          "start": 825.5,
+          "end": 840.5
+        },
+        {
+          "start": 840.5,
+          "end": 843.5
+        },
+        {
+          "start": 843.5,
+          "end": 844.5
+        },
+        {
+          "start": 844.5,
+          "end": 845.5
+        },
+        {
+          "start": 845.5,
+          "end": 849.5
+        },
+        {
+          "start": 849.5,
+          "end": 851.5
+        },
+        {
+          "start": 851.5,
+          "end": 854.5
+        },
+        {
+          "start": 854.5,
+          "end": 860.5
+        },
+        {
+          "start": 860.5,
+          "end": 867.5
+        },
+        {
+          "start": 867.5,
+          "end": 869.5
+        },
+        {
+          "start": 869.5,
+          "end": 876.5
+        },
+        {
+          "start": 876.5,
+          "end": 879.5
+        },
+        {
+          "start": 879.5,
+          "end": 884.5
+        },
+        {
+          "start": 884.5,
+          "end": 891.5
+        },
+        {
+          "start": 891.5,
+          "end": 895.5
+        },
+        {
+          "start": 895.5,
+          "end": 910.5
+        },
+        {
+          "start": 910.5,
+          "end": 917.5
+        },
+        {
+          "start": 940.5,
+          "end": 953.5
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C06",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 953.5,
+        "end": 965.5
+      },
+      {
+        "start": 965.5,
+        "end": 968.5
+      },
+      {
+        "start": 968.5,
+        "end": 972.5
+      },
+      {
+        "start": 972.5,
+        "end": 976.5
+      },
+      {
+        "start": 976.5,
+        "end": 978.5
+      },
+      {
+        "start": 978.5,
+        "end": 983.5
+      },
+      {
+        "start": 983.5,
+        "end": 985.5
+      },
+      {
+        "start": 985.5,
+        "end": 986.5
+      },
+      {
+        "start": 986.5,
+        "end": 989.5
+      },
+      {
+        "start": 989.5,
+        "end": 993.5
+      },
+      {
+        "start": 993.5,
+        "end": 1000.5
+      },
+      {
+        "start": 1000.5,
+        "end": 1005.5
+      },
+      {
+        "start": 1005.5,
+        "end": 1012.5
+      },
+      {
+        "start": 1012.5,
+        "end": 1016.5
+      },
+      {
+        "start": 1016.5,
+        "end": 1018.5
+      },
+      {
+        "start": 1018.5,
+        "end": 1025.5
+      },
+      {
+        "start": 1025.5,
+        "end": 1030.5
+      },
+      {
+        "start": 1030.5,
+        "end": 1048.5
+      },
+      {
+        "start": 1048.5,
+        "end": 1072.5
+      },
+      {
+        "start": 1072.5,
+        "end": 1079.5
+      },
+      {
+        "start": 1079.5,
+        "end": 1092.5
+      },
+      {
+        "start": 1092.5,
+        "end": 1099.5
+      },
+      {
+        "start": 1099.5,
+        "end": 1107.5
+      },
+      {
+        "start": 1107.5,
+        "end": 1111.5
+      },
+      {
+        "start": 1111.5,
+        "end": 1112.5
+      },
+      {
+        "start": 1112.5,
+        "end": 1121.5
+      },
+      {
+        "start": 1121.5,
+        "end": 1131.5
+      },
+      {
+        "start": 1131.5,
+        "end": 1137.5
+      }
+    ],
+    "text": "I don't need an eye now. Correct? No. I am checking what for LCM? A should be divisible by B. So, what did I check over here? If A is divisible by B, I should stop checking for my LCM. So, I will return. What do I need to return A? Because A becomes the LCM. Otherwise, if it is not true, what am I doing? I am changing A and saying you are now A plus A. So, instead of sending A, I am sending what? A plus A who will become the new A for the next LCM. So, I will try to run this. Did I save it? Yes. You are getting 8 for 2 and 8. Let's do for 4 and 6. Did I save it? Why is it coming 0? A plus equal to K. No, why is it coming? 8 into A. So, minimum has to be done. Out of the 2 minutes. No, either way it works. It becomes 4, 8 plus 8. So, we have got to make sure that A is remaining A.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C06",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 953.5,
+          "end": 965.5
+        },
+        {
+          "start": 965.5,
+          "end": 968.5
+        },
+        {
+          "start": 968.5,
+          "end": 972.5
+        },
+        {
+          "start": 972.5,
+          "end": 976.5
+        },
+        {
+          "start": 976.5,
+          "end": 978.5
+        },
+        {
+          "start": 978.5,
+          "end": 983.5
+        },
+        {
+          "start": 983.5,
+          "end": 985.5
+        },
+        {
+          "start": 985.5,
+          "end": 986.5
+        },
+        {
+          "start": 986.5,
+          "end": 989.5
+        },
+        {
+          "start": 989.5,
+          "end": 993.5
+        },
+        {
+          "start": 993.5,
+          "end": 1000.5
+        },
+        {
+          "start": 1000.5,
+          "end": 1005.5
+        },
+        {
+          "start": 1005.5,
+          "end": 1012.5
+        },
+        {
+          "start": 1012.5,
+          "end": 1016.5
+        },
+        {
+          "start": 1016.5,
+          "end": 1018.5
+        },
+        {
+          "start": 1018.5,
+          "end": 1025.5
+        },
+        {
+          "start": 1025.5,
+          "end": 1030.5
+        },
+        {
+          "start": 1030.5,
+          "end": 1048.5
+        },
+        {
+          "start": 1048.5,
+          "end": 1072.5
+        },
+        {
+          "start": 1072.5,
+          "end": 1079.5
+        },
+        {
+          "start": 1079.5,
+          "end": 1092.5
+        },
+        {
+          "start": 1092.5,
+          "end": 1099.5
+        },
+        {
+          "start": 1099.5,
+          "end": 1107.5
+        },
+        {
+          "start": 1107.5,
+          "end": 1111.5
+        },
+        {
+          "start": 1111.5,
+          "end": 1112.5
+        },
+        {
+          "start": 1112.5,
+          "end": 1121.5
+        },
+        {
+          "start": 1121.5,
+          "end": 1131.5
+        },
+        {
+          "start": 1131.5,
+          "end": 1137.5
+        }
+      ],
+      "dwell_time": 184.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C07",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1137.5,
+        "end": 1160.5
+      },
+      {
+        "start": 1160.5,
+        "end": 1167.5
+      },
+      {
+        "start": 1191.5,
+        "end": 1197.5
+      },
+      {
+        "start": 1197.5,
+        "end": 1204.5
+      },
+      {
+        "start": 1204.5,
+        "end": 1211.5
+      },
+      {
+        "start": 1234.5,
+        "end": 1256.5
+      },
+      {
+        "start": 1257.5,
+        "end": 1261.5
+      },
+      {
+        "start": 1261.5,
+        "end": 1268.5
+      },
+      {
+        "start": 1268.5,
+        "end": 1270.5
+      },
+      {
+        "start": 1270.5,
+        "end": 1274.5
+      },
+      {
+        "start": 1274.5,
+        "end": 1279.5
+      },
+      {
+        "start": 1279.5,
+        "end": 1286.5
+      },
+      {
+        "start": 1286.5,
+        "end": 1297.5
+      },
+      {
+        "start": 1297.5,
+        "end": 1300.5
+      },
+      {
+        "start": 1300.5,
+        "end": 1302.5
+      },
+      {
+        "start": 1302.5,
+        "end": 1314.5
+      },
+      {
+        "start": 1314.5,
+        "end": 1318.5
+      },
+      {
+        "start": 1318.5,
+        "end": 1326.5
+      },
+      {
+        "start": 1326.5,
+        "end": 1327.5
+      },
+      {
+        "start": 1327.5,
+        "end": 1331.5
+      },
+      {
+        "start": 1331.5,
+        "end": 1337.5
+      },
+      {
+        "start": 1337.5,
+        "end": 1349.5
+      },
+      {
+        "start": 1349.5,
+        "end": 1352.5
+      },
+      {
+        "start": 1353.5,
+        "end": 1357.5
+      },
+      {
+        "start": 1357.5,
+        "end": 1362.5
+      },
+      {
+        "start": 1362.5,
+        "end": 1366.5
+      }
+    ],
+    "text": "So, I will keep on incrementing. No, I plus plus. No. No. No. So, we are needing I here also because we can't do A plus A. Okay, LCM clear. Same thing goes for your JCD also. Now let's try to understand. Greatest common divisor. How are you going to find this one? Your numbers are 8 and 12 again for JCD. So, I have 1, 2, 4 and 8. These are the divisors of 8. Of 12, what is it? 1, 12, 6, 2, 4, 3 or 3, 4 whatever. These are the divisors of 12. What is the greatest one? Greatest common divisor. Right now do we have anything common? How it will become common? 8 and 12 is the greatest common divisor. 4 is the common guy. Now this is algebra. How will you do in computers? Greatest common divisor.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C07",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1137.5,
+          "end": 1160.5
+        },
+        {
+          "start": 1160.5,
+          "end": 1167.5
+        },
+        {
+          "start": 1191.5,
+          "end": 1197.5
+        },
+        {
+          "start": 1197.5,
+          "end": 1204.5
+        },
+        {
+          "start": 1204.5,
+          "end": 1211.5
+        },
+        {
+          "start": 1234.5,
+          "end": 1256.5
+        },
+        {
+          "start": 1257.5,
+          "end": 1261.5
+        },
+        {
+          "start": 1261.5,
+          "end": 1268.5
+        },
+        {
+          "start": 1268.5,
+          "end": 1270.5
+        },
+        {
+          "start": 1270.5,
+          "end": 1274.5
+        },
+        {
+          "start": 1274.5,
+          "end": 1279.5
+        },
+        {
+          "start": 1279.5,
+          "end": 1286.5
+        },
+        {
+          "start": 1286.5,
+          "end": 1297.5
+        },
+        {
+          "start": 1297.5,
+          "end": 1300.5
+        },
+        {
+          "start": 1300.5,
+          "end": 1302.5
+        },
+        {
+          "start": 1302.5,
+          "end": 1314.5
+        },
+        {
+          "start": 1314.5,
+          "end": 1318.5
+        },
+        {
+          "start": 1318.5,
+          "end": 1326.5
+        },
+        {
+          "start": 1326.5,
+          "end": 1327.5
+        },
+        {
+          "start": 1327.5,
+          "end": 1331.5
+        },
+        {
+          "start": 1331.5,
+          "end": 1337.5
+        },
+        {
+          "start": 1337.5,
+          "end": 1349.5
+        },
+        {
+          "start": 1349.5,
+          "end": 1352.5
+        },
+        {
+          "start": 1353.5,
+          "end": 1357.5
+        },
+        {
+          "start": 1357.5,
+          "end": 1362.5
+        },
+        {
+          "start": 1362.5,
+          "end": 1366.5
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C08",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1366.5,
+        "end": 1368.5
+      },
+      {
+        "start": 1368.5,
+        "end": 1370.5
+      },
+      {
+        "start": 1370.5,
+        "end": 1373.5
+      },
+      {
+        "start": 1373.5,
+        "end": 1375.5
+      },
+      {
+        "start": 1376.5,
+        "end": 1378.5
+      },
+      {
+        "start": 1378.5,
+        "end": 1382.5
+      },
+      {
+        "start": 1382.5,
+        "end": 1384.5
+      },
+      {
+        "start": 1384.5,
+        "end": 1386.5
+      },
+      {
+        "start": 1386.5,
+        "end": 1389.5
+      },
+      {
+        "start": 1389.5,
+        "end": 1395.5
+      },
+      {
+        "start": 1395.5,
+        "end": 1397.5
+      },
+      {
+        "start": 1397.5,
+        "end": 1400.5
+      },
+      {
+        "start": 1400.5,
+        "end": 1403.5
+      },
+      {
+        "start": 1403.5,
+        "end": 1406.5
+      },
+      {
+        "start": 1406.5,
+        "end": 1409.5
+      },
+      {
+        "start": 1409.5,
+        "end": 1415.5
+      },
+      {
+        "start": 1415.5,
+        "end": 1419.5
+      },
+      {
+        "start": 1419.5,
+        "end": 1426.5
+      },
+      {
+        "start": 1426.5,
+        "end": 1430.5
+      },
+      {
+        "start": 1430.5,
+        "end": 1433.5
+      },
+      {
+        "start": 1433.5,
+        "end": 1443.5
+      },
+      {
+        "start": 1443.5,
+        "end": 1446.5
+      },
+      {
+        "start": 1446.5,
+        "end": 1449.5
+      },
+      {
+        "start": 1449.5,
+        "end": 1450.5
+      },
+      {
+        "start": 1450.5,
+        "end": 1451.5
+      },
+      {
+        "start": 1451.5,
+        "end": 1454.5
+      },
+      {
+        "start": 1454.5,
+        "end": 1460.5
+      },
+      {
+        "start": 1460.5,
+        "end": 1463.5
+      },
+      {
+        "start": 1463.5,
+        "end": 1466.5
+      },
+      {
+        "start": 1466.5,
+        "end": 1472.5
+      },
+      {
+        "start": 1472.5,
+        "end": 1474.5
+      },
+      {
+        "start": 1474.5,
+        "end": 1477.5
+      },
+      {
+        "start": 1477.5,
+        "end": 1480.5
+      },
+      {
+        "start": 1480.5,
+        "end": 1486.5
+      },
+      {
+        "start": 1486.5,
+        "end": 1492.5
+      },
+      {
+        "start": 1492.5,
+        "end": 1495.5
+      },
+      {
+        "start": 1495.5,
+        "end": 1498.5
+      },
+      {
+        "start": 1498.5,
+        "end": 1500.5
+      },
+      {
+        "start": 1500.5,
+        "end": 1502.5
+      },
+      {
+        "start": 1502.5,
+        "end": 1507.5
+      },
+      {
+        "start": 1507.5,
+        "end": 1509.5
+      },
+      {
+        "start": 1509.5,
+        "end": 1514.5
+      },
+      {
+        "start": 1514.5,
+        "end": 1517.5
+      },
+      {
+        "start": 1517.5,
+        "end": 1519.5
+      },
+      {
+        "start": 1519.5,
+        "end": 1521.5
+      },
+      {
+        "start": 1521.5,
+        "end": 1527.5
+      },
+      {
+        "start": 1527.5,
+        "end": 1529.5
+      },
+      {
+        "start": 1529.5,
+        "end": 1538.5
+      },
+      {
+        "start": 1538.5,
+        "end": 1539.5
+      },
+      {
+        "start": 1539.5,
+        "end": 1541.5
+      },
+      {
+        "start": 1541.5,
+        "end": 1547.5
+      }
+    ],
+    "text": "What is a common divisor guys? Which can divide both of them. Again can I use a for loop? Now what is the starting? A and B are common divisors. A is 4, A is 8 and B is 12. What would I start with? Who is the common divisor for both of them? Can 12 be a common divisor for both of them? So where should we start from? Itna amaja. Normal asak te apanga. Can I start from 8? Yes or no? So I can start from A. A and A is A Baba. GCD of A and B has to be taken out. For right now I am considering 8 to be 8, B to be 12. What would you write in the 4 loop to get the GCD? Greatest common divisor. Any value I, which can divide A also and B also. That means either if condition. If A modulo I. Correct? No. Is equal equal to 0. And B modulo I is also equal equal to 0. Then return what? I or B or A. You have to find a divisor which can divide A also and which can divide B also. So what will you return back? You will return back your I. So what would be your condition? If A equal to A, where do you have to stop? Lesson or equal to 0? You have to go down. If you don't come from 8 to 7, you will try 7. If you don't come from 7 to 6, you will try 6. Where will you go? One is the greatest divisor of everybody. And what will come here? Minus minus. First check in the form loop. GCD is coming. Then you have to convert this into what? Recursion. There are two ways. You will find one from four loops and you will do it in a while. Do this recursion. It's not an efficient one. I'll show you an efficient one which follows a you kid algorithm.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C08",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1366.5,
+          "end": 1368.5
+        },
+        {
+          "start": 1368.5,
+          "end": 1370.5
+        },
+        {
+          "start": 1370.5,
+          "end": 1373.5
+        },
+        {
+          "start": 1373.5,
+          "end": 1375.5
+        },
+        {
+          "start": 1376.5,
+          "end": 1378.5
+        },
+        {
+          "start": 1378.5,
+          "end": 1382.5
+        },
+        {
+          "start": 1382.5,
+          "end": 1384.5
+        },
+        {
+          "start": 1384.5,
+          "end": 1386.5
+        },
+        {
+          "start": 1386.5,
+          "end": 1389.5
+        },
+        {
+          "start": 1389.5,
+          "end": 1395.5
+        },
+        {
+          "start": 1395.5,
+          "end": 1397.5
+        },
+        {
+          "start": 1397.5,
+          "end": 1400.5
+        },
+        {
+          "start": 1400.5,
+          "end": 1403.5
+        },
+        {
+          "start": 1403.5,
+          "end": 1406.5
+        },
+        {
+          "start": 1406.5,
+          "end": 1409.5
+        },
+        {
+          "start": 1409.5,
+          "end": 1415.5
+        },
+        {
+          "start": 1415.5,
+          "end": 1419.5
+        },
+        {
+          "start": 1419.5,
+          "end": 1426.5
+        },
+        {
+          "start": 1426.5,
+          "end": 1430.5
+        },
+        {
+          "start": 1430.5,
+          "end": 1433.5
+        },
+        {
+          "start": 1433.5,
+          "end": 1443.5
+        },
+        {
+          "start": 1443.5,
+          "end": 1446.5
+        },
+        {
+          "start": 1446.5,
+          "end": 1449.5
+        },
+        {
+          "start": 1449.5,
+          "end": 1450.5
+        },
+        {
+          "start": 1450.5,
+          "end": 1451.5
+        },
+        {
+          "start": 1451.5,
+          "end": 1454.5
+        },
+        {
+          "start": 1454.5,
+          "end": 1460.5
+        },
+        {
+          "start": 1460.5,
+          "end": 1463.5
+        },
+        {
+          "start": 1463.5,
+          "end": 1466.5
+        },
+        {
+          "start": 1466.5,
+          "end": 1472.5
+        },
+        {
+          "start": 1472.5,
+          "end": 1474.5
+        },
+        {
+          "start": 1474.5,
+          "end": 1477.5
+        },
+        {
+          "start": 1477.5,
+          "end": 1480.5
+        },
+        {
+          "start": 1480.5,
+          "end": 1486.5
+        },
+        {
+          "start": 1486.5,
+          "end": 1492.5
+        },
+        {
+          "start": 1492.5,
+          "end": 1495.5
+        },
+        {
+          "start": 1495.5,
+          "end": 1498.5
+        },
+        {
+          "start": 1498.5,
+          "end": 1500.5
+        },
+        {
+          "start": 1500.5,
+          "end": 1502.5
+        },
+        {
+          "start": 1502.5,
+          "end": 1507.5
+        },
+        {
+          "start": 1507.5,
+          "end": 1509.5
+        },
+        {
+          "start": 1509.5,
+          "end": 1514.5
+        },
+        {
+          "start": 1514.5,
+          "end": 1517.5
+        },
+        {
+          "start": 1517.5,
+          "end": 1519.5
+        },
+        {
+          "start": 1519.5,
+          "end": 1521.5
+        },
+        {
+          "start": 1521.5,
+          "end": 1527.5
+        },
+        {
+          "start": 1527.5,
+          "end": 1529.5
+        },
+        {
+          "start": 1529.5,
+          "end": 1538.5
+        },
+        {
+          "start": 1538.5,
+          "end": 1539.5
+        },
+        {
+          "start": 1539.5,
+          "end": 1541.5
+        },
+        {
+          "start": 1541.5,
+          "end": 1547.5
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C09",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1547.5,
+        "end": 1549.5
+      },
+      {
+        "start": 1549.5,
+        "end": 1558.5
+      },
+      {
+        "start": 1558.5,
+        "end": 1561.5
+      },
+      {
+        "start": 1561.5,
+        "end": 1562.5
+      },
+      {
+        "start": 1562.5,
+        "end": 1564.5
+      },
+      {
+        "start": 1564.5,
+        "end": 1566.5
+      },
+      {
+        "start": 1566.5,
+        "end": 1569.5
+      },
+      {
+        "start": 1569.5,
+        "end": 1570.5
+      },
+      {
+        "start": 1570.5,
+        "end": 1573.5
+      },
+      {
+        "start": 1580.5,
+        "end": 1582.5
+      },
+      {
+        "start": 1582.5,
+        "end": 1586.5
+      },
+      {
+        "start": 1586.5,
+        "end": 1589.5
+      },
+      {
+        "start": 1589.5,
+        "end": 1595.5
+      },
+      {
+        "start": 1595.5,
+        "end": 1603.5
+      },
+      {
+        "start": 1603.5,
+        "end": 1607.5
+      },
+      {
+        "start": 1607.5,
+        "end": 1610.5
+      },
+      {
+        "start": 1610.5,
+        "end": 1614.5
+      },
+      {
+        "start": 1614.5,
+        "end": 1619.5
+      },
+      {
+        "start": 1619.5,
+        "end": 1624.5
+      },
+      {
+        "start": 1624.5,
+        "end": 1627.5
+      },
+      {
+        "start": 1627.5,
+        "end": 1628.5
+      },
+      {
+        "start": 1628.5,
+        "end": 1632.5
+      },
+      {
+        "start": 1633.5,
+        "end": 1641.5
+      },
+      {
+        "start": 1641.5,
+        "end": 1646.5
+      },
+      {
+        "start": 1646.5,
+        "end": 1648.5
+      },
+      {
+        "start": 1648.5,
+        "end": 1650.5
+      },
+      {
+        "start": 1650.5,
+        "end": 1653.5
+      },
+      {
+        "start": 1653.5,
+        "end": 1657.5
+      },
+      {
+        "start": 1657.5,
+        "end": 1664.5
+      },
+      {
+        "start": 1664.5,
+        "end": 1666.5
+      },
+      {
+        "start": 1666.5,
+        "end": 1670.5
+      },
+      {
+        "start": 1670.5,
+        "end": 1674.5
+      },
+      {
+        "start": 1674.5,
+        "end": 1675.5
+      },
+      {
+        "start": 1675.5,
+        "end": 1677.5
+      },
+      {
+        "start": 1677.5,
+        "end": 1680.5
+      },
+      {
+        "start": 1680.5,
+        "end": 1686.5
+      },
+      {
+        "start": 1686.5,
+        "end": 1687.5
+      },
+      {
+        "start": 1687.5,
+        "end": 1688.5
+      },
+      {
+        "start": 1688.5,
+        "end": 1689.5
+      },
+      {
+        "start": 1689.5,
+        "end": 1693.5
+      },
+      {
+        "start": 1693.5,
+        "end": 1694.5
+      },
+      {
+        "start": 1694.5,
+        "end": 1696.5
+      },
+      {
+        "start": 1696.5,
+        "end": 1700.5
+      },
+      {
+        "start": 1700.5,
+        "end": 1704.5
+      },
+      {
+        "start": 1704.5,
+        "end": 1710.5
+      },
+      {
+        "start": 1710.5,
+        "end": 1715.5
+      },
+      {
+        "start": 1715.5,
+        "end": 1718.5
+      },
+      {
+        "start": 1718.5,
+        "end": 1720.5
+      },
+      {
+        "start": 1720.5,
+        "end": 1729.5
+      },
+      {
+        "start": 1729.5,
+        "end": 1730.5
+      },
+      {
+        "start": 1730.5,
+        "end": 1733.5
+      },
+      {
+        "start": 1733.5,
+        "end": 1741.5
+      }
+    ],
+    "text": "That is a different thing. First convert it into recursion. Is it equal to factorial and fibonacci? No. It is. LCM is like this. What you are returning is coming. That's it. Guys, all you need to do is this only. And this is i minus minus. Okay. Now, the other part of GCD, what he is saying, U is called as algorithm. To find GCD. We have used a for loop to find it. For loop is checking for each and every value of i. This guy tells you. GCD of 8 and 12. If I have to find. Okay. I will check over here. If 12, modulo 8 is equal equal 0. If yes, then 12 becomes my JCD. Now, answer is no. Correct? This is not equal to 0. Then, I will go for a further call to GCD. And now, at this point, I will say 8, what will I pass? I will not pass 12. I will pass 12, modulo 8. What is 12, modulo 8? 4. So, what will I pass? I will pass 8 and 4. Okay. Yes. Correct. 8 and 4. Now, should I make 4 modulo 8? It will never come. So, here, what is the catch? You have to make sure that whenever you are passing the number, there is one minimum and there is one maximum. So, you are always doing max modulo min. So, in this case, I will do 8 modulo 4. Is it equal equal to 0? Yes, it is equal equal to 0. Then in that case, my minimum is my GCD. Understood? Let us try it for some more. GCD for 9 and 12, suppose.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C09",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1547.5,
+          "end": 1549.5
+        },
+        {
+          "start": 1549.5,
+          "end": 1558.5
+        },
+        {
+          "start": 1558.5,
+          "end": 1561.5
+        },
+        {
+          "start": 1561.5,
+          "end": 1562.5
+        },
+        {
+          "start": 1562.5,
+          "end": 1564.5
+        },
+        {
+          "start": 1564.5,
+          "end": 1566.5
+        },
+        {
+          "start": 1566.5,
+          "end": 1569.5
+        },
+        {
+          "start": 1569.5,
+          "end": 1570.5
+        },
+        {
+          "start": 1570.5,
+          "end": 1573.5
+        },
+        {
+          "start": 1580.5,
+          "end": 1582.5
+        },
+        {
+          "start": 1582.5,
+          "end": 1586.5
+        },
+        {
+          "start": 1586.5,
+          "end": 1589.5
+        },
+        {
+          "start": 1589.5,
+          "end": 1595.5
+        },
+        {
+          "start": 1595.5,
+          "end": 1603.5
+        },
+        {
+          "start": 1603.5,
+          "end": 1607.5
+        },
+        {
+          "start": 1607.5,
+          "end": 1610.5
+        },
+        {
+          "start": 1610.5,
+          "end": 1614.5
+        },
+        {
+          "start": 1614.5,
+          "end": 1619.5
+        },
+        {
+          "start": 1619.5,
+          "end": 1624.5
+        },
+        {
+          "start": 1624.5,
+          "end": 1627.5
+        },
+        {
+          "start": 1627.5,
+          "end": 1628.5
+        },
+        {
+          "start": 1628.5,
+          "end": 1632.5
+        },
+        {
+          "start": 1633.5,
+          "end": 1641.5
+        },
+        {
+          "start": 1641.5,
+          "end": 1646.5
+        },
+        {
+          "start": 1646.5,
+          "end": 1648.5
+        },
+        {
+          "start": 1648.5,
+          "end": 1650.5
+        },
+        {
+          "start": 1650.5,
+          "end": 1653.5
+        },
+        {
+          "start": 1653.5,
+          "end": 1657.5
+        },
+        {
+          "start": 1657.5,
+          "end": 1664.5
+        },
+        {
+          "start": 1664.5,
+          "end": 1666.5
+        },
+        {
+          "start": 1666.5,
+          "end": 1670.5
+        },
+        {
+          "start": 1670.5,
+          "end": 1674.5
+        },
+        {
+          "start": 1674.5,
+          "end": 1675.5
+        },
+        {
+          "start": 1675.5,
+          "end": 1677.5
+        },
+        {
+          "start": 1677.5,
+          "end": 1680.5
+        },
+        {
+          "start": 1680.5,
+          "end": 1686.5
+        },
+        {
+          "start": 1686.5,
+          "end": 1687.5
+        },
+        {
+          "start": 1687.5,
+          "end": 1688.5
+        },
+        {
+          "start": 1688.5,
+          "end": 1689.5
+        },
+        {
+          "start": 1689.5,
+          "end": 1693.5
+        },
+        {
+          "start": 1693.5,
+          "end": 1694.5
+        },
+        {
+          "start": 1694.5,
+          "end": 1696.5
+        },
+        {
+          "start": 1696.5,
+          "end": 1700.5
+        },
+        {
+          "start": 1700.5,
+          "end": 1704.5
+        },
+        {
+          "start": 1704.5,
+          "end": 1710.5
+        },
+        {
+          "start": 1710.5,
+          "end": 1715.5
+        },
+        {
+          "start": 1715.5,
+          "end": 1718.5
+        },
+        {
+          "start": 1718.5,
+          "end": 1720.5
+        },
+        {
+          "start": 1720.5,
+          "end": 1729.5
+        },
+        {
+          "start": 1729.5,
+          "end": 1730.5
+        },
+        {
+          "start": 1730.5,
+          "end": 1733.5
+        },
+        {
+          "start": 1733.5,
+          "end": 1741.5
+        }
+      ],
+      "dwell_time": 186.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C10",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1741.5,
+        "end": 1743.5
+      },
+      {
+        "start": 1743.5,
+        "end": 1745.5
+      },
+      {
+        "start": 1745.5,
+        "end": 1746.5
+      },
+      {
+        "start": 1746.5,
+        "end": 1751.5
+      },
+      {
+        "start": 1751.5,
+        "end": 1754.5
+      },
+      {
+        "start": 1754.5,
+        "end": 1755.5
+      },
+      {
+        "start": 1755.5,
+        "end": 1758.5
+      },
+      {
+        "start": 1758.5,
+        "end": 1759.5
+      },
+      {
+        "start": 1759.5,
+        "end": 1760.5
+      },
+      {
+        "start": 1760.5,
+        "end": 1762.5
+      },
+      {
+        "start": 1762.5,
+        "end": 1765.5
+      },
+      {
+        "start": 1765.5,
+        "end": 1767.5
+      },
+      {
+        "start": 1767.5,
+        "end": 1770.5
+      },
+      {
+        "start": 1771.5,
+        "end": 1773.5
+      },
+      {
+        "start": 1773.5,
+        "end": 1775.5
+      },
+      {
+        "start": 1775.5,
+        "end": 1777.5
+      },
+      {
+        "start": 1777.5,
+        "end": 1780.5
+      },
+      {
+        "start": 1780.5,
+        "end": 1782.5
+      },
+      {
+        "start": 1782.5,
+        "end": 1783.5
+      },
+      {
+        "start": 1783.5,
+        "end": 1786.5
+      },
+      {
+        "start": 1786.5,
+        "end": 1789.5
+      },
+      {
+        "start": 1789.5,
+        "end": 1793.5
+      },
+      {
+        "start": 1793.5,
+        "end": 1796.5
+      },
+      {
+        "start": 1797.5,
+        "end": 1802.5
+      },
+      {
+        "start": 1802.5,
+        "end": 1806.5
+      },
+      {
+        "start": 1806.5,
+        "end": 1809.5
+      },
+      {
+        "start": 1809.5,
+        "end": 1811.5
+      },
+      {
+        "start": 1811.5,
+        "end": 1813.5
+      },
+      {
+        "start": 1813.5,
+        "end": 1815.5
+      },
+      {
+        "start": 1815.5,
+        "end": 1817.5
+      },
+      {
+        "start": 1817.5,
+        "end": 1819.5
+      },
+      {
+        "start": 1819.5,
+        "end": 1821.5
+      },
+      {
+        "start": 1821.5,
+        "end": 1822.5
+      },
+      {
+        "start": 1822.5,
+        "end": 1824.5
+      },
+      {
+        "start": 1824.5,
+        "end": 1829.5
+      },
+      {
+        "start": 1829.5,
+        "end": 1833.5
+      },
+      {
+        "start": 1833.5,
+        "end": 1835.5
+      },
+      {
+        "start": 1835.5,
+        "end": 1838.5
+      },
+      {
+        "start": 1838.5,
+        "end": 1839.5
+      },
+      {
+        "start": 1839.5,
+        "end": 1842.5
+      },
+      {
+        "start": 1842.5,
+        "end": 1845.5
+      },
+      {
+        "start": 1845.5,
+        "end": 1852.5
+      },
+      {
+        "start": 1852.5,
+        "end": 1857.5
+      },
+      {
+        "start": 1857.5,
+        "end": 1862.5
+      },
+      {
+        "start": 1862.5,
+        "end": 1865.5
+      },
+      {
+        "start": 1865.5,
+        "end": 1868.5
+      },
+      {
+        "start": 1868.5,
+        "end": 1872.5
+      },
+      {
+        "start": 1872.5,
+        "end": 1875.5
+      },
+      {
+        "start": 1875.5,
+        "end": 1877.5
+      },
+      {
+        "start": 1877.5,
+        "end": 1880.5
+      },
+      {
+        "start": 1880.5,
+        "end": 1882.5
+      },
+      {
+        "start": 1882.5,
+        "end": 1884.5
+      },
+      {
+        "start": 1884.5,
+        "end": 1890.5
+      },
+      {
+        "start": 1890.5,
+        "end": 1893.5
+      },
+      {
+        "start": 1893.5,
+        "end": 1894.5
+      },
+      {
+        "start": 1894.5,
+        "end": 1896.5
+      },
+      {
+        "start": 1896.5,
+        "end": 1899.5
+      },
+      {
+        "start": 1899.5,
+        "end": 1902.5
+      },
+      {
+        "start": 1902.5,
+        "end": 1905.5
+      },
+      {
+        "start": 1905.5,
+        "end": 1907.5
+      },
+      {
+        "start": 1907.5,
+        "end": 1908.5
+      },
+      {
+        "start": 1908.5,
+        "end": 1910.5
+      },
+      {
+        "start": 1910.5,
+        "end": 1911.5
+      },
+      {
+        "start": 1911.5,
+        "end": 1913.5
+      },
+      {
+        "start": 1913.5,
+        "end": 1916.5
+      },
+      {
+        "start": 1916.5,
+        "end": 1918.5
+      },
+      {
+        "start": 1918.5,
+        "end": 1920.5
+      },
+      {
+        "start": 1920.5,
+        "end": 1923.5
+      }
+    ],
+    "text": "So, what I will have to do? Who is the minimum from this? 9. So, I will keep 9 as it is and I will say 12 modulo 9. Is 12 modulo 9 equal to 0? No, it is not. What will this reduce to 3? Correct. Then what I will do? I will say GCD. I have to pass 9 and 3 to you. What will GCD do? It will check who is the minimum. Who is the minimum in this case? 3 is the minimum. So, what will I do over here? I will do 9 modulo 3. Is it equal equal to 0? Yes. So, what becomes the GCD? The minimum becomes the GCD. So, the greatest common divisor for both of them is what? 3. So, now, how are you going to check this particular thing? Let's try to write a pseudo code and then you write recursion for it. So, what is the first step that we have got to check? I receive. Let me delete this. JCD. I received A. I receive a B. First, what am I going to check? What is minimum? What is maximum? So, in C++, you can give minimum of A, B. You can give maximum of A, B. You will get the minimum number. You will get the maximum number. Okay. So, once I get my A and B, I will determine what is minimum, what is maximum, and I will check if I can directly write this also. Maximum, modulo, minimum is equal to 0. And if this is 0, that means I have found by JCD, what will I return? I will return my minimum of A and B. If you want to take it in variables and don't use directly, you can do that. Else, what will you do? It did not happen. You have got to go for JCD one more time. Then what will you do? You have got to pass minimum and maximum to it. Okay. Now, what would you do? JCD. Pass this. And pass this. Whatever you got it later. Okay. Minimum of A plus B. Okay. Would you pass minimum of A plus B? Or would you pass the modulo value? You will pass the modulo value. So, you will repeat this again. You will pass one maximum,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C10",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1741.5,
+          "end": 1743.5
+        },
+        {
+          "start": 1743.5,
+          "end": 1745.5
+        },
+        {
+          "start": 1745.5,
+          "end": 1746.5
+        },
+        {
+          "start": 1746.5,
+          "end": 1751.5
+        },
+        {
+          "start": 1751.5,
+          "end": 1754.5
+        },
+        {
+          "start": 1754.5,
+          "end": 1755.5
+        },
+        {
+          "start": 1755.5,
+          "end": 1758.5
+        },
+        {
+          "start": 1758.5,
+          "end": 1759.5
+        },
+        {
+          "start": 1759.5,
+          "end": 1760.5
+        },
+        {
+          "start": 1760.5,
+          "end": 1762.5
+        },
+        {
+          "start": 1762.5,
+          "end": 1765.5
+        },
+        {
+          "start": 1765.5,
+          "end": 1767.5
+        },
+        {
+          "start": 1767.5,
+          "end": 1770.5
+        },
+        {
+          "start": 1771.5,
+          "end": 1773.5
+        },
+        {
+          "start": 1773.5,
+          "end": 1775.5
+        },
+        {
+          "start": 1775.5,
+          "end": 1777.5
+        },
+        {
+          "start": 1777.5,
+          "end": 1780.5
+        },
+        {
+          "start": 1780.5,
+          "end": 1782.5
+        },
+        {
+          "start": 1782.5,
+          "end": 1783.5
+        },
+        {
+          "start": 1783.5,
+          "end": 1786.5
+        },
+        {
+          "start": 1786.5,
+          "end": 1789.5
+        },
+        {
+          "start": 1789.5,
+          "end": 1793.5
+        },
+        {
+          "start": 1793.5,
+          "end": 1796.5
+        },
+        {
+          "start": 1797.5,
+          "end": 1802.5
+        },
+        {
+          "start": 1802.5,
+          "end": 1806.5
+        },
+        {
+          "start": 1806.5,
+          "end": 1809.5
+        },
+        {
+          "start": 1809.5,
+          "end": 1811.5
+        },
+        {
+          "start": 1811.5,
+          "end": 1813.5
+        },
+        {
+          "start": 1813.5,
+          "end": 1815.5
+        },
+        {
+          "start": 1815.5,
+          "end": 1817.5
+        },
+        {
+          "start": 1817.5,
+          "end": 1819.5
+        },
+        {
+          "start": 1819.5,
+          "end": 1821.5
+        },
+        {
+          "start": 1821.5,
+          "end": 1822.5
+        },
+        {
+          "start": 1822.5,
+          "end": 1824.5
+        },
+        {
+          "start": 1824.5,
+          "end": 1829.5
+        },
+        {
+          "start": 1829.5,
+          "end": 1833.5
+        },
+        {
+          "start": 1833.5,
+          "end": 1835.5
+        },
+        {
+          "start": 1835.5,
+          "end": 1838.5
+        },
+        {
+          "start": 1838.5,
+          "end": 1839.5
+        },
+        {
+          "start": 1839.5,
+          "end": 1842.5
+        },
+        {
+          "start": 1842.5,
+          "end": 1845.5
+        },
+        {
+          "start": 1845.5,
+          "end": 1852.5
+        },
+        {
+          "start": 1852.5,
+          "end": 1857.5
+        },
+        {
+          "start": 1857.5,
+          "end": 1862.5
+        },
+        {
+          "start": 1862.5,
+          "end": 1865.5
+        },
+        {
+          "start": 1865.5,
+          "end": 1868.5
+        },
+        {
+          "start": 1868.5,
+          "end": 1872.5
+        },
+        {
+          "start": 1872.5,
+          "end": 1875.5
+        },
+        {
+          "start": 1875.5,
+          "end": 1877.5
+        },
+        {
+          "start": 1877.5,
+          "end": 1880.5
+        },
+        {
+          "start": 1880.5,
+          "end": 1882.5
+        },
+        {
+          "start": 1882.5,
+          "end": 1884.5
+        },
+        {
+          "start": 1884.5,
+          "end": 1890.5
+        },
+        {
+          "start": 1890.5,
+          "end": 1893.5
+        },
+        {
+          "start": 1893.5,
+          "end": 1894.5
+        },
+        {
+          "start": 1894.5,
+          "end": 1896.5
+        },
+        {
+          "start": 1896.5,
+          "end": 1899.5
+        },
+        {
+          "start": 1899.5,
+          "end": 1902.5
+        },
+        {
+          "start": 1902.5,
+          "end": 1905.5
+        },
+        {
+          "start": 1905.5,
+          "end": 1907.5
+        },
+        {
+          "start": 1907.5,
+          "end": 1908.5
+        },
+        {
+          "start": 1908.5,
+          "end": 1910.5
+        },
+        {
+          "start": 1910.5,
+          "end": 1911.5
+        },
+        {
+          "start": 1911.5,
+          "end": 1913.5
+        },
+        {
+          "start": 1913.5,
+          "end": 1916.5
+        },
+        {
+          "start": 1916.5,
+          "end": 1918.5
+        },
+        {
+          "start": 1918.5,
+          "end": 1920.5
+        },
+        {
+          "start": 1920.5,
+          "end": 1923.5
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C11",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1923.5,
+        "end": 1927.5
+      },
+      {
+        "start": 1927.5,
+        "end": 1928.5
+      },
+      {
+        "start": 1928.5,
+        "end": 1929.5
+      },
+      {
+        "start": 1929.5,
+        "end": 1931.5
+      },
+      {
+        "start": 1931.5,
+        "end": 1932.5
+      },
+      {
+        "start": 1932.5,
+        "end": 1934.5
+      },
+      {
+        "start": 1934.5,
+        "end": 1938.5
+      },
+      {
+        "start": 1938.5,
+        "end": 1940.5
+      },
+      {
+        "start": 1940.5,
+        "end": 1943.5
+      },
+      {
+        "start": 1943.5,
+        "end": 1945.5
+      },
+      {
+        "start": 1945.5,
+        "end": 1947.5
+      },
+      {
+        "start": 1947.5,
+        "end": 1950.5
+      },
+      {
+        "start": 1950.5,
+        "end": 1952.5
+      },
+      {
+        "start": 1952.5,
+        "end": 1954.5
+      },
+      {
+        "start": 1954.5,
+        "end": 1957.5
+      },
+      {
+        "start": 1957.5,
+        "end": 1963.5
+      },
+      {
+        "start": 1963.5,
+        "end": 1966.5
+      },
+      {
+        "start": 1966.5,
+        "end": 1968.5
+      },
+      {
+        "start": 1968.5,
+        "end": 1972.5
+      },
+      {
+        "start": 1972.5,
+        "end": 1975.5
+      },
+      {
+        "start": 1975.5,
+        "end": 1979.5
+      },
+      {
+        "start": 1979.5,
+        "end": 1980.5
+      },
+      {
+        "start": 1980.5,
+        "end": 1983.5
+      },
+      {
+        "start": 1983.5,
+        "end": 1985.5
+      },
+      {
+        "start": 1985.5,
+        "end": 1987.5
+      },
+      {
+        "start": 1987.5,
+        "end": 1989.5
+      },
+      {
+        "start": 1989.5,
+        "end": 1990.5
+      },
+      {
+        "start": 1990.5,
+        "end": 1991.5
+      },
+      {
+        "start": 1991.5,
+        "end": 1993.5
+      },
+      {
+        "start": 1993.5,
+        "end": 1995.5
+      },
+      {
+        "start": 1995.5,
+        "end": 1997.5
+      },
+      {
+        "start": 1997.5,
+        "end": 1999.5
+      },
+      {
+        "start": 1999.5,
+        "end": 2002.5
+      },
+      {
+        "start": 2002.5,
+        "end": 2004.5
+      },
+      {
+        "start": 2004.5,
+        "end": 2006.5
+      },
+      {
+        "start": 2006.5,
+        "end": 2007.5
+      },
+      {
+        "start": 2007.5,
+        "end": 2009.5
+      },
+      {
+        "start": 2009.5,
+        "end": 2010.5
+      },
+      {
+        "start": 2010.5,
+        "end": 2011.5
+      },
+      {
+        "start": 2011.5,
+        "end": 2015.5
+      },
+      {
+        "start": 2015.5,
+        "end": 2018.5
+      },
+      {
+        "start": 2018.5,
+        "end": 2021.5
+      },
+      {
+        "start": 2021.5,
+        "end": 2024.5
+      },
+      {
+        "start": 2024.5,
+        "end": 2028.5
+      },
+      {
+        "start": 2028.5,
+        "end": 2031.5
+      },
+      {
+        "start": 2031.5,
+        "end": 2033.5
+      },
+      {
+        "start": 2033.5,
+        "end": 2036.5
+      },
+      {
+        "start": 2036.5,
+        "end": 2045.5
+      },
+      {
+        "start": 2045.5,
+        "end": 2050.5
+      },
+      {
+        "start": 2050.5,
+        "end": 2063.5
+      },
+      {
+        "start": 2063.5,
+        "end": 2066.5
+      },
+      {
+        "start": 2066.5,
+        "end": 2070.5
+      },
+      {
+        "start": 2070.5,
+        "end": 2073.5
+      },
+      {
+        "start": 2101.5,
+        "end": 2103.5
+      },
+      {
+        "start": 2103.5,
+        "end": 2106.5
+      },
+      {
+        "start": 2106.5,
+        "end": 2110.5
+      },
+      {
+        "start": 2110.5,
+        "end": 2114.5
+      },
+      {
+        "start": 2114.5,
+        "end": 2117.5
+      },
+      {
+        "start": 2117.5,
+        "end": 2120.5
+      },
+      {
+        "start": 2120.5,
+        "end": 2124.5
+      },
+      {
+        "start": 2124.5,
+        "end": 2137.7
+      }
+    ],
+    "text": "comma, this modulo value. Correct. No. Every time you are doing modulo, and then passing that value. Every time you are doing modulo, you are doing the value. JCD. 8 and 12. First step. Find minimum. Find maximum. Second step. Check. What do you need to check? If maximum modulo minimum is equal to 0. If yes, return minimum. If no. Then what will you do? You call your JCD again. Now, at this time, will you pass 8 and 12 to it? No. What will you pass? 12 you reduced. How did you reduce? Modulo. So, 8. What will you pass? This will be the minimum. Whatever the thing is. And which will you pass 12? 12 modulo. I will write here so that you understand. This will go. Again, I will receive this. Now, what will I receive? 8 and 4. I will find minimum. I will find maximum. Then, 8 modulo 4 equal to 0. Yes, return 4. Okay, this is what you have got to do in JCD. Just write a recursion for this. This is an algorithm. Usits algorithm is what they call it as. To find a JCD. If you want, I can show you. We will write a JCD also. In A, in B. So, first let me check. You can do it straight. But, I am just doing it so that you understand when you are reading the code. So, this is what you have got to do. You can do it straight. Now, what you have got to do is write here. And this is what you have got to do. So, I will write here. I will write here. I will write here. Okay, this is my GCD code.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C11",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1923.5,
+          "end": 1927.5
+        },
+        {
+          "start": 1927.5,
+          "end": 1928.5
+        },
+        {
+          "start": 1928.5,
+          "end": 1929.5
+        },
+        {
+          "start": 1929.5,
+          "end": 1931.5
+        },
+        {
+          "start": 1931.5,
+          "end": 1932.5
+        },
+        {
+          "start": 1932.5,
+          "end": 1934.5
+        },
+        {
+          "start": 1934.5,
+          "end": 1938.5
+        },
+        {
+          "start": 1938.5,
+          "end": 1940.5
+        },
+        {
+          "start": 1940.5,
+          "end": 1943.5
+        },
+        {
+          "start": 1943.5,
+          "end": 1945.5
+        },
+        {
+          "start": 1945.5,
+          "end": 1947.5
+        },
+        {
+          "start": 1947.5,
+          "end": 1950.5
+        },
+        {
+          "start": 1950.5,
+          "end": 1952.5
+        },
+        {
+          "start": 1952.5,
+          "end": 1954.5
+        },
+        {
+          "start": 1954.5,
+          "end": 1957.5
+        },
+        {
+          "start": 1957.5,
+          "end": 1963.5
+        },
+        {
+          "start": 1963.5,
+          "end": 1966.5
+        },
+        {
+          "start": 1966.5,
+          "end": 1968.5
+        },
+        {
+          "start": 1968.5,
+          "end": 1972.5
+        },
+        {
+          "start": 1972.5,
+          "end": 1975.5
+        },
+        {
+          "start": 1975.5,
+          "end": 1979.5
+        },
+        {
+          "start": 1979.5,
+          "end": 1980.5
+        },
+        {
+          "start": 1980.5,
+          "end": 1983.5
+        },
+        {
+          "start": 1983.5,
+          "end": 1985.5
+        },
+        {
+          "start": 1985.5,
+          "end": 1987.5
+        },
+        {
+          "start": 1987.5,
+          "end": 1989.5
+        },
+        {
+          "start": 1989.5,
+          "end": 1990.5
+        },
+        {
+          "start": 1990.5,
+          "end": 1991.5
+        },
+        {
+          "start": 1991.5,
+          "end": 1993.5
+        },
+        {
+          "start": 1993.5,
+          "end": 1995.5
+        },
+        {
+          "start": 1995.5,
+          "end": 1997.5
+        },
+        {
+          "start": 1997.5,
+          "end": 1999.5
+        },
+        {
+          "start": 1999.5,
+          "end": 2002.5
+        },
+        {
+          "start": 2002.5,
+          "end": 2004.5
+        },
+        {
+          "start": 2004.5,
+          "end": 2006.5
+        },
+        {
+          "start": 2006.5,
+          "end": 2007.5
+        },
+        {
+          "start": 2007.5,
+          "end": 2009.5
+        },
+        {
+          "start": 2009.5,
+          "end": 2010.5
+        },
+        {
+          "start": 2010.5,
+          "end": 2011.5
+        },
+        {
+          "start": 2011.5,
+          "end": 2015.5
+        },
+        {
+          "start": 2015.5,
+          "end": 2018.5
+        },
+        {
+          "start": 2018.5,
+          "end": 2021.5
+        },
+        {
+          "start": 2021.5,
+          "end": 2024.5
+        },
+        {
+          "start": 2024.5,
+          "end": 2028.5
+        },
+        {
+          "start": 2028.5,
+          "end": 2031.5
+        },
+        {
+          "start": 2031.5,
+          "end": 2033.5
+        },
+        {
+          "start": 2033.5,
+          "end": 2036.5
+        },
+        {
+          "start": 2036.5,
+          "end": 2045.5
+        },
+        {
+          "start": 2045.5,
+          "end": 2050.5
+        },
+        {
+          "start": 2050.5,
+          "end": 2063.5
+        },
+        {
+          "start": 2063.5,
+          "end": 2066.5
+        },
+        {
+          "start": 2066.5,
+          "end": 2070.5
+        },
+        {
+          "start": 2070.5,
+          "end": 2073.5
+        },
+        {
+          "start": 2101.5,
+          "end": 2103.5
+        },
+        {
+          "start": 2103.5,
+          "end": 2106.5
+        },
+        {
+          "start": 2106.5,
+          "end": 2110.5
+        },
+        {
+          "start": 2110.5,
+          "end": 2114.5
+        },
+        {
+          "start": 2114.5,
+          "end": 2117.5
+        },
+        {
+          "start": 2117.5,
+          "end": 2120.5
+        },
+        {
+          "start": 2120.5,
+          "end": 2124.5
+        },
+        {
+          "start": 2124.5,
+          "end": 2137.7
+        }
+      ],
+      "dwell_time": 186.2,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C12",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2137.7,
+        "end": 2142.5
+      },
+      {
+        "start": 2142.5,
+        "end": 2151.6
+      },
+      {
+        "start": 2151.6,
+        "end": 2156.0
+      },
+      {
+        "start": 2156.0,
+        "end": 2163.0
+      },
+      {
+        "start": 2163.0,
+        "end": 2173.2
+      },
+      {
+        "start": 2173.2,
+        "end": 2181.1
+      },
+      {
+        "start": 2181.1,
+        "end": 2189.7
+      },
+      {
+        "start": 2189.7,
+        "end": 2206.2
+      },
+      {
+        "start": 2206.2,
+        "end": 2223.8
+      },
+      {
+        "start": 2223.8,
+        "end": 2235.8
+      },
+      {
+        "start": 2235.8,
+        "end": 2249.9
+      },
+      {
+        "start": 2249.9,
+        "end": 2258.3
+      },
+      {
+        "start": 2258.3,
+        "end": 2264.8
+      },
+      {
+        "start": 2265.8,
+        "end": 2289.6
+      },
+      {
+        "start": 2289.6,
+        "end": 2294.4
+      },
+      {
+        "start": 2294.4,
+        "end": 2304.5
+      },
+      {
+        "start": 2304.5,
+        "end": 2308.1
+      },
+      {
+        "start": 2308.1,
+        "end": 2316.0
+      },
+      {
+        "start": 2317.0,
+        "end": 2327.2
+      }
+    ],
+    "text": "See check whether it's working. Now the biggest question comes, when will you use JCD, when will you use your LCM? So there are two types of problems that we have. One problem talks about sharing stuff equally. So whenever you guys have got to divide, it can be time, it can be commodities, it can be anything where the question says divide all these things among people equally. At that time you should keep it in mind that you have got to do what JCD, okay. When it comes to timing, scheduling, time intervals, okay, one is running from 30th speed, so whenever it is timing scheduler intervals and they talk about a meeting point or they talk about an intersection point, it means that you are asked to find the LCM. Then equally JCD, timing intervals, scheduling, so OS may round Robin, okay, shortest job first, all those things, what are you going to do with LCM, scheduling algorithms. You have a string, you have to reverse a string using recursion. Reverse a string means what, print I, A, B, I, M, X, A, L, I, N, A, R. Now comes one more aspect of recursion. Make the problem extremely small, solve that problem and repeat it for next, what does it mean, okay. Right now we will do that later, let's talk about dog right now, it is easier to follow. Make a problem small, this string is made up of how many characters, I will reduce this",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C12",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2137.7,
+          "end": 2142.5
+        },
+        {
+          "start": 2142.5,
+          "end": 2151.6
+        },
+        {
+          "start": 2151.6,
+          "end": 2156.0
+        },
+        {
+          "start": 2156.0,
+          "end": 2163.0
+        },
+        {
+          "start": 2163.0,
+          "end": 2173.2
+        },
+        {
+          "start": 2173.2,
+          "end": 2181.1
+        },
+        {
+          "start": 2181.1,
+          "end": 2189.7
+        },
+        {
+          "start": 2189.7,
+          "end": 2206.2
+        },
+        {
+          "start": 2206.2,
+          "end": 2223.8
+        },
+        {
+          "start": 2223.8,
+          "end": 2235.8
+        },
+        {
+          "start": 2235.8,
+          "end": 2249.9
+        },
+        {
+          "start": 2249.9,
+          "end": 2258.3
+        },
+        {
+          "start": 2258.3,
+          "end": 2264.8
+        },
+        {
+          "start": 2265.8,
+          "end": 2289.6
+        },
+        {
+          "start": 2289.6,
+          "end": 2294.4
+        },
+        {
+          "start": 2294.4,
+          "end": 2304.5
+        },
+        {
+          "start": 2304.5,
+          "end": 2308.1
+        },
+        {
+          "start": 2308.1,
+          "end": 2316.0
+        },
+        {
+          "start": 2317.0,
+          "end": 2327.2
+        }
+      ],
+      "dwell_time": 187.5,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C13",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2327.2,
+        "end": 2343.6
+      },
+      {
+        "start": 2343.6,
+        "end": 2352.5
+      },
+      {
+        "start": 2352.5,
+        "end": 2363.0
+      },
+      {
+        "start": 2363.0,
+        "end": 2381.0
+      },
+      {
+        "start": 2381.0,
+        "end": 2390.8
+      },
+      {
+        "start": 2390.8,
+        "end": 2401.6
+      },
+      {
+        "start": 2401.6,
+        "end": 2414.2
+      },
+      {
+        "start": 2414.2,
+        "end": 2429.2
+      },
+      {
+        "start": 2430.2,
+        "end": 2438.6
+      },
+      {
+        "start": 2438.6,
+        "end": 2448.8
+      },
+      {
+        "start": 2448.8,
+        "end": 2454.6
+      },
+      {
+        "start": 2454.6,
+        "end": 2465.5
+      },
+      {
+        "start": 2465.5,
+        "end": 2475.9
+      },
+      {
+        "start": 2475.9,
+        "end": 2492.0
+      },
+      {
+        "start": 2492.0,
+        "end": 2504.2
+      },
+      {
+        "start": 2504.2,
+        "end": 2516.8
+      }
+    ],
+    "text": "problem to a one character O or D, what is reverse of this D, so if I have to print a reverse of this, is this also a string, yes, if I have to print a reverse of a string whose length is equal to 1, what will I do, give the same back, so the first base condition becomes if str dot length is equal to 1, what do you need to return, return str, is this understood. So, we make the problem small, reduce it to its minimum size and see how will you solve, this is how you will solve, now let's make the problem a little bigger, one step, okay. This is my string, what is the output O D, okay. Now how will I print this O D, is the question correct, this I need to solve, fine. I am saying in recursion, I can get it as, now what tools are available for me, you can send to God, okay, then you can send to O D, I can send to you, I can send to you, I can send to you, I can send to you in the second column, how to subtract, then what can you send, D send to you, now what will happen, you have become a length, one, correct, I will return, returning, what am I getting back, D, correct, now when I return here and get, I get my D back, this is my input parameter O D, how will I construct D O, return parameter plus first letter of input parameter, yes, so what will it become, return parameter plus first letter of input parameter, so Kaban Gavo, D O, D O Kiskebaz Gya, what is the return parameter, D O, what is the first parameter of",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C13",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2327.2,
+          "end": 2343.6
+        },
+        {
+          "start": 2343.6,
+          "end": 2352.5
+        },
+        {
+          "start": 2352.5,
+          "end": 2363.0
+        },
+        {
+          "start": 2363.0,
+          "end": 2381.0
+        },
+        {
+          "start": 2381.0,
+          "end": 2390.8
+        },
+        {
+          "start": 2390.8,
+          "end": 2401.6
+        },
+        {
+          "start": 2401.6,
+          "end": 2414.2
+        },
+        {
+          "start": 2414.2,
+          "end": 2429.2
+        },
+        {
+          "start": 2430.2,
+          "end": 2438.6
+        },
+        {
+          "start": 2438.6,
+          "end": 2448.8
+        },
+        {
+          "start": 2448.8,
+          "end": 2454.6
+        },
+        {
+          "start": 2454.6,
+          "end": 2465.5
+        },
+        {
+          "start": 2465.5,
+          "end": 2475.9
+        },
+        {
+          "start": 2475.9,
+          "end": 2492.0
+        },
+        {
+          "start": 2492.0,
+          "end": 2504.2
+        },
+        {
+          "start": 2504.2,
+          "end": 2516.8
+        }
+      ],
+      "dwell_time": 188.6,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C14",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2516.8,
+        "end": 2527.8
+      },
+      {
+        "start": 2527.8,
+        "end": 2539.3
+      },
+      {
+        "start": 2539.3,
+        "end": 2547.6
+      },
+      {
+        "start": 2547.9,
+        "end": 2559.1
+      },
+      {
+        "start": 2560.1,
+        "end": 2565.7
+      },
+      {
+        "start": 2566.9,
+        "end": 2575.8
+      },
+      {
+        "start": 2575.8,
+        "end": 2590.0
+      },
+      {
+        "start": 2590.9,
+        "end": 2602.0
+      },
+      {
+        "start": 2602.0,
+        "end": 2609.5
+      },
+      {
+        "start": 2609.5,
+        "end": 2630.6
+      },
+      {
+        "start": 2630.6,
+        "end": 2643.5
+      },
+      {
+        "start": 2643.5,
+        "end": 2657.2
+      },
+      {
+        "start": 2661.0,
+        "end": 2673.4
+      },
+      {
+        "start": 2677.0,
+        "end": 2683.6
+      },
+      {
+        "start": 2683.6,
+        "end": 2702.4
+      },
+      {
+        "start": 2702.4,
+        "end": 2713.6
+      }
+    ],
+    "text": "input string, G, so what will I make it, again it became dog, it has to become dog, what we were trying to, we got God and we converted into what dog, nice, I can, nice, I can, nice, I can, this make an important string, when do you want to take a action, jadevak ki vapasatevak, reverse my case in an action, coming back, okay, I am sending good, then I can send to it what, O D, then I can send to it, O D, then I will send D to it, I will have to stop here, what comes back, D, then what do I need to do, D, return parameter plus input parameter, return back O D here, or sorry, D O, then return parameter plus first, D O O, return parameter plus first parameter, what will it go as, so am I working when I am passing the substring or am I working when I am getting the answer from the substring, getting on the return time, so let's try to check this first, okay, I will just remove all this, now we will say void, or do you want to pass a string, string, reverse is taking a string STR, reverse I will do it, let's see how do we pass a, k, kum, kse, okay, so if STR dot length becomes empty is equal to 0, I will return, return empty, or a minute root job, first we will learn basic, we will go reverse, void, okay, so if the string becomes empty, I return from there, otherwise I am going to print the string as it is, see out STR and L, okay, and then I am going to return ref STR dot substring one, first let's try to understand what would this do, okay, I am passing here hello,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C14",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2516.8,
+          "end": 2527.8
+        },
+        {
+          "start": 2527.8,
+          "end": 2539.3
+        },
+        {
+          "start": 2539.3,
+          "end": 2547.6
+        },
+        {
+          "start": 2547.9,
+          "end": 2559.1
+        },
+        {
+          "start": 2560.1,
+          "end": 2565.7
+        },
+        {
+          "start": 2566.9,
+          "end": 2575.8
+        },
+        {
+          "start": 2575.8,
+          "end": 2590.0
+        },
+        {
+          "start": 2590.9,
+          "end": 2602.0
+        },
+        {
+          "start": 2602.0,
+          "end": 2609.5
+        },
+        {
+          "start": 2609.5,
+          "end": 2630.6
+        },
+        {
+          "start": 2630.6,
+          "end": 2643.5
+        },
+        {
+          "start": 2643.5,
+          "end": 2657.2
+        },
+        {
+          "start": 2661.0,
+          "end": 2673.4
+        },
+        {
+          "start": 2677.0,
+          "end": 2683.6
+        },
+        {
+          "start": 2683.6,
+          "end": 2702.4
+        },
+        {
+          "start": 2702.4,
+          "end": 2713.6
+        }
+      ],
+      "dwell_time": 186.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C15",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2716.5,
+        "end": 2724.7
+      },
+      {
+        "start": 2724.7,
+        "end": 2733.5
+      },
+      {
+        "start": 2734.7,
+        "end": 2745.2
+      },
+      {
+        "start": 2745.2,
+        "end": 2754.3
+      },
+      {
+        "start": 2755.4,
+        "end": 2760.5
+      },
+      {
+        "start": 2761.4,
+        "end": 2767.3
+      },
+      {
+        "start": 2767.3,
+        "end": 2785.3
+      },
+      {
+        "start": 2798.2,
+        "end": 2807.3
+      },
+      {
+        "start": 2813.5,
+        "end": 2821.1
+      },
+      {
+        "start": 2821.1,
+        "end": 2831.4
+      },
+      {
+        "start": 2834.6,
+        "end": 2844.6
+      },
+      {
+        "start": 2844.6,
+        "end": 2861.0
+      },
+      {
+        "start": 2875.4,
+        "end": 2881.0
+      },
+      {
+        "start": 2884.6,
+        "end": 2894.6
+      },
+      {
+        "start": 2895.1,
+        "end": 2910.1
+      },
+      {
+        "start": 2911.2,
+        "end": 2915.6
+      },
+      {
+        "start": 2916.3,
+        "end": 2925.9
+      },
+      {
+        "start": 2928.3,
+        "end": 2937.5
+      },
+      {
+        "start": 2938.1,
+        "end": 2946.2
+      }
+    ],
+    "text": "don't go inside, what will I print guys, hello, and then I will give a call with a substring, one, one means from first index, that means I am passing what to it, hello, hello is a STR substring, it comes here, I don't go here, I print hello, then I pass what, L, L, O, then I print L, L, L, O, then I pass L, O, then I print L, O, then I pass O, I print O, then I pass empty string, and then I start returning from there, now the work has been done when while going, not while coming back, correct, so let's try to check this, how does this look like, many, many is miracle, ref, hello, old. Please try to understand how string is going, string goes in a very beautiful manner, just printing it, doing nothing with it, okay, I'll be supposed, before we go to reverse, let's do any primitive things, how do I calculate the length of a string, every time while going or while coming back, going also you can do, yes, you can do, so I will make here, just don't skip string length, I'm just checking if string is empty, then I should give 0, this much I know, one case I know, okay, for the other times, every time the method is getting cold, I will add one to it, every time I will substring, I will go to O, then it will go to empty string, correct, at empty string, I am saying 0 goes over here, what is the return type I'm getting, 0, but this is 1, so I will add return to 1, this will give 1, I will add return to 1, this becomes 2, I will add return to 1, and ultimately it gives me what, 3, so I know one case, I only need to design the another case,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C15",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2716.5,
+          "end": 2724.7
+        },
+        {
+          "start": 2724.7,
+          "end": 2733.5
+        },
+        {
+          "start": 2734.7,
+          "end": 2745.2
+        },
+        {
+          "start": 2745.2,
+          "end": 2754.3
+        },
+        {
+          "start": 2755.4,
+          "end": 2760.5
+        },
+        {
+          "start": 2761.4,
+          "end": 2767.3
+        },
+        {
+          "start": 2767.3,
+          "end": 2785.3
+        },
+        {
+          "start": 2798.2,
+          "end": 2807.3
+        },
+        {
+          "start": 2813.5,
+          "end": 2821.1
+        },
+        {
+          "start": 2821.1,
+          "end": 2831.4
+        },
+        {
+          "start": 2834.6,
+          "end": 2844.6
+        },
+        {
+          "start": 2844.6,
+          "end": 2861.0
+        },
+        {
+          "start": 2875.4,
+          "end": 2881.0
+        },
+        {
+          "start": 2884.6,
+          "end": 2894.6
+        },
+        {
+          "start": 2895.1,
+          "end": 2910.1
+        },
+        {
+          "start": 2911.2,
+          "end": 2915.6
+        },
+        {
+          "start": 2916.3,
+          "end": 2925.9
+        },
+        {
+          "start": 2928.3,
+          "end": 2937.5
+        },
+        {
+          "start": 2938.1,
+          "end": 2946.2
+        }
+      ],
+      "dwell_time": 180.9,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C16",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2946.2,
+        "end": 2954.2
+      },
+      {
+        "start": 2954.2,
+        "end": 2963.3
+      },
+      {
+        "start": 2963.8,
+        "end": 2968.1
+      },
+      {
+        "start": 2982.9,
+        "end": 2986.3
+      },
+      {
+        "start": 2988.6,
+        "end": 2991.8
+      },
+      {
+        "start": 2993.4,
+        "end": 3005.7
+      },
+      {
+        "start": 3011.3,
+        "end": 3012.8
+      },
+      {
+        "start": 3016.0,
+        "end": 3021.1
+      },
+      {
+        "start": 3022.1,
+        "end": 3029.0
+      },
+      {
+        "start": 3030.8,
+        "end": 3036.1
+      },
+      {
+        "start": 3037.5,
+        "end": 3046.5
+      },
+      {
+        "start": 3051.4,
+        "end": 3055.7
+      },
+      {
+        "start": 3061.3,
+        "end": 3065.8
+      },
+      {
+        "start": 3067.0,
+        "end": 3075.0
+      },
+      {
+        "start": 3075.8,
+        "end": 3080.2
+      },
+      {
+        "start": 3081.9,
+        "end": 3088.6
+      },
+      {
+        "start": 3089.9,
+        "end": 3094.7
+      },
+      {
+        "start": 3097.8,
+        "end": 3103.4
+      },
+      {
+        "start": 3103.4,
+        "end": 3109.8
+      },
+      {
+        "start": 3113.7,
+        "end": 3122.6
+      },
+      {
+        "start": 3122.6,
+        "end": 3140.3
+      },
+      {
+        "start": 3144.4,
+        "end": 3146.8
+      },
+      {
+        "start": 3152.8,
+        "end": 3165.0
+      },
+      {
+        "start": 3167.8,
+        "end": 3175.7
+      },
+      {
+        "start": 3175.8,
+        "end": 3185.4
+      },
+      {
+        "start": 3188.6,
+        "end": 3191.6
+      },
+      {
+        "start": 3192.4,
+        "end": 3205.5
+      }
+    ],
+    "text": "I know if it is empty, I have to pass 0, and whenever anybody is giving a call, I have to say plus 1 to whatever, I have to add plus 1 to it, whatever is the return value, I have to add plus 1 to it, okay, so now I will just say, see out, 11 it is giving me, it is even counting what the space in it, if I increase the space, obviously it will give me more, 19, okay, this is the caro subjun, I will give you a variation, I will just give you base condition, okay, how do you send the substring, how do you go down, then how do you come up, okay, okay, return value, so then you will understand how to write code, okay, are you able to get the length, all of you, now did you include space and you are getting the length, now whatever be the string, I want only the number of characters, you will ignore the space, all these small things will understand how and where are you going to apply your code, did you want to, oh, I can't see anything, do you understand my question, hello, so much space world, what should it give you answer, 10, hello world, what should it give you, 10, hello world, what should it give you, still 10, length of a string means you are including whatever is there between two commas, I am saying don't give me that, give me only characters, what will you do, yes, and then only return value, would be conditional return, a fellow world, so much of gap between, but still when I try to run it, it gives me 10, if I try to remove this, it still gives me 10, any kind of combination in recursion we have seen, is the base condition understood by everybody, I am going like this, when the length condition is 1, I go back and return what to it be, then I have to collect what, return parameter with first letter of the input parameter, so I will say return, what do I need to return, rev off first, let me build the substring, so this guy is going to give me back what, this guy is going to give me back D,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C16",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2946.2,
+          "end": 2954.2
+        },
+        {
+          "start": 2954.2,
+          "end": 2963.3
+        },
+        {
+          "start": 2963.8,
+          "end": 2968.1
+        },
+        {
+          "start": 2982.9,
+          "end": 2986.3
+        },
+        {
+          "start": 2988.6,
+          "end": 2991.8
+        },
+        {
+          "start": 2993.4,
+          "end": 3005.7
+        },
+        {
+          "start": 3011.3,
+          "end": 3012.8
+        },
+        {
+          "start": 3016.0,
+          "end": 3021.1
+        },
+        {
+          "start": 3022.1,
+          "end": 3029.0
+        },
+        {
+          "start": 3030.8,
+          "end": 3036.1
+        },
+        {
+          "start": 3037.5,
+          "end": 3046.5
+        },
+        {
+          "start": 3051.4,
+          "end": 3055.7
+        },
+        {
+          "start": 3061.3,
+          "end": 3065.8
+        },
+        {
+          "start": 3067.0,
+          "end": 3075.0
+        },
+        {
+          "start": 3075.8,
+          "end": 3080.2
+        },
+        {
+          "start": 3081.9,
+          "end": 3088.6
+        },
+        {
+          "start": 3089.9,
+          "end": 3094.7
+        },
+        {
+          "start": 3097.8,
+          "end": 3103.4
+        },
+        {
+          "start": 3103.4,
+          "end": 3109.8
+        },
+        {
+          "start": 3113.7,
+          "end": 3122.6
+        },
+        {
+          "start": 3122.6,
+          "end": 3140.3
+        },
+        {
+          "start": 3144.4,
+          "end": 3146.8
+        },
+        {
+          "start": 3152.8,
+          "end": 3165.0
+        },
+        {
+          "start": 3167.8,
+          "end": 3175.7
+        },
+        {
+          "start": 3175.8,
+          "end": 3185.4
+        },
+        {
+          "start": 3188.6,
+          "end": 3191.6
+        },
+        {
+          "start": 3192.4,
+          "end": 3205.5
+        }
+      ],
+      "dwell_time": 187.6,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C17",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3209.8,
+        "end": 3215.2
+      },
+      {
+        "start": 3215.9,
+        "end": 3223.4
+      },
+      {
+        "start": 3228.6,
+        "end": 3234.5
+      },
+      {
+        "start": 3245.9,
+        "end": 3258.7
+      },
+      {
+        "start": 3262.0,
+        "end": 3268.1
+      },
+      {
+        "start": 3268.1,
+        "end": 3276.0
+      },
+      {
+        "start": 3285.1,
+        "end": 3294.0
+      },
+      {
+        "start": 3294.0,
+        "end": 3298.9
+      },
+      {
+        "start": 3307.8,
+        "end": 3315.9
+      },
+      {
+        "start": 3316.7,
+        "end": 3323.4
+      },
+      {
+        "start": 3327.2,
+        "end": 3337.7
+      },
+      {
+        "start": 3337.7,
+        "end": 3347.0
+      },
+      {
+        "start": 3350.2,
+        "end": 3360.4
+      },
+      {
+        "start": 3361.0,
+        "end": 3370.7
+      },
+      {
+        "start": 3373.0,
+        "end": 3382.5
+      },
+      {
+        "start": 3382.5,
+        "end": 3397.0
+      },
+      {
+        "start": 3398.2,
+        "end": 3409.4
+      },
+      {
+        "start": 3409.4,
+        "end": 3415.9
+      },
+      {
+        "start": 3419.0,
+        "end": 3430.6
+      },
+      {
+        "start": 3431.0,
+        "end": 3442.5
+      },
+      {
+        "start": 3442.5,
+        "end": 3454.0
+      }
+    ],
+    "text": "and I need to take from the input parameter the first letter, and then combine them together and return back to my colleague, so I got the return type, I will take STR of the input parameter, okay, God called to OD, OD called to D, D is this condition, I come back, give this guy D, now D is returning, first parameter of the input stream, STR, combining with the return type, okay, so what do I return, I return DO, then I take return parameter plus first guy, D, DO, G, I got reverse, look at the diagram and then write the code, it makes your life easier, I will explain you how to do palindrome reverse in recursion manner till that time you think about it, so I have to do reverse, palindrome, not equal, just palindrome or not, while going or while coming, while coming back, but the essay, yeah essay, while returning, not while going, I will tell you how, when you have only one always, whenever you are talking about recursion, what is the extreme case, I having only one character, is this palindrome, yes, yes or no, so the base condition would be if STR dot length equal equal to 1, return what, true, correct no, this length it becomes what, it is true, correct, now you have to go this character and this character means what, first character and last character of the substring needs to be compared, so this is the return condition, main is what, if STR of 0 is equal equal to STR of STR dot length minus 1, last character, first character is equal to last character, then return what, true, else return what, false, now the way I have to call them, first",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C17",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3209.8,
+          "end": 3215.2
+        },
+        {
+          "start": 3215.9,
+          "end": 3223.4
+        },
+        {
+          "start": 3228.6,
+          "end": 3234.5
+        },
+        {
+          "start": 3245.9,
+          "end": 3258.7
+        },
+        {
+          "start": 3262.0,
+          "end": 3268.1
+        },
+        {
+          "start": 3268.1,
+          "end": 3276.0
+        },
+        {
+          "start": 3285.1,
+          "end": 3294.0
+        },
+        {
+          "start": 3294.0,
+          "end": 3298.9
+        },
+        {
+          "start": 3307.8,
+          "end": 3315.9
+        },
+        {
+          "start": 3316.7,
+          "end": 3323.4
+        },
+        {
+          "start": 3327.2,
+          "end": 3337.7
+        },
+        {
+          "start": 3337.7,
+          "end": 3347.0
+        },
+        {
+          "start": 3350.2,
+          "end": 3360.4
+        },
+        {
+          "start": 3361.0,
+          "end": 3370.7
+        },
+        {
+          "start": 3373.0,
+          "end": 3382.5
+        },
+        {
+          "start": 3382.5,
+          "end": 3397.0
+        },
+        {
+          "start": 3398.2,
+          "end": 3409.4
+        },
+        {
+          "start": 3409.4,
+          "end": 3415.9
+        },
+        {
+          "start": 3419.0,
+          "end": 3430.6
+        },
+        {
+          "start": 3431.0,
+          "end": 3442.5
+        },
+        {
+          "start": 3442.5,
+          "end": 3454.0
+        }
+      ],
+      "dwell_time": 190.2,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C18",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3454.0,
+        "end": 3466.4
+      },
+      {
+        "start": 3466.4,
+        "end": 3475.6
+      },
+      {
+        "start": 3475.6,
+        "end": 3497.4
+      },
+      {
+        "start": 3498.4,
+        "end": 3510.6
+      },
+      {
+        "start": 3511.6,
+        "end": 3519.7
+      },
+      {
+        "start": 3520.4,
+        "end": 3530.7
+      },
+      {
+        "start": 3534.1,
+        "end": 3543.1
+      },
+      {
+        "start": 3543.4,
+        "end": 3559.8
+      },
+      {
+        "start": 3559.8,
+        "end": 3570.0
+      },
+      {
+        "start": 3574.6,
+        "end": 3580.9
+      },
+      {
+        "start": 3590.7,
+        "end": 3607.0
+      },
+      {
+        "start": 3607.0,
+        "end": 3618.6
+      },
+      {
+        "start": 3620.6,
+        "end": 3631.0
+      },
+      {
+        "start": 3631.0,
+        "end": 3639.1
+      },
+      {
+        "start": 3640.2,
+        "end": 3648.3
+      },
+      {
+        "start": 3649.9,
+        "end": 3659.6
+      }
+    ],
+    "text": "main nithinana ji hai, second call me what should I pass, itin or ITI, ITI, then next way what should I pass, t, when I go inside, what am I checking for this done, first and last done, first and last done, this is my first thing, what will I pass to it, substring one, no, substring one, first kato, last kato, so what will come, q, r, s, r, q, then what will come, rs are, then what will come, s, this is how you should be invoking it, first and foremost, now while returning back, is s1, is this palindrome, yes, so what do I pass, I pass true to it, now the first and the last of the substring, are they equal, yes, so what should I pass to it, true, again what should I see, first, last equal, yes, again pass what to it, true, first, last last equal, pass what to it, true, understood, okay, let us try to code this, I am going to receive a string, if it is one, I will pass true, if I think my strk 0 is equal to my strk, str dot length minus 1, the last index, if both of them are also equal, I will pass return true, else what will I pass, return, if they are not true what will I pass, false, correct, and then I am giving a call to whom again, rev, now the way I am going to pass the substring, should I pass substring 1, no, first cut, last cut, so the way substring is written over here in c plus pluses, it says substring, you pass where you want to begin and pass me how many characters you have,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C18",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3454.0,
+          "end": 3466.4
+        },
+        {
+          "start": 3466.4,
+          "end": 3475.6
+        },
+        {
+          "start": 3475.6,
+          "end": 3497.4
+        },
+        {
+          "start": 3498.4,
+          "end": 3510.6
+        },
+        {
+          "start": 3511.6,
+          "end": 3519.7
+        },
+        {
+          "start": 3520.4,
+          "end": 3530.7
+        },
+        {
+          "start": 3534.1,
+          "end": 3543.1
+        },
+        {
+          "start": 3543.4,
+          "end": 3559.8
+        },
+        {
+          "start": 3559.8,
+          "end": 3570.0
+        },
+        {
+          "start": 3574.6,
+          "end": 3580.9
+        },
+        {
+          "start": 3590.7,
+          "end": 3607.0
+        },
+        {
+          "start": 3607.0,
+          "end": 3618.6
+        },
+        {
+          "start": 3620.6,
+          "end": 3631.0
+        },
+        {
+          "start": 3631.0,
+          "end": 3639.1
+        },
+        {
+          "start": 3640.2,
+          "end": 3648.3
+        },
+        {
+          "start": 3649.9,
+          "end": 3659.6
+        }
+      ],
+      "dwell_time": 180.1,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C19",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3663.4,
+        "end": 3666.8
+      },
+      {
+        "start": 3668.2,
+        "end": 3678.0
+      },
+      {
+        "start": 3678.0,
+        "end": 3695.4
+      },
+      {
+        "start": 3695.4,
+        "end": 3703.0
+      },
+      {
+        "start": 3703.0,
+        "end": 3713.4
+      },
+      {
+        "start": 3717.8,
+        "end": 3723.0
+      },
+      {
+        "start": 3725.8,
+        "end": 3730.1
+      },
+      {
+        "start": 3731.0,
+        "end": 3738.2
+      },
+      {
+        "start": 3740.3,
+        "end": 3746.5
+      },
+      {
+        "start": 3746.5,
+        "end": 3756.0
+      },
+      {
+        "start": 3756.0,
+        "end": 3764.2
+      },
+      {
+        "start": 3764.2,
+        "end": 3776.5
+      }
+    ],
+    "text": "how many characters you want, that means suppose when I hello vola, substring 1 to 2, I will start from 1 and how many characters I want only 2, what would be the output EL, if I say 4 characters, ELLO understood, okay, so now I need to check how will I pass my substring or how will I invoke this method such that I get to pass or my output is, so what will I say, I have substring, substring 1, how many characters I have sent, how many characters, 1, 2, 3, how many characters I have sent, total length minus 2, yes or no, so how many characters will I need, STR dot length minus 2, minus 2, why did I come, I have two characters, so how many characters I will do, so how many will I save, 3, how much string length is 5, minus 2, I will give you 3, substring of 1 comma, check whether this is working, okay, is balance room or something else needs to be corrected,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C19",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3663.4,
+          "end": 3666.8
+        },
+        {
+          "start": 3668.2,
+          "end": 3678.0
+        },
+        {
+          "start": 3678.0,
+          "end": 3695.4
+        },
+        {
+          "start": 3695.4,
+          "end": 3703.0
+        },
+        {
+          "start": 3703.0,
+          "end": 3713.4
+        },
+        {
+          "start": 3717.8,
+          "end": 3723.0
+        },
+        {
+          "start": 3725.8,
+          "end": 3730.1
+        },
+        {
+          "start": 3731.0,
+          "end": 3738.2
+        },
+        {
+          "start": 3740.3,
+          "end": 3746.5
+        },
+        {
+          "start": 3746.5,
+          "end": 3756.0
+        },
+        {
+          "start": 3756.0,
+          "end": 3764.2
+        },
+        {
+          "start": 3764.2,
+          "end": 3776.5
+        }
+      ],
+      "dwell_time": 101.5,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

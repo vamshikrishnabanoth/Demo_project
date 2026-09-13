@@ -1,0 +1,92 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Greatest Common Divisor (GCD) Algorithms",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Explain the step-by-step logic of the Euclidean Algorithm to determine the GCD of two integers, specifically identifying how the remainder becomes the new divisor in subsequent iterations.",
+    "misconception_target": "Believing that the GCD is the first remainder that is zero, or confusing the final non-zero remainder with the last divisor.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C07",
+      "E_C08",
+      "E_C10",
+      "E_C11"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Least Common Multiple (LCM) Algorithms",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Demonstrate the relationship between GCD and LCM by calculating the LCM of two numbers using the formula LCM(a, b) = (a * b) / GCD(a, b), explaining why this method is more efficient than listing multiples.",
+    "misconception_target": "Assuming the LCM is always the product of the two numbers, or failing to divide by the GCD, leading to an overestimation of the least common multiple.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04",
+      "E_C05",
+      "E_C06",
+      "E_C09"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Modulo Arithmetic and Divisibility",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Interpret the result of the modulo operator (%) to determine divisibility, specifically identifying that a remainder of 0 indicates exact divisibility and a non-zero remainder indicates the offset from the nearest lower multiple.",
+    "misconception_target": "Confusing the modulo result with the quotient of integer division, or assuming that a non-zero remainder means the numbers are not related by any arithmetic operation.",
+    "evidence_refs": [
+      "E_C02",
+      "E_C03",
+      "E_C05",
+      "E_C06",
+      "E_C10",
+      "E_C11"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Recursion and Loop Conversion",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEMONSTRATION",
+    "assessment_goal": "Convert a recursive GCD function into an iterative loop-based implementation, correctly identifying the base case as the loop termination condition and the recursive call as the loop body update.",
+    "misconception_target": "Failing to update the variables correctly in the loop (e.g., not swapping a and b with b and a % b), or missing the base case check which leads to an infinite loop.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C05",
+      "E_C06",
+      "E_C09"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "String Manipulation and Recursion",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEMONSTRATION",
+    "assessment_goal": "Apply recursive logic to manipulate strings, specifically tracing the execution of a function that reverses a string or checks for palindromes, identifying the base case (empty string or single character) and the recursive step (comparing first and last characters).",
+    "misconception_target": "Incorrectly defining the base case (e.g., stopping at length 2 instead of 0 or 1), or misunderstanding how the substring is passed in the recursive call (e.g., slicing incorrectly).",
+    "evidence_refs": [
+      "E_C13",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  }
+]

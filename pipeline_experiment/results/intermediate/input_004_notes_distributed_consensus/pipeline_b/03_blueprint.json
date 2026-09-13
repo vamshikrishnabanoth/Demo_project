@@ -1,0 +1,94 @@
+{
+  "blueprint_id": "BP_input_004_notes_distributed_consensus",
+  "input_id": "input_004_notes_distributed_consensus",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "CAP Theorem",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Distributed Systems",
+        "Consistency",
+        "Availability",
+        "Network Partition"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Consistency Models",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "CAP Theorem",
+        "Strong Consistency",
+        "Eventual Consistency",
+        "Read/Write Semantics"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Partition Tolerance",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "CAP Theorem",
+        "Network Partition",
+        "Fault Tolerance",
+        "Distributed System Basics"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Raft Consensus Protocol",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Consensus Algorithms",
+        "Leader Election",
+        "Log Replication",
+        "Distributed Systems"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

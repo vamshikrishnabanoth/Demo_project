@@ -1,0 +1,46 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Python Programming Fundamentals",
+    "subtopics": [
+      "Syntax and Structure",
+      "Data Types",
+      "Control Flow",
+      "Functions"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Algorithmic Problem Solving Patterns",
+    "subtopics": [
+      "Brute Force",
+      "Divide and Conquer",
+      "Dynamic Programming",
+      "Greedy Algorithms"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Data Structures in Python",
+    "subtopics": [
+      "Lists and Tuples",
+      "Dictionaries and Sets",
+      "Stacks and Queues",
+      "Trees and Graphs"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization and Efficiency",
+    "subtopics": [
+      "Time Complexity Analysis",
+      "Space Complexity Analysis",
+      "Memoization",
+      "Caching Strategies"
+    ],
+    "associated_chunk_ids": []
+  }
+]

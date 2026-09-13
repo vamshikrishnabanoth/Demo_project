@@ -1,0 +1,534 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "ASSIGNMENT",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 5.0
+      },
+      {
+        "start": 5.0,
+        "end": 10.0
+      },
+      {
+        "start": 10.0,
+        "end": 15.0
+      },
+      {
+        "start": 15.0,
+        "end": 20.0
+      },
+      {
+        "start": 20.0,
+        "end": 25.0
+      },
+      {
+        "start": 25.0,
+        "end": 30.0
+      },
+      {
+        "start": 30.0,
+        "end": 35.0
+      },
+      {
+        "start": 35.0,
+        "end": 40.0
+      },
+      {
+        "start": 40.0,
+        "end": 45.0
+      },
+      {
+        "start": 45.0,
+        "end": 50.0
+      },
+      {
+        "start": 50.0,
+        "end": 55.0
+      },
+      {
+        "start": 55.0,
+        "end": 60.0
+      },
+      {
+        "start": 60.0,
+        "end": 65.0
+      },
+      {
+        "start": 65.0,
+        "end": 70.0
+      },
+      {
+        "start": 70.0,
+        "end": 75.0
+      },
+      {
+        "start": 75.0,
+        "end": 80.0
+      },
+      {
+        "start": 80.0,
+        "end": 85.0
+      },
+      {
+        "start": 85.0,
+        "end": 90.0
+      },
+      {
+        "start": 90.0,
+        "end": 95.0
+      },
+      {
+        "start": 95.0,
+        "end": 100.0
+      },
+      {
+        "start": 100.0,
+        "end": 105.0
+      },
+      {
+        "start": 105.0,
+        "end": 110.0
+      },
+      {
+        "start": 110.0,
+        "end": 115.0
+      },
+      {
+        "start": 115.0,
+        "end": 120.0
+      },
+      {
+        "start": 120.0,
+        "end": 125.0
+      },
+      {
+        "start": 125.0,
+        "end": 130.0
+      },
+      {
+        "start": 130.0,
+        "end": 135.0
+      },
+      {
+        "start": 135.0,
+        "end": 140.0
+      },
+      {
+        "start": 140.0,
+        "end": 145.0
+      },
+      {
+        "start": 145.0,
+        "end": 150.0
+      },
+      {
+        "start": 150.0,
+        "end": 155.0
+      },
+      {
+        "start": 155.0,
+        "end": 160.0
+      },
+      {
+        "start": 160.0,
+        "end": 165.0
+      },
+      {
+        "start": 165.0,
+        "end": 170.0
+      },
+      {
+        "start": 170.0,
+        "end": 175.0
+      },
+      {
+        "start": 175.0,
+        "end": 180.0
+      }
+    ],
+    "text": "ASSIGNMENT 1 Basic CRUD Operations Assignment Exercises: - Amazon Product Management System(products.json) Scenario 1 \u2013 Low Stock Products The warehouse manager wants to restock products that are running low. Your task is to display all products whose stock is less than 20. The manager requires the Product ID, Product Name, Stock, and Brand. Scenario 2 \u2013 Premium Product Listing The marketing team is preparing a premium product catalogue. Display all products costing more than \u20b910,000. The results should be arranged from the most expensive to the least expensive. Scenario 3 \u2013 Homepage Display The Amazon homepage displays only the first five featured products. Retrieve only the first five products from the collection. Scenario 4 \u2013 Product Pagination Customers are viewing the second page of products. Each page displays five products. Retrieve only the products that should appear on the second page. Scenario 5 \u2013 Electronics Search A customer searched for all Electronics products. Display only the Product Name, Price, and Rating. Scenario 6 \u2013 Brand Search A customer remembers that the brand starts with \"S\" but cannot recall the full name. Retrieve all products whose brand starts with the letter S. Netflix Movie Database(movies.json) Scenario 1 \u2013 Trending Movies Netflix wants to promote only highly rated movies. Display all movies with ratings greater than 8.5. Scenario 2 \u2013 Latest Releases The homepage should display the five most recently released movies. Scenario 3 \u2013 English Collection A user selected the English language filter. Display the movie title, release year, and rating. Scenario 4 \u2013 Search by Title A subscriber remembers only that the movie title starts with \"I\". Retrieve all matching movies. Scenario 5 \u2013 Movie Pagination The Netflix library displays four movies per page. Display the movies shown on Page 3. Swiggy Restaurant Database(restaurants.json) Scenario 1 \u2013 Fast Delivery Customers want restaurants delivering within 30 minutes. Display the restaurant name, category, and delivery time. Scenario 2 \u2013 Highly Rated Restaurants Swiggy wants to highlight restaurants with ratings above 4.5. Sort the results from the highest-rated restaurant to the lowest-rated restaurant. Scenario 3 \u2013 Hyderabad Food Search A customer searches for restaurants available in Hyderabad. Display only the restaurant name and category. Scenario 4 \u2013 Restaurant Pagination Swiggy displays four restaurants on each page. Retrieve the restaurants that appear on Page 2.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 5.0
+        },
+        {
+          "start": 5.0,
+          "end": 10.0
+        },
+        {
+          "start": 10.0,
+          "end": 15.0
+        },
+        {
+          "start": 15.0,
+          "end": 20.0
+        },
+        {
+          "start": 20.0,
+          "end": 25.0
+        },
+        {
+          "start": 25.0,
+          "end": 30.0
+        },
+        {
+          "start": 30.0,
+          "end": 35.0
+        },
+        {
+          "start": 35.0,
+          "end": 40.0
+        },
+        {
+          "start": 40.0,
+          "end": 45.0
+        },
+        {
+          "start": 45.0,
+          "end": 50.0
+        },
+        {
+          "start": 50.0,
+          "end": 55.0
+        },
+        {
+          "start": 55.0,
+          "end": 60.0
+        },
+        {
+          "start": 60.0,
+          "end": 65.0
+        },
+        {
+          "start": 65.0,
+          "end": 70.0
+        },
+        {
+          "start": 70.0,
+          "end": 75.0
+        },
+        {
+          "start": 75.0,
+          "end": 80.0
+        },
+        {
+          "start": 80.0,
+          "end": 85.0
+        },
+        {
+          "start": 85.0,
+          "end": 90.0
+        },
+        {
+          "start": 90.0,
+          "end": 95.0
+        },
+        {
+          "start": 95.0,
+          "end": 100.0
+        },
+        {
+          "start": 100.0,
+          "end": 105.0
+        },
+        {
+          "start": 105.0,
+          "end": 110.0
+        },
+        {
+          "start": 110.0,
+          "end": 115.0
+        },
+        {
+          "start": 115.0,
+          "end": 120.0
+        },
+        {
+          "start": 120.0,
+          "end": 125.0
+        },
+        {
+          "start": 125.0,
+          "end": 130.0
+        },
+        {
+          "start": 130.0,
+          "end": 135.0
+        },
+        {
+          "start": 135.0,
+          "end": 140.0
+        },
+        {
+          "start": 140.0,
+          "end": 145.0
+        },
+        {
+          "start": 145.0,
+          "end": 150.0
+        },
+        {
+          "start": 150.0,
+          "end": 155.0
+        },
+        {
+          "start": 155.0,
+          "end": 160.0
+        },
+        {
+          "start": 160.0,
+          "end": 165.0
+        },
+        {
+          "start": 165.0,
+          "end": 170.0
+        },
+        {
+          "start": 170.0,
+          "end": 175.0
+        },
+        {
+          "start": 175.0,
+          "end": 180.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "ASSIGNMENT",
+    "time_spans": [
+      {
+        "start": 180.0,
+        "end": 185.0
+      },
+      {
+        "start": 185.0,
+        "end": 190.0
+      },
+      {
+        "start": 190.0,
+        "end": 195.0
+      },
+      {
+        "start": 195.0,
+        "end": 200.0
+      },
+      {
+        "start": 200.0,
+        "end": 205.0
+      },
+      {
+        "start": 205.0,
+        "end": 210.0
+      },
+      {
+        "start": 210.0,
+        "end": 215.0
+      },
+      {
+        "start": 215.0,
+        "end": 220.0
+      },
+      {
+        "start": 220.0,
+        "end": 225.0
+      },
+      {
+        "start": 225.0,
+        "end": 230.0
+      },
+      {
+        "start": 230.0,
+        "end": 235.0
+      },
+      {
+        "start": 235.0,
+        "end": 240.0
+      },
+      {
+        "start": 240.0,
+        "end": 245.0
+      },
+      {
+        "start": 245.0,
+        "end": 250.0
+      },
+      {
+        "start": 250.0,
+        "end": 255.0
+      },
+      {
+        "start": 255.0,
+        "end": 260.0
+      },
+      {
+        "start": 260.0,
+        "end": 265.0
+      },
+      {
+        "start": 265.0,
+        "end": 270.0
+      },
+      {
+        "start": 270.0,
+        "end": 275.0
+      },
+      {
+        "start": 275.0,
+        "end": 280.0
+      },
+      {
+        "start": 280.0,
+        "end": 285.0
+      },
+      {
+        "start": 285.0,
+        "end": 290.0
+      },
+      {
+        "start": 290.0,
+        "end": 295.0
+      },
+      {
+        "start": 295.0,
+        "end": 300.0
+      }
+    ],
+    "text": "Scenario 5 \u2013 Restaurant Name Search A customer remembers that the restaurant name begins with \"P\". Retrieve all matching restaurants. Hospital Management System(patients.json) Scenario 1 \u2013 Senior Patients The hospital administration wants to review the records of patients aged above 40 years. Display the patient's name, age, disease, and consulting doctor. Scenario 2 \u2013 Expensive Treatments The finance department wants to identify patients whose treatment bill exceeds \u20b910,000. Arrange the results from the highest bill to the lowest bill. Scenario 3 \u2013 Fever Cases The medical superintendent wants a report of all patients diagnosed with Fever. Display only the patient name and consulting doctor. Scenario 4 \u2013 Patient Record Pagination The receptionist displays five patient records per page. Retrieve the records shown on Page 2. Scenario 5 \u2013 Doctor Search The receptionist remembers that the doctor's name begins with \"Dr. R\". Retrieve all patients treated by doctors whose names start with Dr. R. Online Food Delivery System(restaurant_orders.json) Scenario 1 \u2013 High-Value Orders The finance team wants to analyse high-value orders above \u20b9800. Display the customer name, restaurant name, city, and order amount. Scenario 2 \u2013 Recent Delivered Orders The operations team wants to review the first five delivered orders. Scenario 3 \u2013 Hyderabad Orders The regional manager wants to view all orders placed from Hyderabad. Scenario 4 \u2013 Order Pagination The order history page displays three orders per page. Retrieve the orders shown on Page 3. Scenario 5 \u2013 Customer Search Customer support remembers only that the customer's name starts with \"R\". Retrieve all matching customer records.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 180.0,
+          "end": 185.0
+        },
+        {
+          "start": 185.0,
+          "end": 190.0
+        },
+        {
+          "start": 190.0,
+          "end": 195.0
+        },
+        {
+          "start": 195.0,
+          "end": 200.0
+        },
+        {
+          "start": 200.0,
+          "end": 205.0
+        },
+        {
+          "start": 205.0,
+          "end": 210.0
+        },
+        {
+          "start": 210.0,
+          "end": 215.0
+        },
+        {
+          "start": 215.0,
+          "end": 220.0
+        },
+        {
+          "start": 220.0,
+          "end": 225.0
+        },
+        {
+          "start": 225.0,
+          "end": 230.0
+        },
+        {
+          "start": 230.0,
+          "end": 235.0
+        },
+        {
+          "start": 235.0,
+          "end": 240.0
+        },
+        {
+          "start": 240.0,
+          "end": 245.0
+        },
+        {
+          "start": 245.0,
+          "end": 250.0
+        },
+        {
+          "start": 250.0,
+          "end": 255.0
+        },
+        {
+          "start": 255.0,
+          "end": 260.0
+        },
+        {
+          "start": 260.0,
+          "end": 265.0
+        },
+        {
+          "start": 265.0,
+          "end": 270.0
+        },
+        {
+          "start": 270.0,
+          "end": 275.0
+        },
+        {
+          "start": 275.0,
+          "end": 280.0
+        },
+        {
+          "start": 280.0,
+          "end": 285.0
+        },
+        {
+          "start": 285.0,
+          "end": 290.0
+        },
+        {
+          "start": 290.0,
+          "end": 295.0
+        },
+        {
+          "start": 295.0,
+          "end": 300.0
+        }
+      ],
+      "dwell_time": 120.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

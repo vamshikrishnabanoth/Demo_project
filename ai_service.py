@@ -2712,9 +2712,30 @@ def run_generation_task(req: GeneratorRequest):
 # -------------------------------------------------------------
 # ARCHITECTURE E v2.0 PRODUCTION ASSESSMENT PIPELINE INTEGRATION
 # -------------------------------------------------------------
-SPEECH_TO_TEXT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Speech_To_Text"))
-if SPEECH_TO_TEXT_DIR not in sys.path:
-    sys.path.insert(0, SPEECH_TO_TEXT_DIR)
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+# Mount Architecture E v2.0 Production Assessment Service Router
+try:
+    from production_engine.service.api import router as assessment_router
+    from production_engine.config import PIPELINE_VERSION, PROMPT_VERSION, ENGINE_CODENAME, MODEL_MAP
+    app.include_router(assessment_router)
+    print("✅ Architecture E v2.0 Production Assessment Router mounted successfully!")
+except Exception as mount_err:
+    print(f"⚠️ Could not mount Architecture E v2.0 assessment router: {mount_err}")
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """System health check and version provenance."""
+    from production_engine.config import PIPELINE_VERSION, PROMPT_VERSION, ENGINE_CODENAME, MODEL_MAP
+    return {
+        "status": "healthy",
+        "pipeline_version": PIPELINE_VERSION,
+        "prompt_version": PROMPT_VERSION,
+        "engine": ENGINE_CODENAME,
+        "frozen_models": MODEL_MAP
+    }
 
 arch_e_v2_engine = None
 
@@ -2724,7 +2745,7 @@ def get_arch_e_engine():
     if arch_e_v2_engine is None:
         try:
             from production_engine.core_engine_v2 import AdaptiveAssessmentEngineV2
-            arch_e_v2_engine = AdaptiveAssessmentEngineV2(provider="groq", model="qwen/qwen3.8-27b", temperature=0.2)
+            arch_e_v2_engine = AdaptiveAssessmentEngineV2()
             print("✅ Architecture E v2.0 Adaptive Assessment Engine initialized successfully!")
         except Exception as e:
             print(f"⚠️ Architecture E v2.0 Engine initialization error: {e}")

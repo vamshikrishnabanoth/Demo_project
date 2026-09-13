@@ -1,0 +1,197 @@
+{
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "In a binary tree, a node is classified as a leaf node if and only if:",
+      "options": {
+        "A": "It is located at the maximum depth of the tree.",
+        "B": "It has exactly one child node.",
+        "C": "It has no children (degree 0).",
+        "D": "It is the root node of the tree."
+      },
+      "correct_option": "C",
+      "explanation": "Option C is correct because, by definition, a leaf node in any tree structure is a node with no descendants, meaning its degree is 0. Option A is incorrect because a node at the maximum depth is a leaf, but a leaf can exist at any depth if its siblings are internal nodes (though in a complete tree they align, the definition is structural, not positional). Option B is incorrect because a node with one child is an internal node (degree 1), not a leaf. Option D is incorrect because the root is a leaf only if the tree consists of a single node; otherwise, it has children."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Which of the following best describes a 'Complete Binary Tree'?",
+      "options": {
+        "A": "A tree where every internal node has exactly two children and all leaves are at the same level.",
+        "B": "A tree where all levels are completely filled except possibly the last level, which is filled from left to right.",
+        "C": "A tree where every internal node has either zero or two children.",
+        "D": "A tree where the height difference between the left and right subtrees of every node is at most 1."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary defines a Complete Binary Tree as 'A binary tree where all levels are completely filled except possibly the last level, which is filled from left to right'. Option A describes a Perfect Binary Tree. Option C describes a Full Binary Tree. Option D describes a Balanced Binary Tree. This question tests the ability to distinguish between similar-sounding tree types."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What is the maximum number of nodes that can exist at level K in a binary tree, assuming the root is at level 0?",
+      "options": {
+        "A": "K",
+        "B": "2^K",
+        "C": "2^(K-1)",
+        "D": "2K"
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary states: 'The maximum number of nodes at level K (where root is level 0) is 2^K'. For example, level 0 has 2^0 = 1 node, level 1 has 2^1 = 2 nodes, and level 2 has 2^2 = 4 nodes. Option A is incorrect as it suggests linear growth. Option C is incorrect because it would imply level 0 has 2^-1 nodes, which is not an integer. Option D is incorrect as it suggests linear growth (2, 4, 6...), whereas binary trees grow exponentially."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "What is the minimum possible height of a binary tree containing N nodes (where N > 1)?",
+      "options": {
+        "A": "log2(N)",
+        "B": "N - 1",
+        "C": "floor(log2(N))",
+        "D": "ceil(log2(N))"
+      },
+      "correct_option": "C",
+      "explanation": "Option C is correct. The minimum height is achieved by a complete binary tree. A tree of height h can hold at most 2^(h+1)-1 nodes and at least 2^h nodes (if we consider the range of N for a given min height h, N is in [2^h, 2^(h+1)-1]). Thus, h = floor(log2(N)). Option A is incorrect because log2(N) is not necessarily an integer. Option B is incorrect as it represents the maximum height of a skewed tree. Option D is incorrect because ceil(log2(N)) can overestimate the height for perfect trees (e.g., N=7, ceil(log2(7))=3, but min height is 2)."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "What is the minimum possible height of a binary tree with n nodes?",
+      "options": {
+        "A": "n - 1",
+        "B": "floor(log2(n))",
+        "C": "ceil(log2(n))",
+        "D": "log2(n + 1)"
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly states: 'The minimum possible height of a binary tree with n nodes is floor(log2(n))'. This occurs when the tree is as 'wide' as possible (a complete or perfect tree). Option A represents the height of a skewed (degenerate) tree, which is the maximum possible height. Option C is incorrect because the floor function is specified in the material. Option D is a common mathematical approximation but does not match the specific formula provided in the text."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "Consider a binary tree where every level except possibly the last is completely filled, and all nodes in the last level are as far left as possible. Which type of binary tree does this describe?",
+      "options": {
+        "A": "Perfect Binary Tree",
+        "B": "Full Binary Tree",
+        "C": "Complete Binary Tree",
+        "D": "Strict Binary Tree"
+      },
+      "correct_option": "C",
+      "explanation": "Option C is correct. A Complete Binary Tree is defined by having all levels fully filled except possibly the last, where nodes are left-justified. Option A is incorrect because a Perfect Binary Tree requires ALL levels, including the last, to be completely filled. Option B is incorrect because a Full (or Strict) Binary Tree requires every node to have either 0 or 2 children, which does not guarantee the left-justified property of the last level. Option D is incorrect as 'Strict' is often synonymous with 'Full' in this context, which again does not imply the left-justified structure of a complete tree."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "What is the maximum number of nodes in a binary tree of height h, assuming the root is at height 0?",
+      "options": {
+        "A": "2^h",
+        "B": "2^(h+1) - 1",
+        "C": "2^h - 1",
+        "D": "h * 2"
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct. The maximum number of nodes occurs in a perfect binary tree. The number of nodes at level i is 2^i. The total nodes from level 0 to h is the sum of a geometric series: 2^0 + 2^1 + ... + 2^h = 2^(h+1) - 1. Option A is incorrect because 2^h represents the number of nodes at level h only, not the cumulative total. Option C is incorrect due to an off-by-one error in the exponent. Option D is incorrect as it suggests a linear relationship, whereas tree growth is exponential."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "According to the provided material, how is the 'height' of a binary tree defined?",
+      "options": {
+        "A": "The number of nodes on the longest path from the root to a leaf.",
+        "B": "The longest path from the root to a leaf, counting links (edges).",
+        "C": "The distance from the root to the deepest node, counting nodes.",
+        "D": "The total number of levels in the tree, starting from 1."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly defines height as 'the longest path from the root to a leaf (counting links/edges)'. It also notes that for a tree with only a root node, the height is 0, which aligns with counting edges (0 edges). Option A is incorrect because it counts nodes, which would result in a height of 1 for a single-node tree. Option C is incorrect because it describes depth (distance to a specific node) and counts nodes. Option D is incorrect because it implies a 1-based indexing of levels, whereas the height is an edge count."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "Given the level-order traversal [1, 2, 3, 4, 5] and the in-order traversal [4, 2, 1, 5, 3], what is the in-order traversal of the left subtree of the root?",
+      "options": {
+        "A": "[2, 4]",
+        "B": "[4, 2]",
+        "C": "[5, 3]",
+        "D": "[3, 5]"
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct. The root is 1 (first in level-order). In the in-order sequence [4, 2, 1, 5, 3], the elements to the left of 1 form the left subtree's in-order traversal: [4, 2]. The elements to the right form the right subtree's in-order traversal: [5, 3]. Option A is incorrect because it reverses the order. Option C is the in-order traversal of the right subtree. Option D is the reverse of the right subtree's in-order traversal."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "In a full binary tree, if the number of internal nodes is denoted by 'in' and the number of leaf nodes by 'l', which of the following mathematical relationships is always true?",
+      "options": {
+        "A": "l = in",
+        "B": "l = in + 1",
+        "C": "l = 2 * in + 1",
+        "D": "l = in - 1"
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly states the property for full binary trees: 'If 'in' is the number of internal nodes and 'l' is the number of leaves, then l = in + 1'. Option A is incorrect because it implies an equal number of internal and leaf nodes, which is not true for full binary trees (e.g., a single root node has 0 internal and 1 leaf). Option C is incorrect because 2*in + 1 represents the total number of nodes (n), not just the leaves. Option D is incorrect because the number of leaves is always greater than the number of internal nodes in a full binary tree."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Full Binary Tree Properties",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Tree Height Definition",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Binary Tree Level Capacity",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Types of Binary Trees",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Tree Height Bounds",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Binary Tree Node Classification",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Types of Binary Trees",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Mathematical Properties of Binary Trees",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Minimum Height of Binary Trees",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_10_binary_trees_audio_ppt",
+      "target_concept": "Tree Reconstruction from Traversals",
+      "cognitive_level": "ANALYZE"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "When inserting a new node at the end of a singly linked list, which of the following steps is required?",
+      "option_a": "Traverse to the last node, set its next pointer to the new node, and set the new node's next to null",
+      "option_b": "Set the new node's prev pointer to the current tail",
+      "option_c": "Insert the new node at the head without traversal",
+      "option_d": "No pointer updates are needed because the list is automatically linked",
+      "correct_option": "A",
+      "explanation": "The correct step is to traverse to the current last node, link its next to the new node, and set the new node's next to null (Option A). Option B describes a doubly linked list operation, not a singly list. Option C inserts at the head, which is not insertion at the end. Option D is false because pointer updates are essential for linking nodes.",
+      "target_concept": "Singly linked list insertion at end",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Which pointer is used to move backwards during a reverse traversal of a doubly linked list?",
+      "option_a": "next",
+      "option_b": "prev",
+      "option_c": "head",
+      "option_d": "tail",
+      "correct_option": "B",
+      "explanation": "In a doubly linked list each node has a prev pointer that points to the previous node, enabling backward movement (Option B). The next pointer moves forward, not backward. Head and tail are node references, not pointers used for traversal direction.",
+      "target_concept": "Doubly linked list reverse traversal",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Before performing a push operation on an array\u2011based stack, which condition must be checked?",
+      "option_a": "Whether the stack is empty",
+      "option_b": "Whether the stack is full (overflow)",
+      "option_c": "Whether the top index is negative",
+      "option_d": "Whether the value being pushed is zero",
+      "correct_option": "B",
+      "explanation": "Array stacks have a fixed capacity; pushing when the top index equals the maximum size would cause overflow, so this condition must be checked (Option B). Checking for emptiness is unnecessary for push. A negative top index indicates an underflow, not relevant for push. The value being zero is a valid data element and does not affect stack capacity.",
+      "target_concept": "Stack push overflow check",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "During infix\u2011to\u2011postfix conversion, what is the correct action when a right parenthesis ')' is encountered?",
+      "option_a": "Push it onto the stack",
+      "option_b": "Pop and output operators until a '(' is found, then discard the '('",
+      "option_c": "Output the ')' directly to the postfix expression",
+      "option_d": "Ignore the ')' and continue scanning",
+      "correct_option": "B",
+      "explanation": "When a ')' is read, the algorithm pops operators from the stack and appends them to the output until it finds the matching '('; the '(' is then discarded (Option B). Pushing ')' would corrupt the operator stack. Outputting ')' directly would produce an invalid postfix expression. Ignoring it would leave operators inside the parentheses unprocessed.",
+      "target_concept": "Infix to postfix handling of right parenthesis",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In a circular linked list, after deleting a node, which pointer must be updated to preserve the circular property when a tail pointer is used?",
+      "option_a": "head's next pointer",
+      "option_b": "tail's next pointer",
+      "option_c": "deleted node's prev pointer",
+      "option_d": "middle node's next pointer",
+      "correct_option": "B",
+      "explanation": "A circular list with a tail pointer keeps the list circular by ensuring tail->next points to the head. After deletion, especially if the deleted node was the head or tail, tail's next must be updated to the new head (Option B). Updating head's next alone does not guarantee circularity if tail is unchanged. The deleted node's prev is no longer part of the list, and a generic middle node's next is unrelated to the circular link maintenance.",
+      "target_concept": "Circular linked list deletion and maintenance",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

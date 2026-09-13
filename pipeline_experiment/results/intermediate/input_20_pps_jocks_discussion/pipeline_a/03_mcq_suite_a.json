@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_20_pps_jocks_discussion",
+  "input_type": "VOICE_ONLY",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the classroom discussion, what is the primary mechanism used to translate theoretical concepts into functional Python code?",
+      "option_a": "Memorizing syntax rules without execution",
+      "option_b": "Logical decomposition of problems into executable code steps",
+      "option_c": "Using external libraries exclusively for all tasks",
+      "option_d": "Writing code in a single block without testing",
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the material emphasizes the 'Logical decomposition of problems into executable code steps' as the method for translating theory into practice. Option A is incorrect because the focus is on interaction and execution, not just memorization. Option C is incorrect because the focus is on core problem-solving logic, not exclusive reliance on libraries. Option D is incorrect because the iterative nature of debugging and testing is highlighted.",
+      "target_concept": "Logical Decomposition",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The process of breaking down complex problems into manageable coding tasks.",
+      "why_assessed": "To verify understanding of the core problem-solving workflow described in the material.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[0]"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions that programming is about memorization or avoiding testing, which contradicts the interactive and iterative approach described."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the material, what characterizes the iterative nature of programming in the Python environment?",
+      "option_a": "Code is written once and never modified",
+      "option_b": "Code is written, executed, and refined based on output and error feedback",
+      "option_c": "Errors are ignored to maintain code flow",
+      "option_d": "Testing is performed only after the entire project is complete",
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly describes the iterative nature as 'code is written, executed, and refined based on output and error feedback.' Option A is incorrect because refinement implies modification. Option C is incorrect because error feedback is a key part of the process. Option D is incorrect because the iterative approach implies continuous testing, not just at the end.",
+      "target_concept": "Iterative Debugging",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The cycle of writing, executing, and refining code based on feedback.",
+      "why_assessed": "To ensure students understand the dynamic and feedback-driven nature of Python problem-solving.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors represent static or linear views of programming, which are misconceptions when the material emphasizes iteration and feedback."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the relationship between logical reasoning and syntactic implementation as highlighted in the classroom discussion?",
+      "option_a": "They are unrelated aspects of programming",
+      "option_b": "Logical reasoning is secondary to syntax",
+      "option_c": "The material highlights the relationship between logical reasoning and syntactic implementation",
+      "option_d": "Syntax is more important than logic in Python",
+      "correct_option": "C",
+      "explanation": "The summary states that the material 'highlights the relationship between logical reasoning and syntactic implementation.' This indicates that both are integral and connected. Options A, B, and D incorrectly separate or prioritize one over the other, contradicting the integrated approach described in the text.",
+      "target_concept": "Logic-Syntax Relationship",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The interplay between algorithmic thinking and Python syntax.",
+      "why_assessed": "To confirm recall of the specific emphasis placed on the connection between logic and code structure.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors suggest a hierarchy or separation between logic and syntax, which are common student misconceptions not supported by the material's emphasis on their relationship."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which of the following best describes the 'problem-solving workflow' in the Python environment as described in the material?",
+      "option_a": "A linear process with no feedback loops",
+      "option_b": "A step-by-step process of breaking down complex problems into manageable coding tasks",
+      "option_c": "A random trial-and-error approach without structure",
+      "option_d": "A process that avoids breaking down problems",
+      "correct_option": "B",
+      "explanation": "The summary explicitly mentions 'the step-by-step process of breaking down complex problems into manageable coding tasks.' Option A is incorrect because the iterative nature implies feedback loops. Option C is incorrect because the process is described as structured (step-by-step). Option D is incorrect because decomposition is a key feature.",
+      "target_concept": "Problem-Solving Workflow",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The structured approach to handling complex computational challenges.",
+      "why_assessed": "To assess understanding of the structured, decompositional nature of the problem-solving process.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect unstructured or linear misconceptions that ignore the decompositional and iterative aspects highlighted in the text."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What is the primary focus of the 'Code Interaction' concept in the classroom setting?",
+      "option_a": "The interaction between the learner and the Python environment",
+      "option_b": "The interaction between different programming languages",
+      "option_c": "The interaction between hardware and software",
+      "option_d": "The interaction between users and web interfaces",
+      "correct_option": "A",
+      "explanation": "The summary states that the content is 'structured around the interaction between the learner and the Python environment.' This directly supports Option A. Options B, C, and D refer to interactions not mentioned in the context of this specific Python problem-solving discussion.",
+      "target_concept": "Learner-Environment Interaction",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The dynamic relationship between the student and the coding tool.",
+      "why_assessed": "To verify identification of the core interactive element of the classroom discussion.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors introduce unrelated types of interactions (language-to-language, hardware-software, user-web) to test if the student can distinguish the specific learner-environment focus."
+    }
+  ]
+}

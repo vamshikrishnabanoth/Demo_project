@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_15_python_problem_solving",
+  "input_id": "input_15_python_problem_solving",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Python Programming Fundamentals",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Algorithmic Problem Solving Patterns",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Data Structures in Python",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Code Optimization and Efficiency",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

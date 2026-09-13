@@ -1,0 +1,77 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Querying and Filtering",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Explain the logical difference between top-level field queries and nested field queries in MongoDB, specifically how dot notation resolves paths within embedded documents for Amazon product data.",
+    "misconception_target": "Confusing top-level field access with nested field access, leading to incorrect query syntax or assuming nested fields are indexed as separate top-level keys.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Querying and Filtering",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Describe the behavior of comparison operators (e.g., $gt, $lt) when applied to array fields in MongoDB, clarifying how the engine matches elements within the array rather than the array object itself.",
+    "misconception_target": "Assuming that comparison operators on arrays compare the entire array structure or require explicit array element indexing, rather than matching if any element satisfies the condition.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Querying and Filtering",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Interpret the results of a query using the $in operator on a categorical field (e.g., product category), explaining how it differs from chaining multiple $eq conditions with $or.",
+    "misconception_target": "Believing that $in performs a substring match or that it is functionally identical to $or in all contexts without understanding the syntactic and performance implications.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Domain-Specific Data Modeling",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Justify the choice to embed product reviews within the product document versus storing them in a separate collection, focusing on read/write access patterns for an Amazon-like system.",
+    "misconception_target": "Assuming that all related data must be normalized into separate collections to avoid duplication, ignoring the performance benefits of embedding for high-read, low-write scenarios.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_02",
+    "topic_name": "Domain-Specific Data Modeling",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Explain the rationale for using a flexible schema (schema-less) for product attributes (e.g., 'color', 'size', 'material') in MongoDB compared to a rigid relational schema, highlighting how it handles varying product types.",
+    "misconception_target": "Believing that a lack of strict schema definition leads to data inconsistency or that all products must have identical fields, failing to recognize the advantage of sparse documents for heterogeneous data.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

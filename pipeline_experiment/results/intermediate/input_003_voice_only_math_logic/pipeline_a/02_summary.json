@@ -1,0 +1,22 @@
+{
+  "input_id": "unknown",
+  "title": "Interactive Arithmetic Logic: GCD, LCM & Euclidean Modulo",
+  "concepts_and_definitions": [
+    "Least Common Multiple (LCM)",
+    "Greatest Common Divisor (GCD)",
+    "Euclidean algorithm",
+    "Modulo operation",
+    "Integer overflow"
+  ],
+  "mechanisms_and_formulas": [
+    "LCM(A,B) * GCD(A,B) = A * B",
+    "LCM(A,B) = (A * B) / GCD(A,B)",
+    "Euclidean algorithm: while B \u2260 0, R = A % B; A = B; B = R; result = A",
+    "Time complexity of Euclidean algorithm: O(log(min(A,B)))"
+  ],
+  "examples_and_code_patterns": [
+    "Example: A=12, B=18 \u2192 first iteration 12 % 18 = 12, resulting in A=18, B=12 (implicit swap)",
+    "Overflow\u2011safe LCM computation: compute (A / GCD) * B instead of (A * B) / GCD"
+  ],
+  "factual_summary_text": "The material explains how to compute the Least Common Multiple (LCM) of two integers using the relationship LCM(A,B) * GCD(A,B) = A * B, which simplifies to LCM = (A * B) / GCD. It then introduces the Euclidean algorithm as an efficient method for finding the Greatest Common Divisor (GCD), avoiding repeated subtraction. The algorithm repeatedly replaces the pair (A,B) with (B, A % B) until B becomes zero, at which point A holds the GCD. This process runs in logarithmic time, O(log(min(A,B))). An example shows that when A < B (e.g., A=12, B=18), the first modulo operation naturally swaps the values without an explicit swap. Finally, the content warns about integer overflow when calculating (A * B) / GCD and recommends performing the division first as (A / GCD) * B, especially in languages like C++ or Java."
+}

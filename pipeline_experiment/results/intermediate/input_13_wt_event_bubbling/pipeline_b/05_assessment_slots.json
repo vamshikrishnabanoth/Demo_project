@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Event Listeners",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the correct JavaScript method used to attach an event handler to a DOM element.",
+    "misconception_target": "Confusing the addEventListener method with direct property assignment (e.g., onclick) or outdated methods like attachEvent.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Event Listeners",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the standard parameters required for the addEventListener method (event type and callback function).",
+    "misconception_target": "Believing that the event object must be explicitly passed as a parameter to addEventListener or that the callback function name is passed as a string rather than a function reference.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Event Bubbling",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Define the direction of event propagation during the bubbling phase.",
+    "misconception_target": "Confusing bubbling with capturing, thinking the event travels from the document root down to the target element.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Event Bubbling",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the default behavior of event propagation in the DOM when no specific phase is specified in addEventListener.",
+    "misconception_target": "Assuming that events do not propagate by default or that the default phase is capturing.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_03",
+    "topic_name": "Event Capturing",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Describe the direction of event propagation during the capturing phase.",
+    "misconception_target": "Confusing capturing with bubbling, thinking the event travels from the target element up to the document root.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

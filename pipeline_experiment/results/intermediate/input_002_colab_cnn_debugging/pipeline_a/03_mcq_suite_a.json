@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_002_colab_cnn_debugging",
+  "input_type": "COLAB",
+  "content_style": "DEBUGGING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is the output shape of a torch.nn.Conv2d layer with kernel_size=3, padding=1, stride=1 applied to an input tensor of shape (B, C_in, H, W)?",
+      "option_a": "(B, C_out, H, W)",
+      "option_b": "(B, C_out, H-2, W-2)",
+      "option_c": "(B, C_out, H+2, W+2)",
+      "option_d": "(B, C_out, H/2, W/2)",
+      "correct_option": "A",
+      "explanation": "With kernel size 3, stride 1 and padding 1, the spatial dimensions are preserved, so the height and width remain H and W. The channel dimension changes to the number of output filters C_out, while the batch dimension B is unchanged. Option B incorrectly subtracts 2, Option C adds 2, and Option D describes the effect of a 2\u00d72 pooling operation, not convolution.",
+      "target_concept": "Conv2d output shape",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "If a tensor of shape (B, 32, 16, 16) is passed through torch.nn.MaxPool2d(kernel_size=2, stride=2), what will be the resulting shape?",
+      "option_a": "(B, 32, 8, 8)",
+      "option_b": "(B, 32, 32, 32)",
+      "option_c": "(B, 64, 8, 8)",
+      "option_d": "(B, 32, 16, 16)",
+      "correct_option": "A",
+      "explanation": "MaxPool2d with kernel 2 and stride 2 halves each spatial dimension, so 16 \u2192 8 while keeping the batch and channel dimensions unchanged. Option B incorrectly enlarges the spatial size, Option C incorrectly doubles the channel count, and Option D leaves the shape unchanged, which would be true only for a stride of 1.",
+      "target_concept": "MaxPool2d output shape",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Why did the original Linear layer definition nn.Linear(1024, 10) raise a RuntimeError in the SimpleCNN model?",
+      "option_a": "The in_features (1024) did not match the flattened tensor size (2048).",
+      "option_b": "The out_features (10) were too small for the classification task.",
+      "option_c": "The Linear layer was missing a bias term.",
+      "option_d": "The activation function after the Linear layer was omitted.",
+      "correct_option": "A",
+      "explanation": "After the second pooling operation the tensor shape is (B, 32, 8, 8), which flattens to 32\u202f\u00d7\u202f8\u202f\u00d7\u202f8\u202f=\u202f2048 features per sample. The Linear layer expects an input size of 1024, causing a matrix\u2011multiplication size mismatch. The other options describe unrelated issues: out_features=10 is appropriate for a 10\u2011class problem, bias is optional and defaults to True, and the presence of an activation function does not affect the shape compatibility.",
+      "target_concept": "Linear layer in_features vs flattened size",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which statement correctly describes the effect of the call x.view(x.size(0), -1) in the forward method?",
+      "option_a": "It flattens all dimensions except the batch dimension into a single vector.",
+      "option_b": "It flattens the entire tensor, including the batch dimension, into a 1\u2011D vector.",
+      "option_c": "It reshapes the tensor to have shape (batch_size, 1) without changing the data.",
+      "option_d": "It swaps the batch dimension with the channel dimension.",
+      "correct_option": "A",
+      "explanation": "x.size(0) returns the batch size B. Using -1 tells PyTorch to infer the product of the remaining dimensions, effectively collapsing channels, height, and width into one dimension while preserving B. Option B would lose the batch separation, Option C does not perform flattening, and Option D describes a transpose operation, not a view.",
+      "target_concept": "Flattening with view",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which optimizer is used in the training loop and what is its distinguishing characteristic?",
+      "option_a": "Adam; it adapts learning rates for each parameter using estimates of first and second moments.",
+      "option_b": "SGD; it uses a fixed learning rate and momentum.",
+      "option_c": "RMSprop; it only adapts learning rates based on a moving average of squared gradients.",
+      "option_d": "Adagrad; it accumulates squared gradients to adjust learning rates.",
+      "correct_option": "A",
+      "explanation": "The summary specifies torch.optim.Adam as the optimizer. Adam combines momentum (first\u2011moment) and RMSprop\u2011like (second\u2011moment) adaptive learning rates, making it distinct from plain SGD, RMSprop, or Adagrad. Options B\u2011D describe other optimizers that are not used in the provided code.",
+      "target_concept": "Adam optimizer characteristics",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "subtopics": [
+      "definition of LCP",
+      "use cases in string processing"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Horizontal Scanning Method",
+    "subtopics": [
+      "iterative prefix reduction",
+      "early termination when prefix empty"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Vertical Scanning Method",
+    "subtopics": [
+      "character-wise comparison across strings",
+      "early mismatch optimization"
+    ],
+    "associated_chunk_ids": [
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Binary Search on Prefix Length",
+    "subtopics": [
+      "determine minimum string length",
+      "logarithmic search of prefix length",
+      "time complexity O(N*min_len*log(min_len))"
+    ],
+    "associated_chunk_ids": [
+      "C03"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Trie-based LCP Approach",
+    "subtopics": [
+      "Trie insertion of strings",
+      "traversal while single child",
+      "handling end-of-word markers"
+    ],
+    "associated_chunk_ids": [
+      "C04"
+    ]
+  }
+]

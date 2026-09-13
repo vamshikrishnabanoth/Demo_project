@@ -1,0 +1,24 @@
+{
+  "request_id": "REQ-1789242694920-input_jo",
+  "timestamp": "2026-09-12T19:54:23Z",
+  "input_id": "input_job_53bd",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "THEORETICAL_RATIONALE"
+  ],
+  "initial_generated_count": 1,
+  "first_pass_validated_count": 1,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 1,
+  "total_latency_ms": 168585.24,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "With only one core concept available, the target focuses on the theoretical rationale of the core methodology for job_53bd, a facet that naturally encompasses design decisions, underlying principles, and expected outcomes. This single target addresses multiple pedagogical facets—conceptual understanding, theoretical justification, and practical implications—while remaining within the medium difficulty range."
+}

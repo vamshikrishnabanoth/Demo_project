@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Fundamentals of Computer Science",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the core definition of computer science as the study of algorithms and computation, distinguishing it from merely the study of hardware or software engineering.",
+    "misconception_target": "Confusing computer science with computer engineering or IT support, focusing on physical components rather than abstract problem-solving.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Fundamentals of Computer Science",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the role of binary representation as the fundamental data format for all digital information processing in computer systems.",
+    "misconception_target": "Believing that computers process information directly in decimal or text formats without conversion to binary.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Theoretical Foundations",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Define the concept of an algorithm as a finite, well-defined sequence of steps for solving a problem.",
+    "misconception_target": "Viewing an algorithm as a specific piece of code or a programming language syntax rather than an abstract procedure.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Theoretical Foundations",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the significance of mathematical notation and set theory in formally describing computational structures and data relationships.",
+    "misconception_target": "Assuming that theoretical foundations are purely abstract and have no practical application in defining data structures or system logic.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_03",
+    "topic_name": "Classroom Lecture Structure",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "METACOGNITIVE_FRAMING",
+    "assessment_goal": "Recognize the standard pedagogical structure of a lecture, specifically the 'Introduce' phase, which sets the context and learning objectives before detailed content delivery.",
+    "misconception_target": "Believing that the introduction phase is optional or that lectures should begin immediately with complex technical details without framing.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

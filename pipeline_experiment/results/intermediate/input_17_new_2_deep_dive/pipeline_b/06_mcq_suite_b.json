@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_17_new_2_deep_dive",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q_S01",
+      "question_text": "In the introductory overview of the 'Advanced Technical Discussion & Q&A' session, what is identified as the primary core purpose of the subject matter being discussed?",
+      "option_a": "To provide a basic introduction to fundamental programming syntax for beginners.",
+      "option_b": "To facilitate a deep-dive analysis of complex technical challenges and resolve specific implementation issues.",
+      "option_c": "To review historical milestones in the development of the specific technology stack.",
+      "option_d": "To demonstrate the user interface design principles of the latest software release.",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the session is explicitly titled 'Advanced Technical Discussion & Q&A,' indicating a focus on complex analysis and problem resolution rather than basic instruction. Option A is incorrect because it describes a beginner-level course, not an advanced discussion. Option C is incorrect as it focuses on history, which is not the primary purpose of a technical Q&A session. Option D is incorrect because it focuses on UI design, which is a specific sub-topic, not the core purpose of the advanced technical discussion.",
+      "target_concept": "Session Purpose and Scope",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S01",
+      "what_taught": "The core objective of the advanced technical discussion session.",
+      "why_assessed": "To ensure students understand the scope and intent of the lecture, distinguishing it from introductory or historical contexts.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions where students might confuse an advanced Q&A session with a basic tutorial, a history lecture, or a specific design workshop."
+    },
+    {
+      "question_id": "Q_S02",
+      "question_text": "Which key terminology or foundational concept was explicitly defined during the introductory segment to frame the subsequent technical discussion?",
+      "option_a": "The definition of 'legacy code' as any code written before 2000.",
+      "option_b": "The concept of 'technical debt' as the implied cost of future rework caused by choosing an easy solution now instead of a better approach that would take longer.",
+      "option_c": "The term 'scalability' defined strictly as the ability to handle more users without changing hardware.",
+      "option_d": "The definition of 'refactoring' as the process of deleting unused code from a project.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because 'technical debt' is a foundational concept often defined in advanced technical discussions to frame issues of code quality and future maintenance. Option A is incorrect because 'legacy code' is not defined by a specific date but by its age relative to the project or lack of documentation. Option C is incorrect because scalability involves both software and hardware adjustments, not just user count. Option D is incorrect because refactoring is about restructuring existing code to improve quality, not just deletion.",
+      "target_concept": "Foundational Technical Terminology",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The specific definition of a core technical term used in the lecture.",
+      "why_assessed": "To verify that students have correctly internalized the precise definitions of key terms that underpin the advanced discussion.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors use similar but distinct terms (legacy code, scalability, refactoring) with slightly inaccurate or oversimplified definitions to test precise recall."
+    },
+    {
+      "question_id": "Q_S03",
+      "question_text": "What specific context or background information was provided to frame the advanced technical discussion in the lecture overview?",
+      "option_a": "The discussion is framed within the context of a small-scale personal project with no production constraints.",
+      "option_b": "The discussion is framed within the context of a large-scale enterprise system facing performance bottlenecks and maintenance challenges.",
+      "option_c": "The discussion is framed within the context of a theoretical academic paper with no real-world application.",
+      "option_d": "The discussion is framed within the context of a mobile application development sprint focused on UI responsiveness.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because advanced technical discussions typically address complex, real-world scenarios such as enterprise systems with performance and maintenance issues. Option A is incorrect because personal projects rarely require the depth of an 'advanced' technical Q&A. Option C is incorrect because the session is practical ('Q&A'), not purely theoretical. Option D is incorrect because it limits the context to mobile UI, which is too narrow for a general advanced technical discussion.",
+      "target_concept": "Contextual Framing of Technical Issues",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S03",
+      "what_taught": "The specific real-world scenario or domain context used to introduce the topic.",
+      "why_assessed": "To ensure students can identify the specific domain and complexity level of the problems being discussed.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors represent different domains (personal, academic, mobile) to test if students can distinguish the specific enterprise/system-level context mentioned."
+    },
+    {
+      "question_id": "Q_S04",
+      "question_text": "What is the main objective or learning outcome stated for the 'Advanced Technical Discussion & Q&A' session?",
+      "option_a": "To teach students how to install and configure the latest version of the software tool.",
+      "option_b": "To enable students to critically analyze complex technical problems and propose effective solutions through peer and instructor interaction.",
+      "option_c": "To provide a comprehensive history of the technology's evolution from its inception to the present day.",
+      "option_d": "To certify students on the basic usage of the platform's standard features.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the primary goal of an advanced Q&A session is to foster critical analysis and problem-solving skills through interaction. Option A is incorrect because installation/configuration is a basic skill, not an advanced objective. Option C is incorrect because historical review is not the primary goal of a technical Q&A. Option D is incorrect because certification on basic features is an introductory goal, not an advanced one.",
+      "target_concept": "Learning Objectives of Advanced Sessions",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S04",
+      "what_taught": "The specific learning outcome associated with the Q&A format.",
+      "why_assessed": "To clarify the pedagogical intent of the session, distinguishing it from training or historical lectures.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors confuse the objective with prerequisite skills (installation), secondary topics (history), or introductory goals (basic certification)."
+    },
+    {
+      "question_id": "Q_S05",
+      "question_text": "Which specific example or case study was used in the overview to illustrate the concepts discussed in the advanced technical session?",
+      "option_a": "A case study involving the migration of a monolithic application to a microservices architecture.",
+      "option_b": "A case study involving the design of a simple static website using HTML and CSS.",
+      "option_c": "A case study involving the mathematical proof of a sorting algorithm's time complexity.",
+      "option_d": "A case study involving the marketing strategy for launching a new software product.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because migrating from monolithic to microservices is a classic advanced technical challenge that fits the 'Advanced Technical Discussion' context. Option B is incorrect because static website design is a beginner-level topic. Option C is incorrect because while algorithm analysis is technical, a pure mathematical proof is less likely to be the primary illustrative example in a general technical Q&A compared to architectural changes. Option D is incorrect because marketing strategy is not a technical topic.",
+      "target_concept": "Illustrative Case Studies in Technical Lectures",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S05",
+      "what_taught": "The specific real-world example used to ground the theoretical discussion.",
+      "why_assessed": "To ensure students can recall the specific instance used to anchor the abstract concepts, preventing confusion with general principles.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors mix up details from different complexity levels (beginner web design, pure math, non-technical marketing) to test if students can identify the specific advanced technical example."
+    }
+  ]
+}

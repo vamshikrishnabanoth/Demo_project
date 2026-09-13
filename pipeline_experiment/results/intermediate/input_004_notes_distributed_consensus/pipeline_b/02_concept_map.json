@@ -1,0 +1,53 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "CAP Theorem",
+    "subtopics": [
+      "Consistency (C)",
+      "Availability (A)",
+      "Partition tolerance (P)",
+      "Trade-offs between guarantees"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Consistency Models",
+    "subtopics": [
+      "Strong consistency",
+      "Eventual consistency",
+      "Linearizability",
+      "Read/write guarantees"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Partition Tolerance",
+    "subtopics": [
+      "Network partitions",
+      "Handling partitioned nodes",
+      "Impact on system design"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Raft Consensus Protocol",
+    "subtopics": [
+      "Leader election",
+      "Log replication",
+      "Safety and liveness guarantees",
+      "Membership changes"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  }
+]

@@ -1,0 +1,164 @@
+{
+  "input_id": "CASE_A_MONOLOGUE",
+  "title": "Supervised Learning: Neural Net Training (Prof. Madhurika)",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 5,
+  "requested_difficulty": "MEDIUM",
+  "defensible_capacity": 5,
+  "final_question_count": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the class-based neural network architecture discussed in class, a student defines a model by inheriting from `nn.Module`. Inside the `__init__` method, they instantiate `self.fc1 = nn.Linear(784, 128)` and `self.fc2 = nn.Linear(128, 10)`. However, in the `forward` method, they only write `return self.fc1(x)`. What is the primary consequence of this implementation error regarding the model's state and computation?",
+      "option_a": "The model will fail to initialize because `nn.Linear` layers cannot be defined inside `__init__` without being immediately called.",
+      "option_b": "The model will output a tensor of shape (batch_size, 128) instead of (batch_size, 10), because the second layer's weights are never applied to the data during the forward pass.",
+      "option_c": "The model will automatically apply `self.fc2` because PyTorch tracks all layers defined in `__init__` and chains them sequentially regardless of the `forward` logic.",
+      "option_d": "The model will raise a dimension mismatch error because `self.fc1` expects 10 inputs but receives 784.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because in class-based models, `__init__` only defines the parameters (state) of the layers, but the `forward` method explicitly defines the computation graph. If `self.fc2` is not called in `forward`, its weights are not used, and the output remains the result of `fc1` (128 units). Option A is incorrect because defining layers in `__init__` is the standard and correct practice. Option C is incorrect because PyTorch does not automatically chain layers; the `forward` method must explicitly call them. Option D is incorrect because `fc1` expects 784 inputs, which matches the input `x`, so no error occurs at `fc1`.",
+      "target_concept": "Class-based Model Architecture",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "Defining the neural network structure using a class template (e.g., inheriting from nn.Module) rather than a simple sequential function call, including the initialization of layers in __init__ and the forward pass in the forward method.",
+      "why_assessed": "Students often struggle with the separation of state (weights) and computation (forward pass) in class-based models. Assessing code interpretation ensures they can identify where layers are instantiated versus where they are applied.",
+      "evidence_refs": [
+        "E_CHILD_004",
+        "E_CHILD_008"
+      ],
+      "misconception_rationale": "Distractors target the misconception that layers defined in __init__ are automatically applied (Option C) or that the class definition itself executes the computation (Option A). Option D targets a confusion about input dimensions."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the lecture, Prof. Madhurika emphasized that without non-linear activation functions (like ReLU or Sigmoid) between layers, a deep neural network with multiple linear transformations collapses into a single linear transformation. Which of the following best explains the mathematical consequence of using only linear activation functions (e.g., identity function) in a multi-layer perceptron?",
+      "option_a": "The network becomes unable to learn any patterns because the weights cannot be updated during backpropagation.",
+      "option_b": "The network's output is equivalent to a single linear layer, limiting its capacity to model complex, non-linear relationships in the data.",
+      "option_c": "The network will always converge to a local minimum, preventing it from reaching the global minimum of the loss function.",
+      "option_d": "The network requires significantly more computational resources to train because the gradient calculations become exponentially more complex.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B. Mathematically, the composition of multiple linear transformations (matrix multiplications) results in a single equivalent linear transformation. If a neural network uses only linear activation functions (such as the identity function), the output of the final layer is simply a linear combination of the input features, regardless of the number of hidden layers. This collapses the network's capacity to that of a single linear layer, making it incapable of modeling complex, non-linear relationships in the data. Option A is incorrect because weights can still be updated via backpropagation in linear networks. Option C is incorrect because linear models have convex loss surfaces (for standard regression/classification) and do not suffer from local minima in the same way non-linear networks do. Option D is incorrect because linear operations are computationally simpler, not more complex, than non-linear ones.",
+      "target_concept": "Activation Functions",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "Specific functions (such as ReLU and Sigmoid) applied to layer outputs to introduce non-linearity before passing data to subsequent layers.",
+      "why_assessed": "Understanding *why* non-linearity is required is crucial. Without it, multiple layers collapse into a single linear transformation. This facet tests the theoretical justification for using activation functions in deep architectures.",
+      "evidence_refs": [
+        "E_CHILD_005",
+        "E_CHILD_004"
+      ],
+      "misconception_rationale": "Distractors target: Believing that activation functions are only for the output layer to produce probabilities., Thinking that linear activation functions (like identity) are sufficient for deep networks to learn complex patterns."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the discussion on Loss Functions, Prof. Madhurika highlighted Categorical Cross-Entropy (CCE) for multi-class classification. Consider a 3-class problem where the true label is Class 1 (one-hot encoded as [0, 1, 0]). The model outputs the following probability vector: [0.1, 0.7, 0.2]. Using the formula for CCE, $L = -\\sum_{i} y_i \\log(p_i)$, what is the approximate loss value for this prediction?",
+      "option_a": "0.35",
+      "option_b": "0.69",
+      "option_c": "1.00",
+      "option_d": "0.10",
+      "correct_option": "A",
+      "explanation": "The correct answer is Option A. Categorical Cross-Entropy (CCE) is calculated as $L = -\\sum_{i} y_i \\log(p_i)$. Given the true label $y = [0, 1, 0]$ and predicted probabilities $p = [0.1, 0.7, 0.2]$, the terms where $y_i = 0$ contribute 0 to the sum. Only the term for Class 1 (index 1) is non-zero: $-1 \\times \\log(0.7)$. Using the natural logarithm, $\\log(0.7) \\approx -0.3567$. Therefore, the loss is $-(-0.3567) \\approx 0.357$, which rounds to 0.35. Option B (0.69) corresponds to $-\\log(0.5)$, Option C (1.00) is a generic high loss, and Option D (0.10) is the probability of the incorrect class, not the loss.",
+      "target_concept": "Loss Function",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "A metric (specifically Categorical Cross-Entropy) used to quantify the error between predicted and actual values during training.",
+      "why_assessed": "Students can often name the loss function but fail to predict its behavior. This target requires tracing a specific prediction vector and true label to calculate or estimate the resulting loss value, testing their grasp of the formula's mechanics.",
+      "evidence_refs": [
+        "E_CHILD_011",
+        "E_CHILD_004"
+      ],
+      "misconception_rationale": "Distractors target: Confusing Categorical Cross-Entropy with Binary Cross-Entropy or Mean Squared Error., Assuming that a higher loss value indicates a better model fit."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "During a neural network training session, a student observes that the loss function value remains constant and does not decrease after several epochs. The student suspects the optimizer is malfunctioning. Based on the principles of gradient-based optimization discussed in class, which of the following is the most technically accurate diagnosis for why the weights are not updating effectively?",
+      "option_a": "The optimizer is failing because it is using the raw loss value directly to update the weights, rather than calculating the gradient of the loss with respect to the weights.",
+      "option_b": "The optimizer is failing because the learning rate is too low, causing the weight updates to be so small that they are effectively zero due to floating-point precision limits.",
+      "option_c": "The optimizer is failing because the network architecture has too many layers, causing the gradients to vanish before reaching the initial layers.",
+      "option_d": "The optimizer is failing because the loss function is non-convex, making it impossible for any optimizer to find a local minimum without manual intervention.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the core mechanism of standard optimizers (like SGD or Adam) is to update weights based on the *gradients* of the loss function, not the loss value itself. If a student or implementation mistakenly uses the loss value directly as the update signal, the direction and magnitude of the update will be incorrect, leading to failure to minimize the loss. Option B is a plausible misconception regarding learning rates, but a 'too low' learning rate typically results in slow convergence, not a complete lack of change (unless it is literally 0). Option C refers to the vanishing gradient problem, which is a specific architectural issue, but the question asks for the fundamental mechanism of the optimizer's failure mode in the context of weight updates. Option D is incorrect because non-convex loss functions are standard in neural networks, and optimizers are specifically designed to navigate them to find local minima; they do not fail simply because the function is non-convex.",
+      "target_concept": "Optimizer",
+      "cognitive_level": "EVALUATE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "An algorithm used to update model weights based on calculated gradients to minimize the loss function.",
+      "why_assessed": "A common failure mode is when the loss does not decrease. Diagnosing why an optimizer might fail (e.g., learning rate too high, gradients vanishing, or incorrect gradient calculation) is a critical practical skill that goes beyond simple definition recall.",
+      "evidence_refs": [
+        "E_CHILD_011",
+        "E_CHILD_004"
+      ],
+      "misconception_rationale": "Option B targets the misconception that any learning rate issue leads to immediate stagnation. Option C targets the confusion between general optimizer mechanics and specific deep network pathologies (vanishing gradients). Option D targets the misconception that non-convexity prevents optimization entirely, ignoring the purpose of gradient descent in such landscapes."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "During a neural network training session, a student observes that the loss function value remains constant and does not decrease after several epochs. The student suspects the optimizer is malfunctioning. Based on the mechanism of weight updates, which of the following is the most technically accurate diagnosis for why the weights are not changing effectively?",
+      "option_a": "The optimizer is failing because it is attempting to update the weights using the raw loss value directly, rather than the gradients of the loss with respect to the weights.",
+      "option_b": "The optimizer is failing because the learning rate is set to a value that is too low, causing the weight updates to be negligible, or the gradients have vanished to near-zero values.",
+      "option_c": "The optimizer is failing because it is searching for the global minimum in the smaller parameter space, leading to an off-by-one error in the weight update index.",
+      "option_d": "The optimizer is failing because the forward pass is not correctly calculating the input data, preventing the backward pass from initiating the gradient calculation.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the optimizer updates weights based on the gradients (the derivative of the loss with respect to the weights). If the learning rate is too low, the step size is negligible, or if gradients vanish (become extremely small), the weights will not change significantly, resulting in a static loss. Option A is incorrect because optimizers do not use the raw loss value to update weights; they use the gradient. Using the loss value directly would not provide directional information for minimization. Option C is incorrect because 'searching the smaller parameter space' and 'off-by-one errors' are concepts related to array manipulation or specific search algorithms, not the fundamental mechanism of gradient-based optimization. Option D is incorrect because while a broken forward pass would prevent training, the specific symptom of 'loss not decreasing' in the context of optimizer failure is best explained by the magnitude of the update step (learning rate/gradients), not the input data calculation itself, assuming the loss is being computed (even if constant).",
+      "target_concept": "Optimizer",
+      "cognitive_level": "EVALUATE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "An algorithm used to update model weights based on calculated gradients to minimize the loss function.",
+      "why_assessed": "A common failure mode is when the loss does not decrease. Diagnosing why an optimizer might fail (e.g., learning rate too high, gradients vanishing, or incorrect gradient calculation) is a critical practical skill that goes beyond simple definition recall.",
+      "evidence_refs": [
+        "E_CHILD_011",
+        "E_CHILD_004"
+      ],
+      "misconception_rationale": "Option A targets the misconception that optimizers use the loss value directly instead of gradients. Option C targets the confusion between optimization algorithms and array/search algorithms (off-by-one, smaller array). Option D targets the confusion between data preprocessing/forward pass errors and optimizer-specific convergence issues."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1788034310021-CASE_A_M",
+    "trace": {
+      "request_id": "REQ-1788034310021-CASE_A_M",
+      "timestamp": "2026-08-29T20:13:36Z",
+      "input_id": "CASE_A_MONOLOGUE",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.5,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "HIT",
+        "tier4_cross_modal": "HIT",
+        "tier5_representation": "HIT"
+      },
+      "selected_facets": [
+        "CODE_INTERPRETATION",
+        "PARAMETER_CHANGE",
+        "THEORETICAL_RATIONALE",
+        "OUTPUT_PREDICTION",
+        "ERROR_DIAGNOSIS"
+      ],
+      "initial_generated_count": 5,
+      "first_pass_validated_count": 5,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 5,
+      "total_latency_ms": 106285.36,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "The request for 5 targets is fulfilled by selecting 5 distinct core concepts from the available pool of 9. To ensure non-redundancy and high quality at a MEDIUM difficulty level, each target is assigned a unique pedagogical facet. This ensures that while the concepts are related (all part of a neural network pipeline), the assessment angles (mechanism, rationale, code, prediction, diagnosis) are distinct, preventing overlap in the skills being tested."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 106.29,
+    "measured_llm_calls": 8,
+    "pedagogical_delivery_index": 0.5,
+    "repairs_performed_count": 2,
+    "facet_distribution": {
+      "CODE_INTERPRETATION": 1,
+      "PARAMETER_CHANGE": 1,
+      "THEORETICAL_RATIONALE": 1,
+      "OUTPUT_PREDICTION": 1,
+      "ERROR_DIAGNOSIS": 1
+    },
+    "cognitive_distribution": {
+      "ANALYZE": 1,
+      "APPLY": 2,
+      "UNDERSTAND": 1,
+      "EVALUATE": 1
+    },
+    "planning_notes": "The request for 5 targets is fulfilled by selecting 5 distinct core concepts from the available pool of 9. To ensure non-redundancy and high quality at a MEDIUM difficulty level, each target is assigned a unique pedagogical facet. This ensures that while the concepts are related (all part of a neural network pipeline), the assessment angles (mechanism, rationale, code, prediction, diagnosis) are distinct, preventing overlap in the skills being tested.",
+    "system_notice": null
+  }
+}

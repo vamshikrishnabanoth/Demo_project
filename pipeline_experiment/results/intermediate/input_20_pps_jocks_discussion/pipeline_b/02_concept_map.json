@@ -1,0 +1,32 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Python Problem Solving",
+    "subtopics": [
+      "Algorithmic Thinking",
+      "Code Logic Design",
+      "Debugging Strategies"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Interactive Learning Methods",
+    "subtopics": [
+      "Classroom Discussion Dynamics",
+      "Collaborative Problem Solving",
+      "Voice-Based Interaction"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Code Implementation",
+    "subtopics": [
+      "Syntax and Structure",
+      "Function Definition",
+      "Variable Management"
+    ],
+    "associated_chunk_ids": []
+  }
+]

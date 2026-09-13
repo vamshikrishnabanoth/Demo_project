@@ -1,0 +1,70 @@
+{
+  "blueprint_id": "BP_input_15_python_problem_solving",
+  "input_id": "input_15_python_problem_solving",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Python Programming Fundamentals",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Basic Computer Literacy",
+        "Syntax Basics"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Algorithmic Problem Solving Patterns",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Python Programming Fundamentals",
+        "Logical Reasoning"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Data Structures in Python",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Python Programming Fundamentals",
+        "Variable Assignment"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Code Optimization and Efficiency",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Algorithmic Problem Solving Patterns",
+        "Data Structures in Python"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In a full binary tree, if the number of internal nodes is denoted by 'in' and the number of leaf nodes by 'l', which of the following mathematical relationships is always true?",
+      "option_a": "l = in",
+      "option_b": "l = in + 1",
+      "option_c": "l = 2 * in + 1",
+      "option_d": "l = in - 1",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly states the property for full binary trees: 'If 'in' is the number of internal nodes and 'l' is the number of leaves, then l = in + 1'. Option A is incorrect because it implies an equal number of internal and leaf nodes, which is not true for full binary trees (e.g., a single root node has 0 internal and 1 leaf). Option C is incorrect because 2*in + 1 represents the total number of nodes (n), not just the leaves. Option D is incorrect because the number of leaves is always greater than the number of internal nodes in a full binary tree.",
+      "target_concept": "Full Binary Tree Properties",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The relationship between internal nodes and leaves in a full binary tree (l = in + 1).",
+      "why_assessed": "To verify the student's recall of the specific mathematical invariant defined for full binary trees.",
+      "evidence_refs": [
+        "Full Binary Tree Relations: If 'in' is the number of internal nodes and 'l' is the number of leaves, then l = in + 1"
+      ],
+      "misconception_rationale": "Distractors A and D reflect common arithmetic errors or confusion with other tree types, while C confuses the leaf count with the total node count formula."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the provided material, how is the 'height' of a binary tree defined?",
+      "option_a": "The number of nodes on the longest path from the root to a leaf.",
+      "option_b": "The longest path from the root to a leaf, counting links (edges).",
+      "option_c": "The distance from the root to the deepest node, counting nodes.",
+      "option_d": "The total number of levels in the tree, starting from 1.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly defines height as 'the longest path from the root to a leaf (counting links/edges)'. It also notes that for a tree with only a root node, the height is 0, which aligns with counting edges (0 edges). Option A is incorrect because it counts nodes, which would result in a height of 1 for a single-node tree. Option C is incorrect because it describes depth (distance to a specific node) and counts nodes. Option D is incorrect because it implies a 1-based indexing of levels, whereas the height is an edge count.",
+      "target_concept": "Tree Height Definition",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The distinction between height (edge count) and depth, and the specific definition of height as the longest path counting edges.",
+      "why_assessed": "To ensure the student understands the precise definition of height, particularly the edge-counting convention which is a common source of off-by-one errors.",
+      "evidence_refs": [
+        "Height and Depth: ... Height is generally defined as the longest path from the root to a leaf (counting links/edges)."
+      ],
+      "misconception_rationale": "Distractors A and C reflect the common misconception of counting nodes instead of edges. Distractor D reflects confusion between level indexing and path length."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the maximum number of nodes that can exist at level K in a binary tree, assuming the root is at level 0?",
+      "option_a": "K",
+      "option_b": "2^K",
+      "option_c": "2^(K-1)",
+      "option_d": "2K",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary states: 'The maximum number of nodes at level K (where root is level 0) is 2^K'. For example, level 0 has 2^0 = 1 node, level 1 has 2^1 = 2 nodes, and level 2 has 2^2 = 4 nodes. Option A is incorrect as it suggests linear growth. Option C is incorrect because it would imply level 0 has 2^-1 nodes, which is not an integer. Option D is incorrect as it suggests linear growth (2, 4, 6...), whereas binary trees grow exponentially.",
+      "target_concept": "Binary Tree Level Capacity",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The exponential growth of nodes per level in a binary tree (2^K).",
+      "why_assessed": "To test the student's knowledge of the fundamental structural property of binary trees regarding node distribution per level.",
+      "evidence_refs": [
+        "Nodes at Level K: The maximum number of nodes at level K (where root is level 0) is 2^K."
+      ],
+      "misconception_rationale": "Distractors A and D reflect a misunderstanding of exponential vs. linear growth. Distractor C reflects an off-by-one error in the exponent."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which of the following best describes a 'Complete Binary Tree'?",
+      "option_a": "A tree where every internal node has exactly two children and all leaves are at the same level.",
+      "option_b": "A tree where all levels are completely filled except possibly the last level, which is filled from left to right.",
+      "option_c": "A tree where every internal node has either zero or two children.",
+      "option_d": "A tree where the height difference between the left and right subtrees of every node is at most 1.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary defines a Complete Binary Tree as 'A binary tree where all levels are completely filled except possibly the last level, which is filled from left to right'. Option A describes a Perfect Binary Tree. Option C describes a Full Binary Tree. Option D describes a Balanced Binary Tree. This question tests the ability to distinguish between similar-sounding tree types.",
+      "target_concept": "Types of Binary Trees",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "The specific definition of a Complete Binary Tree, distinguishing it from Perfect, Full, and Balanced trees.",
+      "why_assessed": "To assess the student's ability to differentiate between the various specialized types of binary trees based on their structural constraints.",
+      "evidence_refs": [
+        "Complete Binary Tree: A binary tree where all levels are completely filled except possibly the last level, which is filled from left to right."
+      ],
+      "misconception_rationale": "Distractors A, C, and D are the exact definitions of other tree types (Perfect, Full, Balanced) mentioned in the text, serving as plausible distractors for students who confuse the terminology."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What is the minimum possible height of a binary tree with n nodes?",
+      "option_a": "n - 1",
+      "option_b": "floor(log2(n))",
+      "option_c": "ceil(log2(n))",
+      "option_d": "log2(n + 1)",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly states: 'The minimum possible height of a binary tree with n nodes is floor(log2(n))'. This occurs when the tree is as 'wide' as possible (a complete or perfect tree). Option A represents the height of a skewed (degenerate) tree, which is the maximum possible height. Option C is incorrect because the floor function is specified in the material. Option D is a common mathematical approximation but does not match the specific formula provided in the text.",
+      "target_concept": "Tree Height Bounds",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The formula for calculating the minimum height of a binary tree given the number of nodes.",
+      "why_assessed": "To test the student's ability to apply the specific formula for minimum height, distinguishing it from the maximum height (skewed tree).",
+      "evidence_refs": [
+        "Minimum Height: The minimum possible height of a binary tree with n nodes is floor(log2(n))."
+      ],
+      "misconception_rationale": "Distractor A is the formula for maximum height (skewed tree). Distractors C and D are close mathematical variations that test precise recall of the 'floor' function and the argument of the logarithm."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788029941062-CASE_B_I",
+  "timestamp": "2026-08-29T19:00:57Z",
+  "input_id": "CASE_B_INTERACTIVE",
+  "selected_representation": "BLUEPRINT",
+  "pedagogical_delivery_index": 0.7,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "MISCONCEPTION_TARGETING",
+    "BOUNDARY_EDGE_CASE",
+    "OFF_BY_ONE_ANALYSIS",
+    "ERROR_DIAGNOSIS",
+    "OUTPUT_PREDICTION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 116788.47,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 HARD targets was fulfilled by selecting 5 distinct concepts from the available 7 and assigning each a unique, high-cognitive-load pedagogical facet. To ensure 'HARD' difficulty, the facets were chosen to require deep analysis, edge-case handling, or complex tracing rather than simple recall. Specifically: 1) Binary Search Partitioning Strategy was assessed via MISCONCEPTION_TARGETING to test understanding of the invariant; 2) Partition Boundary Properties via BOUNDARY_EDGE_CASE to test handling of empty partitions; 3) Median Calculation Logic via OFF_BY_ONE_ANALYSIS to test integer division nuances; 4) Cross-Array Comparison Conditions via ERROR_DIAGNOSIS to test logic flow; and 5) Pointer Adjustment and Search Direction via OUTPUT_PREDICTION to test manual tracing of state changes."
+}

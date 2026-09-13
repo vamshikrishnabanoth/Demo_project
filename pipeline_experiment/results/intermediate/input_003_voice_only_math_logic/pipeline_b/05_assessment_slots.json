@@ -1,0 +1,74 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Least Common Multiple (LCM) Computation",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "EXPLANATION",
+    "assessment_goal": "Apply prime factorization to compute the LCM of two positive integers.",
+    "misconception_target": "Confusing LCM with GCD and using the larger number as the LCM.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C04"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Least Common Multiple (LCM) Computation",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "EXPLANATION",
+    "assessment_goal": "Select the correct method to determine LCM using the multiple\u2011listing approach.",
+    "misconception_target": "Assuming the first common multiple encountered is always the LCM without checking all possibilities.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C04"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Greatest Common Divisor (GCD) via Euclidean Algorithm",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "EXPLANATION",
+    "assessment_goal": "Execute the Euclidean algorithm step\u2011by\u2011step to find the GCD of two integers.",
+    "misconception_target": "Stopping the algorithm after the first remainder equals zero, missing further reductions.",
+    "evidence_refs": [
+      "E_C02"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Implicit Operand Swapping When A < B",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "EXPLANATION",
+    "assessment_goal": "Explain why swapping operands when A < B is necessary for the Euclidean algorithm.",
+    "misconception_target": "Believing the algorithm works without swapping, leading to infinite loops.",
+    "evidence_refs": [
+      "E_C03"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Integer Overflow Prevention in Multiplication/Division",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "EXPLANATION",
+    "assessment_goal": "Analyze potential integer overflow scenarios in LCM calculation and propose safe arithmetic checks.",
+    "misconception_target": "Assuming overflow cannot occur because intermediate results are always within range.",
+    "evidence_refs": [
+      "E_C04"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

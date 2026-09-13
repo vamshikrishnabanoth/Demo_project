@@ -1,0 +1,72 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "CAP Theorem",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Explain the trade-offs among consistency, availability, and partition tolerance as described by the CAP theorem.",
+    "misconception_target": "Belief that a system can simultaneously achieve all three properties.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "CAP Theorem",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Identify which two of the three CAP properties can be guaranteed in a given system scenario.",
+    "misconception_target": "Confusing partition tolerance with network reliability.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Consistency Models",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Differentiate between strong consistency and eventual consistency models.",
+    "misconception_target": "Assuming eventual consistency provides the same guarantees as strong consistency.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Partition Tolerance",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Describe why partition tolerance is essential in distributed systems and its impact on system design.",
+    "misconception_target": "Thinking partition tolerance is optional if the network is reliable.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Raft Consensus Protocol",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Summarize the roles of leader, follower, and candidate in Raft and how log replication ensures consistency.",
+    "misconception_target": "Believing Raft requires a majority of nodes to be up at all times for any operation.",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

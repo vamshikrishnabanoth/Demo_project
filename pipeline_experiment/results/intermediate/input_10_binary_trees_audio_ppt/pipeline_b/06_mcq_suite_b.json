@@ -1,0 +1,119 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "In a binary tree, a node is classified as a leaf node if and only if:",
+      "option_a": "It is located at the maximum depth of the tree.",
+      "option_b": "It has exactly one child node.",
+      "option_c": "It has no children (degree 0).",
+      "option_d": "It is the root node of the tree.",
+      "correct_option": "C",
+      "explanation": "Option C is correct because, by definition, a leaf node in any tree structure is a node with no descendants, meaning its degree is 0. Option A is incorrect because a node at the maximum depth is a leaf, but a leaf can exist at any depth if its siblings are internal nodes (though in a complete tree they align, the definition is structural, not positional). Option B is incorrect because a node with one child is an internal node (degree 1), not a leaf. Option D is incorrect because the root is a leaf only if the tree consists of a single node; otherwise, it has children.",
+      "target_concept": "Binary Tree Node Classification",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Definition of leaf, internal, and root nodes based on degree.",
+      "why_assessed": "To ensure students understand the structural definition of nodes rather than relying on positional heuristics.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08"
+      ],
+      "misconception_rationale": "Distractors target the common confusion between positional depth and structural degree, and the misconception that the root is never a leaf or that single-child nodes are leaves."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "Consider a binary tree where every level except possibly the last is completely filled, and all nodes in the last level are as far left as possible. Which type of binary tree does this describe?",
+      "option_a": "Perfect Binary Tree",
+      "option_b": "Full Binary Tree",
+      "option_c": "Complete Binary Tree",
+      "option_d": "Strict Binary Tree",
+      "correct_option": "C",
+      "explanation": "Option C is correct. A Complete Binary Tree is defined by having all levels fully filled except possibly the last, where nodes are left-justified. Option A is incorrect because a Perfect Binary Tree requires ALL levels, including the last, to be completely filled. Option B is incorrect because a Full (or Strict) Binary Tree requires every node to have either 0 or 2 children, which does not guarantee the left-justified property of the last level. Option D is incorrect as 'Strict' is often synonymous with 'Full' in this context, which again does not imply the left-justified structure of a complete tree.",
+      "target_concept": "Types of Binary Trees",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "Distinction between Full, Complete, and Perfect binary trees.",
+      "why_assessed": "To test the ability to differentiate between similar-sounding tree classifications based on node occupancy rules.",
+      "evidence_refs": [
+        "E_C03",
+        "E_C04",
+        "E_C07",
+        "E_C10",
+        "E_C14"
+      ],
+      "misconception_rationale": "Distractors exploit the confusion between 'full' (node degree constraint) and 'complete' (level occupancy constraint), and the stricter requirement of 'perfect' trees."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "What is the maximum number of nodes in a binary tree of height h, assuming the root is at height 0?",
+      "option_a": "2^h",
+      "option_b": "2^(h+1) - 1",
+      "option_c": "2^h - 1",
+      "option_d": "h * 2",
+      "correct_option": "B",
+      "explanation": "Option B is correct. The maximum number of nodes occurs in a perfect binary tree. The number of nodes at level i is 2^i. The total nodes from level 0 to h is the sum of a geometric series: 2^0 + 2^1 + ... + 2^h = 2^(h+1) - 1. Option A is incorrect because 2^h represents the number of nodes at level h only, not the cumulative total. Option C is incorrect due to an off-by-one error in the exponent. Option D is incorrect as it suggests a linear relationship, whereas tree growth is exponential.",
+      "target_concept": "Mathematical Properties of Binary Trees",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Formula for maximum nodes: 2^(h+1) - 1.",
+      "why_assessed": "To verify the student's ability to apply the geometric series sum formula for tree node counts.",
+      "evidence_refs": [
+        "E_C06",
+        "E_C11",
+        "E_C12",
+        "E_C13"
+      ],
+      "misconception_rationale": "Distractors target the confusion between nodes at a specific level vs. total nodes, and common algebraic errors in summing geometric series."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "What is the minimum possible height of a binary tree containing N nodes (where N > 1)?",
+      "option_a": "log2(N)",
+      "option_b": "N - 1",
+      "option_c": "floor(log2(N))",
+      "option_d": "ceil(log2(N))",
+      "correct_option": "C",
+      "explanation": "Option C is correct. The minimum height is achieved by a complete binary tree. A tree of height h can hold at most 2^(h+1)-1 nodes and at least 2^h nodes (if we consider the range of N for a given min height h, N is in [2^h, 2^(h+1)-1]). Thus, h = floor(log2(N)). Option A is incorrect because log2(N) is not necessarily an integer. Option B is incorrect as it represents the maximum height of a skewed tree. Option D is incorrect because ceil(log2(N)) can overestimate the height for perfect trees (e.g., N=7, ceil(log2(7))=3, but min height is 2).",
+      "target_concept": "Minimum Height of Binary Trees",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S04",
+      "what_taught": "Relationship between node count N and minimum height h.",
+      "why_assessed": "To test the application of logarithmic bounds for tree height optimization.",
+      "evidence_refs": [
+        "E_C06",
+        "E_C11",
+        "E_C12",
+        "E_C13"
+      ],
+      "misconception_rationale": "Distractors include the maximum height (skewed tree) and non-integer or incorrect logarithmic bases."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Given the level-order traversal [1, 2, 3, 4, 5] and the in-order traversal [4, 2, 1, 5, 3], what is the in-order traversal of the left subtree of the root?",
+      "option_a": "[2, 4]",
+      "option_b": "[4, 2]",
+      "option_c": "[5, 3]",
+      "option_d": "[3, 5]",
+      "correct_option": "B",
+      "explanation": "Option B is correct. The root is 1 (first in level-order). In the in-order sequence [4, 2, 1, 5, 3], the elements to the left of 1 form the left subtree's in-order traversal: [4, 2]. The elements to the right form the right subtree's in-order traversal: [5, 3]. Option A is incorrect because it reverses the order. Option C is the in-order traversal of the right subtree. Option D is the reverse of the right subtree's in-order traversal.",
+      "target_concept": "Tree Reconstruction from Traversals",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Reconstructing tree structure from Level-order and In-order sequences.",
+      "why_assessed": "To evaluate the ability to deduce parent-child relationships and subtree boundaries from traversal data.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C09",
+        "E_C14",
+        "E_C15"
+      ],
+      "misconception_rationale": "Distractors represent common errors in splitting the in-order sequence or misidentifying the root from the level-order sequence."
+    }
+  ]
+}

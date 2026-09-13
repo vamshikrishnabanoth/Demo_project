@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_19_new_full_lecture",
+  "input_id": "input_19_new_full_lecture",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Course Overview and Lecture Structure",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Conceptual Frameworks",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Code Implementation and Walkthrough",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Procedural Execution Steps",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

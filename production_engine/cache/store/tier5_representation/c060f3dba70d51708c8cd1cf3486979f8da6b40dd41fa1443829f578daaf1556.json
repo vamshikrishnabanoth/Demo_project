@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "input_id": "C01-C10",
+    "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+    "concepts_and_definitions": [
+      "Divide and Conquer Technique",
+      "Binary Search Algorithm",
+      "Recursive vs. Iterative Method",
+      "Time Complexity Analysis (Best, Average, Worst Case)",
+      "Median of Two Sorted Arrays"
+    ],
+    "mechanisms_and_formulas": [
+      "Recurrence relation for Binary Search: T(n) = T(n/2) + O(1)",
+      "Time Complexity: O(log n) for successful and unsuccessful searches",
+      "Midpoint calculation: mid = low + (high - low) / 2",
+      "Binary Search Logic: If x < a[mid], search left half (high = mid - 1); else search right half (low = mid + 1)"
+    ],
+    "examples_and_code_patterns": [
+      "Java implementation of Iterative Binary Search using a while loop",
+      "Java implementation of Recursive Binary Search using function calls",
+      "Example input/output for finding an element in a sorted array (e.g., finding 68 in [32, 33, 65, 68, 95])",
+      "Problem statement for finding the median of two sorted arrays using binary search to discard halves"
+    ],
+    "factual_summary_text": "The provided material covers Unit II of Design and Analysis of Algorithms, focusing on the Divide and Conquer technique and the Greedy Method. The primary focus is on the Binary Search algorithm, presented in both recursive and iterative forms. The text defines the algorithm's logic for searching a sorted array by repeatedly dividing the search interval in half. It details the time complexity analysis, stating that the computing time is described by a recurrence relation resulting in O(log n) for best, average, and worst-case scenarios for successful searches, and O(log n) for unsuccessful searches.\n\nThe content includes specific code patterns in Java for implementing Binary Search. The iterative version uses a loop to adjust low and high pointers, while the recursive version calls itself with updated bounds. Worked examples demonstrate the algorithm's execution, showing how the array is sorted and how the key is located or determined to be absent. Additionally, the material introduces advanced applications of binary search, such as finding the median of two sorted arrays, where the technique is used to discard portions of the arrays to efficiently determine the median."
+  },
+  "blueprint": null
+}

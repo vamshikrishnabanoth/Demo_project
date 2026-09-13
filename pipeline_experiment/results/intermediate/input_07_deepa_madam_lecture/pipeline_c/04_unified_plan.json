@@ -1,0 +1,133 @@
+{
+  "input_id": "input_07_deepa_madam_lecture",
+  "title": "Interactive Number Theory & Code Logic: GCD, LCM & Euclidean Modulo",
+  "total_requested_questions": 5,
+  "total_available_targets": 5,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Greatest Common Divisor (GCD) Algorithms",
+      "what_taught_summary": "The Euclidean algorithm calculates the GCD by recursively replacing the larger number with the remainder of the division (max % min) until the remainder is zero, at which point the divisor is the GCD. This is demonstrated by tracing GCD(8, 12) to GCD(8, 4) and finally to 4.",
+      "why_assessed_pedagogy": "Students must understand the logical flow of the recursive reduction to verify that the algorithm terminates correctly and yields the largest common divisor, not just any common factor.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming the GCD is always the smaller of the two initial numbers.",
+        "Confusing the remainder (mod result) with the divisor in the recursive step.",
+        "Stopping the recursion when the numbers become equal instead of when the remainder is zero."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C07",
+        "E_C08",
+        "E_C10",
+        "E_C11"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 192.5s]",
+        "[1137.5s - 1366.5s]",
+        "[1366.5s - 1547.5s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Least Common Multiple (LCM) Algorithms",
+      "what_taught_summary": "The LCM is the smallest positive integer divisible by both input numbers, which can be found by iterating through multiples of one number until a multiple is found that is also divisible by the other. For example, LCM(4, 6) is found by checking multiples of 4 (4, 8, 12) until 12 is identified as divisible by 6.",
+      "why_assessed_pedagogy": "This assessment ensures students can distinguish between finding a common multiple and the *least* common multiple, reinforcing the concept of minimality in number theory.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Selecting the product of the two numbers (a*b) as the LCM without checking for smaller common multiples.",
+        "Stopping at the first multiple of the first number that is greater than the second number, regardless of divisibility.",
+        "Confusing LCM with GCD by looking for divisors instead of multiples."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 192.5s]",
+        "[192.5s - 382.5s]",
+        "[382.5s - 565.5s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Modulo Arithmetic and Divisibility",
+      "what_taught_summary": "Modulo arithmetic provides the remainder of a division, which is the core mechanism for the Euclidean algorithm's reduction step. Divisibility is confirmed when the modulo operation results in zero, indicating no remainder.",
+      "why_assessed_pedagogy": "Understanding the modulo operation as a remainder check is fundamental to interpreting the termination condition and the recursive logic of the GCD algorithm.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Believing that a % b returns the quotient rather than the remainder.",
+        "Assuming that if a % b is non-zero, b is not a factor of a, but failing to apply this to the recursive reduction step.",
+        "Confusing the modulo operator with the division operator in code syntax."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C05",
+        "E_C06",
+        "E_C10",
+        "E_C11"
+      ],
+      "source_timestamps_or_slides": [
+        "[192.5s - 382.5s]",
+        "[382.5s - 565.5s]",
+        "[748.5s - 953.5s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Recursion and Loop Conversion",
+      "what_taught_summary": "Recursion involves a function calling itself with a smaller subproblem, requiring a base case to prevent infinite loops. This is applied in the GCD algorithm where the function calls itself with (min, max % min) until the base case (remainder 0) is met.",
+      "why_assessed_pedagogy": "Students must apply the recursive structure to trace the execution path, ensuring they can identify the base case and the recursive step to convert or debug the logic.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Omitting the base case, leading to a stack overflow or infinite recursion.",
+        "Passing the same arguments in the recursive call instead of reducing the problem size.",
+        "Confusing the return value of the recursive call with the return value of the current function instance."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "source_timestamps_or_slides": [
+        "[565.5s - 748.5s]",
+        "[748.5s - 953.5s]",
+        "[953.5s - 1137.5s]"
+      ]
+    },
+    {
+      "target_id": "TGT_05",
+      "topic_name": "String Manipulation and Recursion",
+      "what_taught_summary": "String manipulation via recursion involves processing the first character and recursively calling the function on the substring starting from index 1, with a base case when the string length is 1 or 0. This pattern is used to reverse or print strings.",
+      "why_assessed_pedagogy": "Applying this pattern allows students to generalize recursive thinking from numerical algorithms (like GCD) to data structures like strings, demonstrating the versatility of the recursive paradigm.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Forgetting to concatenate the first character with the result of the recursive call.",
+        "Using the wrong index for the substring (e.g., starting from 0 instead of 1), causing infinite recursion.",
+        "Setting the base case to length > 1 instead of length <= 1, leading to incorrect output or errors."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[2327.2s - 2516.8s]",
+        "[2516.8s - 2713.6s]",
+        "[2716.5s - 2946.2s]"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4598 @@
+{
+  "audio_file": "Binary Trees and different types of  trees.mp3",
+  "duration_seconds": 3365.73,
+  "language": "en",
+  "raw_content": "[0.0s - 8.9s] Yesterday, or in the last class, a boy asked me, ma'am, if there is only one root node,\n[8.9s - 13.8s] is it a tree?\n[13.8s - 17.8s] I am asking you that question.\n[17.8s - 27.0s] If I have only one over here, is it still a tree, yes, it is a tree.\n[27.0s - 33.6s] That is the height of that tree.\n[33.6s - 35.3s] So it depends.\n[35.3s - 37.0s] What are you considering the height?\n[37.0s - 45.0s] Are you considering the nodes as height or are you considering the links as height?\n[45.0s - 51.0s] 90% of online platforms consider links as heights.\n[51.0s - 54.8s] Links is what connection between two nodes.\n[54.8s - 59.8s] So if I have only root node in my tree, what is my height?\n[59.8s - 60.8s] 0.\n[60.8s - 64.8s] What is my depth?\n[64.8s - 67.8s] 0.\n[67.8s - 69.8s] Okay, height is 0.\n[69.8s - 70.8s] Depth is 0.\n[70.8s - 74.8s] Leaves are 1.\n[74.8s - 76.8s] Parent is 1.\n[76.8s - 78.8s] Root node is 1.\n[78.8s - 80.8s] Are we clear?\n[80.8s - 82.8s] Everything is 1.\n[82.8s - 88.8s] Now, what is the difference between a binary tree and a normal tree?\n[88.8s - 91.8s] You have read this, right?\n[91.8s - 98.8s] Tell me the difference between a normal tree and a binary tree.\n[98.8s - 102.8s] We studied trees in the last class, correct?\n[102.8s - 106.8s] Today we will step further and study about binary trees.\n[106.8s - 110.8s] What is the difference between the two?\n[110.8s - 113.8s] Every tree will have a root node?\n[113.8s - 115.8s] Yes.\n[115.8s - 121.8s] That is one common thing, second thing.\n[121.8s - 122.8s] Very good.\n[122.8s - 127.8s] In a normal tree, it contains more than two children.\n[127.8s - 130.8s] What about binary tree?\n[130.8s - 132.8s] At most means what?\n[132.8s - 134.8s] Can it contain 0?\n[134.8s - 136.8s] 1, 2.\n[136.8s - 145.8s] What is the subtree in this?\n[145.8s - 148.8s] Can there be a subtree in a binary tree also?\n[148.8s - 154.8s] Tell me the subtree in this.\n[154.8s - 159.8s] 7, 2, 6, 5, 11 is 1 subtree.\n[159.8s - 163.8s] 6, 5, 11 is another subtree.\n[163.8s - 173.8s] 9, 9, 5, 9, 5, these are all the subtrees listed in this particular binary tree.\n[173.8s - 175.8s] So, the major difference is what?\n[175.8s - 180.8s] In a normal tree, you can have n number of children in a binary tree,\n[180.8s - 184.8s] you can have at most two children only.\n[184.8s - 188.8s] One is left and one is the right one.\n[188.8s - 192.8s] How many internal nodes are here?\n[193.8s - 198.8s] What are internal nodes?\n[198.8s - 202.8s] How many internal nodes?\n[202.8s - 210.8s] 1, 7, 6, 9 and 9.\n[210.8s - 215.8s] Every node which has got children becomes internal node.\n[215.8s - 219.8s] What is an external node?\n[219.8s - 224.8s] What are external nodes here?\n[224.8s - 231.8s] What is the maximum degree of any node in a binary tree?\n[231.8s - 232.8s] 2.\n[232.8s - 241.8s] What would be the height of a binary tree?\n[241.8s - 245.8s] Does it depend on binary tree or any tree?\n[245.8s - 251.8s] Or could always be the height?\n[251.8s - 257.8s] Longest distance from the leaf node to the root.\n[257.8s - 264.8s] So, a binary tree is a special type of tree's data structure in which blah, blah, blah.\n[264.8s - 267.8s] At most have got two children, left, right.\n[267.8s - 273.8s] It can be there, it cannot be there.\n[273.8s - 279.8s] So, there are different types of binary trees, first understand.\n[279.8s - 297.8s] This is 1, 2, 3, 4, 5, 6, 7.\n[297.8s - 304.8s] Now, a full binary tree is a tree in which every parent, okay.\n[304.8s - 308.8s] This is a parent, who else is a parent?\n[308.8s - 310.8s] This is a parent.\n[310.8s - 317.8s] Every parent will either have zero or two as children.\n[317.8s - 322.8s] No parent will have one child, okay.\n[322.8s - 325.8s] When this is the thing, you will call it as what?\n[325.8s - 327.8s] It is a full binary.\n[327.8s - 331.8s] Now, tell me nodes which have got two children here.\n[331.8s - 335.8s] 1, 2, 5.\n[335.8s - 338.8s] Tell me which has got zero children.\n[338.8s - 343.8s] 3, 4, 6, 7.\n[343.8s - 346.8s] So, what is a full binary tree?\n[346.8s - 349.8s] Either zero or two children.\n[349.8s - 352.8s] Suppose I put it over here and say 8.\n[352.8s - 355.8s] Is it a full binary tree?\n[355.8s - 356.8s] No.\n[356.8s - 359.8s] So, if I ask you to create my question to you,\n[359.8s - 364.8s] would be what an exam create a full binary tree?\n[364.8s - 365.8s] Okay.\n[365.8s - 368.8s] So, then you should know what she is asking me to create.\n[368.8s - 369.8s] Okay.\n[369.8s - 372.8s] How and what, how the tree should look like?\n[372.8s - 375.8s] You should have an answer for that.\n[375.8s - 379.8s] Now, I don't want to talk about this at all,\n[379.8s - 383.8s] because there are around five to six types of trees.\n[383.8s - 387.8s] Instead of giving you a formula for each and every one,\n[387.8s - 390.8s] I will give you a generic formula.\n[390.8s - 393.8s] You should know what type of tree it is,\n[393.8s - 395.8s] what are the constraints with the tree,\n[395.8s - 398.8s] and you apply that formula to all the trees.\n[398.8s - 402.8s] Let's do that rather than learning formula for each and every tree.\n[402.8s - 403.8s] Okay.\n[403.8s - 406.8s] So, this is my full binary tree.\n[406.8s - 409.8s] Perfect binary tree.\n[409.8s - 414.8s] Perfect binary tree tells you what?\n[414.8s - 420.8s] Or every internal node will have two child nodes,\n[420.8s - 424.8s] and all the leaf nodes would be at same level.\n[424.8s - 427.8s] It's a perfect binary tree.\n[428.8s - 433.8s] You are not leaving anything here at anybody's mercy.\n[433.8s - 434.8s] Okay.\n[434.8s - 436.8s] If there are three levels,\n[436.8s - 439.8s] can I count the total number of leaves\n[439.8s - 441.8s] if I know the levels in a binary tree?\n[441.8s - 442.8s] Yes.\n[442.8s - 443.8s] Okay.\n[443.8s - 448.8s] So, perfect binary tree means I will have a node.\n[448.8s - 454.8s] Every node, I will make sure have got two children.\n[454.8s - 459.8s] So, I will have zero children to fund over here at all.\n[459.8s - 460.8s] Okay.\n[460.8s - 463.8s] And all because here also,\n[463.8s - 466.8s] suppose this four has got two.\n[466.8s - 469.8s] Does this become a complete binary tree?\n[469.8s - 470.8s] No.\n[470.8s - 471.8s] Why?\n[471.8s - 473.8s] Five does not have anything.\n[473.8s - 475.8s] Five, if I put here,\n[475.8s - 477.8s] still it does not have anything.\n[477.8s - 479.8s] Are we clear?\n[479.8s - 483.8s] So, full binary tree tells you what?\n[483.8s - 488.8s] Zero or one children to all the internal nodes.\n[488.8s - 491.8s] Perfect binary tree tells you what?\n[491.8s - 496.8s] All internal nodes should have two child,\n[496.8s - 498.8s] and all of them should end.\n[498.8s - 502.8s] All the leaf nodes should be at the same level.\n[502.8s - 504.8s] So, you tell me one thing.\n[504.8s - 507.8s] Is tree one a perfect binary?\n[507.8s - 508.8s] Yes.\n[508.8s - 509.8s] Why?\n[509.8s - 510.8s] One node only.\n[510.8s - 512.8s] No children at all.\n[512.8s - 515.8s] Is tree two a perfect binary?\n[515.8s - 516.8s] Yes.\n[516.8s - 520.8s] One root node exactly two children.\n[520.8s - 524.8s] Third one, teeth.\n[524.8s - 526.8s] Third tree.\n[526.8s - 527.8s] Yes.\n[527.8s - 528.8s] Okay.\n[528.8s - 535.8s] So, why do we need all these things is when we do a traversing?\n[535.8s - 536.8s] Okay.\n[536.8s - 541.8s] Or when we are doing any kind of problems based on\n[541.8s - 543.8s] what kind of a binary tree it is?\n[543.8s - 546.8s] I will know how many times I have to jump.\n[546.8s - 549.8s] I will know how many nodes are there.\n[549.8s - 554.8s] I will know how am I supposed to traverse through this particular tree.\n[554.8s - 555.8s] Are we clear?\n[555.8s - 557.8s] So, that's the reason we should understand.\n[557.8s - 560.8s] What do you mean by full binary, perfect binary,\n[560.8s - 562.8s] and all those particular things?\n[562.8s - 563.8s] Okay.\n[563.8s - 569.8s] So, very simple, but very verbose it is actually.\n[569.8s - 572.8s] Complete binary tree.\n[572.8s - 573.8s] Confusing, yes.\n[573.8s - 577.8s] But you've got to come up with some kind of tactics to understand.\n[577.8s - 579.8s] Full, see?\n[579.8s - 580.8s] Perfect, see?\n[580.8s - 583.8s] What do you think about a complete binary tree?\n[583.8s - 586.8s] What do you think it should have?\n[586.8s - 592.8s] Complete means all levels should be filled.\n[592.8s - 594.8s] There are how many levels?\n[594.8s - 595.8s] Three levels.\n[595.8s - 598.8s] It should not end up here.\n[599.8s - 601.8s] Okay.\n[601.8s - 603.8s] All the levels are there.\n[603.8s - 607.8s] At least one node or at least one leaf to that particular parent,\n[607.8s - 608.8s] it should be there.\n[608.8s - 612.8s] Then I will say complete binary tree over here.\n[612.8s - 613.8s] Okay.\n[616.8s - 620.8s] Every level must be completely filled.\n[620.8s - 623.8s] If I want to now add an element here.\n[623.8s - 624.8s] Okay.\n[624.8s - 626.8s] I want to add an element to four.\n[626.8s - 631.8s] I will always start by adding the left leaf.\n[631.8s - 633.8s] This is always the thing.\n[633.8s - 634.8s] Okay.\n[634.8s - 639.8s] Binary search tree may be always add left element first.\n[639.8s - 642.8s] If elements are left in your array,\n[642.8s - 645.8s] then you put on to the right arm of it.\n[645.8s - 649.8s] Otherwise always we will fill up with the left part.\n[649.8s - 652.8s] So, you're also in a complete binary tree.\n[652.8s - 655.8s] Suppose now I have two more elements coming in.\n[655.8s - 658.8s] 11, 13.\n[658.8s - 659.8s] Okay.\n[659.8s - 661.8s] Now I take 11.\n[661.8s - 667.8s] Where do you think I should place 11?\n[667.8s - 668.8s] 11.\n[668.8s - 675.8s] Where do you think I should place 13 now?\n[675.8s - 680.8s] If I do this, is it a complete binary tree?\n[680.8s - 684.8s] Then how will I put it so that it remains a complete binary tree?\n[684.8s - 691.8s] Or do I need three elements to make a complete binary tree?\n[691.8s - 696.8s] Suppose if I have three elements to make it a complete binary tree,\n[696.8s - 702.8s] where do you think it should be?\n[702.8s - 704.8s] What is 4?\n[704.8s - 708.8s] 11.\n[708.8s - 711.8s] 13.\n[711.8s - 713.8s] 14.\n[713.8s - 724.8s] Is this level filled to go to the next level?\n[724.8s - 729.8s] Guys, every level must be completely filled.\n[729.8s - 734.8s] It may not be filled to me.\n[734.8s - 735.8s] Okay.\n[735.8s - 739.8s] Right now, this is level 1.\n[739.8s - 741.8s] This is level 2.\n[741.8s - 743.8s] There are two notes in level 2.\n[743.8s - 745.8s] Level 3.\n[745.8s - 748.8s] How many notes in level 3?\n[748.8s - 750.8s] So, is it okay?\n[750.8s - 752.8s] Yes, it is okay.\n[752.8s - 755.8s] But now if another element comes,\n[755.8s - 762.8s] should I put it here or should I go down?\n[762.8s - 765.8s] First, you should put it with 3.\n[765.8s - 767.8s] So, here what will come?\n[767.8s - 768.8s] 11.\n[768.8s - 770.8s] 4, what will come?\n[770.8s - 772.8s] 13.\n[772.8s - 775.8s] Then, 14.\n[775.8s - 777.8s] Then, 15.\n[777.8s - 780.8s] Then, 16.\n[780.8s - 782.8s] 17.\n[782.8s - 785.8s] 18.\n[785.8s - 786.8s] 19.\n[786.8s - 789.8s] You can leave this empty.\n[789.8s - 794.8s] Then I would say this is a complete binary tree.\n[794.8s - 796.8s] Understood?\n[796.8s - 797.8s] Okay.\n[797.8s - 799.8s] Levels must be filled means what?\n[799.8s - 801.8s] All levels should occupy.\n[801.8s - 804.8s] If I have a 5 here,\n[804.8s - 808.8s] I can move on to here only if this is complete.\n[808.8s - 812.8s] I can move on to the next one only if this is complete.\n[812.8s - 813.8s] Okay.\n[813.8s - 817.8s] That is called your complete binary tree.\n[817.8s - 825.8s] The last leaf element might not have a right sibling.\n[825.8s - 826.8s] Okay.\n[826.8s - 829.8s] So, only the last element it should not,\n[829.8s - 832.8s] it is okay if it does not have the right sibling.\n[832.8s - 833.8s] Okay.\n[833.8s - 836.8s] So, can I say if there are 5?\n[836.8s - 837.8s] Okay.\n[837.8s - 842.8s] How many elements are required to make this tree\n[842.8s - 856.8s] as a complete binary tree if I introduce one more level?\n[856.8s - 859.8s] So, complete binary tree is telling you what?\n[859.8s - 867.8s] What is the difference between a perfect binary tree and a complete binary tree?\n[867.8s - 870.8s] Perfect means what?\n[870.8s - 874.8s] Every level should be completely filled\n[874.8s - 878.8s] and every node should have two only.\n[878.8s - 879.8s] That is what?\n[879.8s - 881.8s] Perfect binary tree.\n[881.8s - 883.8s] What is complete?\n[883.8s - 885.8s] All levels must be filled.\n[885.8s - 889.8s] Levels must be filled means what?\n[889.8s - 892.8s] At zero level, one node.\n[892.8s - 896.8s] So, at two level how many nodes?\n[896.8s - 898.8s] Two.\n[898.8s - 904.8s] At third, second level how many nodes?\n[904.8s - 905.8s] Four.\n[905.8s - 908.8s] At third level how many nodes?\n[908.8s - 912.8s] So, how depending on the number of levels,\n[912.8s - 918.8s] how our node is increasing to the power of L?\n[918.8s - 921.8s] Two to the power of L.\n[921.8s - 925.8s] If I have L at zero, two raised to zero is how much?\n[925.8s - 926.8s] One.\n[926.8s - 927.8s] One node.\n[927.8s - 931.8s] Two to the power one is how much?\n[931.8s - 932.8s] Two.\n[932.8s - 934.8s] Two to the power two.\n[934.8s - 935.8s] How many?\n[935.8s - 936.8s] Four.\n[936.8s - 941.8s] So, is there any relationship between the level and the number of nodes\n[941.8s - 945.8s] when you are talking about perfect binary?\n[945.8s - 946.8s] Yes.\n[946.8s - 953.8s] So, if somebody tells you how many nodes will a perfect binary tree have\n[953.8s - 957.8s] if there are four levels, what you should say directly?\n[957.8s - 960.8s] Two raised to four is the answer.\n[960.8s - 962.8s] Please note this thing down.\n[962.8s - 966.8s] Relationship between level and number of nodes.\n[966.8s - 971.8s] Can you say the same thing for what was the first one?\n[971.8s - 974.8s] Full binary, Gile.\n[974.8s - 975.8s] No.\n[975.8s - 976.8s] Why?\n[976.8s - 979.8s] Because full binary can have children?\n[979.8s - 981.8s] It cannot have children.\n[981.8s - 982.8s] Okay.\n[982.8s - 983.8s] So, I am not sure.\n[983.8s - 988.8s] At the maximum, it would be two to the power L.\n[988.8s - 993.8s] But minimum, I do not know because I do not know whether it will have children or no.\n[993.8s - 994.8s] Okay.\n[994.8s - 1000.8s] So, when you are talking about a full binary tree, sorry, when you are talking about a perfect binary\n[1000.8s - 1006.8s] tree, then depending on the number of levels, can I tell how many nodes are there?\n[1006.8s - 1007.8s] Yes.\n[1007.8s - 1009.8s] How many nodes would be there?\n[1009.8s - 1011.8s] Two to the power of L.\n[1011.8s - 1013.8s] Are we clear?\n[1013.8s - 1029.8s] How is your complete binary tree different from perfect binary tree?\n[1029.8s - 1033.8s] Is there a difference between two?\n[1033.8s - 1034.8s] What is the difference?\n[1035.8s - 1039.8s] You are also seeing all levels should be complete.\n[1039.8s - 1044.8s] But the last one can be left incomplete.\n[1044.8s - 1047.8s] So, how many nodes would be there?\n[1047.8s - 1050.8s] Two to the power L minus one.\n[1050.8s - 1051.8s] Okay.\n[1051.8s - 1057.8s] So, that would be for your complete binary tree.\n[1057.8s - 1063.8s] Summation of two to the power N, how?\n[1063.8s - 1070.8s] At that level, it will give total number of nodes would be summation.\n[1070.8s - 1071.8s] Okay.\n[1071.8s - 1076.8s] So, this is what we look, this is what we have for our complete binary tree.\n[1076.8s - 1081.8s] What is this pathological tree?\n[1081.8s - 1090.8s] Now, if I make it like this, what kind of a tree it becomes?\n[1090.8s - 1114.8s] Full binary tree means what is it?\n[1114.8s - 1123.8s] So, what is this?\n[1123.8s - 1126.8s] So, what is this?\n[1126.8s - 1129.8s] If full binary tree has it?\n[1129.8s - 1131.8s] Is this full binary?\n[1131.8s - 1135.8s] Why?\n[1135.8s - 1138.8s] Full binary says what?\n[1138.8s - 1143.8s] Zero or two for all the internal nodes.\n[1143.8s - 1147.8s] Perfect binary tree means what?\n[1147.8s - 1150.8s] Only two.\n[1150.8s - 1153.8s] Complete binary tree means what?\n[1153.8s - 1156.8s] Sub two.\n[1156.8s - 1159.8s] Last one can be minus one.\n[1159.8s - 1162.8s] But instead of two, it can be only one.\n[1162.8s - 1164.8s] But one will occur.\n[1164.8s - 1167.8s] I left my right my left.\n[1167.8s - 1171.8s] So, what kind of a tree is this?\n[1171.8s - 1174.8s] This is not even pathological tree.\n[1174.8s - 1175.8s] Why?\n[1175.8s - 1179.8s] Because pathological tree has got only single child.\n[1179.8s - 1184.8s] This one has got two children.\n[1184.8s - 1187.8s] So, what kind of a tree is this?\n[1187.8s - 1189.8s] Very good.\n[1189.8s - 1192.8s] This is a normal binary tree.\n[1192.8s - 1201.8s] Very good.\n[1201.8s - 1203.8s] What is this?\n[1203.8s - 1204.8s] Skewed.\n[1204.8s - 1206.8s] Skewed means what?\n[1206.8s - 1209.8s] Everything would be on the left or everything would be on the right.\n[1209.8s - 1212.8s] This is a skewed.\n[1212.8s - 1219.8s] It's left skewed binary tree, right skewed binary tree.\n[1219.8s - 1225.8s] When a pathological or a degenerate tree is such that only left is dominated\n[1225.8s - 1233.8s] or only right is dominated, then we say it is a left skewed binary tree or a right skewed binary tree.\n[1233.8s - 1236.8s] But it's left skewed or right skewed.\n[1236.8s - 1240.8s] But can I say it is still a degenerative tree?\n[1240.8s - 1241.8s] Yes.\n[1241.8s - 1242.8s] Why?\n[1242.8s - 1244.8s] Single node, single parent.\n[1244.8s - 1248.8s] Single parent, single child, whatever.\n[1248.8s - 1254.8s] This is your skewed tree.\n[1254.8s - 1262.8s] Tell me the number of nodes, the skewed tree will have.\n[1262.8s - 1268.8s] Number of levels equal to number of nodes.\n[1268.8s - 1269.8s] Okay.\n[1269.8s - 1277.8s] Tell me the height of a skewed tree.\n[1277.8s - 1280.8s] Level minus 1.\n[1280.8s - 1282.8s] Okay, because level is what?\n[1282.8s - 1284.8s] Level 0.\n[1284.8s - 1285.8s] Level 1.\n[1285.8s - 1287.8s] Level 2.\n[1287.8s - 1291.8s] If I start with 0, then what would it be?\n[1291.8s - 1292.8s] Levels.\n[1292.8s - 1293.8s] Okay.\n[1293.8s - 1298.8s] What is the height of the skewed tree?\n[1298.8s - 1302.8s] Number of levels.\n[1302.8s - 1306.8s] What is the depth of a skewed tree?\n[1306.8s - 1309.8s] Depth of a, a I told tree note.\n[1309.8s - 1310.8s] Correct.\n[1310.8s - 1311.8s] Okay.\n[1311.8s - 1313.8s] Depth of a tree is what?\n[1313.8s - 1316.8s] Again, number of levels.\n[1316.8s - 1317.8s] Okay.\n[1317.8s - 1322.8s] What is the degree of a node in a skewed tree?\n[1322.8s - 1324.8s] Balanced binary tree.\n[1324.8s - 1327.8s] Now, what do you mean by a balanced tree?\n[1327.8s - 1331.8s] Right now, just observe the tree.\n[1331.8s - 1335.8s] Balanced tree mainly is based on the subtrees.\n[1335.8s - 1341.8s] Tell me what is the, only look at the left hand side of the tree.\n[1341.8s - 1342.8s] Okay.\n[1342.8s - 1349.8s] What are the subtrees here?\n[1349.8s - 1354.8s] What is the height of a left subtree?\n[1354.8s - 1358.8s] I shall first identify the subtree.\n[1358.8s - 1359.8s] 2, 4, 5.\n[1359.8s - 1365.8s] And this side.\n[1365.8s - 1368.8s] 2, 4, 5 is one subtrees.\n[1368.8s - 1374.8s] What about on the right hand side?\n[1374.8s - 1377.8s] The left side of the right is the tree.\n[1377.8s - 1381.8s] So, the right side is the tree.\n[1381.8s - 1385.8s] Look at the diagram of the left side.\n[1385.8s - 1388.8s] How many subtrees are there?\n[1388.8s - 1389.8s] No.\n[1389.8s - 1393.8s] How did we start the session today?\n[1393.8s - 1397.8s] Is root border tree?\n[1397.8s - 1398.8s] Correct.\n[1398.8s - 1399.8s] Okay.\n[1399.8s - 1404.8s] So, can I say is three a subtrees?\n[1404.8s - 1405.8s] Yes or no?\n[1405.8s - 1406.8s] Yes.\n[1406.8s - 1410.8s] How many subtrees does your left diagram have?\n[1410.8s - 1413.8s] What are those?\n[1413.8s - 1416.8s] One is 2, 4, 5.\n[1416.8s - 1418.8s] Other is what?\n[1418.8s - 1419.8s] Three.\n[1419.8s - 1420.8s] Understood.\n[1420.8s - 1426.8s] What is the height of 2, 4, 5?\n[1426.8s - 1428.8s] The height of the subtree.\n[1428.8s - 1430.8s] What is the height of a subtree?\n[1430.8s - 1435.8s] Who is the node in the subtree here?\n[1435.8s - 1437.8s] Subtrees are 2, 4, 5.\n[1437.8s - 1438.8s] Okay?\n[1438.8s - 1441.8s] Is there root node here?\n[1441.8s - 1442.8s] Correct.\n[1442.8s - 1445.8s] The height of a subtree here.\n[1445.8s - 1446.8s] One.\n[1446.8s - 1447.8s] Understood?\n[1447.8s - 1448.8s] Okay?\n[1448.8s - 1455.8s] What is the height of your right subtree?\n[1455.8s - 1456.8s] Zero.\n[1456.8s - 1457.8s] Okay?\n[1457.8s - 1460.8s] What do you mean by balanced tree?\n[1460.8s - 1466.8s] When the height of a left subtree,\n[1466.8s - 1471.8s] minus height of the right subtree,\n[1471.8s - 1474.8s] is equal to 1.\n[1474.8s - 1478.8s] I will say the tree is balanced.\n[1478.8s - 1486.8s] First of all, we need to know how to identify a subtree.\n[1486.8s - 1490.8s] Then calculate the height of that particular subtree.\n[1490.8s - 1494.8s] Now, your height of left subtree is 1.\n[1494.8s - 1498.8s] Your height of right subtree is 0.\n[1498.8s - 1500.8s] 1 minus 0 is what?\n[1500.8s - 1501.8s] 1.\n[1501.8s - 1503.8s] So, is it a balanced tree?\n[1503.8s - 1504.8s] Yes.\n[1504.8s - 1507.8s] Now, let's move to the right diagram.\n[1507.8s - 1509.8s] Identify the subtree.\n[1509.8s - 1512.8s] Step number 1.\n[1512.8s - 1515.8s] The biggest subtree.\n[1515.8s - 1519.8s] 2, 4, 5, 6.\n[1519.8s - 1521.8s] Right hand side.\n[1521.8s - 1522.8s] 3.\n[1522.8s - 1524.8s] These are the two subtrees.\n[1524.8s - 1528.8s] What is the height of the left subtree?\n[1528.8s - 1531.8s] Longest path till the leaf.\n[1531.8s - 1532.8s] 2.\n[1532.8s - 1536.8s] What is the height of the right subtree?\n[1536.8s - 1539.8s] 2 minus 0 is how much?\n[1539.8s - 1542.8s] Is it a balanced tree?\n[1542.8s - 1547.8s] Now, I will make some changes here.\n[1547.8s - 1552.8s] You tell me whether it's a balanced tree or it's not a balanced tree.\n[1552.8s - 1554.8s] So, what is a balanced tree?\n[1554.8s - 1559.8s] What is the definition of a balanced tree?\n[1559.8s - 1568.8s] When the height of the left subtree minus the height of right subtree,\n[1568.8s - 1576.8s] if the difference is equal to 1, then I would say that the tree is balanced.\n[1576.8s - 1577.8s] Okay?\n[1577.8s - 1578.8s] 0 or not?\n[1578.8s - 1579.8s] 1.\n[1579.8s - 1580.8s] Huh?\n[1580.8s - 1588.8s] Either 0 or 1?\n[1588.8s - 1589.8s] Yes.\n[1589.8s - 1590.8s] I mean, same.\n[1590.8s - 1591.8s] Yes.\n[1591.8s - 1596.8s] Either it is same or at most it should be 1.\n[1596.8s - 1599.8s] It cannot be more than 1, basically.\n[1599.8s - 1600.8s] Okay?\n[1600.8s - 1607.8s] So, now, has your right side become balanced or low?\n[1607.8s - 1610.8s] Why?\n[1610.8s - 1611.8s] Okay.\n[1611.8s - 1625.8s] I mean, I, because I have space over here.\n[1625.8s - 1634.8s] What kind of a tree is this?\n[1634.8s - 1654.8s] Now, you have a full, perfect, complete, degenerative, left or right skewed, balanced.\n[1655.8s - 1658.8s] And, normal binary.\n[1658.8s - 1660.8s] What kind of a tree is this?\n[1660.8s - 1664.8s] Why is it a full?\n[1664.8s - 1667.8s] How is it a full?\n[1667.8s - 1669.8s] 0 or 2?\n[1669.8s - 1670.8s] Correct?\n[1670.8s - 1672.8s] How many trees are running?\n[1672.8s - 1674.8s] Okay.\n[1674.8s - 1675.8s] All right.\n[1675.8s - 1676.8s] Okay.\n[1676.8s - 1679.8s] Now,\n[1680.8s - 1683.8s] Normal.\n[1683.8s - 1690.8s] Sure?\n[1690.8s - 1692.8s] Balanced.\n[1692.8s - 1701.8s] Sure?\n[1701.8s - 1708.8s] Balanced, okay?\n[1708.8s - 1712.8s] Okay.\n[1712.8s - 1713.8s] Balanced?\n[1713.8s - 1722.8s] Okay.\n[1722.8s - 1724.8s] Balanced is correct.\n[1724.8s - 1726.8s] But, what else?\n[1726.8s - 1727.8s] Perfect.\n[1727.8s - 1728.8s] Perfect?\n[1728.8s - 1730.8s] Perfect.\n[1730.8s - 1733.8s] What is perfect?\n[1733.8s - 1737.8s] All levels, everything, full.\n[1738.8s - 1740.8s] Exactly 2.\n[1740.8s - 1744.8s] So, in the lower left, everybody should be there.\n[1744.8s - 1748.8s] 4 is not left, 7 is not left, 8 is not 3.\n[1748.8s - 1751.8s] So, this becomes what?\n[1751.8s - 1752.8s] Full.\n[1752.8s - 1759.8s] Okay.\n[1759.8s - 1764.8s] Now, these are the properties of a binary tree, which I will read out and you people have\n[1764.8s - 1769.8s] to note because we will have numerical sums on this.\n[1769.8s - 1770.8s] Okay?\n[1770.8s - 1773.8s] First property.\n[1773.8s - 1776.8s] It's small, so I will write it over here.\n[1776.8s - 1782.8s] Total number of edges in any binary tree would be what?\n[1782.8s - 1785.8s] If n is the number, Achapala, here, here, here.\n[1785.8s - 1790.8s] n equal to number of nodes.\n[1790.8s - 1799.8s] H equal to height of a tree.\n[1799.8s - 1811.8s] K equal to level index starting from 0.\n[1811.8s - 1815.8s] K is level.\n[1815.8s - 1832.8s] L is number of leaf nodes.\n[1832.8s - 1833.8s] Okay?\n[1833.8s - 1835.8s] Now, tell me.\n[1835.8s - 1843.8s] You have all the abbreviations in a particular binary tree.\n[1843.8s - 1849.8s] If n is the number of nodes, what would be the number of edges?\n[1849.8s - 1854.8s] n minus 1, write it down properly.\n[1854.8s - 1868.8s] What are the maximum number of nodes at level K?\n[1868.8s - 1873.8s] 2 to the power K.\n[1873.8s - 1876.8s] I am talking about maximum.\n[1876.8s - 1877.8s] Okay?\n[1877.8s - 1880.8s] Minimum, we don't know.\n[1880.8s - 1882.8s] Minimum, tell me actually.\n[1882.8s - 1885.8s] How many are minimum?\n[1885.8s - 1886.8s] No.\n[1886.8s - 1891.8s] Minimum depends on what type of tree it is.\n[1891.8s - 1892.8s] Correct?\n[1892.8s - 1898.8s] Minimum may, if it is full binary, then what?\n[1898.8s - 1901.8s] What is full binary?\n[1901.8s - 1905.8s] 0 or 2?\n[1905.8s - 1910.8s] So, it is undetermined.\n[1910.8s - 1911.8s] Okay?\n[1911.8s - 1913.8s] Minimum is undetermined in there.\n[1913.8s - 1915.8s] Perfect.\n[1915.8s - 1918.8s] Minimum is same as maximum.\n[1918.8s - 1922.8s] Complete.\n[1922.8s - 1927.8s] 2 to the power of K minus 1 would be minimum.\n[1927.8s - 1931.8s] Maximum would be 2 to the power K.\n[1931.8s - 1932.8s] Okay?\n[1932.8s - 1934.8s] Yeah.\n[1934.8s - 1944.8s] The height of a binary tree is H.\n[1944.8s - 1945.8s] Okay?\n[1945.8s - 1950.8s] H, given to you, height is H over here.\n[1950.8s - 1959.8s] Maximum number of nodes in a binary tree if you have the height given.\n[1959.8s - 1966.8s] Usually, maximum number of nodes is 2 to the power of L level type.\n[1966.8s - 1973.8s] But if I have given the height, keeping in mind whatever the skew thing is in all that particular things,\n[1973.8s - 1985.8s] maximum number of nodes in a binary tree of height H would be 2 to the power of H plus 1.\n[1985.8s - 1989.8s] So, number of nodes, if you know the level, you will get it.\n[1989.8s - 1992.8s] If you know the height also, you will get it.\n[1992.8s - 1993.8s] Okay?\n[1993.8s - 1996.8s] So, they can give you sometimes the height.\n[1996.8s - 1998.8s] They can sometimes give you the depth.\n[1998.8s - 2003.8s] Depth is nothing but the level told to you, you have got to find the number of nodes.\n[2003.8s - 2009.8s] So, 2 formulas are there for it with level as well as with height.\n[2009.8s - 2014.8s] 2 to the power H plus 1 minus 1 over here.\n[2014.8s - 2018.8s] Why do you think they have a minus 1 here?\n[2018.8s - 2026.8s] Removing it for root node because root node has 2.\n[2026.8s - 2027.8s] Okay?\n[2027.8s - 2033.8s] So, this is when they give you a height, they ask you to find maximum number of nodes.\n[2033.8s - 2038.8s] Many a time, they will only ask you about nodes.\n[2038.8s - 2041.8s] If you know the height, you will find the height.\n[2041.8s - 2044.8s] If you know the nodes, you will find the level.\n[2044.8s - 2047.8s] If you know the level, you will find the nodes.\n[2047.8s - 2049.8s] Okay?\n[2049.8s - 2056.8s] So, we already know what is a skewed tree?\n[2056.8s - 2065.8s] Uh, height of a skewed tree is equal to?\n[2065.8s - 2073.8s] Height of a skewed tree is equal to number of nodes minus 1.\n[2073.8s - 2076.8s] Okay?\n[2076.8s - 2082.8s] Minimum possible height of a binary tree with n nodes.\n[2082.8s - 2087.8s] Now, node is the only height find domain.\n[2087.8s - 2088.8s] Okay?\n[2088.8s - 2096.8s] So, height is equal to, what is this?\n[2096.8s - 2099.8s] Floor value.\n[2099.8s - 2100.8s] Okay?\n[2100.8s - 2103.8s] Floor value of what?\n[2103.8s - 2107.8s] Log of n to the base 2.\n[2107.8s - 2116.8s] So, if nodes are given, I will find height like this.\n[2116.8s - 2125.8s] If height is given, number of nodes equal to when the height is given,\n[2125.8s - 2132.8s] h plus 1 minus.\n[2132.8s - 2138.8s] Okay?\n[2138.8s - 2145.8s] Maximum possible height, if the number of nodes see when you've got to say what is the height?\n[2145.8s - 2152.8s] When the number of nodes are given, I am saying it is log 2n.\n[2152.8s - 2159.8s] This is a normal tree, but if it is a skewed tree, then it would be n minus 1.\n[2159.8s - 2164.8s] Always check with what kind of tree it is asking you the question.\n[2164.8s - 2170.8s] Okay?\n[2170.8s - 2175.8s] Mostly, they will always ask you to find the number of nodes.\n[2175.8s - 2189.8s] In a full binary tree with L leaves, okay?\n[2189.8s - 2195.8s] There are 4 leaves over here, in a perfect binary tree, suppose.\n[2195.8s - 2203.8s] So, if you have 4 trees over here, then it is asking you in a binary tree with L leaves,\n[2203.8s - 2208.8s] okay? L is 4 over here, what are the total number of nodes?\n[2208.8s - 2218.8s] It is 2L minus 1, but this is applicable only in what?\n[2218.8s - 2223.8s] Full binary tree.\n[2223.8s - 2230.8s] This, I do not want you to do it, I will do it as we go forward.\n[2230.8s - 2237.8s] Please go through what you have written.\n[2260.8s - 2267.8s] Have you gone through this?\n[2267.8s - 2268.8s] Okay?\n[2268.8s - 2273.8s] Should I give you some sums to practice right now or you will directly do it in MCQs?\n[2273.8s - 2274.8s] Very good.\n[2274.8s - 2280.8s] Construction of a binary, now comes programming today, okay?\n[2280.8s - 2286.8s] You want to code this or should we go to traversals directly?\n[2287.8s - 2290.8s] Missing coding, okay?\n[2290.8s - 2295.8s] Construction of a binary tree, how are you going to construct it with the help of node?\n[2295.8s - 2298.8s] What is this again?\n[2298.8s - 2299.8s] Node.\n[2299.8s - 2301.8s] Now your node will have what?\n[2301.8s - 2306.8s] Data, left, right?\n[2306.8s - 2307.8s] Okay?\n[2307.8s - 2314.8s] Before going here and writing your coding, I want you people, we will give you in the exam,\n[2314.8s - 2318.8s] create a full binary tree with 3 levels.\n[2318.8s - 2320.8s] Means, what will you create?\n[2320.8s - 2325.8s] We will even give you nodes.\n[2325.8s - 2327.8s] How will you construct it?\n[2327.8s - 2329.8s] Tell me, how will you make it?\n[2329.8s - 2333.8s] With 3 levels.\n[2333.8s - 2336.8s] What is full binary tree?\n[2336.8s - 2340.8s] 0 or 2.\n[2341.8s - 2342.8s] You have it.\n[2342.8s - 2344.8s] And how many levels do you make?\n[2344.8s - 2345.8s] 3.\n[2345.8s - 2351.8s] So how will you make a tree?\n[2351.8s - 2354.8s] How to make a tree?\n[2354.8s - 2358.8s] Level 0, level 1, level 2 means 3 levels.\n[2358.8s - 2359.8s] Okay?\n[2359.8s - 2361.8s] How to make a binary tree?\n[2361.8s - 2367.8s] Will you first make left or will you make right?\n[2370.8s - 2379.8s] Next one, create a complete binary tree with 3 levels.\n[2379.8s - 2382.8s] How many nodes would it have?\n[2382.8s - 2390.8s] Complete binary tree.\n[2390.8s - 2393.8s] 6 or 5?\n[2394.8s - 2400.8s] Create a skewed tree with 5 nodes.\n[2400.8s - 2407.8s] Create a skewed tree with 5 nodes.\n[2407.8s - 2415.8s] Your words, left skewed, right skewed, your words.\n[2415.8s - 2419.8s] Now you are drawing, right?\n[2419.8s - 2422.8s] They will code it.\n[2422.8s - 2424.8s] All the trees.\n[2424.8s - 2427.8s] Okay? Skewed tree with 5 nodes.\n[2427.8s - 2433.8s] Create a balanced tree with 2 levels.\n[2436.8s - 2442.8s] Is a complete tree always balanced?\n[2442.8s - 2444.8s] Why?\n[2444.8s - 2451.8s] Difference can be 0 or 1.\n[2451.8s - 2454.8s] No, if it is 0 also it is completely balanced.\n[2454.8s - 2464.8s] So complete binary tree in left sub tree is equal to right sub tree's height.\n[2464.8s - 2469.8s] Is a complete tree completely balanced?\n[2469.8s - 2474.8s] Is a full tree completely balanced?\n[2474.8s - 2478.8s] Q.\n[2478.8s - 2482.8s] You say it depends on the height.\n[2482.8s - 2484.8s] Leave it at that.\n[2484.8s - 2487.8s] Is full, complete.\n[2487.8s - 2497.8s] Is perfect binary tree balanced?\n[2497.8s - 2504.8s] Let's create a complete binary tree with 2 levels.\n[2504.8s - 2508.8s] Okay?\n[2508.8s - 2513.8s] We will learn traversal, we will do traversal on those trees.\n[2513.8s - 2515.8s] Let's start.\n[2515.8s - 2520.8s] First we will construct, then we will do a lot of things.\n[2520.8s - 2522.8s] Practice lab, we are opening up.\n[2522.8s - 2527.8s] I want you people to practice only on decilator.\n[2527.8s - 2531.8s] Not your VS code.\n[2531.8s - 2534.8s] Did you start at least?\n[2534.8s - 2536.8s] Okay?\n[2536.8s - 2539.8s] Parent.\n[2539.8s - 2543.8s] We don't want that right now because STL has got only single.\n[2543.8s - 2546.8s] Yeah, this is better.\n[2546.8s - 2548.8s] Yeah, please do it again.\n[2548.8s - 2552.8s] Hey, don't do append in all.\n[2552.8s - 2555.8s] We will be having methods called as insertion division.\n[2555.8s - 2557.8s] What will happen?\n[2557.8s - 2561.8s] Now you are just going to make a normal tree.\n[2561.8s - 2564.8s] What do you mean by normal tree?\n[2564.8s - 2568.8s] I have this node.\n[2568.8s - 2575.8s] This is a tree I want to create.\n[2575.8s - 2579.8s] So I will create one node.\n[2579.8s - 2586.8s] Star root equal to new node 3.\n[2586.8s - 2591.8s] Root left equal new node.\n[2591.8s - 2594.8s] Root root right equal new node.\n[2594.8s - 2597.8s] Suppose there is one more node here.\n[2597.8s - 2599.8s] 8 and 9.\n[2599.8s - 2603.8s] Then with root only I will go.\n[2603.8s - 2604.8s] I am lazy.\n[2604.8s - 2605.8s] That's what I am doing.\n[2605.8s - 2609.8s] That root left k right.\n[2609.8s - 2614.8s] I am putting it.\n[2614.8s - 2616.8s] Correct?\n[2616.8s - 2621.8s] root k left k.\n[2621.8s - 2622.8s] Sorry.\n[2622.8s - 2624.8s] Here 9 will come.\n[2624.8s - 2625.8s] Left k left.\n[2625.8s - 2627.8s] I will put what?\n[2627.8s - 2629.8s] 8.\n[2629.8s - 2630.8s] So can you create?\n[2630.8s - 2632.8s] Because you see that it comes up levels.\n[2632.8s - 2638.8s] You have to level 2, level 3, level 2, level 3.\n[2638.8s - 2639.8s] Okay?\n[2639.8s - 2645.8s] 4, 5, 6, 7.\n[2645.8s - 2654.8s] So if I want to put 7, I would say root left right equal to new node.\n[2654.8s - 2664.8s] 8 equal to new node 7.\n[2664.8s - 2674.8s] That will create all the trees that you have created so far in your notebooks.\n[2674.8s - 2680.8s] But this root is when you create a new root node.\n[2680.8s - 2682.8s] This root has a good name.\n[2682.8s - 2684.8s] Full binary root and complete.\n[2684.8s - 2687.8s] Because I will be asking you to do with that.\n[2687.8s - 2688.8s] Okay?\n[2688.8s - 2694.8s] When we do traverse and all I will ask you to pick up that particular tree and do the traversal.\n[2694.8s - 2697.8s] Left skewed tree was created.\n[2697.8s - 2703.8s] Complete binary, full whatever all those things were here.\n[2703.8s - 2708.8s] Full binary, perfect binary, complete binary skewed.\n[2709.8s - 2713.8s] And one balanced tree, five trees.\n[2713.8s - 2721.8s] I want all of you please use one pointer only.\n[2721.8s - 2725.8s] Okay?\n[2725.8s - 2732.8s] One pointer is unidirectional.\n[2732.8s - 2734.8s] Parents should only point to child.\n[2734.8s - 2737.8s] Don't make child point to parent.\n[2737.8s - 2741.8s] In all those trees that you have.\n[2741.8s - 2752.8s] Can you write some code which will only print leaf notes of that tree?\n[2752.8s - 2761.8s] Print the leaf notes of all the old trees say full binary tree leaf notes printed.\n[2761.8s - 2763.8s] Complete binary tree printed.\n[2763.8s - 2765.8s] Scued printed.\n[2765.8s - 2769.8s] Scued may get there.\n[2769.8s - 2772.8s] One only.\n[2772.8s - 2777.8s] Print the leaf notes of all the trees that you have created so far.\n[2777.8s - 2782.8s] If you have access only to one node that is your root node.\n[2782.8s - 2788.8s] All the people who have finished creating trees programmatically.\n[2788.8s - 2791.8s] All the four trees that you have created.\n[2791.8s - 2794.8s] Please only print the leaf notes of those trees.\n[2794.8s - 2796.8s] What is a leaf node?\n[2796.8s - 2799.8s] Both the pointers should be null.\n[2799.8s - 2803.8s] If both the pointers are null, it is a leaf node.\n[2803.8s - 2806.8s] You have your diagram with you in the book.\n[2806.8s - 2810.8s] You can check whether your code is actually working or not.\n[2810.8s - 2812.8s] Okay?\n[2812.8s - 2818.8s] First of all, you will tell me whether it's possible or not.\n[2818.8s - 2824.8s] I want you to hit that thing and tell me, how can I do this?\n[2824.8s - 2826.8s] That's why I want you to do it.\n[2826.8s - 2829.8s] Can you give me all the leaf notes?\n[2829.8s - 2833.8s] It is a data structure which you have created.\n[2833.8s - 2840.8s] Okay, are you trying to find the leaf notes?\n[2840.8s - 2842.8s] Is it giving you an error?\n[2842.8s - 2847.8s] Is it stopping? Is it not working as you planned it to work?\n[2847.8s - 2848.8s] Okay.\n[2848.8s - 2853.8s] All of you are able to print leaf notes or no?\n[2853.8s - 2854.8s] Good.\n[2854.8s - 2855.8s] Did I ever...\n[2855.8s - 2856.8s] Hey!\n[2856.8s - 2858.8s] You have to identify the problem today.\n[2858.8s - 2860.8s] Why can't you go ahead?\n[2860.8s - 2861.8s] So, what do you think?\n[2861.8s - 2863.8s] If you have added double node.\n[2863.8s - 2866.8s] So, you will be able to go?\n[2866.8s - 2869.8s] If they are double pointers.\n[2869.8s - 2873.8s] No, there also you can't go check.\n[2873.8s - 2877.8s] Now, how will a computer, if you can't traverse?\n[2877.8s - 2884.8s] This is called visiting every node is called as traversal.\n[2884.8s - 2887.8s] Basically, let's try to understand what is happening.\n[2887.8s - 2891.8s] Now, basically, you have constructed the tree.\n[2891.8s - 2893.8s] Can I say tree is constructed?\n[2893.8s - 2894.8s] Yes.\n[2894.8s - 2898.8s] If I ask you to print the tree, what will you do?\n[2898.8s - 2900.8s] How are you going to print the tree?\n[2900.8s - 2903.8s] Is it a linear data structure?\n[2903.8s - 2905.8s] No.\n[2905.8s - 2909.8s] So, if you want to print the tree and you start printing the tree,\n[2909.8s - 2912.8s] what will get printed?\n[2912.8s - 2915.8s] Suppose, you have root node.\n[2915.8s - 2917.8s] I will say it now.\n[2917.8s - 2919.8s] Print the entire tree.\n[2919.8s - 2926.8s] Print 3, 4, 5, 6, 7.\n[2926.8s - 2929.8s] What will happen?\n[2929.8s - 2933.8s] Forget about 3, 4, 5, 6, 7.\n[2933.8s - 2937.8s] If I want to look for a node, listen to this question then.\n[2937.8s - 2940.8s] Forget about traversing and printing it.\n[2940.8s - 2943.8s] It's very difficult to print.\n[2943.8s - 2949.8s] Suppose, I want to look for a node or I want to test.\n[2949.8s - 2959.8s] If I have 7 or no in this particular tree,\n[2959.8s - 2961.8s] look, wait a minute.\n[2961.8s - 2964.8s] It's a little complex.\n[2964.8s - 2969.8s] 8, 9.\n[2969.8s - 2974.8s] I want to check whether 9 is there or not in this tree.\n[2974.8s - 2976.8s] How will I check?\n[2976.8s - 2981.8s] You have only root node.\n[2981.8s - 2985.8s] What value do you have?\n[2985.8s - 2989.8s] Suppose, I put black paper on it.\n[2989.8s - 2992.8s] And you have to find out that 9th node is there.\n[2992.8s - 2997.8s] What are you doing?\n[2997.8s - 3000.8s] How will you do 1 by 1 check?\n[3000.8s - 3002.8s] I am in 3.\n[3002.8s - 3003.8s] Where should I go?\n[3003.8s - 3007.8s] Left or right?\n[3007.8s - 3009.8s] T4 left.\n[3009.8s - 3010.8s] Okay.\n[3010.8s - 3012.8s] 3 by 4.\n[3012.8s - 3014.8s] Where should I go?\n[3014.8s - 3017.8s] Left or right?\n[3017.8s - 3020.8s] Left, 6 by 1.\n[3020.8s - 3022.8s] Where should I go from here?\n[3022.8s - 3026.8s] I am stuck.\n[3026.8s - 3028.8s] How should I go?\n[3028.8s - 3030.8s] What is the point?\n[3030.8s - 3031.8s] Down.\n[3037.8s - 3038.8s] Where is 9th?\n[3038.8s - 3039.8s] I have 5th.\n[3039.8s - 3041.8s] I don't have 4.\n[3041.8s - 3043.8s] Correct.\n[3043.8s - 3044.8s] No.\n[3044.8s - 3048.8s] 3 left, 4 left, 6.\n[3048.8s - 3049.8s] 6 by 1.\n[3049.8s - 3052.8s] 6, I know, is the leaf node.\n[3052.8s - 3053.8s] Okay.\n[3053.8s - 3057.8s] Now from here, where should I go?\n[3058.8s - 3061.8s] Again, I will start.\n[3061.8s - 3064.8s] Are you getting the problem?\n[3064.8s - 3067.8s] Got the problem?\n[3067.8s - 3068.8s] Okay.\n[3068.8s - 3072.8s] So, is it a linear data structure to travel next, next, next till the fine time?\n[3072.8s - 3074.8s] You don't find null?\n[3074.8s - 3076.8s] No.\n[3076.8s - 3078.8s] What kind of a problem it is?\n[3078.8s - 3079.8s] Non-linear.\n[3079.8s - 3084.8s] Non-linear when you need to visit roots or when you need to visit nodes,\n[3084.8s - 3087.8s] you should keep one thing in mind.\n[3087.8s - 3091.8s] What node did I visit?\n[3091.8s - 3095.8s] I should not visit that node again.\n[3095.8s - 3099.8s] From this node, where can I go?\n[3099.8s - 3101.8s] I had come to this node earlier.\n[3101.8s - 3105.8s] Now, I had taken the left part of it.\n[3105.8s - 3108.8s] Now, I should take the right part of it.\n[3108.8s - 3112.8s] Going through each and every node in a tree\n[3112.8s - 3117.8s] is called as traversing a tree.\n[3117.8s - 3118.8s] Okay.\n[3118.8s - 3121.8s] So, if I say I want to traverse a tree,\n[3121.8s - 3126.8s] it means that I will have some mechanism to traverse the tree\n[3126.8s - 3131.8s] and I will visit each and every node in the tree.\n[3131.8s - 3134.8s] If I visit each and every node in the tree,\n[3134.8s - 3137.8s] will I be able to find my 9?\n[3137.8s - 3138.8s] Yes.\n[3138.8s - 3141.8s] Will I be able to search for a node in a tree?\n[3141.8s - 3143.8s] Very easily.\n[3143.8s - 3144.8s] Okay.\n[3144.8s - 3149.8s] So, now, tree data structure tells you\n[3149.8s - 3153.8s] you need to traverse creation of a tree super simple.\n[3153.8s - 3157.8s] All of you created 4, 4, 5, 5 trees.\n[3157.8s - 3160.8s] The difficult part in tree is what?\n[3160.8s - 3161.8s] Traversing.\n[3161.8s - 3162.8s] Okay.\n[3162.8s - 3165.8s] So, there are around\n[3165.8s - 3170.8s] four mechanisms of traversing a tree.\n[3171.8s - 3177.8s] In order, pre-order, post-order, level order.\n[3177.8s - 3178.8s] Okay.\n[3178.8s - 3181.8s] Forget about in order, pre-order, post-order,\n[3181.8s - 3184.8s] it has got a big algorithm and all that stuff.\n[3184.8s - 3188.8s] What do you think would be level order?\n[3188.8s - 3190.8s] So, how will I go?\n[3190.8s - 3192.8s] First, what would come?\n[3192.8s - 3194.8s] Three,\n[3194.8s - 3197.8s] four, five,\n[3197.8s - 3200.8s] six, seven, eight.\n[3200.8s - 3201.8s] No.\n[3201.8s - 3202.8s] Okay.\n[3202.8s - 3205.8s] This would be the order.\n[3205.8s - 3206.8s] Now, a question.\n[3206.8s - 3209.8s] This would be the challenge of the day today.\n[3209.8s - 3212.8s] I am not going to say according to my thoughts.\n[3212.8s - 3214.8s] Okay.\n[3214.8s - 3217.8s] Level order.\n[3217.8s - 3219.8s] Traversing.\n[3219.8s - 3224.8s] Will you do it with stack or will you do it with Q?\n[3224.8s - 3225.8s] How?\n[3225.8s - 3227.8s] We are thinking here.\n[3227.8s - 3229.8s] Class is for thinking right now.\n[3229.8s - 3232.8s] What is the system?\n[3232.8s - 3236.8s] Now, what will come first in Q?\n[3236.8s - 3237.8s] Three.\n[3237.8s - 3240.8s] What will come after three?\n[3240.8s - 3241.8s] Four.\n[3241.8s - 3242.8s] Four, five,\n[3242.8s - 3250.8s] four, five.\n[3250.8s - 3251.8s] Socho.\n[3251.8s - 3255.8s] Three, four, five, how will you get it?\n[3255.8s - 3262.8s] Left and right of the one who has already gone into the Q.\n[3262.8s - 3263.8s] Correct?\n[3263.8s - 3268.8s] So, I have given you a small hint.\n[3268.8s - 3270.8s] Are you understanding?\n[3270.8s - 3273.8s] Try to work on it.\n[3273.8s - 3275.8s] Discuss among yourself.\n[3275.8s - 3279.8s] Next class, we will first start with level traversal.\n[3279.8s - 3280.8s] Easy way.\n[3280.8s - 3281.8s] Q.\n[3281.8s - 3284.8s] Let's see how many of you have thought about it.\n[3284.8s - 3290.8s] Again, if you check,\n[3290.8s - 3294.8s] I don't want you to listen to his solution.\n[3294.8s - 3297.8s] You will corrupt your mind.\n[3297.8s - 3298.8s] Okay.\n[3298.8s - 3300.8s] You will start thinking what he thinks.\n[3300.8s - 3303.8s] You can't run your house on what he thinks.\n[3303.8s - 3308.8s] No, don't listen to any solution.\n[3308.8s - 3310.8s] Try your solution on your own,\n[3310.8s - 3314.8s] just like we did in the stack.\n[3314.8s - 3316.8s] When you create your own solution,\n[3316.8s - 3318.8s] it will always remain with your head.\n[3318.8s - 3320.8s] Somebody explaining you solution tomorrow,\n[3320.8s - 3323.8s] again, you will forget what the solution was.\n[3323.8s - 3324.8s] Clear?\n[3324.8s - 3326.8s] So, the answer is,\n[3326.8s - 3328.8s] we want to do level,\n[3328.8s - 3332.8s] the rest of the preposterous order they are difficult.\n[3332.8s - 3335.8s] We will understand how it works in the class itself.\n[3335.8s - 3338.8s] Level order is something which you can do it on your own.\n[3338.8s - 3341.8s] If you try to think a little bit,\n[3341.8s - 3343.8s] answer to your question is,\n[3343.8s - 3345.8s] how it should get printed,\n[3345.8s - 3348.8s] three, four, five, six, seven, eight,\n[3348.8s - 3350.8s] and then nine.\n[3350.8s - 3353.8s] What kind of data structure would you use\n[3353.8s - 3355.8s] to traverse this tree?\n[3355.8s - 3357.8s] Q.\n[3357.8s - 3358.8s] Two things given to you,\n[3358.8s - 3361.8s] and get me an answer.\n[3361.8s - 3362.8s] Clear?\n[3362.8s - 3363.8s] Okay.\n[3363.8s - 3365.8s] That would be all guys for today.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 8.88,
+      "text": "Yesterday, or in the last class, a boy asked me, ma'am, if there is only one root node,"
+    },
+    {
+      "start": 8.88,
+      "end": 13.8,
+      "text": "is it a tree?"
+    },
+    {
+      "start": 13.8,
+      "end": 17.84,
+      "text": "I am asking you that question."
+    },
+    {
+      "start": 17.84,
+      "end": 27.0,
+      "text": "If I have only one over here, is it still a tree, yes, it is a tree."
+    },
+    {
+      "start": 27.0,
+      "end": 33.6,
+      "text": "That is the height of that tree."
+    },
+    {
+      "start": 33.6,
+      "end": 35.32,
+      "text": "So it depends."
+    },
+    {
+      "start": 35.32,
+      "end": 37.0,
+      "text": "What are you considering the height?"
+    },
+    {
+      "start": 37.0,
+      "end": 45.0,
+      "text": "Are you considering the nodes as height or are you considering the links as height?"
+    },
+    {
+      "start": 45.0,
+      "end": 51.04,
+      "text": "90% of online platforms consider links as heights."
+    },
+    {
+      "start": 51.04,
+      "end": 54.8,
+      "text": "Links is what connection between two nodes."
+    },
+    {
+      "start": 54.8,
+      "end": 59.8,
+      "text": "So if I have only root node in my tree, what is my height?"
+    },
+    {
+      "start": 59.8,
+      "end": 60.8,
+      "text": "0."
+    },
+    {
+      "start": 60.8,
+      "end": 64.8,
+      "text": "What is my depth?"
+    },
+    {
+      "start": 64.8,
+      "end": 67.8,
+      "text": "0."
+    },
+    {
+      "start": 67.8,
+      "end": 69.8,
+      "text": "Okay, height is 0."
+    },
+    {
+      "start": 69.8,
+      "end": 70.8,
+      "text": "Depth is 0."
+    },
+    {
+      "start": 70.8,
+      "end": 74.8,
+      "text": "Leaves are 1."
+    },
+    {
+      "start": 74.8,
+      "end": 76.8,
+      "text": "Parent is 1."
+    },
+    {
+      "start": 76.8,
+      "end": 78.8,
+      "text": "Root node is 1."
+    },
+    {
+      "start": 78.8,
+      "end": 80.8,
+      "text": "Are we clear?"
+    },
+    {
+      "start": 80.8,
+      "end": 82.8,
+      "text": "Everything is 1."
+    },
+    {
+      "start": 82.8,
+      "end": 88.8,
+      "text": "Now, what is the difference between a binary tree and a normal tree?"
+    },
+    {
+      "start": 88.8,
+      "end": 91.8,
+      "text": "You have read this, right?"
+    },
+    {
+      "start": 91.8,
+      "end": 98.8,
+      "text": "Tell me the difference between a normal tree and a binary tree."
+    },
+    {
+      "start": 98.8,
+      "end": 102.8,
+      "text": "We studied trees in the last class, correct?"
+    },
+    {
+      "start": 102.8,
+      "end": 106.8,
+      "text": "Today we will step further and study about binary trees."
+    },
+    {
+      "start": 106.8,
+      "end": 110.8,
+      "text": "What is the difference between the two?"
+    },
+    {
+      "start": 110.8,
+      "end": 113.8,
+      "text": "Every tree will have a root node?"
+    },
+    {
+      "start": 113.8,
+      "end": 115.8,
+      "text": "Yes."
+    },
+    {
+      "start": 115.8,
+      "end": 121.8,
+      "text": "That is one common thing, second thing."
+    },
+    {
+      "start": 121.8,
+      "end": 122.8,
+      "text": "Very good."
+    },
+    {
+      "start": 122.8,
+      "end": 127.8,
+      "text": "In a normal tree, it contains more than two children."
+    },
+    {
+      "start": 127.8,
+      "end": 130.8,
+      "text": "What about binary tree?"
+    },
+    {
+      "start": 130.8,
+      "end": 132.8,
+      "text": "At most means what?"
+    },
+    {
+      "start": 132.8,
+      "end": 134.8,
+      "text": "Can it contain 0?"
+    },
+    {
+      "start": 134.8,
+      "end": 136.8,
+      "text": "1, 2."
+    },
+    {
+      "start": 136.8,
+      "end": 145.8,
+      "text": "What is the subtree in this?"
+    },
+    {
+      "start": 145.8,
+      "end": 148.8,
+      "text": "Can there be a subtree in a binary tree also?"
+    },
+    {
+      "start": 148.8,
+      "end": 154.8,
+      "text": "Tell me the subtree in this."
+    },
+    {
+      "start": 154.8,
+      "end": 159.8,
+      "text": "7, 2, 6, 5, 11 is 1 subtree."
+    },
+    {
+      "start": 159.8,
+      "end": 163.8,
+      "text": "6, 5, 11 is another subtree."
+    },
+    {
+      "start": 163.8,
+      "end": 173.8,
+      "text": "9, 9, 5, 9, 5, these are all the subtrees listed in this particular binary tree."
+    },
+    {
+      "start": 173.8,
+      "end": 175.8,
+      "text": "So, the major difference is what?"
+    },
+    {
+      "start": 175.8,
+      "end": 180.8,
+      "text": "In a normal tree, you can have n number of children in a binary tree,"
+    },
+    {
+      "start": 180.8,
+      "end": 184.8,
+      "text": "you can have at most two children only."
+    },
+    {
+      "start": 184.8,
+      "end": 188.8,
+      "text": "One is left and one is the right one."
+    },
+    {
+      "start": 188.8,
+      "end": 192.8,
+      "text": "How many internal nodes are here?"
+    },
+    {
+      "start": 193.8,
+      "end": 198.8,
+      "text": "What are internal nodes?"
+    },
+    {
+      "start": 198.8,
+      "end": 202.8,
+      "text": "How many internal nodes?"
+    },
+    {
+      "start": 202.8,
+      "end": 210.8,
+      "text": "1, 7, 6, 9 and 9."
+    },
+    {
+      "start": 210.8,
+      "end": 215.8,
+      "text": "Every node which has got children becomes internal node."
+    },
+    {
+      "start": 215.8,
+      "end": 219.8,
+      "text": "What is an external node?"
+    },
+    {
+      "start": 219.8,
+      "end": 224.8,
+      "text": "What are external nodes here?"
+    },
+    {
+      "start": 224.8,
+      "end": 231.8,
+      "text": "What is the maximum degree of any node in a binary tree?"
+    },
+    {
+      "start": 231.8,
+      "end": 232.8,
+      "text": "2."
+    },
+    {
+      "start": 232.8,
+      "end": 241.8,
+      "text": "What would be the height of a binary tree?"
+    },
+    {
+      "start": 241.8,
+      "end": 245.8,
+      "text": "Does it depend on binary tree or any tree?"
+    },
+    {
+      "start": 245.8,
+      "end": 251.8,
+      "text": "Or could always be the height?"
+    },
+    {
+      "start": 251.8,
+      "end": 257.8,
+      "text": "Longest distance from the leaf node to the root."
+    },
+    {
+      "start": 257.8,
+      "end": 264.8,
+      "text": "So, a binary tree is a special type of tree's data structure in which blah, blah, blah."
+    },
+    {
+      "start": 264.8,
+      "end": 267.8,
+      "text": "At most have got two children, left, right."
+    },
+    {
+      "start": 267.8,
+      "end": 273.8,
+      "text": "It can be there, it cannot be there."
+    },
+    {
+      "start": 273.8,
+      "end": 279.8,
+      "text": "So, there are different types of binary trees, first understand."
+    },
+    {
+      "start": 279.8,
+      "end": 297.8,
+      "text": "This is 1, 2, 3, 4, 5, 6, 7."
+    },
+    {
+      "start": 297.8,
+      "end": 304.8,
+      "text": "Now, a full binary tree is a tree in which every parent, okay."
+    },
+    {
+      "start": 304.8,
+      "end": 308.8,
+      "text": "This is a parent, who else is a parent?"
+    },
+    {
+      "start": 308.8,
+      "end": 310.8,
+      "text": "This is a parent."
+    },
+    {
+      "start": 310.8,
+      "end": 317.8,
+      "text": "Every parent will either have zero or two as children."
+    },
+    {
+      "start": 317.8,
+      "end": 322.8,
+      "text": "No parent will have one child, okay."
+    },
+    {
+      "start": 322.8,
+      "end": 325.8,
+      "text": "When this is the thing, you will call it as what?"
+    },
+    {
+      "start": 325.8,
+      "end": 327.8,
+      "text": "It is a full binary."
+    },
+    {
+      "start": 327.8,
+      "end": 331.8,
+      "text": "Now, tell me nodes which have got two children here."
+    },
+    {
+      "start": 331.8,
+      "end": 335.8,
+      "text": "1, 2, 5."
+    },
+    {
+      "start": 335.8,
+      "end": 338.8,
+      "text": "Tell me which has got zero children."
+    },
+    {
+      "start": 338.8,
+      "end": 343.8,
+      "text": "3, 4, 6, 7."
+    },
+    {
+      "start": 343.8,
+      "end": 346.8,
+      "text": "So, what is a full binary tree?"
+    },
+    {
+      "start": 346.8,
+      "end": 349.8,
+      "text": "Either zero or two children."
+    },
+    {
+      "start": 349.8,
+      "end": 352.8,
+      "text": "Suppose I put it over here and say 8."
+    },
+    {
+      "start": 352.8,
+      "end": 355.8,
+      "text": "Is it a full binary tree?"
+    },
+    {
+      "start": 355.8,
+      "end": 356.8,
+      "text": "No."
+    },
+    {
+      "start": 356.8,
+      "end": 359.8,
+      "text": "So, if I ask you to create my question to you,"
+    },
+    {
+      "start": 359.8,
+      "end": 364.8,
+      "text": "would be what an exam create a full binary tree?"
+    },
+    {
+      "start": 364.8,
+      "end": 365.8,
+      "text": "Okay."
+    },
+    {
+      "start": 365.8,
+      "end": 368.8,
+      "text": "So, then you should know what she is asking me to create."
+    },
+    {
+      "start": 368.8,
+      "end": 369.8,
+      "text": "Okay."
+    },
+    {
+      "start": 369.8,
+      "end": 372.8,
+      "text": "How and what, how the tree should look like?"
+    },
+    {
+      "start": 372.8,
+      "end": 375.8,
+      "text": "You should have an answer for that."
+    },
+    {
+      "start": 375.8,
+      "end": 379.8,
+      "text": "Now, I don't want to talk about this at all,"
+    },
+    {
+      "start": 379.8,
+      "end": 383.8,
+      "text": "because there are around five to six types of trees."
+    },
+    {
+      "start": 383.8,
+      "end": 387.8,
+      "text": "Instead of giving you a formula for each and every one,"
+    },
+    {
+      "start": 387.8,
+      "end": 390.8,
+      "text": "I will give you a generic formula."
+    },
+    {
+      "start": 390.8,
+      "end": 393.8,
+      "text": "You should know what type of tree it is,"
+    },
+    {
+      "start": 393.8,
+      "end": 395.8,
+      "text": "what are the constraints with the tree,"
+    },
+    {
+      "start": 395.8,
+      "end": 398.8,
+      "text": "and you apply that formula to all the trees."
+    },
+    {
+      "start": 398.8,
+      "end": 402.8,
+      "text": "Let's do that rather than learning formula for each and every tree."
+    },
+    {
+      "start": 402.8,
+      "end": 403.8,
+      "text": "Okay."
+    },
+    {
+      "start": 403.8,
+      "end": 406.8,
+      "text": "So, this is my full binary tree."
+    },
+    {
+      "start": 406.8,
+      "end": 409.8,
+      "text": "Perfect binary tree."
+    },
+    {
+      "start": 409.8,
+      "end": 414.8,
+      "text": "Perfect binary tree tells you what?"
+    },
+    {
+      "start": 414.8,
+      "end": 420.8,
+      "text": "Or every internal node will have two child nodes,"
+    },
+    {
+      "start": 420.8,
+      "end": 424.8,
+      "text": "and all the leaf nodes would be at same level."
+    },
+    {
+      "start": 424.8,
+      "end": 427.8,
+      "text": "It's a perfect binary tree."
+    },
+    {
+      "start": 428.8,
+      "end": 433.8,
+      "text": "You are not leaving anything here at anybody's mercy."
+    },
+    {
+      "start": 433.8,
+      "end": 434.8,
+      "text": "Okay."
+    },
+    {
+      "start": 434.8,
+      "end": 436.8,
+      "text": "If there are three levels,"
+    },
+    {
+      "start": 436.8,
+      "end": 439.8,
+      "text": "can I count the total number of leaves"
+    },
+    {
+      "start": 439.8,
+      "end": 441.8,
+      "text": "if I know the levels in a binary tree?"
+    },
+    {
+      "start": 441.8,
+      "end": 442.8,
+      "text": "Yes."
+    },
+    {
+      "start": 442.8,
+      "end": 443.8,
+      "text": "Okay."
+    },
+    {
+      "start": 443.8,
+      "end": 448.8,
+      "text": "So, perfect binary tree means I will have a node."
+    },
+    {
+      "start": 448.8,
+      "end": 454.8,
+      "text": "Every node, I will make sure have got two children."
+    },
+    {
+      "start": 454.8,
+      "end": 459.8,
+      "text": "So, I will have zero children to fund over here at all."
+    },
+    {
+      "start": 459.8,
+      "end": 460.8,
+      "text": "Okay."
+    },
+    {
+      "start": 460.8,
+      "end": 463.8,
+      "text": "And all because here also,"
+    },
+    {
+      "start": 463.8,
+      "end": 466.8,
+      "text": "suppose this four has got two."
+    },
+    {
+      "start": 466.8,
+      "end": 469.8,
+      "text": "Does this become a complete binary tree?"
+    },
+    {
+      "start": 469.8,
+      "end": 470.8,
+      "text": "No."
+    },
+    {
+      "start": 470.8,
+      "end": 471.8,
+      "text": "Why?"
+    },
+    {
+      "start": 471.8,
+      "end": 473.8,
+      "text": "Five does not have anything."
+    },
+    {
+      "start": 473.8,
+      "end": 475.8,
+      "text": "Five, if I put here,"
+    },
+    {
+      "start": 475.8,
+      "end": 477.8,
+      "text": "still it does not have anything."
+    },
+    {
+      "start": 477.8,
+      "end": 479.8,
+      "text": "Are we clear?"
+    },
+    {
+      "start": 479.8,
+      "end": 483.8,
+      "text": "So, full binary tree tells you what?"
+    },
+    {
+      "start": 483.8,
+      "end": 488.8,
+      "text": "Zero or one children to all the internal nodes."
+    },
+    {
+      "start": 488.8,
+      "end": 491.8,
+      "text": "Perfect binary tree tells you what?"
+    },
+    {
+      "start": 491.8,
+      "end": 496.8,
+      "text": "All internal nodes should have two child,"
+    },
+    {
+      "start": 496.8,
+      "end": 498.8,
+      "text": "and all of them should end."
+    },
+    {
+      "start": 498.8,
+      "end": 502.8,
+      "text": "All the leaf nodes should be at the same level."
+    },
+    {
+      "start": 502.8,
+      "end": 504.8,
+      "text": "So, you tell me one thing."
+    },
+    {
+      "start": 504.8,
+      "end": 507.8,
+      "text": "Is tree one a perfect binary?"
+    },
+    {
+      "start": 507.8,
+      "end": 508.8,
+      "text": "Yes."
+    },
+    {
+      "start": 508.8,
+      "end": 509.8,
+      "text": "Why?"
+    },
+    {
+      "start": 509.8,
+      "end": 510.8,
+      "text": "One node only."
+    },
+    {
+      "start": 510.8,
+      "end": 512.8,
+      "text": "No children at all."
+    },
+    {
+      "start": 512.8,
+      "end": 515.8,
+      "text": "Is tree two a perfect binary?"
+    },
+    {
+      "start": 515.8,
+      "end": 516.8,
+      "text": "Yes."
+    },
+    {
+      "start": 516.8,
+      "end": 520.8,
+      "text": "One root node exactly two children."
+    },
+    {
+      "start": 520.8,
+      "end": 524.8,
+      "text": "Third one, teeth."
+    },
+    {
+      "start": 524.8,
+      "end": 526.8,
+      "text": "Third tree."
+    },
+    {
+      "start": 526.8,
+      "end": 527.8,
+      "text": "Yes."
+    },
+    {
+      "start": 527.8,
+      "end": 528.8,
+      "text": "Okay."
+    },
+    {
+      "start": 528.8,
+      "end": 535.8,
+      "text": "So, why do we need all these things is when we do a traversing?"
+    },
+    {
+      "start": 535.8,
+      "end": 536.8,
+      "text": "Okay."
+    },
+    {
+      "start": 536.8,
+      "end": 541.8,
+      "text": "Or when we are doing any kind of problems based on"
+    },
+    {
+      "start": 541.8,
+      "end": 543.8,
+      "text": "what kind of a binary tree it is?"
+    },
+    {
+      "start": 543.8,
+      "end": 546.8,
+      "text": "I will know how many times I have to jump."
+    },
+    {
+      "start": 546.8,
+      "end": 549.8,
+      "text": "I will know how many nodes are there."
+    },
+    {
+      "start": 549.8,
+      "end": 554.8,
+      "text": "I will know how am I supposed to traverse through this particular tree."
+    },
+    {
+      "start": 554.8,
+      "end": 555.8,
+      "text": "Are we clear?"
+    },
+    {
+      "start": 555.8,
+      "end": 557.8,
+      "text": "So, that's the reason we should understand."
+    },
+    {
+      "start": 557.8,
+      "end": 560.8,
+      "text": "What do you mean by full binary, perfect binary,"
+    },
+    {
+      "start": 560.8,
+      "end": 562.8,
+      "text": "and all those particular things?"
+    },
+    {
+      "start": 562.8,
+      "end": 563.8,
+      "text": "Okay."
+    },
+    {
+      "start": 563.8,
+      "end": 569.8,
+      "text": "So, very simple, but very verbose it is actually."
+    },
+    {
+      "start": 569.8,
+      "end": 572.8,
+      "text": "Complete binary tree."
+    },
+    {
+      "start": 572.8,
+      "end": 573.8,
+      "text": "Confusing, yes."
+    },
+    {
+      "start": 573.8,
+      "end": 577.8,
+      "text": "But you've got to come up with some kind of tactics to understand."
+    },
+    {
+      "start": 577.8,
+      "end": 579.8,
+      "text": "Full, see?"
+    },
+    {
+      "start": 579.8,
+      "end": 580.8,
+      "text": "Perfect, see?"
+    },
+    {
+      "start": 580.8,
+      "end": 583.8,
+      "text": "What do you think about a complete binary tree?"
+    },
+    {
+      "start": 583.8,
+      "end": 586.8,
+      "text": "What do you think it should have?"
+    },
+    {
+      "start": 586.8,
+      "end": 592.8,
+      "text": "Complete means all levels should be filled."
+    },
+    {
+      "start": 592.8,
+      "end": 594.8,
+      "text": "There are how many levels?"
+    },
+    {
+      "start": 594.8,
+      "end": 595.8,
+      "text": "Three levels."
+    },
+    {
+      "start": 595.8,
+      "end": 598.8,
+      "text": "It should not end up here."
+    },
+    {
+      "start": 599.8,
+      "end": 601.8,
+      "text": "Okay."
+    },
+    {
+      "start": 601.8,
+      "end": 603.8,
+      "text": "All the levels are there."
+    },
+    {
+      "start": 603.8,
+      "end": 607.8,
+      "text": "At least one node or at least one leaf to that particular parent,"
+    },
+    {
+      "start": 607.8,
+      "end": 608.8,
+      "text": "it should be there."
+    },
+    {
+      "start": 608.8,
+      "end": 612.8,
+      "text": "Then I will say complete binary tree over here."
+    },
+    {
+      "start": 612.8,
+      "end": 613.8,
+      "text": "Okay."
+    },
+    {
+      "start": 616.8,
+      "end": 620.8,
+      "text": "Every level must be completely filled."
+    },
+    {
+      "start": 620.8,
+      "end": 623.8,
+      "text": "If I want to now add an element here."
+    },
+    {
+      "start": 623.8,
+      "end": 624.8,
+      "text": "Okay."
+    },
+    {
+      "start": 624.8,
+      "end": 626.8,
+      "text": "I want to add an element to four."
+    },
+    {
+      "start": 626.8,
+      "end": 631.8,
+      "text": "I will always start by adding the left leaf."
+    },
+    {
+      "start": 631.8,
+      "end": 633.8,
+      "text": "This is always the thing."
+    },
+    {
+      "start": 633.8,
+      "end": 634.8,
+      "text": "Okay."
+    },
+    {
+      "start": 634.8,
+      "end": 639.8,
+      "text": "Binary search tree may be always add left element first."
+    },
+    {
+      "start": 639.8,
+      "end": 642.8,
+      "text": "If elements are left in your array,"
+    },
+    {
+      "start": 642.8,
+      "end": 645.8,
+      "text": "then you put on to the right arm of it."
+    },
+    {
+      "start": 645.8,
+      "end": 649.8,
+      "text": "Otherwise always we will fill up with the left part."
+    },
+    {
+      "start": 649.8,
+      "end": 652.8,
+      "text": "So, you're also in a complete binary tree."
+    },
+    {
+      "start": 652.8,
+      "end": 655.8,
+      "text": "Suppose now I have two more elements coming in."
+    },
+    {
+      "start": 655.8,
+      "end": 658.8,
+      "text": "11, 13."
+    },
+    {
+      "start": 658.8,
+      "end": 659.8,
+      "text": "Okay."
+    },
+    {
+      "start": 659.8,
+      "end": 661.8,
+      "text": "Now I take 11."
+    },
+    {
+      "start": 661.8,
+      "end": 667.8,
+      "text": "Where do you think I should place 11?"
+    },
+    {
+      "start": 667.8,
+      "end": 668.8,
+      "text": "11."
+    },
+    {
+      "start": 668.8,
+      "end": 675.8,
+      "text": "Where do you think I should place 13 now?"
+    },
+    {
+      "start": 675.8,
+      "end": 680.8,
+      "text": "If I do this, is it a complete binary tree?"
+    },
+    {
+      "start": 680.8,
+      "end": 684.8,
+      "text": "Then how will I put it so that it remains a complete binary tree?"
+    },
+    {
+      "start": 684.8,
+      "end": 691.8,
+      "text": "Or do I need three elements to make a complete binary tree?"
+    },
+    {
+      "start": 691.8,
+      "end": 696.8,
+      "text": "Suppose if I have three elements to make it a complete binary tree,"
+    },
+    {
+      "start": 696.8,
+      "end": 702.8,
+      "text": "where do you think it should be?"
+    },
+    {
+      "start": 702.8,
+      "end": 704.8,
+      "text": "What is 4?"
+    },
+    {
+      "start": 704.8,
+      "end": 708.8,
+      "text": "11."
+    },
+    {
+      "start": 708.8,
+      "end": 711.8,
+      "text": "13."
+    },
+    {
+      "start": 711.8,
+      "end": 713.8,
+      "text": "14."
+    },
+    {
+      "start": 713.8,
+      "end": 724.8,
+      "text": "Is this level filled to go to the next level?"
+    },
+    {
+      "start": 724.8,
+      "end": 729.8,
+      "text": "Guys, every level must be completely filled."
+    },
+    {
+      "start": 729.8,
+      "end": 734.8,
+      "text": "It may not be filled to me."
+    },
+    {
+      "start": 734.8,
+      "end": 735.8,
+      "text": "Okay."
+    },
+    {
+      "start": 735.8,
+      "end": 739.8,
+      "text": "Right now, this is level 1."
+    },
+    {
+      "start": 739.8,
+      "end": 741.8,
+      "text": "This is level 2."
+    },
+    {
+      "start": 741.8,
+      "end": 743.8,
+      "text": "There are two notes in level 2."
+    },
+    {
+      "start": 743.8,
+      "end": 745.8,
+      "text": "Level 3."
+    },
+    {
+      "start": 745.8,
+      "end": 748.8,
+      "text": "How many notes in level 3?"
+    },
+    {
+      "start": 748.8,
+      "end": 750.8,
+      "text": "So, is it okay?"
+    },
+    {
+      "start": 750.8,
+      "end": 752.8,
+      "text": "Yes, it is okay."
+    },
+    {
+      "start": 752.8,
+      "end": 755.8,
+      "text": "But now if another element comes,"
+    },
+    {
+      "start": 755.8,
+      "end": 762.8,
+      "text": "should I put it here or should I go down?"
+    },
+    {
+      "start": 762.8,
+      "end": 765.8,
+      "text": "First, you should put it with 3."
+    },
+    {
+      "start": 765.8,
+      "end": 767.8,
+      "text": "So, here what will come?"
+    },
+    {
+      "start": 767.8,
+      "end": 768.8,
+      "text": "11."
+    },
+    {
+      "start": 768.8,
+      "end": 770.8,
+      "text": "4, what will come?"
+    },
+    {
+      "start": 770.8,
+      "end": 772.8,
+      "text": "13."
+    },
+    {
+      "start": 772.8,
+      "end": 775.8,
+      "text": "Then, 14."
+    },
+    {
+      "start": 775.8,
+      "end": 777.8,
+      "text": "Then, 15."
+    },
+    {
+      "start": 777.8,
+      "end": 780.8,
+      "text": "Then, 16."
+    },
+    {
+      "start": 780.8,
+      "end": 782.8,
+      "text": "17."
+    },
+    {
+      "start": 782.8,
+      "end": 785.8,
+      "text": "18."
+    },
+    {
+      "start": 785.8,
+      "end": 786.8,
+      "text": "19."
+    },
+    {
+      "start": 786.8,
+      "end": 789.8,
+      "text": "You can leave this empty."
+    },
+    {
+      "start": 789.8,
+      "end": 794.8,
+      "text": "Then I would say this is a complete binary tree."
+    },
+    {
+      "start": 794.8,
+      "end": 796.8,
+      "text": "Understood?"
+    },
+    {
+      "start": 796.8,
+      "end": 797.8,
+      "text": "Okay."
+    },
+    {
+      "start": 797.8,
+      "end": 799.8,
+      "text": "Levels must be filled means what?"
+    },
+    {
+      "start": 799.8,
+      "end": 801.8,
+      "text": "All levels should occupy."
+    },
+    {
+      "start": 801.8,
+      "end": 804.8,
+      "text": "If I have a 5 here,"
+    },
+    {
+      "start": 804.8,
+      "end": 808.8,
+      "text": "I can move on to here only if this is complete."
+    },
+    {
+      "start": 808.8,
+      "end": 812.8,
+      "text": "I can move on to the next one only if this is complete."
+    },
+    {
+      "start": 812.8,
+      "end": 813.8,
+      "text": "Okay."
+    },
+    {
+      "start": 813.8,
+      "end": 817.8,
+      "text": "That is called your complete binary tree."
+    },
+    {
+      "start": 817.8,
+      "end": 825.8,
+      "text": "The last leaf element might not have a right sibling."
+    },
+    {
+      "start": 825.8,
+      "end": 826.8,
+      "text": "Okay."
+    },
+    {
+      "start": 826.8,
+      "end": 829.8,
+      "text": "So, only the last element it should not,"
+    },
+    {
+      "start": 829.8,
+      "end": 832.8,
+      "text": "it is okay if it does not have the right sibling."
+    },
+    {
+      "start": 832.8,
+      "end": 833.8,
+      "text": "Okay."
+    },
+    {
+      "start": 833.8,
+      "end": 836.8,
+      "text": "So, can I say if there are 5?"
+    },
+    {
+      "start": 836.8,
+      "end": 837.8,
+      "text": "Okay."
+    },
+    {
+      "start": 837.8,
+      "end": 842.8,
+      "text": "How many elements are required to make this tree"
+    },
+    {
+      "start": 842.8,
+      "end": 856.8,
+      "text": "as a complete binary tree if I introduce one more level?"
+    },
+    {
+      "start": 856.8,
+      "end": 859.8,
+      "text": "So, complete binary tree is telling you what?"
+    },
+    {
+      "start": 859.8,
+      "end": 867.8,
+      "text": "What is the difference between a perfect binary tree and a complete binary tree?"
+    },
+    {
+      "start": 867.8,
+      "end": 870.8,
+      "text": "Perfect means what?"
+    },
+    {
+      "start": 870.8,
+      "end": 874.8,
+      "text": "Every level should be completely filled"
+    },
+    {
+      "start": 874.8,
+      "end": 878.8,
+      "text": "and every node should have two only."
+    },
+    {
+      "start": 878.8,
+      "end": 879.8,
+      "text": "That is what?"
+    },
+    {
+      "start": 879.8,
+      "end": 881.8,
+      "text": "Perfect binary tree."
+    },
+    {
+      "start": 881.8,
+      "end": 883.8,
+      "text": "What is complete?"
+    },
+    {
+      "start": 883.8,
+      "end": 885.8,
+      "text": "All levels must be filled."
+    },
+    {
+      "start": 885.8,
+      "end": 889.8,
+      "text": "Levels must be filled means what?"
+    },
+    {
+      "start": 889.8,
+      "end": 892.8,
+      "text": "At zero level, one node."
+    },
+    {
+      "start": 892.8,
+      "end": 896.8,
+      "text": "So, at two level how many nodes?"
+    },
+    {
+      "start": 896.8,
+      "end": 898.8,
+      "text": "Two."
+    },
+    {
+      "start": 898.8,
+      "end": 904.8,
+      "text": "At third, second level how many nodes?"
+    },
+    {
+      "start": 904.8,
+      "end": 905.8,
+      "text": "Four."
+    },
+    {
+      "start": 905.8,
+      "end": 908.8,
+      "text": "At third level how many nodes?"
+    },
+    {
+      "start": 908.8,
+      "end": 912.8,
+      "text": "So, how depending on the number of levels,"
+    },
+    {
+      "start": 912.8,
+      "end": 918.8,
+      "text": "how our node is increasing to the power of L?"
+    },
+    {
+      "start": 918.8,
+      "end": 921.8,
+      "text": "Two to the power of L."
+    },
+    {
+      "start": 921.8,
+      "end": 925.8,
+      "text": "If I have L at zero, two raised to zero is how much?"
+    },
+    {
+      "start": 925.8,
+      "end": 926.8,
+      "text": "One."
+    },
+    {
+      "start": 926.8,
+      "end": 927.8,
+      "text": "One node."
+    },
+    {
+      "start": 927.8,
+      "end": 931.8,
+      "text": "Two to the power one is how much?"
+    },
+    {
+      "start": 931.8,
+      "end": 932.8,
+      "text": "Two."
+    },
+    {
+      "start": 932.8,
+      "end": 934.8,
+      "text": "Two to the power two."
+    },
+    {
+      "start": 934.8,
+      "end": 935.8,
+      "text": "How many?"
+    },
+    {
+      "start": 935.8,
+      "end": 936.8,
+      "text": "Four."
+    },
+    {
+      "start": 936.8,
+      "end": 941.8,
+      "text": "So, is there any relationship between the level and the number of nodes"
+    },
+    {
+      "start": 941.8,
+      "end": 945.8,
+      "text": "when you are talking about perfect binary?"
+    },
+    {
+      "start": 945.8,
+      "end": 946.8,
+      "text": "Yes."
+    },
+    {
+      "start": 946.8,
+      "end": 953.8,
+      "text": "So, if somebody tells you how many nodes will a perfect binary tree have"
+    },
+    {
+      "start": 953.8,
+      "end": 957.8,
+      "text": "if there are four levels, what you should say directly?"
+    },
+    {
+      "start": 957.8,
+      "end": 960.8,
+      "text": "Two raised to four is the answer."
+    },
+    {
+      "start": 960.8,
+      "end": 962.8,
+      "text": "Please note this thing down."
+    },
+    {
+      "start": 962.8,
+      "end": 966.8,
+      "text": "Relationship between level and number of nodes."
+    },
+    {
+      "start": 966.8,
+      "end": 971.8,
+      "text": "Can you say the same thing for what was the first one?"
+    },
+    {
+      "start": 971.8,
+      "end": 974.8,
+      "text": "Full binary, Gile."
+    },
+    {
+      "start": 974.8,
+      "end": 975.8,
+      "text": "No."
+    },
+    {
+      "start": 975.8,
+      "end": 976.8,
+      "text": "Why?"
+    },
+    {
+      "start": 976.8,
+      "end": 979.8,
+      "text": "Because full binary can have children?"
+    },
+    {
+      "start": 979.8,
+      "end": 981.8,
+      "text": "It cannot have children."
+    },
+    {
+      "start": 981.8,
+      "end": 982.8,
+      "text": "Okay."
+    },
+    {
+      "start": 982.8,
+      "end": 983.8,
+      "text": "So, I am not sure."
+    },
+    {
+      "start": 983.8,
+      "end": 988.8,
+      "text": "At the maximum, it would be two to the power L."
+    },
+    {
+      "start": 988.8,
+      "end": 993.8,
+      "text": "But minimum, I do not know because I do not know whether it will have children or no."
+    },
+    {
+      "start": 993.8,
+      "end": 994.8,
+      "text": "Okay."
+    },
+    {
+      "start": 994.8,
+      "end": 1000.8,
+      "text": "So, when you are talking about a full binary tree, sorry, when you are talking about a perfect binary"
+    },
+    {
+      "start": 1000.8,
+      "end": 1006.8,
+      "text": "tree, then depending on the number of levels, can I tell how many nodes are there?"
+    },
+    {
+      "start": 1006.8,
+      "end": 1007.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1007.8,
+      "end": 1009.8,
+      "text": "How many nodes would be there?"
+    },
+    {
+      "start": 1009.8,
+      "end": 1011.8,
+      "text": "Two to the power of L."
+    },
+    {
+      "start": 1011.8,
+      "end": 1013.8,
+      "text": "Are we clear?"
+    },
+    {
+      "start": 1013.8,
+      "end": 1029.8,
+      "text": "How is your complete binary tree different from perfect binary tree?"
+    },
+    {
+      "start": 1029.8,
+      "end": 1033.8,
+      "text": "Is there a difference between two?"
+    },
+    {
+      "start": 1033.8,
+      "end": 1034.8,
+      "text": "What is the difference?"
+    },
+    {
+      "start": 1035.8,
+      "end": 1039.8,
+      "text": "You are also seeing all levels should be complete."
+    },
+    {
+      "start": 1039.8,
+      "end": 1044.8,
+      "text": "But the last one can be left incomplete."
+    },
+    {
+      "start": 1044.8,
+      "end": 1047.8,
+      "text": "So, how many nodes would be there?"
+    },
+    {
+      "start": 1047.8,
+      "end": 1050.8,
+      "text": "Two to the power L minus one."
+    },
+    {
+      "start": 1050.8,
+      "end": 1051.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1051.8,
+      "end": 1057.8,
+      "text": "So, that would be for your complete binary tree."
+    },
+    {
+      "start": 1057.8,
+      "end": 1063.8,
+      "text": "Summation of two to the power N, how?"
+    },
+    {
+      "start": 1063.8,
+      "end": 1070.8,
+      "text": "At that level, it will give total number of nodes would be summation."
+    },
+    {
+      "start": 1070.8,
+      "end": 1071.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1071.8,
+      "end": 1076.8,
+      "text": "So, this is what we look, this is what we have for our complete binary tree."
+    },
+    {
+      "start": 1076.8,
+      "end": 1081.8,
+      "text": "What is this pathological tree?"
+    },
+    {
+      "start": 1081.8,
+      "end": 1090.8,
+      "text": "Now, if I make it like this, what kind of a tree it becomes?"
+    },
+    {
+      "start": 1090.8,
+      "end": 1114.8,
+      "text": "Full binary tree means what is it?"
+    },
+    {
+      "start": 1114.8,
+      "end": 1123.8,
+      "text": "So, what is this?"
+    },
+    {
+      "start": 1123.8,
+      "end": 1126.8,
+      "text": "So, what is this?"
+    },
+    {
+      "start": 1126.8,
+      "end": 1129.8,
+      "text": "If full binary tree has it?"
+    },
+    {
+      "start": 1129.8,
+      "end": 1131.8,
+      "text": "Is this full binary?"
+    },
+    {
+      "start": 1131.8,
+      "end": 1135.8,
+      "text": "Why?"
+    },
+    {
+      "start": 1135.8,
+      "end": 1138.8,
+      "text": "Full binary says what?"
+    },
+    {
+      "start": 1138.8,
+      "end": 1143.8,
+      "text": "Zero or two for all the internal nodes."
+    },
+    {
+      "start": 1143.8,
+      "end": 1147.8,
+      "text": "Perfect binary tree means what?"
+    },
+    {
+      "start": 1147.8,
+      "end": 1150.8,
+      "text": "Only two."
+    },
+    {
+      "start": 1150.8,
+      "end": 1153.8,
+      "text": "Complete binary tree means what?"
+    },
+    {
+      "start": 1153.8,
+      "end": 1156.8,
+      "text": "Sub two."
+    },
+    {
+      "start": 1156.8,
+      "end": 1159.8,
+      "text": "Last one can be minus one."
+    },
+    {
+      "start": 1159.8,
+      "end": 1162.8,
+      "text": "But instead of two, it can be only one."
+    },
+    {
+      "start": 1162.8,
+      "end": 1164.8,
+      "text": "But one will occur."
+    },
+    {
+      "start": 1164.8,
+      "end": 1167.8,
+      "text": "I left my right my left."
+    },
+    {
+      "start": 1167.8,
+      "end": 1171.8,
+      "text": "So, what kind of a tree is this?"
+    },
+    {
+      "start": 1171.8,
+      "end": 1174.8,
+      "text": "This is not even pathological tree."
+    },
+    {
+      "start": 1174.8,
+      "end": 1175.8,
+      "text": "Why?"
+    },
+    {
+      "start": 1175.8,
+      "end": 1179.8,
+      "text": "Because pathological tree has got only single child."
+    },
+    {
+      "start": 1179.8,
+      "end": 1184.8,
+      "text": "This one has got two children."
+    },
+    {
+      "start": 1184.8,
+      "end": 1187.8,
+      "text": "So, what kind of a tree is this?"
+    },
+    {
+      "start": 1187.8,
+      "end": 1189.8,
+      "text": "Very good."
+    },
+    {
+      "start": 1189.8,
+      "end": 1192.8,
+      "text": "This is a normal binary tree."
+    },
+    {
+      "start": 1192.8,
+      "end": 1201.8,
+      "text": "Very good."
+    },
+    {
+      "start": 1201.8,
+      "end": 1203.8,
+      "text": "What is this?"
+    },
+    {
+      "start": 1203.8,
+      "end": 1204.8,
+      "text": "Skewed."
+    },
+    {
+      "start": 1204.8,
+      "end": 1206.8,
+      "text": "Skewed means what?"
+    },
+    {
+      "start": 1206.8,
+      "end": 1209.8,
+      "text": "Everything would be on the left or everything would be on the right."
+    },
+    {
+      "start": 1209.8,
+      "end": 1212.8,
+      "text": "This is a skewed."
+    },
+    {
+      "start": 1212.8,
+      "end": 1219.8,
+      "text": "It's left skewed binary tree, right skewed binary tree."
+    },
+    {
+      "start": 1219.8,
+      "end": 1225.8,
+      "text": "When a pathological or a degenerate tree is such that only left is dominated"
+    },
+    {
+      "start": 1225.8,
+      "end": 1233.8,
+      "text": "or only right is dominated, then we say it is a left skewed binary tree or a right skewed binary tree."
+    },
+    {
+      "start": 1233.8,
+      "end": 1236.8,
+      "text": "But it's left skewed or right skewed."
+    },
+    {
+      "start": 1236.8,
+      "end": 1240.8,
+      "text": "But can I say it is still a degenerative tree?"
+    },
+    {
+      "start": 1240.8,
+      "end": 1241.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1241.8,
+      "end": 1242.8,
+      "text": "Why?"
+    },
+    {
+      "start": 1242.8,
+      "end": 1244.8,
+      "text": "Single node, single parent."
+    },
+    {
+      "start": 1244.8,
+      "end": 1248.8,
+      "text": "Single parent, single child, whatever."
+    },
+    {
+      "start": 1248.8,
+      "end": 1254.8,
+      "text": "This is your skewed tree."
+    },
+    {
+      "start": 1254.8,
+      "end": 1262.8,
+      "text": "Tell me the number of nodes, the skewed tree will have."
+    },
+    {
+      "start": 1262.8,
+      "end": 1268.8,
+      "text": "Number of levels equal to number of nodes."
+    },
+    {
+      "start": 1268.8,
+      "end": 1269.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1269.8,
+      "end": 1277.8,
+      "text": "Tell me the height of a skewed tree."
+    },
+    {
+      "start": 1277.8,
+      "end": 1280.8,
+      "text": "Level minus 1."
+    },
+    {
+      "start": 1280.8,
+      "end": 1282.8,
+      "text": "Okay, because level is what?"
+    },
+    {
+      "start": 1282.8,
+      "end": 1284.8,
+      "text": "Level 0."
+    },
+    {
+      "start": 1284.8,
+      "end": 1285.8,
+      "text": "Level 1."
+    },
+    {
+      "start": 1285.8,
+      "end": 1287.8,
+      "text": "Level 2."
+    },
+    {
+      "start": 1287.8,
+      "end": 1291.8,
+      "text": "If I start with 0, then what would it be?"
+    },
+    {
+      "start": 1291.8,
+      "end": 1292.8,
+      "text": "Levels."
+    },
+    {
+      "start": 1292.8,
+      "end": 1293.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1293.8,
+      "end": 1298.8,
+      "text": "What is the height of the skewed tree?"
+    },
+    {
+      "start": 1298.8,
+      "end": 1302.8,
+      "text": "Number of levels."
+    },
+    {
+      "start": 1302.8,
+      "end": 1306.8,
+      "text": "What is the depth of a skewed tree?"
+    },
+    {
+      "start": 1306.8,
+      "end": 1309.8,
+      "text": "Depth of a, a I told tree note."
+    },
+    {
+      "start": 1309.8,
+      "end": 1310.8,
+      "text": "Correct."
+    },
+    {
+      "start": 1310.8,
+      "end": 1311.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1311.8,
+      "end": 1313.8,
+      "text": "Depth of a tree is what?"
+    },
+    {
+      "start": 1313.8,
+      "end": 1316.8,
+      "text": "Again, number of levels."
+    },
+    {
+      "start": 1316.8,
+      "end": 1317.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1317.8,
+      "end": 1322.8,
+      "text": "What is the degree of a node in a skewed tree?"
+    },
+    {
+      "start": 1322.8,
+      "end": 1324.8,
+      "text": "Balanced binary tree."
+    },
+    {
+      "start": 1324.8,
+      "end": 1327.8,
+      "text": "Now, what do you mean by a balanced tree?"
+    },
+    {
+      "start": 1327.8,
+      "end": 1331.8,
+      "text": "Right now, just observe the tree."
+    },
+    {
+      "start": 1331.8,
+      "end": 1335.8,
+      "text": "Balanced tree mainly is based on the subtrees."
+    },
+    {
+      "start": 1335.8,
+      "end": 1341.8,
+      "text": "Tell me what is the, only look at the left hand side of the tree."
+    },
+    {
+      "start": 1341.8,
+      "end": 1342.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1342.8,
+      "end": 1349.8,
+      "text": "What are the subtrees here?"
+    },
+    {
+      "start": 1349.8,
+      "end": 1354.8,
+      "text": "What is the height of a left subtree?"
+    },
+    {
+      "start": 1354.8,
+      "end": 1358.8,
+      "text": "I shall first identify the subtree."
+    },
+    {
+      "start": 1358.8,
+      "end": 1359.8,
+      "text": "2, 4, 5."
+    },
+    {
+      "start": 1359.8,
+      "end": 1365.8,
+      "text": "And this side."
+    },
+    {
+      "start": 1365.8,
+      "end": 1368.8,
+      "text": "2, 4, 5 is one subtrees."
+    },
+    {
+      "start": 1368.8,
+      "end": 1374.8,
+      "text": "What about on the right hand side?"
+    },
+    {
+      "start": 1374.8,
+      "end": 1377.8,
+      "text": "The left side of the right is the tree."
+    },
+    {
+      "start": 1377.8,
+      "end": 1381.8,
+      "text": "So, the right side is the tree."
+    },
+    {
+      "start": 1381.8,
+      "end": 1385.8,
+      "text": "Look at the diagram of the left side."
+    },
+    {
+      "start": 1385.8,
+      "end": 1388.8,
+      "text": "How many subtrees are there?"
+    },
+    {
+      "start": 1388.8,
+      "end": 1389.8,
+      "text": "No."
+    },
+    {
+      "start": 1389.8,
+      "end": 1393.8,
+      "text": "How did we start the session today?"
+    },
+    {
+      "start": 1393.8,
+      "end": 1397.8,
+      "text": "Is root border tree?"
+    },
+    {
+      "start": 1397.8,
+      "end": 1398.8,
+      "text": "Correct."
+    },
+    {
+      "start": 1398.8,
+      "end": 1399.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1399.8,
+      "end": 1404.8,
+      "text": "So, can I say is three a subtrees?"
+    },
+    {
+      "start": 1404.8,
+      "end": 1405.8,
+      "text": "Yes or no?"
+    },
+    {
+      "start": 1405.8,
+      "end": 1406.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1406.8,
+      "end": 1410.8,
+      "text": "How many subtrees does your left diagram have?"
+    },
+    {
+      "start": 1410.8,
+      "end": 1413.8,
+      "text": "What are those?"
+    },
+    {
+      "start": 1413.8,
+      "end": 1416.8,
+      "text": "One is 2, 4, 5."
+    },
+    {
+      "start": 1416.8,
+      "end": 1418.8,
+      "text": "Other is what?"
+    },
+    {
+      "start": 1418.8,
+      "end": 1419.8,
+      "text": "Three."
+    },
+    {
+      "start": 1419.8,
+      "end": 1420.8,
+      "text": "Understood."
+    },
+    {
+      "start": 1420.8,
+      "end": 1426.8,
+      "text": "What is the height of 2, 4, 5?"
+    },
+    {
+      "start": 1426.8,
+      "end": 1428.8,
+      "text": "The height of the subtree."
+    },
+    {
+      "start": 1428.8,
+      "end": 1430.8,
+      "text": "What is the height of a subtree?"
+    },
+    {
+      "start": 1430.8,
+      "end": 1435.8,
+      "text": "Who is the node in the subtree here?"
+    },
+    {
+      "start": 1435.8,
+      "end": 1437.8,
+      "text": "Subtrees are 2, 4, 5."
+    },
+    {
+      "start": 1437.8,
+      "end": 1438.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1438.8,
+      "end": 1441.8,
+      "text": "Is there root node here?"
+    },
+    {
+      "start": 1441.8,
+      "end": 1442.8,
+      "text": "Correct."
+    },
+    {
+      "start": 1442.8,
+      "end": 1445.8,
+      "text": "The height of a subtree here."
+    },
+    {
+      "start": 1445.8,
+      "end": 1446.8,
+      "text": "One."
+    },
+    {
+      "start": 1446.8,
+      "end": 1447.8,
+      "text": "Understood?"
+    },
+    {
+      "start": 1447.8,
+      "end": 1448.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1448.8,
+      "end": 1455.8,
+      "text": "What is the height of your right subtree?"
+    },
+    {
+      "start": 1455.8,
+      "end": 1456.8,
+      "text": "Zero."
+    },
+    {
+      "start": 1456.8,
+      "end": 1457.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1457.8,
+      "end": 1460.8,
+      "text": "What do you mean by balanced tree?"
+    },
+    {
+      "start": 1460.8,
+      "end": 1466.8,
+      "text": "When the height of a left subtree,"
+    },
+    {
+      "start": 1466.8,
+      "end": 1471.8,
+      "text": "minus height of the right subtree,"
+    },
+    {
+      "start": 1471.8,
+      "end": 1474.8,
+      "text": "is equal to 1."
+    },
+    {
+      "start": 1474.8,
+      "end": 1478.8,
+      "text": "I will say the tree is balanced."
+    },
+    {
+      "start": 1478.8,
+      "end": 1486.8,
+      "text": "First of all, we need to know how to identify a subtree."
+    },
+    {
+      "start": 1486.8,
+      "end": 1490.8,
+      "text": "Then calculate the height of that particular subtree."
+    },
+    {
+      "start": 1490.8,
+      "end": 1494.8,
+      "text": "Now, your height of left subtree is 1."
+    },
+    {
+      "start": 1494.8,
+      "end": 1498.8,
+      "text": "Your height of right subtree is 0."
+    },
+    {
+      "start": 1498.8,
+      "end": 1500.8,
+      "text": "1 minus 0 is what?"
+    },
+    {
+      "start": 1500.8,
+      "end": 1501.8,
+      "text": "1."
+    },
+    {
+      "start": 1501.8,
+      "end": 1503.8,
+      "text": "So, is it a balanced tree?"
+    },
+    {
+      "start": 1503.8,
+      "end": 1504.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1504.8,
+      "end": 1507.8,
+      "text": "Now, let's move to the right diagram."
+    },
+    {
+      "start": 1507.8,
+      "end": 1509.8,
+      "text": "Identify the subtree."
+    },
+    {
+      "start": 1509.8,
+      "end": 1512.8,
+      "text": "Step number 1."
+    },
+    {
+      "start": 1512.8,
+      "end": 1515.8,
+      "text": "The biggest subtree."
+    },
+    {
+      "start": 1515.8,
+      "end": 1519.8,
+      "text": "2, 4, 5, 6."
+    },
+    {
+      "start": 1519.8,
+      "end": 1521.8,
+      "text": "Right hand side."
+    },
+    {
+      "start": 1521.8,
+      "end": 1522.8,
+      "text": "3."
+    },
+    {
+      "start": 1522.8,
+      "end": 1524.8,
+      "text": "These are the two subtrees."
+    },
+    {
+      "start": 1524.8,
+      "end": 1528.8,
+      "text": "What is the height of the left subtree?"
+    },
+    {
+      "start": 1528.8,
+      "end": 1531.8,
+      "text": "Longest path till the leaf."
+    },
+    {
+      "start": 1531.8,
+      "end": 1532.8,
+      "text": "2."
+    },
+    {
+      "start": 1532.8,
+      "end": 1536.8,
+      "text": "What is the height of the right subtree?"
+    },
+    {
+      "start": 1536.8,
+      "end": 1539.8,
+      "text": "2 minus 0 is how much?"
+    },
+    {
+      "start": 1539.8,
+      "end": 1542.8,
+      "text": "Is it a balanced tree?"
+    },
+    {
+      "start": 1542.8,
+      "end": 1547.8,
+      "text": "Now, I will make some changes here."
+    },
+    {
+      "start": 1547.8,
+      "end": 1552.8,
+      "text": "You tell me whether it's a balanced tree or it's not a balanced tree."
+    },
+    {
+      "start": 1552.8,
+      "end": 1554.8,
+      "text": "So, what is a balanced tree?"
+    },
+    {
+      "start": 1554.8,
+      "end": 1559.8,
+      "text": "What is the definition of a balanced tree?"
+    },
+    {
+      "start": 1559.8,
+      "end": 1568.8,
+      "text": "When the height of the left subtree minus the height of right subtree,"
+    },
+    {
+      "start": 1568.8,
+      "end": 1576.8,
+      "text": "if the difference is equal to 1, then I would say that the tree is balanced."
+    },
+    {
+      "start": 1576.8,
+      "end": 1577.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1577.8,
+      "end": 1578.8,
+      "text": "0 or not?"
+    },
+    {
+      "start": 1578.8,
+      "end": 1579.8,
+      "text": "1."
+    },
+    {
+      "start": 1579.8,
+      "end": 1580.8,
+      "text": "Huh?"
+    },
+    {
+      "start": 1580.8,
+      "end": 1588.8,
+      "text": "Either 0 or 1?"
+    },
+    {
+      "start": 1588.8,
+      "end": 1589.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1589.8,
+      "end": 1590.8,
+      "text": "I mean, same."
+    },
+    {
+      "start": 1590.8,
+      "end": 1591.8,
+      "text": "Yes."
+    },
+    {
+      "start": 1591.8,
+      "end": 1596.8,
+      "text": "Either it is same or at most it should be 1."
+    },
+    {
+      "start": 1596.8,
+      "end": 1599.8,
+      "text": "It cannot be more than 1, basically."
+    },
+    {
+      "start": 1599.8,
+      "end": 1600.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1600.8,
+      "end": 1607.8,
+      "text": "So, now, has your right side become balanced or low?"
+    },
+    {
+      "start": 1607.8,
+      "end": 1610.8,
+      "text": "Why?"
+    },
+    {
+      "start": 1610.8,
+      "end": 1611.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1611.8,
+      "end": 1625.8,
+      "text": "I mean, I, because I have space over here."
+    },
+    {
+      "start": 1625.8,
+      "end": 1634.8,
+      "text": "What kind of a tree is this?"
+    },
+    {
+      "start": 1634.8,
+      "end": 1654.8,
+      "text": "Now, you have a full, perfect, complete, degenerative, left or right skewed, balanced."
+    },
+    {
+      "start": 1655.8,
+      "end": 1658.8,
+      "text": "And, normal binary."
+    },
+    {
+      "start": 1658.8,
+      "end": 1660.8,
+      "text": "What kind of a tree is this?"
+    },
+    {
+      "start": 1660.8,
+      "end": 1664.8,
+      "text": "Why is it a full?"
+    },
+    {
+      "start": 1664.8,
+      "end": 1667.8,
+      "text": "How is it a full?"
+    },
+    {
+      "start": 1667.8,
+      "end": 1669.8,
+      "text": "0 or 2?"
+    },
+    {
+      "start": 1669.8,
+      "end": 1670.8,
+      "text": "Correct?"
+    },
+    {
+      "start": 1670.8,
+      "end": 1672.8,
+      "text": "How many trees are running?"
+    },
+    {
+      "start": 1672.8,
+      "end": 1674.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1674.8,
+      "end": 1675.8,
+      "text": "All right."
+    },
+    {
+      "start": 1675.8,
+      "end": 1676.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1676.8,
+      "end": 1679.8,
+      "text": "Now,"
+    },
+    {
+      "start": 1680.8,
+      "end": 1683.8,
+      "text": "Normal."
+    },
+    {
+      "start": 1683.8,
+      "end": 1690.8,
+      "text": "Sure?"
+    },
+    {
+      "start": 1690.8,
+      "end": 1692.8,
+      "text": "Balanced."
+    },
+    {
+      "start": 1692.8,
+      "end": 1701.8,
+      "text": "Sure?"
+    },
+    {
+      "start": 1701.8,
+      "end": 1708.8,
+      "text": "Balanced, okay?"
+    },
+    {
+      "start": 1708.8,
+      "end": 1712.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1712.8,
+      "end": 1713.8,
+      "text": "Balanced?"
+    },
+    {
+      "start": 1713.8,
+      "end": 1722.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1722.8,
+      "end": 1724.8,
+      "text": "Balanced is correct."
+    },
+    {
+      "start": 1724.8,
+      "end": 1726.8,
+      "text": "But, what else?"
+    },
+    {
+      "start": 1726.8,
+      "end": 1727.8,
+      "text": "Perfect."
+    },
+    {
+      "start": 1727.8,
+      "end": 1728.8,
+      "text": "Perfect?"
+    },
+    {
+      "start": 1728.8,
+      "end": 1730.8,
+      "text": "Perfect."
+    },
+    {
+      "start": 1730.8,
+      "end": 1733.8,
+      "text": "What is perfect?"
+    },
+    {
+      "start": 1733.8,
+      "end": 1737.8,
+      "text": "All levels, everything, full."
+    },
+    {
+      "start": 1738.8,
+      "end": 1740.8,
+      "text": "Exactly 2."
+    },
+    {
+      "start": 1740.8,
+      "end": 1744.8,
+      "text": "So, in the lower left, everybody should be there."
+    },
+    {
+      "start": 1744.8,
+      "end": 1748.8,
+      "text": "4 is not left, 7 is not left, 8 is not 3."
+    },
+    {
+      "start": 1748.8,
+      "end": 1751.8,
+      "text": "So, this becomes what?"
+    },
+    {
+      "start": 1751.8,
+      "end": 1752.8,
+      "text": "Full."
+    },
+    {
+      "start": 1752.8,
+      "end": 1759.8,
+      "text": "Okay."
+    },
+    {
+      "start": 1759.8,
+      "end": 1764.8,
+      "text": "Now, these are the properties of a binary tree, which I will read out and you people have"
+    },
+    {
+      "start": 1764.8,
+      "end": 1769.8,
+      "text": "to note because we will have numerical sums on this."
+    },
+    {
+      "start": 1769.8,
+      "end": 1770.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1770.8,
+      "end": 1773.8,
+      "text": "First property."
+    },
+    {
+      "start": 1773.8,
+      "end": 1776.8,
+      "text": "It's small, so I will write it over here."
+    },
+    {
+      "start": 1776.8,
+      "end": 1782.8,
+      "text": "Total number of edges in any binary tree would be what?"
+    },
+    {
+      "start": 1782.8,
+      "end": 1785.8,
+      "text": "If n is the number, Achapala, here, here, here."
+    },
+    {
+      "start": 1785.8,
+      "end": 1790.8,
+      "text": "n equal to number of nodes."
+    },
+    {
+      "start": 1790.8,
+      "end": 1799.8,
+      "text": "H equal to height of a tree."
+    },
+    {
+      "start": 1799.8,
+      "end": 1811.8,
+      "text": "K equal to level index starting from 0."
+    },
+    {
+      "start": 1811.8,
+      "end": 1815.8,
+      "text": "K is level."
+    },
+    {
+      "start": 1815.8,
+      "end": 1832.8,
+      "text": "L is number of leaf nodes."
+    },
+    {
+      "start": 1832.8,
+      "end": 1833.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1833.8,
+      "end": 1835.8,
+      "text": "Now, tell me."
+    },
+    {
+      "start": 1835.8,
+      "end": 1843.8,
+      "text": "You have all the abbreviations in a particular binary tree."
+    },
+    {
+      "start": 1843.8,
+      "end": 1849.8,
+      "text": "If n is the number of nodes, what would be the number of edges?"
+    },
+    {
+      "start": 1849.8,
+      "end": 1854.8,
+      "text": "n minus 1, write it down properly."
+    },
+    {
+      "start": 1854.8,
+      "end": 1868.8,
+      "text": "What are the maximum number of nodes at level K?"
+    },
+    {
+      "start": 1868.8,
+      "end": 1873.8,
+      "text": "2 to the power K."
+    },
+    {
+      "start": 1873.8,
+      "end": 1876.8,
+      "text": "I am talking about maximum."
+    },
+    {
+      "start": 1876.8,
+      "end": 1877.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1877.8,
+      "end": 1880.8,
+      "text": "Minimum, we don't know."
+    },
+    {
+      "start": 1880.8,
+      "end": 1882.8,
+      "text": "Minimum, tell me actually."
+    },
+    {
+      "start": 1882.8,
+      "end": 1885.8,
+      "text": "How many are minimum?"
+    },
+    {
+      "start": 1885.8,
+      "end": 1886.8,
+      "text": "No."
+    },
+    {
+      "start": 1886.8,
+      "end": 1891.8,
+      "text": "Minimum depends on what type of tree it is."
+    },
+    {
+      "start": 1891.8,
+      "end": 1892.8,
+      "text": "Correct?"
+    },
+    {
+      "start": 1892.8,
+      "end": 1898.8,
+      "text": "Minimum may, if it is full binary, then what?"
+    },
+    {
+      "start": 1898.8,
+      "end": 1901.8,
+      "text": "What is full binary?"
+    },
+    {
+      "start": 1901.8,
+      "end": 1905.8,
+      "text": "0 or 2?"
+    },
+    {
+      "start": 1905.8,
+      "end": 1910.8,
+      "text": "So, it is undetermined."
+    },
+    {
+      "start": 1910.8,
+      "end": 1911.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1911.8,
+      "end": 1913.8,
+      "text": "Minimum is undetermined in there."
+    },
+    {
+      "start": 1913.8,
+      "end": 1915.8,
+      "text": "Perfect."
+    },
+    {
+      "start": 1915.8,
+      "end": 1918.8,
+      "text": "Minimum is same as maximum."
+    },
+    {
+      "start": 1918.8,
+      "end": 1922.8,
+      "text": "Complete."
+    },
+    {
+      "start": 1922.8,
+      "end": 1927.8,
+      "text": "2 to the power of K minus 1 would be minimum."
+    },
+    {
+      "start": 1927.8,
+      "end": 1931.8,
+      "text": "Maximum would be 2 to the power K."
+    },
+    {
+      "start": 1931.8,
+      "end": 1932.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1932.8,
+      "end": 1934.8,
+      "text": "Yeah."
+    },
+    {
+      "start": 1934.8,
+      "end": 1944.8,
+      "text": "The height of a binary tree is H."
+    },
+    {
+      "start": 1944.8,
+      "end": 1945.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1945.8,
+      "end": 1950.8,
+      "text": "H, given to you, height is H over here."
+    },
+    {
+      "start": 1950.8,
+      "end": 1959.8,
+      "text": "Maximum number of nodes in a binary tree if you have the height given."
+    },
+    {
+      "start": 1959.8,
+      "end": 1966.8,
+      "text": "Usually, maximum number of nodes is 2 to the power of L level type."
+    },
+    {
+      "start": 1966.8,
+      "end": 1973.8,
+      "text": "But if I have given the height, keeping in mind whatever the skew thing is in all that particular things,"
+    },
+    {
+      "start": 1973.8,
+      "end": 1985.8,
+      "text": "maximum number of nodes in a binary tree of height H would be 2 to the power of H plus 1."
+    },
+    {
+      "start": 1985.8,
+      "end": 1989.8,
+      "text": "So, number of nodes, if you know the level, you will get it."
+    },
+    {
+      "start": 1989.8,
+      "end": 1992.8,
+      "text": "If you know the height also, you will get it."
+    },
+    {
+      "start": 1992.8,
+      "end": 1993.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 1993.8,
+      "end": 1996.8,
+      "text": "So, they can give you sometimes the height."
+    },
+    {
+      "start": 1996.8,
+      "end": 1998.8,
+      "text": "They can sometimes give you the depth."
+    },
+    {
+      "start": 1998.8,
+      "end": 2003.8,
+      "text": "Depth is nothing but the level told to you, you have got to find the number of nodes."
+    },
+    {
+      "start": 2003.8,
+      "end": 2009.8,
+      "text": "So, 2 formulas are there for it with level as well as with height."
+    },
+    {
+      "start": 2009.8,
+      "end": 2014.8,
+      "text": "2 to the power H plus 1 minus 1 over here."
+    },
+    {
+      "start": 2014.8,
+      "end": 2018.8,
+      "text": "Why do you think they have a minus 1 here?"
+    },
+    {
+      "start": 2018.8,
+      "end": 2026.8,
+      "text": "Removing it for root node because root node has 2."
+    },
+    {
+      "start": 2026.8,
+      "end": 2027.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2027.8,
+      "end": 2033.8,
+      "text": "So, this is when they give you a height, they ask you to find maximum number of nodes."
+    },
+    {
+      "start": 2033.8,
+      "end": 2038.8,
+      "text": "Many a time, they will only ask you about nodes."
+    },
+    {
+      "start": 2038.8,
+      "end": 2041.8,
+      "text": "If you know the height, you will find the height."
+    },
+    {
+      "start": 2041.8,
+      "end": 2044.8,
+      "text": "If you know the nodes, you will find the level."
+    },
+    {
+      "start": 2044.8,
+      "end": 2047.8,
+      "text": "If you know the level, you will find the nodes."
+    },
+    {
+      "start": 2047.8,
+      "end": 2049.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2049.8,
+      "end": 2056.8,
+      "text": "So, we already know what is a skewed tree?"
+    },
+    {
+      "start": 2056.8,
+      "end": 2065.8,
+      "text": "Uh, height of a skewed tree is equal to?"
+    },
+    {
+      "start": 2065.8,
+      "end": 2073.8,
+      "text": "Height of a skewed tree is equal to number of nodes minus 1."
+    },
+    {
+      "start": 2073.8,
+      "end": 2076.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2076.8,
+      "end": 2082.8,
+      "text": "Minimum possible height of a binary tree with n nodes."
+    },
+    {
+      "start": 2082.8,
+      "end": 2087.8,
+      "text": "Now, node is the only height find domain."
+    },
+    {
+      "start": 2087.8,
+      "end": 2088.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2088.8,
+      "end": 2096.8,
+      "text": "So, height is equal to, what is this?"
+    },
+    {
+      "start": 2096.8,
+      "end": 2099.8,
+      "text": "Floor value."
+    },
+    {
+      "start": 2099.8,
+      "end": 2100.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2100.8,
+      "end": 2103.8,
+      "text": "Floor value of what?"
+    },
+    {
+      "start": 2103.8,
+      "end": 2107.8,
+      "text": "Log of n to the base 2."
+    },
+    {
+      "start": 2107.8,
+      "end": 2116.8,
+      "text": "So, if nodes are given, I will find height like this."
+    },
+    {
+      "start": 2116.8,
+      "end": 2125.8,
+      "text": "If height is given, number of nodes equal to when the height is given,"
+    },
+    {
+      "start": 2125.8,
+      "end": 2132.8,
+      "text": "h plus 1 minus."
+    },
+    {
+      "start": 2132.8,
+      "end": 2138.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2138.8,
+      "end": 2145.8,
+      "text": "Maximum possible height, if the number of nodes see when you've got to say what is the height?"
+    },
+    {
+      "start": 2145.8,
+      "end": 2152.8,
+      "text": "When the number of nodes are given, I am saying it is log 2n."
+    },
+    {
+      "start": 2152.8,
+      "end": 2159.8,
+      "text": "This is a normal tree, but if it is a skewed tree, then it would be n minus 1."
+    },
+    {
+      "start": 2159.8,
+      "end": 2164.8,
+      "text": "Always check with what kind of tree it is asking you the question."
+    },
+    {
+      "start": 2164.8,
+      "end": 2170.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2170.8,
+      "end": 2175.8,
+      "text": "Mostly, they will always ask you to find the number of nodes."
+    },
+    {
+      "start": 2175.8,
+      "end": 2189.8,
+      "text": "In a full binary tree with L leaves, okay?"
+    },
+    {
+      "start": 2189.8,
+      "end": 2195.8,
+      "text": "There are 4 leaves over here, in a perfect binary tree, suppose."
+    },
+    {
+      "start": 2195.8,
+      "end": 2203.8,
+      "text": "So, if you have 4 trees over here, then it is asking you in a binary tree with L leaves,"
+    },
+    {
+      "start": 2203.8,
+      "end": 2208.8,
+      "text": "okay? L is 4 over here, what are the total number of nodes?"
+    },
+    {
+      "start": 2208.8,
+      "end": 2218.8,
+      "text": "It is 2L minus 1, but this is applicable only in what?"
+    },
+    {
+      "start": 2218.8,
+      "end": 2223.8,
+      "text": "Full binary tree."
+    },
+    {
+      "start": 2223.8,
+      "end": 2230.8,
+      "text": "This, I do not want you to do it, I will do it as we go forward."
+    },
+    {
+      "start": 2230.8,
+      "end": 2237.8,
+      "text": "Please go through what you have written."
+    },
+    {
+      "start": 2260.8,
+      "end": 2267.8,
+      "text": "Have you gone through this?"
+    },
+    {
+      "start": 2267.8,
+      "end": 2268.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2268.8,
+      "end": 2273.8,
+      "text": "Should I give you some sums to practice right now or you will directly do it in MCQs?"
+    },
+    {
+      "start": 2273.8,
+      "end": 2274.8,
+      "text": "Very good."
+    },
+    {
+      "start": 2274.8,
+      "end": 2280.8,
+      "text": "Construction of a binary, now comes programming today, okay?"
+    },
+    {
+      "start": 2280.8,
+      "end": 2286.8,
+      "text": "You want to code this or should we go to traversals directly?"
+    },
+    {
+      "start": 2287.8,
+      "end": 2290.8,
+      "text": "Missing coding, okay?"
+    },
+    {
+      "start": 2290.8,
+      "end": 2295.8,
+      "text": "Construction of a binary tree, how are you going to construct it with the help of node?"
+    },
+    {
+      "start": 2295.8,
+      "end": 2298.8,
+      "text": "What is this again?"
+    },
+    {
+      "start": 2298.8,
+      "end": 2299.8,
+      "text": "Node."
+    },
+    {
+      "start": 2299.8,
+      "end": 2301.8,
+      "text": "Now your node will have what?"
+    },
+    {
+      "start": 2301.8,
+      "end": 2306.8,
+      "text": "Data, left, right?"
+    },
+    {
+      "start": 2306.8,
+      "end": 2307.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2307.8,
+      "end": 2314.8,
+      "text": "Before going here and writing your coding, I want you people, we will give you in the exam,"
+    },
+    {
+      "start": 2314.8,
+      "end": 2318.8,
+      "text": "create a full binary tree with 3 levels."
+    },
+    {
+      "start": 2318.8,
+      "end": 2320.8,
+      "text": "Means, what will you create?"
+    },
+    {
+      "start": 2320.8,
+      "end": 2325.8,
+      "text": "We will even give you nodes."
+    },
+    {
+      "start": 2325.8,
+      "end": 2327.8,
+      "text": "How will you construct it?"
+    },
+    {
+      "start": 2327.8,
+      "end": 2329.8,
+      "text": "Tell me, how will you make it?"
+    },
+    {
+      "start": 2329.8,
+      "end": 2333.8,
+      "text": "With 3 levels."
+    },
+    {
+      "start": 2333.8,
+      "end": 2336.8,
+      "text": "What is full binary tree?"
+    },
+    {
+      "start": 2336.8,
+      "end": 2340.8,
+      "text": "0 or 2."
+    },
+    {
+      "start": 2341.8,
+      "end": 2342.8,
+      "text": "You have it."
+    },
+    {
+      "start": 2342.8,
+      "end": 2344.8,
+      "text": "And how many levels do you make?"
+    },
+    {
+      "start": 2344.8,
+      "end": 2345.8,
+      "text": "3."
+    },
+    {
+      "start": 2345.8,
+      "end": 2351.8,
+      "text": "So how will you make a tree?"
+    },
+    {
+      "start": 2351.8,
+      "end": 2354.8,
+      "text": "How to make a tree?"
+    },
+    {
+      "start": 2354.8,
+      "end": 2358.8,
+      "text": "Level 0, level 1, level 2 means 3 levels."
+    },
+    {
+      "start": 2358.8,
+      "end": 2359.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2359.8,
+      "end": 2361.8,
+      "text": "How to make a binary tree?"
+    },
+    {
+      "start": 2361.8,
+      "end": 2367.8,
+      "text": "Will you first make left or will you make right?"
+    },
+    {
+      "start": 2370.8,
+      "end": 2379.8,
+      "text": "Next one, create a complete binary tree with 3 levels."
+    },
+    {
+      "start": 2379.8,
+      "end": 2382.8,
+      "text": "How many nodes would it have?"
+    },
+    {
+      "start": 2382.8,
+      "end": 2390.8,
+      "text": "Complete binary tree."
+    },
+    {
+      "start": 2390.8,
+      "end": 2393.8,
+      "text": "6 or 5?"
+    },
+    {
+      "start": 2394.8,
+      "end": 2400.8,
+      "text": "Create a skewed tree with 5 nodes."
+    },
+    {
+      "start": 2400.8,
+      "end": 2407.8,
+      "text": "Create a skewed tree with 5 nodes."
+    },
+    {
+      "start": 2407.8,
+      "end": 2415.8,
+      "text": "Your words, left skewed, right skewed, your words."
+    },
+    {
+      "start": 2415.8,
+      "end": 2419.8,
+      "text": "Now you are drawing, right?"
+    },
+    {
+      "start": 2419.8,
+      "end": 2422.8,
+      "text": "They will code it."
+    },
+    {
+      "start": 2422.8,
+      "end": 2424.8,
+      "text": "All the trees."
+    },
+    {
+      "start": 2424.8,
+      "end": 2427.8,
+      "text": "Okay? Skewed tree with 5 nodes."
+    },
+    {
+      "start": 2427.8,
+      "end": 2433.8,
+      "text": "Create a balanced tree with 2 levels."
+    },
+    {
+      "start": 2436.8,
+      "end": 2442.8,
+      "text": "Is a complete tree always balanced?"
+    },
+    {
+      "start": 2442.8,
+      "end": 2444.8,
+      "text": "Why?"
+    },
+    {
+      "start": 2444.8,
+      "end": 2451.8,
+      "text": "Difference can be 0 or 1."
+    },
+    {
+      "start": 2451.8,
+      "end": 2454.8,
+      "text": "No, if it is 0 also it is completely balanced."
+    },
+    {
+      "start": 2454.8,
+      "end": 2464.8,
+      "text": "So complete binary tree in left sub tree is equal to right sub tree's height."
+    },
+    {
+      "start": 2464.8,
+      "end": 2469.8,
+      "text": "Is a complete tree completely balanced?"
+    },
+    {
+      "start": 2469.8,
+      "end": 2474.8,
+      "text": "Is a full tree completely balanced?"
+    },
+    {
+      "start": 2474.8,
+      "end": 2478.8,
+      "text": "Q."
+    },
+    {
+      "start": 2478.8,
+      "end": 2482.8,
+      "text": "You say it depends on the height."
+    },
+    {
+      "start": 2482.8,
+      "end": 2484.8,
+      "text": "Leave it at that."
+    },
+    {
+      "start": 2484.8,
+      "end": 2487.8,
+      "text": "Is full, complete."
+    },
+    {
+      "start": 2487.8,
+      "end": 2497.8,
+      "text": "Is perfect binary tree balanced?"
+    },
+    {
+      "start": 2497.8,
+      "end": 2504.8,
+      "text": "Let's create a complete binary tree with 2 levels."
+    },
+    {
+      "start": 2504.8,
+      "end": 2508.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2508.8,
+      "end": 2513.8,
+      "text": "We will learn traversal, we will do traversal on those trees."
+    },
+    {
+      "start": 2513.8,
+      "end": 2515.8,
+      "text": "Let's start."
+    },
+    {
+      "start": 2515.8,
+      "end": 2520.8,
+      "text": "First we will construct, then we will do a lot of things."
+    },
+    {
+      "start": 2520.8,
+      "end": 2522.8,
+      "text": "Practice lab, we are opening up."
+    },
+    {
+      "start": 2522.8,
+      "end": 2527.8,
+      "text": "I want you people to practice only on decilator."
+    },
+    {
+      "start": 2527.8,
+      "end": 2531.8,
+      "text": "Not your VS code."
+    },
+    {
+      "start": 2531.8,
+      "end": 2534.8,
+      "text": "Did you start at least?"
+    },
+    {
+      "start": 2534.8,
+      "end": 2536.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2536.8,
+      "end": 2539.8,
+      "text": "Parent."
+    },
+    {
+      "start": 2539.8,
+      "end": 2543.8,
+      "text": "We don't want that right now because STL has got only single."
+    },
+    {
+      "start": 2543.8,
+      "end": 2546.8,
+      "text": "Yeah, this is better."
+    },
+    {
+      "start": 2546.8,
+      "end": 2548.8,
+      "text": "Yeah, please do it again."
+    },
+    {
+      "start": 2548.8,
+      "end": 2552.8,
+      "text": "Hey, don't do append in all."
+    },
+    {
+      "start": 2552.8,
+      "end": 2555.8,
+      "text": "We will be having methods called as insertion division."
+    },
+    {
+      "start": 2555.8,
+      "end": 2557.8,
+      "text": "What will happen?"
+    },
+    {
+      "start": 2557.8,
+      "end": 2561.8,
+      "text": "Now you are just going to make a normal tree."
+    },
+    {
+      "start": 2561.8,
+      "end": 2564.8,
+      "text": "What do you mean by normal tree?"
+    },
+    {
+      "start": 2564.8,
+      "end": 2568.8,
+      "text": "I have this node."
+    },
+    {
+      "start": 2568.8,
+      "end": 2575.8,
+      "text": "This is a tree I want to create."
+    },
+    {
+      "start": 2575.8,
+      "end": 2579.8,
+      "text": "So I will create one node."
+    },
+    {
+      "start": 2579.8,
+      "end": 2586.8,
+      "text": "Star root equal to new node 3."
+    },
+    {
+      "start": 2586.8,
+      "end": 2591.8,
+      "text": "Root left equal new node."
+    },
+    {
+      "start": 2591.8,
+      "end": 2594.8,
+      "text": "Root root right equal new node."
+    },
+    {
+      "start": 2594.8,
+      "end": 2597.8,
+      "text": "Suppose there is one more node here."
+    },
+    {
+      "start": 2597.8,
+      "end": 2599.8,
+      "text": "8 and 9."
+    },
+    {
+      "start": 2599.8,
+      "end": 2603.8,
+      "text": "Then with root only I will go."
+    },
+    {
+      "start": 2603.8,
+      "end": 2604.8,
+      "text": "I am lazy."
+    },
+    {
+      "start": 2604.8,
+      "end": 2605.8,
+      "text": "That's what I am doing."
+    },
+    {
+      "start": 2605.8,
+      "end": 2609.8,
+      "text": "That root left k right."
+    },
+    {
+      "start": 2609.8,
+      "end": 2614.8,
+      "text": "I am putting it."
+    },
+    {
+      "start": 2614.8,
+      "end": 2616.8,
+      "text": "Correct?"
+    },
+    {
+      "start": 2616.8,
+      "end": 2621.8,
+      "text": "root k left k."
+    },
+    {
+      "start": 2621.8,
+      "end": 2622.8,
+      "text": "Sorry."
+    },
+    {
+      "start": 2622.8,
+      "end": 2624.8,
+      "text": "Here 9 will come."
+    },
+    {
+      "start": 2624.8,
+      "end": 2625.8,
+      "text": "Left k left."
+    },
+    {
+      "start": 2625.8,
+      "end": 2627.8,
+      "text": "I will put what?"
+    },
+    {
+      "start": 2627.8,
+      "end": 2629.8,
+      "text": "8."
+    },
+    {
+      "start": 2629.8,
+      "end": 2630.8,
+      "text": "So can you create?"
+    },
+    {
+      "start": 2630.8,
+      "end": 2632.8,
+      "text": "Because you see that it comes up levels."
+    },
+    {
+      "start": 2632.8,
+      "end": 2638.8,
+      "text": "You have to level 2, level 3, level 2, level 3."
+    },
+    {
+      "start": 2638.8,
+      "end": 2639.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2639.8,
+      "end": 2645.8,
+      "text": "4, 5, 6, 7."
+    },
+    {
+      "start": 2645.8,
+      "end": 2654.8,
+      "text": "So if I want to put 7, I would say root left right equal to new node."
+    },
+    {
+      "start": 2654.8,
+      "end": 2664.8,
+      "text": "8 equal to new node 7."
+    },
+    {
+      "start": 2664.8,
+      "end": 2674.8,
+      "text": "That will create all the trees that you have created so far in your notebooks."
+    },
+    {
+      "start": 2674.8,
+      "end": 2680.8,
+      "text": "But this root is when you create a new root node."
+    },
+    {
+      "start": 2680.8,
+      "end": 2682.8,
+      "text": "This root has a good name."
+    },
+    {
+      "start": 2682.8,
+      "end": 2684.8,
+      "text": "Full binary root and complete."
+    },
+    {
+      "start": 2684.8,
+      "end": 2687.8,
+      "text": "Because I will be asking you to do with that."
+    },
+    {
+      "start": 2687.8,
+      "end": 2688.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2688.8,
+      "end": 2694.8,
+      "text": "When we do traverse and all I will ask you to pick up that particular tree and do the traversal."
+    },
+    {
+      "start": 2694.8,
+      "end": 2697.8,
+      "text": "Left skewed tree was created."
+    },
+    {
+      "start": 2697.8,
+      "end": 2703.8,
+      "text": "Complete binary, full whatever all those things were here."
+    },
+    {
+      "start": 2703.8,
+      "end": 2708.8,
+      "text": "Full binary, perfect binary, complete binary skewed."
+    },
+    {
+      "start": 2709.8,
+      "end": 2713.8,
+      "text": "And one balanced tree, five trees."
+    },
+    {
+      "start": 2713.8,
+      "end": 2721.8,
+      "text": "I want all of you please use one pointer only."
+    },
+    {
+      "start": 2721.8,
+      "end": 2725.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2725.8,
+      "end": 2732.8,
+      "text": "One pointer is unidirectional."
+    },
+    {
+      "start": 2732.8,
+      "end": 2734.8,
+      "text": "Parents should only point to child."
+    },
+    {
+      "start": 2734.8,
+      "end": 2737.8,
+      "text": "Don't make child point to parent."
+    },
+    {
+      "start": 2737.8,
+      "end": 2741.8,
+      "text": "In all those trees that you have."
+    },
+    {
+      "start": 2741.8,
+      "end": 2752.8,
+      "text": "Can you write some code which will only print leaf notes of that tree?"
+    },
+    {
+      "start": 2752.8,
+      "end": 2761.8,
+      "text": "Print the leaf notes of all the old trees say full binary tree leaf notes printed."
+    },
+    {
+      "start": 2761.8,
+      "end": 2763.8,
+      "text": "Complete binary tree printed."
+    },
+    {
+      "start": 2763.8,
+      "end": 2765.8,
+      "text": "Scued printed."
+    },
+    {
+      "start": 2765.8,
+      "end": 2769.8,
+      "text": "Scued may get there."
+    },
+    {
+      "start": 2769.8,
+      "end": 2772.8,
+      "text": "One only."
+    },
+    {
+      "start": 2772.8,
+      "end": 2777.8,
+      "text": "Print the leaf notes of all the trees that you have created so far."
+    },
+    {
+      "start": 2777.8,
+      "end": 2782.8,
+      "text": "If you have access only to one node that is your root node."
+    },
+    {
+      "start": 2782.8,
+      "end": 2788.8,
+      "text": "All the people who have finished creating trees programmatically."
+    },
+    {
+      "start": 2788.8,
+      "end": 2791.8,
+      "text": "All the four trees that you have created."
+    },
+    {
+      "start": 2791.8,
+      "end": 2794.8,
+      "text": "Please only print the leaf notes of those trees."
+    },
+    {
+      "start": 2794.8,
+      "end": 2796.8,
+      "text": "What is a leaf node?"
+    },
+    {
+      "start": 2796.8,
+      "end": 2799.8,
+      "text": "Both the pointers should be null."
+    },
+    {
+      "start": 2799.8,
+      "end": 2803.8,
+      "text": "If both the pointers are null, it is a leaf node."
+    },
+    {
+      "start": 2803.8,
+      "end": 2806.8,
+      "text": "You have your diagram with you in the book."
+    },
+    {
+      "start": 2806.8,
+      "end": 2810.8,
+      "text": "You can check whether your code is actually working or not."
+    },
+    {
+      "start": 2810.8,
+      "end": 2812.8,
+      "text": "Okay?"
+    },
+    {
+      "start": 2812.8,
+      "end": 2818.8,
+      "text": "First of all, you will tell me whether it's possible or not."
+    },
+    {
+      "start": 2818.8,
+      "end": 2824.8,
+      "text": "I want you to hit that thing and tell me, how can I do this?"
+    },
+    {
+      "start": 2824.8,
+      "end": 2826.8,
+      "text": "That's why I want you to do it."
+    },
+    {
+      "start": 2826.8,
+      "end": 2829.8,
+      "text": "Can you give me all the leaf notes?"
+    },
+    {
+      "start": 2829.8,
+      "end": 2833.8,
+      "text": "It is a data structure which you have created."
+    },
+    {
+      "start": 2833.8,
+      "end": 2840.8,
+      "text": "Okay, are you trying to find the leaf notes?"
+    },
+    {
+      "start": 2840.8,
+      "end": 2842.8,
+      "text": "Is it giving you an error?"
+    },
+    {
+      "start": 2842.8,
+      "end": 2847.8,
+      "text": "Is it stopping? Is it not working as you planned it to work?"
+    },
+    {
+      "start": 2847.8,
+      "end": 2848.8,
+      "text": "Okay."
+    },
+    {
+      "start": 2848.8,
+      "end": 2853.8,
+      "text": "All of you are able to print leaf notes or no?"
+    },
+    {
+      "start": 2853.8,
+      "end": 2854.8,
+      "text": "Good."
+    },
+    {
+      "start": 2854.8,
+      "end": 2855.8,
+      "text": "Did I ever..."
+    },
+    {
+      "start": 2855.8,
+      "end": 2856.8,
+      "text": "Hey!"
+    },
+    {
+      "start": 2856.8,
+      "end": 2858.8,
+      "text": "You have to identify the problem today."
+    },
+    {
+      "start": 2858.8,
+      "end": 2860.8,
+      "text": "Why can't you go ahead?"
+    },
+    {
+      "start": 2860.8,
+      "end": 2861.8,
+      "text": "So, what do you think?"
+    },
+    {
+      "start": 2861.8,
+      "end": 2863.8,
+      "text": "If you have added double node."
+    },
+    {
+      "start": 2863.8,
+      "end": 2866.8,
+      "text": "So, you will be able to go?"
+    },
+    {
+      "start": 2866.8,
+      "end": 2869.8,
+      "text": "If they are double pointers."
+    },
+    {
+      "start": 2869.8,
+      "end": 2873.8,
+      "text": "No, there also you can't go check."
+    },
+    {
+      "start": 2873.8,
+      "end": 2877.8,
+      "text": "Now, how will a computer, if you can't traverse?"
+    },
+    {
+      "start": 2877.8,
+      "end": 2884.8,
+      "text": "This is called visiting every node is called as traversal."
+    },
+    {
+      "start": 2884.8,
+      "end": 2887.8,
+      "text": "Basically, let's try to understand what is happening."
+    },
+    {
+      "start": 2887.8,
+      "end": 2891.8,
+      "text": "Now, basically, you have constructed the tree."
+    },
+    {
+      "start": 2891.8,
+      "end": 2893.8,
+      "text": "Can I say tree is constructed?"
+    },
+    {
+      "start": 2893.8,
+      "end": 2894.8,
+      "text": "Yes."
+    },
+    {
+      "start": 2894.8,
+      "end": 2898.8,
+      "text": "If I ask you to print the tree, what will you do?"
+    },
+    {
+      "start": 2898.8,
+      "end": 2900.8,
+      "text": "How are you going to print the tree?"
+    },
+    {
+      "start": 2900.8,
+      "end": 2903.8,
+      "text": "Is it a linear data structure?"
+    },
+    {
+      "start": 2903.8,
+      "end": 2905.8,
+      "text": "No."
+    },
+    {
+      "start": 2905.8,
+      "end": 2909.8,
+      "text": "So, if you want to print the tree and you start printing the tree,"
+    },
+    {
+      "start": 2909.8,
+      "end": 2912.8,
+      "text": "what will get printed?"
+    },
+    {
+      "start": 2912.8,
+      "end": 2915.8,
+      "text": "Suppose, you have root node."
+    },
+    {
+      "start": 2915.8,
+      "end": 2917.8,
+      "text": "I will say it now."
+    },
+    {
+      "start": 2917.8,
+      "end": 2919.8,
+      "text": "Print the entire tree."
+    },
+    {
+      "start": 2919.8,
+      "end": 2926.8,
+      "text": "Print 3, 4, 5, 6, 7."
+    },
+    {
+      "start": 2926.8,
+      "end": 2929.8,
+      "text": "What will happen?"
+    },
+    {
+      "start": 2929.8,
+      "end": 2933.8,
+      "text": "Forget about 3, 4, 5, 6, 7."
+    },
+    {
+      "start": 2933.8,
+      "end": 2937.8,
+      "text": "If I want to look for a node, listen to this question then."
+    },
+    {
+      "start": 2937.8,
+      "end": 2940.8,
+      "text": "Forget about traversing and printing it."
+    },
+    {
+      "start": 2940.8,
+      "end": 2943.8,
+      "text": "It's very difficult to print."
+    },
+    {
+      "start": 2943.8,
+      "end": 2949.8,
+      "text": "Suppose, I want to look for a node or I want to test."
+    },
+    {
+      "start": 2949.8,
+      "end": 2959.8,
+      "text": "If I have 7 or no in this particular tree,"
+    },
+    {
+      "start": 2959.8,
+      "end": 2961.8,
+      "text": "look, wait a minute."
+    },
+    {
+      "start": 2961.8,
+      "end": 2964.8,
+      "text": "It's a little complex."
+    },
+    {
+      "start": 2964.8,
+      "end": 2969.8,
+      "text": "8, 9."
+    },
+    {
+      "start": 2969.8,
+      "end": 2974.8,
+      "text": "I want to check whether 9 is there or not in this tree."
+    },
+    {
+      "start": 2974.8,
+      "end": 2976.8,
+      "text": "How will I check?"
+    },
+    {
+      "start": 2976.8,
+      "end": 2981.8,
+      "text": "You have only root node."
+    },
+    {
+      "start": 2981.8,
+      "end": 2985.8,
+      "text": "What value do you have?"
+    },
+    {
+      "start": 2985.8,
+      "end": 2989.8,
+      "text": "Suppose, I put black paper on it."
+    },
+    {
+      "start": 2989.8,
+      "end": 2992.8,
+      "text": "And you have to find out that 9th node is there."
+    },
+    {
+      "start": 2992.8,
+      "end": 2997.8,
+      "text": "What are you doing?"
+    },
+    {
+      "start": 2997.8,
+      "end": 3000.8,
+      "text": "How will you do 1 by 1 check?"
+    },
+    {
+      "start": 3000.8,
+      "end": 3002.8,
+      "text": "I am in 3."
+    },
+    {
+      "start": 3002.8,
+      "end": 3003.8,
+      "text": "Where should I go?"
+    },
+    {
+      "start": 3003.8,
+      "end": 3007.8,
+      "text": "Left or right?"
+    },
+    {
+      "start": 3007.8,
+      "end": 3009.8,
+      "text": "T4 left."
+    },
+    {
+      "start": 3009.8,
+      "end": 3010.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3010.8,
+      "end": 3012.8,
+      "text": "3 by 4."
+    },
+    {
+      "start": 3012.8,
+      "end": 3014.8,
+      "text": "Where should I go?"
+    },
+    {
+      "start": 3014.8,
+      "end": 3017.8,
+      "text": "Left or right?"
+    },
+    {
+      "start": 3017.8,
+      "end": 3020.8,
+      "text": "Left, 6 by 1."
+    },
+    {
+      "start": 3020.8,
+      "end": 3022.8,
+      "text": "Where should I go from here?"
+    },
+    {
+      "start": 3022.8,
+      "end": 3026.8,
+      "text": "I am stuck."
+    },
+    {
+      "start": 3026.8,
+      "end": 3028.8,
+      "text": "How should I go?"
+    },
+    {
+      "start": 3028.8,
+      "end": 3030.8,
+      "text": "What is the point?"
+    },
+    {
+      "start": 3030.8,
+      "end": 3031.8,
+      "text": "Down."
+    },
+    {
+      "start": 3037.8,
+      "end": 3038.8,
+      "text": "Where is 9th?"
+    },
+    {
+      "start": 3038.8,
+      "end": 3039.8,
+      "text": "I have 5th."
+    },
+    {
+      "start": 3039.8,
+      "end": 3041.8,
+      "text": "I don't have 4."
+    },
+    {
+      "start": 3041.8,
+      "end": 3043.8,
+      "text": "Correct."
+    },
+    {
+      "start": 3043.8,
+      "end": 3044.8,
+      "text": "No."
+    },
+    {
+      "start": 3044.8,
+      "end": 3048.8,
+      "text": "3 left, 4 left, 6."
+    },
+    {
+      "start": 3048.8,
+      "end": 3049.8,
+      "text": "6 by 1."
+    },
+    {
+      "start": 3049.8,
+      "end": 3052.8,
+      "text": "6, I know, is the leaf node."
+    },
+    {
+      "start": 3052.8,
+      "end": 3053.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3053.8,
+      "end": 3057.8,
+      "text": "Now from here, where should I go?"
+    },
+    {
+      "start": 3058.8,
+      "end": 3061.8,
+      "text": "Again, I will start."
+    },
+    {
+      "start": 3061.8,
+      "end": 3064.8,
+      "text": "Are you getting the problem?"
+    },
+    {
+      "start": 3064.8,
+      "end": 3067.8,
+      "text": "Got the problem?"
+    },
+    {
+      "start": 3067.8,
+      "end": 3068.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3068.8,
+      "end": 3072.8,
+      "text": "So, is it a linear data structure to travel next, next, next till the fine time?"
+    },
+    {
+      "start": 3072.8,
+      "end": 3074.8,
+      "text": "You don't find null?"
+    },
+    {
+      "start": 3074.8,
+      "end": 3076.8,
+      "text": "No."
+    },
+    {
+      "start": 3076.8,
+      "end": 3078.8,
+      "text": "What kind of a problem it is?"
+    },
+    {
+      "start": 3078.8,
+      "end": 3079.8,
+      "text": "Non-linear."
+    },
+    {
+      "start": 3079.8,
+      "end": 3084.8,
+      "text": "Non-linear when you need to visit roots or when you need to visit nodes,"
+    },
+    {
+      "start": 3084.8,
+      "end": 3087.8,
+      "text": "you should keep one thing in mind."
+    },
+    {
+      "start": 3087.8,
+      "end": 3091.8,
+      "text": "What node did I visit?"
+    },
+    {
+      "start": 3091.8,
+      "end": 3095.8,
+      "text": "I should not visit that node again."
+    },
+    {
+      "start": 3095.8,
+      "end": 3099.8,
+      "text": "From this node, where can I go?"
+    },
+    {
+      "start": 3099.8,
+      "end": 3101.8,
+      "text": "I had come to this node earlier."
+    },
+    {
+      "start": 3101.8,
+      "end": 3105.8,
+      "text": "Now, I had taken the left part of it."
+    },
+    {
+      "start": 3105.8,
+      "end": 3108.8,
+      "text": "Now, I should take the right part of it."
+    },
+    {
+      "start": 3108.8,
+      "end": 3112.8,
+      "text": "Going through each and every node in a tree"
+    },
+    {
+      "start": 3112.8,
+      "end": 3117.8,
+      "text": "is called as traversing a tree."
+    },
+    {
+      "start": 3117.8,
+      "end": 3118.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3118.8,
+      "end": 3121.8,
+      "text": "So, if I say I want to traverse a tree,"
+    },
+    {
+      "start": 3121.8,
+      "end": 3126.8,
+      "text": "it means that I will have some mechanism to traverse the tree"
+    },
+    {
+      "start": 3126.8,
+      "end": 3131.8,
+      "text": "and I will visit each and every node in the tree."
+    },
+    {
+      "start": 3131.8,
+      "end": 3134.8,
+      "text": "If I visit each and every node in the tree,"
+    },
+    {
+      "start": 3134.8,
+      "end": 3137.8,
+      "text": "will I be able to find my 9?"
+    },
+    {
+      "start": 3137.8,
+      "end": 3138.8,
+      "text": "Yes."
+    },
+    {
+      "start": 3138.8,
+      "end": 3141.8,
+      "text": "Will I be able to search for a node in a tree?"
+    },
+    {
+      "start": 3141.8,
+      "end": 3143.8,
+      "text": "Very easily."
+    },
+    {
+      "start": 3143.8,
+      "end": 3144.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3144.8,
+      "end": 3149.8,
+      "text": "So, now, tree data structure tells you"
+    },
+    {
+      "start": 3149.8,
+      "end": 3153.8,
+      "text": "you need to traverse creation of a tree super simple."
+    },
+    {
+      "start": 3153.8,
+      "end": 3157.8,
+      "text": "All of you created 4, 4, 5, 5 trees."
+    },
+    {
+      "start": 3157.8,
+      "end": 3160.8,
+      "text": "The difficult part in tree is what?"
+    },
+    {
+      "start": 3160.8,
+      "end": 3161.8,
+      "text": "Traversing."
+    },
+    {
+      "start": 3161.8,
+      "end": 3162.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3162.8,
+      "end": 3165.8,
+      "text": "So, there are around"
+    },
+    {
+      "start": 3165.8,
+      "end": 3170.8,
+      "text": "four mechanisms of traversing a tree."
+    },
+    {
+      "start": 3171.8,
+      "end": 3177.8,
+      "text": "In order, pre-order, post-order, level order."
+    },
+    {
+      "start": 3177.8,
+      "end": 3178.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3178.8,
+      "end": 3181.8,
+      "text": "Forget about in order, pre-order, post-order,"
+    },
+    {
+      "start": 3181.8,
+      "end": 3184.8,
+      "text": "it has got a big algorithm and all that stuff."
+    },
+    {
+      "start": 3184.8,
+      "end": 3188.8,
+      "text": "What do you think would be level order?"
+    },
+    {
+      "start": 3188.8,
+      "end": 3190.8,
+      "text": "So, how will I go?"
+    },
+    {
+      "start": 3190.8,
+      "end": 3192.8,
+      "text": "First, what would come?"
+    },
+    {
+      "start": 3192.8,
+      "end": 3194.8,
+      "text": "Three,"
+    },
+    {
+      "start": 3194.8,
+      "end": 3197.8,
+      "text": "four, five,"
+    },
+    {
+      "start": 3197.8,
+      "end": 3200.8,
+      "text": "six, seven, eight."
+    },
+    {
+      "start": 3200.8,
+      "end": 3201.8,
+      "text": "No."
+    },
+    {
+      "start": 3201.8,
+      "end": 3202.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3202.8,
+      "end": 3205.8,
+      "text": "This would be the order."
+    },
+    {
+      "start": 3205.8,
+      "end": 3206.8,
+      "text": "Now, a question."
+    },
+    {
+      "start": 3206.8,
+      "end": 3209.8,
+      "text": "This would be the challenge of the day today."
+    },
+    {
+      "start": 3209.8,
+      "end": 3212.8,
+      "text": "I am not going to say according to my thoughts."
+    },
+    {
+      "start": 3212.8,
+      "end": 3214.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3214.8,
+      "end": 3217.8,
+      "text": "Level order."
+    },
+    {
+      "start": 3217.8,
+      "end": 3219.8,
+      "text": "Traversing."
+    },
+    {
+      "start": 3219.8,
+      "end": 3224.8,
+      "text": "Will you do it with stack or will you do it with Q?"
+    },
+    {
+      "start": 3224.8,
+      "end": 3225.8,
+      "text": "How?"
+    },
+    {
+      "start": 3225.8,
+      "end": 3227.8,
+      "text": "We are thinking here."
+    },
+    {
+      "start": 3227.8,
+      "end": 3229.8,
+      "text": "Class is for thinking right now."
+    },
+    {
+      "start": 3229.8,
+      "end": 3232.8,
+      "text": "What is the system?"
+    },
+    {
+      "start": 3232.8,
+      "end": 3236.8,
+      "text": "Now, what will come first in Q?"
+    },
+    {
+      "start": 3236.8,
+      "end": 3237.8,
+      "text": "Three."
+    },
+    {
+      "start": 3237.8,
+      "end": 3240.8,
+      "text": "What will come after three?"
+    },
+    {
+      "start": 3240.8,
+      "end": 3241.8,
+      "text": "Four."
+    },
+    {
+      "start": 3241.8,
+      "end": 3242.8,
+      "text": "Four, five,"
+    },
+    {
+      "start": 3242.8,
+      "end": 3250.8,
+      "text": "four, five."
+    },
+    {
+      "start": 3250.8,
+      "end": 3251.8,
+      "text": "Socho."
+    },
+    {
+      "start": 3251.8,
+      "end": 3255.8,
+      "text": "Three, four, five, how will you get it?"
+    },
+    {
+      "start": 3255.8,
+      "end": 3262.8,
+      "text": "Left and right of the one who has already gone into the Q."
+    },
+    {
+      "start": 3262.8,
+      "end": 3263.8,
+      "text": "Correct?"
+    },
+    {
+      "start": 3263.8,
+      "end": 3268.8,
+      "text": "So, I have given you a small hint."
+    },
+    {
+      "start": 3268.8,
+      "end": 3270.8,
+      "text": "Are you understanding?"
+    },
+    {
+      "start": 3270.8,
+      "end": 3273.8,
+      "text": "Try to work on it."
+    },
+    {
+      "start": 3273.8,
+      "end": 3275.8,
+      "text": "Discuss among yourself."
+    },
+    {
+      "start": 3275.8,
+      "end": 3279.8,
+      "text": "Next class, we will first start with level traversal."
+    },
+    {
+      "start": 3279.8,
+      "end": 3280.8,
+      "text": "Easy way."
+    },
+    {
+      "start": 3280.8,
+      "end": 3281.8,
+      "text": "Q."
+    },
+    {
+      "start": 3281.8,
+      "end": 3284.8,
+      "text": "Let's see how many of you have thought about it."
+    },
+    {
+      "start": 3284.8,
+      "end": 3290.8,
+      "text": "Again, if you check,"
+    },
+    {
+      "start": 3290.8,
+      "end": 3294.8,
+      "text": "I don't want you to listen to his solution."
+    },
+    {
+      "start": 3294.8,
+      "end": 3297.8,
+      "text": "You will corrupt your mind."
+    },
+    {
+      "start": 3297.8,
+      "end": 3298.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3298.8,
+      "end": 3300.8,
+      "text": "You will start thinking what he thinks."
+    },
+    {
+      "start": 3300.8,
+      "end": 3303.8,
+      "text": "You can't run your house on what he thinks."
+    },
+    {
+      "start": 3303.8,
+      "end": 3308.8,
+      "text": "No, don't listen to any solution."
+    },
+    {
+      "start": 3308.8,
+      "end": 3310.8,
+      "text": "Try your solution on your own,"
+    },
+    {
+      "start": 3310.8,
+      "end": 3314.8,
+      "text": "just like we did in the stack."
+    },
+    {
+      "start": 3314.8,
+      "end": 3316.8,
+      "text": "When you create your own solution,"
+    },
+    {
+      "start": 3316.8,
+      "end": 3318.8,
+      "text": "it will always remain with your head."
+    },
+    {
+      "start": 3318.8,
+      "end": 3320.8,
+      "text": "Somebody explaining you solution tomorrow,"
+    },
+    {
+      "start": 3320.8,
+      "end": 3323.8,
+      "text": "again, you will forget what the solution was."
+    },
+    {
+      "start": 3323.8,
+      "end": 3324.8,
+      "text": "Clear?"
+    },
+    {
+      "start": 3324.8,
+      "end": 3326.8,
+      "text": "So, the answer is,"
+    },
+    {
+      "start": 3326.8,
+      "end": 3328.8,
+      "text": "we want to do level,"
+    },
+    {
+      "start": 3328.8,
+      "end": 3332.8,
+      "text": "the rest of the preposterous order they are difficult."
+    },
+    {
+      "start": 3332.8,
+      "end": 3335.8,
+      "text": "We will understand how it works in the class itself."
+    },
+    {
+      "start": 3335.8,
+      "end": 3338.8,
+      "text": "Level order is something which you can do it on your own."
+    },
+    {
+      "start": 3338.8,
+      "end": 3341.8,
+      "text": "If you try to think a little bit,"
+    },
+    {
+      "start": 3341.8,
+      "end": 3343.8,
+      "text": "answer to your question is,"
+    },
+    {
+      "start": 3343.8,
+      "end": 3345.8,
+      "text": "how it should get printed,"
+    },
+    {
+      "start": 3345.8,
+      "end": 3348.8,
+      "text": "three, four, five, six, seven, eight,"
+    },
+    {
+      "start": 3348.8,
+      "end": 3350.8,
+      "text": "and then nine."
+    },
+    {
+      "start": 3350.8,
+      "end": 3353.8,
+      "text": "What kind of data structure would you use"
+    },
+    {
+      "start": 3353.8,
+      "end": 3355.8,
+      "text": "to traverse this tree?"
+    },
+    {
+      "start": 3355.8,
+      "end": 3357.8,
+      "text": "Q."
+    },
+    {
+      "start": 3357.8,
+      "end": 3358.8,
+      "text": "Two things given to you,"
+    },
+    {
+      "start": 3358.8,
+      "end": 3361.8,
+      "text": "and get me an answer."
+    },
+    {
+      "start": 3361.8,
+      "end": 3362.8,
+      "text": "Clear?"
+    },
+    {
+      "start": 3362.8,
+      "end": 3363.8,
+      "text": "Okay."
+    },
+    {
+      "start": 3363.8,
+      "end": 3365.8,
+      "text": "That would be all guys for today."
+    }
+  ]
+}

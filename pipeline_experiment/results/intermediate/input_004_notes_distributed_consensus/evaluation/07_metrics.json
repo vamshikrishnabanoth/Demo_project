@@ -1,0 +1,46 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 61.4,
+    "source_answerability_percentage": 52.5,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.053,
+    "diversity_score": 0.947,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 3.62
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 48.8,
+    "source_answerability_percentage": 41.1,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.108,
+    "diversity_score": 0.892,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.2,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 3.15
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_004_notes_distributed_consensus",
+    "topics_grounded_percentage": 100.0,
+    "salience_alignment_score": 3.0,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 62.5,
+    "overall_validity_percentage": 88.8
+  },
+  "decision": {
+    "winner": "SUMMARY",
+    "composite_score_summary": 0.596,
+    "composite_score_blueprint": 0.507,
+    "quality_delta": -0.089,
+    "rationale": "Summary produced higher composite quality (Q_A=0.596 vs Q_B=0.507, delta=-0.089) on this self-contained factual content."
+  }
+}

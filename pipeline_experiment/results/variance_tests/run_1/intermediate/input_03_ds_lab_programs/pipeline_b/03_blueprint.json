@@ -1,0 +1,129 @@
+{
+  "blueprint_id": "BP_input_03_ds_lab_programs",
+  "input_id": "input_03_ds_lab_programs",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Singly Linked List Operations",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Node structure",
+        "Pointers",
+        "Dynamic memory allocation",
+        "Basic singly linked list concepts"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Doubly Linked List Operations",
+      "salience_score": 0.325,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Node structure",
+        "Pointers",
+        "Dynamic memory allocation",
+        "Singly linked list operations",
+        "Bidirectional pointers"
+      ],
+      "evidence_refs": [
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Circular Linked List Operations",
+      "salience_score": 0.325,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Node structure",
+        "Pointers",
+        "Dynamic memory allocation",
+        "Singly linked list operations",
+        "Circular reference handling"
+      ],
+      "evidence_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Stack Implementation Using Array",
+      "salience_score": 0.25,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Array data structure",
+        "Indexing",
+        "Stack concept (LIFO)",
+        "Basic array manipulation"
+      ],
+      "evidence_refs": [
+        "E_C11",
+        "E_C12"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Stack Implementation Using Singly Linked List",
+      "salience_score": 0.325,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Node structure",
+        "Pointers",
+        "Dynamic memory allocation",
+        "Stack concept (LIFO)",
+        "Singly linked list operations"
+      ],
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

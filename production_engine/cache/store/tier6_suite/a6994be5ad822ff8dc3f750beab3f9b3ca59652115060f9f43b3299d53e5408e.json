@@ -1,0 +1,81 @@
+{
+  "input_id": "input_job_53bd",
+  "title": "Assessment for Job job_53bd",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 1,
+  "requested_difficulty": "MEDIUM",
+  "defensible_capacity": 1,
+  "final_question_count": 1,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is the rationale behind the choice of the core methodology for job_53bd?",
+      "stem": "What is the rationale behind the choice of the core methodology for job_53bd?",
+      "option_a": "The methodology was chosen based on the trade-offs considered during development.",
+      "option_b": "The methodology is arbitrary and could be replaced by any other approach.",
+      "option_c": "The design choices were made solely for performance, ignoring maintainability.",
+      "option_d": "The methodology is based on performance metrics, not performance and maintainability considerations.",
+      "correct_option": "A",
+      "explanation": "Option A is correct: ",
+      "target_concept": "Core Methodology for Job job_53bd",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The lecture explains why the core methodology for job_53bd was chosen, detailing its design principles, the problem it solves, and the trade‑offs considered during its development.",
+      "why_assessed": "Assessing the theoretical rationale ensures students grasp the motivations behind the methodology, enabling them to evaluate its suitability in different contexts and to justify design choices.",
+      "evidence_refs": [
+        "EV_CANONICAL_01"
+      ],
+      "misconception_rationale": "Distractors target: The methodology is arbitrary and could be replaced by any other approach., The design choices were made solely for performance, ignoring maintainability."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1789242694920-input_jo",
+    "trace": {
+      "request_id": "REQ-1789242694920-input_jo",
+      "timestamp": "2026-09-12T19:54:23Z",
+      "input_id": "input_job_53bd",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.5,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "MISS",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "MISS"
+      },
+      "selected_facets": [
+        "THEORETICAL_RATIONALE"
+      ],
+      "initial_generated_count": 1,
+      "first_pass_validated_count": 1,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 1,
+      "total_latency_ms": 168585.24,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "With only one core concept available, the target focuses on the theoretical rationale of the core methodology for job_53bd, a facet that naturally encompasses design decisions, underlying principles, and expected outcomes. This single target addresses multiple pedagogical facets—conceptual understanding, theoretical justification, and practical implications—while remaining within the medium difficulty range."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 168.59,
+    "measured_llm_calls": 8,
+    "pedagogical_delivery_index": 0.5,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "THEORETICAL_RATIONALE": 1
+    },
+    "cognitive_distribution": {
+      "ANALYZE": 1
+    },
+    "planning_notes": "With only one core concept available, the target focuses on the theoretical rationale of the core methodology for job_53bd, a facet that naturally encompasses design decisions, underlying principles, and expected outcomes. This single target addresses multiple pedagogical facets—conceptual understanding, theoretical justification, and practical implications—while remaining within the medium difficulty range.",
+    "system_notice": null,
+    "generator_model": "allam-2-7b",
+    "generator_provider": "groq",
+    "target_generator": "ft-llama-3-8b-kmit",
+    "serving_mode": "TEMPORARY_HOSTED_DEMO",
+    "critic_model": "openai/gpt-oss-120b",
+    "representation_model": "openai/gpt-oss-20b",
+    "planning_model": "openai/gpt-oss-20b",
+    "stt_model": "whisper-large-v3"
+  }
+}

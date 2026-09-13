@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the provided C++ implementation of a Singly Linked List, what is the primary purpose of the wrapper class (e.g., `SinglyLinkedList`) that manages the `head` pointer?",
+      "option_a": "To store the actual data values of the nodes in a contiguous memory block.",
+      "option_b": "To encapsulate the list's state and provide an interface for operations like insertion and traversal, keeping the `head` pointer accessible.",
+      "option_c": "To automatically manage the memory deallocation of all nodes when the program terminates.",
+      "option_d": "To convert the linked list into a circular structure by linking the last node to the first.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states that the wrapper class manages the `head` pointer, which is essential for accessing the list. It encapsulates the logic for operations. Option A is incorrect because linked lists store data in separate nodes, not contiguous blocks (that is arrays). Option C is incorrect because the summary mentions manual deallocation during deletion, not automatic global cleanup. Option D is incorrect because the wrapper class for a Singly Linked List does not inherently make it circular; that requires specific pointer manipulation described for Circular Linked Lists.",
+      "target_concept": "Singly Linked List Structure",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "C++ Class Implementation: Use of `class Node` and a wrapper class managing the `head` pointer.",
+      "why_assessed": "To verify understanding of the object-oriented design pattern used to manage linked list state.",
+      "evidence_refs": [
+        "examples_and_code_patterns[0]"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions about memory layout (A), automatic memory management (C), and structural properties (D)."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "When implementing a Stack using a static array as described in the material, what condition must be checked before executing the push operation `arr[++top] = val`?",
+      "option_a": "Check if `top == -1` to prevent underflow.",
+      "option_b": "Check if `top == max` to prevent stack overflow.",
+      "option_c": "Check if `arr[top] == NULL` to ensure the slot is empty.",
+      "option_d": "Check if `top > max` to ensure the index is within bounds.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary explicitly states that the array-based stack checks for overflow when `top == max` before pushing. Option A is incorrect because `top == -1` indicates an empty stack (underflow), which is checked during pop, not push. Option C is incorrect because array elements are not pointers to NULL in this context; they hold values. Option D is incorrect because the check is for equality with the maximum capacity, not strictly greater than, as the index is incremented before assignment.",
+      "target_concept": "Stack Array Implementation",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "Stack Push/Pop (Array): Increment/decrement the top index... checking for overflow (top == max).",
+      "why_assessed": "To test the ability to apply boundary condition logic to stack operations.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[2]",
+        "examples_and_code_patterns[2]"
+      ],
+      "misconception_rationale": "Distractors confuse push/pop conditions (A) and use invalid array checks (C, D)."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "In the Infix to Postfix conversion algorithm, what action is taken when an operator is encountered on the stack that has higher or equal precedence to the current operator being processed?",
+      "option_a": "The current operator is pushed onto the stack immediately.",
+      "option_b": "The operators on the stack are popped and appended to the result string until the condition is no longer met.",
+      "option_c": "The current operator is discarded to maintain strict precedence order.",
+      "option_d": "The entire stack is cleared and the algorithm restarts.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states the algorithm involves 'pop operators with higher or equal precedence' from the stack to the result. Option A is incorrect because pushing immediately would violate precedence rules. Option C is incorrect because operators are never discarded; they are moved to the output. Option D is incorrect as clearing the stack is not part of the standard algorithm described.",
+      "target_concept": "Infix to Postfix Conversion",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "Infix to Postfix Algorithm: Scan left-to-right; push operators onto the stack, pop operators with higher or equal precedence.",
+      "why_assessed": "To assess understanding of the precedence handling logic in expression conversion.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[3]"
+      ],
+      "misconception_rationale": "Distractors represent common errors in understanding stack-based expression evaluation, such as ignoring precedence (A) or losing data (C, D)."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "How does the traversal logic for a Doubly Linked List differ from that of a Singly Linked List, according to the provided code patterns?",
+      "option_a": "Doubly Linked Lists require a `do-while` loop to ensure the last node is visited twice.",
+      "option_b": "Doubly Linked Lists allow backward traversal by utilizing the `prev` pointer, whereas Singly Linked Lists only support forward traversal via `next`.",
+      "option_c": "Doubly Linked Lists use a `tail` pointer to start traversal from the end, while Singly Linked Lists start from the `head`.",
+      "option_d": "There is no difference; both use identical `while (temp != NULL)` loops for all operations.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary highlights that Doubly Linked Lists allow bidirectional traversal by adjusting both `prev` and `next` pointers. Option A is incorrect because `do-while` is associated with Circular Linked Lists in the summary. Option C is incorrect because while `tail` is used in Circular lists, the defining feature of Doubly lists is the `prev` pointer for backward movement, not necessarily starting from the tail. Option D is incorrect because the presence of the `prev` pointer fundamentally changes the traversal capabilities.",
+      "target_concept": "Doubly Linked List Traversal",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "Traversal Logic: `while (temp != NULL)` for forward and `prev` traversal for doubly linked lists.",
+      "why_assessed": "To distinguish between the structural capabilities of singly and doubly linked lists.",
+      "evidence_refs": [
+        "examples_and_code_patterns[1]",
+        "concepts_and_definitions[1]"
+      ],
+      "misconception_rationale": "Distractors confuse circular list logic (A), misattribute tail usage (C), or ignore the key structural difference (D)."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the implementation of a Stack using a Singly Linked List, why are push and pop operations considered O(1) time complexity?",
+      "option_a": "Because the list is stored in a contiguous array, allowing direct index access.",
+      "option_b": "Because the head of the list is used as the top, allowing insertion and deletion at the beginning without traversal.",
+      "option_c": "Because the stack automatically balances itself, reducing the number of nodes.",
+      "option_d": "Because the `tail` pointer is updated in constant time for every operation.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary states that the linked-list-based stack 'leverages the head of the list as the top, allowing O(1) push and pop operations by inserting and deleting nodes at the beginning.' Option A is incorrect because linked lists are not contiguous arrays. Option C is incorrect because stacks do not self-balance. Option D is incorrect because updating the tail is not the primary mechanism for O(1) stack operations in a singly linked list; the head is the key.",
+      "target_concept": "Linked List Stack Implementation",
+      "cognitive_level": "EVALUATE",
+      "source_slot_or_topic": "factual_summary",
+      "what_taught": "The linked-list-based stack leverages the head of the list as the top, allowing O(1) push and pop operations.",
+      "why_assessed": "To evaluate the understanding of why specific data structure choices lead to specific performance characteristics.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors confuse array and list properties (A), invent non-existent features (C), or focus on the wrong pointer (D)."
+    }
+  ]
+}

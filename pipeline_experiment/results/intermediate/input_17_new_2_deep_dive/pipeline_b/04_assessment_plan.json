@@ -1,0 +1,15 @@
+{
+  "plan_id": "PLAN_input_17_new_2_deep_dive",
+  "input_id": "input_17_new_2_deep_dive",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "T01",
+      "topic_name": "Overview",
+      "question_count": 5,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

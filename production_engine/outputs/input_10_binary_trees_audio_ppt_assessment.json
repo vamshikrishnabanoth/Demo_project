@@ -1,0 +1,89 @@
+{
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "title": "Hierarchical Data Structures: Binary Trees, Strict Trees & Tree Traversals",
+  "representation_used": "UNIFIED",
+  "routing_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=0.919): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+  "requested_count": 3,
+  "defensible_capacity": 3,
+  "final_question_count": 3,
+  "questions": [
+    {
+      "question_id": "Q_T1_001",
+      "question_text": "Consider a binary tree where every level is completely filled with nodes, and all leaf nodes are at the same depth. Which of the following classifications is the most specific and accurate description of this tree?",
+      "option_a": "It is a Complete Binary Tree, but not necessarily a Perfect Binary Tree.",
+      "option_b": "It is a Perfect Binary Tree, which implies it is also a Full and Complete Binary Tree.",
+      "option_c": "It is a Full Binary Tree, but not necessarily a Complete Binary Tree.",
+      "option_d": "It is a Balanced Binary Tree, but not necessarily a Perfect Binary Tree.",
+      "correct_option": "B",
+      "explanation": "A Perfect Binary Tree is defined as a tree where all levels are completely filled and all leaves are at the same level. This structure inherently satisfies the conditions for being Full (every node has 0 or 2 children) and Complete (filled left-to-right). Option A is incorrect because a Perfect tree is a subset of Complete trees, so saying it is 'not necessarily Perfect' is false. Option C is incorrect because a Perfect tree is also Complete. Option D is incorrect because while it is balanced, 'Perfect' is the more specific and accurate classification given the 'completely filled' constraint.",
+      "target_concept": "Classification of Binary Tree Types",
+      "cognitive_level": "ANALYZE",
+      "what_taught": "The structural definitions distinguishing Full, Perfect, Complete, and Balanced binary trees.",
+      "why_assessed": "Students frequently confuse these terms, particularly between 'Complete' and 'Perfect'. Assessing this ensures students can logically classify a tree structure based on its specific constraints.",
+      "evidence_refs": [
+        "E_C03",
+        "E_C04",
+        "E_C07",
+        "E_C10",
+        "E_C14"
+      ],
+      "misconception_rationale": "Option A targets the misconception that Complete and Perfect are mutually exclusive or that Complete is the 'highest' classification. Option C targets the confusion between Full and Perfect. Option D targets the assumption that 'Balanced' is the primary descriptor for a fully filled tree, ignoring the stricter 'Perfect' definition."
+    },
+    {
+      "question_id": "Q_T2_001",
+      "question_text": "In a Full Binary Tree, if the number of internal nodes (i) is 15, what is the total number of nodes (n) in the tree?",
+      "option_a": "30",
+      "option_b": "31",
+      "option_c": "16",
+      "option_d": "15",
+      "correct_option": "B",
+      "explanation": "For a Full Binary Tree, the relationship between total nodes (n) and internal nodes (i) is given by the formula n = 2i + 1. Substituting i = 15, we get n = 2(15) + 1 = 30 + 1 = 31. Option A (30) is the result of using n = 2i, which is incorrect for full binary trees. Option C (16) is the number of leaf nodes (l = i + 1), not the total nodes. Option D (15) is just the number of internal nodes.",
+      "target_concept": "Mathematical Properties of Full Binary Trees",
+      "cognitive_level": "APPLY",
+      "what_taught": "The relationship between total nodes (n), internal nodes (i), and leaf nodes (l) in a full binary tree, specifically n = 2i + 1 and l = i + 1.",
+      "why_assessed": "This tests the student's ability to apply derived mathematical formulas to verify tree properties or calculate missing values, moving beyond simple definition recall to quantitative analysis.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06",
+        "E_C11",
+        "E_C12",
+        "E_C13"
+      ],
+      "misconception_rationale": "Option A represents a common arithmetic error or confusion with the formula for total edges (2i). Option C represents the confusion between total nodes and leaf nodes (l = i + 1). Option D represents a failure to add the root or internal nodes to the count, or simply selecting the given variable."
+    },
+    {
+      "question_id": "Q_T3_001",
+      "question_text": "A student constructs a binary tree consisting of a single node, which serves as the root. Which of the following statements correctly describes the properties of this tree?",
+      "option_a": "The root is an internal node, and the tree has 0 leaves.",
+      "option_b": "The root is a leaf node, and the tree has 1 leaf.",
+      "option_c": "The root is an internal node, and the tree has 1 leaf.",
+      "option_d": "The root is a leaf node, and the tree has 0 leaves.",
+      "correct_option": "B",
+      "explanation": "A leaf node is defined as a node with no children. An internal node is a node with at least one child. In a tree with a single root node, the root has no children. Therefore, the root is a leaf node. Since there is only one node and it is a leaf, the total number of leaves is 1. Option A is incorrect because the root has no children, so it is not internal. Option C is incorrect because the root is not internal. Option D is incorrect because the root itself counts as a leaf.",
+      "target_concept": "Binary Tree Node Classification and Structure",
+      "cognitive_level": "UNDERSTAND",
+      "what_taught": "The definition of a binary tree as a hierarchical structure with a root, and the classification of nodes into internal nodes (having children) and leaf/external nodes (having no children).",
+      "why_assessed": "This is the foundational concept upon which all other tree properties are built. Ensuring students correctly identify node types is a prerequisite for understanding traversals and tree properties.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08"
+      ],
+      "misconception_rationale": "Option A targets the misconception that the root is always internal. Option C targets the confusion that a root can be both internal and a leaf simultaneously, or that 'leaf' implies a non-root position. Option D targets the misconception that a single node tree has no leaves, confusing 'leaf' with 'child'."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "total_latency_seconds": 79.63,
+    "total_llm_calls": 5,
+    "pedagogical_delivery_index": 0.919,
+    "features": {
+      "has_audio": true,
+      "has_ppt": true,
+      "code_density": 0.0,
+      "text_length_words": 10112,
+      "pedagogical_marker_density": 0.2,
+      "dialogue_interaction_density": 1.09
+    }
+  }
+}

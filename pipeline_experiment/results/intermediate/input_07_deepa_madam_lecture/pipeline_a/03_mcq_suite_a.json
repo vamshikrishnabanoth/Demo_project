@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_07_deepa_madam_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "MATHEMATICAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "According to the Euclidean Algorithm logic described, if the maximum of two numbers (a, b) is divisible by the minimum of the two numbers, what is the result returned?",
+      "option_a": "The maximum of the two numbers",
+      "option_b": "The minimum of the two numbers",
+      "option_c": "The remainder of the division",
+      "option_d": "Zero",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the summary explicitly states the Euclidean GCD Logic: 'If max(a, b) % min(a, b) == 0, return min(a, b)'. This means if one number divides the other perfectly, the smaller number is the greatest common divisor. Option A is incorrect because the GCD cannot be larger than the smaller number. Option C is incorrect because the remainder is zero in this specific case, not the result. Option D is incorrect because the GCD is a positive integer divisor, not the remainder value itself.",
+      "target_concept": "Euclidean Algorithm Base Case",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The conditional logic for the Euclidean GCD algorithm when divisibility is exact.",
+      "why_assessed": "To verify the student understands the termination condition of the Euclidean algorithm.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[0]"
+      ],
+      "misconception_rationale": "Students often confuse the remainder (which is 0) with the result, or assume the larger number is the answer."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the iterative logic for finding the LCM described in the material, what condition must be met for the current candidate value 'i' to be identified as the LCM of numbers 'a' and 'b'?",
+      "option_a": "i % a == 0 OR i % b == 0",
+      "option_b": "i % a == 0 AND i % b == 0",
+      "option_c": "i % a != 0 AND i % b != 0",
+      "option_d": "i == a AND i == b",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the summary defines the iterative LCM logic as checking until the candidate is 'divisible by both input numbers (i % a == 0 and i % b == 0)'. The LCM is the *least common* multiple, meaning it must be a multiple of *both* numbers simultaneously. Option A is incorrect because being divisible by only one number makes it a common multiple of just that number, not both. Option C is incorrect because the LCM must be divisible by the inputs. Option D is incorrect because the LCM is rarely equal to the inputs themselves unless one divides the other, and even then, the condition is about divisibility, not equality.",
+      "target_concept": "LCM Divisibility Condition",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The logical condition required to identify a common multiple in an iterative search.",
+      "why_assessed": "To ensure students understand that 'common' implies satisfying conditions for all inputs simultaneously (AND logic).",
+      "evidence_refs": [
+        "mechanisms_and_formulas[1]"
+      ],
+      "misconception_rationale": "Students frequently confuse logical AND with OR when defining 'common' properties, thinking that satisfying one condition is sufficient."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Based on the provided example, what is the result of calculating GCD(8, 12) using the Euclidean Algorithm?",
+      "option_a": "2",
+      "option_b": "4",
+      "option_c": "6",
+      "option_d": "8",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the summary explicitly provides the example: 'GCD Example: Calculating GCD(8, 12) by checking 12 % 8 != 0, then GCD(8, 4), which results in 4.' The algorithm reduces the problem to GCD(8, 4), and since 8 is divisible by 4, the result is 4. Option A (2) is a common divisor but not the *greatest*. Option C (6) is not a divisor of 8. Option D (8) is not a divisor of 12.",
+      "target_concept": "Euclidean Algorithm Application",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "Tracing the recursive steps of the Euclidean algorithm for specific inputs.",
+      "why_assessed": "To test the ability to apply the algorithm's logic to a concrete numerical example.",
+      "evidence_refs": [
+        "examples_and_code_patterns[0]"
+      ],
+      "misconception_rationale": "Students may stop at the first common divisor found (2) or make arithmetic errors in the modulo step."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In the recursive string reversal pattern described, what serves as the base case that terminates the recursion?",
+      "option_a": "When the string is empty",
+      "option_b": "When the string length is 1",
+      "option_c": "When the string length is 0",
+      "option_d": "When the first character equals the last character",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the summary states: 'A function that reverses a string by checking if the length is 1 (base case) or recursively processing the substring...'. The base case is explicitly defined as a string of length 1. Option A and C are incorrect because the specific implementation described uses length 1 as the stopping point, not an empty string (though empty strings are often base cases in other implementations, this specific text specifies length 1). Option D is incorrect because palindrome checking is not part of the reversal logic described.",
+      "target_concept": "Recursion Base Case",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "Identifying the termination condition in a recursive string manipulation function.",
+      "why_assessed": "To verify understanding of how recursion is structured to prevent infinite loops in the specific context of string reversal.",
+      "evidence_refs": [
+        "examples_and_code_patterns[2]"
+      ],
+      "misconception_rationale": "Students often generalize base cases to 'empty string' without reading the specific implementation details provided in the text."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "According to the factual summary, what is the primary practical application of the GCD concept?",
+      "option_a": "Scheduling and timing intervals",
+      "option_b": "Equal division problems",
+      "option_c": "String concatenation",
+      "option_d": "Sorting arrays",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the summary explicitly notes: 'GCD is used for equal division problems while LCM is used for scheduling and timing intervals.' Option A is incorrect because that is the application of LCM. Option C and D are unrelated to the number theory concepts discussed in the summary.",
+      "target_concept": "Practical Application of GCD",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "factual_summary",
+      "what_taught": "The real-world utility of GCD versus LCM.",
+      "why_assessed": "To ensure students can distinguish between the use cases of GCD and LCM, a common point of confusion.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Students often swap the applications of GCD and LCM, associating 'common' with 'scheduling' (common time) rather than 'division'."
+    }
+  ]
+}

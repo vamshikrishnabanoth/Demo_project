@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_15_python_problem_solving",
+  "input_type": "VOICE_ONLY",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of algorithmic problem solving, what is the primary purpose of 'Problem Decomposition'?",
+      "option_a": "To increase the computational complexity of the algorithm",
+      "option_b": "To break a complex problem into smaller, manageable sub-problems",
+      "option_c": "To convert the problem into a mathematical formula",
+      "option_d": "To optimize the memory usage of the Python interpreter",
+      "correct_option": "B",
+      "explanation": "Option B is correct because problem decomposition is a fundamental strategy in algorithm design where a large, complex problem is divided into smaller, simpler sub-problems that can be solved independently. Option A is incorrect because decomposition aims to simplify logic, not increase complexity. Option C is incorrect because while some problems involve math, decomposition is a structural logic technique, not a conversion to formulas. Option D is incorrect because decomposition is a design phase activity, not a runtime memory optimization technique.",
+      "target_concept": "Problem Decomposition",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The mechanism of breaking down complex computational tasks into smaller logical units.",
+      "why_assessed": "To verify the student understands the foundational strategy for managing algorithmic complexity.",
+      "evidence_refs": [
+        "SUMMARY_mechanisms_and_formulas"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions that decomposition is about performance tuning (D) or mathematical conversion (C) rather than logical structuring."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Which of the following best describes the role of 'Logical Flow' in Python programming patterns?",
+      "option_a": "The visual formatting of code using indentation",
+      "option_b": "The sequential and conditional execution path of instructions",
+      "option_c": "The speed at which Python compiles the source code",
+      "option_d": "The specific data types used in variable declarations",
+      "correct_option": "B",
+      "explanation": "Option B is correct because logical flow refers to the order in which a program executes statements, including sequences, loops, and conditionals. Option A is incorrect because indentation is a syntactic requirement in Python, not the logical flow itself. Option C is incorrect because logical flow is a runtime concept, unrelated to compilation speed. Option D is incorrect because data types define data structure, not the execution path of logic.",
+      "target_concept": "Logical Flow",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "The concept of how instructions are ordered and executed in a program.",
+      "why_assessed": "To ensure students distinguish between syntax (formatting) and semantics (execution logic).",
+      "evidence_refs": [
+        "SUMMARY_concepts_and_definitions"
+      ],
+      "misconception_rationale": "Distractors confuse logical flow with syntactic rules (A) or performance metrics (C), which are common areas of confusion for beginners."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "When translating abstract problem-solving strategies into concrete Python code, which standard programming construct is primarily used to implement 'Algorithmic Logic Structures'?",
+      "option_a": "Import statements for external libraries",
+      "option_b": "Control flow statements such as if/else and loops",
+      "option_c": "Variable naming conventions",
+      "option_d": "Comment blocks for documentation",
+      "correct_option": "B",
+      "explanation": "Option B is correct because algorithmic logic structures (decision making, repetition) are implemented in Python using control flow statements like `if`, `elif`, `else`, `for`, and `while`. Option A is incorrect because imports handle dependencies, not logic. Option C is incorrect because naming is a style guideline, not a logic structure. Option D is incorrect because comments are ignored by the interpreter and do not affect logic execution.",
+      "target_concept": "Algorithmic Logic Structures",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The mapping of abstract logic to specific Python control flow syntax.",
+      "why_assessed": "To assess the ability to apply theoretical logic concepts to practical code implementation.",
+      "evidence_refs": [
+        "SUMMARY_mechanisms_and_formulas",
+        "SUMMARY_examples_and_code_patterns"
+      ],
+      "misconception_rationale": "Distractors represent non-logical elements of code (imports, comments, naming) that students might mistakenly associate with 'structure'."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "According to the material, what is the primary focus of 'Code Patterns' in the context of Python programming?",
+      "option_a": "The aesthetic arrangement of code on the screen",
+      "option_b": "Reusable structures and conventions for solving common computational problems",
+      "option_c": "The specific hardware requirements for running Python",
+      "option_d": "The historical development of the Python language",
+      "correct_option": "B",
+      "explanation": "Option B is correct because code patterns refer to established, reusable solutions to recurring problems in software design and algorithmic implementation. Option A is incorrect because patterns are about logic and structure, not visual aesthetics. Option C is incorrect because patterns are language-level abstractions, not hardware specs. Option D is incorrect because patterns are practical tools, not historical facts.",
+      "target_concept": "Code Patterns",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "The concept of reusing proven structural solutions in coding.",
+      "why_assessed": "To confirm understanding of why patterns are used in professional and academic programming.",
+      "evidence_refs": [
+        "SUMMARY_concepts_and_definitions"
+      ],
+      "misconception_rationale": "Distractors reflect superficial interpretations of 'patterns' (visual) or unrelated technical aspects (hardware, history)."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the process of 'Algorithmic Problem Solving', what is the relationship between 'Problem Decomposition' and 'Logical Flow'?",
+      "option_a": "Problem Decomposition occurs after the Logical Flow is fully executed",
+      "option_b": "Problem Decomposition creates sub-problems that are then structured using Logical Flow",
+      "option_c": "Logical Flow is a subset of Problem Decomposition",
+      "option_d": "They are independent processes with no interaction",
+      "correct_option": "B",
+      "explanation": "Option B is correct because decomposition breaks the problem into parts, and logical flow defines how those parts are executed sequentially or conditionally. Option A is incorrect because decomposition is a design step that precedes execution. Option C is incorrect because they are distinct concepts: one is structural division, the other is execution order. Option D is incorrect because they are tightly coupled in the algorithm design process.",
+      "target_concept": "Algorithmic Problem Solving",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "factual_summary",
+      "what_taught": "The interplay between breaking down problems and structuring their execution.",
+      "why_assessed": "To evaluate the student's ability to synthesize how different algorithmic concepts interact.",
+      "evidence_refs": [
+        "SUMMARY_factual_summary",
+        "SUMMARY_mechanisms_and_formulas"
+      ],
+      "misconception_rationale": "Distractors suggest incorrect temporal or hierarchical relationships between the two core concepts."
+    }
+  ]
+}

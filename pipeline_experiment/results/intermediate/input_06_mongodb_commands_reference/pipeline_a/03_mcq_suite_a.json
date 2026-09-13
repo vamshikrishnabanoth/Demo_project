@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_06_mongodb_commands_reference",
+  "input_type": "NOTES",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "A developer needs to import a large CSV file into a MongoDB Atlas collection. The file contains a header row with column names. Which `mongoimport` command configuration is correct?",
+      "option_a": "mongoimport --uri=\"mongodb+srv://...\" --collection=products --type=csv --headerline data.csv",
+      "option_b": "mongoimport --uri=\"mongodb+srv://...\" --collection=products --type=csv --jsonArray data.csv",
+      "option_c": "mongoimport --uri=\"mongodb+srv://...\" --collection=products --type=json --headerline data.csv",
+      "option_d": "mongoimport --uri=\"mongodb+srv://...\" --collection=products --type=csv --noHeaderLine data.csv",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the material specifies using `--type=csv` and `--headerline` for CSV files that contain column names in the first row. Option B is incorrect because `--jsonArray` is used for JSON files, not CSV. Option C is incorrect because the file type is CSV, not JSON. Option D is incorrect because `--noHeaderLine` (or lack of `--headerline`) implies the first row is data, not column names.",
+      "target_concept": "MongoImport CLI Syntax",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "CLI Import/Export",
+      "what_taught": "Usage of mongoimport with CSV format and header line handling.",
+      "why_assessed": "Ensures students can correctly configure CLI tools for data ingestion based on file format.",
+      "evidence_refs": [
+        "SUMMARY: examples_and_code_patterns[0]"
+      ],
+      "misconception_rationale": "Distractors mix up flags for JSON vs CSV formats and misinterpret header line handling."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In a MongoDB Aggregation Pipeline, what is the primary function of the `$lookup` stage?",
+      "option_a": "To filter documents based on specific conditions before grouping.",
+      "option_b": "To perform a left outer join between collections by matching localField to foreignField.",
+      "option_c": "To sort the documents in ascending or descending order.",
+      "option_d": "To reshape the output documents by including or excluding specific fields.",
+      "correct_option": "B",
+      "explanation": "Option B is correct as the material defines `$lookup` as performing a left outer join between collections. Option A describes `$match`. Option C describes `$sort`. Option D describes `$project`.",
+      "target_concept": "Aggregation Pipeline Stages",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Join Mechanism ($lookup)",
+      "what_taught": "The role of $lookup in joining collections.",
+      "why_assessed": "Differentiates between core aggregation stages which are often confused by students.",
+      "evidence_refs": [
+        "SUMMARY: mechanisms_and_formulas[2]"
+      ],
+      "misconception_rationale": "Distractors represent other common aggregation stages ($match, $sort, $project) to test specific knowledge of $lookup."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "A database administrator wants to verify if a query is utilizing a specific compound index on `category` and `price`. Which method should they use?",
+      "option_a": "Use .explain(\"executionStats\") to analyze the query plan.",
+      "option_b": "Use .count() to check the number of documents returned.",
+      "option_c": "Use .find() with a limit of 1 to inspect the first document.",
+      "option_d": "Use .aggregate() with a $match stage to filter the data.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the material explicitly states that `.explain(\"executionStats\")` is used to analyze query plans and verify index utilization. Options B, C, and D are standard query operations that do not provide execution plan details or index usage statistics.",
+      "target_concept": "Index Selection & Verification",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Index Selection Mechanism",
+      "what_taught": "Using explain() to debug query performance and index usage.",
+      "why_assessed": "Critical for performance optimization tasks in MongoDB.",
+      "evidence_refs": [
+        "SUMMARY: mechanisms_and_formulas[1]"
+      ],
+      "misconception_rationale": "Distractors are common query methods that students might mistakenly believe provide performance insights."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which update operator is used to remove a specific field from a document in MongoDB?",
+      "option_a": "$set",
+      "option_b": "$unset",
+      "option_c": "$push",
+      "option_d": "$inc",
+      "correct_option": "B",
+      "explanation": "Option B is correct as the material lists `$unset` as the operator to remove fields. Option A (`$set`) modifies or adds fields. Option C (`$push`) adds elements to arrays. Option D (`$inc`) increments numeric values.",
+      "target_concept": "Update Operators",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Update Operations",
+      "what_taught": "Basic CRUD update operators, specifically field removal.",
+      "why_assessed": "Foundational knowledge for document manipulation.",
+      "evidence_refs": [
+        "SUMMARY: examples_and_code_patterns[1]"
+      ],
+      "misconception_rationale": "Distractors are other common update operators that perform different actions (modify, add, increment)."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the context of MongoDB schema validation, what is the purpose of defining `bsonType` rules?",
+      "option_a": "To encrypt sensitive data fields within the document.",
+      "option_b": "To enforce data structure and types on collection documents to ensure data integrity.",
+      "option_c": "To automatically index all fields defined in the schema.",
+      "option_d": "To convert documents from JSON to BSON format upon insertion.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the material defines Schema Validation as enforcing data structure and types (e.g., bsonType) to ensure data integrity. Option A is incorrect as validation does not handle encryption. Option C is incorrect as validation does not create indexes. Option D is incorrect as BSON conversion is a storage layer detail, not a validation rule.",
+      "target_concept": "Schema Validation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Schema Validation",
+      "what_taught": "The role of schema validation in maintaining data integrity.",
+      "why_assessed": "Understanding how to enforce data quality in a NoSQL database.",
+      "evidence_refs": [
+        "SUMMARY: concepts_and_definitions[4]"
+      ],
+      "misconception_rationale": "Distractors conflate validation with security (encryption), performance (indexing), or format conversion."
+    }
+  ]
+}

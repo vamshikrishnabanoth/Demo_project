@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788030058088-CASE_C_M",
+  "timestamp": "2026-08-29T19:02:23Z",
+  "input_id": "CASE_C_MULTIMODAL",
+  "selected_representation": "UNIFIED",
+  "pedagogical_delivery_index": 1.0,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "CODE_INTERPRETATION",
+    "OUTPUT_PREDICTION",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 85071.23,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 targets was fulfilled by selecting 5 distinct concepts from the available 10. To ensure non-redundancy and medium difficulty, each target was assigned a unique pedagogical facet: Concept Understanding for the core VAE mechanism, Theoretical Rationale for the KL divergence, Code Interpretation for the encoder, Output Prediction for the reparameterization trick, and Practical Application for the Fashion-MNIST context. This covers the full spectrum from theory to implementation and application without repeating assessment angles."
+}

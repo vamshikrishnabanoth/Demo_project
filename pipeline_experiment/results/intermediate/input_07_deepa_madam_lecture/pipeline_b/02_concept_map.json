@@ -1,0 +1,84 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Greatest Common Divisor (GCD) Algorithms",
+    "subtopics": [
+      "Definition of GCD/HCF",
+      "Iterative GCD implementation",
+      "Recursive GCD implementation",
+      "Euclidean Algorithm logic"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C07",
+      "C08",
+      "C10",
+      "C11"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Least Common Multiple (LCM) Algorithms",
+    "subtopics": [
+      "Definition of LCM",
+      "Iterative LCM implementation using loops",
+      "Recursive LCM implementation",
+      "Relationship between GCD and LCM"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C09"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Modulo Arithmetic and Divisibility",
+    "subtopics": [
+      "Modulo operator usage",
+      "Checking divisibility conditions",
+      "Reduction steps in Euclidean algorithm"
+    ],
+    "associated_chunk_ids": [
+      "C02",
+      "C03",
+      "C05",
+      "C06",
+      "C10",
+      "C11"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Recursion and Loop Conversion",
+    "subtopics": [
+      "Converting while loops to recursion",
+      "Base cases in recursive functions",
+      "Recursive function structure"
+    ],
+    "associated_chunk_ids": [
+      "C04",
+      "C05",
+      "C06",
+      "C09"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "String Manipulation and Recursion",
+    "subtopics": [
+      "String reversal logic",
+      "Substring extraction",
+      "Recursive string processing"
+    ],
+    "associated_chunk_ids": [
+      "C13",
+      "C14",
+      "C15"
+    ]
+  }
+]

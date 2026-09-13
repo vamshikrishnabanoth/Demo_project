@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "What is the time complexity of the linear\u2011scan algorithm for finding the Longest Common Prefix (LCP) of n strings, where m is the length of the shortest string?",
+      "option_a": "O(n+m)",
+      "option_b": "O(n*m)",
+      "option_c": "O(n log m)",
+      "option_d": "O(m log n)",
+      "correct_option": "B",
+      "explanation": "The linear\u2011scan algorithm compares each character position across all n strings until a mismatch occurs. For each of the m positions, it may examine up to n strings, yielding O(n*m) time. Option A incorrectly adds the two sizes; C and D involve logarithmic factors that do not appear in a simple scan.",
+      "target_concept": "Time Complexity",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During a binary search for the LCP length, which condition causes the variable high to be updated to mid-1?",
+      "option_a": "The candidate prefix of length mid is common to all strings",
+      "option_b": "The candidate prefix of length mid is not common to all strings",
+      "option_c": "All strings are empty",
+      "option_d": "The minimum string length is zero",
+      "correct_option": "B",
+      "explanation": "If the prefix of length mid is not common, the maximum possible common prefix must be shorter, so high is set to mid-1. Option A would move low up, not high. Options C and D are special cases that do not trigger the high update rule.",
+      "target_concept": "Binary Search",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Which data structure is used in the HashSet\u2011based approach to determine whether all strings share the same character at a given position?",
+      "option_a": "HashMap",
+      "option_b": "HashSet",
+      "option_c": "Queue",
+      "option_d": "Stack",
+      "correct_option": "B",
+      "explanation": "A HashSet stores unique characters seen at a position; if its size exceeds one, a mismatch exists. A HashMap would require key/value pairs, unnecessary here. Queue and Stack are ordered collections and not suited for uniqueness checks.",
+      "target_concept": "HashSet",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In the linear\u2011scan LCP algorithm, the loop terminates when:",
+      "option_a": "All strings have been processed",
+      "option_b": "A mismatch between characters at the current position is found",
+      "option_c": "The minimum string length is reached",
+      "option_d": "The HashSet size becomes greater than one",
+      "correct_option": "B",
+      "explanation": "The algorithm stops at the first position where any two strings differ, which is option B. Option C is a consequence of B when the mismatch occurs at the last character, but the loop ends earlier if a mismatch appears earlier. Options A and D are not loop\u2011termination conditions.",
+      "target_concept": "String Scanning",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following statements about binary search for the Longest Common Prefix is NOT correct?",
+      "option_a": "The search space is the range of possible prefix lengths from 0 to the length of the shortest string.",
+      "option_b": "If a candidate length is valid, the algorithm sets low to mid+1 to search for a longer prefix.",
+      "option_c": "The algorithm always returns the length of the longest common prefix, even if no common prefix exists.",
+      "option_d": "If a candidate length is invalid, the algorithm sets high to mid-1 to search for a shorter prefix.",
+      "correct_option": "C",
+      "explanation": "When no common prefix exists, the algorithm correctly returns length 0; it does not always return a positive length. Options A, B, and D correctly describe the binary\u2011search logic.",
+      "target_concept": "Binary Search",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

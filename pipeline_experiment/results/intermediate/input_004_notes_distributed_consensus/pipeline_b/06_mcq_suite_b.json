@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_004_notes_distributed_consensus",
+  "input_type": "NOTES",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "According to the CAP theorem, which of the following statements is correct?",
+      "option_a": "A system can provide both consistency and availability if there is no network partition.",
+      "option_b": "A system can provide consistency, availability, and partition tolerance simultaneously.",
+      "option_c": "Partition tolerance can be ignored in a perfectly reliable network.",
+      "option_d": "None of the above.",
+      "correct_option": "A",
+      "explanation": "The CAP theorem states that in the presence of a network partition, a system must choose between consistency and availability; it can provide both consistency and availability only when no partition occurs. Option A captures this nuance and is therefore correct. Option B is the common misconception that all three properties can be achieved together, which the theorem disproves. Option C confuses partition tolerance with network reliability; even reliable networks can experience partitions, so tolerance is essential. Option D is incorrect because Option A is a valid statement.",
+      "target_concept": "CAP Theorem",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "A distributed key\u2011value store continues to accept reads and writes during a network partition, but some reads may return stale values. Which two CAP properties does this system guarantee?",
+      "option_a": "Consistency and Availability",
+      "option_b": "Consistency and Partition tolerance",
+      "option_c": "Availability and Partition tolerance",
+      "option_d": "All three properties",
+      "correct_option": "C",
+      "explanation": "The described behavior shows the system remains available (it accepts operations) and tolerates partitions (it keeps working despite the split). Because stale reads are possible, strong consistency is not guaranteed. Therefore, the two guaranteed properties are Availability and Partition tolerance (Option C). Option A incorrectly includes consistency. Option B pairs consistency with partition tolerance, which is not exhibited. Option D is impossible under CAP; a system cannot guarantee all three simultaneously.",
+      "target_concept": "CAP Theorem",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Which statement best describes eventual consistency?",
+      "option_a": "All reads always return the most recent write immediately.",
+      "option_b": "If no new updates are made, all replicas will eventually converge to the same value.",
+      "option_c": "Every operation appears to execute atomically across all nodes (linearizability).",
+      "option_d": "Reads are blocked until the write has been replicated to a majority of nodes.",
+      "correct_option": "B",
+      "explanation": "Eventual consistency guarantees convergence: after a period without new writes, all replicas will hold the same value (Option B). Option A describes strong consistency, not eventual. Option C describes linearizability, a stronger guarantee than eventual consistency. Option D describes a quorum\u2011based approach for strong consistency, not eventual consistency. The misconception that eventual consistency offers the same guarantees as strong consistency is addressed by highlighting the convergence property only.",
+      "target_concept": "Consistency Models",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Why is partition tolerance considered essential in the design of distributed systems?",
+      "option_a": "Because network partitions never occur, so it can be ignored.",
+      "option_b": "Because it allows the system to continue operating despite network failures.",
+      "option_c": "Because it guarantees strong consistency at all times.",
+      "option_d": "Because it eliminates the need for data replication.",
+      "correct_option": "B",
+      "explanation": "Partition tolerance means the system can keep functioning when communication between subsets of nodes is lost, which is a realistic scenario in distributed environments; thus Option B is correct. Option A reflects the misconception that partitions are optional. Option C confuses tolerance with consistency; tolerance does not by itself guarantee strong consistency. Option D is false because replication is often used precisely to achieve tolerance and availability.",
+      "target_concept": "Partition Tolerance",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the Raft consensus protocol, which role is primarily responsible for handling client requests and replicating log entries to the other nodes?",
+      "option_a": "Follower",
+      "option_b": "Candidate",
+      "option_c": "Leader",
+      "option_d": "Learner",
+      "correct_option": "C",
+      "explanation": "The Leader in Raft receives client commands, appends them to its log, and replicates the entries to Followers, ensuring consistency. Followers simply respond to AppendEntries RPCs and do not handle client requests. Candidates are transient states during elections and do not serve client traffic. \"Learner\" is not a standard Raft role, making Option D a distractor. This addresses the misconception that Raft needs a majority of nodes up for any operation; only a majority is required for leader election and log commitment, not for every individual request.",
+      "target_concept": "Raft Consensus Protocol",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

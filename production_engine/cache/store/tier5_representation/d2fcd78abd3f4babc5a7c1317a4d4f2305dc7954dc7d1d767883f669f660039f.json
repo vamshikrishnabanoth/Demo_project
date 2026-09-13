@@ -1,0 +1,151 @@
+{
+  "summary": null,
+  "blueprint": {
+    "blueprint_id": "BP_CASE_B_INTERACTIVE",
+    "input_id": "CASE_B_INTERACTIVE",
+    "topics": [
+      {
+        "topic_id": "TOP_01",
+        "topic": "Binary Search Partitioning Strategy",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "INTRODUCE"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Binary Search",
+          "Sorted Arrays"
+        ],
+        "evidence_refs": [
+          "E_C01",
+          "E_C03",
+          "E_C04"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_02",
+        "topic": "Partition Boundary Properties",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "EXPLAIN"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Array Partitioning",
+          "Invariants"
+        ],
+        "evidence_refs": [
+          "E_C05",
+          "E_C06",
+          "E_C07"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_03",
+        "topic": "Median Calculation Logic",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "EXPLAIN"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Median Definition",
+          "Even/Odd Length Handling"
+        ],
+        "evidence_refs": [
+          "E_C08",
+          "E_C16",
+          "E_C17",
+          "E_C20"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_04",
+        "topic": "Cross-Array Comparison Conditions",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "EXPLAIN"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Boundary Conditions",
+          "Comparison Logic"
+        ],
+        "evidence_refs": [
+          "E_C13",
+          "E_C14",
+          "E_C15",
+          "E_C18"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_05",
+        "topic": "Pointer Adjustment and Search Direction",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "EXPLAIN"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Search Space Reduction",
+          "Pointer Movement"
+        ],
+        "evidence_refs": [
+          "E_C21",
+          "E_C22",
+          "E_C23"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_06",
+        "topic": "Worked Examples and Data Sets",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "DEMONSTRATE"
+        ],
+        "dominant_mode": "WORKED_EXAMPLE",
+        "target_bloom_level": "APPLY",
+        "prerequisite_concepts": [
+          "Algorithm Steps",
+          "Data Tracing"
+        ],
+        "evidence_refs": [
+          "E_C03",
+          "E_C19",
+          "E_C24"
+        ],
+        "teacher_specificity": "LOW"
+      },
+      {
+        "topic_id": "TOP_07",
+        "topic": "Index and Pointer Management",
+        "salience_score": 0.05,
+        "instructional_acts": [
+          "EXPLAIN"
+        ],
+        "dominant_mode": "CONCEPTUAL_OVERVIEW",
+        "target_bloom_level": "UNDERSTAND",
+        "prerequisite_concepts": [
+          "Indexing",
+          "Pointer Arithmetic"
+        ],
+        "evidence_refs": [
+          "E_C11",
+          "E_C12",
+          "E_C25"
+        ],
+        "teacher_specificity": "LOW"
+      }
+    ]
+  }
+}

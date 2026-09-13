@@ -1,0 +1,31 @@
+{
+  "plan_id": "PLAN_input_01_daa_unit2",
+  "input_id": "input_01_daa_unit2",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Binary Search Algorithm",
+      "question_count": 2,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Median of Two Sorted Arrays",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Fixed Point Problem",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

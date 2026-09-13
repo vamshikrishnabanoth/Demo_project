@@ -1,0 +1,24 @@
+{
+  "input_id": "VOICE_ONLY | PROBLEM_SOLVING",
+  "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+  "concepts_and_definitions": [
+    "Longest Common Prefix (LCP): The longest string that is a prefix of all strings in a given array.",
+    "Binary Search on Answer Space: An algorithmic technique where the search space is the range of possible answers (e.g., prefix length or eating speed) rather than the input array indices.",
+    "Java Memory Management: The distinction between reference variables (stack) and objects (heap), and the concept of garbage collection eligibility versus explicit deallocation.",
+    "Hash Map Frequency Counting: A method to determine commonality by counting occurrences of characters across strings and checking if the count equals the total number of strings.",
+    "Koa Eating Bananas Problem: A specific algorithmic challenge involving finding the minimum integer speed required to consume all bananas within a given time limit."
+  ],
+  "mechanisms_and_formulas": [
+    "Binary Search Logic for LCP: Initialize low=0 and high=min_length. If the substring of length mid is a common prefix, update low=mid+1 to search for a longer prefix; otherwise, update high=mid-1.",
+    "Common Prefix Verification: A helper mechanism that iterates through each string to check if the candidate prefix matches the substring of the same length at the start of the string.",
+    "Banana Eating Time Calculation: For a given speed S, the time taken for a pile of size B is calculated as ceil(B/S). The total time is the sum of these values across all piles.",
+    "Binary Search for Minimum Speed: Search for the minimum speed S such that the total time to eat all bananas is less than or equal to the given hours H. If time <= H, update high=S-1; otherwise, update low=S+1."
+  ],
+  "examples_and_code_patterns": [
+    "Java String Scanning Pattern: Using a StringBuilder to accumulate matching characters and breaking the loop when a mismatch is found or the end of the shortest string is reached.",
+    "Hash Set/Map Initialization: Demonstrating the difference between declaring a reference (Set set;) and instantiating an object (set = new HashSet<>()), highlighting that the former does not allocate heap memory.",
+    "Koa Eating Bananas Brute Force vs. Binary Search: Comparing a linear increment of speed (1, 2, 3...) against a binary search approach to find the optimal speed efficiently.",
+    "Edge Case Handling: Processing only the first 'min_length' characters of the strings, as the prefix cannot exceed the length of the shortest string in the array."
+  ],
+  "factual_summary_text": "The session focuses on solving two distinct algorithmic problems: finding the Longest Common Prefix (LCP) of an array of strings and the 'Koa Eating Bananas' problem. For the LCP problem, the instructor emphasizes that the search space is bounded by the length of the shortest string. The primary solution discussed is a binary search approach where the algorithm searches for the maximum length 'mid' such that the substring of that length is a prefix of all input strings. If the candidate prefix is common, the search moves to the upper half (low = mid + 1); otherwise, it moves to the lower half (high = mid - 1). The discussion also covers a hash-based approach where character frequencies are counted across strings to identify common prefixes, requiring the map to be cleared after processing each character position to avoid cumulative counts.\n\nA significant portion of the lecture addresses Java-specific memory management concepts, clarifying that Java does not use explicit deallocation like C/C++ (new/delete or malloc/free). Instead, objects become eligible for garbage collection when their reference count drops to zero. The instructor uses code examples to illustrate the difference between declaring a reference variable and instantiating an object on the heap, noting that setting a reference to null or reassigning it makes the previous object eligible for collection, though the timing of garbage collection is non-deterministic.\n\nThe second problem, 'Koa Eating Bananas,' involves finding the minimum integer speed at which a person can eat all piles of bananas within a given number of hours. The instructor contrasts a brute-force linear search for speed with a binary search solution. The binary search operates on the range of possible speeds (from 1 to the maximum pile size), calculating the total time required for a given speed using the ceiling of (pile_size / speed). The goal is to find the smallest speed where the total time is less than or equal to the available hours, optimizing the solution from O(N * Max_Pile) to O(N * log(Max_Pile))."
+}

@@ -1,0 +1,131 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "In a Singly Linked List, when inserting a new node at the tail, which sequence of pointer updates is required to maintain the integrity of the list structure?",
+      "option_a": "Set the new node's 'next' pointer to NULL and update the previous node's 'next' pointer to point to the new node.",
+      "option_b": "Set the new node's 'next' pointer to the head and update the head pointer to point to the new node.",
+      "option_c": "Update the previous node's 'next' pointer to the new node, but leave the new node's 'next' pointer uninitialized.",
+      "option_d": "Set the new node's 'prev' pointer to the previous node and the previous node's 'next' pointer to the new node.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because in a Singly Linked List, the last node must have its 'next' pointer set to NULL to indicate the end of the list, and the preceding node must point to the new node to maintain the chain. Option B describes insertion at the head, not the tail. Option C is incorrect because leaving the 'next' pointer uninitialized leads to undefined behavior or memory errors. Option D is incorrect because Singly Linked Lists do not have 'prev' pointers; that is a characteristic of Doubly Linked Lists.",
+      "target_concept": "Singly Linked List Operations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_01",
+      "what_taught": "Students learn the structure of a Singly Linked List where each node holds data and a pointer to the next node, and how to implement insertion by dynamically allocating nodes and updating the 'next' pointers to maintain the linear chain.",
+      "why_assessed": "This assessment verifies that students can visualize the unidirectional pointer flow and understand the memory management required to link nodes without a fixed array size.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Believing that a singly linked list allows direct backward traversal using a 'prev' pointer.; Assuming that inserting a node at the tail requires updating the 'next' pointer of the new node to NULL, but forgetting to update the previous node's 'next' pointer to the new node.; Confusing the 'head' pointer with the first node's data value rather than its memory address."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "When inserting a new node between two existing nodes in a Doubly Linked List, why is it necessary to update both the 'next' and 'prev' pointers of the adjacent nodes?",
+      "option_a": "To ensure that the list remains bidirectionally traversable and that the logical order of nodes is preserved in both forward and backward directions.",
+      "option_b": "To reduce the memory overhead by sharing pointer values between adjacent nodes.",
+      "option_c": "To allow the 'head' pointer to automatically update to the new node if it is inserted at the beginning.",
+      "option_d": "To prevent the 'next' pointer of the new node from pointing to NULL, which would break the circular nature of the list.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because a Doubly Linked List relies on both 'next' and 'prev' pointers to maintain bidirectional consistency. If only one direction is updated, traversal in the other direction will skip the new node or point to an invalid address. Option B is incorrect as updating pointers does not reduce memory overhead. Option C is incorrect because the head pointer is only updated if the insertion is at the very beginning, not generally for any insertion. Option D is incorrect because standard Doubly Linked Lists are not circular; the 'next' pointer of the last node is NULL, not pointing to the head.",
+      "target_concept": "Doubly Linked List Operations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_02",
+      "what_taught": "Students learn the structure of a Singly Linked List where each node holds data and a pointer to the next node, and how to implement insertion by dynamically allocating nodes and updating the 'next' pointers to maintain the linear chain.",
+      "why_assessed": "This assessment verifies that students can visualize the unidirectional pointer flow and understand the memory management required to link nodes without a fixed array size.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Believing that a singly linked list allows direct backward traversal using a 'prev' pointer.; Assuming that inserting a node at the tail requires updating the 'next' pointer of the new node to NULL, but forgetting to update the previous node's 'next' pointer to the new node.; Confusing the 'head' pointer with the first node's data value rather than its memory address."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "In a Circular Linked List, what is the correct termination condition for a traversal loop that visits every node exactly once?",
+      "option_a": "while (temp != NULL)",
+      "option_b": "while (temp->next != NULL)",
+      "option_c": "while (temp != head)",
+      "option_d": "while (temp->next != head)",
+      "correct_option": "C",
+      "explanation": "Option C is correct because in a Circular Linked List, the last node's 'next' pointer points back to the head. Therefore, the loop must stop when the current node ('temp') becomes equal to the 'head' again. Option A is incorrect because there is no NULL pointer in a circular list, leading to an infinite loop. Option B is incorrect for the same reason; 'next' is never NULL. Option D is a common error; if the loop starts at head, checking 'temp->next != head' might skip the head node itself or cause issues depending on initialization, but the standard robust check for visiting all nodes including the start is comparing the current node to the head.",
+      "target_concept": "Circular Linked List Operations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_03",
+      "what_taught": "Students learn the structure of a Singly Linked List where each node holds data and a pointer to the next node, and how to implement insertion by dynamically allocating nodes and updating the 'next' pointers to maintain the linear chain.",
+      "why_assessed": "This assessment verifies that students can visualize the unidirectional pointer flow and understand the memory management required to link nodes without a fixed array size.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Believing that a singly linked list allows direct backward traversal using a 'prev' pointer.; Assuming that inserting a node at the tail requires updating the 'next' pointer of the new node to NULL, but forgetting to update the previous node's 'next' pointer to the new node.; Confusing the 'head' pointer with the first node's data value rather than its memory address."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "In an array-based Stack implementation, what is the primary purpose of checking if 'top == max' before executing a 'push' operation?",
+      "option_a": "To ensure that the new element is placed at the correct index without overwriting existing data.",
+      "option_b": "To verify that the stack is empty before adding the first element.",
+      "option_c": "To prevent stack overflow by avoiding writing to memory locations outside the allocated array bounds.",
+      "option_d": "To calculate the average value of the elements currently in the stack.",
+      "correct_option": "C",
+      "explanation": "Option C is correct because 'top == max' indicates the stack is full. Pushing without this check would write to an index beyond the array's allocated size, causing a buffer overflow and potential memory corruption. Option A is partially true regarding placement but misses the critical safety aspect of bounds checking. Option B is incorrect; checking for empty is done during 'pop' or 'peek', not 'push'. Option D is irrelevant to the push operation.",
+      "target_concept": "Stack Implementation (Array-based)",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_04",
+      "what_taught": "Students understand the array-based Stack implementation where 'push' increments the top index and assigns a value, and 'pop' decrements the top index and retrieves the value, with explicit checks for overflow (top == max) and underflow (top == -1).",
+      "why_assessed": "The assessment focuses on the LIFO behavior and the critical importance of boundary checks to prevent memory corruption or undefined behavior when the stack is full or empty.",
+      "evidence_refs": [
+        "E_C11",
+        "E_C12",
+        "[1800.0s - 1980.0s]",
+        "[1980.0s - 2160.0s]"
+      ],
+      "misconception_rationale": "Forgetting to check for stack overflow before pushing, leading to writing outside the array bounds.; Assuming that 'pop' returns the value at 'arr[top]' before decrementing, but then using the decremented index for the return value.; Believing that the initial value of 'top' should be 0 instead of -1, which would cause the first push to overwrite the first element incorrectly if not handled."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "In a Linked List-based Stack implementation, why is the 'push' operation implemented by creating a new node and updating the 'head' pointer to it, rather than traversing to the end of the list?",
+      "option_a": "To maintain O(1) time complexity for the push operation, as the top of the stack is represented by the head of the list.",
+      "option_b": "To ensure that the stack elements are stored in sorted order from bottom to top.",
+      "option_c": "To allow for efficient backward traversal of the stack elements during debugging.",
+      "option_d": "To reduce the memory allocation overhead by reusing the last node's memory space.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because a stack follows LIFO (Last-In, First-Out) order. In a linked list implementation, the 'head' represents the top of the stack. Inserting at the head is an O(1) operation. Traversing to the end would make the operation O(n), which is inefficient and contrary to the typical performance expectations of a stack. Option B is incorrect; stacks do not inherently maintain sorted order. Option C is incorrect; standard singly linked lists do not support efficient backward traversal. Option D is incorrect; new memory is allocated for each push, and the old head is not reused for the new push.",
+      "target_concept": "Stack Implementation (Linked List-based)",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_05",
+      "what_taught": "Students learn the structure of a Singly Linked List where each node holds data and a pointer to the next node, and how to implement insertion by dynamically allocating nodes and updating the 'next' pointers to maintain the linear chain.",
+      "why_assessed": "This assessment verifies that students can visualize the unidirectional pointer flow and understand the memory management required to link nodes without a fixed array size.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Believing that a singly linked list allows direct backward traversal using a 'prev' pointer.; Assuming that inserting a node at the tail requires updating the 'next' pointer of the new node to NULL, but forgetting to update the previous node's 'next' pointer to the new node.; Confusing the 'head' pointer with the first node's data value rather than its memory address."
+    }
+  ]
+}

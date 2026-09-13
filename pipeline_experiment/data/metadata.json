@@ -1,0 +1,125 @@
+[
+  {
+    "input_id": "input_01_daa_unit2",
+    "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+    "input_type": "PDF",
+    "content_style": "THEORY",
+    "file_path": "Audio/only material/DAA UNIT-II.pdf",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_02_cnn_object_detection",
+    "title": "CNN Object Detection: Fast R-CNN vs. YOLO Architectures & RoI Pooling",
+    "input_type": "PDF",
+    "content_style": "THEORY",
+    "file_path": "Audio/only material/EX2-CNN-OBJECT DETECTION-FASTRCNN VS YOLO-.pdf",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_03_ds_lab_programs",
+    "title": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+    "input_type": "CODE",
+    "content_style": "CODE",
+    "file_path": "Audio/only material/DS Lab Programs(KR24)II-II.docx",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_04_se_lab_git_github",
+    "title": "Software Engineering Lab: Git/GitHub Collaborative Workflows & Merge Conflicts",
+    "input_type": "NOTES",
+    "content_style": "PROCEDURAL",
+    "file_path": "Audio/only material/9h9k_SELAB (1).docx",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_05_assignment_mongodb_crud",
+    "title": "MongoDB CRUD Operations: Amazon Product Management System Queries",
+    "input_type": "ASSIGNMENT",
+    "content_style": "PROBLEM_SOLVING",
+    "file_path": "Audio/only material/assignment_1.docx",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_06_mongodb_commands_reference",
+    "title": "MongoDB Command Reference: MongoImport, Indexing & Aggregation Syntax",
+    "input_type": "NOTES",
+    "content_style": "CODE",
+    "file_path": "Audio/only material/MongoDB COmmands.txt",
+    "duration_seconds": 0.0
+  },
+  {
+    "input_id": "input_07_deepa_madam_lecture",
+    "title": "Interactive Number Theory & Code Logic: GCD, LCM & Euclidean Modulo",
+    "input_type": "VOICE_ONLY",
+    "content_style": "MATHEMATICAL",
+    "file_path": "pipeline_experiment/data/transcripts/deepa_madam_transcript.json",
+    "duration_seconds": 600.0
+  },
+  {
+    "input_id": "input_08_tapadia_sir_lecture",
+    "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROBLEM_SOLVING",
+    "file_path": "pipeline_experiment/data/transcripts/tapadia_sir_transcript.json",
+    "duration_seconds": 600.0
+  },
+  {
+    "input_id": "input_09_wt_web_technologies",
+    "title": "Web Technologies Classroom Lecture: DOM Manipulation & Event Handling",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROCEDURAL",
+    "file_path": "pipeline_experiment/data/transcripts/wt_web_tech_transcript.json",
+    "duration_seconds": 600.0
+  },
+  {
+    "input_id": "input_10_binary_trees_audio_ppt",
+    "title": "Hierarchical Data Structures: Binary Trees, Strict Trees & Tree Traversals",
+    "input_type": "VOICE_PLUS_PPT",
+    "content_style": "THEORY",
+    "file_path": "pipeline_experiment/data/transcripts/binary_trees_transcript.json",
+    "supporting_material_path": "Audio/voice+ppt/deepamam_binarytrees_lecture1/Trees.pptx",
+    "duration_seconds": 1200.0
+  },
+  {
+    "input_id": "input_11_ashamam_vae_colab",
+    "title": "Variational Autoencoders (VAE) on Fashion-MNIST: Latent Sampling & Loss Functions",
+    "input_type": "VOICE_PLUS_PPT",
+    "content_style": "CODE",
+    "file_path": "pipeline_experiment/data/transcripts/ashamam_vae_transcript.json",
+    "supporting_material_path": "Audio/voice+ppt/Ashamam_VAE/CSE-AI-MODULE2-EX3_VAE_FASHIONMNIST.pdf",
+    "duration_seconds": 1642.0
+  },
+  {
+    "input_id": "input_12_tapadia_buy_and_sell_stock",
+    "title": "Algorithmic Problem Solving: Best Time to Buy and Sell Stock (Single & Infinite Transactions)",
+    "input_type": "VOICE_PLUS_PPT",
+    "content_style": "PROBLEM_SOLVING",
+    "file_path": "pipeline_experiment/data/transcripts/tapadia_buy_and_sell_stock_transcript.json",
+    "supporting_material_path": "Audio/voice+ppt/tapadiasir_buyandsellstock_lecture2/tapadia_code_explaination.pdf",
+    "duration_seconds": 4969.0
+  },
+  {
+    "input_id": "input_13_wt_event_bubbling",
+    "title": "Web Technologies Lecture 2: Event Listeners, Event Bubbling & Event Capturing",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROCEDURAL",
+    "file_path": "pipeline_experiment/data/transcripts/wt_19_8_26_transcript.json",
+    "duration_seconds": 3434.0
+  },
+  {
+    "input_id": "input_14_wt_dom_validation",
+    "title": "Web Technologies Lecture 3: DOM Tree Traversal & Form Validation",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROCEDURAL",
+    "file_path": "pipeline_experiment/data/transcripts/wt_20_8_26_transcript.json",
+    "duration_seconds": 3300.0
+  },
+  {
+    "input_id": "input_15_python_problem_solving",
+    "title": "Python Programming & Algorithmic Problem Solving Patterns",
+    "input_type": "VOICE_ONLY",
+    "content_style": "CODE",
+    "file_path": "pipeline_experiment/data/transcripts/pp_lecture_transcript.json",
+    "duration_seconds": 4125.0
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "input_id": "001",
+  "title": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+  "concepts_and_definitions": [
+    "Singly linked list \u2013 a linear collection of nodes where each node points to the next node and the last node points to null.",
+    "Doubly linked list \u2013 a linear collection of nodes with both next and previous pointers, enabling forward and reverse traversal.",
+    "Circular linked list \u2013 a linked list whose last node points back to the first node, forming a circle, allowing continuous traversal.",
+    "Stack \u2013 a LIFO (last-in-first-out) abstract data type supporting push, pop, peek, and isEmpty operations.",
+    "Infix to postfix conversion \u2013 transforming an algebraic expression from infix notation to postfix (Reverse Polish) notation using a stack to handle operator precedence and parentheses."
+  ],
+  "mechanisms_and_formulas": [
+    "Insertion at end of singly linked list: traverse to last node and set its next to new node.",
+    "Deletion of a node with value v: locate node, adjust previous node\u2019s next to skip the target node, then delete.",
+    "Stack push (array): increment top index and store value; pop: retrieve value at top and decrement top.",
+    "Infix to postfix algorithm: for each token, if operand output it; if '(', push; if ')', pop until '('; if operator, pop operators of higher or equal precedence before pushing new operator."
+  ],
+  "examples_and_code_patterns": [
+    "SinglyLinkedList::insert(int val) \u2013 creates a new Node, traverses to tail, and links it.",
+    "DoublyLinkedList::displayReverse() \u2013 moves to tail then traverses backwards using prev pointers.",
+    "Stack::push(int val) and Stack::pop() \u2013 array implementation with overflow/underflow checks.",
+    "InfixToPostfix::convert(string expr) \u2013 scans expression, uses stack to reorder operators into postfix string."
+  ],
+  "factual_summary_text": "The lab material presents a series of C++ programs that implement fundamental data structures and algorithms. It begins with singly linked lists, demonstrating dynamic node creation, insertion at the end, deletion of a specified value, traversal for display, and counting nodes to determine length. The next module covers doubly linked lists, adding backward links to enable reverse traversal and illustrating how to maintain both prev and next pointers during insertions and deletions. Circular linked lists are then explored, showing how a tail pointer can be used to keep the list circular and how to delete nodes while preserving the circular property. Stack operations are implemented twice: once with a fixed-size array and once with a singly linked list, each providing push, pop, peek, isEmpty, and display functionalities. Finally, the material includes an infix-to-postfix conversion program that scans an expression, uses a stack to manage operator precedence and parentheses, and outputs the equivalent postfix notation. Each program is accompanied by sample inputs and outputs, illustrating the expected behavior of the implemented data structures and algorithms."
+}

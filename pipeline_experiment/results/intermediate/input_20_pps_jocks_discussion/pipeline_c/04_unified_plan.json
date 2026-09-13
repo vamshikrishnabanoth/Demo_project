@@ -1,0 +1,53 @@
+{
+  "input_id": "input_20_pps_jocks_discussion",
+  "title": "Classroom Discussion: Problem Solving in Python Interaction",
+  "total_requested_questions": 5,
+  "total_available_targets": 3,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Python Problem Solving",
+      "what_taught_summary": "The fundamental definition of Python problem solving as the logical decomposition of abstract problems into sequential, executable code steps within a Python environment.",
+      "why_assessed_pedagogy": "To establish a baseline conceptual framework that allows students to recognize the standard workflow of translating logical requirements into Python syntax.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming that problem solving in Python is solely about memorizing specific library functions rather than logical decomposition.",
+        "Believing that the 'executable code steps' must be written in a single line without any intermediate logical breakdown.",
+        "Confusing the Python programming language itself with the general concept of algorithmic problem solving."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Interactive Learning Methods",
+      "what_taught_summary": "The definition of interactive learning methods in the context of Python, specifically focusing on the use of interactive code execution patterns to facilitate logical decomposition.",
+      "why_assessed_pedagogy": "To ensure students can identify and recall the specific pedagogical techniques used to engage with code interactively, distinguishing them from passive reading or static analysis.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Thinking that interactive learning only refers to using graphical user interfaces (GUIs) rather than command-line or notebook-based code execution.",
+        "Assuming that 'interactive' implies real-time collaboration with other students rather than the student's direct interaction with the code interpreter.",
+        "Believing that interactive methods do not involve the logical decomposition of problems, but only testing pre-written code."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Code Implementation",
+      "what_taught_summary": "The definition of code interaction as the mechanism where logical problem decomposition is realized through specific interactive code execution patterns.",
+      "why_assessed_pedagogy": "To verify that students can recall the specific terminology and mechanisms associated with implementing logical steps into active code interactions.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing 'code interaction' with general software debugging or error correction processes.",
+        "Assuming that code implementation requires a full application structure rather than simple interactive execution patterns.",
+        "Believing that the logical decomposition step is separate from and unrelated to the actual code interaction phase."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

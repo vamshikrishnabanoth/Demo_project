@@ -1,0 +1,138 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 300.0
+      }
+    ],
+    "text": "Look at this logic carefully. If we want to compute LCM of two numbers A and B, remember the relation: LCM(A, B) * GCD(A, B) = A * B. Therefore LCM is simply (A * B) / GCD(A, B).",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 300.0
+        }
+      ],
+      "dwell_time": 300.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 300.0,
+        "end": 900.0
+      }
+    ],
+    "text": "Now how do we compute GCD efficiently? Do not use subtraction repeatedly. We use the Euclidean algorithm: while B is not zero, remainder R = A % B, set A = B, and set B = R. When B becomes zero, A is our GCD. Why modulo? Because modulo reduces the larger number exponentially in logarithmic time O(log(min(A, B))).",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 300.0,
+          "end": 900.0
+        }
+      ],
+      "dwell_time": 600.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 900.0,
+        "end": 1500.0
+      }
+    ],
+    "text": "Student asks: what if A < B initially? Excellent question. If A=12 and B=18, in iteration 1: 12 % 18 is 12! So A becomes 18 and B becomes 12, naturally swapping them without needing an explicit swap variable!",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 900.0,
+          "end": 1500.0
+        }
+      ],
+      "dwell_time": 600.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1500.0,
+        "end": 1800.0
+      }
+    ],
+    "text": "Always watch out for integer overflow: when calculating (A * B) / GCD, do (A / GCD) * B first to prevent integer overflow in C++/Java.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1500.0,
+          "end": 1800.0
+        }
+      ],
+      "dwell_time": 300.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

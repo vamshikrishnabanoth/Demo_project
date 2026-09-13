@@ -1,0 +1,25 @@
+{
+  "input_id": "lab001",
+  "title": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+  "concepts_and_definitions": [
+    "Singly Linked List \u2013 a linear collection of nodes where each node points to the next node.",
+    "Doubly Linked List \u2013 a linear collection of nodes with both next and previous pointers.",
+    "Circular Linked List \u2013 a linked list where the last node points back to the first node, forming a circle.",
+    "Stack \u2013 a LIFO (last\u2011in, first\u2011out) abstract data type supporting push, pop, peek and isEmpty operations.",
+    "Array\u2011based Stack \u2013 stack implementation using a fixed\u2011size array.",
+    "Infix to Postfix Conversion \u2013 algorithm that transforms an arithmetic expression from infix notation to postfix (Reverse Polish) notation using a stack."
+  ],
+  "mechanisms_and_formulas": [
+    "Insertion at end (singly/doubly/circular): create new node, adjust next (and prev for doubly) pointers, update tail if needed.",
+    "Deletion by value: traverse list, locate node, relink predecessor's next (and predecessor's prev for doubly) to successor, delete node.",
+    "Stack push (array): top++; arr[top]=value; push (linked list): newNode->next = top; top = newNode.",
+    "Infix to postfix precedence handling: while stack not empty and precedence(stack.top) >= precedence(current) pop to output; push '(' and ')' handling."
+  ],
+  "examples_and_code_patterns": [
+    "SinglyLinkedList::insert(int val) \u2013 creates Node* temp = new Node(val); traverses to last node and sets p->next = temp.",
+    "DoublyLinkedList::displayReverse() \u2013 moves to last node then iterates using prev pointers to print values.",
+    "Stack class (array) \u2013 int arr[100]; int top; push checks overflow, pop checks underflow, peek prints arr[top].",
+    "Infix to postfix conversion (not fully shown) \u2013 scans characters, uses a stack<char> for operators, outputs operands directly."
+  ],
+  "factual_summary_text": "The material provides a series of laboratory programs that demonstrate fundamental data\u2011structure operations in C++. It begins with a singly linked list implementation supporting dynamic node creation, insertion at the end, deletion by value, traversal for display, and length calculation. The doubly linked list extends these concepts by maintaining both forward and backward links, enabling forward and reverse traversals. A circular linked list variant is also presented, where the tail node points back to the head, and insertion, deletion, and circular traversal are handled accordingly. \nAdditionally, the lab includes stack implementations using both a fixed\u2011size array and a singly linked list, illustrating push, pop, peek, and emptiness checks. Finally, an algorithm for converting infix expressions to postfix notation is outlined, emphasizing the use of a stack to manage operator precedence and parentheses. Across all programs, standard C++ constructs such as classes, dynamic memory allocation, and I/O streams are employed to illustrate the practical application of these data structures."
+}

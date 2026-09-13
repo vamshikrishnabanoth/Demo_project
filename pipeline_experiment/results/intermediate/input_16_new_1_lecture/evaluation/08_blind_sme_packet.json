@@ -1,0 +1,197 @@
+{
+  "input_id": "input_16_new_1_lecture",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "A student argues that Computer Science is primarily the study of how to assemble computer hardware and install operating systems. Which statement best corrects this misconception by defining the core focus of Computer Science?",
+      "options": {
+        "A": "Computer Science is the study of algorithms and computation, focusing on abstract problem-solving rather than just physical hardware or software installation.",
+        "B": "Computer Science is the engineering discipline dedicated to the design and manufacturing of microprocessors and circuit boards.",
+        "C": "Computer Science is the practice of providing technical support and troubleshooting for end-users in corporate environments.",
+        "D": "Computer Science is the study of user interface design and graphic aesthetics to make software visually appealing."
+      },
+      "correct_option": "A",
+      "explanation": "Option A is correct because Computer Science is fundamentally the study of algorithms, computation, and the theoretical limits of what can be computed. It is an abstract discipline concerned with problem-solving methods. Option B describes Computer Engineering, which focuses on hardware design. Option C describes IT Support or Help Desk roles. Option D describes Human-Computer Interaction (HCI) or UI/UX Design, which is a subfield but not the core definition of CS."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "What is the primary limitation of the provided input that prevents the generation of a factual summary?",
+      "options": {
+        "A": "The absence of a transcript or text data.",
+        "B": "The lack of visual aids or diagrams.",
+        "C": "The absence of speaker identification.",
+        "D": "The lack of a clear lecture structure."
+      },
+      "correct_option": "A",
+      "explanation": "The summary explicitly states that the absence of a transcript or text data is the reason a factual summary could not be generated. The other options are not mentioned as limitations in the provided text."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What does the summary indicate about the presence of concepts, definitions, mechanisms, formulas, or code patterns in the provided content?",
+      "options": {
+        "A": "They are present but not detailed in the summary.",
+        "B": "They are absent because the input lacks transcript or text data.",
+        "C": "They are present but only in the audio portion.",
+        "D": "They are present but require additional processing to extract."
+      },
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the provided source content contains no educational material, concepts, definitions, mechanisms, formulas, or code patterns due to the lack of transcript or text data. The other options are not supported by the summary."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "What is the primary significance of mathematical notation and set theory in the theoretical foundations of computer science?",
+      "options": {
+        "A": "They are used solely for aesthetic purposes to make academic papers look more complex and professional.",
+        "B": "They provide a formal language to precisely describe computational structures, data relationships, and logical proofs, ensuring unambiguous system design.",
+        "C": "They are only relevant to theoretical mathematicians and have no practical application in software engineering or data structure implementation.",
+        "D": "They are used to calculate the physical dimensions of computer hardware components for manufacturing purposes."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because mathematical notation and set theory allow for the precise, unambiguous definition of data structures (e.g., sets, graphs, trees) and the formal proof of algorithm correctness. This rigor is essential for building reliable systems. Option A is incorrect as it dismisses the functional utility of formalism. Option C is incorrect because these foundations are directly applied in defining data structures and system logic. Option D is incorrect as it confuses theoretical CS with hardware engineering."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "What can be inferred about the content of the lecture based on the provided summary?",
+      "options": {
+        "A": "The lecture covered advanced topics in computer science.",
+        "B": "The content of the lecture cannot be determined from the provided summary.",
+        "C": "The lecture was focused on practical coding exercises.",
+        "D": "The lecture included detailed explanations of core principles."
+      },
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that no factual summary of the presented content can be generated due to the lack of transcript or text data. Therefore, the content of the lecture cannot be determined from the provided summary. The other options are not supported by the summary."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "In the context of digital information processing, why is binary representation considered the fundamental data format for all computer systems?",
+      "options": {
+        "A": "Because computers process information directly in decimal format, which is more efficient for human-readable calculations.",
+        "B": "Because binary representation (0s and 1s) corresponds to the physical states of electronic circuits (e.g., voltage high/low), enabling reliable digital processing.",
+        "C": "Because text files are stored in a proprietary binary format that cannot be converted to any other numerical base.",
+        "D": "Because binary is the only number system that allows for the storage of negative numbers without using extra bits."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because digital computers operate on electronic switches that have two stable states (on/off, high/low voltage), which are naturally represented by binary digits (bits). All other data types (text, images, audio) are encoded into binary for storage and processing. Option A is incorrect because computers do not natively process decimal; they convert it to binary. Option C is incorrect because binary is a base-2 number system, not a proprietary file format, and can be converted to other bases. Option D is incorrect because other number systems (like two's complement in binary, or signed magnitude) handle negatives, and binary is not unique in this capability in a way that defines its fundamental role."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "Which of the following best describes the definition of an algorithm in computer science?",
+      "options": {
+        "A": "A specific line of code written in a programming language like Python or Java that executes a single operation.",
+        "B": "A finite, well-defined sequence of steps or instructions for solving a specific problem or performing a computation.",
+        "C": "A hardware component within the CPU that fetches and decodes instructions from memory.",
+        "D": "A database query that retrieves specific records from a table based on user input."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because an algorithm is an abstract, step-by-step procedure that is finite (it terminates) and well-defined (each step is unambiguous). It is independent of any specific programming language. Option A is incorrect because an algorithm is not a single line of code; it is a logical procedure that can be implemented in code. Option C describes the Control Unit or Instruction Decoder, which is hardware. Option D describes a specific application of an algorithm (query processing) but is not the definition of an algorithm itself."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "According to the summary, what type of input was provided for the lecture titled 'Core Computer Science Principles'?",
+      "options": {
+        "A": "A fully transcribed text document.",
+        "B": "A voice-only theory lecture without accompanying text data.",
+        "C": "A combination of video and audio recordings.",
+        "D": "A set of lecture slides with speaker notes."
+      },
+      "correct_option": "B",
+      "explanation": "The summary clearly indicates that the input is a voice-only theory lecture without accompanying transcript or text data. The other options are not mentioned in the provided summary."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "In the standard pedagogical structure of a lecture, what is the primary purpose of the 'Introduce' phase?",
+      "options": {
+        "A": "To present the most complex technical details and code examples immediately to challenge the students.",
+        "B": "To set the context, outline the learning objectives, and frame the topic before delivering detailed content.",
+        "C": "To allow students to ask questions about the previous lecture's material without any new information being presented.",
+        "D": "To distribute the final exam questions so students can prepare for the assessment."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the 'Introduce' phase (or hook) is designed to orient learners, explain why the topic is important, and state what they will learn. This scaffolding helps students organize their cognitive resources. Option A is incorrect because starting with complex details without context can lead to cognitive overload and confusion. Option C describes a review session, not the introduction of new material. Option D is pedagogically unsound and not part of standard lecture structure."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "Based on the provided summary, what is the primary reason a factual summary of the lecture content could not be generated?",
+      "options": {
+        "A": "The lecture was too short to contain meaningful information.",
+        "B": "The input consisted solely of a title and metadata without a transcript or text data.",
+        "C": "The audio recording was corrupted and unreadable.",
+        "D": "The lecture covered topics outside the scope of core computer science."
+      },
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the input consists solely of a title and metadata indicating a voice-only theory lecture without accompanying transcript or text data, which is why no factual summary could be generated. The other options are not supported by the provided text."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Data Availability and Processing",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Input Data Types",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Content Extraction Limitations",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Data Processing Constraints",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Inference from Limited Data",
+      "cognitive_level": "EVALUATE"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q_S01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Definition of Computer Science",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q_S02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Binary Representation",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q_S03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Definition of an Algorithm",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q_S04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Role of Mathematical Foundations",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q_S05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_16_new_1_lecture",
+      "target_concept": "Lecture Structure: Introduction Phase",
+      "cognitive_level": "REMEMBER"
+    }
+  }
+}

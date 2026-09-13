@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788025193718-CASE_B_I",
+  "timestamp": "2026-08-29T17:43:05Z",
+  "input_id": "CASE_B_INTERACTIVE",
+  "selected_representation": "BLUEPRINT",
+  "pedagogical_delivery_index": 0.7,
+  "cache_telemetry": {
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "OFF_BY_ONE_ANALYSIS",
+    "THEORETICAL_RATIONALE",
+    "ERROR_DIAGNOSIS",
+    "BOUNDARY_EDGE_CASE",
+    "ARCHITECTURAL_COMPARISON"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 191514.72,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 HARD targets was fulfilled by selecting 5 distinct concepts from the 7 available. To ensure high difficulty and non-redundancy, each target was assigned a unique, high-order pedagogical facet (OFF_BY_ONE, THEORETICAL_RATIONALE, ERROR_DIAGNOSIS, BOUNDARY_EDGE_CASE, and ARCHITECTURAL_COMPARISON). This approach avoids simple recall and forces students to apply deep logical reasoning, trace complex state changes, and analyze edge cases inherent in binary search partitioning problems."
+}

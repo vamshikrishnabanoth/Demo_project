@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_18_new_recording_37",
+  "input_type": "VOICE_ONLY",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "According to the conceptual overview provided in the lecture, what is the primary purpose of establishing a high-level mental model of the algorithm's structure before examining specific code?",
+      "option_a": "To ensure that the algorithm's output is strictly deterministic regardless of input variability.",
+      "option_b": "To enable students to interpret subsequent detailed technical steps by understanding the logical flow and core components.",
+      "option_c": "To demonstrate that the algorithm's sole purpose is optimization rather than general problem-solving logic.",
+      "option_d": "To confuse the high-level conceptual flow with specific implementation details to test student attention.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture's pedagogical goal was to establish a foundational mental model of the algorithm's structure and purpose, which allows students to interpret the detailed technical steps that follow. Option A is incorrect because the overview does not claim the output is deterministic without considering input variability; this is a misconception about the nature of the algorithm. Option C is incorrect because the algorithm is presented as a general problem-solving logic, not solely for optimization. Option D is incorrect because the goal is clarity, not confusion; confusing concepts with implementation details is a student error, not an instructional objective.",
+      "target_concept": "Algorithmic Overview and Mental Modeling",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the algorithm's output is deterministic without considering input variability.; Confusing the high-level conceptual flow with specific implementation details or syntax.; Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In the context of the algorithmic review, how does the lecture distinguish between the high-level conceptual flow and specific implementation details?",
+      "option_a": "The high-level flow focuses on the logical sequence of operations, while implementation details involve specific syntax and code structures.",
+      "option_b": "The high-level flow is identical to the implementation details, as the algorithm is fully defined by its code syntax.",
+      "option_c": "The high-level flow is concerned only with the final output, whereas implementation details are concerned only with the input data.",
+      "option_d": "The high-level flow is a deterministic process, while implementation details introduce non-deterministic variability.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the lecture emphasizes understanding the logical flow and core components (high-level) before diving into specific code or formulas (implementation). Option B is incorrect because it conflates the abstract conceptual model with concrete syntax, which is a key distinction made in the overview. Option C is incorrect because the high-level flow encompasses the entire logical process, not just the output, and implementation details are not limited to input data. Option D is incorrect because the overview does not characterize the high-level flow as deterministic in contrast to non-deterministic implementation; rather, it focuses on the logical structure.",
+      "target_concept": "Abstraction vs. Implementation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the algorithm's output is deterministic without considering input variability.; Confusing the high-level conceptual flow with specific implementation details or syntax.; Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "Why is it important to avoid assuming that the algorithm's output is deterministic without considering input variability, as highlighted in the lecture's conceptual overview?",
+      "option_a": "Because the algorithm's purpose is solely optimization, which requires fixed inputs.",
+      "option_b": "Because the logical flow of the algorithm depends on the specific input data, and ignoring this leads to an incorrect mental model of its behavior.",
+      "option_c": "Because the implementation details are more important than the conceptual flow in determining the output.",
+      "option_d": "Because the algorithm is designed to produce random outputs to test student understanding.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture emphasizes that the algorithm's logical flow is tied to its input variability; assuming determinism without this context creates a flawed mental model. Option A is incorrect because the algorithm is not solely for optimization, and optimization does not require fixed inputs. Option C is incorrect because the conceptual flow is foundational to understanding the output, not less important than implementation details. Option D is incorrect because the algorithm is not designed to produce random outputs; this is a misinterpretation of input variability.",
+      "target_concept": "Input Variability and Algorithmic Behavior",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the algorithm's output is deterministic without considering input variability.; Confusing the high-level conceptual flow with specific implementation details or syntax.; Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "What is the primary risk of confusing the high-level conceptual flow of the algorithm with specific implementation details, as discussed in the lecture?",
+      "option_a": "It may lead to an inability to interpret the subsequent detailed technical steps correctly.",
+      "option_b": "It ensures that the algorithm's output is always deterministic.",
+      "option_c": "It simplifies the algorithm's purpose to solely optimization.",
+      "option_d": "It eliminates the need to consider input variability.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the lecture's goal is to build a mental model that allows students to interpret detailed steps; confusing abstraction with implementation undermines this goal. Option B is incorrect because confusing the levels of abstraction does not ensure determinism; it may lead to incorrect assumptions about the algorithm's behavior. Option C is incorrect because the algorithm's purpose is general problem-solving, not solely optimization, and confusing the flow with implementation does not simplify its purpose. Option D is incorrect because input variability is a key consideration in the algorithm's logical flow, and confusing the levels does not eliminate this need.",
+      "target_concept": "Cognitive Load and Abstraction Levels",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the algorithm's output is deterministic without considering input variability.; Confusing the high-level conceptual flow with specific implementation details or syntax.; Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "How does the lecture's conceptual overview support the interpretation of the algorithm's logical flow without relying on specific code or formulas?",
+      "option_a": "By focusing on the core components and their interactions, which form the basis for understanding the algorithm's purpose.",
+      "option_b": "By assuming that the algorithm's output is deterministic, which simplifies the logical flow.",
+      "option_c": "By limiting the algorithm's purpose to optimization, which makes the logical flow easier to follow.",
+      "option_d": "By conflating the high-level conceptual flow with implementation details to provide a complete picture.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the lecture introduces the core components and explains the logical flow conceptually, allowing students to understand the algorithm's purpose without needing specific code. Option B is incorrect because assuming determinism is a misconception that does not support the interpretation of the logical flow; it oversimplifies the algorithm's behavior. Option C is incorrect because the algorithm's purpose is general problem-solving, not solely optimization, and limiting its purpose does not aid in understanding the logical flow. Option D is incorrect because conflating conceptual flow with implementation details is a misconception that hinders, rather than supports, the interpretation of the algorithm's logical flow.",
+      "target_concept": "Conceptual Understanding of Algorithmic Logic",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture provides a conceptual overview of the algorithmic review, introducing the core components and explaining the logical flow of the algorithm without specific code or formulas.",
+      "why_assessed": "The teacher aimed to establish a foundational mental model of the algorithm's structure and purpose to ensure students can interpret subsequent detailed technical steps.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the algorithm's output is deterministic without considering input variability.; Confusing the high-level conceptual flow with specific implementation details or syntax.; Believing the algorithm's purpose is solely optimization rather than general problem-solving logic."
+    }
+  ]
+}

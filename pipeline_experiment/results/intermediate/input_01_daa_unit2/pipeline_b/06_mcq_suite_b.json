@@ -1,0 +1,92 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_01_daa_unit2",
+  "input_type": "PDF",
+  "content_style": "THEORY",
+  "total_questions": 4,
+  "questions": [
+    {
+      "question_id": "Q_S01",
+      "question_text": "In the context of the Binary Search algorithm, what is the fundamental logical invariant that must hold true for the algorithm to correctly discard half of the search space at each step?",
+      "option_a": "The target element must be smaller than the first element and larger than the last element of the current subarray.",
+      "option_b": "The array segment being searched must be sorted, ensuring that if the target is not at the midpoint, it must lie entirely in either the left or the right half.",
+      "option_c": "The midpoint index must always be an even number to ensure the search space is divided into two equal integer-sized parts.",
+      "option_d": "The target element must be present in the array; otherwise, the algorithm cannot determine which half to discard.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the validity of binary search relies on the sorted order of the array. This order establishes a monotonic relationship, allowing the algorithm to infer that if target < A[mid], the target (if present) must be in the left half, and if target > A[mid], it must be in the right half. Option A is incorrect because the target is compared to the midpoint, not the boundaries, to determine the direction. Option C is incorrect because the midpoint index parity is irrelevant to the logic; integer division handles the split. Option D is incorrect because binary search is designed to handle the case where the target is absent by eventually exhausting the search space.",
+      "target_concept": "Binary Search Invariant and Precondition",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "The requirement for a sorted array and the logical basis for halving the search space based on comparison with the midpoint.",
+      "why_assessed": "To verify the student understands why the sorted precondition is necessary for the divide-and-conquer strategy to work in binary search.",
+      "evidence_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "misconception_rationale": "Distractors target the misconception that binary search compares against boundaries or requires the element to exist, and the confusion about index arithmetic."
+    },
+    {
+      "question_id": "Q_S02",
+      "question_text": "Consider a sorted array of 1,024 elements. In the worst-case scenario for Binary Search, how many times must the search interval be halved (i.e., how many iterations of the loop) to reduce the search space to a single element?",
+      "option_a": "10",
+      "option_b": "11",
+      "option_c": "12",
+      "option_d": "1,024",
+      "correct_option": "A",
+      "explanation": "Option A is correct. The number of iterations required to reduce a problem of size $n$ to size 1 using binary search is $\\log_2 n$. For $n = 1024$, $\\log_2 1024 = 10$ because $2^{10} = 1024$. Each iteration halves the search space: $1024 \\to 512 \\to 256 \\to 128 \\to 64 \\to 32 \\to 16 \\to 8 \\to 4 \\to 2 \\to 1$. Option B is incorrect as it represents $\\log_2 2048$. Option C is incorrect as it represents $\\log_2 4096$. Option D is incorrect as it represents the linear search complexity $O(n)$, not the logarithmic reduction of the search space.",
+      "target_concept": "Binary Search Time Complexity and Trace",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The relationship between the initial array size and the number of steps in binary search, specifically $\\log_2 n$.",
+      "why_assessed": "To assess the ability to trace the algorithm's efficiency and calculate the exact number of steps for a given input size.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "misconception_rationale": "Distractors include off-by-one errors in logarithmic calculation and the confusion between linear and logarithmic complexity."
+    },
+    {
+      "question_id": "Q_S03",
+      "question_text": "When applying the divide-and-conquer strategy to find the median of two sorted arrays of lengths $m$ and $n$ (where $m < n$), why is it standard practice to perform the binary search on the smaller array?",
+      "option_a": "To ensure that the median is always an integer rather than a floating-point number.",
+      "option_b": "To guarantee that the partition index in the larger array remains within its valid bounds, preventing out-of-bounds access errors.",
+      "option_c": "Because the median of two arrays is always located in the smaller array.",
+      "option_d": "To simplify the calculation of the average of the two individual medians.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. In the standard O(log(min(m,n))) algorithm, we binary search on the smaller array to find a partition $i$. The corresponding partition $j$ in the larger array is calculated as $j = (m + n + 1) / 2 - i$. If we searched on the larger array, $i$ could be large, causing $j$ to become negative or exceed the length of the smaller array, leading to invalid indices. By searching on the smaller array, we ensure $j$ stays within the valid range of the larger array. Option A is incorrect because the median type depends on the total count parity, not the search array. Option C is incorrect because the median can be in either array. Option D is incorrect because the median is not the average of the individual medians.",
+      "target_concept": "Median of Two Sorted Arrays - Partition Strategy",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03",
+      "what_taught": "The constraint that the binary search must be performed on the smaller array to maintain valid partition indices in the larger array.",
+      "why_assessed": "To evaluate the student's understanding of the boundary conditions and index calculations in the median of two sorted arrays problem.",
+      "evidence_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "misconception_rationale": "Distractors target the misconception that the median is derived from individual medians or that the location is fixed to one array."
+    },
+    {
+      "question_id": "Q_S04",
+      "question_text": "In the Median of Two Sorted Arrays problem, a valid partition is found when the elements are split into left and right halves. Which condition must be satisfied for the partition to be valid?",
+      "option_a": "The maximum element of the left half of Array 1 must be less than or equal to the minimum element of the right half of Array 2, AND the maximum element of the left half of Array 2 must be less than or equal to the minimum element of the right half of Array 1.",
+      "option_b": "The maximum element of the left half of Array 1 must be equal to the maximum element of the left half of Array 2.",
+      "option_c": "The minimum element of the right half of Array 1 must be greater than the minimum element of the right half of Array 2.",
+      "option_d": "The sum of the elements in the left halves must be equal to the sum of the elements in the right halves.",
+      "correct_option": "A",
+      "explanation": "Option A is correct. For the combined left halves to contain the smallest elements and the combined right halves to contain the largest elements, the largest element in the left part of one array must not exceed the smallest element in the right part of the other array. Specifically, $A[i-1] \\le B[j]$ and $B[j-1] \\le A[i]$. Option B is incorrect because equality is not required, and comparing maxes of the same side is not the validity condition. Option C is incorrect because it only compares the right halves, ignoring the cross-array constraint with the left halves. Option D is incorrect because the sums of elements are irrelevant to the ordering required for the median.",
+      "target_concept": "Median of Two Sorted Arrays - Validity Condition",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S04",
+      "what_taught": "The cross-array comparison requirements ($max(left_1) \\le min(right_2)$ and $max(left_2) \\le min(right_1)$) that define a valid partition.",
+      "why_assessed": "To ensure the student can verify if a proposed partition satisfies the necessary ordering constraints for the median calculation.",
+      "evidence_refs": [
+        "E_C11",
+        "E_C12"
+      ],
+      "misconception_rationale": "Distractors target the failure to check cross-array comparisons or the use of irrelevant metrics like sums or equality."
+    }
+  ]
+}

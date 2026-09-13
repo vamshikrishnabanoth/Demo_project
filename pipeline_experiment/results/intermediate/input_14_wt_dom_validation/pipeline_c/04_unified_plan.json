@@ -1,0 +1,38 @@
+{
+  "input_id": "input_14_wt_dom_validation",
+  "title": "Web Technologies Lecture 3: DOM Tree Traversal & Form Validation",
+  "total_requested_questions": 5,
+  "total_available_targets": 2,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "DOM Tree Traversal",
+      "what_taught_summary": "The Document Object Model (DOM) is a tree structure where nodes represent elements, and traversal involves accessing parent, child, and sibling relationships to manipulate the document. Key methods include `document.querySelector` for selecting nodes and `addEventListener` for binding events like form submission.",
+      "why_assessed_pedagogy": "This assessment verifies that students can recall the fundamental structure of the DOM and the specific JavaScript methods used to interact with it, establishing the baseline vocabulary necessary for more complex manipulation tasks.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing the DOM tree with the visual layout of the page, assuming DOM order always matches visual order.",
+        "Believing that `document.querySelector` returns all matching elements instead of just the first one.",
+        "Assuming that DOM traversal methods automatically update the HTML source code in the file rather than just the in-memory representation."
+      ],
+      "allocated_question_count": 3,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Form Validation",
+      "what_taught_summary": "Client-side form validation uses HTML5 attributes such as `required`, `type=\"email\"`, and `pattern` to define constraints, combined with JavaScript event listeners to check input values against these constraints before submission.",
+      "why_assessed_pedagogy": "The pedagogical goal is to ensure students recognize the specific HTML5 validation attributes and the event-driven mechanism used to trigger validation, distinguishing between native browser validation and custom JavaScript logic.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming that HTML5 validation attributes work without any JavaScript or browser support, or that they replace the need for server-side validation entirely.",
+        "Confusing the `pattern` attribute with a regular expression object in JavaScript, thinking it requires a `/` delimiter.",
+        "Believing that the `submit` event fires only after validation passes, rather than being the event where validation is typically intercepted or checked."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

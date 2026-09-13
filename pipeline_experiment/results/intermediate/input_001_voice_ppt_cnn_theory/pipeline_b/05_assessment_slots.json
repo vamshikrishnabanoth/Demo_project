@@ -1,0 +1,75 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_02",
+    "topic_name": "Inductive Biases in CNNs",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Analyze how inductive biases such as locality, weight sharing, and translation invariance shape feature learning in CNNs.",
+    "misconception_target": "Students often assume CNNs are fully translation invariant without accounting for border effects.",
+    "evidence_refs": [
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_03",
+    "topic_name": "Spatial Output Dimension Calculation",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "THEORY_APPLICATION",
+    "assessment_goal": "Apply the output dimension formula to determine the spatial size of a feature map given kernel size, stride, and padding.",
+    "misconception_target": "Confusing the effect of padding leading to off\u2011by\u2011one errors in dimension calculations.",
+    "evidence_refs": [
+      "E_C03"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_04",
+    "topic_name": "Receptive Field Stacking and Parameter Efficiency",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Analyze how stacking multiple small convolutional layers expands the receptive field compared to a single large kernel.",
+    "misconception_target": "Belief that a single large kernel always yields a larger receptive field than stacked small kernels.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C05"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Receptive Field Stacking and Parameter Efficiency",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Compare the parameter count of deep stacks of 3\u00d73 kernels with that of a shallow 7\u00d77 kernel achieving the same receptive field.",
+    "misconception_target": "Assuming deeper networks always require more parameters than shallow wide kernels.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C05"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Receptive Field Stacking and Parameter Efficiency",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Evaluate trade\u2011offs between receptive field size, computational cost, and parameter efficiency in different stacking strategies.",
+    "misconception_target": "Overlooking the computational overhead of deeper stacks despite lower parameter counts.",
+    "evidence_refs": [
+      "E_C04",
+      "E_C05"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

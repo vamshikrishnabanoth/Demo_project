@@ -1,0 +1,197 @@
+{
+  "input_id": "input_05_assignment_mongodb_crud",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "In an Amazon product management system, a document contains a top-level field `price` and a nested field `dimensions.weight`. Which of the following statements correctly describes how MongoDB resolves these fields during a query?",
+      "options": {
+        "A": "Both `price` and `dimensions.weight` are treated as top-level keys in the index, requiring separate index entries for each.",
+        "B": "`price` is accessed directly, while `dimensions.weight` is resolved using dot notation to traverse the embedded document structure.",
+        "C": "`dimensions.weight` must be accessed via array indexing (e.g., `dimensions[0].weight`) regardless of whether `dimensions` is an object or array.",
+        "D": "Nested fields like `dimensions.weight` cannot be queried directly and must be flattened into top-level fields before querying."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because MongoDB uses dot notation to access fields within embedded documents. `price` is a top-level field, while `dimensions.weight` requires traversing the `dimensions` object to reach `weight`. Option A is incorrect because nested fields are not automatically top-level keys; they are part of the parent document's structure. Option C is incorrect because dot notation works for both objects and arrays without requiring explicit array indexing unless specific element access is needed. Option D is incorrect because MongoDB natively supports querying nested fields without flattening."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "In the Hospital Management System scenario, which fields are specifically projected when filtering patient records by age greater than 40?",
+      "options": {
+        "A": "Patient ID, Address, and Phone Number",
+        "B": "Name, Age, Disease, and Doctor details",
+        "C": "All available fields in the patient document",
+        "D": "Age and Bill amount only"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B. The factual summary and examples explicitly state that for senior patients (age > 40), the projection includes the patient's name, age, disease, and doctor details. Option A is incorrect as these fields are not mentioned in the context of the age > 40 query. Option C is incorrect because the exercise emphasizes using projection to limit output, not returning the entire document. Option D is incorrect because it omits the name, disease, and doctor details which are part of the specified projection."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "To retrieve restaurant records where the name starts with the letter 'P', which string matching technique is most appropriately applied in MongoDB?",
+      "options": {
+        "A": "Numeric comparison using the > operator",
+        "B": "Regex or prefix matching",
+        "C": "Full document equality check",
+        "D": "Sorting by name in ascending order"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B (Regex or prefix matching). The material explicitly states that string matching utilizes regex or prefix matching to find documents where a string field begins with a specific character. Option A is incorrect because numeric operators cannot be applied to string fields for pattern matching. Option C is incorrect because an equality check would only find names that are exactly 'P', not those starting with 'P'. Option D is incorrect because sorting organizes data but does not filter it based on a specific pattern."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "In an Amazon-like system, why might it be preferable to embed product reviews within the product document rather than storing them in a separate collection?",
+      "options": {
+        "A": "Embedding ensures that all related data is normalized, avoiding duplication.",
+        "B": "Embedding reduces the need for joins, improving read performance for high-read, low-write scenarios.",
+        "C": "Embedding allows for easier scaling of the review collection independently from the product collection.",
+        "D": "Embedding is required by MongoDB to maintain referential integrity."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because embedding reviews in the product document reduces the need for joins, which improves read performance, especially in high-read, low-write scenarios. Option A is incorrect because embedding does not normalize data; it denormalizes it. Option C is incorrect because embedding does not allow independent scaling of reviews. Option D is incorrect because MongoDB does not enforce referential integrity through embedding."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "Which of the following best describes the primary purpose of the 'Read' operations demonstrated in the Amazon and Hospital management system exercises?",
+      "options": {
+        "A": "To insert new product and patient records into the database",
+        "B": "To modify existing stock levels and patient ages",
+        "C": "To retrieve specific subsets of data based on numeric and string criteria",
+        "D": "To delete obsolete product and patient records"
+      },
+      "correct_option": "C",
+      "explanation": "The correct option is C. The material focuses on 'Read' queries, which involve filtering documents based on numeric comparisons (stock, price, age) and string patterns (names). This process retrieves specific subsets of data. Option A describes 'Create' operations. Option B describes 'Update' operations. Option D describes 'Delete' operations. The exercises do not involve modifying or removing data, only querying it."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "A product document has an array field `tags` containing [\"electronics\", \"sale\", \"new\"]. Which statement accurately describes the behavior of the query `{ tags: { $gt: \"electronics\" } }`?",
+      "options": {
+        "A": "The query compares the entire array object to the string \"electronics\" and returns no results.",
+        "B": "The query matches if any element in the `tags` array is lexicographically greater than \"electronics\".",
+        "C": "The query requires explicit array element indexing (e.g., `tags.0`) to compare individual elements.",
+        "D": "The query performs a substring match and returns documents where \"electronics\" is a substring of any tag."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because comparison operators like `$gt` on array fields in MongoDB match if any element in the array satisfies the condition. Option A is incorrect because MongoDB does not compare the entire array object to a scalar value in this context. Option C is incorrect because explicit indexing is not required for general array element matching. Option D is incorrect because `$gt` performs a comparison, not a substring match."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "To find products in the categories \"electronics\" or \"books\", which of the following queries is most appropriate and efficient in MongoDB?",
+      "options": {
+        "A": "`{ category: { $in: [\"electronics\", \"books\"] } }`",
+        "B": "`{ category: \"electronics\" }` followed by a separate query for `{ category: \"books\" }` and merging results.",
+        "C": "`{ $or: [{ category: \"electronics\" }, { category: \"books\" }] }`",
+        "D": "`{ category: { $regex: \"electronics|books\" } }`"
+      },
+      "correct_option": "A",
+      "explanation": "Option A is correct because the `$in` operator is specifically designed to match any value in a list, making it more concise and often more efficient than chaining `$or` conditions. Option B is incorrect because it requires multiple queries, which is less efficient. Option C is functionally equivalent but less concise and may have higher overhead. Option D is incorrect because `$regex` performs substring matching, which is not the intended behavior for exact category matches."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "When filtering products in the Amazon system to find items with a price greater than 10,000 and displaying them from most to least expensive, which combination of operations is required?",
+      "options": {
+        "A": "Filtering with < operator and Sorting in ascending order",
+        "B": "Filtering with > operator and Sorting in descending order",
+        "C": "Filtering with > operator and Sorting in ascending order",
+        "D": "Filtering with < operator and Sorting in descending order"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B. The condition 'price greater than 10,000' requires the use of the greater than (>) comparison operator. The requirement to display items 'from most to least expensive' necessitates sorting the results in descending order. Option A is incorrect because it uses the less than (<) operator and ascending sort, which would find cheap items and list them from lowest to highest price. Option C is incorrect because while it uses the correct operator, ascending sort would list the most expensive items last. Option D is incorrect because it uses the wrong operator (<) for the price condition."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "Why is a flexible schema (schema-less) advantageous for storing product attributes like 'color', 'size', and 'material' in MongoDB?",
+      "options": {
+        "A": "It ensures that all products have identical fields, preventing data inconsistency.",
+        "B": "It allows for sparse documents, accommodating varying product types without requiring all fields to be present.",
+        "C": "It enforces strict data types for all attributes, ensuring data integrity.",
+        "D": "It reduces the storage size of the database by compressing all documents."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because a flexible schema allows for sparse documents, where different products can have different attributes without requiring all fields to be present. Option A is incorrect because a flexible schema does not enforce identical fields. Option C is incorrect because a flexible schema does not enforce strict data types. Option D is incorrect because a flexible schema does not inherently reduce storage size through compression."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "In the context of the Amazon Product Management System, which MongoDB query operation is primarily used to retrieve only the Product ID, Name, Stock, and Brand fields for products with a stock level less than 20?",
+      "options": {
+        "A": "Sorting",
+        "B": "Projection",
+        "C": "Aggregation",
+        "D": "Indexing"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B (Projection). Projection is the mechanism used in MongoDB to restrict the output to specific fields, preventing the return of the entire document. In this scenario, the requirement to display only 'Product ID, Name, Stock, and Brand' explicitly calls for projection. Option A (Sorting) is incorrect because sorting arranges documents in a specific order (e.g., ascending/descending) but does not limit which fields are displayed. Option C (Aggregation) is incorrect as it involves processing data records through a pipeline for calculations or transformations, which is not the primary goal here. Option D (Indexing) is incorrect because it is a performance optimization technique for faster data retrieval, not a method for selecting specific fields in the output."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "Projection Mechanism",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "Comparison Operators and Sorting",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "String Pattern Matching",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "Projection in Hospital Context",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "CRUD Operations - Read",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "MongoDB Querying and Filtering: Dot Notation for Nested Fields",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "MongoDB Querying and Filtering: Comparison Operators on Arrays",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "MongoDB Querying and Filtering: $in Operator vs. $or",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "Domain-Specific Data Modeling: Embedding vs. Referencing",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_05_assignment_mongodb_crud",
+      "target_concept": "Domain-Specific Data Modeling: Flexible Schema for Heterogeneous Data",
+      "cognitive_level": "UNDERSTAND"
+    }
+  }
+}

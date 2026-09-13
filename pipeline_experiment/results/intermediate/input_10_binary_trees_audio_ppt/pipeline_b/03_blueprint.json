@@ -1,0 +1,98 @@
+{
+  "blueprint_id": "BP_input_10_binary_trees_audio_ppt",
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Binary Tree Fundamentals and Node Classification",
+      "salience_score": 0.279,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEFINITION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Graph Theory Basics",
+        "Node and Edge Definitions",
+        "Root Node Concept"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Types of Binary Trees",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "dominant_mode": "CLASSIFICATION_COMPARISON",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Binary Tree Definition",
+        "Node Degree",
+        "Leaf Node Identification"
+      ],
+      "evidence_refs": [
+        "E_C03",
+        "E_C04",
+        "E_C07",
+        "E_C10",
+        "E_C14"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Mathematical Properties and Formulas of Binary Trees",
+      "salience_score": 0.394,
+      "instructional_acts": [
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "FORMULA_DERIVATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Logarithms",
+        "Geometric Progressions",
+        "Tree Height Definition"
+      ],
+      "evidence_refs": [
+        "E_C06",
+        "E_C11",
+        "E_C12",
+        "E_C13"
+      ],
+      "teacher_specificity": "HIGH"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Tree Construction and Structural Analysis",
+      "salience_score": 0.24,
+      "instructional_acts": [
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "STRUCTURAL_ANALYSIS",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Binary Tree Properties",
+        "Level Order Traversal",
+        "Parent-Child Relationships"
+      ],
+      "evidence_refs": [
+        "E_C05",
+        "E_C09",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

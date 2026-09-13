@@ -1,0 +1,74 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix - Binary Search Approach",
+    "subtopics": [
+      "Binary search on prefix length",
+      "Checking prefix existence across all strings",
+      "Time complexity O(n log m)",
+      "Space complexity O(1)"
+    ],
+    "associated_chunk_ids": [
+      "C10",
+      "C12"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Longest Common Prefix - Brute Force Approach",
+    "subtopics": [
+      "Iterative character comparison",
+      "Early termination on mismatch",
+      "Time complexity O(n*m)",
+      "Space complexity O(1)"
+    ],
+    "associated_chunk_ids": [
+      "C02",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Management",
+    "subtopics": [
+      "Stack vs Heap allocation",
+      "Object eligibility for garbage collection",
+      "Set usage and memory",
+      "Understanding references"
+    ],
+    "associated_chunk_ids": [
+      "C07",
+      "C08"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Code Quality & Refactoring",
+    "subtopics": [
+      "Readability and maintainability",
+      "Avoiding unnecessary processing",
+      "Refactoring hints",
+      "Code improvement strategies"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C05",
+      "C06"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Banana Eating Problem",
+    "subtopics": [
+      "Brute force solution",
+      "Time complexity analysis",
+      "Optimization considerations",
+      "Problem statement interpretation"
+    ],
+    "associated_chunk_ids": [
+      "C13",
+      "C14",
+      "C15"
+    ]
+  }
+]

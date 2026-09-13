@@ -1,0 +1,173 @@
+{
+  "BENCH_01_DAA": {
+    "title": "DAA: Binary Search on Median of Two Sorted Arrays",
+    "modality": "VOICE_ONLY",
+    "flat_rag": {
+      "avg_context_words": 324.5,
+      "latency_seconds": 7.3,
+      "valid_questions_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the binary search algorithm for finding the median of two sorted arrays A and B, we partition the arrays such that the total number of elements on the left side equals the total number on the right side. Let $L_A$ be the maximum element on the left partition of A, $R_A$ be the minimum element on the right partition of A, $L_B$ be the maximum element on the left partition of B, and $R_B$ be the minimum element on the right partition of B. Which of the following conditions must be satisfied for the partition to be valid and allow for the correct calculation of the median?",
+        "option_a": "$L_A \\le R_B$ AND $L_B \\le R_A$",
+        "option_b": "$L_A \\ge R_B$ AND $L_B \\ge R_A$",
+        "option_c": "$L_A \\le L_B$ AND $R_A \\le R_B$",
+        "option_d": "The sum of elements in the left partitions of A and B must equal the sum of elements in the right partitions of A and B.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the validity of the partition relies on the cross-array invariant: every element on the left side of the combined array must be less than or equal to every element on the right side. This is guaranteed if the largest element on the left of A ($L_A$) is less than or equal to the smallest element on the right of B ($R_B$), and vice versa ($L_B \\le R_A$). Option B reverses the inequality, which would imply the left side contains larger elements than the right, violating sorted order. Option C compares elements within the same array or same side, which does not ensure the global sorted order across the two arrays. Option D is irrelevant because the median depends on rank/order, not the sum of values.",
+        "target_concept": "Partition Validity Conditions",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "A partition is valid if and only if the maximum element on the left side of the partition in array A is less than or equal to the minimum element on the right side of the partition in array B, AND the maximum element on the left side of the partition in array B is less than or equal to the minimum element on the right side of the partition in array A.",
+        "why_assessed": "This is the core logical constraint that makes the binary search approach work. Students often struggle to understand why we compare these specific cross-array boundaries. Assessing this ensures students understand the invariant that must hold for the median calculation to be valid, rather than just memorizing the code structure.",
+        "evidence_refs": [
+          "E_C58",
+          "E_C06",
+          "E_C42"
+        ],
+        "misconception_rationale": "Option B targets the misconception of confusing comparison direction (thinking larger left values are needed). Option C targets the misconception of checking internal array sorting or same-side comparisons instead of cross-array boundaries. Option D targets the misconception that median calculation relies on value sums rather than positional order."
+      }
+    },
+    "hierarchical_rag": {
+      "avg_parent_context_words": 426.0,
+      "latency_seconds": 35.7,
+      "valid_questions_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the binary search algorithm for finding the median of two sorted arrays A and B, we partition A at index i and B at index j. The teacher emphasized that the partition is only valid if specific cross-array boundary conditions are met. Which of the following sets of conditions correctly defines a valid partition?",
+        "option_a": "max(left_A) <= min(right_B) AND max(left_B) <= min(right_A)",
+        "option_b": "max(left_A) >= min(right_B) AND max(left_B) >= min(right_A)",
+        "option_c": "left_A is sorted AND left_B is sorted",
+        "option_d": "sum(left_A) == sum(right_B) AND sum(left_B) == sum(right_A)",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the validity of the partition relies on the invariant that all elements in the combined left half must be less than or equal to all elements in the combined right half. This requires the largest element on the left of A to be <= the smallest element on the right of B, and vice versa. Option B reverses the inequality, which would imply the left half contains larger elements, violating the sorted order of the combined array. Option C is insufficient because internal sorting does not guarantee the relative ordering between the two arrays. Option D is irrelevant to the sorting order and median calculation.",
+        "target_concept": "Partition Validity Conditions",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "A partition is valid if and only if max(left_A) <= min(right_B) AND max(left_B) <= min(right_A).",
+        "why_assessed": "To ensure students understand the logical invariant that makes the binary search approach work, rather than just memorizing code structure.",
+        "evidence_refs": [
+          "E_CHILD_010",
+          "E_CHILD_008"
+        ],
+        "misconception_rationale": "Distractors target common errors: reversing comparison directions (B), ignoring cross-array relationships (C), and using irrelevant aggregate properties like sums (D)."
+      }
+    }
+  },
+  "BENCH_02_VAE": {
+    "title": "Deep Learning: Variational Autoencoders (Fashion-MNIST)",
+    "modality": "VOICE_PLUS_PPT",
+    "flat_rag": {
+      "avg_context_words": 287.0,
+      "latency_seconds": 36.0,
+      "valid_questions_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "You are implementing the encoder for a Variational Autoencoder (VAE) on the Fashion-MNIST dataset. The latent space dimension is set to 10. In your PyTorch implementation, the final linear layer of the encoder must output a tensor of what shape for a single input image, and why?",
+        "option_a": "Shape (10,), because the encoder maps the input directly to the 10-dimensional latent vector z.",
+        "option_b": "Shape (20,), because the encoder must output both the mean (\u03bc) and the log-variance (log \u03c3\u00b2) for each of the 10 latent dimensions.",
+        "option_c": "Shape (20,), because the encoder must output the mean (\u03bc) and the standard deviation (\u03c3) for each of the 10 latent dimensions.",
+        "option_d": "Shape (10,), because the variance is assumed to be constant (1) in the latent space, so only the mean needs to be learned.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because a VAE encoder models the latent space as a probability distribution, requiring two parameters per latent dimension: the mean (\u03bc) and the log-variance (log \u03c3\u00b2). For 10 dimensions, this results in 20 outputs. Option A is incorrect because it describes a standard Autoencoder, which outputs a single point estimate. Option C is incorrect because we output log-variance (log \u03c3\u00b2) rather than standard deviation (\u03c3) to ensure numerical stability and guarantee positive variance when exponentiated. Option D is incorrect because VAEs learn the variance; it is not fixed to 1.",
+        "target_concept": "VAE Encoder Output Dimensions",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The encoder in a VAE must output two vectors for each latent dimension: the mean (\u03bc) and the log-variance (log \u03c3\u00b2). This is distinct from a standard autoencoder which outputs a single fixed vector.",
+        "why_assessed": "This is a fundamental architectural difference between standard AEs and VAEs. Students often mistakenly configure the final linear layer of the encoder to output only the latent dimension size, failing to account for the probabilistic nature of the latent space.",
+        "evidence_refs": [
+          "E_C06",
+          "E_C07",
+          "E_C22"
+        ],
+        "misconception_rationale": "Distractors target common errors: confusing VAE with standard AE (A), outputting \u03c3 instead of log \u03c3\u00b2 (C), and assuming fixed variance (D)."
+      }
+    },
+    "hierarchical_rag": {
+      "avg_parent_context_words": 839.5,
+      "latency_seconds": 7.6,
+      "valid_questions_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "You are implementing the encoder for a Variational Autoencoder (VAE) on the Fashion-MNIST dataset. The latent space dimension is set to 16. In your PyTorch implementation, the final linear layer of the encoder (`nn.Linear`) must have an output size of 32. Which two specific parameters does this layer output, and why is the second parameter parameterized in this specific way?",
+        "option_a": "It outputs the mean (\u03bc) and the variance (\u03c3\u00b2). The variance is output directly because it is a positive value that can be used immediately in the sampling equation.",
+        "option_b": "It outputs the mean (\u03bc) and the log-variance (log \u03c3\u00b2). The log-variance is used to ensure numerical stability and to guarantee that the resulting variance is strictly positive when exponentiated.",
+        "option_c": "It outputs the mean (\u03bc) and the standard deviation (\u03c3). The standard deviation is output directly to simplify the reparameterization formula z = \u03bc + \u03c3 * \u03b5.",
+        "option_d": "It outputs the mean (\u03bc) and the log-standard deviation (log \u03c3). This allows the model to learn the scale of the noise directly without needing an exponential function during the forward pass.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the VAE encoder must output parameters for a Gaussian distribution. Specifically, it outputs the mean (\u03bc) and the log-variance (log \u03c3\u00b2). Using log-variance is standard practice because the variance must be positive, and the exponential function (exp) is monotonic and maps real numbers to positive numbers, ensuring \u03c3\u00b2 > 0. It also improves numerical stability compared to using a softplus or sigmoid activation on the variance directly. Option A is incorrect because outputting variance directly requires a non-linear activation (like softplus) to ensure positivity, which is less stable and not the standard 'log-variance' parameterization taught. Option C is incorrect because the standard parameterization is log-variance, not standard deviation; while mathematically related, the network outputs log \u03c3\u00b2, and \u03c3 is derived as exp(0.5 * log \u03c3\u00b2). Option D is incorrect because the standard convention is log-variance, not log-standard deviation, and the exponential function is indeed required to get the actual variance/standard deviation for the sampling step.",
+        "target_concept": "VAE Encoder Output Dimensions",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The encoder in a VAE must output two vectors for each latent dimension: the mean (\u03bc) and the log-variance (log \u03c3\u00b2). This is distinct from a standard autoencoder which outputs a single fixed vector.",
+        "why_assessed": "This is a fundamental architectural difference between standard AEs and VAEs. Students often mistakenly configure the final linear layer of the encoder to output only the latent dimension size, failing to account for the probabilistic nature of the latent space.",
+        "evidence_refs": [
+          "E_CHILD_013",
+          "E_CHILD_010"
+        ],
+        "misconception_rationale": "Distractors target common implementation errors: outputting variance directly (A) which risks numerical instability or requires extra activations; outputting standard deviation (C) which is a less common parameterization; and outputting log-standard deviation (D) which is a confusion of the standard log-variance convention."
+      }
+    }
+  },
+  "BENCH_03_ML": {
+    "title": "Machine Learning: Supervised Model Training (Prof. Madhurika)",
+    "modality": "VOICE_ONLY",
+    "flat_rag": {
+      "avg_context_words": 294.0,
+      "latency_seconds": 35.4,
+      "valid_questions_count": 2,
+      "validation_status": "PASSED",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the custom model class demonstrated in class for a binary classification task with 12 input features, which of the following correctly describes the layer configuration and activation function placement?",
+        "option_a": "Input layer size 12, hidden layers with ReLU activation, and a single output unit with Sigmoid activation.",
+        "option_b": "Input layer size 12, hidden layers with Sigmoid activation, and a single output unit with ReLU activation.",
+        "option_c": "Input layer size 12, hidden layers with ReLU activation, and a single output unit with no activation function.",
+        "option_d": "Input layer size 12, hidden layers with ReLU activation, and a two-unit output layer with Sigmoid activation.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the instructor explicitly defined the input layer based on the 12 features, used ReLU for hidden layers to introduce non-linearity, and applied Sigmoid to the single output unit to generate a probability for binary classification. Option B is incorrect because Sigmoid in hidden layers can lead to vanishing gradients, and ReLU is not suitable for the final binary output. Option C is incorrect because omitting the output activation prevents the model from outputting a probability-like value between 0 and 1. Option D is incorrect because binary classification requires a single output unit, not two.",
+        "target_concept": "Neural Network Architecture & Activation Function Placement",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "Defining a custom model class where input size matches feature count (12), hidden layers use ReLU, and the single output layer uses Sigmoid for binary classification.",
+        "why_assessed": "To ensure students understand the rationale behind specific layer configurations and activation choices, preventing common errors like misplaced activations or incorrect output dimensions.",
+        "evidence_refs": [
+          "E_C02",
+          "E_C03",
+          "E_C04"
+        ],
+        "misconception_rationale": "Distractors target common errors: using Sigmoid in hidden layers (B), forgetting output activation (C), and using multi-unit outputs for binary tasks (D)."
+      }
+    },
+    "hierarchical_rag": {
+      "avg_parent_context_words": 877.0,
+      "latency_seconds": 34.3,
+      "valid_questions_count": 1,
+      "validation_status": "PARTIAL",
+      "sample_question": {
+        "question_id": "Q1",
+        "question_text": "In the custom model class demonstrated by Prof. Madhurika for a binary classification task with 12 input features, which of the following correctly describes the layer configuration and activation function placement?",
+        "option_a": "Input layer size 12, hidden layers with ReLU activation, and a single-unit output layer with Sigmoid activation.",
+        "option_b": "Input layer size 12, hidden layers with Sigmoid activation, and a single-unit output layer with ReLU activation.",
+        "option_c": "Input layer size equal to the number of samples, hidden layers with ReLU activation, and a single-unit output layer with Sigmoid activation.",
+        "option_d": "Input layer size 12, hidden layers with ReLU activation, and a two-unit output layer with Sigmoid activation.",
+        "correct_option": "A",
+        "explanation": "",
+        "target_concept": "Neural Network Architecture & Activation Function Placement",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The instructor demonstrated defining a custom model class where the input layer size is determined by the number of dataset features (e.g., 12). Hidden layers are defined by specific neuron counts (e.g., 360 to 8), and the output layer is a single unit. Crucially, the instructor emphasized explicitly assigning ReLU to hidden layers to introduce non-linearity and Sigmoid to the final output layer to produce a probability-like value for binary classification.",
+        "why_assessed": "This is a core procedural skill. Students often confuse where to place activation functions (e.g., applying Sigmoid to hidden layers or forgetting the output activation). Testing this ensures students understand the rationale behind the specific layer configurations and activation choices demonstrated in the code.",
+        "evidence_refs": [
+          "E_CHILD_004",
+          "E_CHILD_008"
+        ],
+        "misconception_rationale": "Distractors target: Applying Sigmoid activation to hidden layers instead of ReLU., Omitting the activation function on the final output layer., Setting the input layer size to the number of samples rather than the number of features., Using a multi-unit output layer for a binary classification task."
+      }
+    }
+  }
+}

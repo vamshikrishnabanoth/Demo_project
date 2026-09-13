@@ -1,0 +1,119 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_05_assignment_mongodb_crud",
+  "input_type": "ASSIGNMENT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "A developer needs to retrieve all Amazon products where the 'stock' level is less than 10. Which of the following MongoDB query structures correctly implements this filtering logic?",
+      "option_a": "db.products.find({ \"stock\": { $gt: 10 } })",
+      "option_b": "db.products.find({ \"stock\": { $lt: 10 } })",
+      "option_c": "db.products.find({ \"stock\": 10 })",
+      "option_d": "db.products.find({ \"stock\": { $ne: 10 } })",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the requirement is to find products with stock 'less than' 10, which corresponds to the MongoDB comparison operator `$lt` (less than). Option A is incorrect because `$gt` stands for 'greater than', which would return products with stock higher than 10, directly contradicting the requirement. Option C is incorrect because it performs an exact match for stock equal to 10, ignoring the inequality condition. Option D is incorrect because `$ne` stands for 'not equal', which would return all products where the stock is not exactly 10, including those with stock greater than 10.",
+      "target_concept": "MongoDB Comparison Operators",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "MongoDB Querying and Filtering",
+      "what_taught": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ],
+      "misconception_rationale": "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).; Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.; Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In a MongoDB query, if you specify a projection object like `{ \"name\": 1, \"price\": 1 }` in the `find()` method, what is the primary effect on the returned documents?",
+      "option_a": "It sorts the results by 'name' and 'price' in ascending order.",
+      "option_b": "It returns only the 'name' and 'price' fields (along with the _id) for each matching document.",
+      "option_c": "It excludes the 'name' and 'price' fields from the results, returning all other fields.",
+      "option_d": "It creates an index on the 'name' and 'price' fields to speed up future queries.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because in MongoDB, a projection with a value of `1` (or `true`) specifies that only the listed fields should be included in the result set (in addition to the `_id` field by default). Option A is incorrect because sorting is a separate operation (`.sort()`) and is not part of the projection syntax. Option C is incorrect because excluding fields requires a value of `0` (or `false`), not `1`. Option D is incorrect because projection affects data retrieval, not index creation, which is a separate administrative command.",
+      "target_concept": "MongoDB Projection",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "MongoDB Querying and Filtering",
+      "what_taught": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ],
+      "misconception_rationale": "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).; Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.; Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "A student writes the query `db.products.find({ \"price\": { $lt: 50 } }).sort({ \"price\": 1 })`. Which statement accurately describes the execution order and function of this command?",
+      "option_a": "The query first sorts all products by price, then filters for those under $50.",
+      "option_b": "The query first filters for products under $50, then sorts the resulting subset by price in ascending order.",
+      "option_c": "The query filters for products under $50 and simultaneously sorts the entire collection by price.",
+      "option_d": "The query is invalid because sorting must be performed before filtering in MongoDB.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because MongoDB executes the `find()` query (filtering) first to identify the matching documents, and then applies the `.sort()` method to order that specific result set. Option A is incorrect because filtering happens before sorting; sorting the entire collection first would be inefficient and is not how the pipeline works. Option C is incorrect because sorting is applied to the result set of the filter, not the entire collection independently of the filter. Option D is incorrect because the syntax is valid; sorting after filtering is a standard and common pattern.",
+      "target_concept": "Query Execution Order",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "MongoDB Querying and Filtering",
+      "what_taught": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ],
+      "misconception_rationale": "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).; Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.; Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "In the context of an Amazon Product Management System, a business requirement states: 'Show all electronics priced under $100 with stock levels below 5.' How should this be translated into a single MongoDB query?",
+      "option_a": "db.products.find({ \"category\": \"electronics\", \"price\": { $lt: 100 } }).find({ \"stock\": { $lt: 5 } })",
+      "option_b": "db.products.find({ \"category\": \"electronics\", \"price\": { $lt: 100 }, \"stock\": { $lt: 5 } })",
+      "option_c": "db.products.find({ \"category\": \"electronics\" }).where(\"price < 100 AND stock < 5\")",
+      "option_d": "db.products.find({ \"category\": \"electronics\", \"price\": 100, \"stock\": 5 })",
+      "correct_option": "B",
+      "explanation": "Option B is correct because MongoDB uses a single document object for the query filter, where multiple conditions are combined using implicit AND logic. All key-value pairs in the object must be true for a document to match. Option A is incorrect because chaining two `.find()` methods is not valid syntax for combining conditions; the second find would operate on the result of the first, but the syntax is wrong for this purpose. Option C is incorrect because `.where()` is not a standard MongoDB method for this type of filtering; it uses SQL-like syntax which is not native to MongoDB's query language. Option D is incorrect because it uses exact match values (100 and 5) instead of comparison operators ($lt), which would only find products exactly at those values.",
+      "target_concept": "Compound Queries in Domain Context",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Domain-Specific Data Modeling",
+      "what_taught": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ],
+      "misconception_rationale": "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).; Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.; Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "When modeling Amazon products in MongoDB, a document contains a nested field `details.brand`. Which of the following queries correctly filters for products where the brand is 'Sony'?",
+      "option_a": "db.products.find({ \"details.brand\": \"Sony\" })",
+      "option_b": "db.products.find({ \"details\": { \"brand\": \"Sony\" } })",
+      "option_c": "db.products.find({ \"brand\": \"Sony\" })",
+      "option_d": "db.products.find({ \"details[brand]\": \"Sony\" })",
+      "correct_option": "A",
+      "explanation": "Option A is correct because MongoDB uses dot notation (`field.subfield`) to access nested fields within a document. Option B is incorrect because while it looks like a nested object, the query syntax for matching a specific value in a nested field requires the dot notation in the key, not a nested object structure for the value (unless using `$elemMatch` for arrays, which is not the case here). Option C is incorrect because it assumes 'brand' is a top-level field, ignoring the 'details' parent field. Option D is incorrect because square bracket notation is not used in MongoDB query syntax for field paths; dot notation is the standard.",
+      "target_concept": "Nested Field Querying",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Domain-Specific Data Modeling",
+      "what_taught": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ],
+      "misconception_rationale": "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).; Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.; Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+    }
+  ]
+}

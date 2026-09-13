@@ -1,0 +1,110 @@
+{
+  "blueprint_id": "BP_input_005_assignment_mongodb",
+  "input_id": "input_005_assignment_mongodb",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "MongoDB Aggregation Pipeline Fundamentals",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "MongoDB Basics",
+        "Document Structure",
+        "Basic Querying"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Aggregation Operators and Stages",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Aggregation Pipeline Fundamentals",
+        "MongoDB Query Language"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Performance Tuning for Aggregations",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_ANALYSIS",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Aggregation Operators",
+        "Indexing",
+        "Performance Basics"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "E\u2011commerce Data Modeling in MongoDB",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Document Modeling",
+        "Relationships in MongoDB",
+        "Aggregation Basics"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Business Metrics Derived from Aggregations",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_ANALYSIS",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Business Metrics Concepts",
+        "Aggregation Pipeline",
+        "Data Modeling"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

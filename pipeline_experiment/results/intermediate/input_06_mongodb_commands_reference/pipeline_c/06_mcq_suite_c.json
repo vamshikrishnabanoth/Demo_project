@@ -1,0 +1,125 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_06_mongodb_commands_reference",
+  "input_type": "NOTES",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "A developer needs to import a CSV file named `sales_data.csv` into the `sales` collection of the `retail` database. The CSV file contains a header row with column names. Which `mongoimport` command is syntactically correct and will correctly map the columns to document fields?",
+      "option_a": "mongoimport --db retail --collection sales --file sales_data.csv --type=csv --headerline",
+      "option_b": "mongoimport --db retail --collection sales --file sales_data.csv --type=csv --jsonArray",
+      "option_c": "mongodump --db retail --collection sales --file sales_data.csv --type=csv --headerline",
+      "option_d": "mongoimport --db retail --collection sales --file sales_data.csv --type=csv",
+      "correct_option": "A",
+      "explanation": "Option A is correct because it uses `mongoimport` (the correct tool for data ingestion), specifies `--type=csv` to handle the file format, and includes `--headerline` to ensure the first row is treated as field names rather than data. Option B is incorrect because `--jsonArray` is used for JSON files wrapped in brackets, not CSV files. Option C is incorrect because `mongodump` is a backup utility, not an import tool. Option D is incorrect because omitting `--headerline` causes the first row (column names) to be imported as a data document, leading to incorrect schema mapping.",
+      "target_concept": "Data Import and Export",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "TGT_01",
+      "what_taught": "Students must recall the specific CLI flags for `mongoimport` (e.g., `--jsonArray`, `--type=csv`, `--headerline`) and the distinction between `mongoimport`/`mongoexport` for data transfer versus `mongodump`/`mongorestore` for full backups.",
+      "why_assessed": "To ensure students can correctly identify and select the appropriate command-line utility and syntax for basic data ingestion tasks without requiring complex logic or troubleshooting.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Confusing `mongoimport` with `mongodump`, assuming `mongoimport` creates a full database backup rather than just inserting documents.; Omitting the `--headerline` flag when importing CSV files, leading to the first row being treated as data instead of column names.; Using `--jsonArray` for standard line-delimited JSON files, which is only required for JSON arrays wrapped in brackets."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "An administrator needs to create a full backup of the `production` database and later restore it to a new server. Which pair of commands should be used for this disaster recovery scenario?",
+      "option_a": "mongoexport and mongoimport",
+      "option_b": "mongodump and mongorestore",
+      "option_c": "mongodump and mongoimport",
+      "option_d": "mongoexport and mongorestore",
+      "correct_option": "B",
+      "explanation": "Option B is correct because `mongodump` creates a binary backup of the database (or specific collections) that preserves metadata and structure, and `mongorestore` is the corresponding tool to restore that backup. Option A is incorrect because `mongoexport`/`mongoimport` are for document-level data transfer (JSON/CSV) and do not create restorable binary backups. Option C is incorrect because `mongoimport` cannot restore a `mongodump` archive. Option D is incorrect because `mongorestore` cannot read `mongoexport` output (JSON/CSV).",
+      "target_concept": "Backup and Restore",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "TGT_02",
+      "what_taught": "Students must recall the specific CLI flags for `mongoimport` (e.g., `--jsonArray`, `--type=csv`, `--headerline`) and the distinction between `mongoimport`/`mongoexport` for data transfer versus `mongodump`/`mongorestore` for full backups.",
+      "why_assessed": "To ensure students can correctly identify and select the appropriate command-line utility and syntax for basic data ingestion tasks without requiring complex logic or troubleshooting.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ],
+      "misconception_rationale": "Confusing `mongoimport` with `mongodump`, assuming `mongoimport` creates a full database backup rather than just inserting documents.; Omitting the `--headerline` flag when importing CSV files, leading to the first row being treated as data instead of column names.; Using `--jsonArray` for standard line-delimited JSON files, which is only required for JSON arrays wrapped in brackets."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "Given a document `{ _id: 1, attributes: { size: \"M\" }, subjects: [\"Math\", \"Science\", \"History\"] }`, which update operation correctly changes the third element of the `subjects` array to \"Art\" without affecting other fields?",
+      "option_a": "db.collection.updateOne({_id: 1}, {$set: {\"subjects.2\": \"Art\"}})",
+      "option_b": "db.collection.updateOne({_id: 1}, {$set: {\"subjects\": [\"Math\", \"Science\", \"Art\"]}})",
+      "option_c": "db.collection.updateOne({_id: 1}, {$unset: {\"subjects.2\": \"\"}})",
+      "option_d": "db.collection.updateOne({_id: 1}, {$pull: {\"subjects\": \"History\"}})",
+      "correct_option": "A",
+      "explanation": "Option A is correct because `$set` with the path `\"subjects.2\"` specifically targets the element at index 2 (the third element) and updates its value. Option B is incorrect because it replaces the entire array, which is less efficient and risky if other parts of the array were modified concurrently. Option C is incorrect because `$unset` removes the field/element entirely, not updates it. Option D is incorrect because `$pull` removes elements matching a condition, not updates a specific index.",
+      "target_concept": "Query Operators and Array Updates",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "TGT_03",
+      "what_taught": "Students must apply update operators like `$set` and `$unset` to modify specific fields, including nested paths (e.g., `attributes.size`) and array indices (e.g., `subjects.2`), and use `.explain(\"executionStats\")` to verify index utilization.",
+      "why_assessed": "To demonstrate the ability to manipulate complex document structures and analyze query performance, ensuring students can write efficient and precise update operations.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06",
+        "[720.0s - 900.0s]",
+        "[900.0s - 1080.0s]"
+      ],
+      "misconception_rationale": "Using `$set` to replace an entire array instead of updating a specific index, or vice versa, leading to data loss or unintended structure changes.; Assuming that creating an index automatically guarantees its use by the query planner without verifying via `.explain()`.; Confusing `$unset` with `$pull`, using `$unset` to remove a specific element from an array rather than the entire array field."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Which aggregation pipeline correctly calculates the total sales amount for each product category, filtering only for orders placed in 2023, and sorts the results by total sales in descending order?",
+      "option_a": "[{$match: {year: 2023}}, {$group: {_id: \"$category\", totalSales: {$sum: \"$amount\"}}}, {$sort: {totalSales: -1}}]",
+      "option_b": "[{$group: {_id: \"$category\", totalSales: {$sum: \"$amount\"}}}, {$match: {year: 2023}}, {$sort: {totalSales: -1}}]",
+      "option_c": "[{$match: {year: 2023}}, {$project: {category: 1, totalSales: {$sum: \"$amount\"}}}, {$sort: {totalSales: -1}}]",
+      "option_d": "[{$sort: {year: 1}}, {$group: {_id: \"$category\", totalSales: {$sum: \"$amount\"}}}, {$match: {year: 2023}}]",
+      "correct_option": "A",
+      "explanation": "Option A is correct because it follows the optimal pipeline order: `$match` first to filter documents (reducing the dataset for aggregation), then `$group` to aggregate by category, and finally `$sort` to order the results. Option B is incorrect because `$match` is placed after `$group`; while it might work if the group output included the year, it is inefficient and logically flawed if the year field is not preserved in the group output. Option C is incorrect because `$project` cannot perform aggregation operations like `$sum`; it only reshapes fields. Option D is incorrect because `$sort` before `$group` is unnecessary for aggregation performance and `$match` is placed last, which is inefficient.",
+      "target_concept": "Aggregation Pipeline",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "TGT_04",
+      "what_taught": "Students must construct aggregation pipelines using sequential stages such as `$match`, `$group` (with `$sum`/`$push`), `$sort`, and `$project` to transform and analyze data.",
+      "why_assessed": "To demonstrate the ability to design multi-step data processing workflows that filter, aggregate, and reshape data for reporting or analysis.",
+      "evidence_refs": [
+        "E_C07",
+        "E_C08",
+        "E_C09",
+        "[1080.0s - 1260.0s]",
+        "[1260.0s - 1440.0s]",
+        "[1440.0s - 1620.0s]"
+      ],
+      "misconception_rationale": "Placing `$sort` before `$group` unnecessarily, assuming it improves performance when `$group` inherently handles aggregation regardless of input order.; Using `$match` after `$group` to filter aggregated results, when it is more efficient to filter before grouping if possible.; Confusing `$project` with `$group`, using `$project` to aggregate values (like sums) instead of just reshaping fields."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "A developer creates a sparse index on the `email` field of the `users` collection. Which of the following statements accurately describes the behavior of this index?",
+      "option_a": "The index includes all documents in the collection, regardless of whether the `email` field is present.",
+      "option_b": "The index only includes documents where the `email` field is present and not null.",
+      "option_c": "The index prevents any document from being inserted if the `email` field is missing.",
+      "option_d": "The index is equivalent to creating two separate single-field indexes on `email` and `_id`.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because a sparse index in MongoDB only indexes documents that contain the indexed field. Documents missing the field are not included in the index, saving space and potentially improving performance for queries that filter on that field. Option A is incorrect because that describes a standard (non-sparse) index. Option C is incorrect because indexes do not enforce data integrity or prevent insertion; schema validation rules do that. Option D is incorrect because a sparse index is a single-field index with a specific storage characteristic, not a compound or multi-index structure.",
+      "target_concept": "Indexing and Schema Validation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_05",
+      "what_taught": "Students must explain the purpose of different index types (single-field, compound, unique, sparse) and how schema validation rules (e.g., `bsonType`) enforce data integrity on collection documents.",
+      "why_assessed": "To ensure students understand the underlying mechanisms of performance optimization and data consistency, moving beyond syntax to the conceptual role of indexes and validation.",
+      "evidence_refs": [
+        "E_C10",
+        "E_C11",
+        "[1620.0s - 1800.0s]",
+        "[1800.0s - 1845.0s]"
+      ],
+      "misconception_rationale": "Believing that a sparse index includes documents where the indexed field is missing, when it actually excludes them.; Assuming that schema validation prevents all invalid data from being inserted, when it can be configured to warn rather than error.; Thinking that a compound index on `{a: 1, b: 1}` is equivalent to two separate single-field indexes for queries filtering on both fields."
+    }
+  ]
+}

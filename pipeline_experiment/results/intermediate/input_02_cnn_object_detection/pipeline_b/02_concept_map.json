@@ -1,0 +1,76 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Fast R-CNN Architecture & Inference",
+    "subtopics": [
+      "Region Proposal Network (RPN)",
+      "Anchor Generation",
+      "Convolutional Backbone (ResNet)",
+      "Model Inference Pipeline",
+      "Bounding Box Prediction"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C06",
+      "C07",
+      "C09"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "YOLO Architecture & Inference",
+    "subtopics": [
+      "Single-pass Object Detection",
+      "YOLO Model Loading",
+      "YOLO Inference Pipeline",
+      "Real-time Performance"
+    ],
+    "associated_chunk_ids": [
+      "C09",
+      "C11"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Dataset Preparation & Preprocessing",
+    "subtopics": [
+      "PennFudanPed Dataset",
+      "Mask to Bounding Box Conversion",
+      "Image Tensor Conversion",
+      "Pixel-level to Object-level Transformation"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C04",
+      "C05"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Results Visualization",
+    "subtopics": [
+      "Bounding Box Drawing",
+      "Confidence Score Filtering",
+      "Matplotlib & OpenCV Integration",
+      "Prediction Overlay"
+    ],
+    "associated_chunk_ids": [
+      "C08",
+      "C11"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Performance Benchmarking",
+    "subtopics": [
+      "Inference Time Measurement",
+      "Fast R-CNN vs YOLO Comparison",
+      "Latency Analysis",
+      "Comparison Graphing"
+    ],
+    "associated_chunk_ids": [
+      "C09",
+      "C12"
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "blueprint_id": "BP_input_14_wt_dom_validation",
+  "input_id": "input_14_wt_dom_validation",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "DOM Tree Traversal",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "HTML Structure",
+        "Node Hierarchy"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Form Validation",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "HTML Form Elements",
+        "JavaScript Basics"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

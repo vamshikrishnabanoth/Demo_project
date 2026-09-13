@@ -1,0 +1,157 @@
+{
+  "input_id": "CASE_D_STATIC_NOTES",
+  "title": "MongoDB Multi-Stage Aggregation Pipeline & CRUD Operations",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.050 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 5,
+  "requested_difficulty": "EASY",
+  "defensible_capacity": 5,
+  "final_question_count": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In a MongoDB aggregation pipeline, you have a collection of 10,000 documents. You need to calculate the average price of items where the category is 'electronics'. According to the efficiency principles discussed in class, where should the $match stage be placed in the pipeline, and what is its primary function?",
+      "option_a": "It should be placed at the end of the pipeline to ensure all transformations are applied before filtering out non-electronics items.",
+      "option_b": "It should be placed at the beginning of the pipeline to filter documents based on criteria, reducing the dataset size for subsequent stages.",
+      "option_c": "It should be placed in the middle of the pipeline to modify the document structure by removing non-essential fields before calculation.",
+      "option_d": "It can be placed anywhere in the pipeline as it does not affect performance, and its function is to project only the 'price' field.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because $match acts as a filter similar to a standard query. Placing it at the beginning minimizes the number of documents processed by expensive subsequent stages (like $group or $project), which is a key performance optimization strategy. Option A is incorrect because filtering at the end wastes resources processing irrelevant documents. Option C is incorrect because $match does not modify document structure; $project or $addFields do that. Option D is incorrect because placement significantly affects performance, and $match filters documents, it does not project fields.",
+      "target_concept": "$match Operator",
+      "cognitive_level": "REMEMBER",
+      "difficulty_level": "EASY",
+      "what_taught": "The $match operator filters documents in the pipeline based on specified criteria, similar to a standard query filter. It is typically placed at the beginning of the pipeline to reduce the number of documents processed by subsequent stages.",
+      "why_assessed": "Assessing the fundamental definition and purpose of $match ensures students understand its role as the primary filtering mechanism in the aggregation pipeline, which is a prerequisite for understanding more complex stages.",
+      "evidence_refs": [
+        "T01"
+      ],
+      "misconception_rationale": "Distractors target the misconception that $match modifies structure (confusing it with $project) and the performance misconception that stage order does not matter or that filtering should happen last."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Consider a document in the 'orders' collection: { _id: 1, customer: 'Alice', items: ['laptop', 'mouse', 'keyboard'] }. If you apply the $unwind operator on the 'items' field, what will be the output of the pipeline stage?",
+      "option_a": "A single document: { _id: 1, customer: 'Alice', items: ['laptop', 'mouse', 'keyboard'] }",
+      "option_b": "Three separate documents: { _id: 1, customer: 'Alice', items: 'laptop' }, { _id: 1, customer: 'Alice', items: 'mouse' }, and { _id: 1, customer: 'Alice', items: 'keyboard' }",
+      "option_c": "A single document: { _id: 1, customer: 'Alice' } (the items field is removed entirely)",
+      "option_d": "An error, because $unwind can only be applied to top-level scalar fields, not arrays.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because $unwind deconstructs an array field, outputting one document for each element in the array. The other fields in the original document are preserved in each new document. Option A is incorrect because the array is not preserved as a single unit. Option C is incorrect because $unwind does not remove the field; it transforms the array into multiple documents. Option D is incorrect because $unwind is specifically designed to work on array fields.",
+      "target_concept": "$unwind Operator",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "EASY",
+      "what_taught": "The $unwind operator deconstructs an array field from the input documents, outputting a document for each element. If the field is not an array, it is ignored or handled based on options. This effectively 'flattens' array data into individual documents.",
+      "why_assessed": "Understanding $unwind is critical for processing embedded arrays. Assessing this concept ensures students grasp how array data is transformed into a stream of documents for further processing.",
+      "evidence_refs": [
+        "T02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that $unwind removes the field (Option C) or that it fails on arrays (Option D), and the confusion about whether the array remains intact (Option A)."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "Consider a 'users' collection and an 'orders' collection. You execute the following aggregation pipeline stage on 'users':\n\n{\n  \"$lookup\": {\n    \"from\": \"orders\",\n    \"localField\": \"_id\",\n    \"foreignField\": \"userId\",\n    \"as\": \"userOrders\"\n  }\n}\n\nIf a user document with `_id: 101` exists in 'users' but has no corresponding documents in 'orders', what will be the value of the `userOrders` field in the resulting document for that user?",
+      "option_a": "The document will be excluded from the aggregation results because no match was found.",
+      "option_b": "The `userOrders` field will contain an empty array `[]`.",
+      "option_c": "The `userOrders` field will contain `null`.",
+      "option_d": "The `userOrders` field will contain the document `{ userId: 101 }`.",
+      "correct_option": "B",
+      "explanation": "The $lookup operator performs a left outer join. This means that if no matching documents are found in the foreign collection ('orders'), the local document is still included in the output, but the specified output field ('userOrders') is populated with an empty array. Option A is incorrect because $lookup does not drop unmatched documents (unlike an inner join). Option C is incorrect because the default behavior for no matches is an empty array, not null. Option D is incorrect because it assumes a match exists or fabricates data not present in the foreign collection.",
+      "target_concept": "$lookup Operator",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "EASY",
+      "what_taught": "The $lookup operator performs a left outer join with another collection, matching documents based on localField and foreignField, and storing results in a new array field. Unmatched documents retain the local document with an empty array in the result field.",
+      "why_assessed": "To verify that students understand the left outer join semantics of $lookup, specifically that unmatched documents are preserved and the result field is an empty array, rather than being dropped or set to null.",
+      "evidence_refs": [
+        "T03: $lookup performs a left outer join",
+        "T03: adds the results to a new field in the output document"
+      ],
+      "misconception_rationale": "Option A targets the misconception that $lookup is an inner join. Option C targets the confusion between null and empty array for missing data. Option D targets the confusion of what data is actually stored (the matched documents, not just the key)."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "You are analyzing an aggregation pipeline stage defined as follows:\n\n{\n  \"$group\": {\n    \"_id\": \"$department\",\n    \"totalSalary\": { \"$sum\": \"$salary\" },\n    \"employeeList\": { \"$push\": \"$name\" }\n  }\n}\n\nWhich statement correctly describes the behavior of this stage?",
+      "option_a": "It sorts the documents by department and then sums the salaries, keeping all original documents in the output.",
+      "option_b": "It groups documents by the value of the 'department' field, calculates the sum of 'salary' for each group, and creates an array of 'name' values for each group.",
+      "option_c": "It groups documents by the document's primary key (_id), calculates the average salary, and pushes the department names into an array.",
+      "option_d": "It filters documents where 'department' is not null and sums the 'salary' field, but does not group the documents.",
+      "correct_option": "B",
+      "explanation": "The $group operator reduces multiple documents into a single document per group. The `_id` field in $group defines the grouping key (here, `$department`), not the document's primary key. The accumulator expressions `$sum` and `$push` are applied to the fields specified within each group. Option A is incorrect because $group aggregates/reduces documents, it does not just sort them. Option C is incorrect because the `_id` in $group is the grouping key, not the document's primary key, and the accumulator is `$sum`, not `$avg`. Option D is incorrect because $group inherently groups documents; it is not a filter or simple calculation stage.",
+      "target_concept": "$group Operator",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "EASY",
+      "what_taught": "The $group operator aggregates documents based on a specified key (_id), applying accumulator expressions ($sum, $push, etc.) to calculate values for each group, reducing multiple documents into one per group.",
+      "why_assessed": "To ensure students can distinguish the grouping key (_id in $group) from the document primary key and understand that $group reduces documents rather than sorting or filtering them.",
+      "evidence_refs": [
+        "T04: $group aggregates documents based on a specified key",
+        "T04: applies accumulator expressions ($sum, $push)",
+        "T04: reduces multiple documents into a single document per group"
+      ],
+      "misconception_rationale": "Option A targets the misconception that $group is a sorting operation. Option C targets the confusion between the $group _id (grouping key) and the document _id (primary key), as well as misidentifying the accumulator. Option D targets the misconception that $group is a filter or simple projection stage."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "You are building an aggregation pipeline to analyze sales data. The collection contains documents with a field `items` (an array of objects) and a field `status` (string). You need to find the total quantity of items for all documents where `status` is 'shipped'. Which of the following pipeline structures is the most efficient and correct approach, and why?",
+      "option_a": "db.collection.aggregate([ { $unwind: \"$items\" }, { $match: { status: \"shipped\" } }, { $group: { _id: null, totalQty: { $sum: \"$items.qty\" } } } ])",
+      "option_b": "db.collection.aggregate([ { $match: { status: \"shipped\" } }, { $unwind: \"$items\" }, { $group: { _id: null, totalQty: { $sum: \"$items.qty\" } } } ])",
+      "option_c": "db.collection.aggregate([ { $group: { _id: null, totalQty: { $sum: \"$items.qty\" } } }, { $match: { status: \"shipped\" } }, { $unwind: \"$items\" } ])",
+      "option_d": "db.collection.aggregate([ { $unwind: \"$items\" }, { $group: { _id: null, totalQty: { $sum: \"$items.qty\" } } }, { $match: { status: \"shipped\" } } ])",
+      "correct_option": "B",
+      "explanation": "Option B is correct because it places the `$match` stage before the `$unwind` stage. As taught, filtering early in the pipeline reduces the number of documents that subsequent stages must process. `$unwind` is computationally expensive as it deconstructs arrays into multiple documents; by filtering first, only the 'shipped' documents are unwound, improving performance. Option A is inefficient because it unwinds all documents (including non-shipped ones) before filtering. Option C is incorrect because `$group` aggregates the data, losing the individual document context needed for the subsequent `$match` on `status` (unless `status` was included in the group key, which it isn't here, and even then, the logic is flawed for this specific query). Option D is incorrect because it attempts to filter after grouping, which is logically invalid for this specific requirement as the `status` field is no longer available in the grouped output in a way that allows simple matching against the original document structure, and it also suffers from the inefficiency of unwinding everything first.",
+      "target_concept": "Multi-Stage Aggregation Pipeline Stage Ordering",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "EASY",
+      "what_taught": "The sequential nature of aggregation pipelines and the performance benefit of placing `$match` before expensive operations like `$unwind`.",
+      "why_assessed": "To ensure students understand that stage order affects both performance and logical correctness, specifically recognizing that filtering early reduces the workload for subsequent stages.",
+      "evidence_refs": [
+        "T05: Multi-Stage Aggregation Pipeline"
+      ],
+      "misconception_rationale": "Option A targets the misconception that order doesn't matter for performance (students might think unwinding first is fine). Option C targets the misconception that aggregation stages can be reordered arbitrarily without losing data context (grouping before matching). Option D targets the misconception that filtering can happen after aggregation if the field is preserved, ignoring the logical flow and efficiency."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1788034616280-CASE_D_S",
+    "trace": {
+      "request_id": "REQ-1788034616280-CASE_D_S",
+      "timestamp": "2026-08-29T20:18:21Z",
+      "input_id": "CASE_D_STATIC_NOTES",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": 0.05,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "HIT",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "HIT"
+      },
+      "selected_facets": [
+        "CONCEPT_UNDERSTANDING",
+        "CODE_INTERPRETATION",
+        "PRACTICAL_APPLICATION"
+      ],
+      "initial_generated_count": 5,
+      "first_pass_validated_count": 5,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 5,
+      "total_latency_ms": 84990.95,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct core concepts from the available pool. To ensure non-redundancy and pedagogical variety at an easy difficulty level, I selected fundamental operators and one key architectural principle. Each target focuses on a different aspect of the aggregation pipeline: basic filtering ($match), array deconstruction ($unwind), joining data ($lookup), aggregation logic ($group), and overall pipeline structure (Multi-Stage Aggregation Pipeline). The facets were chosen to align with foundational understanding (CONCEPT_UNDERSTANDING) and basic application (PRACTICAL_APPLICATION/CODE_INTERPRETATION) suitable for EASY difficulty."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 84.99,
+    "measured_llm_calls": 4,
+    "pedagogical_delivery_index": 0.05,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "CONCEPT_UNDERSTANDING": 3,
+      "CODE_INTERPRETATION": 1,
+      "PRACTICAL_APPLICATION": 1
+    },
+    "cognitive_distribution": {
+      "REMEMBER": 1,
+      "UNDERSTAND": 2,
+      "APPLY": 2
+    },
+    "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct core concepts from the available pool. To ensure non-redundancy and pedagogical variety at an easy difficulty level, I selected fundamental operators and one key architectural principle. Each target focuses on a different aspect of the aggregation pipeline: basic filtering ($match), array deconstruction ($unwind), joining data ($lookup), aggregation logic ($group), and overall pipeline structure (Multi-Stage Aggregation Pipeline). The facets were chosen to align with foundational understanding (CONCEPT_UNDERSTANDING) and basic application (PRACTICAL_APPLICATION/CODE_INTERPRETATION) suitable for EASY difficulty.",
+    "system_notice": null
+  }
+}

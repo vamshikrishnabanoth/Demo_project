@@ -1,0 +1,8 @@
+{
+  "test": "Experiment 2: Cross-Material Linkage Stress-Test",
+  "total_cases": 4,
+  "passed_baseline": 2,
+  "passed_aligned": 4,
+  "success_rate_baseline_percentage": 50.0,
+  "success_rate_aligned_percentage": 100.0
+}

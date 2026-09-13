@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788033714339-CASE_D_S",
+  "timestamp": "2026-08-29T20:04:34Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.05,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "CODE_INTERPRETATION",
+    "OUTPUT_PREDICTION",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 160279.5,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct core concepts from the available list. To ensure non-redundancy and pedagogical variety, each target focuses on a different operator or fundamental principle (Pipeline, $match, $unwind, $lookup, $group) and utilizes a distinct assessment facet (Concept Understanding, Theoretical Rationale, Code Interpretation, Output Prediction, and Practical Application). This approach covers the foundational mechanics of the aggregation pipeline without overlapping in cognitive demand or topic focus."
+}

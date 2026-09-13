@@ -1,0 +1,48 @@
+{
+  "blueprint_id": "BP_input_05_assignment_mongodb_crud",
+  "input_id": "input_05_assignment_mongodb_crud",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "MongoDB Querying and Filtering",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "MongoDB document structure",
+        "Basic query syntax",
+        "Data types in MongoDB"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Domain-Specific Data Modeling",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Relational vs NoSQL data modeling",
+        "Schema design principles",
+        "Domain-specific entities (Amazon products)"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

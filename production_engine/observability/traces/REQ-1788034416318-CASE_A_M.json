@@ -1,0 +1,19 @@
+{
+  "request_id": "REQ-1788034416318-CASE_A_M",
+  "timestamp": "2026-08-29T20:13:36Z",
+  "input_id": "CASE_A_MONOLOGUE",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "HIT"
+  },
+  "selected_facets": [],
+  "initial_generated_count": 0,
+  "first_pass_validated_count": 0,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 138.0,
+  "status": "CACHED_DELIVERED",
+  "repair_actions": [],
+  "planning_notes": ""
+}

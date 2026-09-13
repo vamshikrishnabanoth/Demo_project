@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q_S01",
+      "question_text": "In the single-pass scanning algorithm for the longest common prefix, if one string is a prefix of another, what is the resulting longest common prefix?",
+      "option_a": "The shorter string",
+      "option_b": "The longer string",
+      "option_c": "An empty string",
+      "option_d": "The entire set of strings",
+      "correct_option": "A",
+      "explanation": "The algorithm scans characters across all strings until a mismatch or the end of a string is reached. If one string is a prefix of another, the scan stops at the end of the shorter string, so the longest common prefix is the shorter string. The longer string cannot be the prefix because it contains additional characters. An empty string would only occur if the first characters differ. The entire set of strings is not a prefix.",
+      "target_concept": "Longest Common Prefix Algorithm",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q_S02",
+      "question_text": "Why is the single-pass scanning approach more efficient than a pairwise comparison approach for finding the longest common prefix?",
+      "option_a": "It reduces the number of comparisons to O(n*m) instead of O(n^2*m)",
+      "option_b": "It uses recursion to avoid loops",
+      "option_c": "It sorts the strings first",
+      "option_d": "It employs hash tables to store prefixes",
+      "correct_option": "A",
+      "explanation": "In single-pass scanning, each character position is compared across all strings once, giving O(n*m) time (n strings, m average length). Pairwise comparison would compare each pair of strings, leading to O(n^2*m) comparisons. Recursion, sorting, or hash tables are not part of the basic single-pass algorithm and do not provide the same efficiency advantage.",
+      "target_concept": "Longest Common Prefix Algorithm",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q_S03",
+      "question_text": "Which optimization reduces unnecessary character comparisons during string scanning in the LCP algorithm?",
+      "option_a": "Break the loop immediately when a mismatch is found",
+      "option_b": "Compare each character against all strings in nested loops",
+      "option_c": "Use a separate loop for each string",
+      "option_d": "Recompute the prefix after every comparison",
+      "correct_option": "A",
+      "explanation": "Breaking the loop on the first mismatch stops further comparisons, saving time. The other options either increase comparisons (nested loops, separate loops) or add overhead (recomputing the prefix).",
+      "target_concept": "String Scanning and Character Comparison Optimization",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "Q_S04",
+      "question_text": "In Java, nullifying an object reference does not immediately trigger garbage collection. Which statement is correct regarding GC behavior?",
+      "option_a": "GC runs only when the JVM determines memory is low",
+      "option_b": "GC runs immediately after a reference is set to null",
+      "option_c": "GC runs only when System.gc() is explicitly called",
+      "option_d": "GC runs only after the program terminates",
+      "correct_option": "A",
+      "explanation": "Java's garbage collector is non-deterministic; it runs when the JVM needs memory, not immediately after a reference is nulled. System.gc() is a suggestion, not a guarantee, and GC does not wait until program exit.",
+      "target_concept": "Java Memory Model and Garbage Collection",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "Q_S05",
+      "question_text": "Which refactoring technique improves the readability and maintainability of an LCP algorithm implementation without affecting its performance?",
+      "option_a": "Extract a separate method for comparing prefixes",
+      "option_b": "Inline all helper methods into the main function",
+      "option_c": "Replace loops with recursive calls",
+      "option_d": "Add extensive logging statements",
+      "correct_option": "A",
+      "explanation": "Extracting a method isolates the prefix comparison logic, making the code clearer while keeping the same runtime. Inlining reduces modularity, recursion can add overhead, and excessive logging can degrade performance and clutter the code.",
+      "target_concept": "Code Optimization and Refactoring Practices",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "blueprint_id": "BP_input_13_wt_event_bubbling",
+  "input_id": "input_13_wt_event_bubbling",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Event Listeners",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "DOM Elements",
+        "JavaScript Functions",
+        "addEventListener API"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Event Bubbling",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "DOM Hierarchy",
+        "Event Propagation",
+        "Event Listeners"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Event Capturing",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "DOM Hierarchy",
+        "Event Propagation",
+        "Event Listeners"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

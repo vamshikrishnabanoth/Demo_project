@@ -1,0 +1,101 @@
+{
+  "blueprint_id": "BP_input_002_colab_cnn_debugging",
+  "input_id": "input_002_colab_cnn_debugging",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Convolutional Layer Configuration in PyTorch",
+      "salience_score": 0.339,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Tensor basics",
+        "PyTorch tensors",
+        "Convolution operation",
+        "Kernel/filter",
+        "Stride",
+        "Padding"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Pooling Layers and Multi\u2011layer CNN Architecture",
+      "salience_score": 0.308,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEMONSTRATION",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Convolutional layers",
+        "Feature maps",
+        "Pooling operation (max and average)",
+        "CNN architecture fundamentals",
+        "Stride and padding"
+      ],
+      "evidence_refs": [
+        "E_C02"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+      "salience_score": 0.5,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "DEBUG",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEBUGGING",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Tensor shapes",
+        "Flatten operation",
+        "Fully connected (Linear) layer",
+        "Output dimensions of convolutional layers",
+        "Batch size"
+      ],
+      "evidence_refs": [
+        "E_C03",
+        "E_C05"
+      ],
+      "teacher_specificity": "HIGH"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Training Loop, Loss Function, and Optimizer in PyTorch",
+      "salience_score": 0.244,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Model forward pass",
+        "Loss functions (e.g., CrossEntropy)",
+        "Gradient descent",
+        "PyTorch autograd",
+        "Optimizers (e.g., SGD, Adam)"
+      ],
+      "evidence_refs": [
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "blueprint_id": "BP_input_02_cnn_object_detection",
+  "input_id": "input_02_cnn_object_detection",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Fast R-CNN Architecture & Inference",
+      "salience_score": 0.55,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Convolutional Neural Networks (CNN)",
+        "Region Proposal Networks (RPN)",
+        "RoI Pooling",
+        "Anchor Boxes"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C06",
+        "E_C07",
+        "E_C09"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "YOLO Architecture & Inference",
+      "salience_score": 0.25,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Grid-based Detection",
+        "Bounding Box Regression",
+        "Confidence Scores"
+      ],
+      "evidence_refs": [
+        "E_C09",
+        "E_C11"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Dataset Preparation & Preprocessing",
+      "salience_score": 0.411,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "PROCEDURAL_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Image Annotation Formats (e.g., COCO, VOC)",
+        "Data Augmentation",
+        "Normalization"
+      ],
+      "evidence_refs": [
+        "E_C03",
+        "E_C04",
+        "E_C05"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Results Visualization",
+      "salience_score": 0.25,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "PROCEDURAL_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Bounding Box Coordinates",
+        "Class Labels",
+        "Confidence Thresholds"
+      ],
+      "evidence_refs": [
+        "E_C08",
+        "E_C11"
+      ],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Performance Benchmarking",
+      "salience_score": 0.259,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "COMPARE"
+      ],
+      "dominant_mode": "COMPARATIVE_ANALYSIS",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "mAP (mean Average Precision)",
+        "Inference Speed (FPS)",
+        "Model Complexity"
+      ],
+      "evidence_refs": [
+        "E_C09",
+        "E_C12"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

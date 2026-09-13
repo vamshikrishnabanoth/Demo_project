@@ -1,0 +1,48 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_001_voice_ppt_cnn_theory",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "THEORY",
+  "total_questions": 3,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which of the following best explains why a convolutional neural network is not perfectly translation\u2011invariant, especially near image borders?",
+      "option_a": "Weight sharing guarantees identical responses for any spatial shift, so borders have no effect.",
+      "option_b": "Zero\u2011padding or other border handling introduces edge effects that break full translation invariance.",
+      "option_c": "Local receptive fields limit the network to only small translations, making it invariant only locally.",
+      "option_d": "Pooling layers destroy all translation information, preventing any invariance.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the way CNNs handle borders (e.g., zero\u2011padding) creates artificial values that differ from interior pixels, so a feature shifted to the edge is processed differently. Option A is wrong: weight sharing promotes invariance but does not eliminate border effects. Option C confuses locality with invariance; locality enables translation invariance but does not restrict it to small shifts. Option D misstates the role of pooling: pooling provides some robustness to small shifts but does not eliminate translation invariance altogether.",
+      "target_concept": "Inductive Biases in CNNs",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "A 32\u00d732 input feature map is processed by a convolutional layer with kernel size 5\u00d75, stride 2, and padding 1. What is the spatial size of the output feature map?",
+      "option_a": "13\u00d713",
+      "option_b": "14\u00d714",
+      "option_c": "15\u00d715",
+      "option_d": "16\u00d716",
+      "correct_option": "C",
+      "explanation": "The output dimension formula is floor((N+2p\u2011k)/s)+1. Substituting N=32, p=1, k=5, s=2 gives floor((32+2\u20115)/2)+1 = floor(29/2)+1 = 14+1 = 15. Therefore the output is 15\u00d715. Option A (13) and B (14) result from forgetting the +1 or mis\u2011handling the floor operation. Option D (16) comes from adding instead of dividing or using ceiling. The correct answer is C.",
+      "target_concept": "Spatial Output Dimension Calculation",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Consider two design choices that produce a receptive field of size 5\u00d75 on the input image: (i) a single 5\u00d75 convolution (no padding, stride\u202f1) and (ii) two consecutive 3\u00d73 convolutions (no padding, stride\u202f1). Which statement about their receptive fields is true?",
+      "option_a": "The stacked 3\u00d73 convolutions have a larger receptive field than the single 5\u00d75 convolution.",
+      "option_b": "The single 5\u00d75 convolution has a larger receptive field than the stacked 3\u00d73 convolutions.",
+      "option_c": "Both designs result in the same 5\u00d75 receptive field.",
+      "option_d": "The receptive field depends on the number of channels, not the kernel sizes.",
+      "correct_option": "C",
+      "explanation": "Two 3\u00d73 convolutions expand the receptive field by (3\u20111)+(3\u20111)=4 pixels in each dimension, yielding a 5\u00d75 field, exactly the same as a single 5\u00d75 kernel. Option A is a common misconception that stacking always enlarges the field beyond the equivalent large kernel. Option B ignores the additive effect of stacking. Option D is irrelevant; receptive field size is determined by kernel size, stride, and stacking, not channel count. Hence C is correct.",
+      "target_concept": "Receptive Field Stacking and Parameter Efficiency",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S03"
+    }
+  ]
+}

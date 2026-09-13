@@ -1,0 +1,5513 @@
+{
+  "audio_file": "Audio/only voice/WT 20-8-26.m4a",
+  "title": "Web Tech Lecture 3: DOM Nodes & Form Validation",
+  "duration": 4044.89,
+  "total_segments": 688,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 12.0,
+      "text": "Then you do not get any awkwardness, because when you get out of the day, is it unbeaten?",
+      "avg_logprob": -0.794,
+      "no_speech_prob": 0.38
+    },
+    {
+      "id": 2,
+      "start": 12.0,
+      "end": 14.0,
+      "text": "Getting the point.",
+      "avg_logprob": -0.794,
+      "no_speech_prob": 0.38
+    },
+    {
+      "id": 3,
+      "start": 14.0,
+      "end": 16.0,
+      "text": "It will be on the vocals, clear and clear.",
+      "avg_logprob": -0.794,
+      "no_speech_prob": 0.38
+    },
+    {
+      "id": 4,
+      "start": 16.0,
+      "end": 26.0,
+      "text": "And to shoot for the night of the walk will be end of a session on pause for the session night.",
+      "avg_logprob": -0.794,
+      "no_speech_prob": 0.38
+    },
+    {
+      "id": 5,
+      "start": 26.0,
+      "end": 29.0,
+      "text": "It will be on the vocals, clear and clear, to be on the night.",
+      "avg_logprob": -0.865,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 6,
+      "start": 29.0,
+      "end": 36.0,
+      "text": "So, going away to that sort of thing.",
+      "avg_logprob": -0.865,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 7,
+      "start": 36.0,
+      "end": 59.0,
+      "text": "What we need to create, what we need to create, based upon using history, that we have done yesterday.",
+      "avg_logprob": -0.517,
+      "no_speech_prob": 0.361
+    },
+    {
+      "id": 8,
+      "start": 60.0,
+      "end": 65.0,
+      "text": "You find it differently in three days of work, which will be got created in the work.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 9,
+      "start": 65.0,
+      "end": 68.0,
+      "text": "Then, start working then.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 10,
+      "start": 68.0,
+      "end": 69.0,
+      "text": "Over time then.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 11,
+      "start": 69.0,
+      "end": 74.0,
+      "text": "Until then, get the comprises of four, eight to nine nights of four.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 12,
+      "start": 74.0,
+      "end": 76.0,
+      "text": "Ten nights of four.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 13,
+      "start": 76.0,
+      "end": 79.0,
+      "text": "First try to connect to the creative circle.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 14,
+      "start": 79.0,
+      "end": 81.0,
+      "text": "On the top of.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 15,
+      "start": 81.0,
+      "end": 82.0,
+      "text": "Not this.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 16,
+      "start": 82.0,
+      "end": 83.0,
+      "text": "Not this is not a circle.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 17,
+      "start": 83.0,
+      "end": 85.0,
+      "text": "Not this is a framework.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 18,
+      "start": 85.0,
+      "end": 88.0,
+      "text": "On the top of it, we are using history.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.574
+    },
+    {
+      "id": 19,
+      "start": 89.0,
+      "end": 89.68,
+      "text": "Do.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 20,
+      "start": 89.68,
+      "end": 91.88,
+      "text": "Take one serve.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 21,
+      "start": 91.88,
+      "end": 92.84,
+      "text": "Using H-",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 22,
+      "start": 92.84,
+      "end": 93.72,
+      "text": "20 point.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 23,
+      "start": 93.72,
+      "end": 95.72,
+      "text": "Once the server is set up.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 24,
+      "start": 95.72,
+      "end": 97.92,
+      "text": "Once the server is set up.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 25,
+      "start": 97.92,
+      "end": 101.24,
+      "text": "Once your server is set up, the second serve is one of these.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 26,
+      "start": 101.24,
+      "end": 106.56,
+      "text": "Can you connect to the MD is a Mongol, why to connect to?",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 27,
+      "start": 106.56,
+      "end": 110.04,
+      "text": "A Mongol with key is going to be your second striker.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 28,
+      "start": 110.04,
+      "end": 111.96,
+      "text": "Once the collection is established.",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 29,
+      "start": 111.96,
+      "end": 113.36,
+      "text": "Then only you can perform your\ufffd the job period of the system through the edge thoughts or",
+      "avg_logprob": -2.08,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 30,
+      "start": 113.36,
+      "end": 120.36,
+      "text": "for anything else. And these are not going to be your classes, these are going to be",
+      "avg_logprob": -0.717,
+      "no_speech_prob": 0.134
+    },
+    {
+      "id": 31,
+      "start": 120.36,
+      "end": 126.36,
+      "text": "the freeing physics, these are going to be the freeing physics.",
+      "avg_logprob": -0.717,
+      "no_speech_prob": 0.134
+    },
+    {
+      "id": 32,
+      "start": 126.36,
+      "end": 137.36,
+      "text": "Correct to one more thing, you have to be one of these. Can you launch, can you create",
+      "avg_logprob": -0.717,
+      "no_speech_prob": 0.134
+    },
+    {
+      "id": 33,
+      "start": 137.36,
+      "end": 144.36,
+      "text": "a data base, once the connection is established, then the first thing is created data base",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 34,
+      "start": 144.36,
+      "end": 155.36,
+      "text": "and a data base and a data base. Once this step is done, launch data, launch data base",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 35,
+      "start": 155.36,
+      "end": 168.36,
+      "text": "is a data base name and address, in the next name and address. Once this is done,",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.07
+    },
+    {
+      "id": 36,
+      "start": 168.36,
+      "end": 191.36,
+      "text": "can you insert the data, can you insert the data. Once insertion is performed on the",
+      "avg_logprob": -0.313,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 37,
+      "start": 191.36,
+      "end": 196.36,
+      "text": "database and in the collection, in a particular data base, in a particular collection is",
+      "avg_logprob": -0.313,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 38,
+      "start": 196.36,
+      "end": 205.36,
+      "text": "inserted, one operation is performed here. Then you are going to start your data base",
+      "avg_logprob": -0.461,
+      "no_speech_prob": 0.116
+    },
+    {
+      "id": 39,
+      "start": 205.36,
+      "end": 215.36,
+      "text": "all the other operations for us and so on. If you are superior, then you are good.",
+      "avg_logprob": -0.461,
+      "no_speech_prob": 0.116
+    },
+    {
+      "id": 40,
+      "start": 216.36,
+      "end": 222.36,
+      "text": "Now, the synonym will be a dynamic user.",
+      "avg_logprob": -0.737,
+      "no_speech_prob": 0.32
+    },
+    {
+      "id": 41,
+      "start": 222.36,
+      "end": 231.36,
+      "text": "We will be providing this to the friendly, we will be providing a friendly, with the robots",
+      "avg_logprob": -0.737,
+      "no_speech_prob": 0.32
+    },
+    {
+      "id": 42,
+      "start": 231.36,
+      "end": 240.36,
+      "text": "on this to insert a particular robot, the robot means that the robot, slice, uses,",
+      "avg_logprob": -0.737,
+      "no_speech_prob": 0.32
+    },
+    {
+      "id": 43,
+      "start": 240.36,
+      "end": 249.36,
+      "text": "that we use this route to insert. So, you have to identify for a insert which round",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 44,
+      "start": 249.36,
+      "end": 255.36,
+      "text": "is being used, whether we are requesting you to insert one or insert",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 45,
+      "start": 255.36,
+      "end": 265.36,
+      "text": "maybe, insert one or insert maybe. Second thing is, you are using the same route",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 46,
+      "start": 265.36,
+      "end": 275.36,
+      "text": "and you are using the same route and you are lacking. But, appropriate the route,",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.233
+    },
+    {
+      "id": 47,
+      "start": 275.36,
+      "end": 281.36,
+      "text": "any number that you need anything? No.",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.233
+    },
+    {
+      "id": 48,
+      "start": 282.36,
+      "end": 290.36,
+      "text": "Yesterday we have done the final number one. Today, we will be looking at how to,",
+      "avg_logprob": -0.33,
+      "no_speech_prob": 0.314
+    },
+    {
+      "id": 49,
+      "start": 290.36,
+      "end": 296.36,
+      "text": "in final number one, we had already seen how to deal with the body part.",
+      "avg_logprob": -0.33,
+      "no_speech_prob": 0.314
+    },
+    {
+      "id": 50,
+      "start": 296.36,
+      "end": 298.36,
+      "text": "What it means?",
+      "avg_logprob": -0.33,
+      "no_speech_prob": 0.314
+    },
+    {
+      "id": 51,
+      "start": 298.36,
+      "end": 305.36,
+      "text": "Content will send the data, where content will be sending the data to a request",
+      "avg_logprob": -0.33,
+      "no_speech_prob": 0.314
+    },
+    {
+      "id": 52,
+      "start": 306.36,
+      "end": 314.36,
+      "text": "and that request will be JSON. So, you have to use path and synonym by first,",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 53,
+      "start": 314.36,
+      "end": 320.36,
+      "text": "you are converting to an object, again converting to a JSON.",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 54,
+      "start": 320.36,
+      "end": 326.36,
+      "text": "JSON object into a string of object and again string to JSON.",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 55,
+      "start": 326.36,
+      "end": 333.36,
+      "text": "You can access, if it is an object, then only you can access the data, the engineering.",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 56,
+      "start": 334.36,
+      "end": 341.36,
+      "text": "If I am going with registration form, in a game, engineering,",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 57,
+      "start": 341.36,
+      "end": 347.36,
+      "text": "contactable, age, these are the fields. When you set it through request,",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 58,
+      "start": 347.36,
+      "end": 354.36,
+      "text": "first line is filling the data, clicking on submit or add feedback.",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 59,
+      "start": 354.36,
+      "end": 359.36,
+      "text": "When you click on that, the data is passing to the server,",
+      "avg_logprob": -0.343,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 60,
+      "start": 359.36,
+      "end": 364.36,
+      "text": "the server will be getting the data in the form of request.",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 61,
+      "start": 364.36,
+      "end": 368.36,
+      "text": "The request of calling, from the, you have to pass the data,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 62,
+      "start": 368.36,
+      "end": 375.36,
+      "text": "you have to convert the data into object within string input.",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 63,
+      "start": 375.36,
+      "end": 380.36,
+      "text": "Once the object is available, then you can access the individual elements",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 64,
+      "start": 380.36,
+      "end": 385.36,
+      "text": "and push it into your data test. After pushing out the data test,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 65,
+      "start": 385.36,
+      "end": 390.36,
+      "text": "submit it as one of the data as well, inserted problems.",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.15
+    },
+    {
+      "id": 66,
+      "start": 390.36,
+      "end": 397.36,
+      "text": "Getting the things, or if you press kill to certain kinds of,",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.15
+    },
+    {
+      "id": 67,
+      "start": 397.36,
+      "end": 402.36,
+      "text": "then you will get what I want to convey.",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.15
+    },
+    {
+      "id": 68,
+      "start": 415.36,
+      "end": 422.36,
+      "text": "Here you can see I have three parts, one is going to be work, right here.",
+      "avg_logprob": -0.886,
+      "no_speech_prob": 0.355
+    },
+    {
+      "id": 69,
+      "start": 445.36,
+      "end": 452.36,
+      "text": "The first is to speed your time, right here.",
+      "avg_logprob": -0.765,
+      "no_speech_prob": 0.343
+    },
+    {
+      "id": 70,
+      "start": 452.36,
+      "end": 455.36,
+      "text": "Same other object.",
+      "avg_logprob": -0.765,
+      "no_speech_prob": 0.343
+    },
+    {
+      "id": 71,
+      "start": 455.36,
+      "end": 460.36,
+      "text": "And third one is to speed your time.",
+      "avg_logprob": -0.765,
+      "no_speech_prob": 0.343
+    },
+    {
+      "id": 72,
+      "start": 460.36,
+      "end": 463.36,
+      "text": "More to speed your time.",
+      "avg_logprob": -0.765,
+      "no_speech_prob": 0.343
+    },
+    {
+      "id": 73,
+      "start": 463.36,
+      "end": 469.36,
+      "text": "Firstly, we will be leaving the server object,",
+      "avg_logprob": -0.765,
+      "no_speech_prob": 0.343
+    },
+    {
+      "id": 74,
+      "start": 470.36,
+      "end": 481.36,
+      "text": "Armages, Armages, using the speed, the server will keep you right,",
+      "avg_logprob": -0.768,
+      "no_speech_prob": 0.138
+    },
+    {
+      "id": 75,
+      "start": 481.36,
+      "end": 486.36,
+      "text": "and you will try to connect through your Armaging.",
+      "avg_logprob": -0.768,
+      "no_speech_prob": 0.138
+    },
+    {
+      "id": 76,
+      "start": 486.36,
+      "end": 494.36,
+      "text": "Also some action for after Armaging.",
+      "avg_logprob": -0.768,
+      "no_speech_prob": 0.138
+    },
+    {
+      "id": 77,
+      "start": 494.36,
+      "end": 500.36,
+      "text": "Then using the Armages, using that being set over here.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.402
+    },
+    {
+      "id": 78,
+      "start": 500.36,
+      "end": 509.36,
+      "text": "Using the Armages, using that being set over here,",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.402
+    },
+    {
+      "id": 79,
+      "start": 509.36,
+      "end": 514.36,
+      "text": "you will try to keep everything on that way,",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.402
+    },
+    {
+      "id": 80,
+      "start": 514.36,
+      "end": 518.36,
+      "text": "through your Armages.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.402
+    },
+    {
+      "id": 81,
+      "start": 518.36,
+      "end": 522.36,
+      "text": "This is a helicopter which is going to be here",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.402
+    },
+    {
+      "id": 82,
+      "start": 522.36,
+      "end": 526.36,
+      "text": "and make fail money on what you need to be looking at,",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 83,
+      "start": 526.36,
+      "end": 531.36,
+      "text": "but really what you need to be looking at is mainly",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 84,
+      "start": 531.36,
+      "end": 535.36,
+      "text": "of the nightly insert that being on the way you can make.",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 85,
+      "start": 535.36,
+      "end": 539.36,
+      "text": "So very frankly, we are going to watch you on this.",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 86,
+      "start": 539.36,
+      "end": 542.36,
+      "text": "We are going to be working on that part.",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 87,
+      "start": 542.36,
+      "end": 546.36,
+      "text": "I will go insert one, I will go insert reading for you,",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 88,
+      "start": 546.36,
+      "end": 549.36,
+      "text": "reading one for you, reading and so on.",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 89,
+      "start": 549.36,
+      "end": 554.36,
+      "text": "Using one object being and nothing which you are reading",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 90,
+      "start": 554.36,
+      "end": 560.36,
+      "text": "the things point by point outside that side.",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 91,
+      "start": 560.36,
+      "end": 562.36,
+      "text": "That is what the server surface on the surface is,",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 92,
+      "start": 562.36,
+      "end": 566.36,
+      "text": "on some of the surface surface on it.",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 93,
+      "start": 566.36,
+      "end": 570.36,
+      "text": "Here, we have done this example effort on the",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 94,
+      "start": 570.36,
+      "end": 576.36,
+      "text": "assessment module, reading a server,",
+      "avg_logprob": -1.048,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 95,
+      "start": 576.36,
+      "end": 583.36,
+      "text": "This is done.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.292
+    },
+    {
+      "id": 96,
+      "start": 583.36,
+      "end": 586.36,
+      "text": "This is done.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.292
+    },
+    {
+      "id": 97,
+      "start": 586.36,
+      "end": 591.36,
+      "text": "This is done.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.292
+    },
+    {
+      "id": 98,
+      "start": 591.36,
+      "end": 596.36,
+      "text": "Second part, that will remain same.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.292
+    },
+    {
+      "id": 99,
+      "start": 596.36,
+      "end": 600.36,
+      "text": "Next thing, whatever you do, you will be doing it,",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.292
+    },
+    {
+      "id": 100,
+      "start": 600.36,
+      "end": 607.36,
+      "text": "it creates our own, in this portion.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 101,
+      "start": 607.36,
+      "end": 612.36,
+      "text": "It creates our own itself, so we know it is within us.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 102,
+      "start": 612.36,
+      "end": 617.36,
+      "text": "You are not going to disturb the already and it affects our created self,",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 103,
+      "start": 617.36,
+      "end": 619.36,
+      "text": "and it is within.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 104,
+      "start": 619.36,
+      "end": 622.36,
+      "text": "This part, we are not expecting.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 105,
+      "start": 622.36,
+      "end": 625.36,
+      "text": "This is static.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 106,
+      "start": 625.36,
+      "end": 627.36,
+      "text": "This is static.",
+      "avg_logprob": -0.499,
+      "no_speech_prob": 0.168
+    },
+    {
+      "id": 107,
+      "start": 627.36,
+      "end": 634.36,
+      "text": "We are changing this part, it creates our own.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 108,
+      "start": 634.36,
+      "end": 636.36,
+      "text": "When you come back here, exactly one.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 109,
+      "start": 636.36,
+      "end": 637.36,
+      "text": "Simple.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 110,
+      "start": 637.36,
+      "end": 642.36,
+      "text": "Now, we are going over here.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 111,
+      "start": 642.36,
+      "end": 646.36,
+      "text": "What is inside our own?",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 112,
+      "start": 646.36,
+      "end": 647.36,
+      "text": "This part.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 113,
+      "start": 647.36,
+      "end": 653.36,
+      "text": "Getting the things clear, and over here, what we are passing,",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.023
+    },
+    {
+      "id": 114,
+      "start": 653.36,
+      "end": 660.36,
+      "text": "but, someone has to get either request, or someone has to send a response.",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 115,
+      "start": 660.36,
+      "end": 663.36,
+      "text": "The request part, response.",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 116,
+      "start": 663.36,
+      "end": 670.36,
+      "text": "So, this part, and look at this part, as comments have been included,",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 117,
+      "start": 670.36,
+      "end": 674.36,
+      "text": "you feel that this is an important part.",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 118,
+      "start": 674.36,
+      "end": 677.36,
+      "text": "This is what we have to consider.",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 119,
+      "start": 677.36,
+      "end": 680.36,
+      "text": "Request method, it will get the method,",
+      "avg_logprob": -0.53,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 120,
+      "start": 680.36,
+      "end": 685.36,
+      "text": "Loser wants to get the data, closer data,",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 121,
+      "start": 685.36,
+      "end": 689.36,
+      "text": "close the data, or delete the data.",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 122,
+      "start": 689.36,
+      "end": 694.36,
+      "text": "First, the work has to know, what is the HTTP method, user wants to do.",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 123,
+      "start": 694.36,
+      "end": 699.36,
+      "text": "Get is used when you want to delete the data, retrieve the data,",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 124,
+      "start": 699.36,
+      "end": 702.36,
+      "text": "which is available on your model.",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 125,
+      "start": 702.36,
+      "end": 709.36,
+      "text": "Then, you are going to send a method, which is going to be equivalent to get.",
+      "avg_logprob": -0.346,
+      "no_speech_prob": 0.063
+    },
+    {
+      "id": 126,
+      "start": 710.36,
+      "end": 716.36,
+      "text": "And first, it is used for inserting the data.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 127,
+      "start": 716.36,
+      "end": 721.36,
+      "text": "What is used for the data is already available, and you want to update.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 128,
+      "start": 721.36,
+      "end": 723.36,
+      "text": "You feel it is also a particular data.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 129,
+      "start": 723.36,
+      "end": 726.36,
+      "text": "They say, if you are using a password, it is already available.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 130,
+      "start": 726.36,
+      "end": 729.36,
+      "text": "And you want to update your password.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 131,
+      "start": 729.36,
+      "end": 733.36,
+      "text": "But, then you are going to use this method, good.",
+      "avg_logprob": -0.359,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 132,
+      "start": 733.36,
+      "end": 739.36,
+      "text": "And, delete, if you want to delete a particular document from your homeworld.",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 133,
+      "start": 739.36,
+      "end": 740.36,
+      "text": "Fine.",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 134,
+      "start": 740.36,
+      "end": 743.36,
+      "text": "So, methods should be appropriate.",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 135,
+      "start": 743.36,
+      "end": 751.36,
+      "text": "If you want to insert the data, and you are using get method, what happens?",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 136,
+      "start": 751.36,
+      "end": 755.36,
+      "text": "The data will not be pushed onto your homeworld.",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 137,
+      "start": 755.36,
+      "end": 760.36,
+      "text": "Otherwise, you will have to post it there, be the code of the correct data.",
+      "avg_logprob": -0.39,
+      "no_speech_prob": 0.093
+    },
+    {
+      "id": 138,
+      "start": 760.36,
+      "end": 763.36,
+      "text": "What you are trying to do, you are conveying to your server.",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 139,
+      "start": 763.36,
+      "end": 769.36,
+      "text": "You don't have to contain to your server, you have to be specific with your method.",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 140,
+      "start": 769.36,
+      "end": 774.36,
+      "text": "That is, that is one thing, I have a little bit in our previous world,",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 141,
+      "start": 774.36,
+      "end": 777.36,
+      "text": "that is the request word method.",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 142,
+      "start": 777.36,
+      "end": 780.36,
+      "text": "And, why?",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 143,
+      "start": 780.36,
+      "end": 784.36,
+      "text": "Or to which route you are focusing?",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 144,
+      "start": 784.36,
+      "end": 787.36,
+      "text": "Because, you are specifying, I say, give that answer,",
+      "avg_logprob": -0.45,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 145,
+      "start": 787.36,
+      "end": 790.36,
+      "text": "I am specifying my routes, upfront in my front end.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 146,
+      "start": 790.36,
+      "end": 796.36,
+      "text": "So, the route should be properly without any cases to be error.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 147,
+      "start": 796.36,
+      "end": 800.36,
+      "text": "There should not be any, again the smaller case, each number,",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 148,
+      "start": 800.36,
+      "end": 803.36,
+      "text": "there are capital and institutional problems.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 149,
+      "start": 803.36,
+      "end": 808.36,
+      "text": "It will not fix, it will say that the provided route is not far.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 150,
+      "start": 808.36,
+      "end": 810.36,
+      "text": "You already is not far.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 151,
+      "start": 810.36,
+      "end": 815.36,
+      "text": "If you are writing the code in the map, in the error part.",
+      "avg_logprob": -0.411,
+      "no_speech_prob": 0.131
+    },
+    {
+      "id": 152,
+      "start": 815.36,
+      "end": 818.36,
+      "text": "Getting the things, so these are the two things,",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 153,
+      "start": 818.36,
+      "end": 823.36,
+      "text": "which play a crucial role in any type of request,",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 154,
+      "start": 823.36,
+      "end": 825.36,
+      "text": "to the server.",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 155,
+      "start": 825.36,
+      "end": 828.36,
+      "text": "Method, you are talking.",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 156,
+      "start": 828.36,
+      "end": 832.36,
+      "text": "Secondly,",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 157,
+      "start": 832.36,
+      "end": 835.36,
+      "text": "I will ask for,",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 158,
+      "start": 835.36,
+      "end": 839.36,
+      "text": "when you know, you are seeing the data.",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 159,
+      "start": 839.36,
+      "end": 843.36,
+      "text": "Just run this, just run this,",
+      "avg_logprob": -0.35,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 160,
+      "start": 843.36,
+      "end": 845.36,
+      "text": "you are not seeing the data,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 161,
+      "start": 845.36,
+      "end": 847.36,
+      "text": "no need of comment on it,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 162,
+      "start": 847.36,
+      "end": 849.36,
+      "text": "you are coming from this.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 163,
+      "start": 849.36,
+      "end": 852.36,
+      "text": "You are no argument or server like.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 164,
+      "start": 852.36,
+      "end": 854.36,
+      "text": "What is the,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 165,
+      "start": 854.36,
+      "end": 856.36,
+      "text": "everyone will allow you.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 166,
+      "start": 856.36,
+      "end": 858.36,
+      "text": "Under client execution,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 167,
+      "start": 858.36,
+      "end": 860.36,
+      "text": "you will know,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 168,
+      "start": 860.36,
+      "end": 861.36,
+      "text": "they put their rights,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 169,
+      "start": 861.36,
+      "end": 862.36,
+      "text": "which is also the,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 170,
+      "start": 862.36,
+      "end": 864.36,
+      "text": "under client and in visualization,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 171,
+      "start": 864.36,
+      "end": 867.36,
+      "text": "it is off-few cable.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 172,
+      "start": 867.36,
+      "end": 869.36,
+      "text": "In your lab also,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 173,
+      "start": 869.36,
+      "end": 870.36,
+      "text": "you will have the data.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 174,
+      "start": 870.36,
+      "end": 875.22,
+      "text": "use me to access all these ideas, we will, we will use perspective of punches to the",
+      "avg_logprob": -0.961,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 175,
+      "start": 875.22,
+      "end": 880.92,
+      "text": "legendary, with Thundercraft like a chase shoot use, but you will use marks for that time.",
+      "avg_logprob": -0.961,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 176,
+      "start": 880.92,
+      "end": 888.72,
+      "text": "You will use marks, because front end and back end connectivity is the key, even if",
+      "avg_logprob": -0.961,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 177,
+      "start": 888.72,
+      "end": 893.56,
+      "text": "your operations are working, you will have operations, and if you want, you can show",
+      "avg_logprob": -0.961,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 178,
+      "start": 893.56,
+      "end": 900.56,
+      "text": "to use Thundercraft, but you will use certain marks, any other point.",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.114
+    },
+    {
+      "id": 179,
+      "start": 923.56,
+      "end": 939.68,
+      "text": "You will have Thundercraft, generally in my company we use post-man, but over here",
+      "avg_logprob": -0.625,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 180,
+      "start": 939.68,
+      "end": 947.56,
+      "text": "we are using Thundercraft for a lighter, but in both of these, the commands are in this",
+      "avg_logprob": -0.625,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 181,
+      "start": 947.56,
+      "end": 948.56,
+      "text": "scene.",
+      "avg_logprob": -0.625,
+      "no_speech_prob": 0.04
+    },
+    {
+      "id": 182,
+      "start": 948.56,
+      "end": 955.56,
+      "text": "You can, yeah, have you executed example two?",
+      "avg_logprob": -0.709,
+      "no_speech_prob": 0.091
+    },
+    {
+      "id": 183,
+      "start": 955.56,
+      "end": 967.56,
+      "text": "Yeah, one is the example two, no, NPM also you can use, NPM, example two.",
+      "avg_logprob": -0.709,
+      "no_speech_prob": 0.091
+    },
+    {
+      "id": 184,
+      "start": 968.56,
+      "end": 985.56,
+      "text": "Yeah, NPM, NPM, NPM, NPM, NPM, NPM, NPM.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.738
+    },
+    {
+      "id": 185,
+      "start": 985.56,
+      "end": 992.56,
+      "text": "I will select two, NPM, NPM, NPM, NPM, NPM, NPM, NPM, NPM.",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.567
+    },
+    {
+      "id": 186,
+      "start": 1015.56,
+      "end": 1022.56,
+      "text": "Now, what we are seeing is, in Thundercraft, now we want to make an increase, we want",
+      "avg_logprob": -0.381,
+      "no_speech_prob": 0.371
+    },
+    {
+      "id": 187,
+      "start": 1022.56,
+      "end": 1030.56,
+      "text": "to make an increase to the server, and an increase that will not equal, not double equal,",
+      "avg_logprob": -0.381,
+      "no_speech_prob": 0.371
+    },
+    {
+      "id": 188,
+      "start": 1030.56,
+      "end": 1035.56,
+      "text": "double equal to, double equal to, double equal to, double equal to, if you want, you can",
+      "avg_logprob": -0.381,
+      "no_speech_prob": 0.371
+    },
+    {
+      "id": 189,
+      "start": 1035.56,
+      "end": 1042.56,
+      "text": "use double equal to, it will work, but in certain cases, it will not work.",
+      "avg_logprob": -0.381,
+      "no_speech_prob": 0.371
+    },
+    {
+      "id": 190,
+      "start": 1042.56,
+      "end": 1049.56,
+      "text": "So, in what cases, when type is mismatched, the body body is used for type-packing",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 191,
+      "start": 1049.56,
+      "end": 1050.56,
+      "text": "works.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 192,
+      "start": 1050.56,
+      "end": 1058.56,
+      "text": "The method is what we get, and what is the response when we take it, this is a get increase,",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 193,
+      "start": 1058.56,
+      "end": 1059.56,
+      "text": "a simple request.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 194,
+      "start": 1059.56,
+      "end": 1066.56,
+      "text": "If I am going to select the letter as post, then my response is, this is a post request.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 195,
+      "start": 1066.56,
+      "end": 1070.56,
+      "text": "We are not at connecting our memory in this case.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 196,
+      "start": 1071.56,
+      "end": 1075.56,
+      "text": "We are just testing, and the get a post will work properly.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.659
+    },
+    {
+      "id": 197,
+      "start": 1075.56,
+      "end": 1081.56,
+      "text": "We expect to put Thundercraft in your response, in your response, after that, or the return",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.659
+    },
+    {
+      "id": 198,
+      "start": 1081.56,
+      "end": 1090.56,
+      "text": "in your response.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.659
+    },
+    {
+      "id": 199,
+      "start": 1090.56,
+      "end": 1099.56,
+      "text": "Now, you will see the metal out here.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.659
+    },
+    {
+      "id": 200,
+      "start": 1099.56,
+      "end": 1106.56,
+      "text": "The metal out here, I am going to go for the 0, select this attack,",
+      "avg_logprob": -0.708,
+      "no_speech_prob": 0.332
+    },
+    {
+      "id": 201,
+      "start": 1106.56,
+      "end": 1113.56,
+      "text": "2.30% or 2.30% or 2.30% or 3.30%.",
+      "avg_logprob": -0.708,
+      "no_speech_prob": 0.332
+    },
+    {
+      "id": 202,
+      "start": 1113.56,
+      "end": 1116.56,
+      "text": "Now, you will see that the number is 4.30% or 2.30%.",
+      "avg_logprob": -0.708,
+      "no_speech_prob": 0.332
+    },
+    {
+      "id": 203,
+      "start": 1116.56,
+      "end": 1124.56,
+      "text": "So, 2.30% or 3.30% or 3.30% or 2.30% or 2.30% or 2.30% or 3.30%.",
+      "avg_logprob": -0.708,
+      "no_speech_prob": 0.332
+    },
+    {
+      "id": 204,
+      "start": 1124.56,
+      "end": 1142.56,
+      "text": "Now, as soon as I will be sending, what is the message when you take this plate?",
+      "avg_logprob": -0.468,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 205,
+      "start": 1143.56,
+      "end": 1146.56,
+      "text": "This is the get it.",
+      "avg_logprob": -0.507,
+      "no_speech_prob": 0.294
+    },
+    {
+      "id": 206,
+      "start": 1146.56,
+      "end": 1157.56,
+      "text": "You want to say, see, we are getting a success message to our rate, and we are getting",
+      "avg_logprob": -0.507,
+      "no_speech_prob": 0.294
+    },
+    {
+      "id": 207,
+      "start": 1157.56,
+      "end": 1160.56,
+      "text": "the message which we are passing through, getting it.",
+      "avg_logprob": -0.507,
+      "no_speech_prob": 0.294
+    },
+    {
+      "id": 208,
+      "start": 1160.56,
+      "end": 1166.56,
+      "text": "We are on the moral, we are getting this.",
+      "avg_logprob": -0.507,
+      "no_speech_prob": 0.294
+    },
+    {
+      "id": 209,
+      "start": 1166.56,
+      "end": 1173.56,
+      "text": "Now, one more thing we are getting around.",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 210,
+      "start": 1173.56,
+      "end": 1175.56,
+      "text": "We are getting only metal.",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 211,
+      "start": 1175.56,
+      "end": 1180.56,
+      "text": "You said that request and system, what you said?",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 212,
+      "start": 1180.56,
+      "end": 1182.56,
+      "text": "Metal, place you are like.",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 213,
+      "start": 1182.56,
+      "end": 1186.56,
+      "text": "When you are in this slash, by default, by default.",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 214,
+      "start": 1186.56,
+      "end": 1193.56,
+      "text": "If you want to speak to this thing, row, then what we are going to do?",
+      "avg_logprob": -0.477,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 215,
+      "start": 1193.56,
+      "end": 1200.56,
+      "text": "In example 2, in example 2, you can have this.",
+      "avg_logprob": -0.373,
+      "no_speech_prob": 0.102
+    },
+    {
+      "id": 216,
+      "start": 1200.56,
+      "end": 1207.56,
+      "text": "Double land, double land, safe place, pay attention.",
+      "avg_logprob": -0.373,
+      "no_speech_prob": 0.102
+    },
+    {
+      "id": 217,
+      "start": 1207.56,
+      "end": 1212.56,
+      "text": "When we use the piece row, is that until and unless you recover this,",
+      "avg_logprob": -0.373,
+      "no_speech_prob": 0.102
+    },
+    {
+      "id": 218,
+      "start": 1212.56,
+      "end": 1218.56,
+      "text": "you cannot get rid of the rest of the current operation.",
+      "avg_logprob": -0.373,
+      "no_speech_prob": 0.102
+    },
+    {
+      "id": 219,
+      "start": 1218.56,
+      "end": 1225.56,
+      "text": "Request not whether I am constantly, or should I tell you?",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.179
+    },
+    {
+      "id": 220,
+      "start": 1225.56,
+      "end": 1244.56,
+      "text": "And request for more than is going to be trash from it.",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.179
+    },
+    {
+      "id": 221,
+      "start": 1245.56,
+      "end": 1251.56,
+      "text": "When this time, right to run, again, along saving,",
+      "avg_logprob": -0.767,
+      "no_speech_prob": 0.225
+    },
+    {
+      "id": 222,
+      "start": 1251.56,
+      "end": 1255.56,
+      "text": "close the server, bring that to us, sir.",
+      "avg_logprob": -0.767,
+      "no_speech_prob": 0.225
+    },
+    {
+      "id": 223,
+      "start": 1255.56,
+      "end": 1264.56,
+      "text": "Not this, on command from home.",
+      "avg_logprob": -0.767,
+      "no_speech_prob": 0.225
+    },
+    {
+      "id": 224,
+      "start": 1265.56,
+      "end": 1278.56,
+      "text": "Now, again, once again, say, other electricity method.",
+      "avg_logprob": -0.539,
+      "no_speech_prob": 0.128
+    },
+    {
+      "id": 225,
+      "start": 1278.56,
+      "end": 1281.56,
+      "text": "We have one more thing, that is other electricity method.",
+      "avg_logprob": -0.539,
+      "no_speech_prob": 0.128
+    },
+    {
+      "id": 226,
+      "start": 1281.56,
+      "end": 1284.56,
+      "text": "Now, we are not getting any question.",
+      "avg_logprob": -0.539,
+      "no_speech_prob": 0.128
+    },
+    {
+      "id": 227,
+      "start": 1284.56,
+      "end": 1287.56,
+      "text": "Because it is not matching with the piece condition.",
+      "avg_logprob": -0.539,
+      "no_speech_prob": 0.128
+    },
+    {
+      "id": 228,
+      "start": 1288.56,
+      "end": 1294.56,
+      "text": "It has to match in the gate and the row, the path.",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 229,
+      "start": 1294.56,
+      "end": 1296.56,
+      "text": "We had a path, right?",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 230,
+      "start": 1296.56,
+      "end": 1302.56,
+      "text": "Say, slash running, slash running in the row.",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 231,
+      "start": 1302.56,
+      "end": 1306.56,
+      "text": "Said, this is the gate.",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 232,
+      "start": 1306.56,
+      "end": 1309.56,
+      "text": "Getting the things, the method should be gate.",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 233,
+      "start": 1309.56,
+      "end": 1314.56,
+      "text": "And the URL should be slash running.",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.031
+    },
+    {
+      "id": 234,
+      "start": 1315.56,
+      "end": 1320.56,
+      "text": "Now, Friday, the proposed period in 2002, is a big point.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 235,
+      "start": 1320.56,
+      "end": 1323.56,
+      "text": "After that, what do you want to work on?",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 236,
+      "start": 1323.56,
+      "end": 1325.56,
+      "text": "For a slash running.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 237,
+      "start": 1325.56,
+      "end": 1328.56,
+      "text": "Getting the things, you are not getting the piece.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 238,
+      "start": 1328.56,
+      "end": 1333.56,
+      "text": "Raise your hand.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 239,
+      "start": 1333.56,
+      "end": 1336.56,
+      "text": "Now, change it to post it.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 240,
+      "start": 1336.56,
+      "end": 1339.56,
+      "text": "In new requests, sir.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.162
+    },
+    {
+      "id": 241,
+      "start": 1339.56,
+      "end": 1356.56,
+      "text": "Now, see, we have not mentioned, we are not freezing to any load in post.",
+      "avg_logprob": -0.475,
+      "no_speech_prob": 0.227
+    },
+    {
+      "id": 242,
+      "start": 1356.56,
+      "end": 1361.56,
+      "text": "We are just to define whether it is a post or not.",
+      "avg_logprob": -0.475,
+      "no_speech_prob": 0.227
+    },
+    {
+      "id": 243,
+      "start": 1361.56,
+      "end": 1368.56,
+      "text": "Getting the things, at the moment, what is the code in our post method?",
+      "avg_logprob": -0.475,
+      "no_speech_prob": 0.227
+    },
+    {
+      "id": 244,
+      "start": 1369.56,
+      "end": 1371.56,
+      "text": "Have you defined any load?",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 245,
+      "start": 1371.56,
+      "end": 1372.56,
+      "text": "No.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 246,
+      "start": 1372.56,
+      "end": 1375.56,
+      "text": "We are not given any code.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 247,
+      "start": 1375.56,
+      "end": 1378.56,
+      "text": "Any URL.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 248,
+      "start": 1378.56,
+      "end": 1380.56,
+      "text": "We are not defined any URL.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 249,
+      "start": 1380.56,
+      "end": 1382.56,
+      "text": "So, it is taking any URL.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 250,
+      "start": 1382.56,
+      "end": 1385.56,
+      "text": "Instead of providing, if I give you one to three, it will take.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 251,
+      "start": 1385.56,
+      "end": 1390.56,
+      "text": "You are not restricted for condition.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 252,
+      "start": 1390.56,
+      "end": 1392.56,
+      "text": "Interface with the template.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 253,
+      "start": 1392.56,
+      "end": 1396.56,
+      "text": "Even if the run end gets slow, they can have data.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.043
+    },
+    {
+      "id": 254,
+      "start": 1396.56,
+      "end": 1398.56,
+      "text": "Post will be tried, sir.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 255,
+      "start": 1398.56,
+      "end": 1400.56,
+      "text": "As soon as success, they are not.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 256,
+      "start": 1400.56,
+      "end": 1401.56,
+      "text": "Success, sir.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 257,
+      "start": 1401.56,
+      "end": 1402.56,
+      "text": "Who said round?",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 258,
+      "start": 1402.56,
+      "end": 1405.56,
+      "text": "But, it will enter into your database.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 259,
+      "start": 1405.56,
+      "end": 1407.56,
+      "text": "The question lies more.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 260,
+      "start": 1407.56,
+      "end": 1411.56,
+      "text": "Because, I had mentioned something in our front end.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 261,
+      "start": 1411.56,
+      "end": 1414.56,
+      "text": "That post will become this route only.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 262,
+      "start": 1414.56,
+      "end": 1417.56,
+      "text": "And, you are using all the code.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 263,
+      "start": 1417.56,
+      "end": 1420.56,
+      "text": "That was the other chase route.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 264,
+      "start": 1420.56,
+      "end": 1422.56,
+      "text": "Sir, I will talk about that.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 265,
+      "start": 1422.56,
+      "end": 1423.56,
+      "text": "Why?",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 266,
+      "start": 1423.56,
+      "end": 1425.56,
+      "text": "Success, sir.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.089
+    },
+    {
+      "id": 267,
+      "start": 1425.56,
+      "end": 1427.56,
+      "text": "Play the answer now.",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 268,
+      "start": 1427.56,
+      "end": 1432.56,
+      "text": "Any of these?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 269,
+      "start": 1432.56,
+      "end": 1434.56,
+      "text": "Next.",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 270,
+      "start": 1434.56,
+      "end": 1437.56,
+      "text": "What do we have?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 271,
+      "start": 1437.56,
+      "end": 1441.56,
+      "text": "Scward-up?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 272,
+      "start": 1441.56,
+      "end": 1446.56,
+      "text": "Oh, what is the difference between first and second?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 273,
+      "start": 1446.56,
+      "end": 1448.56,
+      "text": "Sir, sir...",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 274,
+      "start": 1448.56,
+      "end": 1452.56,
+      "text": "Third?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 275,
+      "start": 1452.56,
+      "end": 1453.56,
+      "text": "What is the difference between state-min Kundenys or claimed-m Claus?",
+      "avg_logprob": -1.853,
+      "no_speech_prob": 0.154
+    },
+    {
+      "id": 276,
+      "start": 1453.56,
+      "end": 1463.56,
+      "text": "What is the difference between second example and third example?",
+      "avg_logprob": -0.541,
+      "no_speech_prob": 0.133
+    },
+    {
+      "id": 277,
+      "start": 1463.56,
+      "end": 1465.56,
+      "text": "It has been T as invention.",
+      "avg_logprob": -0.541,
+      "no_speech_prob": 0.133
+    },
+    {
+      "id": 278,
+      "start": 1465.56,
+      "end": 1475.56,
+      "text": "What is the difference between second and third example?",
+      "avg_logprob": -0.541,
+      "no_speech_prob": 0.133
+    },
+    {
+      "id": 279,
+      "start": 1475.56,
+      "end": 1485.56,
+      "text": "What is the difference between second and third?",
+      "avg_logprob": -0.459,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 280,
+      "start": 1486.56,
+      "end": 1490.56,
+      "text": "Okay, okay.",
+      "avg_logprob": -0.479,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 281,
+      "start": 1490.56,
+      "end": 1502.56,
+      "text": "Say, in your request, in your request, there should be only one, restaurant and response.",
+      "avg_logprob": -0.479,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 282,
+      "start": 1502.56,
+      "end": 1507.56,
+      "text": "And it should be repeated only once, not more than once.",
+      "avg_logprob": -0.479,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 283,
+      "start": 1507.56,
+      "end": 1512.56,
+      "text": "If it is repeating again and again, we will hamper you around.",
+      "avg_logprob": -0.479,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 284,
+      "start": 1512.56,
+      "end": 1522.56,
+      "text": "Any open example for, hopefully I may have designed it for further, this particular problem.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.014
+    },
+    {
+      "id": 285,
+      "start": 1542.56,
+      "end": 1561.56,
+      "text": "In example to only, in example to only, say, we are in the condition, two times it, let's go down.",
+      "avg_logprob": -0.687,
+      "no_speech_prob": 0.127
+    },
+    {
+      "id": 286,
+      "start": 1561.56,
+      "end": 1576.56,
+      "text": "Okay, once I have completed it all, two on the right is, and we are in the condition.",
+      "avg_logprob": -0.686,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 287,
+      "start": 1576.56,
+      "end": 1584.56,
+      "text": "Now is any feedback to your request, wait, send.",
+      "avg_logprob": -0.686,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 288,
+      "start": 1584.56,
+      "end": 1587.56,
+      "text": "What happens?",
+      "avg_logprob": -0.686,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 289,
+      "start": 1587.56,
+      "end": 1590.56,
+      "text": "We are getting further from this one.",
+      "avg_logprob": -0.613,
+      "no_speech_prob": 0.033
+    },
+    {
+      "id": 290,
+      "start": 1590.56,
+      "end": 1599.56,
+      "text": "Whatever the next, this one, getting the things, if you want things, I can just not write.",
+      "avg_logprob": -0.613,
+      "no_speech_prob": 0.033
+    },
+    {
+      "id": 291,
+      "start": 1599.56,
+      "end": 1602.56,
+      "text": "It's not right, it's not okay.",
+      "avg_logprob": -0.613,
+      "no_speech_prob": 0.033
+    },
+    {
+      "id": 292,
+      "start": 1602.56,
+      "end": 1605.56,
+      "text": "But, let's not answer the only ones.",
+      "avg_logprob": -0.613,
+      "no_speech_prob": 0.033
+    },
+    {
+      "id": 293,
+      "start": 1605.56,
+      "end": 1612.56,
+      "text": "Unlocking, uncomment means uncommentable for me.",
+      "avg_logprob": -0.613,
+      "no_speech_prob": 0.033
+    },
+    {
+      "id": 294,
+      "start": 1612.56,
+      "end": 1615.56,
+      "text": "What you are seeing on you?",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 295,
+      "start": 1615.56,
+      "end": 1618.56,
+      "text": "End up process of zero.",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 296,
+      "start": 1618.56,
+      "end": 1624.56,
+      "text": "So, read the end of this.",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 297,
+      "start": 1624.56,
+      "end": 1629.56,
+      "text": "See, error has been, it is ending the summary with an error.",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 298,
+      "start": 1629.56,
+      "end": 1633.56,
+      "text": "Place to go, once I have done, transfer to log also.",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 299,
+      "start": 1633.56,
+      "end": 1636.56,
+      "text": "After one request, it is ending.",
+      "avg_logprob": -0.56,
+      "no_speech_prob": 0.107
+    },
+    {
+      "id": 300,
+      "start": 1636.56,
+      "end": 1641.56,
+      "text": "If you have double n, let's go, let's go from n.",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 301,
+      "start": 1641.56,
+      "end": 1646.56,
+      "text": "If you are writing from times, in a simple thing, then what happens?",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 302,
+      "start": 1646.56,
+      "end": 1648.56,
+      "text": "It is executed, right?",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 303,
+      "start": 1648.56,
+      "end": 1657.56,
+      "text": "With an error, if error comes, everything follows.",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.143
+    },
+    {
+      "id": 304,
+      "start": 1657.56,
+      "end": 1663.56,
+      "text": "And, go to your request, send.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 305,
+      "start": 1663.56,
+      "end": 1666.56,
+      "text": "Make that to question.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 306,
+      "start": 1666.56,
+      "end": 1669.56,
+      "text": "See.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 307,
+      "start": 1669.56,
+      "end": 1672.56,
+      "text": "Subject response, log n.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 308,
+      "start": 1672.56,
+      "end": 1674.56,
+      "text": "Subject response, log n.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 309,
+      "start": 1674.56,
+      "end": 1681.56,
+      "text": "It is throwing from, it is not trying to present the next things.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 310,
+      "start": 1681.56,
+      "end": 1686.56,
+      "text": "Comment on those words once again, brother.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 311,
+      "start": 1686.56,
+      "end": 1689.56,
+      "text": "What is the difference I want to show you?",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 312,
+      "start": 1689.56,
+      "end": 1691.56,
+      "text": "Close to the ends.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 313,
+      "start": 1691.56,
+      "end": 1694.56,
+      "text": "Again, here.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 314,
+      "start": 1694.56,
+      "end": 1699.56,
+      "text": "Read the end of this.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 315,
+      "start": 1699.56,
+      "end": 1704.56,
+      "text": "Now, again, new request.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 316,
+      "start": 1704.56,
+      "end": 1706.56,
+      "text": "Send.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 317,
+      "start": 1706.56,
+      "end": 1711.56,
+      "text": "Again, in the response, come back to the console.",
+      "avg_logprob": -0.446,
+      "no_speech_prob": 0.039
+    },
+    {
+      "id": 318,
+      "start": 1712.56,
+      "end": 1714.56,
+      "text": "You see here.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 319,
+      "start": 1714.56,
+      "end": 1717.56,
+      "text": "Subject is still intact.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 320,
+      "start": 1717.56,
+      "end": 1720.56,
+      "text": "It is not going to make any error.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 321,
+      "start": 1720.56,
+      "end": 1724.56,
+      "text": "If you are going to post request, then it will explain.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 322,
+      "start": 1724.56,
+      "end": 1727.56,
+      "text": "That's what n should be only once.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 323,
+      "start": 1727.56,
+      "end": 1729.56,
+      "text": "Why a particular request?",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 324,
+      "start": 1729.56,
+      "end": 1733.56,
+      "text": "It should not be twice.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 325,
+      "start": 1733.56,
+      "end": 1738.56,
+      "text": "It is the things, now example to example 3, defines that.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 326,
+      "start": 1738.56,
+      "end": 1740.56,
+      "text": "That is the difference.",
+      "avg_logprob": -0.413,
+      "no_speech_prob": 0.092
+    },
+    {
+      "id": 327,
+      "start": 1740.56,
+      "end": 1747.56,
+      "text": "I am using risk.1, risk.n, not in each and every conditional segment.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 328,
+      "start": 1747.56,
+      "end": 1751.56,
+      "text": "At once, at the end, after all the conditional segments.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 329,
+      "start": 1751.56,
+      "end": 1755.56,
+      "text": "Example 3.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 330,
+      "start": 1755.56,
+      "end": 1759.56,
+      "text": "Get back to external.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 331,
+      "start": 1759.56,
+      "end": 1761.56,
+      "text": "The difference.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 332,
+      "start": 1761.56,
+      "end": 1765.56,
+      "text": "The difference is that I still find a better advantage.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 333,
+      "start": 1765.56,
+      "end": 1768.56,
+      "text": "After this, the difference comes.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 334,
+      "start": 1768.56,
+      "end": 1774.56,
+      "text": "The difference is that, risk.n is used only once in the entire system.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 335,
+      "start": 1774.56,
+      "end": 1777.56,
+      "text": "Rescores.n.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 336,
+      "start": 1777.56,
+      "end": 1779.56,
+      "text": "And means and and the.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 337,
+      "start": 1779.56,
+      "end": 1783.56,
+      "text": "And extract this up.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 338,
+      "start": 1783.56,
+      "end": 1788.56,
+      "text": "Find with this, risk.n should be used only once.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 339,
+      "start": 1788.56,
+      "end": 1794.56,
+      "text": "All these are the mistakes which you are doing from my experience.",
+      "avg_logprob": -0.509,
+      "no_speech_prob": 0.011
+    },
+    {
+      "id": 340,
+      "start": 1794.56,
+      "end": 1815.84,
+      "text": "In example 4, now we are focusing on the u1 as well, in example 2, in example 3, we",
+      "avg_logprob": -0.503,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 341,
+      "start": 1815.84,
+      "end": 1822.84,
+      "text": "had focus only on the methods, we had focus only on the methods, get to post because",
+      "avg_logprob": -0.503,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 342,
+      "start": 1822.84,
+      "end": 1828.52,
+      "text": "these are the two things which we decided to use, get 10 post. Here in this example 4,",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 343,
+      "start": 1828.52,
+      "end": 1837.76,
+      "text": "we are focusing on the routes. If my u1 is on flash, then output which is being displayed",
+      "avg_logprob": -0.402,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 344,
+      "start": 1837.76,
+      "end": 1851.0,
+      "text": "is below word, below word in the next time, below word. If my u1 is flash project, make",
+      "avg_logprob": -0.706,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 345,
+      "start": 1851.0,
+      "end": 1861.84,
+      "text": "it as flash hd, hd of different types of content types. Here we are focusing on R that",
+      "avg_logprob": -0.706,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 346,
+      "start": 1861.84,
+      "end": 1868.52,
+      "text": "is now, along with that, we are focusing on the content type. This is also played",
+      "avg_logprob": -0.668,
+      "no_speech_prob": 0.17
+    },
+    {
+      "id": 347,
+      "start": 1868.52,
+      "end": 1877.84,
+      "text": "to zero, another content type is playing text, R, machine language, R for R, J, and R.",
+      "avg_logprob": -0.668,
+      "no_speech_prob": 0.17
+    },
+    {
+      "id": 348,
+      "start": 1877.84,
+      "end": 1887.08,
+      "text": "When in the next, R, say, I am not teaching you what you are going through, I am teaching",
+      "avg_logprob": -0.668,
+      "no_speech_prob": 0.17
+    },
+    {
+      "id": 349,
+      "start": 1887.08,
+      "end": 1895.2,
+      "text": "you how to teach, because when you are in exam, something is going wrong. If something",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 350,
+      "start": 1895.2,
+      "end": 1904.8,
+      "text": "is not in your favor, you should know upfront where to search it is going wrong. You should",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.171
+    },
+    {
+      "id": 351,
+      "start": 1904.8,
+      "end": 1920.56,
+      "text": "know what you do, you write an example number 4. Everyone please write an example number",
+      "avg_logprob": -0.572,
+      "no_speech_prob": 0.616
+    },
+    {
+      "id": 352,
+      "start": 1920.56,
+      "end": 1943.28,
+      "text": "4, 4 to the browser, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,",
+      "avg_logprob": -0.639,
+      "no_speech_prob": 0.941
+    },
+    {
+      "id": 353,
+      "start": 2123.28,
+      "end": 2129.32,
+      "text": "this is the equation, this is what will be played on JSON only. Now, that is the JSON",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.938
+    },
+    {
+      "id": 354,
+      "start": 2129.32,
+      "end": 2134.84,
+      "text": "street, JSON street can be accessed directly, you have to convert it, stingify it, you can",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.938
+    },
+    {
+      "id": 355,
+      "start": 2134.84,
+      "end": 2140.92,
+      "text": "object, you know to access your name, I am sitting. If it is an object, then only you",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.938
+    },
+    {
+      "id": 356,
+      "start": 2140.92,
+      "end": 2147.48,
+      "text": "can access, right? This was thought, body, God, name, response, body, God, what is",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.938
+    },
+    {
+      "id": 357,
+      "start": 2147.48,
+      "end": 2157.36,
+      "text": "the city, are they access channel adjacent conversion, adjacent to object. From on where this",
+      "avg_logprob": -0.73,
+      "no_speech_prob": 0.3
+    },
+    {
+      "id": 358,
+      "start": 2157.36,
+      "end": 2163.4,
+      "text": "adjacent project is in your response volume, I have not yet written against you, but this",
+      "avg_logprob": -0.73,
+      "no_speech_prob": 0.3
+    },
+    {
+      "id": 359,
+      "start": 2163.4,
+      "end": 2171.4,
+      "text": "is the one which we are going to use again and again from each and every request and response.",
+      "avg_logprob": -0.73,
+      "no_speech_prob": 0.3
+    },
+    {
+      "id": 360,
+      "start": 2172.4,
+      "end": 2181.4,
+      "text": "See, my dear, what here we will use, what we are going to use, place the adjacent ones,",
+      "avg_logprob": -0.73,
+      "no_speech_prob": 0.428
+    },
+    {
+      "id": 361,
+      "start": 2181.4,
+      "end": 2193.48,
+      "text": "we have written three words, what is on slash, what is on slash this thing, what is on",
+      "avg_logprob": -0.73,
+      "no_speech_prob": 0.428
+    },
+    {
+      "id": 362,
+      "start": 2193.48,
+      "end": 2200.48,
+      "text": "the adjacent text, three different words to see three different attend types, attend types,",
+      "avg_logprob": -0.673,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 363,
+      "start": 2200.48,
+      "end": 2209.48,
+      "text": "attend types. I have given the attend type, but in these same ways, what is the output,",
+      "avg_logprob": -0.673,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 364,
+      "start": 2209.48,
+      "end": 2215.48,
+      "text": "whether attend type is on, still what is the output, whether attend type is on adjacent,",
+      "avg_logprob": -0.673,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 365,
+      "start": 2215.48,
+      "end": 2221.48,
+      "text": "what is on, why attend types are important, that is what we are going to use.",
+      "avg_logprob": -0.673,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 366,
+      "start": 2224.48,
+      "end": 2230.48,
+      "text": "Look at in example number four, everything adjacent, this is your passing adjacent data,",
+      "avg_logprob": -0.576,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 367,
+      "start": 2230.48,
+      "end": 2239.48,
+      "text": "this is your passing adjacent object, but signifies converting the people adjacent and it is",
+      "avg_logprob": -0.576,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 368,
+      "start": 2239.48,
+      "end": 2246.48,
+      "text": "free, because browser knows only adjacent, it does not know you are objects. So, when you are",
+      "avg_logprob": -0.576,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 369,
+      "start": 2247.48,
+      "end": 2253.48,
+      "text": "reading your marks, when you are passing as an request, then it has to be adjacent format,",
+      "avg_logprob": -0.273,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 370,
+      "start": 2253.48,
+      "end": 2262.48,
+      "text": "when you are reading, you have to pass back to an object, that we are going to use again",
+      "avg_logprob": -0.273,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 371,
+      "start": 2262.48,
+      "end": 2267.48,
+      "text": "and again, on the first and second, but third, we are going to use again and again, if I want",
+      "avg_logprob": -0.273,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 372,
+      "start": 2267.48,
+      "end": 2272.48,
+      "text": "to say three, I have to say about one and the most, because they not only will get any importance,",
+      "avg_logprob": -0.273,
+      "no_speech_prob": 0.059
+    },
+    {
+      "id": 373,
+      "start": 2272.48,
+      "end": 2279.48,
+      "text": "but okay, content type has certain importance, in a response. In a response, status code",
+      "avg_logprob": -0.376,
+      "no_speech_prob": 0.186
+    },
+    {
+      "id": 374,
+      "start": 2279.48,
+      "end": 2290.48,
+      "text": "and status code and content type, who request you are aligned with method, when you are requesting",
+      "avg_logprob": -0.376,
+      "no_speech_prob": 0.186
+    },
+    {
+      "id": 375,
+      "start": 2290.48,
+      "end": 2297.48,
+      "text": "you are a method, place it in server, when server is responding, status code and content type",
+      "avg_logprob": -0.376,
+      "no_speech_prob": 0.186
+    },
+    {
+      "id": 376,
+      "start": 2297.48,
+      "end": 2304.48,
+      "text": "place in whatever, do I, if you remember this properly, fix it for the contestants.",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.484
+    },
+    {
+      "id": 377,
+      "start": 2304.48,
+      "end": 2313.48,
+      "text": "Now, in example five, we are combining both of these, we are combining your method, your",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.484
+    },
+    {
+      "id": 378,
+      "start": 2313.48,
+      "end": 2322.48,
+      "text": "model, place your method, we are enhancing step-by-step, first, when you need to server, second,",
+      "avg_logprob": -0.595,
+      "no_speech_prob": 0.484
+    },
+    {
+      "id": 379,
+      "start": 2322.48,
+      "end": 2329.48,
+      "text": "seeing what is the equivalent of method, request of method, third, your model, now method",
+      "avg_logprob": -0.288,
+      "no_speech_prob": 0.163
+    },
+    {
+      "id": 380,
+      "start": 2329.48,
+      "end": 2338.48,
+      "text": "place your model, double-hand, when both are matching, then only the part will get",
+      "avg_logprob": -0.288,
+      "no_speech_prob": 0.163
+    },
+    {
+      "id": 381,
+      "start": 2338.48,
+      "end": 2350.48,
+      "text": "to you. What you are doing, or here in example type, please go through the code once,",
+      "avg_logprob": -0.803,
+      "no_speech_prob": 0.71
+    },
+    {
+      "id": 382,
+      "start": 2350.48,
+      "end": 2358.48,
+      "text": "and you are learning, unless I talk, please go through the code.",
+      "avg_logprob": -0.803,
+      "no_speech_prob": 0.71
+    },
+    {
+      "id": 383,
+      "start": 2359.48,
+      "end": 2371.48,
+      "text": "I am talking to one of the second converges, I said you don't do the new copy, just know",
+      "avg_logprob": -0.747,
+      "no_speech_prob": 0.783
+    },
+    {
+      "id": 384,
+      "start": 2371.48,
+      "end": 2375.48,
+      "text": "I had a quote, for example,",
+      "avg_logprob": -0.747,
+      "no_speech_prob": 0.783
+    },
+    {
+      "id": 385,
+      "start": 2375.48,
+      "end": 2395.48,
+      "text": "this is the truth, request of the spawns which we are going to use in our program.",
+      "avg_logprob": -0.787,
+      "no_speech_prob": 0.765
+    },
+    {
+      "id": 386,
+      "start": 2395.48,
+      "end": 2410.48,
+      "text": "But to get to this, we have to know the suppression between each enemy.",
+      "avg_logprob": -0.605,
+      "no_speech_prob": 0.274
+    },
+    {
+      "id": 387,
+      "start": 2410.48,
+      "end": 2423.48,
+      "text": "Now, planning will explain me this program, what is happening?",
+      "avg_logprob": -0.605,
+      "no_speech_prob": 0.274
+    },
+    {
+      "id": 388,
+      "start": 2423.48,
+      "end": 2430.48,
+      "text": "What is happening?",
+      "avg_logprob": -0.726,
+      "no_speech_prob": 0.568
+    },
+    {
+      "id": 389,
+      "start": 2430.48,
+      "end": 2438.48,
+      "text": "Yes sir, if we want to ask government like this, you must see, you are going to work",
+      "avg_logprob": -0.726,
+      "no_speech_prob": 0.568
+    },
+    {
+      "id": 390,
+      "start": 2438.48,
+      "end": 2445.48,
+      "text": "for that, you are going to see 60 square knots, we tend to think that, if you are responsible",
+      "avg_logprob": -0.726,
+      "no_speech_prob": 0.568
+    },
+    {
+      "id": 391,
+      "start": 2445.48,
+      "end": 2449.48,
+      "text": "because you are going to give things up, and one will give you things.",
+      "avg_logprob": -0.726,
+      "no_speech_prob": 0.568
+    },
+    {
+      "id": 392,
+      "start": 2449.48,
+      "end": 2456.48,
+      "text": "Then you should be clear on what you are doing, understanding what you are doing.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.487
+    },
+    {
+      "id": 393,
+      "start": 2456.48,
+      "end": 2464.48,
+      "text": "These are just the, the strategies of the group, today we are in that sense, that sense of",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.487
+    },
+    {
+      "id": 394,
+      "start": 2464.48,
+      "end": 2468.48,
+      "text": "our application, we have to get to engineering level.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.487
+    },
+    {
+      "id": 395,
+      "start": 2468.48,
+      "end": 2477.48,
+      "text": "So, in combination, we have to pass.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.487
+    },
+    {
+      "id": 396,
+      "start": 2478.48,
+      "end": 2481.48,
+      "text": "This is the nursery, not suddenly APC, then APC.",
+      "avg_logprob": -0.664,
+      "no_speech_prob": 0.218
+    },
+    {
+      "id": 397,
+      "start": 2481.48,
+      "end": 2484.48,
+      "text": "I am not like APC, then APC.",
+      "avg_logprob": -0.664,
+      "no_speech_prob": 0.218
+    },
+    {
+      "id": 398,
+      "start": 2484.48,
+      "end": 2486.48,
+      "text": "No?",
+      "avg_logprob": -0.664,
+      "no_speech_prob": 0.218
+    },
+    {
+      "id": 399,
+      "start": 2491.48,
+      "end": 2497.48,
+      "text": "Fine, everyone answer this page, everyone is answer this page.",
+      "avg_logprob": -0.664,
+      "no_speech_prob": 0.218
+    },
+    {
+      "id": 400,
+      "start": 2498.48,
+      "end": 2508.48,
+      "text": "What we are doing, we are in the first step, is that this can be, this can be,",
+      "avg_logprob": -0.535,
+      "no_speech_prob": 0.651
+    },
+    {
+      "id": 401,
+      "start": 2508.48,
+      "end": 2517.48,
+      "text": "and where we are going in this area, request headers post, request headers.",
+      "avg_logprob": -0.535,
+      "no_speech_prob": 0.651
+    },
+    {
+      "id": 402,
+      "start": 2518.48,
+      "end": 2521.48,
+      "text": "Request what headers means what?",
+      "avg_logprob": -0.6,
+      "no_speech_prob": 0.183
+    },
+    {
+      "id": 403,
+      "start": 2521.48,
+      "end": 2524.48,
+      "text": "Control got wrong.",
+      "avg_logprob": -0.6,
+      "no_speech_prob": 0.183
+    },
+    {
+      "id": 404,
+      "start": 2528.48,
+      "end": 2536.48,
+      "text": "We saw the request headers, where they can move on, header split.",
+      "avg_logprob": -0.6,
+      "no_speech_prob": 0.183
+    },
+    {
+      "id": 405,
+      "start": 2536.48,
+      "end": 2545.48,
+      "text": "See here, request what headers, this is a request, and what?",
+      "avg_logprob": -0.6,
+      "no_speech_prob": 0.183
+    },
+    {
+      "id": 406,
+      "start": 2545.48,
+      "end": 2546.48,
+      "text": "Request what?",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 407,
+      "start": 2546.48,
+      "end": 2547.48,
+      "text": "Write it.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 408,
+      "start": 2547.48,
+      "end": 2548.48,
+      "text": "Okay?",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 409,
+      "start": 2548.48,
+      "end": 2551.48,
+      "text": "Otherwise, write it right somehow, header.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 410,
+      "start": 2551.48,
+      "end": 2558.48,
+      "text": "Go through the example number two, or example number one.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 411,
+      "start": 2558.48,
+      "end": 2562.48,
+      "text": "See here, response what?",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 412,
+      "start": 2562.48,
+      "end": 2563.48,
+      "text": "Write it.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 413,
+      "start": 2563.48,
+      "end": 2565.48,
+      "text": "Sir, not request, response what?",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 414,
+      "start": 2565.48,
+      "end": 2566.48,
+      "text": "Write it.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 415,
+      "start": 2566.48,
+      "end": 2570.48,
+      "text": "You are writing the headers for, and the candidate.",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 416,
+      "start": 2570.48,
+      "end": 2574.48,
+      "text": "But, when you learn this, what is also being shown?",
+      "avg_logprob": -0.423,
+      "no_speech_prob": 0.03
+    },
+    {
+      "id": 417,
+      "start": 2574.48,
+      "end": 2575.48,
+      "text": "Write it.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 418,
+      "start": 2575.48,
+      "end": 2576.48,
+      "text": "See?",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 419,
+      "start": 2576.48,
+      "end": 2577.48,
+      "text": "Um.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 420,
+      "start": 2577.48,
+      "end": 2578.48,
+      "text": "Um.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 421,
+      "start": 2578.48,
+      "end": 2579.48,
+      "text": "Write it.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 422,
+      "start": 2579.48,
+      "end": 2580.48,
+      "text": "Be new.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 423,
+      "start": 2580.48,
+      "end": 2584.48,
+      "text": "This is the advantage of header comma.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 424,
+      "start": 2584.48,
+      "end": 2585.48,
+      "text": "What we are accessing?",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 425,
+      "start": 2585.48,
+      "end": 2588.48,
+      "text": "We are accessing this right post.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 426,
+      "start": 2588.48,
+      "end": 2589.48,
+      "text": "Roomy.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 427,
+      "start": 2589.48,
+      "end": 2590.48,
+      "text": "Post, right?",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 428,
+      "start": 2590.48,
+      "end": 2595.48,
+      "text": "Get right to the code BS4, example number six.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.097
+    },
+    {
+      "id": 429,
+      "start": 2595.48,
+      "end": 2596.48,
+      "text": "Six of times.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 430,
+      "start": 2596.48,
+      "end": 2597.48,
+      "text": "Right.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 431,
+      "start": 2597.48,
+      "end": 2602.48,
+      "text": "What we are saying earlier, header is not post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 432,
+      "start": 2602.48,
+      "end": 2604.48,
+      "text": "header is coming out.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 433,
+      "start": 2604.48,
+      "end": 2607.48,
+      "text": "Check from header, slot post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 434,
+      "start": 2607.48,
+      "end": 2612.48,
+      "text": "Our order of this is going to be local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 435,
+      "start": 2612.48,
+      "end": 2613.48,
+      "text": "local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 436,
+      "start": 2613.48,
+      "end": 2614.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 437,
+      "start": 2614.48,
+      "end": 2615.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 438,
+      "start": 2615.48,
+      "end": 2616.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 439,
+      "start": 2616.48,
+      "end": 2617.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 440,
+      "start": 2617.48,
+      "end": 2618.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 441,
+      "start": 2618.48,
+      "end": 2619.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 442,
+      "start": 2619.48,
+      "end": 2620.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 443,
+      "start": 2620.48,
+      "end": 2621.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 444,
+      "start": 2621.48,
+      "end": 2622.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 445,
+      "start": 2622.48,
+      "end": 2623.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 446,
+      "start": 2623.48,
+      "end": 2624.48,
+      "text": "Local post.",
+      "avg_logprob": -0.482,
+      "no_speech_prob": 0.149
+    },
+    {
+      "id": 447,
+      "start": 2624.48,
+      "end": 2625.48,
+      "text": "Local post.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 448,
+      "start": 2625.48,
+      "end": 2626.48,
+      "text": "Local post.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 449,
+      "start": 2626.48,
+      "end": 2629.48,
+      "text": "What are from which is, which is running?",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 450,
+      "start": 2629.48,
+      "end": 2630.48,
+      "text": "So, after it also.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 451,
+      "start": 2630.48,
+      "end": 2633.48,
+      "text": "It is running on 3,000.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 452,
+      "start": 2633.48,
+      "end": 2638.48,
+      "text": "So, the answer for this is, sir, directly actually running for this.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 453,
+      "start": 2638.48,
+      "end": 2642.48,
+      "text": "We do know, and then it will run on this code.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 454,
+      "start": 2642.48,
+      "end": 2647.48,
+      "text": "Because, when then what is going to be defined by me?",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 455,
+      "start": 2647.48,
+      "end": 2650.48,
+      "text": "So, directly, it cannot use.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 456,
+      "start": 2650.48,
+      "end": 2651.48,
+      "text": "If you want, you can.",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 457,
+      "start": 2651.48,
+      "end": 2654.48,
+      "text": "But, manually, you have to keep on changing the things.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 458,
+      "start": 2654.48,
+      "end": 2657.48,
+      "text": "You are doing more dynamically.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 459,
+      "start": 2657.48,
+      "end": 2660.48,
+      "text": "You will take from the header map.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 460,
+      "start": 2660.48,
+      "end": 2663.48,
+      "text": "So, request dot headers dot post.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 461,
+      "start": 2663.48,
+      "end": 2665.48,
+      "text": "We will give you local post.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 462,
+      "start": 2665.48,
+      "end": 2666.48,
+      "text": "Local.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 463,
+      "start": 2666.48,
+      "end": 2667.48,
+      "text": "3,000.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 464,
+      "start": 2667.48,
+      "end": 2669.48,
+      "text": "What is request dot URL?",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 465,
+      "start": 2669.48,
+      "end": 2670.48,
+      "text": "That is going to be.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 466,
+      "start": 2670.48,
+      "end": 2672.48,
+      "text": "The order on which you are going to come.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 467,
+      "start": 2672.48,
+      "end": 2673.48,
+      "text": "Answer this.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 468,
+      "start": 2673.48,
+      "end": 2676.48,
+      "text": "Whether it is slash search.",
+      "avg_logprob": -0.431,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 469,
+      "start": 2676.48,
+      "end": 2678.48,
+      "text": "Or slash search.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 470,
+      "start": 2678.48,
+      "end": 2679.48,
+      "text": "Or slash.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 471,
+      "start": 2679.48,
+      "end": 2682.48,
+      "text": "What do you want to do?",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 472,
+      "start": 2682.48,
+      "end": 2684.48,
+      "text": "Where do you want to come?",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 473,
+      "start": 2684.48,
+      "end": 2685.48,
+      "text": "That is slash search.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 474,
+      "start": 2685.48,
+      "end": 2687.48,
+      "text": "That is going to be what you press dot.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 475,
+      "start": 2687.48,
+      "end": 2689.48,
+      "text": "On the reach order.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 476,
+      "start": 2689.48,
+      "end": 2691.48,
+      "text": "Learning pressing the things.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 477,
+      "start": 2691.48,
+      "end": 2698.48,
+      "text": "Now, when you click here, confirm dot log of password.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 478,
+      "start": 2698.48,
+      "end": 2705.48,
+      "text": "I want to see what is there in password.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.452
+    },
+    {
+      "id": 479,
+      "start": 2705.48,
+      "end": 2707.48,
+      "text": "I want to see the code.",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 480,
+      "start": 2708.48,
+      "end": 2709.48,
+      "text": "So, it ispassed to search box.",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 481,
+      "start": 2709.48,
+      "end": 2712.48,
+      "text": "So, what is the code?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 482,
+      "start": 2712.48,
+      "end": 2714.48,
+      "text": "What is the code?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 483,
+      "start": 2714.48,
+      "end": 2715.48,
+      "text": "What is the code?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 484,
+      "start": 2715.48,
+      "end": 2716.48,
+      "text": "of what?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 485,
+      "start": 2716.48,
+      "end": 2717.48,
+      "text": "Of whatever.",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 486,
+      "start": 2717.48,
+      "end": 2719.48,
+      "text": "So, what is the code?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 487,
+      "start": 2719.48,
+      "end": 2721.48,
+      "text": "How do I get?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 488,
+      "start": 2721.48,
+      "end": 2722.48,
+      "text": "So that is what it is.",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 489,
+      "start": 2722.48,
+      "end": 2726.48,
+      "text": "How do I get the code?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 490,
+      "start": 2726.48,
+      "end": 2727.48,
+      "text": "So, what?",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 491,
+      "start": 2727.48,
+      "end": 2730.48,
+      "text": "I have to be able to say,",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 492,
+      "start": 2730.48,
+      "end": 2732.48,
+      "text": "because when you click here,",
+      "avg_logprob": -1.688,
+      "no_speech_prob": 0.234
+    },
+    {
+      "id": 493,
+      "start": 2762.48,
+      "end": 2772.36,
+      "text": "See, this is a fast river, fast river, from that command you are going to get all these",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.372
+    },
+    {
+      "id": 494,
+      "start": 2772.36,
+      "end": 2773.36,
+      "text": "things.",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.372
+    },
+    {
+      "id": 495,
+      "start": 2773.36,
+      "end": 2778.4,
+      "text": "That is, coal is present, but it is trash, because we are in human trash, like that is",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.372
+    },
+    {
+      "id": 496,
+      "start": 2778.4,
+      "end": 2782.6,
+      "text": "a generally, you are not getting in your coal.",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.372
+    },
+    {
+      "id": 497,
+      "start": 2782.6,
+      "end": 2788.48,
+      "text": "And search, you are not searching for entity, this is something, and you are such",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.372
+    },
+    {
+      "id": 498,
+      "start": 2788.48,
+      "end": 2795.38,
+      "text": "as a balanced entity, profile is the issue, you may be, RGV is this, that is the first",
+      "avg_logprob": -1.068,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 499,
+      "start": 2795.38,
+      "end": 2796.38,
+      "text": "vehicle.",
+      "avg_logprob": -1.068,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 500,
+      "start": 2796.38,
+      "end": 2804.88,
+      "text": "RGV is, what is the ROS RGV, CMRS, a predetermined software, your RGV, souls and target,",
+      "avg_logprob": -1.068,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 501,
+      "start": 2804.88,
+      "end": 2806.64,
+      "text": "they should have a link.",
+      "avg_logprob": -1.068,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 502,
+      "start": 2806.64,
+      "end": 2814.12,
+      "text": "So, this is the open of your parcel URL, now you can just search, smash search.",
+      "avg_logprob": -1.068,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 503,
+      "start": 2844.12,
+      "end": 2858.28,
+      "text": "And this part here we have access it, we have access it, get back to the, when this is",
+      "avg_logprob": -0.926,
+      "no_speech_prob": 0.516
+    },
+    {
+      "id": 504,
+      "start": 2858.28,
+      "end": 2864.88,
+      "text": "equal length of last search, I am going to tell you this here, and the method is here,",
+      "avg_logprob": -0.926,
+      "no_speech_prob": 0.516
+    },
+    {
+      "id": 505,
+      "start": 2864.88,
+      "end": 2872.28,
+      "text": "there, what you are going to do is, get back to, from where this column is coming, this",
+      "avg_logprob": -0.611,
+      "no_speech_prob": 0.593
+    },
+    {
+      "id": 506,
+      "start": 2872.28,
+      "end": 2878.12,
+      "text": "is said to be, many parameters, this is said to be, many parameters, many parameters",
+      "avg_logprob": -0.611,
+      "no_speech_prob": 0.593
+    },
+    {
+      "id": 507,
+      "start": 2878.12,
+      "end": 2885.36,
+      "text": "will be written, like this, but only the JavaScript you might have heard about many parameters.",
+      "avg_logprob": -0.611,
+      "no_speech_prob": 0.593
+    },
+    {
+      "id": 508,
+      "start": 2885.36,
+      "end": 2894.8,
+      "text": "See it, there is said to be, urban, I was asked the worst, urban, some remember,",
+      "avg_logprob": -0.851,
+      "no_speech_prob": 0.748
+    },
+    {
+      "id": 509,
+      "start": 2894.8,
+      "end": 2911.1,
+      "text": "that search, for shenma, this for shenma, the urban, the urban, the urban, the urban, the",
+      "avg_logprob": -0.93,
+      "no_speech_prob": 0.518
+    },
+    {
+      "id": 510,
+      "start": 2911.1,
+      "end": 2918.1,
+      "text": "urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban,",
+      "avg_logprob": -0.198,
+      "no_speech_prob": 0.674
+    },
+    {
+      "id": 511,
+      "start": 2918.1,
+      "end": 2925.1,
+      "text": ", urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban,",
+      "avg_logprob": -0.198,
+      "no_speech_prob": 0.674
+    },
+    {
+      "id": 512,
+      "start": 2925.1,
+      "end": 2930.1,
+      "text": "urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban,",
+      "avg_logprob": -0.198,
+      "no_speech_prob": 0.674
+    },
+    {
+      "id": 513,
+      "start": 2930.1,
+      "end": 2938.1,
+      "text": "urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban,",
+      "avg_logprob": -0.198,
+      "no_speech_prob": 0.674
+    },
+    {
+      "id": 514,
+      "start": 2938.1,
+      "end": 2957.58,
+      "text": "C L, search, question mark Q equal to 20, meaning this is 20 parameters, search, question",
+      "avg_logprob": -0.598,
+      "no_speech_prob": 0.126
+    },
+    {
+      "id": 515,
+      "start": 2957.58,
+      "end": 2964.38,
+      "text": "mark, question mark, after question mark, what is the term you are searching for?",
+      "avg_logprob": -0.598,
+      "no_speech_prob": 0.126
+    },
+    {
+      "id": 516,
+      "start": 2964.38,
+      "end": 2970.58,
+      "text": "I am searching for, because I did query and Q1 was at the Google or Q1 bit from the",
+      "avg_logprob": -0.497,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 517,
+      "start": 2970.58,
+      "end": 2978.5,
+      "text": "line, what I have been query, what is a query you want to show? This is used when you",
+      "avg_logprob": -0.497,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 518,
+      "start": 2978.5,
+      "end": 2986.74,
+      "text": "are searching in find 1, find 1 ID, based on ID you are going to find one particular thing",
+      "avg_logprob": -0.497,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 519,
+      "start": 2986.74,
+      "end": 2992.78,
+      "text": "or based on name you are searching a document. Getting these things, all these are relevant",
+      "avg_logprob": -0.497,
+      "no_speech_prob": 0.071
+    },
+    {
+      "id": 520,
+      "start": 2992.78,
+      "end": 3004.02,
+      "text": "with your next steps, is all we have? Can I talk about this thing? What we are seeing",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.091
+    },
+    {
+      "id": 521,
+      "start": 3004.02,
+      "end": 3011.82,
+      "text": "with this is ask you are there, ask some things like we search for ones, feedback to answer,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.091
+    },
+    {
+      "id": 522,
+      "start": 3011.82,
+      "end": 3021.1,
+      "text": "ask you are there, ask some things like we search for ones, okay? Can I talk to the",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.091
+    },
+    {
+      "id": 523,
+      "start": 3021.1,
+      "end": 3032.7,
+      "text": "people, mean that you get, you get the term which is mean ask, this is coming from the",
+      "avg_logprob": -0.762,
+      "no_speech_prob": 0.195
+    },
+    {
+      "id": 524,
+      "start": 3032.7,
+      "end": 3038.1,
+      "text": "word which we are going to provide, feedback to the kind of thing, kind of like that in",
+      "avg_logprob": -0.762,
+      "no_speech_prob": 0.195
+    },
+    {
+      "id": 525,
+      "start": 3038.1,
+      "end": 3052.1,
+      "text": "question mark, so equal to, we search for one ID, now we are passing the searching parameters,",
+      "avg_logprob": -0.838,
+      "no_speech_prob": 0.554
+    },
+    {
+      "id": 526,
+      "start": 3052.1,
+      "end": 3063.1,
+      "text": "you are getting the search results, but this is the same, and the verb is R9, this is used",
+      "avg_logprob": -0.838,
+      "no_speech_prob": 0.554
+    },
+    {
+      "id": 527,
+      "start": 3063.1,
+      "end": 3070.1,
+      "text": "when colon ID, ID when you are searching on a particular ID, you are searching on between",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.566
+    },
+    {
+      "id": 528,
+      "start": 3070.1,
+      "end": 3080.1,
+      "text": "the data based on an ID, now we are taking the concept, now you see, search has been done",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.566
+    },
+    {
+      "id": 529,
+      "start": 3080.1,
+      "end": 3086.1,
+      "text": "on the same amount of term equal to R9, and the search tab in this term equal to R9,",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.566
+    },
+    {
+      "id": 530,
+      "start": 3086.1,
+      "end": 3093.1,
+      "text": "R9, the value is very slick, so that is the reason why R3 model, dot search pattern,",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.727
+    },
+    {
+      "id": 531,
+      "start": 3093.1,
+      "end": 3102.1,
+      "text": "okay, okay, that term, get the term, instead of term, if I use something else, it will",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.727
+    },
+    {
+      "id": 532,
+      "start": 3102.1,
+      "end": 3111.1,
+      "text": "not use it, instead of term, you get right, in total I use term, so it is given term,",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.727
+    },
+    {
+      "id": 533,
+      "start": 3111.1,
+      "end": 3118.1,
+      "text": "in total it is a term, but by the question I am addressing as K1, we provide, then I am",
+      "avg_logprob": -0.503,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 534,
+      "start": 3118.1,
+      "end": 3127.1,
+      "text": "getting more time to provide, because that the word in this root Q1 uses, Q represents",
+      "avg_logprob": -0.503,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 535,
+      "start": 3127.1,
+      "end": 3138.1,
+      "text": "credit for Google, term is represented by me, tomorrow you can use ID, but ID and uses",
+      "avg_logprob": -0.503,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 536,
+      "start": 3138.1,
+      "end": 3145.1,
+      "text": "are an ID and you are out, anything past you are, getting the things, past you are",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.346
+    },
+    {
+      "id": 537,
+      "start": 3145.1,
+      "end": 3150.1,
+      "text": "out, term is G, nashot is instance that I have to let it out, everything is internally,",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.346
+    },
+    {
+      "id": 538,
+      "start": 3150.1,
+      "end": 3157.1,
+      "text": "getting the things, what we are trying to say, this is called searching the parameters,",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.346
+    },
+    {
+      "id": 539,
+      "start": 3157.1,
+      "end": 3166.1,
+      "text": "based on path parameters, we saw how to search on a path, path is used for a post or",
+      "avg_logprob": -0.472,
+      "no_speech_prob": 0.346
+    },
+    {
+      "id": 540,
+      "start": 3166.1,
+      "end": 3175.1,
+      "text": "get something, but put or sign one, when you are going to do, then you should work with",
+      "avg_logprob": -0.387,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 541,
+      "start": 3175.1,
+      "end": 3184.1,
+      "text": "path parameters, parameters are the different things, what is the parameter you want to pass?",
+      "avg_logprob": -0.387,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 542,
+      "start": 3185.1,
+      "end": 3196.1,
+      "text": "So, when this is, when this is an ad, then you will get a term, that is when you see",
+      "avg_logprob": -0.541,
+      "no_speech_prob": 0.801
+    },
+    {
+      "id": 543,
+      "start": 3196.1,
+      "end": 3203.1,
+      "text": "framework here, that is search results 1, so if this is not ad, then you are going to",
+      "avg_logprob": -0.541,
+      "no_speech_prob": 0.801
+    },
+    {
+      "id": 544,
+      "start": 3203.1,
+      "end": 3210.1,
+      "text": "get a term provided, no term provided, search results 1, no term provided,",
+      "avg_logprob": -0.617,
+      "no_speech_prob": 0.585
+    },
+    {
+      "id": 545,
+      "start": 3210.1,
+      "end": 3217.1,
+      "text": "because it is an algorithm, either of this should be a credit, it is magic and present",
+      "avg_logprob": -0.617,
+      "no_speech_prob": 0.585
+    },
+    {
+      "id": 546,
+      "start": 3217.1,
+      "end": 3227.1,
+      "text": "all its credit is, or if you are not asking any search parameters, then you will get",
+      "avg_logprob": -0.617,
+      "no_speech_prob": 0.585
+    },
+    {
+      "id": 547,
+      "start": 3227.1,
+      "end": 3241.1,
+      "text": "a format or not follow, next example 6, nah regular expressions we add a regular expression,",
+      "avg_logprob": -0.667,
+      "no_speech_prob": 0.449
+    },
+    {
+      "id": 548,
+      "start": 3241.1,
+      "end": 3250.1,
+      "text": "small section, but execution, I will be using a simple things only, if, now focus on",
+      "avg_logprob": -0.667,
+      "no_speech_prob": 0.449
+    },
+    {
+      "id": 549,
+      "start": 3250.1,
+      "end": 3257.1,
+      "text": "What is on the regular expression and what it is ready to do is, we had the expression",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 550,
+      "start": 3257.1,
+      "end": 3260.1,
+      "text": "for the previous, the next step.",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 551,
+      "start": 3260.1,
+      "end": 3265.1,
+      "text": "I said you that math parameters use this idea right.",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 552,
+      "start": 3265.1,
+      "end": 3268.1,
+      "text": "Based on this idea, let's use the data.",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 553,
+      "start": 3268.1,
+      "end": 3271.1,
+      "text": "This one, idea.",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 554,
+      "start": 3271.1,
+      "end": 3276.1,
+      "text": "Okay, so in your example, if this is the thing,",
+      "avg_logprob": -0.63,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 555,
+      "start": 3276.1,
+      "end": 3281.1,
+      "text": "if this is the thing, and idea in a word,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 556,
+      "start": 3281.1,
+      "end": 3284.1,
+      "text": "MongoDB will be 24 characters,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 557,
+      "start": 3284.1,
+      "end": 3285.1,
+      "text": "exactly.",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 558,
+      "start": 3285.1,
+      "end": 3287.1,
+      "text": "Excitation one means,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 559,
+      "start": 3287.1,
+      "end": 3290.1,
+      "text": "you come on top, you write it up,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 560,
+      "start": 3290.1,
+      "end": 3294.1,
+      "text": "you write a comment on you,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 561,
+      "start": 3294.1,
+      "end": 3296.1,
+      "text": "comment on it,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 562,
+      "start": 3296.1,
+      "end": 3297.1,
+      "text": "okay.",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 563,
+      "start": 3297.1,
+      "end": 3299.1,
+      "text": "That's it.",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 564,
+      "start": 3299.1,
+      "end": 3301.1,
+      "text": "Excitation one will have,",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.175
+    },
+    {
+      "id": 565,
+      "start": 3301.1,
+      "end": 3303.1,
+      "text": "that small a to z is",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 566,
+      "start": 3303.1,
+      "end": 3306.1,
+      "text": "n-al in a-al.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 567,
+      "start": 3306.1,
+      "end": 3308.1,
+      "text": "K to z.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 568,
+      "start": 3308.1,
+      "end": 3310.1,
+      "text": "A to z, okay.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 569,
+      "start": 3310.1,
+      "end": 3314.1,
+      "text": "Capital A to z also.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 570,
+      "start": 3314.1,
+      "end": 3317.1,
+      "text": "I mean it's the same idea.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 571,
+      "start": 3317.1,
+      "end": 3321.1,
+      "text": "Capital A to z,",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 572,
+      "start": 3321.1,
+      "end": 3325.1,
+      "text": "it will have numbers from 0 to 9.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 573,
+      "start": 3325.1,
+      "end": 3328.1,
+      "text": "Excitation levels A to effort is right.",
+      "avg_logprob": -1.041,
+      "no_speech_prob": 0.053
+    },
+    {
+      "id": 574,
+      "start": 3328.1,
+      "end": 3348.96,
+      "text": "So, it is from 0 to 9, now we have to write here in this equation for that, on a low,",
+      "avg_logprob": -0.856,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 575,
+      "start": 3348.96,
+      "end": 3356.48,
+      "text": "I have to write here, on a low, I have to write here, on a low, I have to write here,",
+      "avg_logprob": -0.856,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 576,
+      "start": 3356.48,
+      "end": 3383.16,
+      "text": "on a low, I have to write here, on a high, I have to write here, on a low, I have to",
+      "avg_logprob": -0.939,
+      "no_speech_prob": 0.104
+    },
+    {
+      "id": 577,
+      "start": 3383.16,
+      "end": 3386.44,
+      "text": "write here, but it is from 0 to 9, and now we have to write here.",
+      "avg_logprob": -0.939,
+      "no_speech_prob": 0.104
+    },
+    {
+      "id": 578,
+      "start": 3386.44,
+      "end": 3400.44,
+      "text": "So, this is a pattern of a regular expression, what is a pattern which we want to find,",
+      "avg_logprob": -0.706,
+      "no_speech_prob": 0.318
+    },
+    {
+      "id": 579,
+      "start": 3400.44,
+      "end": 3424.44,
+      "text": "which is a pattern which we want to find, which is a pattern which we want to find,",
+      "avg_logprob": -0.786,
+      "no_speech_prob": 0.374
+    },
+    {
+      "id": 580,
+      "start": 3425.44,
+      "end": 3439.44,
+      "text": "see this is a thing right, now this is something which is like a normal dog out there,",
+      "avg_logprob": -0.422,
+      "no_speech_prob": 0.321
+    },
+    {
+      "id": 581,
+      "start": 3439.44,
+      "end": 3455.44,
+      "text": "now if it is a dog operator, what we used to do, we used to put this one on this common sense,",
+      "avg_logprob": -0.528,
+      "no_speech_prob": 0.322
+    },
+    {
+      "id": 582,
+      "start": 3455.44,
+      "end": 3468.44,
+      "text": "so the pattern is like this, the pattern is like this, and it starts with this,",
+      "avg_logprob": -0.727,
+      "no_speech_prob": 0.297
+    },
+    {
+      "id": 583,
+      "start": 3468.44,
+      "end": 3475.44,
+      "text": "this you know what we present this as a slash, we are keeping distance,",
+      "avg_logprob": -0.727,
+      "no_speech_prob": 0.297
+    },
+    {
+      "id": 584,
+      "start": 3475.44,
+      "end": 3487.44,
+      "text": "if this is a dog, you want to basically figure out that dog, we are going to put this,",
+      "avg_logprob": -0.384,
+      "no_speech_prob": 0.172
+    },
+    {
+      "id": 585,
+      "start": 3487.44,
+      "end": 3500.44,
+      "text": "we are going to figure out this, right, this is a dog, what are we, we want slash,",
+      "avg_logprob": -0.384,
+      "no_speech_prob": 0.172
+    },
+    {
+      "id": 586,
+      "start": 3500.44,
+      "end": 3507.44,
+      "text": "then of course, what we are trying to know, we are going to have a fixed thing that is user apart,",
+      "avg_logprob": -0.407,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 587,
+      "start": 3507.44,
+      "end": 3519.44,
+      "text": "again slash on that we are going to have this, this will not be the basis, basis of our content,",
+      "avg_logprob": -0.407,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 588,
+      "start": 3519.44,
+      "end": 3526.44,
+      "text": "then after that you have something said to me, I mean, we have something said to me,",
+      "avg_logprob": -0.407,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 589,
+      "start": 3526.44,
+      "end": 3533.44,
+      "text": "which should be a number, in this case it is taking as a number,",
+      "avg_logprob": -0.37,
+      "no_speech_prob": 0.498
+    },
+    {
+      "id": 590,
+      "start": 3533.44,
+      "end": 3546.44,
+      "text": "but if it is a, if it is a exact as one number, then yes, say, exact as one number,",
+      "avg_logprob": -0.37,
+      "no_speech_prob": 0.498
+    },
+    {
+      "id": 591,
+      "start": 3547.44,
+      "end": 3568.44,
+      "text": "I know, 8 or 10, after 8 or 10, I am energy, it can have digital,",
+      "avg_logprob": -0.616,
+      "no_speech_prob": 0.463
+    },
+    {
+      "id": 592,
+      "start": 3569.44,
+      "end": 3577.44,
+      "text": "in this, so this represents your exact as number, all the exact as number,",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 593,
+      "start": 3577.44,
+      "end": 3583.44,
+      "text": "correct, right, here in this case we are first only on BGM,",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 594,
+      "start": 3583.44,
+      "end": 3593.44,
+      "text": "this will be the BGM of course, but for me, our two words will be between have user,",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 595,
+      "start": 3594.44,
+      "end": 3605.44,
+      "text": "which starts with a slash user, and slash energy,",
+      "avg_logprob": -0.466,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 596,
+      "start": 3605.44,
+      "end": 3618.44,
+      "text": "slash E plus, any number of users, they should end, so the case for this is between",
+      "avg_logprob": -0.466,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 597,
+      "start": 3618.44,
+      "end": 3628.44,
+      "text": "a slash user, 1 to 3 or 5, this 1 to 3 or 5, we are developing it with any number of users,",
+      "avg_logprob": -0.546,
+      "no_speech_prob": 0.196
+    },
+    {
+      "id": 598,
+      "start": 3628.44,
+      "end": 3636.44,
+      "text": "E plus, E represents your region, dear lord, many, any number of users,",
+      "avg_logprob": -0.546,
+      "no_speech_prob": 0.196
+    },
+    {
+      "id": 599,
+      "start": 3636.44,
+      "end": 3643.44,
+      "text": "that we are managing upon the request order, what is going to be my request order,",
+      "avg_logprob": -0.546,
+      "no_speech_prob": 0.196
+    },
+    {
+      "id": 600,
+      "start": 3643.44,
+      "end": 3648.44,
+      "text": "no per most, 1,000, 3,000 slash user, slash 1 to 3,",
+      "avg_logprob": -0.487,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 601,
+      "start": 3648.44,
+      "end": 3655.44,
+      "text": "slash user, slash 1 to 3, right, and if the method is gay,",
+      "avg_logprob": -0.487,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 602,
+      "start": 3655.44,
+      "end": 3659.44,
+      "text": "then only you are going to bring matter of birth,",
+      "avg_logprob": -0.487,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 603,
+      "start": 3659.44,
+      "end": 3665.44,
+      "text": "what is this matter of birth, can you bring to your controller,",
+      "avg_logprob": -0.487,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 604,
+      "start": 3665.44,
+      "end": 3672.44,
+      "text": "robot match, can you bring it up, before you, 7th leg,",
+      "avg_logprob": -0.655,
+      "no_speech_prob": 0.706
+    },
+    {
+      "id": 605,
+      "start": 3672.44,
+      "end": 3680.44,
+      "text": "okay, transfer to robot match,",
+      "avg_logprob": -0.655,
+      "no_speech_prob": 0.706
+    },
+    {
+      "id": 606,
+      "start": 3680.44,
+      "end": 3687.44,
+      "text": "now run this, run this,",
+      "avg_logprob": -0.655,
+      "no_speech_prob": 0.706
+    },
+    {
+      "id": 607,
+      "start": 3695.44,
+      "end": 3709.44,
+      "text": "please enter, now try to open it in underline,",
+      "avg_logprob": -0.575,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 608,
+      "start": 3709.44,
+      "end": 3715.44,
+      "text": "slash, 3 to 6, 4 to 3, slash user,",
+      "avg_logprob": -0.575,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 609,
+      "start": 3715.44,
+      "end": 3719.44,
+      "text": "slash 1 to 3, any number you can use,",
+      "avg_logprob": -0.575,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 610,
+      "start": 3719.44,
+      "end": 3722.44,
+      "text": "if you are giving us a particular,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 611,
+      "start": 3722.44,
+      "end": 3728.44,
+      "text": "send, send, now check out the,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 612,
+      "start": 3728.44,
+      "end": 3732.44,
+      "text": "sorry, yeah, so what we are seeing here,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 613,
+      "start": 3732.44,
+      "end": 3737.44,
+      "text": "match of 1, do you like index, first index,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 614,
+      "start": 3737.44,
+      "end": 3742.44,
+      "text": "index 1 is the number into your search,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 615,
+      "start": 3742.44,
+      "end": 3745.44,
+      "text": "number into a search, and of 1,",
+      "avg_logprob": -0.544,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 616,
+      "start": 3745.44,
+      "end": 3748.44,
+      "text": "it is an idea, if you want to see,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 617,
+      "start": 3748.44,
+      "end": 3750.44,
+      "text": "it is an idea, from an idea,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 618,
+      "start": 3750.44,
+      "end": 3752.44,
+      "text": "you are accessing the first index,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 619,
+      "start": 3752.44,
+      "end": 3754.44,
+      "text": "that is the number,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 620,
+      "start": 3754.44,
+      "end": 3757.44,
+      "text": "a type of robot,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 621,
+      "start": 3757.44,
+      "end": 3760.44,
+      "text": "examples this,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 622,
+      "start": 3760.44,
+      "end": 3763.44,
+      "text": "so match of 1, will give you the number,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 623,
+      "start": 3763.44,
+      "end": 3765.44,
+      "text": "will you restore it, user again,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 624,
+      "start": 3765.44,
+      "end": 3767.44,
+      "text": "and this user again,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 625,
+      "start": 3767.44,
+      "end": 3768.44,
+      "text": "you are passing it wrong,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 626,
+      "start": 3768.44,
+      "end": 3770.44,
+      "text": "response not right,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 627,
+      "start": 3770.44,
+      "end": 3771.44,
+      "text": "response not right,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 628,
+      "start": 3771.44,
+      "end": 3772.44,
+      "text": "outlet user,",
+      "avg_logprob": -0.416,
+      "no_speech_prob": 0.228
+    },
+    {
+      "id": 629,
+      "start": 3772.44,
+      "end": 3774.44,
+      "text": "attack me back,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 630,
+      "start": 3774.44,
+      "end": 3776.44,
+      "text": "to all of the traffic races,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 631,
+      "start": 3776.44,
+      "end": 3779.44,
+      "text": "backwards,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 632,
+      "start": 3779.44,
+      "end": 3783.44,
+      "text": "please, you are providing a DC-123,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 633,
+      "start": 3783.44,
+      "end": 3785.44,
+      "text": "R-123, a DC, R-183,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 634,
+      "start": 3785.44,
+      "end": 3787.44,
+      "text": "R-182,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 635,
+      "start": 3787.44,
+      "end": 3789.44,
+      "text": "likewise, instead of dictates,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 636,
+      "start": 3789.44,
+      "end": 3791.44,
+      "text": "you are passing anything,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 637,
+      "start": 3791.44,
+      "end": 3792.44,
+      "text": "alphabetically,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 638,
+      "start": 3792.44,
+      "end": 3795.44,
+      "text": "then it will give you an error,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 639,
+      "start": 3795.44,
+      "end": 3798.44,
+      "text": "go to the correct,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 640,
+      "start": 3798.44,
+      "end": 3800.44,
+      "text": "go to the correct,",
+      "avg_logprob": -0.554,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 641,
+      "start": 3800.44,
+      "end": 3803.44,
+      "text": "then it will give you an error,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 642,
+      "start": 3803.44,
+      "end": 3804.44,
+      "text": "1, here,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 643,
+      "start": 3804.44,
+      "end": 3805.44,
+      "text": "R-102,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 644,
+      "start": 3805.44,
+      "end": 3807.44,
+      "text": "4, not 4, not.",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 645,
+      "start": 3807.44,
+      "end": 3809.44,
+      "text": "If I am doing,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 646,
+      "start": 3809.44,
+      "end": 3810.44,
+      "text": "in my regular exercise,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 647,
+      "start": 3810.44,
+      "end": 3811.44,
+      "text": "exact exercise,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 648,
+      "start": 3811.44,
+      "end": 3812.44,
+      "text": "six,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 649,
+      "start": 3812.44,
+      "end": 3815.44,
+      "text": "if I am doing,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 650,
+      "start": 3815.44,
+      "end": 3817.44,
+      "text": "W-press hole,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 651,
+      "start": 3817.44,
+      "end": 3818.44,
+      "text": "use of D-press,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 652,
+      "start": 3818.44,
+      "end": 3820.44,
+      "text": "if I am going with W-press,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 653,
+      "start": 3820.44,
+      "end": 3822.44,
+      "text": "please, R-151,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 654,
+      "start": 3822.44,
+      "end": 3824.44,
+      "text": "this will work,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 655,
+      "start": 3824.44,
+      "end": 3827.44,
+      "text": "you may try to,",
+      "avg_logprob": -0.536,
+      "no_speech_prob": 0.18
+    },
+    {
+      "id": 656,
+      "start": 3827.44,
+      "end": 3829.44,
+      "text": "can I go,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 657,
+      "start": 3829.44,
+      "end": 3834.44,
+      "text": "yes.",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 658,
+      "start": 3834.44,
+      "end": 3836.44,
+      "text": "Sir,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 659,
+      "start": 3836.44,
+      "end": 3839.44,
+      "text": "I will catch it.",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 660,
+      "start": 3839.44,
+      "end": 3840.44,
+      "text": "Again,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 661,
+      "start": 3840.44,
+      "end": 3842.44,
+      "text": "what the thing is,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 662,
+      "start": 3842.44,
+      "end": 3844.44,
+      "text": "frontrail,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 663,
+      "start": 3844.44,
+      "end": 3846.44,
+      "text": "R-102,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 664,
+      "start": 3846.44,
+      "end": 3848.44,
+      "text": "R-151,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 665,
+      "start": 3848.44,
+      "end": 3851.44,
+      "text": "right will now please practice on this,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 666,
+      "start": 3851.44,
+      "end": 3853.44,
+      "text": "as we have,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 667,
+      "start": 3853.44,
+      "end": 3856.44,
+      "text": "our class on next Monday,",
+      "avg_logprob": -1.333,
+      "no_speech_prob": 0.035
+    },
+    {
+      "id": 668,
+      "start": 3856.44,
+      "end": 3863.44,
+      "text": "for gate because all these are the bases, we have a time with our nursery we will step",
+      "avg_logprob": -0.55,
+      "no_speech_prob": 0.076
+    },
+    {
+      "id": 669,
+      "start": 3863.44,
+      "end": 3874.44,
+      "text": "into a gate on Monday. Okay, fine with this, after this what we will see, how do I play",
+      "avg_logprob": -0.55,
+      "no_speech_prob": 0.076
+    },
+    {
+      "id": 670,
+      "start": 3874.44,
+      "end": 3885.44,
+      "text": "insert, insert one, insert many, find, find one, find all, play on Monday, on Wednesday",
+      "avg_logprob": -0.55,
+      "no_speech_prob": 0.076
+    },
+    {
+      "id": 671,
+      "start": 3885.44,
+      "end": 3892.44,
+      "text": "what you are going to see, based on trended routes, output change even insert, I will say",
+      "avg_logprob": -0.358,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 672,
+      "start": 3892.44,
+      "end": 3901.44,
+      "text": "only insert, that will applies one, I will say only insert one, find one, on Wednesday,",
+      "avg_logprob": -0.358,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 673,
+      "start": 3901.44,
+      "end": 3910.44,
+      "text": "based on trended, now trended in the option to picture on Monday, on Monday we will see only",
+      "avg_logprob": -0.358,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 674,
+      "start": 3910.44,
+      "end": 3917.44,
+      "text": "without any question and response, we will simply insert one, insert many, all those",
+      "avg_logprob": -0.396,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 675,
+      "start": 3917.44,
+      "end": 3925.44,
+      "text": "things. Okay, on Wednesday based on routes, you will be sending two routes, how to tag",
+      "avg_logprob": -0.396,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 676,
+      "start": 3925.44,
+      "end": 3932.44,
+      "text": "you using the question and response. If you have done with that, then Wednesday will",
+      "avg_logprob": -0.396,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 677,
+      "start": 3932.44,
+      "end": 3938.44,
+      "text": "be done with our internet, I will be saying only on one example, you have a thankful",
+      "avg_logprob": -0.396,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 678,
+      "start": 3938.44,
+      "end": 3945.44,
+      "text": "answer one, another insert many of the age here, I will be an explorer, find one, find",
+      "avg_logprob": -0.496,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 679,
+      "start": 3945.44,
+      "end": 3951.44,
+      "text": "all of the age here, what is the change? Only the changes, you have to focus, rest will",
+      "avg_logprob": -0.496,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 680,
+      "start": 3951.44,
+      "end": 3957.44,
+      "text": "remain same, if you have done with that, then you will know the cost, our cost will come",
+      "avg_logprob": -0.496,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 681,
+      "start": 3957.44,
+      "end": 3964.44,
+      "text": "last week, before that we keep session, I am cost, cost is very simple one, my dear, your",
+      "avg_logprob": -0.496,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 682,
+      "start": 3964.44,
+      "end": 3971.44,
+      "text": "trended should know where packet is running, because trend will wait, packet will be",
+      "avg_logprob": -0.419,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 683,
+      "start": 3971.44,
+      "end": 3976.44,
+      "text": "running, packet will be running somewhere, if I want to know, I have to take it class",
+      "avg_logprob": -0.419,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 684,
+      "start": 3976.44,
+      "end": 3983.44,
+      "text": "to you, I have to know where you are sitting, which room you are sitting, that gaming is your",
+      "avg_logprob": -0.419,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 685,
+      "start": 3983.44,
+      "end": 3989.44,
+      "text": "cost, if your packet is running on a different server, which is a different, this red packet",
+      "avg_logprob": -0.419,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 686,
+      "start": 3989.44,
+      "end": 3996.44,
+      "text": "is a different, this is a different IP, how you are providing that access, this is a different",
+      "avg_logprob": -0.616,
+      "no_speech_prob": 0.729
+    },
+    {
+      "id": 687,
+      "start": 3996.44,
+      "end": 4005.44,
+      "text": "what you are cost, who is a low, who is not a low, okay? Thank you,",
+      "avg_logprob": -0.616,
+      "no_speech_prob": 0.729
+    },
+    {
+      "id": 688,
+      "start": 4005.44,
+      "end": 4007.44,
+      "text": "thank you,",
+      "avg_logprob": -0.647,
+      "no_speech_prob": 0.861
+    }
+  ],
+  "text": "Then you do not get any awkwardness, because when you get out of the day, is it unbeaten? Getting the point. It will be on the vocals, clear and clear. And to shoot for the night of the walk will be end of a session on pause for the session night. It will be on the vocals, clear and clear, to be on the night. So, going away to that sort of thing. What we need to create, what we need to create, based upon using history, that we have done yesterday. You find it differently in three days of work, which will be got created in the work. Then, start working then. Over time then. Until then, get the comprises of four, eight to nine nights of four. Ten nights of four. First try to connect to the creative circle. On the top of. Not this. Not this is not a circle. Not this is a framework. On the top of it, we are using history. Do. Take one serve. Using H- 20 point. Once the server is set up. Once the server is set up. Once your server is set up, the second serve is one of these. Can you connect to the MD is a Mongol, why to connect to? A Mongol with key is going to be your second striker. Once the collection is established. Then only you can perform your\ufffd the job period of the system through the edge thoughts or for anything else. And these are not going to be your classes, these are going to be the freeing physics, these are going to be the freeing physics. Correct to one more thing, you have to be one of these. Can you launch, can you create a data base, once the connection is established, then the first thing is created data base and a data base and a data base. Once this step is done, launch data, launch data base is a data base name and address, in the next name and address. Once this is done, can you insert the data, can you insert the data. Once insertion is performed on the database and in the collection, in a particular data base, in a particular collection is inserted, one operation is performed here. Then you are going to start your data base all the other operations for us and so on. If you are superior, then you are good. Now, the synonym will be a dynamic user. We will be providing this to the friendly, we will be providing a friendly, with the robots on this to insert a particular robot, the robot means that the robot, slice, uses, that we use this route to insert. So, you have to identify for a insert which round is being used, whether we are requesting you to insert one or insert maybe, insert one or insert maybe. Second thing is, you are using the same route and you are using the same route and you are lacking. But, appropriate the route, any number that you need anything? No. Yesterday we have done the final number one. Today, we will be looking at how to, in final number one, we had already seen how to deal with the body part. What it means? Content will send the data, where content will be sending the data to a request and that request will be JSON. So, you have to use path and synonym by first, you are converting to an object, again converting to a JSON. JSON object into a string of object and again string to JSON. You can access, if it is an object, then only you can access the data, the engineering. If I am going with registration form, in a game, engineering, contactable, age, these are the fields. When you set it through request, first line is filling the data, clicking on submit or add feedback. When you click on that, the data is passing to the server, the server will be getting the data in the form of request. The request of calling, from the, you have to pass the data, you have to convert the data into object within string input. Once the object is available, then you can access the individual elements and push it into your data test. After pushing out the data test, submit it as one of the data as well, inserted problems. Getting the things, or if you press kill to certain kinds of, then you will get what I want to convey. Here you can see I have three parts, one is going to be work, right here. The first is to speed your time, right here. Same other object. And third one is to speed your time. More to speed your time. Firstly, we will be leaving the server object, Armages, Armages, using the speed, the server will keep you right, and you will try to connect through your Armaging. Also some action for after Armaging. Then using the Armages, using that being set over here. Using the Armages, using that being set over here, you will try to keep everything on that way, through your Armages. This is a helicopter which is going to be here and make fail money on what you need to be looking at, but really what you need to be looking at is mainly of the nightly insert that being on the way you can make. So very frankly, we are going to watch you on this. We are going to be working on that part. I will go insert one, I will go insert reading for you, reading one for you, reading and so on. Using one object being and nothing which you are reading the things point by point outside that side. That is what the server surface on the surface is, on some of the surface surface on it. Here, we have done this example effort on the assessment module, reading a server, This is done. This is done. This is done. Second part, that will remain same. Next thing, whatever you do, you will be doing it, it creates our own, in this portion. It creates our own itself, so we know it is within us. You are not going to disturb the already and it affects our created self, and it is within. This part, we are not expecting. This is static. This is static. We are changing this part, it creates our own. When you come back here, exactly one. Simple. Now, we are going over here. What is inside our own? This part. Getting the things clear, and over here, what we are passing, but, someone has to get either request, or someone has to send a response. The request part, response. So, this part, and look at this part, as comments have been included, you feel that this is an important part. This is what we have to consider. Request method, it will get the method, Loser wants to get the data, closer data, close the data, or delete the data. First, the work has to know, what is the HTTP method, user wants to do. Get is used when you want to delete the data, retrieve the data, which is available on your model. Then, you are going to send a method, which is going to be equivalent to get. And first, it is used for inserting the data. What is used for the data is already available, and you want to update. You feel it is also a particular data. They say, if you are using a password, it is already available. And you want to update your password. But, then you are going to use this method, good. And, delete, if you want to delete a particular document from your homeworld. Fine. So, methods should be appropriate. If you want to insert the data, and you are using get method, what happens? The data will not be pushed onto your homeworld. Otherwise, you will have to post it there, be the code of the correct data. What you are trying to do, you are conveying to your server. You don't have to contain to your server, you have to be specific with your method. That is, that is one thing, I have a little bit in our previous world, that is the request word method. And, why? Or to which route you are focusing? Because, you are specifying, I say, give that answer, I am specifying my routes, upfront in my front end. So, the route should be properly without any cases to be error. There should not be any, again the smaller case, each number, there are capital and institutional problems. It will not fix, it will say that the provided route is not far. You already is not far. If you are writing the code in the map, in the error part. Getting the things, so these are the two things, which play a crucial role in any type of request, to the server. Method, you are talking. Secondly, I will ask for, when you know, you are seeing the data. Just run this, just run this, you are not seeing the data, no need of comment on it, you are coming from this. You are no argument or server like. What is the, everyone will allow you. Under client execution, you will know, they put their rights, which is also the, under client and in visualization, it is off-few cable. In your lab also, you will have the data. use me to access all these ideas, we will, we will use perspective of punches to the legendary, with Thundercraft like a chase shoot use, but you will use marks for that time. You will use marks, because front end and back end connectivity is the key, even if your operations are working, you will have operations, and if you want, you can show to use Thundercraft, but you will use certain marks, any other point. You will have Thundercraft, generally in my company we use post-man, but over here we are using Thundercraft for a lighter, but in both of these, the commands are in this scene. You can, yeah, have you executed example two? Yeah, one is the example two, no, NPM also you can use, NPM, example two. Yeah, NPM, NPM, NPM, NPM, NPM, NPM, NPM. I will select two, NPM, NPM, NPM, NPM, NPM, NPM, NPM, NPM. Now, what we are seeing is, in Thundercraft, now we want to make an increase, we want to make an increase to the server, and an increase that will not equal, not double equal, double equal to, double equal to, double equal to, double equal to, if you want, you can use double equal to, it will work, but in certain cases, it will not work. So, in what cases, when type is mismatched, the body body is used for type-packing works. The method is what we get, and what is the response when we take it, this is a get increase, a simple request. If I am going to select the letter as post, then my response is, this is a post request. We are not at connecting our memory in this case. We are just testing, and the get a post will work properly. We expect to put Thundercraft in your response, in your response, after that, or the return in your response. Now, you will see the metal out here. The metal out here, I am going to go for the 0, select this attack, 2.30% or 2.30% or 2.30% or 3.30%. Now, you will see that the number is 4.30% or 2.30%. So, 2.30% or 3.30% or 3.30% or 2.30% or 2.30% or 2.30% or 3.30%. Now, as soon as I will be sending, what is the message when you take this plate? This is the get it. You want to say, see, we are getting a success message to our rate, and we are getting the message which we are passing through, getting it. We are on the moral, we are getting this. Now, one more thing we are getting around. We are getting only metal. You said that request and system, what you said? Metal, place you are like. When you are in this slash, by default, by default. If you want to speak to this thing, row, then what we are going to do? In example 2, in example 2, you can have this. Double land, double land, safe place, pay attention. When we use the piece row, is that until and unless you recover this, you cannot get rid of the rest of the current operation. Request not whether I am constantly, or should I tell you? And request for more than is going to be trash from it. When this time, right to run, again, along saving, close the server, bring that to us, sir. Not this, on command from home. Now, again, once again, say, other electricity method. We have one more thing, that is other electricity method. Now, we are not getting any question. Because it is not matching with the piece condition. It has to match in the gate and the row, the path. We had a path, right? Say, slash running, slash running in the row. Said, this is the gate. Getting the things, the method should be gate. And the URL should be slash running. Now, Friday, the proposed period in 2002, is a big point. After that, what do you want to work on? For a slash running. Getting the things, you are not getting the piece. Raise your hand. Now, change it to post it. In new requests, sir. Now, see, we have not mentioned, we are not freezing to any load in post. We are just to define whether it is a post or not. Getting the things, at the moment, what is the code in our post method? Have you defined any load? No. We are not given any code. Any URL. We are not defined any URL. So, it is taking any URL. Instead of providing, if I give you one to three, it will take. You are not restricted for condition. Interface with the template. Even if the run end gets slow, they can have data. Post will be tried, sir. As soon as success, they are not. Success, sir. Who said round? But, it will enter into your database. The question lies more. Because, I had mentioned something in our front end. That post will become this route only. And, you are using all the code. That was the other chase route. Sir, I will talk about that. Why? Success, sir. Play the answer now. Any of these? Next. What do we have? Scward-up? Oh, what is the difference between first and second? Sir, sir... Third? What is the difference between state-min Kundenys or claimed-m Claus? What is the difference between second example and third example? It has been T as invention. What is the difference between second and third example? What is the difference between second and third? Okay, okay. Say, in your request, in your request, there should be only one, restaurant and response. And it should be repeated only once, not more than once. If it is repeating again and again, we will hamper you around. Any open example for, hopefully I may have designed it for further, this particular problem. In example to only, in example to only, say, we are in the condition, two times it, let's go down. Okay, once I have completed it all, two on the right is, and we are in the condition. Now is any feedback to your request, wait, send. What happens? We are getting further from this one. Whatever the next, this one, getting the things, if you want things, I can just not write. It's not right, it's not okay. But, let's not answer the only ones. Unlocking, uncomment means uncommentable for me. What you are seeing on you? End up process of zero. So, read the end of this. See, error has been, it is ending the summary with an error. Place to go, once I have done, transfer to log also. After one request, it is ending. If you have double n, let's go, let's go from n. If you are writing from times, in a simple thing, then what happens? It is executed, right? With an error, if error comes, everything follows. And, go to your request, send. Make that to question. See. Subject response, log n. Subject response, log n. It is throwing from, it is not trying to present the next things. Comment on those words once again, brother. What is the difference I want to show you? Close to the ends. Again, here. Read the end of this. Now, again, new request. Send. Again, in the response, come back to the console. You see here. Subject is still intact. It is not going to make any error. If you are going to post request, then it will explain. That's what n should be only once. Why a particular request? It should not be twice. It is the things, now example to example 3, defines that. That is the difference. I am using risk.1, risk.n, not in each and every conditional segment. At once, at the end, after all the conditional segments. Example 3. Get back to external. The difference. The difference is that I still find a better advantage. After this, the difference comes. The difference is that, risk.n is used only once in the entire system. Rescores.n. And means and and the. And extract this up. Find with this, risk.n should be used only once. All these are the mistakes which you are doing from my experience. In example 4, now we are focusing on the u1 as well, in example 2, in example 3, we had focus only on the methods, we had focus only on the methods, get to post because these are the two things which we decided to use, get 10 post. Here in this example 4, we are focusing on the routes. If my u1 is on flash, then output which is being displayed is below word, below word in the next time, below word. If my u1 is flash project, make it as flash hd, hd of different types of content types. Here we are focusing on R that is now, along with that, we are focusing on the content type. This is also played to zero, another content type is playing text, R, machine language, R for R, J, and R. When in the next, R, say, I am not teaching you what you are going through, I am teaching you how to teach, because when you are in exam, something is going wrong. If something is not in your favor, you should know upfront where to search it is going wrong. You should know what you do, you write an example number 4. Everyone please write an example number 4, 4 to the browser, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, this is the equation, this is what will be played on JSON only. Now, that is the JSON street, JSON street can be accessed directly, you have to convert it, stingify it, you can object, you know to access your name, I am sitting. If it is an object, then only you can access, right? This was thought, body, God, name, response, body, God, what is the city, are they access channel adjacent conversion, adjacent to object. From on where this adjacent project is in your response volume, I have not yet written against you, but this is the one which we are going to use again and again from each and every request and response. See, my dear, what here we will use, what we are going to use, place the adjacent ones, we have written three words, what is on slash, what is on slash this thing, what is on the adjacent text, three different words to see three different attend types, attend types, attend types. I have given the attend type, but in these same ways, what is the output, whether attend type is on, still what is the output, whether attend type is on adjacent, what is on, why attend types are important, that is what we are going to use. Look at in example number four, everything adjacent, this is your passing adjacent data, this is your passing adjacent object, but signifies converting the people adjacent and it is free, because browser knows only adjacent, it does not know you are objects. So, when you are reading your marks, when you are passing as an request, then it has to be adjacent format, when you are reading, you have to pass back to an object, that we are going to use again and again, on the first and second, but third, we are going to use again and again, if I want to say three, I have to say about one and the most, because they not only will get any importance, but okay, content type has certain importance, in a response. In a response, status code and status code and content type, who request you are aligned with method, when you are requesting you are a method, place it in server, when server is responding, status code and content type place in whatever, do I, if you remember this properly, fix it for the contestants. Now, in example five, we are combining both of these, we are combining your method, your model, place your method, we are enhancing step-by-step, first, when you need to server, second, seeing what is the equivalent of method, request of method, third, your model, now method place your model, double-hand, when both are matching, then only the part will get to you. What you are doing, or here in example type, please go through the code once, and you are learning, unless I talk, please go through the code. I am talking to one of the second converges, I said you don't do the new copy, just know I had a quote, for example, this is the truth, request of the spawns which we are going to use in our program. But to get to this, we have to know the suppression between each enemy. Now, planning will explain me this program, what is happening? What is happening? Yes sir, if we want to ask government like this, you must see, you are going to work for that, you are going to see 60 square knots, we tend to think that, if you are responsible because you are going to give things up, and one will give you things. Then you should be clear on what you are doing, understanding what you are doing. These are just the, the strategies of the group, today we are in that sense, that sense of our application, we have to get to engineering level. So, in combination, we have to pass. This is the nursery, not suddenly APC, then APC. I am not like APC, then APC. No? Fine, everyone answer this page, everyone is answer this page. What we are doing, we are in the first step, is that this can be, this can be, and where we are going in this area, request headers post, request headers. Request what headers means what? Control got wrong. We saw the request headers, where they can move on, header split. See here, request what headers, this is a request, and what? Request what? Write it. Okay? Otherwise, write it right somehow, header. Go through the example number two, or example number one. See here, response what? Write it. Sir, not request, response what? Write it. You are writing the headers for, and the candidate. But, when you learn this, what is also being shown? Write it. See? Um. Um. Write it. Be new. This is the advantage of header comma. What we are accessing? We are accessing this right post. Roomy. Post, right? Get right to the code BS4, example number six. Six of times. Right. What we are saying earlier, header is not post. header is coming out. Check from header, slot post. Our order of this is going to be local post. local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. Local post. What are from which is, which is running? So, after it also. It is running on 3,000. So, the answer for this is, sir, directly actually running for this. We do know, and then it will run on this code. Because, when then what is going to be defined by me? So, directly, it cannot use. If you want, you can. But, manually, you have to keep on changing the things. You are doing more dynamically. You will take from the header map. So, request dot headers dot post. We will give you local post. Local. 3,000. What is request dot URL? That is going to be. The order on which you are going to come. Answer this. Whether it is slash search. Or slash search. Or slash. What do you want to do? Where do you want to come? That is slash search. That is going to be what you press dot. On the reach order. Learning pressing the things. Now, when you click here, confirm dot log of password. I want to see what is there in password. I want to see the code. So, it ispassed to search box. So, what is the code? What is the code? What is the code? of what? Of whatever. So, what is the code? How do I get? So that is what it is. How do I get the code? So, what? I have to be able to say, because when you click here, See, this is a fast river, fast river, from that command you are going to get all these things. That is, coal is present, but it is trash, because we are in human trash, like that is a generally, you are not getting in your coal. And search, you are not searching for entity, this is something, and you are such as a balanced entity, profile is the issue, you may be, RGV is this, that is the first vehicle. RGV is, what is the ROS RGV, CMRS, a predetermined software, your RGV, souls and target, they should have a link. So, this is the open of your parcel URL, now you can just search, smash search. And this part here we have access it, we have access it, get back to the, when this is equal length of last search, I am going to tell you this here, and the method is here, there, what you are going to do is, get back to, from where this column is coming, this is said to be, many parameters, this is said to be, many parameters, many parameters will be written, like this, but only the JavaScript you might have heard about many parameters. See it, there is said to be, urban, I was asked the worst, urban, some remember, that search, for shenma, this for shenma, the urban, the urban, the urban, the urban, the urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, , urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, urban, C L, search, question mark Q equal to 20, meaning this is 20 parameters, search, question mark, question mark, after question mark, what is the term you are searching for? I am searching for, because I did query and Q1 was at the Google or Q1 bit from the line, what I have been query, what is a query you want to show? This is used when you are searching in find 1, find 1 ID, based on ID you are going to find one particular thing or based on name you are searching a document. Getting these things, all these are relevant with your next steps, is all we have? Can I talk about this thing? What we are seeing with this is ask you are there, ask some things like we search for ones, feedback to answer, ask you are there, ask some things like we search for ones, okay? Can I talk to the people, mean that you get, you get the term which is mean ask, this is coming from the word which we are going to provide, feedback to the kind of thing, kind of like that in question mark, so equal to, we search for one ID, now we are passing the searching parameters, you are getting the search results, but this is the same, and the verb is R9, this is used when colon ID, ID when you are searching on a particular ID, you are searching on between the data based on an ID, now we are taking the concept, now you see, search has been done on the same amount of term equal to R9, and the search tab in this term equal to R9, R9, the value is very slick, so that is the reason why R3 model, dot search pattern, okay, okay, that term, get the term, instead of term, if I use something else, it will not use it, instead of term, you get right, in total I use term, so it is given term, in total it is a term, but by the question I am addressing as K1, we provide, then I am getting more time to provide, because that the word in this root Q1 uses, Q represents credit for Google, term is represented by me, tomorrow you can use ID, but ID and uses are an ID and you are out, anything past you are, getting the things, past you are out, term is G, nashot is instance that I have to let it out, everything is internally, getting the things, what we are trying to say, this is called searching the parameters, based on path parameters, we saw how to search on a path, path is used for a post or get something, but put or sign one, when you are going to do, then you should work with path parameters, parameters are the different things, what is the parameter you want to pass? So, when this is, when this is an ad, then you will get a term, that is when you see framework here, that is search results 1, so if this is not ad, then you are going to get a term provided, no term provided, search results 1, no term provided, because it is an algorithm, either of this should be a credit, it is magic and present all its credit is, or if you are not asking any search parameters, then you will get a format or not follow, next example 6, nah regular expressions we add a regular expression, small section, but execution, I will be using a simple things only, if, now focus on What is on the regular expression and what it is ready to do is, we had the expression for the previous, the next step. I said you that math parameters use this idea right. Based on this idea, let's use the data. This one, idea. Okay, so in your example, if this is the thing, if this is the thing, and idea in a word, MongoDB will be 24 characters, exactly. Excitation one means, you come on top, you write it up, you write a comment on you, comment on it, okay. That's it. Excitation one will have, that small a to z is n-al in a-al. K to z. A to z, okay. Capital A to z also. I mean it's the same idea. Capital A to z, it will have numbers from 0 to 9. Excitation levels A to effort is right. So, it is from 0 to 9, now we have to write here in this equation for that, on a low, I have to write here, on a low, I have to write here, on a low, I have to write here, on a low, I have to write here, on a high, I have to write here, on a low, I have to write here, but it is from 0 to 9, and now we have to write here. So, this is a pattern of a regular expression, what is a pattern which we want to find, which is a pattern which we want to find, which is a pattern which we want to find, see this is a thing right, now this is something which is like a normal dog out there, now if it is a dog operator, what we used to do, we used to put this one on this common sense, so the pattern is like this, the pattern is like this, and it starts with this, this you know what we present this as a slash, we are keeping distance, if this is a dog, you want to basically figure out that dog, we are going to put this, we are going to figure out this, right, this is a dog, what are we, we want slash, then of course, what we are trying to know, we are going to have a fixed thing that is user apart, again slash on that we are going to have this, this will not be the basis, basis of our content, then after that you have something said to me, I mean, we have something said to me, which should be a number, in this case it is taking as a number, but if it is a, if it is a exact as one number, then yes, say, exact as one number, I know, 8 or 10, after 8 or 10, I am energy, it can have digital, in this, so this represents your exact as number, all the exact as number, correct, right, here in this case we are first only on BGM, this will be the BGM of course, but for me, our two words will be between have user, which starts with a slash user, and slash energy, slash E plus, any number of users, they should end, so the case for this is between a slash user, 1 to 3 or 5, this 1 to 3 or 5, we are developing it with any number of users, E plus, E represents your region, dear lord, many, any number of users, that we are managing upon the request order, what is going to be my request order, no per most, 1,000, 3,000 slash user, slash 1 to 3, slash user, slash 1 to 3, right, and if the method is gay, then only you are going to bring matter of birth, what is this matter of birth, can you bring to your controller, robot match, can you bring it up, before you, 7th leg, okay, transfer to robot match, now run this, run this, please enter, now try to open it in underline, slash, 3 to 6, 4 to 3, slash user, slash 1 to 3, any number you can use, if you are giving us a particular, send, send, now check out the, sorry, yeah, so what we are seeing here, match of 1, do you like index, first index, index 1 is the number into your search, number into a search, and of 1, it is an idea, if you want to see, it is an idea, from an idea, you are accessing the first index, that is the number, a type of robot, examples this, so match of 1, will give you the number, will you restore it, user again, and this user again, you are passing it wrong, response not right, response not right, outlet user, attack me back, to all of the traffic races, backwards, please, you are providing a DC-123, R-123, a DC, R-183, R-182, likewise, instead of dictates, you are passing anything, alphabetically, then it will give you an error, go to the correct, go to the correct, then it will give you an error, 1, here, R-102, 4, not 4, not. If I am doing, in my regular exercise, exact exercise, six, if I am doing, W-press hole, use of D-press, if I am going with W-press, please, R-151, this will work, you may try to, can I go, yes. Sir, I will catch it. Again, what the thing is, frontrail, R-102, R-151, right will now please practice on this, as we have, our class on next Monday, for gate because all these are the bases, we have a time with our nursery we will step into a gate on Monday. Okay, fine with this, after this what we will see, how do I play insert, insert one, insert many, find, find one, find all, play on Monday, on Wednesday what you are going to see, based on trended routes, output change even insert, I will say only insert, that will applies one, I will say only insert one, find one, on Wednesday, based on trended, now trended in the option to picture on Monday, on Monday we will see only without any question and response, we will simply insert one, insert many, all those things. Okay, on Wednesday based on routes, you will be sending two routes, how to tag you using the question and response. If you have done with that, then Wednesday will be done with our internet, I will be saying only on one example, you have a thankful answer one, another insert many of the age here, I will be an explorer, find one, find all of the age here, what is the change? Only the changes, you have to focus, rest will remain same, if you have done with that, then you will know the cost, our cost will come last week, before that we keep session, I am cost, cost is very simple one, my dear, your trended should know where packet is running, because trend will wait, packet will be running, packet will be running somewhere, if I want to know, I have to take it class to you, I have to know where you are sitting, which room you are sitting, that gaming is your cost, if your packet is running on a different server, which is a different, this red packet is a different, this is a different IP, how you are providing that access, this is a different what you are cost, who is a low, who is not a low, okay? Thank you, thank you,"
+}

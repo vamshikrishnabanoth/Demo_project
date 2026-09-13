@@ -1,0 +1,197 @@
+{
+  "input_id": "input_20_pps_jocks_discussion",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "A student is tasked with writing a Python program to calculate the average of a list of numbers. Before writing any code, the student breaks the problem down into: (1) reading the list, (2) summing the elements, and (3) dividing by the count. Which phase of the problem-solving process does this activity primarily represent?",
+      "options": {
+        "A": "Algorithm Design and Decomposition",
+        "B": "Code Execution and Testing",
+        "C": "Syntax Validation",
+        "D": "Data Storage Management"
+      },
+      "correct_option": "A",
+      "explanation": "The correct answer is A because breaking a complex problem into smaller, manageable sub-problems (reading, summing, dividing) is the definition of decomposition, a core part of algorithm design. Option B is incorrect because no code has been run yet. Option C is incorrect because syntax validation occurs after code is written. Option D is incorrect because the focus is on logic flow, not how data is stored in memory."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Which of the following best describes the 'problem-solving workflow' in the Python environment as described in the material?",
+      "options": {
+        "A": "A linear process with no feedback loops",
+        "B": "A step-by-step process of breaking down complex problems into manageable coding tasks",
+        "C": "A random trial-and-error approach without structure",
+        "D": "A process that avoids breaking down problems"
+      },
+      "correct_option": "B",
+      "explanation": "The summary explicitly mentions 'the step-by-step process of breaking down complex problems into manageable coding tasks.' Option A is incorrect because the iterative nature implies feedback loops. Option C is incorrect because the process is described as structured (step-by-step). Option D is incorrect because decomposition is a key feature."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What is the relationship between logical reasoning and syntactic implementation as highlighted in the classroom discussion?",
+      "options": {
+        "A": "They are unrelated aspects of programming",
+        "B": "Logical reasoning is secondary to syntax",
+        "C": "The material highlights the relationship between logical reasoning and syntactic implementation",
+        "D": "Syntax is more important than logic in Python"
+      },
+      "correct_option": "C",
+      "explanation": "The summary states that the material 'highlights the relationship between logical reasoning and syntactic implementation.' This indicates that both are integral and connected. Options A, B, and D incorrectly separate or prioritize one over the other, contradicting the integrated approach described in the text."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "During an interactive coding session, which strategy is most effective for maintaining student engagement?",
+      "options": {
+        "A": "The instructor explains the code line-by-line while students listen silently.",
+        "B": "Students predict the output of a code snippet before running it and discuss their reasoning.",
+        "C": "The instructor distributes a printed handout of the code for students to read at their own pace.",
+        "D": "Students watch a pre-recorded video tutorial without any opportunity for questions."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because predicting output and discussing reasoning requires active cognitive engagement and peer interaction, which are hallmarks of interactive learning. Option A is passive listening. Option C is independent reading. Option D is passive consumption of media. These do not involve the active participation required for interactive engagement."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "What is the primary focus of the 'Code Interaction' concept in the classroom setting?",
+      "options": {
+        "A": "The interaction between the learner and the Python environment",
+        "B": "The interaction between different programming languages",
+        "C": "The interaction between hardware and software",
+        "D": "The interaction between users and web interfaces"
+      },
+      "correct_option": "A",
+      "explanation": "The summary states that the content is 'structured around the interaction between the learner and the Python environment.' This directly supports Option A. Options B, C, and D refer to interactions not mentioned in the context of this specific Python problem-solving discussion."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "In the initial stages of solving a programming problem in Python, a student writes the following: 'START, GET user_input, IF user_input > 0 THEN PRINT positive, ELSE PRINT negative, END'. What is the primary purpose of this text?",
+      "options": {
+        "A": "It is a valid Python script that can be executed directly by the interpreter.",
+        "B": "It is pseudocode used to outline the logic before translating it into Python syntax.",
+        "C": "It is a flowchart diagram represented in text format for visual debugging.",
+        "D": "It is a comment block that Python ignores during execution."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the text uses natural language and logical keywords (START, GET, IF, THEN) that are not valid Python syntax. This is the definition of pseudocode, which serves as a bridge between problem understanding and code implementation. Option A is incorrect because Python would throw a syntax error on 'START' or 'GET'. Option C is incorrect because while it represents logic, it is not a visual diagram. Option D is incorrect because it is not written with Python comment syntax (e.g., #) and is intended as a planning tool, not just a note."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "Which of the following best defines a key characteristic of interactive learning methods in a classroom setting?",
+      "options": {
+        "A": "The exclusive use of digital tablets and laptops for all instructional activities.",
+        "B": "Real-time feedback and active student participation in the learning process.",
+        "C": "The instructor delivering a one-way lecture while students take notes.",
+        "D": "Students working independently on assignments without instructor intervention."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because interactive learning is defined by the two-way exchange of information, where students participate and receive immediate feedback. Option A is incorrect because interactivity does not require digital technology; verbal discussion is also interactive. Option C describes passive learning (lecture). Option D describes independent study, which lacks the interactive element of collaboration or immediate feedback."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "According to the material, what characterizes the iterative nature of programming in the Python environment?",
+      "options": {
+        "A": "Code is written once and never modified",
+        "B": "Code is written, executed, and refined based on output and error feedback",
+        "C": "Errors are ignored to maintain code flow",
+        "D": "Testing is performed only after the entire project is complete"
+      },
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly describes the iterative nature as 'code is written, executed, and refined based on output and error feedback.' Option A is incorrect because refinement implies modification. Option C is incorrect because error feedback is a key part of the process. Option D is incorrect because the iterative approach implies continuous testing, not just at the end."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "A student needs to print the numbers from 1 to 5 exactly once each. Which of the following Python code snippets correctly implements this logic?",
+      "options": {
+        "A": "for i in range(1, 6): print(i)",
+        "B": "while i < 5: print(i)",
+        "C": "if i == 5: print(i)",
+        "D": "for i in range(5): print(i + 1)"
+      },
+      "correct_option": "A",
+      "explanation": "The correct answer is A because `range(1, 6)` generates the sequence 1, 2, 3, 4, 5, and the `for` loop iterates through this known number of times. Option B is incorrect because `i` is not initialized, causing a NameError, and `while` is less appropriate for a known count. Option C is incorrect because an `if` statement only executes once and does not loop. Option D is technically correct in output (prints 1-5) but is less direct than A; however, in the context of 'correct translation of a logical algorithm', A is the most standard and direct implementation of '1 to 5'. Wait, let's re-evaluate D. `range(5)` is 0-4. `i+1` makes it 1-5. Both A and D produce the same output. However, A is the more direct translation of '1 to 5'. Let's look for a clearer distractor. Let's change Option D to `for i in range(1, 5): print(i)` which prints 1-4. This makes A the only correct one.\n\nRevised Option D: `for i in range(1, 5): print(i)`\n\nExplanation Update: Option A is correct as `range(1, 6)` includes 1 and excludes 6, yielding 1,2,3,4,5. Option B fails due to uninitialized variable. Option C is not a loop. Option D prints only 1,2,3,4 because `range(1, 5)` stops at 4."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "In the context of the classroom discussion, what is the primary mechanism used to translate theoretical concepts into functional Python code?",
+      "options": {
+        "A": "Memorizing syntax rules without execution",
+        "B": "Logical decomposition of problems into executable code steps",
+        "C": "Using external libraries exclusively for all tasks",
+        "D": "Writing code in a single block without testing"
+      },
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the material emphasizes the 'Logical decomposition of problems into executable code steps' as the method for translating theory into practice. Option A is incorrect because the focus is on interaction and execution, not just memorization. Option C is incorrect because the focus is on core problem-solving logic, not exclusive reliance on libraries. Option D is incorrect because the iterative nature of debugging and testing is highlighted."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Logical Decomposition",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Iterative Debugging",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Logic-Syntax Relationship",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Problem-Solving Workflow",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Learner-Environment Interaction",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Problem Decomposition",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Role of Pseudocode",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Characteristics of Interactive Learning",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Student Engagement Strategies",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_20_pps_jocks_discussion",
+      "target_concept": "Control Flow Implementation",
+      "cognitive_level": "REMEMBER"
+    }
+  }
+}

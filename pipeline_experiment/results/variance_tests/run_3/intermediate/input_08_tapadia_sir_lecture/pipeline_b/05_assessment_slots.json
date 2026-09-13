@@ -1,0 +1,87 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Algorithm",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Demonstrate understanding of how to compute the longest common prefix among a list of strings using a single-pass scanning approach.",
+    "misconception_target": "Assuming the algorithm incorrectly handles cases where one string is a prefix of another.",
+    "evidence_refs": [
+      "E_C09",
+      "E_C10",
+      "E_C11",
+      "E_C12",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Algorithm",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Explain why the single-pass scanning algorithm is more efficient than a pairwise comparison approach.",
+    "misconception_target": "Believing that pairwise comparison yields the same time complexity.",
+    "evidence_refs": [
+      "E_C09",
+      "E_C10",
+      "E_C11",
+      "E_C12",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "String Scanning and Character Comparison Optimization",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Demonstrate how to optimize character comparison during string scanning to reduce unnecessary comparisons.",
+    "misconception_target": "Assuming that checking each character against all strings is necessary.",
+    "evidence_refs": [
+      "E_C02",
+      "E_C04",
+      "E_C06",
+      "E_C15"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Model and Garbage Collection",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Analyze the impact of object references on Java's garbage collection behavior in a given code snippet.",
+    "misconception_target": "Thinking that nullifying a reference always triggers immediate GC.",
+    "evidence_refs": [
+      "E_C07",
+      "E_C08"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization and Refactoring Practices",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Apply code refactoring techniques to improve readability and maintainability of a given LCP algorithm implementation.",
+    "misconception_target": "Assuming refactoring always improves performance.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "test": "Experiment 7: Multi-Tier Cache Ablation Benchmark",
+  "cold_run": {
+    "tier1_stt_seconds": 0.0514,
+    "tier2_canonical_seconds": 0.004,
+    "tier3_hierarchical_seconds": 0.002,
+    "tier4_cross_modal_seconds": 0.001,
+    "tier5_representation_seconds": 5.3731,
+    "total_pre_planning_seconds": 5.4315,
+    "llm_calls_spent": 1
+  },
+  "warm_run": {
+    "tier1_stt_seconds": 0.001,
+    "tier2_canonical_seconds": 0.0005,
+    "tier3_hierarchical_seconds": 0.0,
+    "tier4_cross_modal_seconds": 0.0005,
+    "tier5_representation_seconds": 0.0079,
+    "total_pre_planning_seconds": 0.01,
+    "llm_calls_spent": 0,
+    "speedup_factor": 543.15
+  },
+  "invalidation_test_passed": true,
+  "multi_quiz_reuse_verified": true
+}

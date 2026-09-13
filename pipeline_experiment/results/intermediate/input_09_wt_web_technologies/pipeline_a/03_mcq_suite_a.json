@@ -1,0 +1,109 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_09_wt_web_technologies",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the Node.js File System module, what is the primary operational difference between fs.writeFileSync and fs.appendFileSync when interacting with an existing file?",
+      "option_a": "fs.writeFileSync is asynchronous, while fs.appendFileSync is synchronous.",
+      "option_b": "fs.writeFileSync overwrites the existing content of the file, whereas fs.appendFileSync adds new content to the end without modifying previous data.",
+      "option_c": "fs.writeFileSync creates a new file only if it does not exist, while fs.appendFileSync creates a new file if it does not exist.",
+      "option_d": "fs.writeFileSync is restricted to text files, while fs.appendFileSync can handle binary data only.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture explicitly distinguishes these two methods: fs.writeFileSync overwrites the file's content, while fs.appendFileSync preserves existing content and adds new data to the end. Option A is incorrect because both methods are synchronous (indicated by the 'Sync' suffix). Option C is incorrect because both methods will create the file if it does not exist, but their behavior regarding existing content differs. Option D is incorrect because both methods can handle various data types, not just text or binary exclusively.",
+      "target_concept": "File Writing vs. Appending",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The distinction between overwriting (writeFileSync) and appending (appendFileSync) file operations.",
+      "why_assessed": "To ensure students understand the side effects of different file writing methods to prevent accidental data loss.",
+      "evidence_refs": [
+        "Mechanisms_and_formulas: File Appending",
+        "Factual_Summary: writing to files with fs.writeFileSync (which overwrites existing content)"
+      ],
+      "misconception_rationale": "Distractors target common confusions about sync/async nature and file creation behavior."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "A developer needs to remove a directory named 'logs' from the file system. Which Node.js File System method should they use?",
+      "option_a": "fs.unlinkSync('logs')",
+      "option_b": "fs.rmdirSync('logs')",
+      "option_c": "fs.writeFileSync('logs', '')",
+      "option_d": "fs.mkdirSync('logs')",
+      "correct_option": "B",
+      "explanation": "Option B is correct because fs.rmdirSync is the specific method for removing directories, analogous to the Linux 'rmdir' command. Option A is incorrect because fs.unlinkSync is restricted to deleting files and cannot be used for directories. Option C is incorrect because writing an empty string to a directory path is not a valid removal operation and may cause an error. Option D is incorrect because fs.mkdirSync is used to create directories, not remove them.",
+      "target_concept": "Directory Removal",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Mechanisms and Formulas",
+      "what_taught": "The specific use of fs.rmdirSync for directory deletion versus file deletion.",
+      "why_assessed": "To verify students can select the correct API for directory management tasks.",
+      "evidence_refs": [
+        "Mechanisms_and_formulas: Directory Removal",
+        "Factual_Summary: fs.rmdirSync is required for directory removal"
+      ],
+      "misconception_rationale": "Distractors include the file deletion method (unlinkSync) which is a common error when students conflate file and directory operations."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the primary security purpose of using 'Safe Buffers' in memory allocation?",
+      "option_a": "To increase the speed of data retrieval by pre-allocating large memory blocks.",
+      "option_b": "To ensure that allocated memory space is initialized to zeros, preventing information leakage from previous memory contents.",
+      "option_c": "To allow the buffer to automatically resize when more data is written than the allocated space.",
+      "option_d": "To encrypt the data stored in the buffer before it is written to the file system.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture defines Safe Buffers as memory allocations initialized to zeros to prevent residual data from previous operations from being exposed. Option A is incorrect because safe buffers are about security, not speed optimization. Option C is incorrect because buffers have a fixed size and do not automatically resize. Option D is incorrect because safe buffers do not perform encryption; they only initialize memory to zero.",
+      "target_concept": "Safe Buffers",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Concepts and Definitions",
+      "what_taught": "The definition and security benefit of zero-initialized memory buffers.",
+      "why_assessed": "To assess understanding of low-level memory security concepts relevant to handling sensitive data.",
+      "evidence_refs": [
+        "Concepts_and_definitions: Safe Buffers",
+        "Factual_Summary: safe buffers, where memory is initialized to zeros"
+      ],
+      "misconception_rationale": "Distractors reflect misconceptions about buffer functionality (resizing, encryption) and performance vs. security trade-offs."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "In a 60-byte buffer, if a name is written at index 0 and an email is written at index 20, what characterizes the memory space between the end of the name and the start of the email?",
+      "option_a": "It contains random garbage data from previous operations.",
+      "option_b": "It is filled with null characters (zero bytes) because the buffer was initialized to zeros.",
+      "option_c": "It is compressed to save memory space.",
+      "option_d": "It is automatically filled with the last character of the name to maintain continuity.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture explains that buffers are allocated with zero-initialized memory (safe buffers), so any space not explicitly written to remains as zero bytes. Option A is incorrect because safe buffers prevent garbage data from previous operations. Option C is incorrect because buffers do not compress data. Option D is incorrect because there is no automatic filling mechanism; the space remains zero.",
+      "target_concept": "Buffer Memory Layout",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Examples and Code Patterns",
+      "what_taught": "How data placement in a buffer affects the state of unused memory segments.",
+      "why_assessed": "To test the ability to visualize and analyze memory layout based on buffer initialization rules.",
+      "evidence_refs": [
+        "Examples_and_code_patterns: Buffer Memory Layout",
+        "Factual_Summary: resulting in a gap of zero bytes between the two fields"
+      ],
+      "misconception_rationale": "Distractors target misconceptions about uninitialized memory (garbage data) and automatic data manipulation (compression/filling)."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "When reading from a buffer, what is the effect of specifying only a starting index without an ending index?",
+      "option_a": "It reads only the single byte at the starting index.",
+      "option_b": "It reads from the starting index to the end of the buffer.",
+      "option_c": "It returns an error because both start and end indices are required.",
+      "option_d": "It reads from the beginning of the buffer to the starting index.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the lecture states that providing just a start index allows the system to read to the end of the buffer. Option A is incorrect because it reads a range, not a single byte. Option C is incorrect because the end index is optional. Option D is incorrect because the range is from the start index forward, not backward.",
+      "target_concept": "Buffer Reading",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Concepts and Definitions",
+      "what_taught": "The syntax and behavior of extracting substrings from buffers using start/end indices.",
+      "why_assessed": "To ensure students understand the default behavior of buffer reading functions when parameters are omitted.",
+      "evidence_refs": [
+        "Concepts_and_definitions: Buffer Reading",
+        "Examples_and_code_patterns: Buffer Substring Extraction"
+      ],
+      "misconception_rationale": "Distractors reflect errors in understanding index directionality and parameter requirements."
+    }
+  ]
+}

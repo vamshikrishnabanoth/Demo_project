@@ -1,0 +1,35 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_006_problem_solving_lcp",
+  "input_type": "PROBLEM_SOLVING",
+  "content_style": "PROCEDURAL",
+  "total_questions": 2,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Consider the following Java method that returns the longest common prefix of an array of strings. The method assumes every string has at least one character and accesses characters by index without any checks.\n\npublic String longestCommonPrefix(String[] strs) {\n    if (strs == null || strs.length == 0) return \"\";\n    for (int i = 0; i < strs[0].length(); i++) {\n        char c = strs[0].charAt(i);\n        for (int j = 1; j < strs.length; j++) {\n            if (i >= strs[j].length() || strs[j].charAt(i) != c) {\n                return strs[0].substring(0, i);\n            }\n        }\n    }\n    return strs[0];\n}\n\nWhich of the following statements correctly identifies the logical error that leads to an index\u2011out\u2011of\u2011bounds exception when the input contains an empty string?\n",
+      "option_a": "The method does not verify that the input array itself is non\u2011null.",
+      "option_b": "The method fails to check whether any string in the array is empty before accessing chars by index.",
+      "option_c": "The outer loop should iterate over the number of strings, not the length of the first string.",
+      "option_d": "The return statement should concatenate the prefix instead of using substring.",
+      "correct_option": "B",
+      "explanation": "The bug arises because the code accesses strs[j].charAt(i) without first confirming that strs[j] has a character at position i. If any string is empty, strs[j].length() is 0, making i >= strs[j].length() true only after the first iteration, but the charAt call occurs before the check, causing an IndexOutOfBoundsException. Option B pinpoints this missing empty\u2011string check. Option A is unrelated; the null\u2011array case is already handled. Option C misidentifies the loop purpose\u2014iterating over characters of the first string is correct. Option D describes an unrelated return\u2011value issue.",
+      "target_concept": "Handling empty strings in LCP implementations",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "A student analyzes the following pseudo\u2011code for finding the longest common prefix using a nested loop:\n\nfor i from 0 to length_of_first_string - 1:\n    for each string s in array:\n        if i == length(s) or s[i] != first_string[i]:\n            return prefix up to i\nreturn first_string\n\nThe student claims the algorithm runs in O(N) time, where N is the total number of characters across all strings. Which statement best identifies the flaw in this complexity analysis?\n",
+      "option_a": "The outer loop runs at most the length of the shortest string, so the overall complexity is O(N).",
+      "option_b": "The nested loops cause each character of each string to be examined at most once, yielding O(N) time.",
+      "option_c": "Because the inner loop iterates over all strings for each character position, the worst\u2011case time is O(N\u202f\u00d7\u202fM), where M is the average string length.",
+      "option_d": "The algorithm uses a binary search internally, so its complexity is O(log\u202fN).",
+      "correct_option": "C",
+      "explanation": "In the worst case (all strings share the full prefix), the outer loop iterates M times (average length) and the inner loop scans all N strings each time, giving O(N\u202f\u00d7\u202fM) operations. The student's O(N) claim ignores the repeated scanning of all strings for each character position. Option C correctly describes this inefficiency. Option A mistakenly assumes the loop bound is the shortest string, which still leads to O(N\u202f\u00d7\u202fM). Option B repeats the student's incorrect reasoning. Option D is irrelevant; no binary search is used.",
+      "target_concept": "Time\u2011complexity analysis of LCP algorithms",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S02"
+    }
+  ]
+}

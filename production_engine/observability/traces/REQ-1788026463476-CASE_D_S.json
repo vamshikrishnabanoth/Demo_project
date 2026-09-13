@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788026463476-CASE_D_S",
+  "timestamp": "2026-08-29T18:02:26Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": -0.1,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "OUTPUT_PREDICTION",
+    "PRACTICAL_APPLICATION",
+    "MISCONCEPTION_TARGETING"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 83395.12,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct concepts from the available pool. To ensure non-redundancy and pedagogical variety at an easy level, I mapped each target to a different assessment facet: Concept Understanding for the core definition of context switching, Code Interpretation for the collection lifecycle API, Output Prediction for the insertion mechanism, Practical Application for general CRUD operations, and Misconception Targeting for the specific syntax of database switching. This covers the core curriculum definitions and mechanisms without overlapping in cognitive demand or specific content focus."
+}

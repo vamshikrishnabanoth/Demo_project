@@ -1,0 +1,197 @@
+{
+  "input_id": "input_14_wt_dom_validation",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "A developer needs to iterate through only the element nodes (e.g., <div>, <span>) that are direct children of a specific container element, excluding any whitespace text nodes or comments. Which property should they access on the container element?",
+      "options": {
+        "A": "childNodes",
+        "B": "children",
+        "C": "firstChild",
+        "D": "querySelectorAll('*')"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B ('children') because the 'children' property returns an HTMLCollection containing only the element child nodes of a node, explicitly excluding text nodes and comments. Option A ('childNodes') is incorrect because it returns a NodeList containing all child nodes, including text nodes (often created by whitespace in HTML) and comment nodes. Option C ('firstChild') is incorrect because it returns only the single first child node, not a collection of all children. Option D ('querySelectorAll(\"*\")') is incorrect because it selects all descendant elements, not just immediate children, and returns a static NodeList rather than a live collection of direct children."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Which HTML5 attributes are specifically mentioned in the lecture as examples of native browser validation?",
+      "options": {
+        "A": "id, class, and style",
+        "B": "required, type=\"email\", and pattern",
+        "C": "href, src, and alt",
+        "D": "data-value, data-type, and data-check"
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly lists 'required, type=\"email\", and pattern' as examples of native HTML5 validation attributes. Option A lists general styling and identification attributes. Option C lists standard link and image attributes. Option D lists custom data attributes which are not native validation mechanisms."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "According to the lecture, what is the primary goal of client-side form validation?",
+      "options": {
+        "A": "To encrypt user data before it is sent to the server.",
+        "B": "To ensure data integrity by checking input values against constraints before submission.",
+        "C": "To store form data in local browser storage for offline access.",
+        "D": "To automatically fill in form fields based on user history."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary defines form validation as ensuring 'data integrity before submission' by checking inputs against constraints. Option A is incorrect as validation is not encryption. Option C is incorrect as validation does not inherently involve local storage. Option D is incorrect as auto-fill is a separate browser feature, not the core purpose of validation logic."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "Which standard HTML5 attribute should be added to an <input> element to ensure that the form cannot be submitted if the field is left empty?",
+      "options": {
+        "A": "validate",
+        "B": "mandatory",
+        "C": "required",
+        "D": "non-empty"
+      },
+      "correct_option": "C",
+      "explanation": "The correct option is C ('required') because it is the standard HTML5 constraint validation attribute that specifies that the input must be filled out before submitting the form. Option A ('validate') is incorrect because it is not a standard HTML5 attribute for this purpose. Option B ('mandatory') is incorrect because it is not a recognized HTML5 validation attribute. Option D ('non-empty') is incorrect because it is not a standard HTML5 attribute."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "In the JavaScript code pattern described for custom validation, which methods are used to trigger validation logic on form submission?",
+      "options": {
+        "A": "document.createElement and document.appendChild",
+        "B": "document.querySelector and addEventListener",
+        "C": "window.onload and window.onerror",
+        "D": "form.submit and form.reset"
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly mentions the 'use of document.querySelector and addEventListener to trigger validation on form submission.' Option A is for creating and adding new DOM nodes, not attaching event handlers. Option C refers to global window events, not specific form element interaction. Option D refers to form methods that execute submission or reset, rather than the event-driven checking logic described."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "In JavaScript DOM manipulation, which standard property is used to navigate from a specific node to its immediate parent node in the document hierarchy?",
+      "options": {
+        "A": "parent",
+        "B": "parentNode",
+        "C": "parentElement",
+        "D": "previousSibling"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B ('parentNode') because it is the standard DOM property that returns the parent node of the specified node. While 'parentElement' (Option C) is a valid property, it specifically returns the parent *element* (or null if the parent is not an element, such as the document), whereas 'parentNode' is the general term for navigating to the parent node in the tree structure. Option A ('parent') is incorrect because it is not a standard DOM property name. Option D ('previousSibling') is incorrect because it navigates to a sibling node, not a parent node."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "A developer uses the 'nextSibling' property to traverse the DOM. Which of the following statements accurately describes the potential return value of this property?",
+      "options": {
+        "A": "It always returns the next element node in the document.",
+        "B": "It returns the next node, which may be a text node, comment node, or element node.",
+        "C": "It returns the next element node, or null if no element follows.",
+        "D": "It returns a NodeList of all subsequent sibling elements."
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B because 'nextSibling' returns the next node in the tree, which can be any node type, including text nodes (often whitespace), comment nodes, or element nodes. Option A is incorrect because it ignores the presence of non-element nodes. Option C is incorrect because it describes the behavior of 'nextElementSibling', not 'nextSibling'. Option D is incorrect because 'nextSibling' returns a single node reference, not a collection of nodes."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "Which of the following best describes the primary purpose of DOM traversal methods?",
+      "options": {
+        "A": "To render the CSS styles of the document onto the screen.",
+        "B": "To access parent, child, and sibling nodes to dynamically modify page content and structure.",
+        "C": "To validate the syntax of the HTML code before it is loaded.",
+        "D": "To compress the HTML file size for faster network transmission."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary states that traversal involves 'accessing parent, child, and sibling nodes, allowing developers to dynamically modify the page content and structure.' Option A is incorrect as rendering is a separate browser engine task. Option C is incorrect because DOM traversal occurs after the document is loaded, not during syntax validation. Option D is incorrect as traversal is a runtime operation, not a compression technique."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "In JavaScript, which property or method on an input element is used to determine if the current value satisfies all validation constraints (such as type, pattern, and required)?",
+      "options": {
+        "A": "isValid",
+        "B": "checkValidity()",
+        "C": "validate()",
+        "D": "isFormValid"
+      },
+      "correct_option": "B",
+      "explanation": "The correct option is B ('checkValidity()') because it is the standard method that returns a boolean indicating whether the element's value satisfies all validation constraints. Option A ('isValid') is incorrect because it is not a standard DOM property or method. Option C ('validate()') is incorrect because it is not a standard method for checking validity (though 'reportValidity()' exists, 'validate()' does not). Option D ('isFormValid') is incorrect because it is not a standard property; validity is checked per-element, not as a single boolean property on the element itself."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "In the context of the Document Object Model (DOM), how is the structure of an HTML document fundamentally represented to the browser?",
+      "options": {
+        "A": "As a linear sequence of text strings parsed from top to bottom.",
+        "B": "As a tree-like representation where each HTML element is a node.",
+        "C": "As a flat array of objects indexed by their ID attributes.",
+        "D": "As a graph structure with no defined parent-child hierarchy."
+      },
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly defines the DOM as a 'tree-like representation of HTML elements, where each element is a node.' Option A is incorrect because the DOM is hierarchical, not linear. Option C is incorrect because the DOM is not a flat array; it maintains structural relationships. Option D is incorrect because the DOM specifically relies on a parent-child hierarchy, unlike a general graph."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "DOM Tree Structure",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "DOM Traversal Purpose",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "Client-Side Form Validation",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "HTML5 Validation Attributes",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "JavaScript Event-Driven Validation",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q_S01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "DOM Tree Traversal: Accessing Element Children",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q_S02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "DOM Tree Traversal: Parent Navigation",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q_S03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "DOM Tree Traversal: Sibling Navigation",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q_S04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "Form Validation: Required Fields",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q_S05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_14_wt_dom_validation",
+      "target_concept": "Form Validation: JavaScript Validity Check",
+      "cognitive_level": "REMEMBER"
+    }
+  }
+}

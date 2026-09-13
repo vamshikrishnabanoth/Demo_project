@@ -1,0 +1,82 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Aggregation Pipeline Fundamentals",
+    "subtopics": [
+      "Pipeline stages sequencing",
+      "Document flow through stages",
+      "Stage input and output formats"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Aggregation Operators and Stages",
+    "subtopics": [
+      "$match filtering",
+      "$group aggregation",
+      "$lookup joins",
+      "$project reshaping",
+      "$sort ordering",
+      "$limit result size",
+      "$unwind array deconstruction",
+      "$addFields computed fields",
+      "$facet multi\u2011pipeline branching",
+      "$bucket bucket aggregation",
+      "$bucketAuto automatic bucketing",
+      "$sortByCount count sorting",
+      "$geoNear geospatial proximity",
+      "$graphLookup recursive lookup",
+      "$out write results",
+      "$merge upsert behavior"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Performance Tuning for Aggregations",
+    "subtopics": [
+      "Index utilization in $match",
+      "Pipeline optimization order",
+      "Explain plan analysis",
+      "Memory limits and allowDiskUse",
+      "Sharding considerations"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "E\u2011commerce Data Modeling in MongoDB",
+    "subtopics": [
+      "Orders collection schema",
+      "Products collection schema",
+      "Users collection schema",
+      "Referencing vs embedding",
+      "Data relationships for aggregation"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Business Metrics Derived from Aggregations",
+    "subtopics": [
+      "Total sales per period",
+      "Average order value",
+      "Top\u2011selling products",
+      "User purchase frequency",
+      "Revenue by category",
+      "Customer segmentation"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  }
+]

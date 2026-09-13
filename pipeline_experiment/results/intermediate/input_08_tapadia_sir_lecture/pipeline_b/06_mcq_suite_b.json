@@ -1,0 +1,117 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "Consider the following Java code snippet implementing the horizontal scanning approach for the Longest Common Prefix problem:\n\n```java\npublic String longestCommonPrefix(String[] strs) {\n    if (strs == null || strs.length == 0) return \"\";\n    String prefix = strs[0];\n    for (int i = 1; i < strs.length; i++) {\n        while (strs[i].indexOf(prefix) != 0) {\n            prefix = prefix.substring(0, prefix.length() - 1);\n            if (prefix.isEmpty()) return \"\";\n        }\n    }\n    return prefix;\n}\n```\n\nIf the input array is `[\"flower\", \"flow\", \"flight\"]`, what is the primary logical flaw or potential inefficiency in this specific implementation compared to the standard character-by-character comparison method, and what is the correct output?",
+      "option_a": "The code fails to handle empty strings; the correct output is \"fl\".",
+      "option_b": "The code uses `indexOf` which is O(N) per check, making the inner loop potentially O(N^2) in worst-case scenarios, but it correctly returns \"fl\".",
+      "option_c": "The code incorrectly assumes the first string is always the prefix; the correct output is \"f\".",
+      "option_d": "The code causes an IndexOutOfBoundsException when `prefix` becomes empty; the correct output is \"\".",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the provided code uses `strs[i].indexOf(prefix) != 0` inside a while loop. While this logic is functionally correct for finding the prefix, `indexOf` scans the string, and `substring` creates a new string object. In the worst case (e.g., strings with long common prefixes that fail at the last character), this can be less efficient than a simple character-by-character comparison loop which is O(M) per string. The output for [\"flower\", \"flow\", \"flight\"] is indeed \"fl\" because 'f' and 'l' match, but 'o' in 'flower'/'flow' does not match 'i' in 'flight'. Option A is incorrect because the code handles empty prefixes via `if (prefix.isEmpty()) return \"\"`. Option C is incorrect because the code does not assume the first string is the final prefix; it shrinks it. Option D is incorrect because the `isEmpty` check prevents `substring` from being called on an empty string in a way that would throw an exception (substring(0,0) is valid, but the loop exits).",
+      "target_concept": "Longest Common Prefix Algorithm - Horizontal Scanning Efficiency",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Horizontal scanning algorithm using string manipulation vs character comparison.",
+      "why_assessed": "To assess the ability to analyze code efficiency and correctness in edge cases.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C04",
+        "E_C05",
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors target the misconception that the first string is always the answer or that the code crashes on empty strings, which are common student errors when not carefully tracing the loop conditions."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In the vertical scanning approach for the Longest Common Prefix, we iterate through the characters of the first string (index `i`) and compare it with the character at the same index in all other strings. Given the array `[\"dog\", \"racecar\", \"car\"]`, at which index `i` does the algorithm terminate, and what is the resulting prefix?",
+      "option_a": "Index 0; Prefix \"\"",
+      "option_b": "Index 1; Prefix \"d\"",
+      "option_c": "Index 2; Prefix \"do\"",
+      "option_d": "Index 3; Prefix \"dog\"",
+      "correct_option": "A",
+      "explanation": "Option A is correct. Vertical scanning starts at index 0 of the first string ('d'). It compares 'd' with the character at index 0 of the second string ('r'). Since 'd' != 'r', the loop terminates immediately. The prefix length is 0, so the result is an empty string \"\". Option B is incorrect because the mismatch happens at the very first character, so no prefix is formed. Option C and D are incorrect because the algorithm stops at the first mismatch, which occurs at index 0.",
+      "target_concept": "Longest Common Prefix Algorithm - Vertical Scanning Termination",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02",
+      "what_taught": "Step-by-step execution of vertical scanning and termination conditions.",
+      "why_assessed": "To verify understanding of how the algorithm handles immediate mismatches and index boundaries.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C04",
+        "E_C05",
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that the algorithm might continue past a mismatch or that the index of the mismatch equals the prefix length."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "In Java, consider the following code:\n\n```java\nString s = new String(\"Hello\");\ns = null;\n```\n\nWhich of the following statements accurately describes the memory management behavior regarding the object originally referenced by `s`?",
+      "option_a": "The memory occupied by the \"Hello\" string is immediately freed by the JVM at the moment `s` is set to null.",
+      "option_b": "The object becomes eligible for garbage collection, but the actual reclamation of memory is non-deterministic and managed by the JVM's garbage collector.",
+      "option_c": "The object remains in memory permanently because the string literal \"Hello\" is interned and cannot be garbage collected.",
+      "option_d": "The memory is freed only when the program terminates, as Java does not have automatic memory management for local variables.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. Setting a reference to `null` removes the strong reference to the object, making it eligible for garbage collection. However, the JVM does not guarantee *when* the garbage collector will run. It is a heuristic process. Option A is incorrect because garbage collection is not synchronous with the assignment to null. Option C is incorrect because while string literals are interned, the `new String(\"Hello\")` creates a new object on the heap (unless optimized away by the compiler, but conceptually it's a distinct object reference). Even if interned, the reference `s` pointing to it is what matters for eligibility; if no other references exist, it's eligible. More importantly, the statement implies it *cannot* be GC'd, which is false for the specific object instance if it's the only reference. Option D is incorrect because Java has automatic memory management (GC) for heap objects.",
+      "target_concept": "Java Memory Management - Garbage Collection Eligibility",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Conditions for garbage collection eligibility and non-deterministic nature of GC.",
+      "why_assessed": "To clarify the difference between eligibility for GC and actual memory reclamation.",
+      "evidence_refs": [
+        "E_C07",
+        "E_C08"
+      ],
+      "misconception_rationale": "Distractors target the common misconception that setting a variable to null immediately frees memory or that GC is deterministic."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "When applying Binary Search to find the Longest Common Prefix, we search over the possible lengths of the prefix (from 0 to the length of the shortest string). What specific property of the predicate function `hasCommonPrefix(length)` allows us to use binary search instead of linear scanning?",
+      "option_a": "The function is strictly increasing with respect to the length of the prefix.",
+      "option_b": "The function is monotonic: if a prefix of length `k` exists, then all prefixes of length `< k` also exist.",
+      "option_c": "The function is periodic, repeating its true/false values every `N` characters.",
+      "option_d": "The function is random, but the average case allows for O(log N) performance.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. Binary search requires a monotonic property. In the context of LCP, if the first `k` characters are common to all strings, then the first `k-1` characters must also be common. This creates a sequence of True values followed by False values (or all True/False), which allows binary search to find the boundary. Option A is incorrect because the function is not strictly increasing; it's a boolean predicate that is True for valid lengths and False for invalid ones. Option C is incorrect as there is no periodicity. Option D is incorrect as the function is deterministic, not random.",
+      "target_concept": "Binary Search on Answer Space - Monotonicity",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S04",
+      "what_taught": "The monotonic property required for binary search on the answer space.",
+      "why_assessed": "To assess the analytical understanding of why binary search is applicable to this problem.",
+      "evidence_refs": [
+        "E_C10",
+        "E_C11",
+        "E_C12"
+      ],
+      "misconception_rationale": "Distractors reflect misconceptions about the nature of the predicate function, such as confusing it with a numerical increasing function or assuming randomness."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "In the 'Koko Eating Bananas' problem, we use binary search on the eating speed `K`. Given piles `[31, 11, 23, 11, 11, 11, 11, 11, 11, 11]` and `H = 100`, what should be the upper bound (`high`) for the binary search range to ensure we find the minimum valid speed efficiently?",
+      "option_a": "The sum of all bananas in the piles.",
+      "option_b": "The maximum number of bananas in any single pile.",
+      "option_c": "The number of piles.",
+      "option_d": "The total number of hours `H`.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. The minimum speed Koko needs is at least 1, and the maximum speed she needs is the size of the largest pile. If she eats at the speed of the largest pile, she can finish that pile in 1 hour, and all other smaller piles in 1 hour each. Since the number of piles is less than or equal to H (in this case 10 piles <= 100 hours), this speed is always sufficient. Therefore, the upper bound is `max(piles)`. Option A is incorrect because eating at the sum of all bananas per hour is far more than necessary. Option C is incorrect because the number of piles is not a speed. Option D is incorrect because H is the time limit, not a speed.",
+      "target_concept": "Binary Search on Answer Space - Boundary Definition",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Defining the correct search boundaries for binary search on the answer space.",
+      "why_assessed": "To verify the ability to correctly set the upper bound in a feasibility-based binary search problem.",
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception of setting the upper bound to the total quantity or the time limit, rather than the maximum individual unit requirement."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Binary Tree Fundamentals and Node Classification",
+    "subtopics": [
+      "Definition of a tree and root node",
+      "Internal nodes vs. leaf nodes",
+      "Left and right children",
+      "Degree of a node",
+      "Depth and height of a tree"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02",
+      "C08"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Types of Binary Trees",
+    "subtopics": [
+      "Full binary tree",
+      "Perfect binary tree",
+      "Complete binary tree",
+      "Skewed tree",
+      "Balanced binary tree"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C04",
+      "C07",
+      "C10",
+      "C14"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Mathematical Properties and Formulas of Binary Trees",
+    "subtopics": [
+      "Maximum nodes at a specific level (2^k)",
+      "Total nodes in a perfect tree (2^L - 1)",
+      "Relationship between nodes and edges (n-1)",
+      "Calculating height from node count and vice versa"
+    ],
+    "associated_chunk_ids": [
+      "C06",
+      "C11",
+      "C12",
+      "C13"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Tree Construction and Structural Analysis",
+    "subtopics": [
+      "Identifying subtrees",
+      "Calculating subtree height for balance verification",
+      "Constructing trees level by level",
+      "Distinguishing between complete and balanced structures"
+    ],
+    "associated_chunk_ids": [
+      "C05",
+      "C09",
+      "C14",
+      "C15"
+    ]
+  }
+]

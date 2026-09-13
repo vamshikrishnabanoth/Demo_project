@@ -1,0 +1,101 @@
+{
+  "blueprint_id": "BP_input_08_tapadia_sir_lecture",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Longest Common Prefix (LCP) Algorithm",
+      "salience_score": 0.7,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN",
+        "DEBUG"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Strings",
+        "Arrays",
+        "Loops",
+        "Basic Algorithms"
+      ],
+      "evidence_refs": [
+        "E_C09",
+        "E_C10",
+        "E_C11",
+        "E_C12",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "String Scanning and Character Comparison Optimization",
+      "salience_score": 0.601,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN",
+        "DEBUG"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Strings",
+        "Character Comparison",
+        "Loop Optimization"
+      ],
+      "evidence_refs": [
+        "E_C02",
+        "E_C04",
+        "E_C06",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Java Memory Model and Garbage Collection",
+      "salience_score": 0.301,
+      "instructional_acts": [
+        "DEBUG",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CODE_DEBUGGING",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Java Basics",
+        "Memory Allocation",
+        "Object References",
+        "Garbage Collection"
+      ],
+      "evidence_refs": [
+        "E_C07",
+        "E_C08"
+      ],
+      "teacher_specificity": "HIGH"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Code Optimization and Refactoring Practices",
+      "salience_score": 0.451,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Basic Coding",
+        "OOP",
+        "Design Patterns",
+        "Code Readability"
+      ],
+      "evidence_refs": [
+        "E_C03",
+        "E_C05"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

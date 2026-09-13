@@ -1,0 +1,76 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 0.0,
+    "source_answerability_percentage": 0.0,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.124,
+    "diversity_score": 0.876,
+    "genericness_index": 1.0,
+    "hallucination_rate": 1.0,
+    "average_bloom_level": 1.8,
+    "bloom_distribution": {
+      "REMEMBER": 0.6,
+      "UNDERSTAND": 0.2,
+      "ANALYZE": 0.2
+    },
+    "specificity_score": 1.44
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 0.0,
+    "source_answerability_percentage": 0.0,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.039,
+    "diversity_score": 0.961,
+    "genericness_index": 1.0,
+    "hallucination_rate": 1.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "REMEMBER": 0.4,
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.4
+    },
+    "specificity_score": 1.48
+  },
+  "metrics_unified_pipeline_c": {
+    "source_grounding_percentage": 0.0,
+    "source_answerability_percentage": 0.0,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.095,
+    "diversity_score": 0.905,
+    "genericness_index": 1.0,
+    "hallucination_rate": 1.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "REMEMBER": 0.4,
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.4
+    },
+    "specificity_score": 1.45
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_19_new_full_lecture",
+    "topics_grounded_percentage": 0.0,
+    "salience_alignment_score": 3.0,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 0.0,
+    "overall_validity_percentage": 35.0
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.162,
+    "composite_score_blueprint": 0.174,
+    "quality_delta": 0.012,
+    "rationale": "Composite quality difference (|delta|=0.012) is within the indifference threshold (0.05)."
+  },
+  "three_way_decision": {
+    "winner": "UNIFIED_PIPELINE_C",
+    "q_summary_a": 0.162,
+    "q_blueprint_b": 0.174,
+    "q_unified_c": 0.172,
+    "delta_c_minus_a": 0.01,
+    "delta_c_minus_b": -0.002,
+    "delta_b_minus_a": 0.012,
+    "rationale": "Pipeline C (WHAT + WHY) produced optimal overall quality (Q_C=0.172, Bloom=2.0) combining technical grounding with pedagogical depth."
+  }
+}

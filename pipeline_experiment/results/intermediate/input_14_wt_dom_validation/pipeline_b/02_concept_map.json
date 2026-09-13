@@ -1,0 +1,24 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "DOM Tree Traversal",
+    "subtopics": [
+      "Node Hierarchy",
+      "Parent-Child Relationships",
+      "Siblings and Adjacent Nodes",
+      "Traversal Algorithms (Pre-order, In-order, Post-order)"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Form Validation",
+    "subtopics": [
+      "Client-Side Validation",
+      "HTML5 Validation Attributes",
+      "JavaScript Validation Logic",
+      "Error Handling and User Feedback"
+    ],
+    "associated_chunk_ids": []
+  }
+]

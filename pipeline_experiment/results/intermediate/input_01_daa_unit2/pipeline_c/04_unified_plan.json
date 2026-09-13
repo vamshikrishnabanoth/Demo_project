@@ -1,0 +1,83 @@
+{
+  "input_id": "input_01_daa_unit2",
+  "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+  "total_requested_questions": 5,
+  "total_available_targets": 3,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Binary Search Algorithm",
+      "what_taught_summary": "Binary search operates on sorted arrays by recursively or iteratively halving the search interval using the midpoint formula mid = low + (high - low) / 2, resulting in a time complexity of O(log n) defined by the recurrence T(n) = T(n/2) + O(1).",
+      "why_assessed_pedagogy": "This target assesses the student's conceptual understanding of how the divide-and-conquer strategy reduces problem size and why the specific midpoint calculation is necessary to prevent integer overflow while maintaining logarithmic efficiency.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming binary search works on unsorted arrays by simply comparing the middle element.",
+        "Calculating the midpoint as (low + high) / 2 without recognizing the risk of integer overflow for large indices.",
+        "Believing the time complexity is O(n) because the algorithm traverses the array, ignoring the halving of the search space."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "source_timestamps_or_slides": [
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]",
+        "[540.0s - 720.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Median of Two Sorted Arrays",
+      "what_taught_summary": "The median of two sorted arrays is determined by finding a partition point where the left half contains the smaller elements and the right half contains the larger elements, calculating the median as (max(left_half) + min(right_half)) / 2.0 for even lengths or max(left_half) for odd lengths.",
+      "why_assessed_pedagogy": "This target evaluates the student's ability to apply binary search logic to a complex partitioning problem, demonstrating how to efficiently locate the median without merging the arrays, which would result in O(n) complexity.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Merging the two arrays into a single sorted array and then finding the median, which is inefficient and defeats the purpose of the divide-and-conquer approach.",
+        "Incorrectly identifying the partition boundaries, leading to a median calculation that includes elements from the wrong half.",
+        "Assuming the median is always the average of the two middle elements of the individual arrays, ignoring the combined sorted order."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10",
+        "E_C11",
+        "E_C12"
+      ],
+      "source_timestamps_or_slides": [
+        "[1260.0s - 1440.0s]",
+        "[1440.0s - 1620.0s]",
+        "[1620.0s - 1800.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Fixed Point Problem",
+      "what_taught_summary": "The fixed point problem involves finding an index i in a sorted array where A[i] = i by applying binary search logic: if arr[mid] < mid, search the right half; if arr[mid] > mid, search the left half; if equal, return mid.",
+      "why_assessed_pedagogy": "This target assesses the student's ability to adapt standard binary search conditions to a specific property (index-value equality), demonstrating the flexibility of the divide-and-conquer paradigm in solving non-trivial search problems.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Searching for the value equal to the index in an unsorted manner or using linear search, ignoring the sorted property that enables binary search.",
+        "Incorrectly adjusting the search bounds, such as searching the left half when arr[mid] < mid, which contradicts the monotonic nature of the difference A[i] - i.",
+        "Assuming a fixed point always exists in any sorted array, failing to handle the case where no such index is found."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C08",
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[1260.0s - 1440.0s]",
+        "[2160.0s - 2340.0s]",
+        "[2340.0s - 2520.0s]"
+      ]
+    }
+  ]
+}

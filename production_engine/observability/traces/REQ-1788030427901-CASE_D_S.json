@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788030427901-CASE_D_S",
+  "timestamp": "2026-08-29T19:08:01Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": -0.1,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "OUTPUT_PREDICTION",
+    "ERROR_DIAGNOSIS",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 53636.3,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct concepts from the available pool. To ensure non-redundancy and pedagogical variety, each target focuses on a different core mechanism (Context Switching, Collection Creation, Document Insertion, Collection Dropping, and General CRUD) and utilizes a distinct assessment facet (Concept Understanding, Code Interpretation, Output Prediction, Error Diagnosis, and Practical Application). This ensures broad coverage of the 'Database Context Switching', 'Collection Management', and 'CRUD Operations' modules without repeating the same cognitive task type."
+}

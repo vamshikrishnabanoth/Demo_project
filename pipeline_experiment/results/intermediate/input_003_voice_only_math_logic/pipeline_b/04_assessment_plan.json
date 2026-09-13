@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_003_voice_only_math_logic",
+  "input_id": "input_003_voice_only_math_logic",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Least Common Multiple (LCM) Computation",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Greatest Common Divisor (GCD) via Euclidean Algorithm",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Implicit Operand Swapping When A < B",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Integer Overflow Prevention in Multiplication/Division",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    }
+  ]
+}

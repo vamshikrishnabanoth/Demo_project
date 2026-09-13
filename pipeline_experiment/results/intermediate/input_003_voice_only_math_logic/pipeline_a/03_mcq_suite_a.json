@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_003_voice_only_math_logic",
+  "input_type": "VOICE_ONLY",
+  "content_style": "MATHEMATICAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which formula correctly computes the Least Common Multiple (LCM) of two positive integers A and B using their Greatest Common Divisor (GCD)?",
+      "option_a": "(A * B) / GCD(A,B)",
+      "option_b": "(A + B) / GCD(A,B)",
+      "option_c": "(A * B) * GCD(A,B)",
+      "option_d": "GCD(A,B) / (A * B)",
+      "correct_option": "A",
+      "explanation": "The relationship LCM(A,B) * GCD(A,B) = A * B can be rearranged to LCM(A,B) = (A * B) / GCD(A,B). Option A reflects this rearranged formula. Option B adds instead of multiplies, which is unrelated. Option C multiplies by GCD rather than dividing, giving a value far larger than the true LCM. Option D inverts the relationship, producing a fraction, not an integer LCM.",
+      "target_concept": "LCM formula using GCD",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Using the Euclidean algorithm, what is the GCD of 48 and 18?",
+      "option_a": "6",
+      "option_b": "12",
+      "option_c": "18",
+      "option_d": "24",
+      "correct_option": "A",
+      "explanation": "Step 1: 48 % 18 = 12 \u2192 (A,B) = (18,12). Step 2: 18 % 12 = 6 \u2192 (A,B) = (12,6). Step 3: 12 % 6 = 0 \u2192 algorithm stops, GCD = 6. Therefore option A is correct. Options B, C, and D are larger than the actual GCD and result from common misconceptions such as confusing the remainder with the GCD or assuming the smaller number is the GCD.",
+      "target_concept": "Euclidean algorithm for GCD",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Which computation order avoids integer overflow when calculating LCM of large integers A and B?",
+      "option_a": "(A / GCD(A,B)) * B",
+      "option_b": "(A * B) / GCD(A,B)",
+      "option_c": "(A + B) / GCD(A,B)",
+      "option_d": "GCD(A,B) * (A + B)",
+      "correct_option": "A",
+      "explanation": "Performing the division first reduces the magnitude of the intermediate product, preventing overflow. Option A does exactly this. Option B multiplies first, which can exceed the range of fixed\u2011size integer types. Options C and D are unrelated to the correct LCM formula and would not yield the LCM.",
+      "target_concept": "Overflow\u2011safe LCM computation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "What is the asymptotic time complexity of the Euclidean algorithm for finding the GCD of two integers A and B?",
+      "option_a": "Linear in min(A,B)",
+      "option_b": "Logarithmic in min(A,B)",
+      "option_c": "Quadratic in max(A,B)",
+      "option_d": "Constant time",
+      "correct_option": "B",
+      "explanation": "The Euclidean algorithm runs in O(log\u202fmin(A,B)) time because each modulo step reduces the size of the numbers roughly by a factor related to the golden ratio. Option B correctly states this logarithmic behavior. Option A overestimates the cost, Option C suggests a much higher cost, and Option D incorrectly claims the algorithm finishes in constant time regardless of input size.",
+      "target_concept": "Time complexity of Euclidean algorithm",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "When applying the Euclidean algorithm to A = 12 and B = 18 (where A < B), what occurs after the first iteration?",
+      "option_a": "The values are implicitly swapped, so the next pair is (18,12).",
+      "option_b": "The algorithm terminates because the remainder is zero.",
+      "option_c": "The GCD is immediately identified as A.",
+      "option_d": "A division\u2011by\u2011zero error occurs.",
+      "correct_option": "A",
+      "explanation": "The first modulo operation computes 12 % 18 = 12, leaving the pair as (18,12); this effectively swaps the values without an explicit swap statement. Option A describes this behavior. Option B is false because the remainder is not zero. Option C is incorrect; the GCD is not known after one step. Option D is impossible because B is non\u2011zero, so no division\u2011by\u2011zero occurs.",
+      "target_concept": "Implicit swapping in Euclidean algorithm when A < B",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

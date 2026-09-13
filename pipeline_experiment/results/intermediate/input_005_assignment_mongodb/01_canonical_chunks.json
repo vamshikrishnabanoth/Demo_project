@@ -1,0 +1,151 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "ASSIGNMENT",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 5.0
+      },
+      {
+        "start": 5.0,
+        "end": 10.0
+      },
+      {
+        "start": 10.0,
+        "end": 15.0
+      },
+      {
+        "start": 15.0,
+        "end": 20.0
+      },
+      {
+        "start": 20.0,
+        "end": 25.0
+      },
+      {
+        "start": 25.0,
+        "end": 30.0
+      },
+      {
+        "start": 30.0,
+        "end": 35.0
+      },
+      {
+        "start": 35.0,
+        "end": 40.0
+      },
+      {
+        "start": 40.0,
+        "end": 45.0
+      },
+      {
+        "start": 45.0,
+        "end": 50.0
+      },
+      {
+        "start": 50.0,
+        "end": 55.0
+      },
+      {
+        "start": 55.0,
+        "end": 60.0
+      },
+      {
+        "start": 60.0,
+        "end": 65.0
+      },
+      {
+        "start": 65.0,
+        "end": 70.0
+      },
+      {
+        "start": 70.0,
+        "end": 75.0
+      }
+    ],
+    "text": "# Assignment: MongoDB Multi-Stage Aggregation Pipeline ## Problem Statement Given an e-commerce database with collections `orders`, `products`, and `users`, construct multi-stage aggregation queries to produce business metrics. ### Stage Constraints and Operators 1. `$match`: Filter completed orders with status `DELIVERED` placed within year 2024. 2. `$unwind`: Deconstruct the `items` array to process individual product records. 3. `$lookup`: Join with `products` collection matching `items.product_id` to `_id` to fetch product categories and unit costs. 4. `$group`: Group by `product.category` and compute: - `total_revenue`: `$sum: { $multiply: [\"$items.quantity\", \"$items.unit_price\"] }` - `average_item_margin`: `$avg: { $subtract: [\"$items.unit_price\", \"$products.cost\"] }` 5. `$sort`: Sort descending by `total_revenue`. 6. `$project`: Restructure output suppressing `_id` and formatting revenue to 2 decimal places. ### Important Anti-Patterns to Avoid - Never place `$unwind` before `$match` because unwinding the entire collection before filtering explodes memory usage. - Ensure indexing on fields utilized in the initial `$match` stage for pipeline optimization.",
+    "material_refs": [],
+    "topic_candidates": [
+      "aggregation",
+      "pipeline"
+    ],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 5.0
+        },
+        {
+          "start": 5.0,
+          "end": 10.0
+        },
+        {
+          "start": 10.0,
+          "end": 15.0
+        },
+        {
+          "start": 15.0,
+          "end": 20.0
+        },
+        {
+          "start": 20.0,
+          "end": 25.0
+        },
+        {
+          "start": 25.0,
+          "end": 30.0
+        },
+        {
+          "start": 30.0,
+          "end": 35.0
+        },
+        {
+          "start": 35.0,
+          "end": 40.0
+        },
+        {
+          "start": 40.0,
+          "end": 45.0
+        },
+        {
+          "start": 45.0,
+          "end": 50.0
+        },
+        {
+          "start": 50.0,
+          "end": 55.0
+        },
+        {
+          "start": 55.0,
+          "end": 60.0
+        },
+        {
+          "start": 60.0,
+          "end": 65.0
+        },
+        {
+          "start": 65.0,
+          "end": 70.0
+        },
+        {
+          "start": 70.0,
+          "end": 75.0
+        }
+      ],
+      "dwell_time": 75.0,
+      "repetition_count": 4,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

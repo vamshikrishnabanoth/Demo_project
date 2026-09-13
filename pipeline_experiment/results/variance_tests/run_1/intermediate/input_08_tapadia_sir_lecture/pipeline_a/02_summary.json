@@ -1,0 +1,21 @@
+{
+  "input_id": "001",
+  "title": "Algorithmic Problem Solving: Longest Common Prefix String Scanning",
+  "concepts_and_definitions": [
+    "Longest Common Prefix (LCP) \u2013 the longest string that is a prefix of all strings in a set",
+    "Binary Search \u2013 divide\u2011and\u2011conquer technique to locate a target value within a sorted range",
+    "Hash Set \u2013 data structure for O(1) average\u2011time membership checks, used to count character occurrences",
+    "Time Complexity \u2013 Big\u2011O notation describing algorithm efficiency, e.g., O(n\u00b7m) for LCP and O(n\u00b7log\u202fM) for banana\u2011eating",
+    "Greedy Strategy \u2013 choosing the locally optimal speed in the banana\u2011eating problem to minimize hours"
+  ],
+  "mechanisms_and_formulas": [
+    "Binary Search Update Rules: if prefix is common, low = mid+1; else high = mid-1",
+    "Banana\u2011Eating Time Formula: hours = \u03a3 ceil(pile_i / speed)",
+    "LCP Character Comparison Loop: for each position j, compare s[0][j] with s[i][j] for all i"
+  ],
+  "examples_and_code_patterns": [
+    "Java method for LCP:\nString longestCommonPrefix(String[] strs){\n if(strs==null||strs.length==0) return \"\";\n String prefix=strs[0];\n for(int i=1;i<strs.length;i++){\n   while(strs[i].indexOf(prefix)!=0) prefix=prefix.substring(0,prefix.length()-1);\n }\n return prefix;}\n",
+    "Java binary search for banana\u2011eating speed:\nint minEatingSpeed(int[] piles,int h){\n int low=1,high=*max(piles),ans=high;\n while(low<=high){\n   int mid=(low+high)/2;\n   if(canFinish(piles,mid,h)){ans=mid;high=mid-1;}else{low=mid+1;}\n }\n return ans;}\n"
+  ],
+  "factual_summary_text": "The session revisited two classic algorithmic challenges: finding the longest common prefix (LCP) among a list of strings and determining the minimum eating speed for a banana\u2011eating problem. For the LCP, the instructor emphasized a straightforward character\u2011by\u2011character comparison across all strings, breaking out of the loop when a mismatch occurs and returning the accumulated prefix. The discussion highlighted the importance of early termination and the use of a hash set to count character occurrences when checking for common prefixes.\n\nThe banana\u2011eating problem was approached with a binary search over possible speeds. The lecturer explained how to compute the total hours required for a given speed using the formula \u2211 ceil(pile_i / speed) and how to adjust the search bounds based on whether the computed time exceeds the allowed hours. Throughout the lecture, code snippets were examined, memory allocation in Java was clarified (reference vs. garbage collection), and students were prompted to identify potential improvements in the provided implementations.\n\nOverall, the class combined theoretical explanations of binary search and greedy strategies with practical code reviews, reinforcing concepts such as time complexity analysis, loop invariants, and efficient data structure usage."
+}

@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_11_ashamam_vae_colab",
+  "input_id": "input_11_ashamam_vae_colab",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Variational Autoencoder (VAE) Architecture",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Latent Sampling Techniques",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "VAE Loss Functions",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Fashion-MNIST Dataset Application",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Model Training and Evaluation",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

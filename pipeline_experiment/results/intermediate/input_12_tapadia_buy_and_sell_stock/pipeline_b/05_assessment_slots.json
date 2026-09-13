@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Problem Definition and Constraints",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_INTRODUCTION",
+    "assessment_goal": "Identify the specific constraints of the 'Best Time to Buy and Sell Stock' problem, specifically distinguishing between the single-transaction limit and the infinite-transaction allowance.",
+    "misconception_target": "Confusing the problem constraints by assuming a fixed number of transactions (e.g., k=2) applies to all variants, or misinterpreting 'infinite' as 'unlimited days' rather than 'unlimited trades'.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Brute Force Approach",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "ALGORITHMIC_ANALYSIS",
+    "assessment_goal": "Explain the time complexity of the brute force approach for finding the maximum profit by evaluating all possible buy-sell pairs.",
+    "misconception_target": "Incorrectly calculating the time complexity as O(n) due to overlooking the nested loop structure, or O(n log n) by confusing it with sorting-based solutions.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Optimized Single Transaction Solution",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Apply the single-pass optimization technique to determine the maximum profit by tracking the minimum price seen so far and calculating the potential profit at each step.",
+    "misconception_target": "Failing to update the minimum price correctly (e.g., only checking the first element) or calculating profit as (current_price - previous_price) instead of (current_price - global_min_so_far).",
+    "evidence_refs": [],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Infinite Transactions Strategy",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Analyze why summing all positive daily differences is equivalent to the maximum profit for infinite transactions, comparing it against the single-transaction logic.",
+    "misconception_target": "Believing that one must hold the stock for the entire duration of an upward trend rather than recognizing that buying and selling on consecutive days yields the same cumulative profit as holding.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Dynamic Programming Generalization",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "ALGORITHMIC_GENERALIZATION",
+    "assessment_goal": "Identify the correct state transition equation for the dynamic programming solution that generalizes the problem to k transactions.",
+    "misconception_target": "Defining the DP state incorrectly (e.g., dp[i][j] as profit on day i with j transactions remaining vs. completed) or missing the dependency on the previous day's state in the recurrence relation.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

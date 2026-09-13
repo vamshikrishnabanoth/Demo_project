@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "Consider the following Java method that attempts to find the longest common prefix (LCP) among an array of strings. The current implementation incorrectly omits the last common character when a mismatch is found. Which single change will fix the off\u2011by\u2011one error so that the method returns the correct LCP?",
+      "option_a": "Change the loop condition to `j <= prefix.length() && j <= strs[i].length()`.",
+      "option_b": "Replace `prefix = prefix.substring(0, j-1);` with `prefix = prefix.substring(0, j);`.",
+      "option_c": "Increment `j` after the loop instead of inside the loop.",
+      "option_d": "Initialize `prefix` with the first string's first character only.",
+      "correct_option": "B",
+      "explanation": "The bug is caused by subtracting one from the index when updating the prefix, which removes the last matched character. Changing the substring call to use `j` instead of `j-1` preserves all matched characters. Option A incorrectly extends the loop bounds and would cause an IndexOutOfBoundsException. Option C changes the logic of the loop but still leaves the off\u2011by\u2011one error. Option D changes the initial prefix and does not address the bug.",
+      "target_concept": "Longest Common Prefix",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "The following code scans each string in the array for every character of the current prefix, resulting in O(n*m) time. Which modification will reduce the time complexity to O(n) by allowing early exit when a mismatch is found?",
+      "option_a": "Move the `prefix = prefix.substring(0, j);` line outside the inner loop.",
+      "option_b": "Add a `break;` statement immediately after updating the prefix inside the inner loop.",
+      "option_c": "Replace the inner loop with a recursive call.",
+      "option_d": "Remove the outer loop entirely.",
+      "correct_option": "B",
+      "explanation": "Adding a `break;` after updating the prefix stops the inner loop as soon as a mismatch is detected, preventing unnecessary comparisons and reducing the overall complexity to O(n). Option A keeps the inner loop running to completion. Option C introduces unnecessary recursion. Option D eliminates the algorithm entirely.",
+      "target_concept": "String Scanning Optimization",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "In a multi\u2011threaded Java program, thread A computes the longest common prefix and stores it in a local variable `result`. Thread B later reads `result` to print it. According to the Java Memory Model, which statement is true about the visibility of `result` between the threads?",
+      "option_a": "`result` is automatically visible to thread B without any synchronization because it is a local variable.",
+      "option_b": "Thread B may see a stale value of `result` unless the variable is declared `volatile` or accessed within a synchronized block.",
+      "option_c": "The Java Memory Model guarantees that all threads see the most recent value of any local variable after the method returns.",
+      "option_d": "Visibility is not a concern for local variables; only static fields require synchronization.",
+      "correct_option": "B",
+      "explanation": "Local variables are stored on the thread\u2019s stack and are not shared; however, if the value is passed to another thread via a shared reference, visibility rules apply. Without `volatile` or synchronization, thread B may see a stale value. Option A incorrectly assumes automatic visibility. Option C misstates the memory model. Option D ignores the possibility of passing the value through shared objects.",
+      "target_concept": "Java Memory Model",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "A divide\u2011and\u2011conquer version of the LCP algorithm splits the array of strings into two halves, recursively finds the LCP of each half, and then merges the two prefixes. What is the time complexity of this approach compared to the standard linear scan?",
+      "option_a": "O(n log m) where n is number of strings and m is average string length.",
+      "option_b": "O(n + m) \u2013 the same as the linear scan.",
+      "option_c": "O(n log n) \u2013 worse than the linear scan.",
+      "option_d": "O(n) \u2013 better than the linear scan.",
+      "correct_option": "B",
+      "explanation": "Both the linear scan and the divide\u2011and\u2011conquer approach examine each character of each string once, leading to O(n + m) time. The divide\u2011and\u2011conquer does not add extra logarithmic factors because the merge step is linear in the length of the prefixes. Option A incorrectly mixes string length into the log factor. Option C overestimates the cost. Option D incorrectly claims a better complexity.",
+      "target_concept": "Divide\u2011and\u2011Conquer LCP",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Suppose we want to avoid redundant character comparisons in the LCP algorithm by memoizing the longest common prefix of every pair of strings encountered. Which of the following best describes how memoization would affect the algorithm's performance?",
+      "option_a": "It would increase time complexity to O(n^2) but reduce space complexity.",
+      "option_b": "It would reduce the number of comparisons to O(n*m) while using additional O(n^2) space.",
+      "option_c": "It would eliminate all comparisons after the first run, making subsequent calls O(1).",
+      "option_d": "It would not change the asymptotic time complexity but could improve constant factors for repeated calls.",
+      "correct_option": "D",
+      "explanation": "Memoization stores previously computed prefixes, so repeated comparisons are avoided, but the overall asymptotic complexity remains O(n*m). It improves constant factors, especially for repeated calls. Option A incorrectly states a time increase. Option B misstates the comparison count. Option C overstates the benefit, implying all future calls are constant time.",
+      "target_concept": "Memoization in LCP",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

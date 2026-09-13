@@ -1,0 +1,50 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Motivation for Convolutional Neural Networks",
+    "subtopics": [
+      "Limitations of fully connected MLPs for high\u2011resolution images",
+      "Parameter explosion from flattening",
+      "Loss of spatial locality"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Inductive Biases in CNNs",
+    "subtopics": [
+      "Local connectivity",
+      "Weight sharing",
+      "Translation equivariance"
+    ],
+    "associated_chunk_ids": [
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Spatial Output Dimension Calculation",
+    "subtopics": [
+      "Convolution output size formula O = floor((W\u2011K+2P)/S)+1",
+      "Effect of stride, padding, kernel size on output"
+    ],
+    "associated_chunk_ids": [
+      "C03"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Receptive Field Stacking and Parameter Efficiency",
+    "subtopics": [
+      "Receptive field growth through multiple layers",
+      "Parameter count comparison 3\u00d73 vs 7\u00d77 filters",
+      "Additional non\u2011linearities from stacked layers"
+    ],
+    "associated_chunk_ids": [
+      "C04",
+      "C05"
+    ]
+  }
+]

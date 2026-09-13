@@ -1,0 +1,83 @@
+{
+  "input_id": "input_11_ashamam_vae_colab",
+  "title": "Variational Autoencoders (VAE) on Fashion-MNIST: Latent Sampling & Loss Functions",
+  "total_requested_questions": 5,
+  "total_available_targets": 5,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Variational Autoencoder (VAE) Architecture",
+      "what_taught_summary": "The VAE encoder is a Keras Sequential model with Dense layers (256, 128 units, ReLU) that outputs two distinct tensors: z_mean and z_log_var, representing the parameters of the latent distribution.",
+      "why_assessed_pedagogy": "To ensure students can identify the specific architectural components and output structure required to define a probabilistic latent space, distinguishing it from a standard autoencoder.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "The encoder outputs a single deterministic vector z directly without separate mean and variance tensors.",
+        "The final layer of the encoder uses a Sigmoid activation to constrain the latent vector to [0, 1].",
+        "The encoder uses Conv2D layers exclusively to process the 28x28 image input before flattening."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Latent Sampling Techniques",
+      "what_taught_summary": "Latent sampling utilizes the reparameterization trick where z is calculated as z = \u03bc + exp(0.5 * log_var) * \u03b5, with \u03b5 sampled from a standard normal distribution N(0, 1).",
+      "why_assessed_pedagogy": "To verify that students recall the specific mathematical mechanism used to make the sampling process differentiable during backpropagation.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "The noise term \u03b5 is sampled from a uniform distribution U(0, 1).",
+        "The variance term is used directly as \u03c3 in the formula z = \u03bc + \u03c3 * \u03b5 without the exponential transformation.",
+        "The sampling layer is a standard Dense layer that performs a linear combination of inputs."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "VAE Loss Functions",
+      "what_taught_summary": "The total VAE loss function is the sum of the reconstruction loss (e.g., binary cross-entropy) and the KL divergence term, which regularizes the latent space to match a standard normal prior.",
+      "why_assessed_pedagogy": "To confirm students can identify the two fundamental components of the VAE objective function and their respective roles in balancing reconstruction accuracy and latent space regularization.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "The KL divergence term measures the difference between the input image and the reconstructed image.",
+        "The reconstruction loss is calculated using Mean Squared Error (MSE) exclusively, regardless of data type.",
+        "The total loss is the product of the reconstruction loss and the KL divergence term."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Fashion-MNIST Dataset Application",
+      "what_taught_summary": "Fashion-MNIST data is preprocessed by normalizing pixel values to the [0, 1] range (dividing by 255.0) and expanding dimensions to (28, 28, 1) for model input compatibility.",
+      "why_assessed_pedagogy": "To ensure students remember the specific data preprocessing steps required to adapt the Fashion-MNIST dataset for use with the VAE architecture.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Pixel values are normalized to the [-1, 1] range by subtracting 127.5 and dividing by 127.5.",
+        "The input shape remains (28, 28) without expanding the channel dimension.",
+        "The dataset is one-hot encoded before being fed into the encoder."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_05",
+      "topic_name": "Model Training and Evaluation",
+      "what_taught_summary": "The model training setup involves a Keras Sequential encoder with Dense layers (256, 128 units, ReLU) outputting z_mean and z_log_var, which are then used in the reparameterization formula for training.",
+      "why_assessed_pedagogy": "To verify that students can recall the specific model configuration and the integration of the encoder outputs into the training pipeline.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "The encoder uses Dropout layers after every Dense layer to prevent overfitting.",
+        "The z_mean and z_log_var tensors are concatenated before being passed to the decoder.",
+        "The model is trained using a standard Autoencoder loss function without the KL divergence term."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

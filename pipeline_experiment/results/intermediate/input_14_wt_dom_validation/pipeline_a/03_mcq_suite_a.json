@@ -1,0 +1,105 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_14_wt_dom_validation",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the Document Object Model (DOM), how is the structure of an HTML document fundamentally represented to the browser?",
+      "option_a": "As a linear sequence of text strings parsed from top to bottom.",
+      "option_b": "As a tree-like representation where each HTML element is a node.",
+      "option_c": "As a flat array of objects indexed by their ID attributes.",
+      "option_d": "As a graph structure with no defined parent-child hierarchy.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly defines the DOM as a 'tree-like representation of HTML elements, where each element is a node.' Option A is incorrect because the DOM is hierarchical, not linear. Option C is incorrect because the DOM is not a flat array; it maintains structural relationships. Option D is incorrect because the DOM specifically relies on a parent-child hierarchy, unlike a general graph.",
+      "target_concept": "DOM Tree Structure",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "Definition of DOM as a tree-like structure of nodes.",
+      "why_assessed": "To verify fundamental understanding of the data structure underlying DOM manipulation.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect common misconceptions that HTML is processed linearly or that the DOM is a simple list/graph without hierarchy."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Which of the following best describes the primary purpose of DOM traversal methods?",
+      "option_a": "To render the CSS styles of the document onto the screen.",
+      "option_b": "To access parent, child, and sibling nodes to dynamically modify page content and structure.",
+      "option_c": "To validate the syntax of the HTML code before it is loaded.",
+      "option_d": "To compress the HTML file size for faster network transmission.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary states that traversal involves 'accessing parent, child, and sibling nodes, allowing developers to dynamically modify the page content and structure.' Option A is incorrect as rendering is a separate browser engine task. Option C is incorrect because DOM traversal occurs after the document is loaded, not during syntax validation. Option D is incorrect as traversal is a runtime operation, not a compression technique.",
+      "target_concept": "DOM Traversal Purpose",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "The utility of traversing nodes for dynamic modification.",
+      "why_assessed": "To ensure students understand the functional application of DOM traversal in web development.",
+      "evidence_refs": [
+        "mechanisms_and_formulas",
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors confuse DOM manipulation with rendering, validation, or network optimization tasks."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "According to the lecture, what is the primary goal of client-side form validation?",
+      "option_a": "To encrypt user data before it is sent to the server.",
+      "option_b": "To ensure data integrity by checking input values against constraints before submission.",
+      "option_c": "To store form data in local browser storage for offline access.",
+      "option_d": "To automatically fill in form fields based on user history.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary defines form validation as ensuring 'data integrity before submission' by checking inputs against constraints. Option A is incorrect as validation is not encryption. Option C is incorrect as validation does not inherently involve local storage. Option D is incorrect as auto-fill is a separate browser feature, not the core purpose of validation logic.",
+      "target_concept": "Client-Side Form Validation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "The role of validation in maintaining data integrity pre-submission.",
+      "why_assessed": "To confirm understanding of why validation is performed on the client side.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors conflate validation with security (encryption), persistence (storage), or convenience (auto-fill) features."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which HTML5 attributes are specifically mentioned in the lecture as examples of native browser validation?",
+      "option_a": "id, class, and style",
+      "option_b": "required, type=\"email\", and pattern",
+      "option_c": "href, src, and alt",
+      "option_d": "data-value, data-type, and data-check",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly lists 'required, type=\"email\", and pattern' as examples of native HTML5 validation attributes. Option A lists general styling and identification attributes. Option C lists standard link and image attributes. Option D lists custom data attributes which are not native validation mechanisms.",
+      "target_concept": "HTML5 Validation Attributes",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "Specific HTML5 attributes used for native validation.",
+      "why_assessed": "To test recall of specific technical syntax and attributes taught in the lecture.",
+      "evidence_refs": [
+        "examples_and_code_patterns"
+      ],
+      "misconception_rationale": "Distractors include common HTML attributes that are not related to form validation, testing the student's ability to distinguish validation-specific syntax."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the JavaScript code pattern described for custom validation, which methods are used to trigger validation logic on form submission?",
+      "option_a": "document.createElement and document.appendChild",
+      "option_b": "document.querySelector and addEventListener",
+      "option_c": "window.onload and window.onerror",
+      "option_d": "form.submit and form.reset",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the summary explicitly mentions the 'use of document.querySelector and addEventListener to trigger validation on form submission.' Option A is for creating and adding new DOM nodes, not attaching event handlers. Option C refers to global window events, not specific form element interaction. Option D refers to form methods that execute submission or reset, rather than the event-driven checking logic described.",
+      "target_concept": "JavaScript Event-Driven Validation",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "examples_and_code_patterns",
+      "what_taught": "The specific JS methods used to attach validation logic to form events.",
+      "why_assessed": "To assess the ability to apply the specific procedural steps for implementing custom validation.",
+      "evidence_refs": [
+        "examples_and_code_patterns"
+      ],
+      "misconception_rationale": "Distractors represent other common DOM manipulation or form handling methods that students might confuse with event listener attachment."
+    }
+  ]
+}

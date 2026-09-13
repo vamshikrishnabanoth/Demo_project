@@ -1,0 +1,59 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "File System Operations in Node.js",
+    "subtopics": [
+      "Synchronous directory creation (fs.mkdirSync)",
+      "Appending to files (fs.appendFileSync)",
+      "Deleting files (fs.unlink)",
+      "Reading directories (fs.readdir)"
+    ],
+    "associated_chunk_ids": [
+      "C05",
+      "C06",
+      "C08",
+      "C09",
+      "C10"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Node.js Buffer Management",
+    "subtopics": [
+      "Buffer allocation and sizing",
+      "Writing data to specific buffer indices",
+      "Reading data from buffers",
+      "Memory cleanup and latency considerations"
+    ],
+    "associated_chunk_ids": [
+      "C11",
+      "C13",
+      "C14",
+      "C15"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Web Technologies Fundamentals",
+    "subtopics": [
+      "DOM Manipulation",
+      "Event Handling",
+      "Session Management",
+      "Cookies"
+    ],
+    "associated_chunk_ids": [
+      "C03"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Network Data Transfer",
+    "subtopics": [
+      "File transfer over networks",
+      "Data transmission between sources and destinations"
+    ],
+    "associated_chunk_ids": [
+      "C12"
+    ]
+  }
+]

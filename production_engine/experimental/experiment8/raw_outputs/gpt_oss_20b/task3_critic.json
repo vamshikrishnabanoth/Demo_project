@@ -1,0 +1,281 @@
+{
+  "model_id": "openai/gpt-oss-120b",
+  "trials": [
+    {
+      "DEF_01_DUP_OPTION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_01",
+          "target_field": "option_c",
+          "replacement_content": "O(n^2)",
+          "patch_rationale": "Replacing the duplicated 'O(log n)' with a distinct incorrect choice ('O(n^2)') restores uniqueness among options while keeping the stem, correct answer, and explanation unchanged."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_01",
+          "question_text": "What is the asymptotic time complexity of standard Binary Search on a sorted array of size n?",
+          "option_a": "O(n)",
+          "option_b": "O(log n)",
+          "option_c": "O(n^2)",
+          "option_d": "O(1)",
+          "correct_option": "B",
+          "explanation": "Binary search halves the search space each step, giving O(log n).",
+          "target_concept": "Binary Search Complexity",
+          "cognitive_level": "REMEMBER",
+          "difficulty_level": "EASY",
+          "what_taught": "Binary search is O(log n)",
+          "why_assessed": "Assess basic complexity",
+          "evidence_refs": [
+            "E01"
+          ],
+          "misconception_rationale": "O(n) represents linear search."
+        },
+        "attempts": 1
+      },
+      "DEF_02_KEY_MISMATCH": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_02",
+          "target_field": "correct_option",
+          "replacement_content": "C",
+          "patch_rationale": "Updating \"correct_option\" to \"C\" aligns the answer key with the explanation and source evidence, resolving the key mismatch without altering any other content."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_02",
+          "question_text": "In a Variational Autoencoder, how is the latent vector z sampled using the reparameterization trick?",
+          "option_a": "z = mu * eps",
+          "option_b": "z = mu - log_var",
+          "option_c": "z = mu + sigma * eps",
+          "option_d": "z = sigma / eps",
+          "correct_option": "C",
+          "explanation": "Option C (z = mu + sigma * eps) is the correct formulation enabling backpropagation.",
+          "target_concept": "Reparameterization Trick",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "Reparameterization is z = mu + sigma * eps",
+          "why_assessed": "Assess sampling formulation",
+          "evidence_refs": [
+            "E02"
+          ],
+          "misconception_rationale": "Students often forget the addition of mu."
+        },
+        "attempts": 1
+      },
+      "DEF_03_WRONG_EXPLANATION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_03",
+          "target_field": "explanation",
+          "replacement_content": "When A[i-1] > B[j], the partition index i in array A is too large, meaning the left side of the combined partition contains more elements than allowed. To restore the invariant A[i-1] \u2264 B[j] we must move the partition left by decreasing i (and correspondingly increasing j). This adjustment rebalances the halves and ensures the correct median can be computed.",
+          "patch_rationale": "Replacing the empty rationale with a concise mathematical explanation satisfies the validation requirement while preserving the original stem, options, and correct answer."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_03",
+          "question_text": "During median finding in two sorted arrays, what action must be taken if the invariant condition A[i-1] > B[j] is encountered?",
+          "option_a": "Increase partition index i to search right",
+          "option_b": "Decrease partition index i to search left",
+          "option_c": "Terminate and return A[i]",
+          "option_d": "Swap array A and array B entirely",
+          "correct_option": "B",
+          "explanation": "When A[i-1] > B[j], the partition index i in array A is too large, meaning the left side of the combined partition contains more elements than allowed. To restore the invariant A[i-1] \u2264 B[j] we must move the partition left by decreasing i (and correspondingly increasing j). This adjustment rebalances the halves and ensures the correct median can be computed.",
+          "target_concept": "Partition Invariant Correction",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "HARD",
+          "what_taught": "If A[i-1] > B[j], decrease i",
+          "why_assessed": "Assess invariant recovery",
+          "evidence_refs": [
+            "E03"
+          ],
+          "misconception_rationale": "Increasing i would exacerbate the imbalance."
+        },
+        "attempts": 1
+      }
+    },
+    {
+      "DEF_01_DUP_OPTION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_01",
+          "target_field": "option_c",
+          "replacement_content": "O(n^2)",
+          "patch_rationale": "Replacing the duplicate with a distinct, plausible incorrect answer eliminates ambiguity while preserving the original stem, correct answer, and concept focus."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_01",
+          "question_text": "What is the asymptotic time complexity of standard Binary Search on a sorted array of size n?",
+          "option_a": "O(n)",
+          "option_b": "O(log n)",
+          "option_c": "O(n^2)",
+          "option_d": "O(1)",
+          "correct_option": "B",
+          "explanation": "Binary search halves the search space each step, giving O(log n).",
+          "target_concept": "Binary Search Complexity",
+          "cognitive_level": "REMEMBER",
+          "difficulty_level": "EASY",
+          "what_taught": "Binary search is O(log n)",
+          "why_assessed": "Assess basic complexity",
+          "evidence_refs": [
+            "E01"
+          ],
+          "misconception_rationale": "O(n) represents linear search."
+        },
+        "attempts": 1
+      },
+      "DEF_02_KEY_MISMATCH": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_02",
+          "target_field": "correct_option",
+          "replacement_content": "C",
+          "patch_rationale": "Updating 'correct_option' to 'C' aligns the answer key with the explanation and the verified source, resolving the key mismatch while preserving all other content."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_02",
+          "question_text": "In a Variational Autoencoder, how is the latent vector z sampled using the reparameterization trick?",
+          "option_a": "z = mu * eps",
+          "option_b": "z = mu - log_var",
+          "option_c": "z = mu + sigma * eps",
+          "option_d": "z = sigma / eps",
+          "correct_option": "C",
+          "explanation": "Option C (z = mu + sigma * eps) is the correct formulation enabling backpropagation.",
+          "target_concept": "Reparameterization Trick",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "Reparameterization is z = mu + sigma * eps",
+          "why_assessed": "Assess sampling formulation",
+          "evidence_refs": [
+            "E02"
+          ],
+          "misconception_rationale": "Students often forget the addition of mu."
+        },
+        "attempts": 1
+      },
+      "DEF_03_WRONG_EXPLANATION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_03",
+          "target_field": "explanation",
+          "replacement_content": "When A[i-1] > B[j], the partition index i in array A is too large, meaning the left side of the combined partition contains an element greater than an element on the right side. To restore the invariant A[i-1] \u2264 B[j] we must move the partition left by decreasing i (and correspondingly increasing j). This adjustment ensures all elements in the left partition are \u2264 all elements in the right partition, which is necessary for correctly computing the median.",
+          "patch_rationale": "Replacing the trivial placeholder with a detailed, mathematically grounded explanation satisfies the validation requirement for a non\u2011empty, concept\u2011aligned explanation while leaving all other fields unchanged."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_03",
+          "question_text": "During median finding in two sorted arrays, what action must be taken if the invariant condition A[i-1] > B[j] is encountered?",
+          "option_a": "Increase partition index i to search right",
+          "option_b": "Decrease partition index i to search left",
+          "option_c": "Terminate and return A[i]",
+          "option_d": "Swap array A and array B entirely",
+          "correct_option": "B",
+          "explanation": "When A[i-1] > B[j], the partition index i in array A is too large, meaning the left side of the combined partition contains an element greater than an element on the right side. To restore the invariant A[i-1] \u2264 B[j] we must move the partition left by decreasing i (and correspondingly increasing j). This adjustment ensures all elements in the left partition are \u2264 all elements in the right partition, which is necessary for correctly computing the median.",
+          "target_concept": "Partition Invariant Correction",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "HARD",
+          "what_taught": "If A[i-1] > B[j], decrease i",
+          "why_assessed": "Assess invariant recovery",
+          "evidence_refs": [
+            "E03"
+          ],
+          "misconception_rationale": "Increasing i would exacerbate the imbalance."
+        },
+        "attempts": 1
+      }
+    },
+    {
+      "DEF_01_DUP_OPTION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_01",
+          "target_field": "option_c",
+          "replacement_content": "O(n^2)",
+          "patch_rationale": "Replacing the duplicated 'O(log n)' with a distinct incorrect choice ('O(n^2)') restores uniqueness among options while preserving the correct answer and overall integrity of the question."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_01",
+          "question_text": "What is the asymptotic time complexity of standard Binary Search on a sorted array of size n?",
+          "option_a": "O(n)",
+          "option_b": "O(log n)",
+          "option_c": "O(n^2)",
+          "option_d": "O(1)",
+          "correct_option": "B",
+          "explanation": "Binary search halves the search space each step, giving O(log n).",
+          "target_concept": "Binary Search Complexity",
+          "cognitive_level": "REMEMBER",
+          "difficulty_level": "EASY",
+          "what_taught": "Binary search is O(log n)",
+          "why_assessed": "Assess basic complexity",
+          "evidence_refs": [
+            "E01"
+          ],
+          "misconception_rationale": "O(n) represents linear search."
+        },
+        "attempts": 1
+      },
+      "DEF_02_KEY_MISMATCH": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_02",
+          "target_field": "correct_option",
+          "replacement_content": "C",
+          "patch_rationale": "Updating 'correct_option' to 'C' aligns the answer key with the explanation, evidence, and the true reparameterization trick, resolving the mismatch without altering any other content."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_02",
+          "question_text": "In a Variational Autoencoder, how is the latent vector z sampled using the reparameterization trick?",
+          "option_a": "z = mu * eps",
+          "option_b": "z = mu - log_var",
+          "option_c": "z = mu + sigma * eps",
+          "option_d": "z = sigma / eps",
+          "correct_option": "C",
+          "explanation": "Option C (z = mu + sigma * eps) is the correct formulation enabling backpropagation.",
+          "target_concept": "Reparameterization Trick",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "Reparameterization is z = mu + sigma * eps",
+          "why_assessed": "Assess sampling formulation",
+          "evidence_refs": [
+            "E02"
+          ],
+          "misconception_rationale": "Students often forget the addition of mu."
+        },
+        "attempts": 1
+      },
+      "DEF_03_WRONG_EXPLANATION": {
+        "repair_strategy": "SINGLE_FIELD_PATCH",
+        "patch_applied": {
+          "question_id": "Q_DEF_03",
+          "target_field": "explanation",
+          "replacement_content": "When A[i-1] > B[j], the element immediately left of the partition in array A is greater than the element immediately right of the partition in array B, breaking the required ordering A[i-1] \u2264 B[j]. This indicates that the partition index i is positioned too far to the right, so the binary search must move the partition left by decreasing i. Reducing i shrinks the left side of A and expands its right side, restoring the invariant and allowing the algorithm to converge on the correct median.",
+          "patch_rationale": "Replacing the trivial placeholder with a concise, mathematically grounded explanation satisfies the validation requirement while preserving the original question content and answer key."
+        },
+        "final_passed": true,
+        "repaired_mcq": {
+          "question_id": "Q_DEF_03",
+          "question_text": "During median finding in two sorted arrays, what action must be taken if the invariant condition A[i-1] > B[j] is encountered?",
+          "option_a": "Increase partition index i to search right",
+          "option_b": "Decrease partition index i to search left",
+          "option_c": "Terminate and return A[i]",
+          "option_d": "Swap array A and array B entirely",
+          "correct_option": "B",
+          "explanation": "When A[i-1] > B[j], the element immediately left of the partition in array A is greater than the element immediately right of the partition in array B, breaking the required ordering A[i-1] \u2264 B[j]. This indicates that the partition index i is positioned too far to the right, so the binary search must move the partition left by decreasing i. Reducing i shrinks the left side of A and expands its right side, restoring the invariant and allowing the algorithm to converge on the correct median.",
+          "target_concept": "Partition Invariant Correction",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "HARD",
+          "what_taught": "If A[i-1] > B[j], decrease i",
+          "why_assessed": "Assess invariant recovery",
+          "evidence_refs": [
+            "E03"
+          ],
+          "misconception_rationale": "Increasing i would exacerbate the imbalance."
+        },
+        "attempts": 1
+      }
+    }
+  ]
+}

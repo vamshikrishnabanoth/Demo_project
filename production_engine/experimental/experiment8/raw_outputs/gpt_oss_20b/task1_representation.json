@@ -1,0 +1,435 @@
+{
+  "model_id": "openai/gpt-oss-120b",
+  "trials": [
+    {
+      "daa_blueprint": {
+        "blueprint_id": "BP_DAA_BENCH",
+        "input_id": "DAA_BENCH",
+        "topics": [
+          {
+            "topic_id": "TOP_01",
+            "topic": "Problem Definition",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Array",
+              "Sorted array",
+              "Median"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_02",
+            "topic": "Binary Search Partition Strategy",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Binary search",
+              "Array partition",
+              "Indexing"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_03",
+            "topic": "Invariant Conditions",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Loop invariant",
+              "Sorted order",
+              "Condition checking"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_04",
+            "topic": "Edge Cases and Adjustments",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Boundary conditions",
+              "Edge case handling",
+              "Array length"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_05",
+            "topic": "Time and Space Complexity",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Big O notation",
+              "Time complexity",
+              "Space complexity"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          }
+        ]
+      },
+      "vae_summary": {
+        "input_id": "input_001",
+        "title": "Variational Autoencoder Formulation",
+        "concepts_and_definitions": [
+          "Variational Autoencoder (VAE)",
+          "Evidence Lower Bound (ELBO)",
+          "Reconstruction loss (log\u2011likelihood term)",
+          "Kullback\u2011Leibler (KL) divergence between approximate posterior and prior",
+          "Reparameterization trick for stochastic gradient descent",
+          "Latent variable z with mean \u03bc and variance \u03c3\u00b2"
+        ],
+        "mechanisms_and_formulas": [
+          "L(\u03b8,\u03c6;x)=E_{q_\u03c6(z|x)}[log\u202fp_\u03b8(x|z)]\u2212D_{KL}(q_\u03c6(z|x)\u2016p(z))",
+          "z=\u03bc+\u03c3\u00b7\u03b5 \u2003with\u2003\u03b5\u223c\ud835\udca9(0,I) (reparameterization)",
+          "D_{KL}(\ud835\udca9(\u03bc,\u03c3\u00b2)\u2016\ud835\udca9(0,I))=\u2212\u00bd\u2211_{i}(1+log\u202f\u03c3_i\u00b2\u2212\u03bc_i\u00b2\u2212\u03c3_i\u00b2)"
+        ],
+        "examples_and_code_patterns": [
+          "TensorFlow reparameterization:\u202fz = mu + tf.exp(0.5 * log_var) * eps",
+          "ELBO loss computation in TF/Keras:\nrecon_loss = tf.reduce_sum(tf.keras.losses.binary_crossentropy(x, x_decoded), axis=[1,2,3])\nkl_loss = -0.5 * tf.reduce_sum(1 + log_var - tf.square(mu) - tf.exp(log_var), axis=1)\nloss = tf.reduce_mean(recon_loss + kl_loss)"
+        ],
+        "factual_summary_text": "The material introduces the Variational Autoencoder (VAE) as a generative model that learns a probabilistic mapping between data x and latent variables z. Training maximizes the Evidence Lower Bound (ELBO), which consists of two terms: a reconstruction loss that encourages the decoder p_\u03b8(x|z) to reproduce the input, and a KL\u2011divergence term that regularizes the approximate posterior q_\u03c6(z|x) toward a chosen prior p(z), typically a standard normal distribution. The ELBO is expressed as L(\u03b8,\u03c6;x)=E_{q(z|x)}[log\u202fp(x|z)]\u2212D_{KL}(q(z|x)\u2016p(z)).\n\nTo enable gradient\u2011based optimization despite the stochastic sampling of z, the reparameterization trick is employed: a sample z is obtained by shifting and scaling a noise variable \u03b5 drawn from a fixed distribution, usually \u03b5\u223c\ud835\udca9(0,I), using the encoder\u2019s predicted mean \u03bc and variance \u03c3\u00b2 (or log\u2011variance log_var). In TensorFlow this appears as z = mu + tf.exp(0.5 * log_var) * eps. The KL term for Gaussian q and p has a closed\u2011form expression, allowing efficient computation of the ELBO loss during training."
+      }
+    },
+    {
+      "daa_blueprint": {
+        "blueprint_id": "BP_DAA_BENCH",
+        "input_id": "DAA_BENCH",
+        "topics": [
+          {
+            "topic_id": "TOP_01",
+            "topic": "Problem Definition",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [
+              "Array",
+              "Sorted Order",
+              "Median Definition"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_02",
+            "topic": "Binary Search Partition Approach",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "APPLY"
+            ],
+            "dominant_mode": "CONCEPTUAL_EXPLANATION",
+            "target_bloom_level": "APPLY",
+            "prerequisite_concepts": [
+              "Binary Search",
+              "Array Indexing",
+              "Partition Concept"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_03",
+            "topic": "Invariant Conditions",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "ANALYZE"
+            ],
+            "dominant_mode": "CONCEPTUAL_COMPARISON",
+            "target_bloom_level": "ANALYZE",
+            "prerequisite_concepts": [
+              "Loop Invariant",
+              "Array Bounds",
+              "Median Condition"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_04",
+            "topic": "Edge Case Handling",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "REINFORCE"
+            ],
+            "dominant_mode": "CONCEPTUAL_EXPLANATION",
+            "target_bloom_level": "ANALYZE",
+            "prerequisite_concepts": [
+              "Edge Cases",
+              "Array Length",
+              "Index Out of Bounds"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_05",
+            "topic": "Complexity and Correctness",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "COMPARE",
+              "EVALUATE"
+            ],
+            "dominant_mode": "CONCEPTUAL_COMPARISON",
+            "target_bloom_level": "EVALUATE",
+            "prerequisite_concepts": [
+              "Time Complexity",
+              "Big O Notation",
+              "Correctness Proof"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          }
+        ]
+      },
+      "vae_summary": {
+        "input_id": "input_001",
+        "title": "Variational Autoencoder Formulation",
+        "concepts_and_definitions": [
+          "Variational Autoencoder (VAE)",
+          "Evidence Lower Bound (ELBO)",
+          "Reconstruction loss",
+          "Kullback\u2011Leibler (KL) divergence",
+          "Reparameterization trick",
+          "Encoder distribution q(z|x) and decoder p(x|z)"
+        ],
+        "mechanisms_and_formulas": [
+          "L(\u03b8,\u03c6;x)=E_{q(z|x)}[log\u202fp(x|z)]\u2212D_{KL}(q(z|x)\u2016p(z))",
+          "z=\u03bc+\u03c3\u00b7\u03b5  (or z=\u03bc+exp(0.5\u00b7log_var)\u00b7\u03b5)",
+          "D_{KL}(\ud835\udca9(\u03bc,\u03c3\u00b2)\u2016\ud835\udca9(0,1))=\u22120.5\u2211(1+log\u202f\u03c3\u00b2\u2212\u03bc\u00b2\u2212\u03c3\u00b2)"
+        ],
+        "examples_and_code_patterns": [
+          "z = mu + tf.exp(0.5 * log_var) * eps",
+          "reconstruction_loss = -tf.reduce_sum(tf.log(p_x_given_z), axis=1)",
+          "kl_loss = -0.5 * tf.reduce_sum(1 + log_var - tf.square(mu) - tf.exp(log_var), axis=1)"
+        ],
+        "factual_summary_text": "The material introduces the Variational Autoencoder (VAE) as a generative model that learns a probabilistic mapping between data x and latent variables z. Training optimizes the Evidence Lower Bound (ELBO), which consists of two terms: a reconstruction loss that encourages the decoder p(x|z) to reproduce the input, and a KL divergence that regularizes the encoder distribution q(z|x) toward a chosen prior p(z), typically a standard normal. The ELBO is expressed as L(\u03b8,\u03c6;x)=E_{q(z|x)}[log\u202fp(x|z)]\u2212D_{KL}(q(z|x)\u2016p(z))."
+      }
+    },
+    {
+      "daa_blueprint": {
+        "blueprint_id": "BP_DAA_BENCH",
+        "input_id": "DAA_BENCH",
+        "topics": [
+          {
+            "topic_id": "TOP_01",
+            "topic": "Problem Statement and Goal",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "INTRODUCE",
+              "EXPLAIN"
+            ],
+            "dominant_mode": "CONCEPTUAL_EXPLANATION",
+            "target_bloom_level": "UNDERSTAND",
+            "prerequisite_concepts": [],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_02",
+            "topic": "Binary Search Partition Strategy",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "DEMONSTRATE"
+            ],
+            "dominant_mode": "CONCEPTUAL_COMPARISON",
+            "target_bloom_level": "APPLY",
+            "prerequisite_concepts": [
+              "Sorted Array",
+              "Binary Search",
+              "Partition Concept"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_03",
+            "topic": "Invariant Conditions",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "REINFORCE"
+            ],
+            "dominant_mode": "CONCEPTUAL_EXPLANATION",
+            "target_bloom_level": "ANALYZE",
+            "prerequisite_concepts": [
+              "Loop Invariant",
+              "Binary Search"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_04",
+            "topic": "Edge Cases and Corner Conditions",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "COMPARE"
+            ],
+            "dominant_mode": "CONCEPTUAL_COMPARISON",
+            "target_bloom_level": "ANALYZE",
+            "prerequisite_concepts": [
+              "Array Indexing",
+              "Boundary Conditions"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_05",
+            "topic": "Time and Space Complexity Analysis",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "EXPLAIN",
+              "COMPARE"
+            ],
+            "dominant_mode": "CONCEPTUAL_COMPARISON",
+            "target_bloom_level": "ANALYZE",
+            "prerequisite_concepts": [
+              "Big O Notation",
+              "Algorithm Analysis"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_06",
+            "topic": "Implementation Details and Pointer Logic",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "DEMONSTRATE",
+              "APPLY"
+            ],
+            "dominant_mode": "CODE_DEMONSTRATION",
+            "target_bloom_level": "APPLY",
+            "prerequisite_concepts": [
+              "Programming Language Syntax",
+              "Pointer Arithmetic",
+              "Array Access"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          },
+          {
+            "topic_id": "TOP_07",
+            "topic": "Worked Example Walkthrough",
+            "salience_score": 0.05,
+            "instructional_acts": [
+              "DEMONSTRATE",
+              "PRACTICE"
+            ],
+            "dominant_mode": "WORKED_EXAMPLE",
+            "target_bloom_level": "APPLY",
+            "prerequisite_concepts": [
+              "Problem Statement",
+              "Binary Search Partition Strategy",
+              "Invariant Conditions",
+              "Edge Cases",
+              "Complexity Analysis",
+              "Implementation Details"
+            ],
+            "evidence_refs": [
+              "E_C01"
+            ],
+            "teacher_specificity": "MEDIUM"
+          }
+        ]
+      },
+      "vae_summary": {
+        "input_id": "input_001",
+        "title": "Variational Autoencoder Formulation",
+        "concepts_and_definitions": [
+          "Variational Autoencoder (VAE)",
+          "Evidence Lower Bound (ELBO)",
+          "Reconstruction loss",
+          "Kullback\u2011Leibler (KL) divergence",
+          "Reparameterization trick",
+          "Latent variable distribution q(z|x)"
+        ],
+        "mechanisms_and_formulas": [
+          "L(\u03b8,\u03d5;x)=E_{q(z|x)}[log\u202fp(x|z)]\u2212D_{KL}(q(z|x)\u2016p(z))",
+          "z = \u03bc + \u03c3\u00b7\u03b5  (reparameterization)",
+          "\u03c3 = exp(0.5\u00b7log_var)  (TensorFlow implementation)"
+        ],
+        "examples_and_code_patterns": [
+          "z = mu + tf.exp(0.5 * log_var) * eps  # reparameterization in TF",
+          "reconstruction_loss = tf.reduce_sum(tf.keras.losses.binary_crossentropy(x, x_decoded), axis=[1,2,3])",
+          "kl_loss = -0.5 * tf.reduce_sum(1 + log_var - tf.square(mu) - tf.exp(log_var), axis=1)",
+          "total_loss = tf.reduce_mean(reconstruction_loss + kl_loss)"
+        ],
+        "factual_summary_text": "The material introduces the Variational Autoencoder (VAE) as a generative model that learns a probabilistic mapping between data x and latent variables z. Training maximizes the Evidence Lower Bound (ELBO), which decomposes into two terms: a reconstruction loss that encourages the decoder p(x|z) to reproduce the input, and a KL divergence that regularizes the approximate posterior q(z|x) toward a prior p(z), typically a standard normal distribution. The ELBO is expressed as L(\u03b8,\u03d5;x)=E_{q(z|x)}[log\u202fp(x|z)]\u2212D_{KL}(q(z|x)\u2016p(z)).\n\nTo enable gradient\u2011based optimization despite the stochastic sampling of z, the reparameterization trick is employed: a latent sample is written as z = \u03bc + \u03c3\u00b7\u03b5, where \u03b5\u223cN(0, I) and \u03bc,\u03c3 are outputs of the encoder network. In TensorFlow this is implemented as z = mu + tf.exp(0.5 * log_var) * eps. The loss computation combines the binary cross\u2011entropy reconstruction term with the analytic KL term for Gaussian q(z|x), yielding a total loss that is back\u2011propagated to update both encoder (\u03d5) and decoder (\u03b8) parameters."
+      }
+    }
+  ]
+}

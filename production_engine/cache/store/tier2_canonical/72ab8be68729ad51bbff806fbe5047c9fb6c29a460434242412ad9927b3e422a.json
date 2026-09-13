@@ -1,0 +1,66 @@
+{
+  "input_id": "VAE_CACHE_TEST",
+  "title": "VAE Architecture",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "PROBLEM_SOLVING",
+  "duration_seconds": 15.0,
+  "raw_content": "Variational Autoencoders use the reparameterization trick to allow backpropagation through stochastic latent variables.",
+  "chunks": [
+    {
+      "chunk_id": "C01",
+      "source_type": "TRANSCRIPT",
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 15.0
+        }
+      ],
+      "text": "Variational Autoencoders use reparameterization.",
+      "material_refs": [],
+      "topic_candidates": [],
+      "evidence": {
+        "evidence_id": "E_C01",
+        "topic_id": null,
+        "time_spans": [],
+        "dwell_time": 0.0,
+        "repetition_count": 0,
+        "emphasis_markers": [],
+        "worked_example": false,
+        "demonstration": false,
+        "student_question": false,
+        "teacher_correction": false,
+        "debugging_event": false,
+        "code_interaction": false,
+        "negative_instruction": false,
+        "source_refs": []
+      }
+    },
+    {
+      "chunk_id": "SLIDE_01",
+      "source_type": "SLIDE",
+      "time_spans": [],
+      "text": "VAE Architecture: Encoder outputs mu and log_var. Sampling: z = mu + exp(0.5*log_var)*eps.",
+      "material_refs": [
+        "Slide_1"
+      ],
+      "topic_candidates": [],
+      "evidence": {
+        "evidence_id": "E_SLIDE_01",
+        "topic_id": null,
+        "time_spans": [],
+        "dwell_time": 0.0,
+        "repetition_count": 0,
+        "emphasis_markers": [],
+        "worked_example": false,
+        "demonstration": false,
+        "student_question": false,
+        "teacher_correction": false,
+        "debugging_event": false,
+        "code_interaction": false,
+        "negative_instruction": false,
+        "source_refs": []
+      }
+    }
+  ],
+  "supporting_materials_text": "--- Slide 1 ---\nVAE Architecture: Encoder outputs mu and log_var. Sampling: z = mu + exp(0.5*log_var)*eps."
+}

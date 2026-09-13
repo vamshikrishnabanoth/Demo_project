@@ -1,0 +1,76 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "subtopics": [
+      "Scanning approach",
+      "Binary search approach",
+      "No extra space",
+      "Algorithmic logic"
+    ],
+    "associated_chunk_ids": [
+      "C04",
+      "C06",
+      "C09",
+      "C10",
+      "C11",
+      "C12"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "String Scanning Optimization",
+    "subtopics": [
+      "Processing only necessary characters",
+      "Early termination",
+      "Length-based pruning"
+    ],
+    "associated_chunk_ids": [
+      "C02",
+      "C04",
+      "C06"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Model",
+    "subtopics": [
+      "Stack vs Heap",
+      "Object references",
+      "Garbage collection eligibility"
+    ],
+    "associated_chunk_ids": [
+      "C07",
+      "C08"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization & Refactoring",
+    "subtopics": [
+      "Removing redundant checks",
+      "Improving readability",
+      "Performance improvements"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C05",
+      "C07",
+      "C08",
+      "C15"
+    ]
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Brute Force vs Efficient Algorithms",
+    "subtopics": [
+      "Time complexity analysis",
+      "Nested loops",
+      "Optimization strategies"
+    ],
+    "associated_chunk_ids": [
+      "C13",
+      "C14"
+    ]
+  }
+]

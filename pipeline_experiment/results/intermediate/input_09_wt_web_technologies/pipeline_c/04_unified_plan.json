@@ -1,0 +1,95 @@
+{
+  "input_id": "input_09_wt_web_technologies",
+  "title": "Web Technologies Classroom Lecture: DOM Manipulation & Event Handling",
+  "total_requested_questions": 5,
+  "total_available_targets": 4,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "File System Operations in Node.js",
+      "what_taught_summary": "Students must distinguish between synchronous and asynchronous file operations in Node.js, specifically understanding that synchronous methods like `fs.writeFileSync` block the execution thread, while asynchronous methods allow concurrent task processing. Additionally, they need to differentiate between overwriting a file using `writeFileSync` and appending to it using `appendFileSync`.",
+      "why_assessed_pedagogy": "This assessment targets the conceptual understanding of Node.js's non-blocking I/O model, which is fundamental to writing efficient server-side applications, and ensures students can correctly choose between overwriting and appending data to avoid data loss.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Believing that `fs.appendFileSync` overwrites the existing file content rather than adding to the end.",
+        "Assuming that synchronous operations in Node.js do not block the main thread, similar to asynchronous operations.",
+        "Thinking that `fs.unlinkSync` can be used to delete directories directly without using specific directory removal methods."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C05",
+        "E_C06",
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "source_timestamps_or_slides": [
+        "[810.0s - 994.0s]",
+        "[994.0s - 1177.0s]",
+        "[1372.0s - 1561.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Node.js Buffer Management",
+      "what_taught_summary": "Students should explain the concept of safe buffers, where allocated memory is initialized to zeros to prevent data leakage, and describe how data is stored at specific indices within a buffer, potentially leaving gaps of zero bytes between segments. They must also understand how to extract substrings from a buffer using start and end indices.",
+      "why_assessed_pedagogy": "This topic is assessed to ensure students grasp the memory management implications of buffer operations, particularly the security benefit of zero-initialization and the mechanics of reading specific data segments from a fixed memory block.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming that newly allocated buffers contain random garbage data from previous memory usage rather than zeros.",
+        "Believing that reading a buffer substring without an end index returns only the byte at the start index.",
+        "Thinking that `fs.mkdirSync` fails if the parent directories in a nested path do not already exist."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C11",
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[2186.2s - 2405.2s]",
+        "[2587.2s - 2769.2s]",
+        "[2769.2s - 2950.2s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Web Technologies Fundamentals",
+      "what_taught_summary": "Students are expected to recall the basic definitions of the File System module and the distinction between synchronous and asynchronous operations. They should also remember the syntax for creating directories using `fs.mkdirSync` and performing basic synchronous file read/write operations.",
+      "why_assessed_pedagogy": "This introductory assessment checks foundational recall of core Node.js file system terminology and basic API usage, establishing the necessary vocabulary and syntax recognition for more complex procedural tasks later in the course.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing the `fs` module with browser-based file APIs that do not exist in standard web environments.",
+        "Misremembering the function name for creating directories as `fs.createDirSync` instead of `fs.mkdirSync`.",
+        "Believing that `fs.readFileSync` is an asynchronous operation because it involves reading from disk."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C03"
+      ],
+      "source_timestamps_or_slides": [
+        "[424.0s - 609.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Network Data Transfer",
+      "what_taught_summary": "Students should recall the definition of safe buffers as zero-initialized memory allocations and the mechanism of buffer allocation where data is written at specific indices. They must also remember the difference between `fs.appendFileSync` and `fs.writeFileSync` in terms of file content modification.",
+      "why_assessed_pedagogy": "This assessment verifies basic recall of buffer memory concepts and file manipulation methods, ensuring students have the foundational knowledge required to understand data transfer and storage mechanisms in networked applications.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Thinking that `fs.appendFileSync` replaces the entire file content with the new data.",
+        "Assuming that buffer allocation always fills the entire memory block with data, leaving no zero-byte gaps.",
+        "Believing that safe buffers are only used for network data transfer and not for local file system operations."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C12"
+      ],
+      "source_timestamps_or_slides": [
+        "[2405.2s - 2587.2s]"
+      ]
+    }
+  ]
+}

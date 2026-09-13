@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_10_binary_trees_audio_ppt",
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Binary Tree Fundamentals and Node Classification",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Types of Binary Trees",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Mathematical Properties and Formulas of Binary Trees",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Tree Construction and Structural Analysis",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    }
+  ]
+}

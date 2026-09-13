@@ -1,0 +1,91 @@
+{
+  "blueprint_id": "BP_input_001_voice_ppt_cnn_theory",
+  "input_id": "input_001_voice_ppt_cnn_theory",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Motivation for Convolutional Neural Networks",
+      "salience_score": 0.054,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "THEORY_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "basic neural networks",
+        "image data representation",
+        "fully connected layers"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Inductive Biases in CNNs",
+      "salience_score": 0.257,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "convolution operation",
+        "local connectivity",
+        "parameter sharing",
+        "translation invariance"
+      ],
+      "evidence_refs": [
+        "E_C02"
+      ],
+      "teacher_specificity": "HIGH"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Spatial Output Dimension Calculation",
+      "salience_score": 0.182,
+      "instructional_acts": [
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "THEORY_APPLICATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "output dimension formula",
+        "kernel size",
+        "stride",
+        "padding"
+      ],
+      "evidence_refs": [
+        "E_C03"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Receptive Field Stacking and Parameter Efficiency",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE",
+        "REINFORCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "receptive field",
+        "layer stacking",
+        "parameter count",
+        "efficiency trade\u2011offs"
+      ],
+      "evidence_refs": [
+        "E_C04",
+        "E_C05"
+      ],
+      "teacher_specificity": "HIGH"
+    }
+  ]
+}

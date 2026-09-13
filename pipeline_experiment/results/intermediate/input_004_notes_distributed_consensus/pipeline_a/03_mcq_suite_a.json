@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_004_notes_distributed_consensus",
+  "input_type": "NOTES",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "According to the CAP theorem, if a distributed system chooses to remain available during a network partition, which guarantee must it sacrifice?",
+      "option_a": "Consistency",
+      "option_b": "Partition Tolerance",
+      "option_c": "Both Consistency and Partition Tolerance",
+      "option_d": "None; it can keep all three guarantees",
+      "correct_option": "A",
+      "explanation": "The CAP theorem states that in the presence of a partition, a system can provide at most two of the three guarantees. To stay Available, it must sacrifice Consistency. Option B is incorrect because Partition Tolerance is required when partitions occur. Option C is wrong because only Consistency is sacrificed, not both. Option D contradicts the theorem.",
+      "target_concept": "CAP Theorem",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the Raft consensus protocol, what event causes a follower to transition to the candidate state?",
+      "option_a": "Receiving an AppendEntries RPC with a higher term",
+      "option_b": "Detecting a leader's heartbeat timeout after a randomized election timeout",
+      "option_c": "Being voted for by a majority of nodes",
+      "option_d": "Appending a client command to its own log",
+      "correct_option": "B",
+      "explanation": "A follower becomes a candidate when it does not receive heartbeats within its randomized election timeout (150\u2011300\u202fms). Option A describes a follower stepping down, not becoming a candidate. Option C describes the condition for becoming leader, not candidate. Option D is an action performed by a leader, not a trigger for candidacy.",
+      "target_concept": "Raft Leader Election",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "When does Raft consider a log entry to be committed?",
+      "option_a": "Immediately after the leader appends it to its own log",
+      "option_b": "When the entry is replicated on a majority of servers",
+      "option_c": "When the entry is stored on all servers in the cluster",
+      "option_d": "When the entry is applied to the state machine on the leader only",
+      "correct_option": "B",
+      "explanation": "Raft defines commitment as the point when a log entry is stored on a majority of nodes, ensuring durability despite failures. Option A is premature; replication to a majority is required. Option C is too strict; Raft does not need all servers. Option D confuses commitment with application; an entry must be replicated before it can be applied.",
+      "target_concept": "Log Replication and Commitment",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which statement best describes Raft's safety invariant?",
+      "option_a": "A leader may commit entries that were not present in previous terms",
+      "option_b": "If a leader commits a log entry, that entry must appear in the logs of all future leaders in higher terms",
+      "option_c": "Followers can overwrite entries from previous terms without restriction",
+      "option_d": "Commitment is decided by a single node without requiring a majority",
+      "correct_option": "B",
+      "explanation": "The safety invariant guarantees that any entry committed by a leader is present in the logs of all later leaders, preventing divergent histories. Option A contradicts the invariant. Option C ignores the up\u2011to\u2011date check that prevents overwriting committed entries. Option D misstates Raft's majority requirement for commitment.",
+      "target_concept": "Safety Invariant",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following systems is typically classified as a CP system under the CAP theorem?",
+      "option_a": "Cassandra",
+      "option_b": "DynamoDB",
+      "option_c": "HBase",
+      "option_d": "Riak",
+      "correct_option": "C",
+      "explanation": "HBase (and MongoDB with majority writes) are examples of CP systems that prioritize Consistency and Partition Tolerance over Availability. Cassandra and DynamoDB are classic AP systems that favor Availability. Riak is also designed as an AP system. Therefore only option C correctly identifies a CP system.",
+      "target_concept": "CAP Theorem \u2013 System Classifications",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

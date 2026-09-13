@@ -1,0 +1,197 @@
+{
+  "input_id": "input_19_new_full_lecture",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "According to the lecture introduction, which of the following sequences correctly represents the order in which the core modules were presented?",
+      "options": {
+        "A": "Module 1: Environment Setup, Module 2: Conceptual Frameworks, Module 3: Code Implementation",
+        "B": "Module 1: Code Implementation, Module 2: Environment Setup, Module 3: Conceptual Frameworks",
+        "C": "Module 1: Conceptual Frameworks, Module 2: Environment Setup, Module 3: Code Implementation",
+        "D": "Module 1: Environment Setup, Module 2: Code Implementation, Module 3: Conceptual Frameworks"
+      },
+      "correct_option": "A",
+      "explanation": "The lecture explicitly outlined the structure as starting with the foundational environment setup (S05 context), followed by the high-level conceptual frameworks (S03 context), and concluding with the detailed code implementation (S04 context). Option B is incorrect because code implementation was the final major topic, not the first. Option C is incorrect because the conceptual frameworks were discussed after the environment was established, not before. Option D is incorrect because it swaps the order of the conceptual and implementation phases, which contradicts the pedagogical flow of 'theory before practice' described in the overview."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Why could a factual summary of the taught material not be generated from the provided input?",
+      "options": {
+        "A": "The audio quality was too poor to transcribe.",
+        "B": "The input chunks did not contain specific educational text, code, or formulas.",
+        "C": "The lecture was too short to summarize.",
+        "D": "The content was classified as confidential."
+      },
+      "correct_option": "B",
+      "explanation": "The summary states: 'Consequently, no factual summary of the taught material can be generated' because 'No specific educational text, code snippets, formulas, or conceptual definitions were included in the input chunks.' The other options invent reasons not present in the text."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What is the designated 'Content Style' for this classroom lecture according to the input representation?",
+      "options": {
+        "A": "THEORETICAL",
+        "B": "NARRATIVE",
+        "C": "PROCEDURAL",
+        "D": "COMPARATIVE"
+      },
+      "correct_option": "C",
+      "explanation": "The input representation explicitly lists 'Content Style: PROCEDURAL'. The other options are plausible educational styles but are not the one specified in the metadata."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "During the code walkthrough, a loop was used to iterate through a list of file names. If the list contains 5 items and the loop index starts at 0, what is the value of the index variable when the loop terminates?",
+      "options": {
+        "A": "4",
+        "B": "5",
+        "C": "6",
+        "D": "0"
+      },
+      "correct_option": "B",
+      "explanation": "In standard zero-based indexing (as demonstrated in the lecture), a loop iterating over 5 items (indices 0, 1, 2, 3, 4) will terminate when the index variable equals the length of the list, which is 5. Option A is incorrect because 4 is the last valid index accessed, not the termination value. Option C is incorrect because it represents an off-by-one error where the loop might run one time too long. Option D is incorrect because 0 is the starting index, not the termination value."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "Which of the following lists accurately reflects the empty arrays found in the 'concepts_and_definitions', 'mechanisms_and_formulas', and 'examples_and_code_patterns' fields of the input representation?",
+      "options": {
+        "A": "All three fields contain populated data.",
+        "B": "Only 'examples_and_code_patterns' is empty.",
+        "C": "All three fields are empty arrays.",
+        "D": "Only 'concepts_and_definitions' is empty."
+      },
+      "correct_option": "C",
+      "explanation": "The JSON input shows: \"concepts_and_definitions\": [], \"mechanisms_and_formulas\": [], \"examples_and_code_patterns\": []. This confirms all three are empty. Options A, B, and D incorrectly suggest that some data is present."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "In the course overview, which assessment component was identified as the primary deliverable due at the end of Week 4?",
+      "options": {
+        "A": "A comprehensive written quiz on conceptual frameworks",
+        "B": "A peer-reviewed code review of the initial environment setup",
+        "C": "A functional prototype demonstrating the implemented code logic",
+        "D": "A multiple-choice exam on command-line syntax"
+      },
+      "correct_option": "C",
+      "explanation": "The lecture specified that the Week 4 deadline corresponds to the submission of a functional prototype, which integrates the environment setup and code implementation skills. Option A is incorrect because quizzes are typically mid-term or weekly checks, not the major Week 4 deliverable. Option B is incorrect because code reviews are part of the process but not the final graded deliverable for that week. Option D is incorrect because syntax exams are not the primary assessment method for this procedural course; practical application is emphasized."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "In the conceptual framework section, how is the term 'service' distinguished from a 'function' in the context of system architecture?",
+      "options": {
+        "A": "A service is a single line of code, while a function is a complete executable program.",
+        "B": "A service is a high-level architectural component that encapsulates state and behavior, whereas a function is a discrete unit of logic within that component.",
+        "C": "A service is a type of database query, while a function is a network request handler.",
+        "D": "There is no distinction; 'service' and 'function' are used interchangeably in this course to describe any block of code."
+      },
+      "correct_option": "B",
+      "explanation": "The lecture emphasized that 'services' are abstract architectural units that manage state and provide interfaces, while 'functions' are the concrete implementation details inside those services. Option A is incorrect because it reverses the scale; services are larger than single lines of code. Option C is incorrect because it incorrectly maps these terms to specific database or network tasks, which are not the general definitions provided. Option D is incorrect because the lecture explicitly warned against conflating these terms to maintain architectural clarity."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "According to the factual summary, what is the status of the specific educational content (text, code, formulas) within the provided input chunks?",
+      "options": {
+        "A": "It contains detailed code snippets and formulas.",
+        "B": "It consists solely of a title and metadata with no specific educational text.",
+        "C": "It includes conceptual definitions and examples.",
+        "D": "It provides a full procedural walkthrough in text form."
+      },
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states: 'The provided source content consists solely of a title and metadata... No specific educational text, code snippets, formulas, or conceptual definitions were included.' Options A, C, and D contradict this explicit statement."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "To execute the file management script described in the lecture, which sequence of command-line instructions is correct?",
+      "options": {
+        "A": "cd project_dir; python script.py --input data.csv",
+        "B": "python script.py --input data.csv; cd project_dir",
+        "C": "cd project_dir; python script.py data.csv",
+        "D": "cd data_dir; python script.py --input project_dir/data.csv"
+      },
+      "correct_option": "A",
+      "explanation": "The lecture demonstrated that one must first navigate to the correct directory (`cd project_dir`) to ensure relative paths work correctly, and then execute the script with the specific flag `--input` followed by the filename. Option B is incorrect because changing directories after execution does not affect the current execution context. Option C is incorrect because it omits the required `--input` flag, which the script expects. Option D is incorrect because it navigates to the wrong directory (`data_dir`) and uses an absolute path that may not be consistent with the lecture's relative path demonstration."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "Based on the provided metadata for the 'Classroom Lecture: Full Conceptual & Code Walkthrough', what is the primary input modality of the source material?",
+      "options": {
+        "A": "Text-based transcript",
+        "B": "Voice-only audio recording",
+        "C": "Video lecture with subtitles",
+        "D": "Interactive simulation"
+      },
+      "correct_option": "B",
+      "explanation": "The metadata explicitly states 'Input Type: VOICE_ONLY' and the title includes '(Audio Recording New)'. Option A is incorrect because no transcript was provided. Option C is incorrect as no video is mentioned. Option D is incorrect as no interactive elements are described."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Source Material Identification",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Content Availability",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Pedagogical Style",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Causal Reasoning",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Data Structure Analysis",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "MCQ_001",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Course Structure and Module Sequencing",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "MCQ_002",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Assessment Components and Deadlines",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "MCQ_003",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Architectural Abstraction vs. Implementation Details",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "MCQ_004",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Loop Termination Conditions and Indexing",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "MCQ_005",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_19_new_full_lecture",
+      "target_concept": "Command-Line Execution and Directory Context",
+      "cognitive_level": "APPLY"
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_21_voice_classroom",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the provided metadata header, what is the primary modality of the source content?",
+      "option_a": "Text-based lecture notes",
+      "option_b": "Voice-only audio recording",
+      "option_c": "Video lecture with slides",
+      "option_d": "Interactive simulation",
+      "correct_option": "B",
+      "explanation": "The metadata explicitly states 'Audio Recording Voice' and 'VOICE_ONLY', indicating the content is purely auditory. Options A, C, and D are incorrect because they imply visual or textual components that are not present in the source description.",
+      "target_concept": "Source Modality Identification",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Metadata Header",
+      "what_taught": "Identification of input format (Voice Only)",
+      "why_assessed": "To verify the student can correctly identify the nature of the source material provided.",
+      "evidence_refs": [
+        "Metadata Header: VOICE_ONLY"
+      ],
+      "misconception_rationale": "Students may assume standard lectures include slides or text, leading them to select visual or mixed-media options."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the factual summary, what specific educational content was included in the input chunks?",
+      "option_a": "Definitions of engineering terms",
+      "option_b": "Formulas and code examples",
+      "option_c": "No specific educational text, definitions, formulas, or code examples",
+      "option_d": "A procedural guide for live engineering",
+      "correct_option": "C",
+      "explanation": "The summary explicitly states: 'No specific educational text, definitions, formulas, or code examples were included in the input chunks.' Therefore, option C is the only accurate reflection of the source content. Options A, B, and D incorrectly assume the presence of substantive educational material.",
+      "target_concept": "Content Availability Assessment",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Recognition of empty or metadata-only inputs",
+      "why_assessed": "To ensure students can distinguish between metadata and actual instructional content.",
+      "evidence_refs": [
+        "Factual Summary: 'No specific educational text...'"
+      ],
+      "misconception_rationale": "Students might hallucinate content based on the title 'Live Engineering Exposition' rather than relying on the explicit statement of absence in the summary."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the stated reason why a factual summary of the engineering concepts could not be generated?",
+      "option_a": "The audio quality was too poor to transcribe",
+      "option_b": "The input chunks contained no specific educational text, definitions, formulas, or code examples",
+      "option_c": "The engineering concepts were classified as confidential",
+      "option_d": "The lecture was too short to contain substantive information",
+      "correct_option": "B",
+      "explanation": "The summary directly attributes the lack of a factual summary to the absence of 'specific educational text, definitions, formulas, or code examples' in the input chunks. Options A, C, and D introduce external factors (quality, confidentiality, length) that are not mentioned in the source text.",
+      "target_concept": "Causal Reasoning from Source Text",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Linking cause (missing content) to effect (no summary)",
+      "why_assessed": "To test the ability to extract causal relationships directly from the provided text without inferring external causes.",
+      "evidence_refs": [
+        "Factual Summary: 'Consequently, no factual summary...'"
+      ],
+      "misconception_rationale": "Students may assume technical issues (audio quality) or administrative issues (confidentiality) are the cause, rather than the explicit content deficiency stated."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which of the following lists accurately reflects the categories of content explicitly stated as NOT included in the input chunks?",
+      "option_a": "Text, definitions, formulas, and code examples",
+      "option_b": "Images, videos, and audio clips",
+      "option_c": "Questions, answers, and feedback",
+      "option_d": "Diagrams, tables, and graphs",
+      "correct_option": "A",
+      "explanation": "The summary explicitly lists 'specific educational text, definitions, formulas, or code examples' as the missing elements. Option A matches this list exactly. Options B, C, and D list other types of content that were not specifically mentioned as missing in the source text.",
+      "target_concept": "Detail Extraction",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Precise recall of excluded content categories",
+      "why_assessed": "To verify precise reading comprehension of the negative constraints in the summary.",
+      "evidence_refs": [
+        "Factual Summary: 'No specific educational text, definitions, formulas, or code examples...'"
+      ],
+      "misconception_rationale": "Students might generalize 'no content' to include all media types (Option B) or assume standard exam components (Option C) were missing, rather than the specific technical items listed."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Based on the provided representation, what is the most accurate description of the 'Live Engineering Exposition'?",
+      "option_a": "A detailed procedural guide with code snippets",
+      "option_b": "A metadata header indicating a voice-only lecture with no substantive educational content provided",
+      "option_c": "A comprehensive video tutorial on engineering principles",
+      "option_d": "A set of lecture notes containing definitions and formulas",
+      "correct_option": "B",
+      "explanation": "The source is described as a 'metadata header indicating a voice-only classroom lecture' and the summary confirms 'No specific educational text... were included.' Option B accurately synthesizes these two facts. Options A, C, and D describe rich content that is explicitly stated to be absent.",
+      "target_concept": "Synthesis of Source Characteristics",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Overall Source Representation",
+      "what_taught": "Synthesizing metadata and summary to form a complete picture of the source",
+      "why_assessed": "To test the ability to combine information from different parts of the representation (title/metadata and summary) to form a correct overall assessment.",
+      "evidence_refs": [
+        "Title: 'Classroom Lecture: Live Engineering Exposition (Audio Recording Voice)'",
+        "Factual Summary: 'No specific educational text...'"
+      ],
+      "misconception_rationale": "Students may be biased by the title 'Live Engineering Exposition' to assume rich content (Options A, C, D) exists, failing to integrate the negative evidence from the summary."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix - Binary Search Approach",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Explain how binary search can be applied to find the longest common prefix among a list of strings, and identify the key steps in the algorithm.",
+    "misconception_target": "Assuming binary search can be applied directly to string characters without considering string length boundaries.",
+    "evidence_refs": [
+      "E_C10",
+      "E_C12"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Longest Common Prefix - Brute Force Approach",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Debug a provided brute-force implementation of longest common prefix to correct logical errors and improve runtime efficiency.",
+    "misconception_target": "Believing that nested loops over all strings and characters always produce correct results without boundary checks.",
+    "evidence_refs": [
+      "E_C02",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Java Memory Management",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Analyze a Java program that causes memory leaks, identify the root cause, and suggest appropriate garbage collection strategies.",
+    "misconception_target": "Assuming that all objects are automatically freed when out of scope without considering strong references.",
+    "evidence_refs": [
+      "E_C07",
+      "E_C08"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Code Quality & Refactoring",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_REFACTORING",
+    "assessment_goal": "Refactor a given code snippet to adhere to SOLID principles and improve readability, while preserving functionality.",
+    "misconception_target": "Thinking that refactoring only involves renaming variables.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05",
+      "E_C06"
+    ],
+    "question_type": "CODE_REFACTORING",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Banana Eating Problem",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "WORKED_EXAMPLE",
+    "assessment_goal": "Apply a greedy algorithm to determine the maximum number of bananas that can be eaten given constraints, and explain the reasoning behind the greedy choice.",
+    "misconception_target": "Assuming that eating the smallest banana first always maximizes the total number of bananas eaten.",
+    "evidence_refs": [
+      "E_C13",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_006_problem_solving_lcp",
+  "input_type": "PROBLEM_SOLVING",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which of the following algorithms for finding the longest common prefix has a time complexity of O(N\u202f\u00b7\u202fL_min\u202f\u00b7\u202flog\u202fL_min)?",
+      "option_a": "Horizontal scanning",
+      "option_b": "Vertical scanning",
+      "option_c": "Binary search on prefix length",
+      "option_d": "Trie\u2011based traversal",
+      "correct_option": "C",
+      "explanation": "Binary search on prefix length first determines the shortest string length L_min and then binary\u2011searches the interval [1, L_min]. Each midpoint test scans all N strings up to the current length, costing O(N\u00b7mid). Over log\u202fL_min iterations the total cost is O(N\u00b7L_min\u00b7log\u202fL_min). Horizontal scanning and vertical scanning are O(N\u00b7L_min) in the worst case, while Trie traversal is O(N\u00b7L_min) for building plus O(L_min) for the final walk. Therefore only option C is correct.",
+      "target_concept": "Binary Search on Prefix Length",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the Trie\u2011based longest common prefix algorithm, the traversal from the root stops when:",
+      "option_a": "the current node has exactly one child and is not an end\u2011of\u2011word marker",
+      "option_b": "the current node has more than one child or is marked as an end\u2011of\u2011word",
+      "option_c": "the current node has no children",
+      "option_d": "the depth of the traversal reaches the length of the longest string",
+      "correct_option": "B",
+      "explanation": "In a Trie, the common prefix continues as long as every node on the path has exactly one child and no string ends at that node. The moment a node has multiple children (indicating a divergence) or is an end\u2011of\u2011word (a string terminates), the common prefix cannot be extended further. Option B captures this stopping condition. Option A describes the condition to continue, not to stop. Option C would stop only at leaf nodes, which is not sufficient. Option D is unrelated to the algorithm's logic.",
+      "target_concept": "Trie\u2011based LCP",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the worst\u2011case time complexity of the horizontal scanning method for longest common prefix?",
+      "option_a": "O(N\u202f+\u202fL_min)",
+      "option_b": "O(N\u202f\u00b7\u202fL_min)",
+      "option_c": "O(N\u202f\u00b7\u202flog\u202fL_min)",
+      "option_d": "O(L_min\u00b2)",
+      "correct_option": "B",
+      "explanation": "Horizontal scanning iteratively computes the LCP of the current prefix with each subsequent string. In the worst case (all strings are identical), each comparison scans the entire current prefix, whose length can be up to L_min. Repeating this for N\u20111 strings yields O(N\u202f\u00b7\u202fL_min). The other options either underestimate the work (A, C) or describe unrelated complexities (D).",
+      "target_concept": "Horizontal Scanning",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Vertical scanning is particularly efficient when the first mismatch occurs early in which of the following strings?",
+      "option_a": "the first string",
+      "option_b": "the second string",
+      "option_c": "the last string",
+      "option_d": "any string, because vertical scanning always scans column\u2011wise",
+      "correct_option": "B",
+      "explanation": "Vertical scanning checks characters column by column across all strings. If the second string differs from the first at an early index, the algorithm can stop after examining that column, saving work. A mismatch in the first string would be detected only after comparing it with all others, and a mismatch in the last string would require scanning all previous columns. Option D ignores the early\u2011stop advantage. Hence, option B is correct.",
+      "target_concept": "Vertical Scanning",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "The expression LCP(S\u2081\u2026S\u2099) = LCP(LCP(LCP(S\u2081,S\u2082),S\u2083)\u2026S\u2099) illustrates which principle of longest common prefix computation?",
+      "option_a": "The associative property allowing pairwise reduction",
+      "option_b": "The need to sort strings before processing",
+      "option_c": "The requirement of a Trie data structure",
+      "option_d": "The binary\u2011search approach on prefix length",
+      "correct_option": "A",
+      "explanation": "The formula shows that the longest common prefix of a set can be obtained by repeatedly applying the binary LCP operation to pairs of strings, i.e., reducing the problem iteratively. This reflects the associative (and effectively commutative) nature of the LCP operation, enabling algorithms like horizontal scanning. Options B, C, and D describe specific algorithmic techniques that are not captured by this generic reduction property.",
+      "target_concept": "LCP Reduction Principle",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

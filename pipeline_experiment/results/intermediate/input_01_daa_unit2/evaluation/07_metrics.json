@@ -1,0 +1,74 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 86.8,
+    "source_answerability_percentage": 69.9,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.111,
+    "diversity_score": 0.889,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.8,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.4,
+      "APPLY": 0.4,
+      "ANALYZE": 0.2
+    },
+    "specificity_score": 4.48
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 84.2,
+    "source_answerability_percentage": 66.4,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.168,
+    "diversity_score": 0.832,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.5,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.5,
+      "APPLY": 0.5
+    },
+    "specificity_score": 4.36
+  },
+  "metrics_unified_pipeline_c": {
+    "source_grounding_percentage": 79.7,
+    "source_answerability_percentage": 72.7,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.078,
+    "diversity_score": 0.922,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.5,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.5,
+      "APPLY": 0.5
+    },
+    "specificity_score": 4.25
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_01_daa_unit2",
+    "topics_grounded_percentage": 100.0,
+    "salience_alignment_score": 4.5,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 44.4,
+    "overall_validity_percentage": 83.3
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.799,
+    "composite_score_blueprint": 0.762,
+    "quality_delta": -0.037,
+    "rationale": "Composite quality difference (|delta|=0.037) is within the indifference threshold (0.05)."
+  },
+  "three_way_decision": {
+    "winner": "SUMMARY_PIPELINE_A",
+    "q_summary_a": 0.799,
+    "q_blueprint_b": 0.762,
+    "q_unified_c": 0.758,
+    "delta_c_minus_a": -0.041,
+    "delta_c_minus_b": -0.004,
+    "delta_b_minus_a": -0.037,
+    "rationale": "Summary produced highest quality (Q_A=0.799 vs Q_C=0.758, Q_B=0.762)."
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_003_voice_only_math_logic",
+  "input_type": "VOICE_ONLY",
+  "content_style": "MATHEMATICAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "S01",
+      "question_text": "Using prime factorization, what is the least common multiple (LCM) of 12 and 18?",
+      "option_a": "36",
+      "option_b": "54",
+      "option_c": "12",
+      "option_d": "18",
+      "correct_option": "A",
+      "explanation": "Prime factorization: 12 = 2^2\u00b73, 18 = 2\u00b73^2. LCM uses the highest power of each prime: 2^2\u00b73^2 = 4\u00b79 = 36, so option A is correct. Option B (54) multiplies the numbers and then divides by 2, which is not the LCM. Option C (12) is the smaller number and confuses LCM with GCD. Option D (18) is the larger number and reflects the misconception of using the larger operand as the LCM.",
+      "target_concept": "Least Common Multiple (LCM) Computation",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "S02",
+      "question_text": "Which of the following lists correctly shows the process of finding the LCM of 4 and 6 using the multiple\u2011listing method?",
+      "option_a": "Multiples of 4: 4, 8, 12, 16\u2026; Multiples of 6: 6, 12, 18\u2026 \u2192 First common multiple is 12.",
+      "option_b": "Multiples of 4: 4, 8, 12, 16\u2026; Multiples of 6: 6, 12, 18\u2026 \u2192 First common multiple is 6.",
+      "option_c": "Multiples of 4: 4, 8, 12, 16\u2026; Multiples of 6: 6, 12, 18\u2026 \u2192 First common multiple is 4.",
+      "option_d": "Multiples of 4: 4, 8, 12, 16\u2026; Multiples of 6: 6, 12, 18\u2026 \u2192 First common multiple is 24.",
+      "correct_option": "A",
+      "explanation": "The multiple\u2011listing method requires listing multiples of each number until a common value appears. The first common multiple of 4 and 6 is 12, making option A correct. Option B incorrectly selects 6, which is not a multiple of 4. Option C selects 4, which is not a multiple of 6. Option D jumps to 24 without checking earlier common multiples, reflecting the misconception that the first common multiple encountered after a few steps is always the LCM.",
+      "target_concept": "Least Common Multiple (LCM) Computation",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "S03",
+      "question_text": "Apply the Euclidean algorithm to find the GCD of 48 and 18. Which of the following is the correct final remainder that yields the GCD?",
+      "option_a": "6",
+      "option_b": "12",
+      "option_c": "18",
+      "option_d": "0",
+      "correct_option": "A",
+      "explanation": "Euclidean steps: 48 \u00f7 18 = 2 remainder 12; 18 \u00f7 12 = 1 remainder 6; 12 \u00f7 6 = 2 remainder 0. The last non\u2011zero remainder is 6, so the GCD is 6 (option A). Option B (12) is the first remainder and reflects the misconception of stopping after the first remainder equals zero (which never occurs at that step). Option C (18) is the larger original number and confuses GCD with the input. Option D (0) is the final remainder but not the GCD itself; the algorithm stops when the remainder becomes 0, and the previous remainder is the GCD.",
+      "target_concept": "Greatest Common Divisor (GCD) via Euclidean Algorithm",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "S04",
+      "question_text": "Why is it necessary to swap the operands when the first number A is less than the second number B before starting the Euclidean algorithm?",
+      "option_a": "Swapping ensures that the first division produces a remainder smaller than the divisor, preventing an infinite loop.",
+      "option_b": "Swapping speeds up the algorithm but is not required for correctness.",
+      "option_c": "Swapping changes the GCD value to the larger of the two numbers.",
+      "option_d": "Swapping is only needed when both numbers are prime.",
+      "correct_option": "A",
+      "explanation": "The Euclidean algorithm requires the dividend to be greater than or equal to the divisor; otherwise the first remainder would equal the dividend, causing the algorithm to repeat indefinitely. Swapping A and B when A < B guarantees a proper remainder sequence, making option A correct. Option B is incorrect because the algorithm will fail without swapping, not merely run slower. Option C misstates the effect of swapping; the GCD remains unchanged. Option D is unrelated; swapping is required for any pair where A < B, not just primes.",
+      "target_concept": "Implicit Operand Swapping When A < B",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "S05",
+      "question_text": "When computing LCM(a, b) = (a \u00f7 GCD(a, b)) \u00d7 b, which safety check best prevents integer overflow in a 32\u2011bit signed environment?",
+      "option_a": "Verify that (a \u00f7 GCD(a, b)) \u2264 MAX_INT \u00f7 b before performing the multiplication.",
+      "option_b": "Assume overflow cannot occur because a and b are positive and small.",
+      "option_c": "Perform the multiplication first and then divide by GCD(a, b).",
+      "option_d": "Only check that a and b are less than MAX_INT, ignoring the intermediate product.",
+      "correct_option": "A",
+      "explanation": "The safe approach is to ensure the intermediate product will not exceed the maximum representable integer. By checking (a \u00f7 GCD) \u2264 MAX_INT \u00f7 b, we guarantee the multiplication stays within bounds, so option A is correct. Option B ignores the possibility of overflow, reflecting the misconception that intermediate results are always safe. Option C re\u2011orders the operations in a way that can cause overflow before division. Option D fails to consider the product of the reduced factor and b, so it does not prevent overflow.",
+      "target_concept": "Integer Overflow Prevention in Multiplication/Division",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

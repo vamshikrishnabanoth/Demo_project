@@ -1,0 +1,28 @@
+{
+  "request_id": "REQ-1788034310021-CASE_A_M",
+  "timestamp": "2026-08-29T20:13:36Z",
+  "input_id": "CASE_A_MONOLOGUE",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CODE_INTERPRETATION",
+    "PARAMETER_CHANGE",
+    "THEORETICAL_RATIONALE",
+    "OUTPUT_PREDICTION",
+    "ERROR_DIAGNOSIS"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 106285.36,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 targets is fulfilled by selecting 5 distinct core concepts from the available pool of 9. To ensure non-redundancy and high quality at a MEDIUM difficulty level, each target is assigned a unique pedagogical facet. This ensures that while the concepts are related (all part of a neural network pipeline), the assessment angles (mechanism, rationale, code, prediction, diagnosis) are distinct, preventing overlap in the skills being tested."
+}

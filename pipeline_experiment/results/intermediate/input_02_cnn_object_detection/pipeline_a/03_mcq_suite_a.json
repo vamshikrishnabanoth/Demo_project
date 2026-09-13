@@ -1,0 +1,107 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_02_cnn_object_detection",
+  "input_type": "PDF",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the architectural comparison provided, what is the primary structural difference between Fast R-CNN and YOLO that results in YOLO's significantly lower inference latency?",
+      "option_a": "YOLO uses a Region Proposal Network (RPN) to generate candidate regions, while Fast R-CNN does not.",
+      "option_b": "YOLO is a single-stage detector that predicts bounding boxes and classes in one pass, whereas Fast R-CNN is a two-stage process involving proposal generation and RoI processing.",
+      "option_c": "YOLO utilizes a ResNet50 backbone pretrained on COCO, while Fast R-CNN uses a lightweight custom backbone.",
+      "option_d": "YOLO converts pixel-level segmentation masks into bounding boxes, while Fast R-CNN predicts boxes directly from the image grid.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary explicitly defines YOLO as a 'single-stage object detection architecture' that detects objects in 'one pass,' contrasting it with Fast R-CNN, which is described as a 'two-stage process' involving a Region Proposal Network (RPN) and RoI Heads. This architectural difference is cited as the reason for YOLO's lower latency (approx. 0.22s vs 8.00s). Option A is incorrect because it reverses the roles; Fast R-CNN uses the RPN, not YOLO. Option C is incorrect because the summary states Fast R-CNN utilizes the ResNet50 backbone, not YOLO. Option D is incorrect because mask-to-box conversion is a data preprocessing step described for the dataset, not a core architectural difference in how the models detect objects.",
+      "target_concept": "Architectural Differences: Single-stage vs. Two-stage Detection",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "Fast R-CNN is a two-stage model (RPN + RoI Head), while YOLO is a single-stage model.",
+      "why_assessed": "To verify the student understands the fundamental architectural distinction that drives the performance trade-off between speed and refinement.",
+      "evidence_refs": [
+        "concepts_and_definitions[0]",
+        "concepts_and_definitions[1]",
+        "mechanisms_and_formulas[3]"
+      ],
+      "misconception_rationale": "Distractors A and D swap the specific mechanisms (RPN, mask conversion) between the two models, reflecting a common error in associating specific components with the wrong architecture. Distractor C incorrectly attributes the specific backbone mentioned for Fast R-CNN to YOLO."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "In the context of the Fast R-CNN pipeline described, what is the specific function of the Region Proposal Network (RPN)?",
+      "option_a": "It extracts fixed-size feature representations from variable-sized regions of interest for final classification.",
+      "option_b": "It generates anchor boxes and predicts objectness scores and bounding box offsets.",
+      "option_c": "It converts pixel-level segmentation masks into object-level bounding boxes using NumPy.",
+      "option_d": "It directly predicts the final class probabilities and bounding boxes across the entire image grid in a single pass.",
+      "correct_option": "B",
+      "explanation": "Option B is correct as the summary explicitly defines the Region Proposal Network (RPN) as a component that 'generates anchor boxes and predicts objectness scores and bounding box offsets.' Option A describes the function of RoI Pooling (MultiScaleRoIAlign), which occurs after the RPN. Option C describes the data preprocessing step of converting masks to boxes, which is not part of the RPN's internal mechanism. Option D describes the function of the YOLO architecture, not the RPN within Fast R-CNN.",
+      "target_concept": "Function of the Region Proposal Network (RPN)",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "RPN generates proposals (anchors, objectness, offsets) for the subsequent RoI stage.",
+      "why_assessed": "To ensure precise recall of the specific role of the RPN within the two-stage detection pipeline.",
+      "evidence_refs": [
+        "concepts_and_definitions[3]"
+      ],
+      "misconception_rationale": "Distractors A, C, and D describe other components (RoI Pooling, Data Preprocessing, YOLO) or steps in the pipeline, testing if the student can distinguish the specific role of the RPN from other parts of the system."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "According to the performance comparison in the material, what is the approximate inference time for the YOLO model compared to Fast R-CNN?",
+      "option_a": "YOLO: ~8.00 seconds, Fast R-CNN: ~0.22 seconds",
+      "option_b": "YOLO: ~0.22 seconds, Fast R-CNN: ~8.00 seconds",
+      "option_c": "YOLO: ~0.22 seconds, Fast R-CNN: ~0.22 seconds",
+      "option_d": "YOLO: ~8.00 seconds, Fast R-CNN: ~8.00 seconds",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the 'Performance Comparison' section of the summary states that 'YOLO demonstrates significantly lower latency (approx. 0.22s) compared to Fast R-CNN (approx. 8.00s).' Option A reverses the values. Options C and D incorrectly suggest the models have similar or identical performance, contradicting the explicit comparison provided in the text.",
+      "target_concept": "Quantitative Performance Comparison",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "mechanisms_and_formulas",
+      "what_taught": "YOLO is significantly faster (~0.22s) than Fast R-CNN (~8.00s).",
+      "why_assessed": "To verify the student has retained the specific quantitative data points used to illustrate the speed-accuracy trade-off.",
+      "evidence_refs": [
+        "mechanisms_and_formulas[3]",
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractor A is a direct reversal of the correct values, a common error when memorizing paired data. Distractors C and D test if the student understands that there is a significant performance gap, rather than assuming parity."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "What is the primary purpose of the RoI Pooling (MultiScaleRoIAlign) mechanism in the Fast R-CNN architecture?",
+      "option_a": "To generate initial candidate regions and anchor boxes from the feature map.",
+      "option_b": "To extract fixed-size feature representations from variable-sized regions of interest for classification and regression.",
+      "option_c": "To convert the entire image into a tensor for input into the backbone network.",
+      "option_d": "To filter out bounding boxes with a confidence score below 0.5 during visualization.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the summary defines RoI Pooling (MultiScaleRoIAlign) as a mechanism that 'extracts fixed-size feature representations from variable-sized regions of interest (RoIs) for classification and regression.' Option A describes the RPN. Option C describes the preprocessing step of converting images to tensors. Option D describes a post-processing/visualization step involving confidence thresholds, not the feature extraction mechanism of RoI Pooling.",
+      "target_concept": "Function of RoI Pooling",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "RoI Pooling standardizes variable-sized region features into fixed-size vectors for the classification head.",
+      "why_assessed": "To assess understanding of how variable-sized proposals are processed to fit the fixed input requirements of the classification/regression heads.",
+      "evidence_refs": [
+        "concepts_and_definitions[4]"
+      ],
+      "misconception_rationale": "Distractors A, C, and D represent other distinct steps in the pipeline (Proposal Generation, Preprocessing, Post-processing). This tests if the student can map specific functions to the correct architectural component."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the context of the Fast R-CNN implementation described, what does 'Transfer Learning' refer to?",
+      "option_a": "Converting pixel-level segmentation masks into bounding boxes using NumPy.",
+      "option_b": "Reusing a model pretrained on a large dataset (e.g., COCO) to leverage general feature extraction capabilities for a specific task.",
+      "option_c": "Using the `ultralytics` library to load a YOLO model for pedestrian detection.",
+      "option_d": "Applying `torch.no_grad()` to disable gradient calculation during inference.",
+      "correct_option": "B",
+      "explanation": "Option B is correct as the summary explicitly defines Transfer Learning as 'The technique of reusing a model pretrained on a large dataset (e.g., COCO) to leverage general feature extraction capabilities for a specific task like pedestrian detection.' Option A describes data preprocessing. Option C describes a specific library usage for YOLO, not the general concept of transfer learning. Option D describes an optimization technique for inference speed, not the learning strategy itself.",
+      "target_concept": "Definition of Transfer Learning",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "concepts_and_definitions",
+      "what_taught": "Transfer learning involves using pre-trained weights (e.g., from COCO) to improve performance on a new task.",
+      "why_assessed": "To ensure the student understands the concept of leveraging pre-trained knowledge, which is a key part of the Fast R-CNN setup described.",
+      "evidence_refs": [
+        "concepts_and_definitions[2]"
+      ],
+      "misconception_rationale": "Distractors A, C, and D are technical steps or tools mentioned in the material but are not the definition of transfer learning. This tests the ability to distinguish between the high-level learning strategy and the low-level implementation details."
+    }
+  ]
+}

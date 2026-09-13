@@ -1,0 +1,15 @@
+{
+  "plan_id": "PLAN_input_21_voice_classroom",
+  "input_id": "input_21_voice_classroom",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "T01",
+      "topic_name": "Overview",
+      "question_count": 5,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

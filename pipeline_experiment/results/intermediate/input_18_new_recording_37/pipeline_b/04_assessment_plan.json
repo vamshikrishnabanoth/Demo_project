@@ -1,0 +1,15 @@
+{
+  "plan_id": "PLAN_input_18_new_recording_37",
+  "input_id": "input_18_new_recording_37",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "T01",
+      "topic_name": "Overview",
+      "question_count": 5,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    }
+  ]
+}

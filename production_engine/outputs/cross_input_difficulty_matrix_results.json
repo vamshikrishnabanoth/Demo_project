@@ -1,0 +1,478 @@
+{
+  "MODALITY_01_VOICE_ONLY": {
+    "title": "DAA: Binary Search on Median of Two Sorted Arrays",
+    "modality": "VOICE_ONLY",
+    "router_decision": "BLUEPRINT",
+    "pdi_score": null,
+    "tiers": {
+      "EASY": {
+        "difficulty_requested": "EASY",
+        "latency_seconds": 54.5,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "UNDERSTAND": 1,
+          "REMEMBER": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the binary search approach to finding the median of two sorted arrays, what is the primary condition that defines a valid partition between the two arrays?",
+            "option_a": "The partition must split each individual array exactly in half, ensuring equal element counts in both arrays.",
+            "option_b": "The maximum element of the left partition must be less than or equal to the minimum element of the right partition, and the left partition must contain exactly half of the total elements.",
+            "option_c": "The left partition must contain strictly fewer elements than the right partition to ensure the median is always in the right half.",
+            "option_d": "The sum of the elements in the left partition must be equal to the sum of the elements in the right partition.",
+            "correct_option": "B",
+            "explanation": "Option B is correct because the algorithm relies on creating a virtual merged array where the left side contains exactly half the total elements (n/2) and is properly ordered relative to the right side (max(left) <= min(right)). Option A is incorrect because the partition sizes of the individual arrays do not need to be equal; they are determined by the binary search index. Option C is incorrect because the left partition must contain exactly half the total elements (or floor/ceil depending on odd/even total), not strictly fewer. Option D is irrelevant to the median calculation, which depends on position, not sum.",
+            "target_concept": "Binary Search Partitioning Strategy",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "EASY",
+            "what_taught": "The core strategy involves partitioning the two sorted arrays such that the left halves contain exactly half of the total elements, and the maximum element of the left partition is less than or equal to the minimum element of the right partition.",
+            "why_assessed": "This is the foundational conceptual overview introduced at the start of the lesson. Assessing this ensures students understand the high-level goal of the binary search approach before diving into index logic.",
+            "evidence_refs": [
+              "E_C58",
+              "E_C06",
+              "E_C42"
+            ],
+            "misconception_rationale": "Distractors target the common misconception that the arrays must be split individually in half (A) or that the partition sizes must be unequal (C), which contradicts the 'half of total elements' rule taught in class."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "When initializing the binary search for the median of two sorted arrays of lengths m and n, how is the total number of elements required in the left partition calculated?",
+            "option_a": "By taking the length of the first array (m) and dividing by 2.",
+            "option_b": "By taking the sum of the lengths of both arrays (m + n) and dividing by 2 using integer division.",
+            "option_c": "By taking the sum of the lengths of both arrays (m + n) and rounding up to the nearest integer.",
+            "option_d": "By taking the maximum length of the two arrays and dividing by 2.",
+            "correct_option": "B",
+            "explanation": "Option B is correct because the left partition of the virtual merged array must contain exactly half of the total elements. Since the total number of elements is m + n, the size of the left partition is (m + n) // 2. Option A is incorrect because it ignores the second array. Option C is incorrect because integer division (floor) is used to determine the count of elements in the left half; rounding up would place too many elements in the left partition for the standard median definition. Option D is incorrect because the median depends on the combined size, not just the larger array.",
+            "target_concept": "Initial Partition Size Determination",
+            "cognitive_level": "REMEMBER",
+            "difficulty_level": "EASY",
+            "what_taught": "The initial partition size for the binary search is determined by taking the sum of the lengths of both arrays and dividing by 2 (integer division) to find the total number of elements that must be in the left partition.",
+            "why_assessed": "This is a specific, directly stated initialization logic that serves as the starting point for the algorithm. It is a discrete fact that can be recalled without complex derivation.",
+            "evidence_refs": [
+              "E_C26",
+              "E_C42",
+              "E_C05"
+            ],
+            "misconception_rationale": "Distractors target the error of using only one array's length (A) or incorrect rounding behavior (C), which are common coding bugs when implementing the partition size calculation."
+          }
+        ]
+      },
+      "MEDIUM": {
+        "difficulty_requested": "MEDIUM",
+        "latency_seconds": 114.8,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "APPLY": 2
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the binary search algorithm for the median of two sorted arrays `nums1` (length m) and `nums2` (length n), where `m <= n`, we perform the binary search on `nums1` to find a partition index `i`. If `m = 3` and `n = 5`, and the binary search converges on `i = 2`, what is the correct value for the partition index `j` in `nums2`, and what is the specific condition required for this partition to be valid?",
+            "option_a": "j = 3; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i]",
+            "option_b": "j = 3; Condition: nums1[i] <= nums2[j-1] AND nums2[j] <= nums1[i-1]",
+            "option_c": "j = 5; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i]",
+            "option_d": "j = 4; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i]",
+            "correct_option": "A",
+            "explanation": "The total number of elements is m + n = 3 + 5 = 8. The size of the left half of the combined array must be (m + n + 1) // 2 = (8 + 1) // 2 = 4 (using integer division). The partition index `j` is calculated as `j = (m + n + 1) // 2 - i`. Substituting the values: `j = 4 - 2 = 3`. The validity condition for the partition is that the maximum element in the left half of `nums1` (`nums1[i-1]`) must be less than or equal to the minimum element in the right half of `nums2` (`nums2[j]`), and the maximum element in the left half of `nums2` (`nums2[j-1]`) must be less than or equal to the minimum element in the right half of `nums1` (`nums1[i]`). Option A correctly calculates `j` and states the standard cross-array comparison conditions. Option B reverses the comparison logic. Option C incorrectly calculates `j` as `n - i` (5 - 2 = 3? No, 5-2=3, wait. If C says j=5, that's wrong. Let's re-read C. C says j=5. That would imply j = n? No. Let's make C a common error like j = n - i = 3? No, A is j=3. Let's make C j = (m+n)//2 - i = 4 - 2 = 2? Or j = n - i = 3? If A is correct with j=3, C needs a different wrong j. Let's set C to j = 4 (using (m+n)//2 - i = 4-2=2? No. Let's set C to j = n - i = 3? That's the same as A. Let's set C to j = (m+n)//2 - i = 4 - 2 = 2. And D to j = (m+n+1)//2 - i + 1 = 4. Let's refine options to be distinct misconceptions.\n\nRevised Options:\nA: j = 3; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i] (Correct)\nB: j = 3; Condition: nums1[i] <= nums2[j-1] AND nums2[j] <= nums1[i-1] (Reversed logic)\nC: j = 2; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i] (Calculated j as (m+n)//2 - i = 4-2=2, ignoring the +1 for odd/even handling or just wrong formula)\nD: j = 4; Condition: nums1[i-1] <= nums2[j] AND nums2[j-1] <= nums1[i] (Calculated j as (m+n+1)//2 - i + 1 = 4, off-by-one)\n\nLet's stick to the generated options in the thought process but ensure they are distinct.\nOriginal A: j=3, correct cond.\nOriginal B: j=3, reversed cond.\nOriginal C: j=5, correct cond. (j=5 is n, which is wrong).\nOriginal D: j=4, correct cond. (j=4 is off-by-one).\n\nThis set is good. A is correct. B is logic error. C is formula error (j=n). D is formula error (off-by-one).",
+            "target_concept": "Partition Boundary and Size Constraints",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "The binary search is performed on the smaller array to find a partition index `i` such that the number of elements in the left half of the combined array is exactly `(m + n + 1) // 2`. The corresponding partition index `j` in the second array is derived as `j = (m + n + 1) // 2 - i`. The valid partition requires that `nums1[i-1] <= nums2[j]` and `nums2[j-1] <= nums1[i]`.",
+            "why_assessed": "This is the foundational step of the algorithm. Students frequently make off-by-one errors in calculating `j` or fail to correctly handle the boundary conditions. Assessing this ensures the student understands how to set up the binary search space and the validity check for a partition.",
+            "evidence_refs": [
+              "E_C42",
+              "E_C02",
+              "E_C26"
+            ],
+            "misconception_rationale": "Option B represents a student who reverses the comparison logic, thinking the left side must be smaller than the right side in a reversed manner. Option C represents a student who incorrectly assumes `j` is simply the length of the second array or uses a flawed subtraction. Option D represents an off-by-one error in the calculation of `j`, a very common mistake when dealing with 0-indexed vs 1-indexed partition sizes."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "Consider two sorted arrays `nums1 = [1, 3]` and `nums2 = [2, 4]`. The total length is 4 (even). A valid partition is found where the left half of the combined array contains `[1, 2]` and the right half contains `[3, 4]`. Specifically, `max(left_half) = 2` and `min(right_half) = 3`. What is the correct median calculation?",
+            "option_a": "2.0",
+            "option_b": "2",
+            "option_c": "2.5",
+            "option_d": "3.0",
+            "correct_option": "C",
+            "explanation": "For an even total length, the median is the average of the two middle elements. These are the maximum element of the left partition (`max(left_max)`) and the minimum element of the right partition (`min(right_min)`). Here, `max(left_max) = 2` and `min(right_min) = 3`. The median is `(2 + 3) / 2.0 = 2.5`. Option C is correct. Option A is the result of integer division truncation if one mistakenly uses integer division or just takes the lower middle. Option B is the integer result of `(2+3)//2` which is 2, representing a common integer division error. Option D is the upper middle element, which would be the median if the total length were odd and this was the single middle element, or if the student incorrectly took the max of the right half.",
+            "target_concept": "Median Extraction Logic for Odd/Even Total Length",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "Once a valid partition is found, the median is calculated differently based on the total length `m + n`. If the total length is even, the median is `(max(left_max) + min(right_min)) / 2.0`, where `left_max` is the maximum of the left halves and `right_min` is the minimum of the right halves.",
+            "why_assessed": "This step tests the student's ability to correctly interpret the partitioned data to derive the final answer. A common error is mixing up the max/min operations or failing to cast to float for the even case, resulting in integer division errors.",
+            "evidence_refs": [
+              "E_C26",
+              "E_C06",
+              "E_C42"
+            ],
+            "misconception_rationale": "Option A and B represent the common error of integer division or truncation, where `(2+3)/2` is calculated as 2 instead of 2.5. Option D represents a student who confuses the median with the maximum of the left half or the minimum of the right half in an odd-length scenario, or simply picks the wrong boundary element."
+          }
+        ]
+      },
+      "HARD": {
+        "difficulty_requested": "HARD",
+        "latency_seconds": 115.4,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "ANALYZE": 1,
+          "EVALUATE": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the binary search algorithm for finding the median of two sorted arrays, we partition array A at index `i` and array B at index `j` such that the left halves contain exactly half of the total elements. Let `A[i-1]` be the maximum element of the left partition of A, and `B[j]` be the minimum element of the right partition of B. During the binary search, if the condition `A[i-1] > B[j]` is true, what is the correct logical interpretation and the required adjustment to the search space?",
+            "option_a": "The partition in A is too far to the right, meaning `A[i-1]` is too large. We must decrease `i` (move the partition in A to the left) to find a smaller `A[i-1]` that satisfies the invariant.",
+            "option_b": "The partition in A is too far to the left, meaning `A[i-1]` is too small. We must increase `i` (move the partition in A to the right) to find a larger `A[i-1]` that satisfies the invariant.",
+            "option_c": "The partition in B is too far to the right. We must increase `j` (move the partition in B to the right) to ensure `B[j]` is larger than `A[i-1]`.",
+            "option_d": "The invariant is violated because the arrays are not sorted. The algorithm must terminate and return an error, as the median cannot be calculated with this input.",
+            "correct_option": "A",
+            "explanation": "The core invariant requires that the maximum of the left partition of A (`A[i-1]`) must be less than or equal to the minimum of the right partition of B (`B[j]`). If `A[i-1] > B[j]`, it means the element `A[i-1]` is too large to be in the left half; it belongs in the right half. Therefore, the partition in A is too far to the right. To fix this, we must move the partition in A to the left (decrease `i`), which will result in a smaller `A[i-1]` (or a sentinel -infinity) and a larger `B[j]` (since `j` increases as `i` decreases to maintain the total count), thereby potentially satisfying the condition `A[i-1] <= B[j]`. Option B is incorrect because moving right would make `A[i-1]` even larger. Option C is incorrect because we only binary search on one array (typically the smaller one) to maintain O(log(min(m,n))) complexity; adjusting B directly is not the standard algorithmic step. Option D is incorrect because the condition `A[i-1] > B[j]` is a normal part of the binary search process, not an error state.",
+            "target_concept": "Partition Boundary Invariant and Cross-Array Comparison Logic",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "what_taught": "The algorithm partitions the two arrays such that the left halves contain exactly half of the total elements. The critical invariant is that the maximum element of the left partition of array A must be less than or equal to the minimum element of the right partition of array B. The binary search direction is determined by comparing A[left_max] with B[right_min]. If A[left_max] > B[right_min], the partition in A is too far right, so we move left.",
+            "why_assessed": "This is the core architectural logic of the solution. Students often fail to understand *why* the comparison dictates the direction of the binary search. Assessing this requires analyzing the failure mode: if the student chooses the wrong comparison or direction, the partition invariant is violated, leading to an incorrect median calculation.",
+            "evidence_refs": [
+              "E_C42",
+              "E_C06",
+              "E_C58"
+            ],
+            "misconception_rationale": "Option B represents the common misconception of confusing the direction of the inequality with the direction of the search space reduction (thinking 'greater than' means 'go right'). Option C reflects the misconception that both arrays must be adjusted simultaneously or that the search is performed on both, ignoring the O(log(min(m,n))) optimization. Option D is a distractor for students who do not understand that the binary search is a process of elimination, not a validation check that fails on inequality."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "When implementing the binary search for the median of two sorted arrays, the algorithm is optimized to perform the binary search on the shorter array. Consider a scenario where the partition index `i` in the shorter array becomes 0. In this case, the 'left partition' of the shorter array is empty. How does the algorithm handle the comparison between the 'maximum of the left partition' and the 'minimum of the right partition of the other array' to maintain the partition invariant?",
+            "option_a": "The algorithm explicitly checks if `i == 0` and skips the comparison, directly calculating the median from the right partitions of both arrays.",
+            "option_b": "The 'maximum of the left partition' is treated as negative infinity (-\u221e), ensuring that the condition `LeftMax <= RightMin` is always satisfied for that side, allowing the binary search logic to proceed without index errors.",
+            "option_c": "The 'maximum of the left partition' is treated as the first element of the shorter array (`A[0]`), and the comparison is performed against the minimum of the right partition of the other array.",
+            "option_d": "The algorithm must switch to binary searching the longer array to avoid the empty partition case, as the invariant cannot be maintained with an empty left side.",
+            "correct_option": "B",
+            "explanation": "To simplify the logic and avoid complex boundary checks for empty partitions, the algorithm uses sentinel values. If the partition in the shorter array is at index 0, the left partition is empty. The 'maximum' of an empty set is conceptually negative infinity. By treating `A[i-1]` as `-\u221e`, the condition `A[i-1] <= B[j]` becomes `-\u221e <= B[j]`, which is always true. This allows the binary search to continue correctly: if the other condition (`B[j-1] <= A[i]`) fails, the search will adjust `i` accordingly. Option A is incorrect because skipping the comparison breaks the binary search logic. Option C is incorrect because `A[0]` is in the right partition, not the left; using it would violate the partition definition. Option D is incorrect because searching the longer array would increase time complexity to O(log(max(m,n))) and does not solve the empty partition issue; the sentinel approach is the standard robust solution.",
+            "target_concept": "Handling Uneven Array Lengths and Boundary Conditions",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "what_taught": "To simplify the logic and avoid complex boundary checks for empty partitions, the algorithm always performs the binary search on the shorter array. If the partition in the shorter array is at index 0, the 'left max' is considered negative infinity. If the partition is at the end of the shorter array, the 'right min' is considered positive infinity. This ensures that the cross-array comparison logic remains valid even when one side of the partition is empty.",
+            "why_assessed": "This topic addresses a common architectural failure mode: index out of bounds or logical errors when one array is significantly shorter than the other. Assessing this requires evaluating why searching the shorter array is a strategic choice (reducing the search space and simplifying edge cases) and how the infinity sentinels preserve the invariant.",
+            "evidence_refs": [
+              "E_C06",
+              "E_C42",
+              "E_C05"
+            ],
+            "misconception_rationale": "Option A represents the misconception that edge cases require special-case branching that bypasses the core loop logic. Option C reflects a common off-by-one or partition definition error where students confuse the elements belonging to the left vs. right partition. Option D is a distractor for students who believe the 'shorter array' strategy is only for performance and not for logical simplification, or who think the invariant breaks with empty sets."
+          }
+        ]
+      }
+    },
+    "routing_rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint."
+  },
+  "MODALITY_02_VOICE_PLUS_PPT": {
+    "title": "Deep Learning: Variational Autoencoders (Fashion-MNIST)",
+    "modality": "VOICE_PLUS_PPT",
+    "router_decision": "UNIFIED",
+    "pdi_score": null,
+    "tiers": {
+      "EASY": {
+        "difficulty_requested": "EASY",
+        "latency_seconds": 119.9,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "UNDERSTAND": 1,
+          "REMEMBER": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the lecture on Fashion-MNIST, we contrasted the latent space of a standard autoencoder with that of a Variational Autoencoder (VAE). According to the instructor's explanation, what is the fundamental difference in how the latent representation is defined for a given input image?",
+            "option_a": "A standard autoencoder maps an input to a single fixed vector, whereas a VAE maps the input to a probability distribution defined by a mean and variance.",
+            "option_b": "A standard autoencoder maps an input to a probability distribution, whereas a VAE maps the input to a single fixed vector to ensure deterministic decoding.",
+            "option_c": "Both models map inputs to single fixed vectors, but the VAE uses a different loss function to regularize the distance between these vectors.",
+            "option_d": "A standard autoencoder compresses the image into a lower-dimensional space, while a VAE expands the image into a higher-dimensional latent space to capture more detail.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the lecture explicitly states that the improvement in the latent space is done 'not just by one point, but understanding mean and variance of that particular data.' This defines the VAE's latent space as a probability distribution. Option B reverses the definitions. Option C is incorrect because the VAE does not map to a single fixed vector; it maps to a distribution. Option D is incorrect because both models typically compress data into a lower-dimensional latent space; the difference lies in the nature of that representation (point vs. distribution), not the dimensionality direction.",
+            "target_concept": "VAE vs. Standard Autoencoder Latent Representation",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "EASY",
+            "what_taught": "A Variational Autoencoder (VAE) learns a probability distribution in the latent space (defined by mean and variance) rather than mapping inputs to a single fixed vector, unlike a standard autoencoder.",
+            "why_assessed": "This is the foundational distinction introduced in the lecture. Testing this ensures students understand the core 'Variational' aspect of the model, which is the primary topic of the session.",
+            "evidence_refs": [
+              "E_C06",
+              "E_C05",
+              "E_SLIDE_01"
+            ],
+            "misconception_rationale": "Distractor B targets the misconception that VAEs are deterministic while standard AEs are probabilistic. Distractor C targets the misconception that the only difference is the loss function, ignoring the architectural change in latent representation. Distractor D targets a confusion about dimensionality reduction vs. expansion, which is a common confusion in generative models."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "During the code walkthrough for the VAE encoder, the instructor specified the exact outputs produced by the final layer of the encoder network for each input image. Which pair of parameters does the encoder output?",
+            "option_a": "The mean (\u03bc) and the standard deviation (\u03c3).",
+            "option_b": "The mean (\u03bc) and the log-variance (log \u03c3\u00b2).",
+            "option_c": "The mean (\u03bc) and the variance (\u03c3\u00b2).",
+            "option_d": "The latent vector (z) and the reconstruction error.",
+            "correct_option": "B",
+            "explanation": "Option B is correct. In standard VAE implementations (and as implied by the need for stable numerical computation in the reparameterization trick), the encoder outputs the mean and the log-variance. The variance is then obtained by exponentiating the log-variance. Option A is incorrect because outputting standard deviation directly is less common and numerically less stable than log-variance in this context. Option C is incorrect because outputting raw variance can lead to numerical instability (negative values or overflow) during training; log-variance is the standard practice. Option D is incorrect because the latent vector z is sampled *after* the encoder outputs the distribution parameters, and reconstruction error is a loss metric, not an encoder output.",
+            "target_concept": "VAE Encoder Output Parameters",
+            "cognitive_level": "REMEMBER",
+            "difficulty_level": "EASY",
+            "what_taught": "The encoder in a VAE produces two specific vectors for each input: the mean (\u03bc) and the log-variance (log \u03c3\u00b2) of the latent distribution.",
+            "why_assessed": "This is a direct factual recall of the architectural output described in the technical summary and code walkthrough. It tests if the student remembers the specific parameters generated by the encoder, which are necessary for the reparameterization trick.",
+            "evidence_refs": [
+              "E_C06",
+              "E_C21",
+              "E_C22"
+            ],
+            "misconception_rationale": "Distractor A targets the misconception that the network outputs standard deviation directly. Distractor C targets the misconception that raw variance is output, ignoring the numerical stability reasons for using log-variance. Distractor D targets the confusion between the encoder's output (distribution parameters) and the subsequent sampling step (latent vector z)."
+          }
+        ]
+      },
+      "MEDIUM": {
+        "difficulty_requested": "MEDIUM",
+        "latency_seconds": 91.0,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "APPLY": 1,
+          "UNDERSTAND": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the implementation of a Variational Autoencoder (VAE) for Fashion-MNIST, the encoder outputs parameters \u03bc (mean) and \u03c3 (standard deviation) for the latent variable z. To enable backpropagation through the stochastic sampling step, the reparameterization trick is applied. Which of the following correctly describes the mathematical operation and its primary purpose in the training loop?",
+            "option_a": "z = \u03bc + \u03c3 * \u03b5, where \u03b5 ~ N(0,1); this separates the randomness from the learnable parameters, allowing gradients to flow through \u03bc and \u03c3.",
+            "option_b": "z = \u03bc * \u03c3 + \u03b5, where \u03b5 is a learnable vector; this allows the network to learn the specific noise pattern required for each image.",
+            "option_c": "z = softmax(\u03bc + \u03c3); this ensures the latent vector is a probability distribution, making the sampling process differentiable via the softmax gradient.",
+            "option_d": "z = \u03bc + \u03c3; this removes the stochastic element entirely, ensuring the latent space is deterministic and easier to optimize with standard MSE loss.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the reparameterization trick defines z as a deterministic function of the learnable parameters (\u03bc, \u03c3) and a random variable (\u03b5) sampled from a standard normal distribution. Since \u03b5 is independent of the parameters, the gradient can be computed with respect to \u03bc and \u03c3. Option B is incorrect because \u03b5 is not a learnable parameter; it is sampled from a fixed distribution. Option C is incorrect because the latent space in a standard VAE is continuous, not a discrete probability distribution requiring softmax. Option D is incorrect because removing the stochastic element (\u03b5) turns the model into a standard autoencoder, which does not learn a continuous latent distribution suitable for generation.",
+            "target_concept": "Reparameterization Trick Application",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "The reparameterization trick allows the stochastic sampling process in the VAE to be made differentiable by sampling noise epsilon from a standard normal distribution and computing z = mu + sigma * epsilon. This separates the randomness (epsilon) from the learnable parameters (mu, sigma), enabling backpropagation through the latent layer.",
+            "why_assessed": "This is a core procedural mechanism that distinguishes VAEs from standard autoencoders. Students often struggle with why standard sampling isn't differentiable. Assessing this ensures they understand the specific code/formula implementation (z = mu + sigma * epsilon) and its purpose (enabling gradient flow), which is a key 'APPLY' level skill in implementing VAEs.",
+            "evidence_refs": [
+              "E_C06",
+              "E_SLIDE_01",
+              "E_C24"
+            ],
+            "misconception_rationale": "Option B targets the misconception that noise is learnable. Option C targets the confusion between continuous latent spaces and discrete categorical distributions (softmax). Option D targets the misunderstanding that VAEs are deterministic or that the trick removes randomness rather than making it differentiable."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "During the training of a VAE on the Fashion-MNIST dataset, the total loss function is composed of two distinct terms: the Reconstruction Loss and the KL Divergence Loss. What is the specific role of the KL Divergence term in this context?",
+            "option_a": "It penalizes the latent vector for having large absolute values, acting as a standard L2 regularization to prevent overfitting.",
+            "option_b": "It maximizes the variance of the latent space to ensure that generated images are as diverse as possible.",
+            "option_c": "It regularizes the latent space by penalizing deviations from a standard normal distribution N(0,1), ensuring the space is continuous and suitable for sampling.",
+            "option_d": "It measures the pixel-wise difference between the input and reconstructed image, ensuring the decoder accurately reproduces the original data.",
+            "correct_option": "C",
+            "explanation": "Option C is correct because the KL Divergence term measures the difference between the learned latent distribution (defined by \u03bc and \u03c3) and the prior distribution (standard normal N(0,1)). This forces the latent space to be structured and continuous, allowing for meaningful interpolation and sampling of new data points. Option A is incorrect because KL divergence is a distributional constraint, not a simple magnitude penalty (L2). Option B is incorrect because the goal is to match the prior (which has unit variance), not to maximize variance arbitrarily. Option D describes the Reconstruction Loss, not the KL Divergence term.",
+            "target_concept": "VAE Loss Function Composition",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "The total VAE loss is the sum of the Reconstruction Loss (e.g., MSE or BCE) and the KL Divergence Loss. The KL Divergence term regularizes the latent space by penalizing deviations from a standard normal distribution N(0,1), ensuring the latent space is continuous and suitable for sampling new data points.",
+            "why_assessed": "Understanding the *why* behind the two loss components is critical. Students often forget the KL term or misunderstand its purpose (thinking it's just a penalty for large values rather than a distributional constraint). This target assesses the rationale for the loss function design, which is a core conceptual understanding required to debug or modify VAE implementations.",
+            "evidence_refs": [
+              "E_C06",
+              "E_SLIDE_01",
+              "E_C05"
+            ],
+            "misconception_rationale": "Option A targets the common confusion between KL divergence and L2 regularization. Option B targets the misconception that the goal is to maximize spread rather than match a specific prior. Option D targets the confusion between the two components of the loss function, misidentifying the reconstruction term as the KL term."
+          }
+        ]
+      },
+      "HARD": {
+        "difficulty_requested": "HARD",
+        "latency_seconds": 118.9,
+        "question_count": 1,
+        "validation_status": "PARTIAL",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "ANALYZE": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the VAE architecture discussed for Fashion-MNIST, the encoder outputs parameters \u03bc and \u03c3\u00b2. A student attempts to implement the sampling step as `z = sample_gaussian(mu, sigma)` directly in the computational graph, but observes that gradients with respect to the encoder weights are zero. Which of the following best explains why the reparameterization trick `z = \u03bc + \u03c3 * \u03b5` (where \u03b5 ~ N(0,1)) is necessary to fix this?",
+            "option_a": "The standard sampling operation is a discrete, non-differentiable black box that breaks the chain rule; the trick moves the stochasticity to the input \u03b5, making the operation with respect to \u03bc and \u03c3 deterministic and differentiable.",
+            "option_b": "The Gaussian distribution N(\u03bc, \u03c3\u00b2) is not differentiable with respect to its parameters, so the trick replaces it with a uniform distribution to ensure smooth gradient flow.",
+            "option_c": "The decoder requires a fixed noise vector to stabilize training; the trick ensures that \u03b5 is a constant zero vector, removing randomness from the latent space entirely.",
+            "option_d": "The encoder weights are frozen during the sampling phase; the trick allows the decoder to update its weights by backpropagating through the sampled z value directly.",
+            "correct_option": "A",
+            "explanation": "",
+            "target_concept": "Reparameterization Trick & Gradient Flow",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "what_taught": "The reparameterization trick transforms the stochastic sampling operation z ~ N(\u03bc, \u03c3\u00b2) into a deterministic function z = \u03bc + \u03c3 * \u03b5, where \u03b5 ~ N(0, 1). This allows gradients to flow through the encoder parameters (\u03bc and \u03c3) during backpropagation, which is impossible if the sampling operation itself is treated as a non-differentiable black box.",
+            "why_assessed": "This is a critical architectural failure mode. Students often assume that because the network is differentiable, gradients will naturally flow through the latent variable. Assessing this requires the student to analyze the computational graph and understand why the standard 'sample' operation breaks the chain rule, and how the trick specifically resolves this by moving the randomness to the input (\u03b5) rather than the operation.",
+            "evidence_refs": [
+              "E_SLIDE_01",
+              "E_C06",
+              "E_C07"
+            ],
+            "misconception_rationale": "Distractors target: Gradients can flow through the sampling operation if the distribution is differentiable., The reparameterization trick is only needed for the decoder, not the encoder., The noise term \u03b5 is a fixed constant, not a random variable sampled from N(0,1)., Without the trick, the VAE would simply converge to a deterministic autoencoder."
+          }
+        ]
+      }
+    },
+    "routing_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=1.000): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY)."
+  },
+  "MODALITY_03_PDF_STATIC": {
+    "title": "Computer Vision: Faster R-CNN vs YOLO Object Detection",
+    "modality": "PDF",
+    "router_decision": "SUMMARY",
+    "pdi_score": null,
+    "tiers": {
+      "EASY": {
+        "difficulty_requested": "EASY",
+        "latency_seconds": 47.3,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "REMEMBER": 2
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the comparative analysis of object detection models, why does YOLO achieve faster inference times compared to Fast R-CNN?",
+            "option_a": "YOLO uses a single-step detection process, whereas Fast R-CNN relies on a multi-stage region proposal and classification pipeline.",
+            "option_b": "YOLO utilizes a more complex region proposal generator that filters out background noise more efficiently than Fast R-CNN.",
+            "option_c": "Fast R-CNN is slower because it requires pixel-level mask annotations, while YOLO only requires bounding boxes.",
+            "option_d": "YOLO is faster because it operates on smaller image resolutions, whereas Fast R-CNN processes full-resolution images without downsampling.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the evidence explicitly states that YOLO detects objects in one step (single-step), resulting in faster inference, while Fast R-CNN is a region-based model that utilizes region proposals and classification (multi-stage), leading to higher computational cost. Option B is incorrect because YOLO does not use a region proposal generator; that is a characteristic of R-CNN variants. Option C is incorrect because Fast R-CNN requires bounding boxes, not pixel-level masks (masks are for Mask R-CNN), and the speed difference is due to the architectural pipeline, not the annotation format. Option D is incorrect because the speed difference is attributed to the single-step vs. multi-stage mechanism, not image resolution differences.",
+            "target_concept": "YOLO vs. Fast R-CNN Inference Speed Mechanism",
+            "cognitive_level": "REMEMBER",
+            "difficulty_level": "EASY",
+            "what_taught": "YOLO is a single-step object detection model that is faster than Fast R-CNN, which is a region-based model that utilizes region proposals and classification, resulting in higher computational cost and slower inference.",
+            "why_assessed": "The instructor explicitly contrasted the two models based on their operational mechanisms (single-step vs. multi-stage/region proposal) and their resulting performance (YOLO is faster). This is a core conceptual distinction emphasized in the summary.",
+            "evidence_refs": [
+              "E_C09",
+              "E_C08",
+              "E_C01"
+            ],
+            "misconception_rationale": "Distractors target the misconception that YOLO is a region-based model (B), that Fast R-CNN uses masks (C), or that speed is determined by resolution rather than architectural steps (D)."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "When preparing the Penn-Fudan Pedestrian Dataset for use with the Fast R-CNN model, what specific preprocessing step is required regarding the annotations?",
+            "option_a": "The pixel-level masks provided by the dataset must be converted into rectangular bounding boxes.",
+            "option_b": "The bounding boxes provided by the dataset must be converted into pixel-level masks for higher accuracy.",
+            "option_c": "No conversion is needed because the Penn-Fudan dataset natively provides bounding boxes compatible with Fast R-CNN.",
+            "option_d": "The annotations must be converted from bounding boxes to semantic segmentation maps to match the model's input requirements.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the evidence states that the Penn-Fudan dataset gives images and masks (pixel-level annotations), but Fast R-CNN needs bounding boxes (rectangles around objects), so the masks must be converted. Option B is incorrect because the dataset provides masks, not bounding boxes, and Fast R-CNN requires bounding boxes, not masks. Option C is incorrect because the dataset does not natively provide bounding boxes; it provides pixel-level masks. Option D is incorrect because Fast R-CNN requires bounding boxes, not semantic segmentation maps.",
+            "target_concept": "Penn-Fudan Dataset Annotation Conversion",
+            "cognitive_level": "REMEMBER",
+            "difficulty_level": "EASY",
+            "what_taught": "The Penn-Fudan Pedestrian Dataset contains pixel-level masks, which must be converted into rectangular bounding boxes to align with the input requirements of the Fast R-CNN model.",
+            "why_assessed": "The material specifically highlights the preprocessing pipeline for Fast R-CNN, noting that the dataset's native format (pixel-level masks) requires conversion to bounding boxes. This is a specific factual detail about the data preparation step taught.",
+            "evidence_refs": [
+              "E_C03",
+              "E_C08",
+              "E_C09"
+            ],
+            "misconception_rationale": "Distractors target the misconception that the dataset natively provides bounding boxes (C), that the conversion direction is masks-to-boxes vs boxes-to-masks (B), or that the model requires segmentation maps (D)."
+          }
+        ]
+      },
+      "MEDIUM": {
+        "difficulty_requested": "MEDIUM",
+        "latency_seconds": 77.7,
+        "question_count": 2,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "APPLY": 1,
+          "UNDERSTAND": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In the Fast R-CNN preprocessing pipeline demonstrated in class, you have a NumPy image array with shape (H, W, C) and a pixel-level segmentation mask. To prepare the image for the PyTorch model, which code snippet correctly converts the image to a normalized tensor and handles the annotation format requirement?",
+            "option_a": "img_tensor = torch.tensor(np.array(img)).permute(2, 0, 1) / 255.0; boxes = mask_to_bbox(mask)",
+            "option_b": "img_tensor = torch.tensor(np.array(img)) / 255.0; boxes = mask_to_bbox(mask)",
+            "option_c": "img_tensor = torch.tensor(np.array(img)).permute(2, 0, 1) / 1000.0; boxes = mask_to_bbox(mask)",
+            "option_d": "img_tensor = torch.tensor(np.array(img)).permute(2, 0, 1) / 255.0; boxes = mask",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the instructor explicitly demonstrated the pattern `torch.tensor(np.array(img)).permute(2,0,1)/255.0` to convert the image to a PyTorch tensor with shape (C, H, W) and normalized pixel values. Additionally, the lecture highlighted that Fast R-CNN requires bounding boxes, not raw masks, so `mask_to_bbox` is necessary. Option B is incorrect because it fails to permute the dimensions, leaving the tensor in (H, W, C) format which is incompatible with PyTorch's expected (C, H, W) input. Option C is incorrect because it normalizes by 1000.0 instead of 255.0, which is the standard for 8-bit images. Option D is incorrect because it passes the raw mask directly, but Fast R-CNN requires rectangular bounding box coordinates (x1, y1, x2, y2), not pixel-level segmentation masks.",
+            "target_concept": "Fast R-CNN Input Preprocessing Pipeline",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "The specific procedure for preparing data for Fast R-CNN involves converting pixel-level segmentation masks into rectangular bounding box coordinates (x1, y1, x2, y2) and normalizing image pixel values by dividing by 255.0 after permuting dimensions to (C, H, W) for PyTorch tensor compatibility.",
+            "why_assessed": "The instructor explicitly demonstrated the code pattern for this conversion, highlighting that Fast R-CNN requires bounding boxes rather than raw masks, and that tensor normalization is a critical step for model input. This is a core procedural skill for applying the model.",
+            "evidence_refs": [
+              "E_C03",
+              "E_C01",
+              "E_C07"
+            ],
+            "misconception_rationale": "Distractors target common coding errors: forgetting to permute dimensions (B), using an incorrect normalization divisor (C), and assuming the model can accept raw masks without conversion to bounding boxes (D)."
+          },
+          {
+            "question_id": "Q2",
+            "question_text": "During the benchmarking exercise comparing YOLO and Fast R-CNN, the instructor observed that YOLO had a significantly smaller inference time bar. What is the primary architectural reason for this speed difference, and what is the common output structure shared by both models?",
+            "option_a": "YOLO is faster because it is a single-stage detector that processes images in one step; both models output a structure containing 'boxes', 'labels', and 'scores'.",
+            "option_b": "YOLO is faster because it uses a Feature Pyramid Network (FPN) to extract features more efficiently; both models output raw coordinate lists.",
+            "option_c": "YOLO is faster because it detects all objects at once, reducing the need for region proposals; Fast R-CNN outputs a dictionary while YOLO outputs a list of tensors.",
+            "option_d": "YOLO is faster because it skips the classification step; both models output 'boxes' and 'IoU scores' only.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the lecture emphasized that YOLO is a single-stage detector, meaning it detects objects in one step, which results in faster inference compared to Fast R-CNN's two-stage process (proposal generation followed by classification). The instructor also noted that both models output a similar structure containing 'boxes', 'labels', and 'scores' (confidence). Option B is incorrect because FPN is a feature extraction component, not the primary reason for YOLO's speed advantage over the two-stage pipeline, and the output is not just raw coordinates. Option C is incorrect because while YOLO does detect in one step, the output structures are fundamentally similar (dictionaries/objects with boxes, labels, scores), not fundamentally different types. Option D is incorrect because YOLO does not skip classification, and the output includes confidence scores, not just IoU scores.",
+            "target_concept": "Architectural Trade-offs: YOLO vs. Fast R-CNN",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "MEDIUM",
+            "what_taught": "YOLO is a single-stage detector that processes images in one step, resulting in significantly faster inference times. Fast R-CNN is a region-based detector that generates region proposals followed by classification, which introduces computational overhead and slower inference. Both models output a structure containing 'boxes', 'labels', and 'scores' (confidence).",
+            "why_assessed": "The lecture emphasized the speed difference as a key differentiator, using benchmarking code to visualize this trade-off. Understanding why YOLO is faster (single-step vs. proposal generation) is a core conceptual rationale for model selection.",
+            "evidence_refs": [
+              "E_C09",
+              "E_C08",
+              "E_C05"
+            ],
+            "misconception_rationale": "Distractors target misconceptions about the source of speed (FPN vs. single-stage), the nature of the output structures (assuming they are fundamentally different), and the specific components of the output (confusing confidence with IoU or skipping classification)."
+          }
+        ]
+      },
+      "HARD": {
+        "difficulty_requested": "HARD",
+        "latency_seconds": 77.8,
+        "question_count": 1,
+        "validation_status": "PASSED",
+        "traceability_rate": 100.0,
+        "cognitive_distribution": {
+          "EVALUATE": 1
+        },
+        "questions": [
+          {
+            "question_id": "Q1",
+            "question_text": "In a comparative analysis of object detection architectures, a student argues that YOLO achieves significantly lower inference time than Fast R-CNN primarily because YOLO utilizes a lighter-weight backbone with fewer total parameters. Based on the architectural mechanics discussed in class, which statement correctly identifies the primary computational reason for YOLO's speed advantage?",
+            "option_a": "YOLO is faster because it eliminates the two-stage process, performing object detection and bounding box regression in a single forward pass, whereas Fast R-CNN incurs high overhead from generating and classifying region proposals.",
+            "option_b": "YOLO is faster because it uses a simpler classification head that requires fewer floating-point operations per pixel compared to the complex multi-class softmax layer in Fast R-CNN.",
+            "option_c": "YOLO is faster because it processes images at a lower resolution by default, reducing the input tensor size, while Fast R-CNN requires high-resolution inputs to maintain localization precision.",
+            "option_d": "YOLO is faster because it avoids the need for data augmentation during inference, whereas Fast R-CNN must apply multiple geometric transformations to the input image to ensure robust detection.",
+            "correct_option": "A",
+            "explanation": "Option A is correct because the core architectural difference highlighted in the course is that YOLO is a single-stage detector (one step) while Fast R-CNN is a two-stage detector (region proposal generation followed by classification). The computational bottleneck in Fast R-CNN is the generation and processing of region proposals, not the complexity of the classification head or the number of parameters. Option B is incorrect because the classification head is not the dominant cost; the region proposal stage is. Option C is incorrect because resolution is a hyperparameter, not an inherent architectural constraint defining the speed difference. Option D is incorrect because data augmentation is a training technique, not an inference step, and does not explain the architectural speed difference.",
+            "target_concept": "Architectural Trade-offs: Single-Stage vs. Two-Stage Detection",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "what_taught": "YOLO is a single-stage detector that identifies objects in one step, resulting in significantly faster inference. Fast R-CNN is a two-stage detector that first generates region proposals and then classifies them, leading to higher computational overhead and slower inference.",
+            "why_assessed": "This is a core comparative concept emphasized in the summary. Assessing this requires students to analyze WHY the architectural difference leads to performance differences, moving beyond simple recall of 'YOLO is faster' to understanding the computational mechanics of region proposal generation vs. single-step regression.",
+            "evidence_refs": [
+              "E_C09",
+              "E_C08",
+              "E_C01"
+            ],
+            "misconception_rationale": "Distractors target the misconception that speed is due to parameter count (B), input resolution (C), or training/inference confusion (D), rather than the elimination of the region proposal stage (A)."
+          }
+        ]
+      }
+    },
+    "routing_rationale": "PDI=0.055 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_18_new_recording_37",
+  "input_type": "VOICE_ONLY",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the provided summary of the lecture, what is the primary characteristic of the source content?",
+      "option_a": "It contains detailed algorithmic definitions and formulas.",
+      "option_b": "It is empty and contains no educational material.",
+      "option_c": "It presents code patterns for algorithmic review.",
+      "option_d": "It provides clarifications on specific algorithmic mechanisms.",
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states that the provided source content is empty and that no educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented. Therefore, option B is correct. Options A, C, and D are incorrect because they describe content that the summary explicitly states is absent.",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The factual summary of the input material.",
+      "why_assessed": "To verify the student's ability to accurately interpret the provided metadata and summary of the source material.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors A, C, and D reflect a common misconception where students might assume that a lecture titled 'Algorithmic Review' must contain substantive algorithmic content, ignoring the explicit statement that the content is empty."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the summary, which of the following categories of information is NOT present in the source content?",
+      "option_a": "Concepts and definitions",
+      "option_b": "Mechanisms and formulas",
+      "option_c": "Examples and code patterns",
+      "option_d": "All of the above",
+      "correct_option": "D",
+      "explanation": "The summary states that 'No educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented in the input.' This means that concepts, mechanisms, and examples are all absent. Therefore, 'All of the above' is the correct answer. Options A, B, and C are individually incorrect because they imply that only one category is missing, whereas the summary indicates a total absence of all listed categories.",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The absence of specific content categories in the source.",
+      "why_assessed": "To test the student's comprehension of the negative constraints provided in the summary.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors A, B, and C are plausible if a student misreads the summary as listing what is present rather than what is absent, or if they assume some categories might be present while others are not."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What does the 'factual_summary' field in the provided representation indicate about the input material?",
+      "option_a": "It indicates that the material is incomplete but contains partial concepts.",
+      "option_b": "It indicates that the material is entirely empty of educational content.",
+      "option_c": "It indicates that the material focuses solely on code patterns.",
+      "option_d": "It indicates that the material is a theoretical overview without examples.",
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states: 'The provided source content is empty. No educational material... were presented in the input.' This directly supports option B. Option A is incorrect because it suggests partial content, which contradicts the 'empty' description. Options C and D are incorrect because they suggest specific types of content (code patterns or theoretical overview) that are explicitly stated to be absent.",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Interpretation of the factual summary field.",
+      "why_assessed": "To assess the student's ability to understand and interpret the metadata describing the source material.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors A, C, and D reflect common misinterpretations where students might assume that an 'empty' summary implies a specific type of missing content or a partial presence of other content."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "If a student were to generate questions based strictly on the provided summary, what would be the most accurate topic for those questions?",
+      "option_a": "The time complexity of sorting algorithms.",
+      "option_b": "The absence of educational content in the source material.",
+      "option_c": "The implementation of dynamic programming.",
+      "option_d": "The definition of graph traversal algorithms.",
+      "correct_option": "B",
+      "explanation": "Since the summary states that the source content is empty and contains no educational material, the only accurate topic for questions grounded strictly in this summary is the absence of content itself. Options A, C, and D are incorrect because they refer to specific algorithmic topics that are not present in the source material, as explicitly stated in the summary.",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Application of the summary's constraints to question generation.",
+      "why_assessed": "To test the student's ability to apply the constraints of the source material to a practical task (question generation).",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors A, C, and D are plausible because they are common topics in an 'Algorithmic Review' lecture, but they are not supported by the specific summary provided, which states the content is empty."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following statements is TRUE based on the provided summary of the lecture?",
+      "option_a": "The lecture included detailed code examples for algorithmic review.",
+      "option_b": "The lecture provided clarifications on specific algorithmic mechanisms.",
+      "option_c": "The lecture contained no educational material, concepts, or formulas.",
+      "option_d": "The lecture presented a theoretical overview of algorithmic definitions.",
+      "correct_option": "C",
+      "explanation": "The summary explicitly states that 'No educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented in the input.' This makes option C the only true statement. Options A, B, and D are false because they claim the presence of code examples, clarifications on mechanisms, or theoretical overviews, all of which are explicitly stated to be absent in the summary.",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Verification of facts against the provided summary.",
+      "why_assessed": "To ensure the student can accurately distinguish between what is stated in the summary and what is not.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors A, B, and D are plausible based on the lecture title 'Algorithmic Review & Clarifications,' but they are contradicted by the explicit statement in the summary that the content is empty."
+    }
+  ]
+}

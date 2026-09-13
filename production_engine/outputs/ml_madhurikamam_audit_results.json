@@ -1,0 +1,76 @@
+{
+  "lecture_title": "Machine Learning Lecture: Supervised Learning, Model Training & Core Concepts (Prof. Madhurika)",
+  "audio_file": "Audio/only voice/ML_MadhurikaMam.mp4",
+  "duration_seconds": 611.88,
+  "cleaned_segments_count": 256,
+  "removed_chatter_count": 0,
+  "pdi_score": 0.5,
+  "routed_representation": "SUMMARY",
+  "allocated_questions": 3,
+  "validation_status": "PASSED",
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the lecture, Prof. Madhurika demonstrated defining a neural network class template where the input layer size is set based on `training_data.shape[1]`. If a student has a dataset with 500 rows (samples) and 12 columns (features), what is the correct dimension for the input layer, and why?",
+      "option_a": "12, because the input layer size is strictly determined by the number of columns (features) in the dataset.",
+      "option_b": "500, because the input layer must accommodate the total number of samples (rows) to process the entire batch.",
+      "option_c": "12, but this is an arbitrary hyperparameter chosen by the developer to optimize training speed.",
+      "option_d": "500, because the model structure is independent of the data dimensions and depends on the batch size.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the evidence explicitly states that the input layer size is derived from the number of columns (features), e.g., 'I have 12 input features. So...'. Option B is incorrect because rows represent samples, not features; the input layer processes one sample at a time, so its width matches the feature count. Option C is incorrect because the input size is not arbitrary; it is fixed by the data structure. Option D is incorrect because the model structure is not independent of data dimensions; the input shape must match the feature vector length.",
+      "target_concept": "Neural Network Input Layer Sizing",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The size of the first layer (input layer) is strictly determined by the number of columns (features) in the dataset. For example, a dataset with 12 or 20 features requires an input layer of that specific dimension. The model is defined via a class template, not by arbitrary sequence cutting.",
+      "why_assessed": "The instructor explicitly emphasized that the input shape is derived from the data structure (columns), correcting the misconception that model structure is independent of data dimensions. This is a foundational 'Apply' skill for building the class template.",
+      "evidence_refs": [
+        "E_C02",
+        "E_C06",
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors target common errors: confusing rows (samples) with columns (features), assuming input size is a tunable hyperparameter, or believing model structure is decoupled from data shape."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the training loop, Prof. Madhurika emphasized saving the loss value for each epoch into a list. What is the primary purpose of this specific step as described in the lecture?",
+      "option_a": "To allow the creation of performance plots and to monitor the reduction of error over time.",
+      "option_b": "To calculate the final accuracy of the model, as the last saved loss value equals the accuracy percentage.",
+      "option_c": "To prevent the model from overfitting by automatically stopping the training if the loss increases.",
+      "option_d": "To serve as a mandatory checkpoint for saving the model weights to disk after every epoch.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the evidence states, 'I'm saving the loss. So, that I can create the pose [plot]... for each airport [epoch], how much loss I'm going to be.' This directly supports monitoring progress and visualization. Option B is incorrect because loss is an error metric (e.g., cross-entropy), not accuracy; they are distinct metrics. Option C is incorrect because saving loss does not inherently trigger early stopping; that requires specific logic not mentioned as the primary purpose of saving. Option D is incorrect because saving loss values is for analysis, not for persisting model weights.",
+      "target_concept": "Epoch-wise Loss Monitoring",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "EASY",
+      "what_taught": "During the training loop, the loss value (e.g., cross-entropy) is calculated for each epoch. These values must be saved to a list to monitor training progress, visualize performance plots, and verify error reduction over time.",
+      "why_assessed": "The lecture highlighted the mechanism of saving loss values per epoch as a critical step for post-training analysis. This tests the 'Understand' level of why this step is performed and how it integrates into the training loop.",
+      "evidence_refs": [
+        "E_C06",
+        "E_C05",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target misconceptions: equating loss with accuracy, assuming saving loss automatically controls training flow (early stopping), or confusing loss tracking with model weight persistence."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the supervised learning workflow discussed in class, a binary classification model outputs a continuous probability score of exactly 0.50 for a specific test instance. Based on the thresholding rule explicitly defined by Prof. Madhurika for converting this continuous output into a discrete class label, what is the final predicted class?",
+      "option_a": "Class 0, because the probability must be strictly greater than 0.5 to be classified as positive.",
+      "option_b": "Class 1, because the rule specifies that if the probability is greater than or equal to 0.5, it is classified as 1.",
+      "option_c": "Class 0, because the threshold is applied to the loss value, and a loss of 0.5 indicates a negative prediction.",
+      "option_d": "Class 1, because the threshold is dynamically adjusted to 0.49 to account for class imbalance in the dataset.",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the instructor explicitly defined the thresholding logic as: 'If the probability is greater than or equal to 0.5, the output is classified as 1; otherwise, it is classified as 0.' Therefore, a probability of exactly 0.5 satisfies the 'greater than or equal to' condition, resulting in a prediction of Class 1. Option A is incorrect because it uses a strict inequality (> 0.5), which contradicts the 'or equal to' clause taught in class. Option C is incorrect because the threshold is applied to the probability output, not the loss value. Option D is incorrect because the lecture specified a fixed threshold of 0.5 for this context, not a dynamically adjusted one based on class imbalance.",
+      "target_concept": "Binary Classification Thresholding",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The model outputs a continuous probability. To generate a discrete class label, a threshold (specifically 0.5) is applied. If the probability is greater than or equal to 0.5, the output is classified as 1; otherwise, it is classified as 0.",
+      "why_assessed": "This is a critical 'Analyze' level target because it requires understanding the logical boundary condition (>= vs >) and the transformation from continuous output to discrete class. The instructor explicitly defined the 'greater than or equal to' condition.",
+      "evidence_refs": [
+        "E_C02",
+        "E_C04",
+        "E_C06"
+      ],
+      "misconception_rationale": "Option A targets the common off-by-one or strict inequality misconception where students forget the 'equal to' part of the boundary condition. Option C targets the confusion between model outputs (probability) and evaluation metrics (loss). Option D targets the misconception that the threshold is always variable or dependent on class distribution, whereas the specific rule taught was a fixed 0.5 with a specific inequality direction."
+    }
+  ]
+}

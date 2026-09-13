@@ -1,0 +1,89 @@
+{
+  "blueprint_id": "BP_input_04_se_lab_git_github",
+  "input_id": "input_04_se_lab_git_github",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Git & GitHub Environment Setup",
+      "salience_score": 0.435,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Command Line Interface (CLI)",
+        "File System Hierarchy",
+        "User Authentication"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Collaborative Workflows & Pull Requests",
+      "salience_score": 0.449,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Git Repository Structure",
+        "Branching",
+        "Remote Repositories"
+      ],
+      "evidence_refs": [
+        "E_C03",
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Merge Conflict Resolution",
+      "salience_score": 0.285,
+      "instructional_acts": [
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Git Merge",
+        "File Diffing",
+        "Version Control History"
+      ],
+      "evidence_refs": [
+        "E_C05"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Patch Creation and Application",
+      "salience_score": 0.588,
+      "instructional_acts": [
+        "DEBUG",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEBUGGING",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Git Diff",
+        "Patch File Format",
+        "Contextual Code Changes"
+      ],
+      "evidence_refs": [
+        "E_C06",
+        "E_C07"
+      ],
+      "teacher_specificity": "HIGH"
+    }
+  ]
+}

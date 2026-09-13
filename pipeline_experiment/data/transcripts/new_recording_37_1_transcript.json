@@ -1,0 +1,633 @@
+{
+  "audio_file": "Audio/only voice/New recording 37 (1).m4a",
+  "title": "Classroom Lecture: Audio Recording 37",
+  "duration": 1170.09,
+  "total_segments": 78,
+  "segments": [
+    {
+      "id": 1,
+      "start": 240.0,
+      "end": 242.0,
+      "text": "All right, ladies and gentlemen,",
+      "avg_logprob": -0.733,
+      "no_speech_prob": 0.733
+    },
+    {
+      "id": 2,
+      "start": 242.0,
+      "end": 244.0,
+      "text": "we're going to start with Danba.",
+      "avg_logprob": -0.733,
+      "no_speech_prob": 0.733
+    },
+    {
+      "id": 3,
+      "start": 244.0,
+      "end": 246.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.733,
+      "no_speech_prob": 0.733
+    },
+    {
+      "id": 4,
+      "start": 246.0,
+      "end": 248.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.733,
+      "no_speech_prob": 0.733
+    },
+    {
+      "id": 5,
+      "start": 248.0,
+      "end": 252.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.733,
+      "no_speech_prob": 0.733
+    },
+    {
+      "id": 6,
+      "start": 360.0,
+      "end": 362.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 7,
+      "start": 362.0,
+      "end": 364.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 8,
+      "start": 364.0,
+      "end": 366.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 9,
+      "start": 366.0,
+      "end": 368.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 10,
+      "start": 368.0,
+      "end": 370.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 11,
+      "start": 370.0,
+      "end": 372.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 12,
+      "start": 372.0,
+      "end": 374.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 13,
+      "start": 374.0,
+      "end": 376.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 14,
+      "start": 376.0,
+      "end": 378.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 15,
+      "start": 378.0,
+      "end": 380.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 16,
+      "start": 380.0,
+      "end": 382.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 17,
+      "start": 382.0,
+      "end": 384.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 18,
+      "start": 384.0,
+      "end": 386.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 19,
+      "start": 386.0,
+      "end": 388.0,
+      "text": "We're going to start with Danba.",
+      "avg_logprob": -0.071,
+      "no_speech_prob": 0.84
+    },
+    {
+      "id": 20,
+      "start": 778.0,
+      "end": 788.0,
+      "text": "Okay, next line, please.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 21,
+      "start": 788.0,
+      "end": 790.0,
+      "text": "So stay in the middle of it.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 22,
+      "start": 790.0,
+      "end": 798.0,
+      "text": "So stay in the middle of it.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 23,
+      "start": 798.0,
+      "end": 801.0,
+      "text": "Okay, next line.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 24,
+      "start": 801.0,
+      "end": 803.0,
+      "text": "Get that in the middle of it.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 25,
+      "start": 803.0,
+      "end": 806.0,
+      "text": "Get that in the middle of it.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.713
+    },
+    {
+      "id": 26,
+      "start": 807.0,
+      "end": 810.0,
+      "text": "Get that in the middle of my legs.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 27,
+      "start": 810.0,
+      "end": 813.0,
+      "text": "I last my name.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 28,
+      "start": 813.0,
+      "end": 815.0,
+      "text": "Then I'm mainstreaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 29,
+      "start": 815.0,
+      "end": 818.0,
+      "text": "Then I'm not mainstreaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 30,
+      "start": 818.0,
+      "end": 821.0,
+      "text": "Ben Streaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 31,
+      "start": 821.0,
+      "end": 824.0,
+      "text": "Ben Streaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 32,
+      "start": 824.0,
+      "end": 827.0,
+      "text": "Ben Streaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 33,
+      "start": 827.0,
+      "end": 830.0,
+      "text": "Ben Streaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 34,
+      "start": 830.0,
+      "end": 832.0,
+      "text": "Ben Streaming.",
+      "avg_logprob": -0.52,
+      "no_speech_prob": 0.306
+    },
+    {
+      "id": 35,
+      "start": 862.0,
+      "end": 866.0,
+      "text": "I'm a little bit scared, I'm a little bit scared.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 36,
+      "start": 866.0,
+      "end": 869.0,
+      "text": "Yes, I'm scared.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 37,
+      "start": 869.0,
+      "end": 872.0,
+      "text": "She's scared.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 38,
+      "start": 872.0,
+      "end": 875.0,
+      "text": "Now, back to the boxes.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 39,
+      "start": 875.0,
+      "end": 877.0,
+      "text": "Right, back to the boxes.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 40,
+      "start": 877.0,
+      "end": 881.0,
+      "text": "Okay, back to the boxes.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 41,
+      "start": 881.0,
+      "end": 884.0,
+      "text": "It's a bit scary.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 42,
+      "start": 884.0,
+      "end": 888.0,
+      "text": "I'm scared.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 43,
+      "start": 888.0,
+      "end": 890.0,
+      "text": "I'm scared.",
+      "avg_logprob": -1.303,
+      "no_speech_prob": 0.591
+    },
+    {
+      "id": 44,
+      "start": 920.0,
+      "end": 931.0,
+      "text": "They've been saying, it looks like unward pass, but today is the anniversary of these delicate times.",
+      "avg_logprob": -0.816,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 45,
+      "start": 931.0,
+      "end": 935.0,
+      "text": "And today is the first time, you've been saying, it's a bad word.",
+      "avg_logprob": -0.816,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 46,
+      "start": 935.0,
+      "end": 938.0,
+      "text": "They've been saying, what we are doing.",
+      "avg_logprob": -0.816,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 47,
+      "start": 938.0,
+      "end": 942.0,
+      "text": "And it's a few times, and it's a bit complicated.",
+      "avg_logprob": -0.816,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 48,
+      "start": 942.0,
+      "end": 945.0,
+      "text": "They've been saying, it's easy.",
+      "avg_logprob": -0.816,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 49,
+      "start": 975.0,
+      "end": 985.0,
+      "text": "Thank you.",
+      "avg_logprob": -0.959,
+      "no_speech_prob": 0.645
+    },
+    {
+      "id": 50,
+      "start": 985.0,
+      "end": 989.0,
+      "text": "Thank you.",
+      "avg_logprob": -0.959,
+      "no_speech_prob": 0.645
+    },
+    {
+      "id": 51,
+      "start": 989.0,
+      "end": 992.0,
+      "text": "Thank you, thank you.",
+      "avg_logprob": -0.959,
+      "no_speech_prob": 0.645
+    },
+    {
+      "id": 52,
+      "start": 1082.0,
+      "end": 1087.0,
+      "text": "And the last place to work is the name of Richard Salvas.",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 53,
+      "start": 1087.0,
+      "end": 1089.0,
+      "text": "Why are you here today?",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 54,
+      "start": 1089.0,
+      "end": 1093.0,
+      "text": "If you came to Northwood, you'll see Richard in Northwood.",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 55,
+      "start": 1093.0,
+      "end": 1097.0,
+      "text": "You will be in the month of the Republic.",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 56,
+      "start": 1097.0,
+      "end": 1100.0,
+      "text": "So the republic has left right here.",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 57,
+      "start": 1100.0,
+      "end": 1103.0,
+      "text": "And last day, when the war ended,",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 58,
+      "start": 1103.0,
+      "end": 1105.0,
+      "text": "you know, every house,",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 59,
+      "start": 1105.0,
+      "end": 1107.0,
+      "text": "or every single house,",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 60,
+      "start": 1107.0,
+      "end": 1109.0,
+      "text": "or every single house,",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 61,
+      "start": 1109.0,
+      "end": 1111.0,
+      "text": "you know, every house,",
+      "avg_logprob": -0.916,
+      "no_speech_prob": 0.744
+    },
+    {
+      "id": 62,
+      "start": 1111.0,
+      "end": 1113.0,
+      "text": "you know what I'm talking about?",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 63,
+      "start": 1113.0,
+      "end": 1117.0,
+      "text": "I mean, I will not walk in because I'm not going to get too late",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 64,
+      "start": 1117.0,
+      "end": 1119.0,
+      "text": "to look at the public,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 65,
+      "start": 1119.0,
+      "end": 1121.0,
+      "text": "I'm pretty excited about that.",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 66,
+      "start": 1121.0,
+      "end": 1122.0,
+      "text": "In a month,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 67,
+      "start": 1122.0,
+      "end": 1124.0,
+      "text": "I pretty face not one,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 68,
+      "start": 1124.0,
+      "end": 1126.0,
+      "text": "but the only one.",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 69,
+      "start": 1126.0,
+      "end": 1127.98,
+      "text": "I am teaching,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 70,
+      "start": 1127.98,
+      "end": 1130.0,
+      "text": "one every day,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 71,
+      "start": 1130.0,
+      "end": 1133.0,
+      "text": "I'm not saying that one week or two week last,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 72,
+      "start": 1133.0,
+      "end": 1134.0,
+      "text": "two a week,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 73,
+      "start": 1134.0,
+      "end": 1135.0,
+      "text": "two past months,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 74,
+      "start": 1135.0,
+      "end": 1137.0,
+      "text": "thank you for your patience,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 75,
+      "start": 1137.0,
+      "end": 1138.0,
+      "text": "here in New Zealand,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 76,
+      "start": 1138.0,
+      "end": 1139.0,
+      "text": "here in New Zealand,",
+      "avg_logprob": -1.352,
+      "no_speech_prob": 0.317
+    },
+    {
+      "id": 77,
+      "start": 1169.0,
+      "end": 1170.0,
+      "text": "I don't know what I'm going to do.",
+      "avg_logprob": -0.808,
+      "no_speech_prob": 0.76
+    },
+    {
+      "id": 78,
+      "start": 1170.0,
+      "end": 1172.0,
+      "text": "I don't know what I'm going to do.",
+      "avg_logprob": -0.808,
+      "no_speech_prob": 0.76
+    }
+  ],
+  "text": "All right, ladies and gentlemen, we're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. We're going to start with Danba. Okay, next line, please. So stay in the middle of it. So stay in the middle of it. Okay, next line. Get that in the middle of it. Get that in the middle of it. Get that in the middle of my legs. I last my name. Then I'm mainstreaming. Then I'm not mainstreaming. Ben Streaming. Ben Streaming. Ben Streaming. Ben Streaming. Ben Streaming. I'm a little bit scared, I'm a little bit scared. Yes, I'm scared. She's scared. Now, back to the boxes. Right, back to the boxes. Okay, back to the boxes. It's a bit scary. I'm scared. I'm scared. They've been saying, it looks like unward pass, but today is the anniversary of these delicate times. And today is the first time, you've been saying, it's a bad word. They've been saying, what we are doing. And it's a few times, and it's a bit complicated. They've been saying, it's easy. Thank you. Thank you. Thank you, thank you. And the last place to work is the name of Richard Salvas. Why are you here today? If you came to Northwood, you'll see Richard in Northwood. You will be in the month of the Republic. So the republic has left right here. And last day, when the war ended, you know, every house, or every single house, or every single house, you know, every house, you know what I'm talking about? I mean, I will not walk in because I'm not going to get too late to look at the public, I'm pretty excited about that. In a month, I pretty face not one, but the only one. I am teaching, one every day, I'm not saying that one week or two week last, two a week, two past months, thank you for your patience, here in New Zealand, here in New Zealand, I don't know what I'm going to do. I don't know what I'm going to do."
+}

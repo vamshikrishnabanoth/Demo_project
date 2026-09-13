@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Course Overview and Lecture Structure",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "LECTURE_OVERVIEW",
+    "assessment_goal": "Recall the primary learning objectives and the sequential structure of the course modules as presented in the lecture introduction.",
+    "misconception_target": "Confusing the order of module delivery or misidentifying the core competency focus of a specific week.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Course Overview and Lecture Structure",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "LECTURE_OVERVIEW",
+    "assessment_goal": "Identify the specific assessment components and their respective weightings or deadlines mentioned in the course overview.",
+    "misconception_target": "Misremembering the type of assessment (e.g., confusing a project with a quiz) or the associated timeline.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Conceptual Frameworks",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPOSITION",
+    "assessment_goal": "Explain the relationship between high-level system architecture components and the underlying programming terminology used to describe them.",
+    "misconception_target": "Conflating abstract architectural concepts (e.g., 'service') with concrete implementation details (e.g., 'function') or misinterpreting the direction of data flow.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Code Implementation and Walkthrough",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_WALKTHROUGH",
+    "assessment_goal": "Apply the demonstrated control flow and data structure logic to predict the output of a modified code snippet or identify the specific line responsible for a state change.",
+    "misconception_target": "Misapplying syntax rules (e.g., off-by-one errors in loops) or misunderstanding the mutability of data structures during the walkthrough.",
+    "evidence_refs": [],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Procedural Execution Steps",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "PROCEDURAL_GUIDANCE",
+    "assessment_goal": "Sequence the correct command-line instructions required to set up the environment and execute the file management tasks described in the lecture.",
+    "misconception_target": "Executing commands in the wrong directory context or using incorrect flags for file operations, leading to execution failure.",
+    "evidence_refs": [],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

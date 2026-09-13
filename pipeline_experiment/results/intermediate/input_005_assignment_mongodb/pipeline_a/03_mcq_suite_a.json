@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_005_assignment_mongodb",
+  "input_type": "ASSIGNMENT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which aggregation stage should be placed first to achieve optimal performance in the described pipeline?",
+      "option_a": "$match",
+      "option_b": "$unwind",
+      "option_c": "$lookup",
+      "option_d": "$group",
+      "correct_option": "A",
+      "explanation": "Placing $match first filters documents using indexed fields (status and orderDate) before any expensive operations, minimizing the amount of data processed downstream. $unwind would deconstruct arrays before filtering, leading to unnecessary work. $lookup and $group also operate on larger data sets if placed before $match, reducing efficiency.",
+      "target_concept": "$match stage ordering",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "What expression correctly computes total_revenue in the $group stage?",
+      "option_a": "{ $sum: { $multiply: [ '$items.quantity', '$items.unit_price' ] } }",
+      "option_b": "{ $avg: { $multiply: [ '$items.quantity', '$items.unit_price' ] } }",
+      "option_c": "{ $sum: { $subtract: [ '$items.unit_price', '$productInfo.cost' ] } }",
+      "option_d": "{ $count: {} }",
+      "correct_option": "A",
+      "explanation": "total_revenue is defined as the sum of quantity multiplied by unit_price for each item, which matches option A. Option B uses $avg instead of $sum, yielding an average rather than total. Option C subtracts cost from unit_price, which calculates margin, not revenue. Option D simply counts documents and does not perform any arithmetic.",
+      "target_concept": "total_revenue calculation",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Why is placing $unwind before $match considered an anti\u2011pattern in this pipeline?",
+      "option_a": "It forces the pipeline to unwind all array elements before filtering, consuming unnecessary memory.",
+      "option_b": "It creates duplicate documents that cannot be de\u2011duplicated later.",
+      "option_c": "It prevents the use of indexes on the fields used in $match.",
+      "option_d": "It changes the natural order of the documents, affecting $sort results.",
+      "correct_option": "A",
+      "explanation": "When $unwind precedes $match, every array element is expanded even for orders that will later be discarded, leading to extra memory and CPU usage. Option B is incorrect because duplicates are not the primary issue. Option C is inaccurate; indexes are still usable in $match but are applied later, reducing their benefit. Option D is irrelevant; $unwind does not affect ordering relative to $sort.",
+      "target_concept": "anti\u2011pattern (unwind before match)",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Which fields should be indexed to optimize the initial $match stage that selects delivered orders from 2024?",
+      "option_a": "status only",
+      "option_b": "orderDate only",
+      "option_c": "status and orderDate",
+      "option_d": "items.product_id",
+      "correct_option": "C",
+      "explanation": "The $match filters on both status and orderDate, so a compound index on these two fields allows the query planner to quickly locate relevant documents. Indexing only one field (options A or B) would not be as efficient. Indexing items.product_id (option D) is useful for $lookup but does not help the initial $match.",
+      "target_concept": "indexing for pipeline optimization",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "In the final $project stage, how is the total_revenue field formatted before being returned?",
+      "option_a": "It is rounded to two decimal places using $round.",
+      "option_b": "It is converted to a string with $toString.",
+      "option_c": "It is left unchanged, preserving full precision.",
+      "option_d": "It is truncated to an integer using $trunc.",
+      "correct_option": "A",
+      "explanation": "The specification states that total_revenue should be rounded to two decimal places, which is achieved with the $round operator. Converting to string (B) or truncating to an integer (D) would not meet the rounding requirement. Leaving it unchanged (C) would retain more than two decimal places, violating the formatting rule.",
+      "target_concept": "$project stage formatting",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

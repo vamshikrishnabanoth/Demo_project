@@ -1,0 +1,24 @@
+{
+  "request_id": "REQ-1789242076360-input_te",
+  "timestamp": "2026-09-12T19:43:08Z",
+  "input_id": "input_test_178",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING"
+  ],
+  "initial_generated_count": 1,
+  "first_pass_validated_count": 1,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 1,
+  "total_latency_ms": 112048.84,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "Selected one core concept (Assessment) and one pedagogical facet (CONCEPT_UNDERSTANDING) to meet the single target requirement at EASY difficulty."
+}

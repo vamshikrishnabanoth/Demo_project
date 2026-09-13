@@ -1,0 +1,30 @@
+# Frozen Experiment Configuration: Summary vs. Pedagogical Blueprint
+experiment_name: "summary_vs_blueprint_mcq_study"
+version: "1.0.0"
+controlled_execution:
+  paradigm: "Controlled sequential pipeline with frozen configuration and no agentic feedback loops"
+  enable_rag: false
+  enable_agentic_loops: false
+  enable_difficulty_selector: false
+
+generator:
+  provider: "groq"
+  model: "openai/gpt-oss-120b"
+  fallback_model: "openai/gpt-oss-20b"
+  temperature: 0.2
+  top_p: 0.9
+  max_tokens: 2048
+  questions_per_input: 5
+
+salience_weights:
+  dwell_time_norm: 0.30
+  repetition_norm: 0.15
+  emphasis_markers_norm: 0.15
+  worked_example: 0.10
+  demonstration: 0.10
+  debugging: 0.10
+  student_qna: 0.10
+
+decision_thresholds:
+  significance_delta: 0.05
+  correctness_tolerance: 0.05

@@ -1,0 +1,55 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Git & GitHub Environment Setup",
+    "subtopics": [
+      "Global Git Configuration",
+      "GitHub Account & Organization Setup",
+      "Collaborator Invitations"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Collaborative Workflows & Pull Requests",
+    "subtopics": [
+      "Forking Public Repositories",
+      "Branch Management",
+      "Creating and Merging Pull Requests",
+      "Keeping Branches Updated"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Merge Conflict Resolution",
+    "subtopics": [
+      "Identifying Conflict Markers",
+      "Manual Code Editing",
+      "Staging Resolved Files",
+      "Completing the Merge Commit"
+    ],
+    "associated_chunk_ids": [
+      "C05"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Patch Creation and Application",
+    "subtopics": [
+      "Generating Patches with git format-patch",
+      "Applying Shared Patch Files",
+      "Testing and Mging Patches"
+    ],
+    "associated_chunk_ids": [
+      "C06",
+      "C07"
+    ]
+  }
+]

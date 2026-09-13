@@ -1,0 +1,48 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_002_colab_cnn_debugging",
+  "input_type": "COLAB",
+  "content_style": "DEBUGGING",
+  "total_questions": 3,
+  "questions": [
+    {
+      "question_id": "Q1_S01",
+      "question_text": "You have an input feature map of size 32\u00d732 and you want a Conv2d layer that produces an output of size 28\u00d728 using kernel_size=5, stride=1. What padding value should you set?",
+      "option_a": "0",
+      "option_b": "1",
+      "option_c": "2",
+      "option_d": "3",
+      "correct_option": "A",
+      "explanation": "The Conv2d output size formula is (W\u2011K+2P)/S + 1. Plugging in W=32, K=5, S=1 and desired output 28 gives (32\u20115+2P)/1 + 1 = 28 \u2192 32\u20115+2P+1 = 28 \u2192 2P = 0 \u2192 P = 0. Therefore padding 0 yields the required 28\u00d728 output. Option B (padding 1) would give (32\u20115+2)/1+1 = 30, option C gives 32, and option D gives 34, all incorrect.",
+      "target_concept": "Convolutional Layer Configuration in PyTorch",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2_S02",
+      "question_text": "Consider the following sequence: Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1) \u2192 MaxPool2d(kernel_size=2, stride=2) \u2192 Conv2d(16, 32, kernel_size=5, stride=1, padding=0) \u2192 MaxPool2d(kernel_size=3, stride=2). If the input image is 32\u00d732, what is the spatial size (height\u202f\u00d7\u202fwidth) of the final feature map?",
+      "option_a": "5\u00d75",
+      "option_b": "6\u00d76",
+      "option_c": "8\u00d78",
+      "option_d": "4\u00d74",
+      "correct_option": "A",
+      "explanation": "First Conv preserves size because padding=1: 32\u219232. First MaxPool halves it: 32\u219216. Second Conv reduces size: (16\u20115)/1+1 = 12. Second MaxPool with kernel 3 and stride 2 gives floor((12\u20113)/2)+1 = floor(9/2)+1 = 4+1 = 5. Hence the final spatial dimensions are 5\u00d75. Options B, C, and D result from common misconceptions: forgetting that pooling changes size when stride \u2260 kernel (B), assuming pooling does not change size (C), or mis\u2011applying floor vs ceil (D).",
+      "target_concept": "Pooling Layers and Multi\u2011layer CNN Architecture",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q3_S03",
+      "question_text": "A convolutional block outputs a tensor of shape (batch_size, 64, 8, 8). Which of the following statements correctly flattens the tensor for a subsequent Linear layer?",
+      "option_a": "x = x.view(-1, 64*8*8)",
+      "option_b": "x = x.view(batch_size, -1)",
+      "option_c": "x = x.view(-1, 64*8)",
+      "option_d": "x = x.view(64, -1)",
+      "correct_option": "A",
+      "explanation": "Flattening must preserve the batch dimension and collapse the remaining dimensions into a single feature vector. x.view(-1, 64*8*8) lets PyTorch infer the batch size (the first dimension) and creates a second dimension of 64*8*8 = 4096 features, which is correct. Option B is ambiguous because the variable batch_size is not defined inside the view call; it would raise a NameError. Option C drops one spatial dimension, yielding 512 features, which is too small. Option D swaps dimensions and loses the batch axis entirely.",
+      "target_concept": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S03"
+    }
+  ]
+}

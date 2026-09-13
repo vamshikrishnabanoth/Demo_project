@@ -1,0 +1,6873 @@
+{
+  "audio_file": "Audio/only voice/PP.m4a",
+  "title": "Python Programming / Problem Solving Lecture",
+  "duration": 5055.49,
+  "total_segments": 858,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 4.0,
+      "text": "I just remember one of the organizers did it with my colleague.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 2,
+      "start": 4.0,
+      "end": 6.0,
+      "text": "She was a client.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 3,
+      "start": 6.0,
+      "end": 9.0,
+      "text": "Hello, Scott Parking, you get here.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 4,
+      "start": 9.0,
+      "end": 12.0,
+      "text": "And you need to open the printing box at two.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 5,
+      "start": 12.0,
+      "end": 14.0,
+      "text": "One is a tuple, and then one is sex.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 6,
+      "start": 14.0,
+      "end": 17.0,
+      "text": "Okay, keep it in sex.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 7,
+      "start": 20.0,
+      "end": 23.0,
+      "text": "Yes, you need sex in two.",
+      "avg_logprob": -0.874,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 8,
+      "start": 60.0,
+      "end": 65.0,
+      "text": "Okay, first of all, I want to ask you something.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 9,
+      "start": 65.0,
+      "end": 68.0,
+      "text": "I will ask you something.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 10,
+      "start": 72.0,
+      "end": 78.0,
+      "text": "If you ask me what you want to do, I will ask you something.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 11,
+      "start": 80.0,
+      "end": 82.0,
+      "text": "I will ask you something.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 12,
+      "start": 82.0,
+      "end": 86.0,
+      "text": "And you will say that I am happy for your people.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 13,
+      "start": 86.0,
+      "end": 88.0,
+      "text": "Thank you.",
+      "avg_logprob": -1.084,
+      "no_speech_prob": 0.423
+    },
+    {
+      "id": 14,
+      "start": 268.0,
+      "end": 273.64,
+      "text": "first year loan is Rs. 1000 and then will go to Rs. 2.5 come at 6.5.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 15,
+      "start": 273.64,
+      "end": 276.62,
+      "text": "So, the rate is around Rs. 1000.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 16,
+      "start": 276.62,
+      "end": 278.3,
+      "text": "That is a bit too.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 17,
+      "start": 278.3,
+      "end": 280.44,
+      "text": "So, the rate is about Rs. 1000.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 18,
+      "start": 280.44,
+      "end": 281.44,
+      "text": "That is it.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 19,
+      "start": 281.44,
+      "end": 282.84,
+      "text": "Since the 1,000, I have already got the card.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 20,
+      "start": 282.84,
+      "end": 283.84,
+      "text": "It was a easy thing.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 21,
+      "start": 283.84,
+      "end": 286.44,
+      "text": "The only thing is you have to know the flow of its solution.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 22,
+      "start": 286.44,
+      "end": 287.44,
+      "text": "First, mind.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 23,
+      "start": 287.44,
+      "end": 292.32,
+      "text": "Second one, you have to know the integration part which could be affiliated with other one.",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 24,
+      "start": 292.32,
+      "end": 293.32,
+      "text": "How?",
+      "avg_logprob": -1.395,
+      "no_speech_prob": 0.507
+    },
+    {
+      "id": 25,
+      "start": 293.32,
+      "end": 297.32,
+      "text": "Now, just for those of you who have been created to begin this off-quake,",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 26,
+      "start": 297.32,
+      "end": 300.32,
+      "text": "must be in the place.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 27,
+      "start": 300.32,
+      "end": 302.32,
+      "text": "Come here.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 28,
+      "start": 302.32,
+      "end": 305.32,
+      "text": "There's both of them doing some other roles.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 29,
+      "start": 305.32,
+      "end": 306.32,
+      "text": "I know.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 30,
+      "start": 306.32,
+      "end": 307.32,
+      "text": "I know.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 31,
+      "start": 307.32,
+      "end": 310.32,
+      "text": "Man.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 32,
+      "start": 310.32,
+      "end": 312.32,
+      "text": "You should start the rest now, right?",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 33,
+      "start": 312.32,
+      "end": 313.32,
+      "text": "What?",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 34,
+      "start": 313.32,
+      "end": 315.32,
+      "text": "What's the law?",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 35,
+      "start": 315.32,
+      "end": 317.32,
+      "text": "It's not the law.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 36,
+      "start": 317.32,
+      "end": 320.32,
+      "text": "It's not the law.",
+      "avg_logprob": -0.85,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 37,
+      "start": 320.32,
+      "end": 322.32,
+      "text": "What?",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 38,
+      "start": 322.32,
+      "end": 323.32,
+      "text": "What?",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 39,
+      "start": 323.32,
+      "end": 324.32,
+      "text": "How are you doing?",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 40,
+      "start": 324.32,
+      "end": 327.32,
+      "text": "You're part of it.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 41,
+      "start": 327.32,
+      "end": 329.32,
+      "text": "My name is Larry.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 42,
+      "start": 329.32,
+      "end": 330.32,
+      "text": "Larry.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 43,
+      "start": 330.32,
+      "end": 333.32,
+      "text": "So, parts of the heart of the brain are the secondary.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 44,
+      "start": 333.32,
+      "end": 336.32,
+      "text": "The secondary collection of the meaning was it.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 45,
+      "start": 336.32,
+      "end": 338.32,
+      "text": "Collection of course.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 46,
+      "start": 338.32,
+      "end": 339.32,
+      "text": "The secondary round.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 47,
+      "start": 339.32,
+      "end": 340.32,
+      "text": "There's a separate round.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 48,
+      "start": 340.32,
+      "end": 341.32,
+      "text": "Fick of course.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 49,
+      "start": 341.32,
+      "end": 342.32,
+      "text": "Broom of course.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 50,
+      "start": 342.32,
+      "end": 343.32,
+      "text": "Collection of part.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 51,
+      "start": 343.32,
+      "end": 344.32,
+      "text": "Set up for you.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 52,
+      "start": 344.32,
+      "end": 348.32,
+      "text": "The secondary meaning is collection of elements.",
+      "avg_logprob": -0.559,
+      "no_speech_prob": 0.065
+    },
+    {
+      "id": 53,
+      "start": 348.32,
+      "end": 350.32,
+      "text": "It's a collection of items.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 54,
+      "start": 350.32,
+      "end": 358.32,
+      "text": "But as I already told you, the important artifacts that we are discussing from last two weeks",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 55,
+      "start": 358.32,
+      "end": 359.32,
+      "text": "is list.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 56,
+      "start": 359.32,
+      "end": 360.32,
+      "text": "It's capital.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 57,
+      "start": 360.32,
+      "end": 363.32,
+      "text": "It's literally strings.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 58,
+      "start": 363.32,
+      "end": 366.32,
+      "text": "And now we have to the set.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 59,
+      "start": 366.32,
+      "end": 369.32,
+      "text": "It's capital marked, but we'll list that very simple one.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 60,
+      "start": 369.32,
+      "end": 370.32,
+      "text": "List.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 61,
+      "start": 370.32,
+      "end": 372.32,
+      "text": "Capital.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 62,
+      "start": 372.32,
+      "end": 373.32,
+      "text": "List.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 63,
+      "start": 373.32,
+      "end": 374.32,
+      "text": "Capital.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 64,
+      "start": 374.32,
+      "end": 375.32,
+      "text": "Capital.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 65,
+      "start": 375.32,
+      "end": 376.32,
+      "text": "It's simple.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 66,
+      "start": 376.32,
+      "end": 378.32,
+      "text": "Stincies different.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 67,
+      "start": 378.32,
+      "end": 379.32,
+      "text": "Dictionary.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 68,
+      "start": 379.32,
+      "end": 383.32,
+      "text": "And the set is quite different from them.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 69,
+      "start": 383.32,
+      "end": 385.32,
+      "text": "So, what?",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 70,
+      "start": 385.32,
+      "end": 387.32,
+      "text": "Examiner of the thing.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 71,
+      "start": 387.32,
+      "end": 390.32,
+      "text": "One easy one is combined with the hardware.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 72,
+      "start": 390.32,
+      "end": 396.32,
+      "text": "If list is combined with the dictionary, capital will be combined with the set.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 73,
+      "start": 396.32,
+      "end": 399.32,
+      "text": "Like that in combination, they will ask you questions.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 74,
+      "start": 399.32,
+      "end": 402.32,
+      "text": "So, in the final examination.",
+      "avg_logprob": -0.304,
+      "no_speech_prob": 0.095
+    },
+    {
+      "id": 75,
+      "start": 402.32,
+      "end": 405.32,
+      "text": "Question one, for our question two, like that they will give you.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 76,
+      "start": 405.32,
+      "end": 408.32,
+      "text": "As you know the pattern of question paper.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 77,
+      "start": 408.32,
+      "end": 413.32,
+      "text": "So, you need to, if they would like to ask the question, they will ask list combination",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 78,
+      "start": 413.32,
+      "end": 414.32,
+      "text": "of the study.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 79,
+      "start": 414.32,
+      "end": 416.32,
+      "text": "Capital combination of list.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 80,
+      "start": 416.32,
+      "end": 417.32,
+      "text": "List.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 81,
+      "start": 417.32,
+      "end": 420.32,
+      "text": "90% they will give you like this only.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 82,
+      "start": 420.32,
+      "end": 427.32,
+      "text": "If required in different case, different rare case, they will include the spin.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 83,
+      "start": 427.32,
+      "end": 428.32,
+      "text": "Some way.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 84,
+      "start": 428.32,
+      "end": 431.32,
+      "text": "Some way they may be the first question or second question.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 85,
+      "start": 431.32,
+      "end": 436.32,
+      "text": "But the maximum combination is, list and capital are easy.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 86,
+      "start": 436.32,
+      "end": 438.32,
+      "text": "Dictionary and sets are quite different.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 87,
+      "start": 438.32,
+      "end": 439.32,
+      "text": "Okay.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 88,
+      "start": 439.32,
+      "end": 442.32,
+      "text": "Not like them, little different.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 89,
+      "start": 442.32,
+      "end": 447.32,
+      "text": "So, combination of list and sets and they give, are coupled with the dictionary.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 90,
+      "start": 447.32,
+      "end": 449.32,
+      "text": "What combination they will give you?",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 91,
+      "start": 449.32,
+      "end": 450.32,
+      "text": "We do not know.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 92,
+      "start": 450.32,
+      "end": 452.32,
+      "text": "But you are covered in these four plus spin.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 93,
+      "start": 452.32,
+      "end": 457.32,
+      "text": "I think we are able to answer the big question.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 94,
+      "start": 457.32,
+      "end": 458.32,
+      "text": "How many marks?",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 95,
+      "start": 458.32,
+      "end": 459.32,
+      "text": "5 marks.",
+      "avg_logprob": -0.339,
+      "no_speech_prob": 0.007
+    },
+    {
+      "id": 96,
+      "start": 459.32,
+      "end": 460.32,
+      "text": "5 marks.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 97,
+      "start": 460.32,
+      "end": 461.32,
+      "text": "5 marks.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 98,
+      "start": 461.32,
+      "end": 464.32,
+      "text": "Each question carries two and a half marks.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 99,
+      "start": 464.32,
+      "end": 468.32,
+      "text": "For very good understanding, your preparation should be like that.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 100,
+      "start": 468.32,
+      "end": 470.32,
+      "text": "Now, you all are in this concept.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 101,
+      "start": 470.32,
+      "end": 473.32,
+      "text": "In the final examination, you have to call the five marks.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 102,
+      "start": 473.32,
+      "end": 475.32,
+      "text": "Okay, understood.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 103,
+      "start": 475.32,
+      "end": 479.32,
+      "text": "And in each unit, they have to give one more questions to you.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 104,
+      "start": 479.32,
+      "end": 484.32,
+      "text": "If spin is left in here, they will give one more questions only on spins.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 105,
+      "start": 484.32,
+      "end": 488.32,
+      "text": "If list is mister, one more questions only on this theory.",
+      "avg_logprob": -0.385,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 106,
+      "start": 489.32,
+      "end": 490.32,
+      "text": "Hope you understood.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 107,
+      "start": 490.32,
+      "end": 493.32,
+      "text": "Like that, you are thinking about should be there.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 108,
+      "start": 493.32,
+      "end": 494.32,
+      "text": "Hope you understood.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 109,
+      "start": 494.32,
+      "end": 496.32,
+      "text": "Totally, here, four, they are two.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 110,
+      "start": 496.32,
+      "end": 499.32,
+      "text": "Six questions are going to get.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 111,
+      "start": 499.32,
+      "end": 501.32,
+      "text": "I am going to have one more question.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 112,
+      "start": 501.32,
+      "end": 502.32,
+      "text": "He will list you.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 113,
+      "start": 502.32,
+      "end": 506.32,
+      "text": "This time, capital set, combination by four questions.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 114,
+      "start": 506.32,
+      "end": 507.32,
+      "text": "Okay.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 115,
+      "start": 507.32,
+      "end": 508.32,
+      "text": "One more question.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 116,
+      "start": 508.32,
+      "end": 510.32,
+      "text": "The second unit is going to go to the question here.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 117,
+      "start": 510.32,
+      "end": 511.32,
+      "text": "One marks, two marks.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 118,
+      "start": 511.32,
+      "end": 512.32,
+      "text": "Two marks.",
+      "avg_logprob": -0.582,
+      "no_speech_prob": 0.061
+    },
+    {
+      "id": 119,
+      "start": 512.32,
+      "end": 516.32,
+      "text": "So, remember, having given the answer, things say that all the time, you should get it.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 120,
+      "start": 516.32,
+      "end": 518.32,
+      "text": "All the time, the answer.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 121,
+      "start": 518.32,
+      "end": 521.32,
+      "text": "So, your preparation should be very, very often.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 122,
+      "start": 521.32,
+      "end": 522.32,
+      "text": "Okay.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 123,
+      "start": 522.32,
+      "end": 525.32,
+      "text": "We are not going to put a part of combination, we come.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 124,
+      "start": 525.32,
+      "end": 527.32,
+      "text": "And that term, don't go for exception.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 125,
+      "start": 527.32,
+      "end": 529.32,
+      "text": "You prepare like a subject.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 126,
+      "start": 529.32,
+      "end": 530.32,
+      "text": "Okay.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 127,
+      "start": 530.32,
+      "end": 532.32,
+      "text": "I am going to do it.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 128,
+      "start": 532.32,
+      "end": 535.32,
+      "text": "Take one point.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 129,
+      "start": 535.32,
+      "end": 538.32,
+      "text": "Take one point.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 130,
+      "start": 538.32,
+      "end": 540.32,
+      "text": "Take one one point.",
+      "avg_logprob": -0.666,
+      "no_speech_prob": 0.216
+    },
+    {
+      "id": 131,
+      "start": 543.32,
+      "end": 545.32,
+      "text": "Take one point.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 132,
+      "start": 545.32,
+      "end": 549.32,
+      "text": "Set some usage.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 133,
+      "start": 549.32,
+      "end": 551.32,
+      "text": "Set is set to set some.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 134,
+      "start": 551.32,
+      "end": 556.32,
+      "text": "Set is a collection.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 135,
+      "start": 556.32,
+      "end": 564.32,
+      "text": "Set is a collection which is another.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 136,
+      "start": 564.32,
+      "end": 569.32,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 137,
+      "start": 569.32,
+      "end": 571.32,
+      "text": "Unchangeable analyze.",
+      "avg_logprob": -0.372,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 138,
+      "start": 571.32,
+      "end": 573.32,
+      "text": "Double quotation.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 139,
+      "start": 573.32,
+      "end": 574.32,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 140,
+      "start": 574.32,
+      "end": 575.32,
+      "text": "Double quotation.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 141,
+      "start": 575.32,
+      "end": 576.32,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 142,
+      "start": 576.32,
+      "end": 577.32,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 143,
+      "start": 577.32,
+      "end": 580.32,
+      "text": "And then, unindexed.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 144,
+      "start": 580.32,
+      "end": 583.32,
+      "text": "Unindexed.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 145,
+      "start": 587.32,
+      "end": 596.32,
+      "text": "Sets are written.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 146,
+      "start": 596.32,
+      "end": 600.32,
+      "text": "Sets are written using curly braces.",
+      "avg_logprob": -0.436,
+      "no_speech_prob": 0.006
+    },
+    {
+      "id": 147,
+      "start": 600.32,
+      "end": 601.32,
+      "text": "Okay.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 148,
+      "start": 601.32,
+      "end": 602.32,
+      "text": "braces.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 149,
+      "start": 604.32,
+      "end": 605.32,
+      "text": "Let's have braces.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 150,
+      "start": 605.32,
+      "end": 606.32,
+      "text": "braces.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 151,
+      "start": 606.32,
+      "end": 607.32,
+      "text": "Come here.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 152,
+      "start": 607.32,
+      "end": 608.32,
+      "text": "Let's have braces.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 153,
+      "start": 608.32,
+      "end": 610.32,
+      "text": "We call it curly braces.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 154,
+      "start": 610.32,
+      "end": 615.32,
+      "text": "So, I am using V and S. Is it visible?",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 155,
+      "start": 615.32,
+      "end": 619.32,
+      "text": "Now, we are choosing for two.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 156,
+      "start": 619.32,
+      "end": 621.32,
+      "text": "The other half is you know.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 157,
+      "start": 621.32,
+      "end": 624.32,
+      "text": "Let's choose equal two.",
+      "avg_logprob": -0.51,
+      "no_speech_prob": 0.073
+    },
+    {
+      "id": 158,
+      "start": 625.32,
+      "end": 627.32,
+      "text": "Sheet.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 159,
+      "start": 627.32,
+      "end": 629.32,
+      "text": "Sheet.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 160,
+      "start": 629.32,
+      "end": 631.32,
+      "text": "Varshmana.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 161,
+      "start": 631.32,
+      "end": 634.32,
+      "text": "Varshmana.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 162,
+      "start": 634.32,
+      "end": 637.32,
+      "text": "Varshmana.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 163,
+      "start": 637.32,
+      "end": 638.32,
+      "text": "Varshmana.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 164,
+      "start": 638.32,
+      "end": 640.32,
+      "text": "They are called point papers.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 165,
+      "start": 640.32,
+      "end": 643.32,
+      "text": "What they need is to take that you take on your own.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 166,
+      "start": 643.32,
+      "end": 645.32,
+      "text": "After that, they are sent in that way.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 167,
+      "start": 645.32,
+      "end": 648.32,
+      "text": "And then, after that, they can send their own to the gate.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 168,
+      "start": 648.32,
+      "end": 650.32,
+      "text": "So, how many elements are there?",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 169,
+      "start": 650.32,
+      "end": 651.32,
+      "text": "Oh, all the elements are there.",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 170,
+      "start": 651.32,
+      "end": 653.32,
+      "text": "You need same to role, ready?",
+      "avg_logprob": -0.797,
+      "no_speech_prob": 0.214
+    },
+    {
+      "id": 171,
+      "start": 653.32,
+      "end": 654.32,
+      "text": "Yes.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 172,
+      "start": 654.32,
+      "end": 655.32,
+      "text": "We call it as A.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 173,
+      "start": 655.32,
+      "end": 657.32,
+      "text": "So, same braces on our own.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 174,
+      "start": 657.32,
+      "end": 658.32,
+      "text": "Dictionary.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 175,
+      "start": 658.32,
+      "end": 660.32,
+      "text": "Dictionary, your elements are loud.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 176,
+      "start": 660.32,
+      "end": 661.32,
+      "text": "Dictionary.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 177,
+      "start": 661.32,
+      "end": 663.32,
+      "text": "These are the elements in future.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 178,
+      "start": 663.32,
+      "end": 665.32,
+      "text": "That is what the difference is.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 179,
+      "start": 665.32,
+      "end": 666.32,
+      "text": "Oh, that's what it is.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 180,
+      "start": 666.32,
+      "end": 667.32,
+      "text": "It is a violent point.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 181,
+      "start": 667.32,
+      "end": 668.32,
+      "text": "Yes.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 182,
+      "start": 668.32,
+      "end": 669.32,
+      "text": "So, set me out.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 183,
+      "start": 669.32,
+      "end": 671.32,
+      "text": "Corruption of elements in the already.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 184,
+      "start": 671.32,
+      "end": 672.32,
+      "text": "Braces.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 185,
+      "start": 672.32,
+      "end": 673.32,
+      "text": "Uncertainly, braces.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 186,
+      "start": 673.32,
+      "end": 674.32,
+      "text": "C.A.M.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 187,
+      "start": 674.32,
+      "end": 675.32,
+      "text": "Corruption we used for.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 188,
+      "start": 675.32,
+      "end": 676.32,
+      "text": "It's different.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 189,
+      "start": 676.32,
+      "end": 677.32,
+      "text": "It's different.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 190,
+      "start": 677.32,
+      "end": 678.32,
+      "text": "It's different.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 191,
+      "start": 678.32,
+      "end": 679.32,
+      "text": "Yeah.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 192,
+      "start": 679.32,
+      "end": 680.32,
+      "text": "Each element is unique.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 193,
+      "start": 680.32,
+      "end": 681.32,
+      "text": "Separately different.",
+      "avg_logprob": -0.586,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 194,
+      "start": 681.32,
+      "end": 682.32,
+      "text": "There each item is.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 195,
+      "start": 682.32,
+      "end": 684.32,
+      "text": "There each element is a combination of.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 196,
+      "start": 684.32,
+      "end": 685.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 197,
+      "start": 685.32,
+      "end": 686.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 198,
+      "start": 686.32,
+      "end": 687.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 199,
+      "start": 687.32,
+      "end": 688.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 200,
+      "start": 688.32,
+      "end": 689.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 201,
+      "start": 689.32,
+      "end": 690.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 202,
+      "start": 690.32,
+      "end": 691.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 203,
+      "start": 691.32,
+      "end": 692.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 204,
+      "start": 692.32,
+      "end": 693.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 205,
+      "start": 693.32,
+      "end": 694.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 206,
+      "start": 694.32,
+      "end": 695.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 207,
+      "start": 695.32,
+      "end": 696.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 208,
+      "start": 696.32,
+      "end": 697.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 209,
+      "start": 697.32,
+      "end": 698.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 210,
+      "start": 698.32,
+      "end": 699.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 211,
+      "start": 699.32,
+      "end": 700.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 212,
+      "start": 700.32,
+      "end": 701.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 213,
+      "start": 701.32,
+      "end": 702.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 214,
+      "start": 702.32,
+      "end": 703.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 215,
+      "start": 703.32,
+      "end": 704.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 216,
+      "start": 704.32,
+      "end": 705.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 217,
+      "start": 705.32,
+      "end": 706.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 218,
+      "start": 706.32,
+      "end": 707.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 219,
+      "start": 707.32,
+      "end": 708.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 220,
+      "start": 708.32,
+      "end": 709.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 221,
+      "start": 709.32,
+      "end": 710.32,
+      "text": "E.",
+      "avg_logprob": -0.216,
+      "no_speech_prob": 0.1
+    },
+    {
+      "id": 222,
+      "start": 710.32,
+      "end": 712.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 223,
+      "start": 712.32,
+      "end": 713.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 224,
+      "start": 713.32,
+      "end": 714.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 225,
+      "start": 714.32,
+      "end": 716.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 226,
+      "start": 716.32,
+      "end": 717.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 227,
+      "start": 717.32,
+      "end": 719.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 228,
+      "start": 719.32,
+      "end": 721.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 229,
+      "start": 721.32,
+      "end": 723.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 230,
+      "start": 723.32,
+      "end": 726.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 231,
+      "start": 726.32,
+      "end": 727.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 232,
+      "start": 727.32,
+      "end": 729.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 233,
+      "start": 729.32,
+      "end": 730.32,
+      "text": "\u6709\u4e00 Mr.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 234,
+      "start": 730.32,
+      "end": 732.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 235,
+      "start": 732.32,
+      "end": 733.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 236,
+      "start": 733.32,
+      "end": 735.32,
+      "text": "E.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 237,
+      "start": 735.32,
+      "end": 737.32,
+      "text": "Ir curious to see what we are doing.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 238,
+      "start": 737.32,
+      "end": 738.32,
+      "text": "Why not?",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 239,
+      "start": 738.32,
+      "end": 739.32,
+      "text": "Sorry.",
+      "avg_logprob": -1.051,
+      "no_speech_prob": 0.273
+    },
+    {
+      "id": 240,
+      "start": 739.32,
+      "end": 746.88,
+      "text": "As lie there is not even a lie.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 241,
+      "start": 746.88,
+      "end": 753.54,
+      "text": "Only requests are delivered to this man, but here he is also not?",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 242,
+      "start": 753.54,
+      "end": 755.04,
+      "text": "Not at all.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 243,
+      "start": 755.04,
+      "end": 756.04,
+      "text": "Not at all.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 244,
+      "start": 756.04,
+      "end": 757.04,
+      "text": "But at least not built in.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 245,
+      "start": 757.04,
+      "end": 758.04,
+      "text": "Okay, understood.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 246,
+      "start": 758.04,
+      "end": 759.04,
+      "text": "So, Example 1.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 247,
+      "start": 759.04,
+      "end": 763.04,
+      "text": "SCG for those who take some measurements, you can take safe and different issue.",
+      "avg_logprob": -1.835,
+      "no_speech_prob": 0.206
+    },
+    {
+      "id": 248,
+      "start": 763.04,
+      "end": 770.04,
+      "text": "you can take fruits of vegetable, mass, subject, marks, popularity days, but can you maintain",
+      "avg_logprob": -0.824,
+      "no_speech_prob": 0.094
+    },
+    {
+      "id": 249,
+      "start": 770.04,
+      "end": 779.04,
+      "text": "it? Order is, it is order is not maintain, order is not maintain, very very important is",
+      "avg_logprob": -0.824,
+      "no_speech_prob": 0.094
+    },
+    {
+      "id": 250,
+      "start": 779.04,
+      "end": 786.04,
+      "text": "there, good sex is important ok, unavoidable and I told you one point it is unindexed,",
+      "avg_logprob": -0.806,
+      "no_speech_prob": 0.137
+    },
+    {
+      "id": 251,
+      "start": 786.04,
+      "end": 797.04,
+      "text": "it is unindexed, indexed, yes of 0, 0, first I will not take, first I will not take",
+      "avg_logprob": -0.806,
+      "no_speech_prob": 0.137
+    },
+    {
+      "id": 252,
+      "start": 797.04,
+      "end": 804.04,
+      "text": "a window, I will tell you, you do not know, this order will open, yes of the answer",
+      "avg_logprob": -0.806,
+      "no_speech_prob": 0.137
+    },
+    {
+      "id": 253,
+      "start": 804.04,
+      "end": 811.04,
+      "text": "you will open up to index value, you will open up to index value, so there is no index",
+      "avg_logprob": -0.548,
+      "no_speech_prob": 0.044
+    },
+    {
+      "id": 254,
+      "start": 811.04,
+      "end": 820.04,
+      "text": "value because of an order, a point right no, it is unindexed because it does not follow",
+      "avg_logprob": -0.548,
+      "no_speech_prob": 0.044
+    },
+    {
+      "id": 255,
+      "start": 820.04,
+      "end": 823.04,
+      "text": "order, because it is unordered, because it is unordered, in the group index value",
+      "avg_logprob": -0.548,
+      "no_speech_prob": 0.044
+    },
+    {
+      "id": 256,
+      "start": 823.04,
+      "end": 830.04,
+      "text": "index value So, you do not know, no, I will not give you, will make sure",
+      "avg_logprob": -1.302,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 257,
+      "start": 830.04,
+      "end": 838.04,
+      "text": "it is unordered. In the group index value is not red, but red.",
+      "avg_logprob": -1.302,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 258,
+      "start": 838.04,
+      "end": 843.04,
+      "text": "So, it is unordered, it is unordered. Because it is unordered, in the group index value",
+      "avg_logprob": -1.302,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 259,
+      "start": 843.04,
+      "end": 852.24,
+      "text": "r, r, r, r, r, r, r, r, r, r, r, r, and in 0, 0, 0, 0, 0 so, we will get",
+      "avg_logprob": -1.302,
+      "no_speech_prob": 0.05
+    },
+    {
+      "id": 260,
+      "start": 852.24,
+      "end": 877.48,
+      "text": "element in the set cannot be changed, but can be removed, but can be removed or added,",
+      "avg_logprob": -0.55,
+      "no_speech_prob": 0.244
+    },
+    {
+      "id": 261,
+      "start": 877.48,
+      "end": 884.48,
+      "text": "but can be removed or added, but can be removed or added, did you change?",
+      "avg_logprob": -0.627,
+      "no_speech_prob": 0.138
+    },
+    {
+      "id": 262,
+      "start": 884.48,
+      "end": 891.48,
+      "text": "Yes.",
+      "avg_logprob": -1.238,
+      "no_speech_prob": 0.466
+    },
+    {
+      "id": 263,
+      "start": 891.48,
+      "end": 898.48,
+      "text": "Yes.",
+      "avg_logprob": -1.238,
+      "no_speech_prob": 0.466
+    },
+    {
+      "id": 264,
+      "start": 928.48,
+      "end": 941.48,
+      "text": "add all, okay, so from new item is added, it is not happening, it is not happening,",
+      "avg_logprob": -0.68,
+      "no_speech_prob": 0.275
+    },
+    {
+      "id": 265,
+      "start": 941.48,
+      "end": 947.48,
+      "text": "it is happening with the add only, but add that, there is no matter the add is in, okay,",
+      "avg_logprob": -0.68,
+      "no_speech_prob": 0.275
+    },
+    {
+      "id": 266,
+      "start": 947.48,
+      "end": 953.48,
+      "text": "so I am talking about the add, add that, okay, so I am using add here, new element can be added",
+      "avg_logprob": -0.68,
+      "no_speech_prob": 0.275
+    },
+    {
+      "id": 267,
+      "start": 953.48,
+      "end": 960.48,
+      "text": "by using add method, how I transfer, add method is used to add, add method is used to add",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.081
+    },
+    {
+      "id": 268,
+      "start": 960.48,
+      "end": 981.48,
+      "text": "element to set, element to set, now I am going to try to remove, see, come, so remove",
+      "avg_logprob": -0.319,
+      "no_speech_prob": 0.081
+    },
+    {
+      "id": 269,
+      "start": 981.48,
+      "end": 986.48,
+      "text": "method is used to remove the element from the set, see the element is removed, so I cannot",
+      "avg_logprob": -0.195,
+      "no_speech_prob": 0.101
+    },
+    {
+      "id": 270,
+      "start": 986.48,
+      "end": 993.48,
+      "text": "change already elements that are there, but what I get to, I can add the new item and",
+      "avg_logprob": -0.195,
+      "no_speech_prob": 0.101
+    },
+    {
+      "id": 271,
+      "start": 993.48,
+      "end": 1003.48,
+      "text": "I can remove the element from the set, so what method are you using, add method is used",
+      "avg_logprob": -0.195,
+      "no_speech_prob": 0.101
+    },
+    {
+      "id": 272,
+      "start": 1003.48,
+      "end": 1010.48,
+      "text": "to, add element to set, remove method is used to remove, element from the set, you can",
+      "avg_logprob": -0.336,
+      "no_speech_prob": 0.39
+    },
+    {
+      "id": 273,
+      "start": 1010.48,
+      "end": 1030.48,
+      "text": "take the element from the set, you can take the set out, you can take the set out, okay,",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.235
+    },
+    {
+      "id": 274,
+      "start": 1030.48,
+      "end": 1059.48,
+      "text": "okay, let's the access item, access item, access item, so I am called as, like a,",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.72
+    },
+    {
+      "id": 275,
+      "start": 1059.48,
+      "end": 1068.48,
+      "text": "elements in the set cannot be accessed by using index value code, because it is not maintained",
+      "avg_logprob": -0.362,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 276,
+      "start": 1068.48,
+      "end": 1074.48,
+      "text": "that is the reason you code, but the thing is, I would like to access, directly you printed",
+      "avg_logprob": -0.362,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 277,
+      "start": 1074.48,
+      "end": 1081.48,
+      "text": "S value like this, instead of that can I access the sets to the help of loads, yes, for",
+      "avg_logprob": -0.412,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 278,
+      "start": 1081.48,
+      "end": 1100.48,
+      "text": "I in S when, okay, element is equal to, element is equal to I, okay, what I am doing here,",
+      "avg_logprob": -0.412,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 279,
+      "start": 1100.48,
+      "end": 1108.48,
+      "text": "I just want to access the elements that are there in the set by using loop, so access item,",
+      "avg_logprob": -0.262,
+      "no_speech_prob": 0.204
+    },
+    {
+      "id": 280,
+      "start": 1108.48,
+      "end": 1113.48,
+      "text": "how they are accessing, what is that, actually I printed the set with the help of print statement,",
+      "avg_logprob": -0.262,
+      "no_speech_prob": 0.204
+    },
+    {
+      "id": 281,
+      "start": 1113.48,
+      "end": 1120.48,
+      "text": "and second one is, I don't have any test values, how I have to access a, by using loops,",
+      "avg_logprob": -0.262,
+      "no_speech_prob": 0.204
+    },
+    {
+      "id": 282,
+      "start": 1120.48,
+      "end": 1135.48,
+      "text": "okay, access item, access the set items using loop, access set item using loops,",
+      "avg_logprob": -0.19,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 283,
+      "start": 1135.48,
+      "end": 1147.48,
+      "text": "you don't know, access set item using loop, okay, access set item using loop, you don't know",
+      "avg_logprob": -0.636,
+      "no_speech_prob": 0.594
+    },
+    {
+      "id": 284,
+      "start": 1237.48,
+      "end": 1261.82,
+      "text": "So, like how we use a sort of object function with the list and the previous law, the",
+      "avg_logprob": -0.835,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 285,
+      "start": 1261.82,
+      "end": 1268.82,
+      "text": "same object function which is used to previous the sequence data type, that I have passed",
+      "avg_logprob": -0.841,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 286,
+      "start": 1268.82,
+      "end": 1273.82,
+      "text": "and data type, here also we can use same object function. So, whatever we hear,",
+      "avg_logprob": -0.841,
+      "no_speech_prob": 0.45
+    },
+    {
+      "id": 287,
+      "start": 1273.82,
+      "end": 1280.82,
+      "text": "we can use same object function. So, already it is just an object to take one.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.417
+    },
+    {
+      "id": 288,
+      "start": 1280.82,
+      "end": 1295.82,
+      "text": "And here I am taking k is equal to pi times pi times pi times pi times pi times pi times",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.417
+    },
+    {
+      "id": 289,
+      "start": 1295.82,
+      "end": 1302.82,
+      "text": "pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times",
+      "avg_logprob": -0.058,
+      "no_speech_prob": 0.255
+    },
+    {
+      "id": 290,
+      "start": 1302.82,
+      "end": 1326.32,
+      "text": "So, how many sets, two sets and heavy, so what I am going, yes I am updating, in the",
+      "avg_logprob": -0.821,
+      "no_speech_prob": 0.355
+    },
+    {
+      "id": 291,
+      "start": 1327.32,
+      "end": 1331.32,
+      "text": "and I would like to check whether the SC is updated or not.",
+      "avg_logprob": -0.447,
+      "no_speech_prob": 0.202
+    },
+    {
+      "id": 292,
+      "start": 1331.32,
+      "end": 1336.32,
+      "text": "Okay, same example we get with this, nothing new.",
+      "avg_logprob": -0.447,
+      "no_speech_prob": 0.202
+    },
+    {
+      "id": 293,
+      "start": 1336.32,
+      "end": 1343.32,
+      "text": "Already existing collection of elements I am updating with the new one, T is not going to be affected,",
+      "avg_logprob": -0.447,
+      "no_speech_prob": 0.202
+    },
+    {
+      "id": 294,
+      "start": 1343.32,
+      "end": 1349.32,
+      "text": "which is going to be updated, this is going to be updated with me, that is what will mean,",
+      "avg_logprob": -0.447,
+      "no_speech_prob": 0.202
+    },
+    {
+      "id": 295,
+      "start": 1349.32,
+      "end": 1351.32,
+      "text": "what we understood.",
+      "avg_logprob": -0.447,
+      "no_speech_prob": 0.202
+    },
+    {
+      "id": 296,
+      "start": 1352.32,
+      "end": 1358.32,
+      "text": "Okay, so here I have two sets, one set is updated with another set of elements.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 297,
+      "start": 1358.32,
+      "end": 1361.32,
+      "text": "Same example we suppose this is going to happen from the start.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 298,
+      "start": 1361.32,
+      "end": 1365.32,
+      "text": "I think it is going to be the same, we are already updating the model,",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 299,
+      "start": 1365.32,
+      "end": 1368.32,
+      "text": "it is going to happen.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 300,
+      "start": 1368.32,
+      "end": 1370.32,
+      "text": "Okay understood.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 301,
+      "start": 1370.32,
+      "end": 1375.32,
+      "text": "So, it is fine, you are saying two sets are taken, that is good.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 302,
+      "start": 1375.32,
+      "end": 1380.32,
+      "text": "But what my intention is, same example we are taking.",
+      "avg_logprob": -0.612,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 303,
+      "start": 1381.32,
+      "end": 1391.32,
+      "text": "Okay, but instead of set of life could take it as a list.",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 304,
+      "start": 1391.32,
+      "end": 1395.32,
+      "text": "I would like to take like this, does it work sir?",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 305,
+      "start": 1395.32,
+      "end": 1396.32,
+      "text": "What is the set?",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 306,
+      "start": 1396.32,
+      "end": 1397.32,
+      "text": "What is?",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 307,
+      "start": 1397.32,
+      "end": 1398.32,
+      "text": "List.",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 308,
+      "start": 1398.32,
+      "end": 1403.32,
+      "text": "Not only this, you can take couple also nothing but it will work, it will update.",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 309,
+      "start": 1403.32,
+      "end": 1410.32,
+      "text": "Set is combined with the list, but list will be combined with the set.",
+      "avg_logprob": -0.354,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 310,
+      "start": 1410.32,
+      "end": 1412.32,
+      "text": "This is what is going to happen.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 311,
+      "start": 1412.32,
+      "end": 1414.32,
+      "text": "So, here what I did?",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 312,
+      "start": 1414.32,
+      "end": 1417.32,
+      "text": "It is going to be updated, it will be updated.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 313,
+      "start": 1417.32,
+      "end": 1419.32,
+      "text": "So, what I said is, now what is the list?",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 314,
+      "start": 1419.32,
+      "end": 1421.32,
+      "text": "I will do two different types.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 315,
+      "start": 1421.32,
+      "end": 1424.32,
+      "text": "Okay, but same update function is going to be updated,",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 316,
+      "start": 1424.32,
+      "end": 1426.32,
+      "text": "it will be updated, yes it will work.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 317,
+      "start": 1426.32,
+      "end": 1431.32,
+      "text": "But it is going to be updated with the list and it will be combined with the set items.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 318,
+      "start": 1431.32,
+      "end": 1434.32,
+      "text": "Okay, let us run this one.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 319,
+      "start": 1434.32,
+      "end": 1436.32,
+      "text": "Is it working or not?",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 320,
+      "start": 1436.32,
+      "end": 1438.32,
+      "text": "Not only a list, we can take couple also.",
+      "avg_logprob": -0.592,
+      "no_speech_prob": 0.049
+    },
+    {
+      "id": 321,
+      "start": 1438.32,
+      "end": 1440.32,
+      "text": "No issue at all.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 322,
+      "start": 1440.32,
+      "end": 1441.32,
+      "text": "Okay, understood.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 323,
+      "start": 1441.32,
+      "end": 1445.32,
+      "text": "One third set you can take one definition.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 324,
+      "start": 1445.32,
+      "end": 1447.32,
+      "text": "Yes sir.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 325,
+      "start": 1447.32,
+      "end": 1450.32,
+      "text": "Take one example.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 326,
+      "start": 1450.32,
+      "end": 1453.32,
+      "text": "Efficient.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 327,
+      "start": 1453.32,
+      "end": 1459.32,
+      "text": "Mm-hmm.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 328,
+      "start": 1459.32,
+      "end": 1464.32,
+      "text": "Okay, let us run this one.",
+      "avg_logprob": -0.597,
+      "no_speech_prob": 0.086
+    },
+    {
+      "id": 329,
+      "start": 1464.32,
+      "end": 1471.32,
+      "text": "Okay.",
+      "avg_logprob": -0.735,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 330,
+      "start": 1471.32,
+      "end": 1478.32,
+      "text": "All right.",
+      "avg_logprob": -0.735,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 331,
+      "start": 1478.32,
+      "end": 1490.32,
+      "text": "Now, we object.",
+      "avg_logprob": -0.735,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 332,
+      "start": 1490.32,
+      "end": 1502.32,
+      "text": "When you are using update function,",
+      "avg_logprob": -0.254,
+      "no_speech_prob": 0.293
+    },
+    {
+      "id": 333,
+      "start": 1502.32,
+      "end": 1508.32,
+      "text": "when you are using update function with the sets,",
+      "avg_logprob": -0.254,
+      "no_speech_prob": 0.293
+    },
+    {
+      "id": 334,
+      "start": 1508.32,
+      "end": 1512.32,
+      "text": "when you are using update function with sets,",
+      "avg_logprob": -0.254,
+      "no_speech_prob": 0.293
+    },
+    {
+      "id": 335,
+      "start": 1512.32,
+      "end": 1516.32,
+      "text": "you can use.",
+      "avg_logprob": -1.478,
+      "no_speech_prob": 0.353
+    },
+    {
+      "id": 336,
+      "start": 1516.32,
+      "end": 1524.32,
+      "text": "You can use honorable objects.",
+      "avg_logprob": -1.478,
+      "no_speech_prob": 0.353
+    },
+    {
+      "id": 337,
+      "start": 1524.32,
+      "end": 1535.32,
+      "text": "You can use honorable objects like list,",
+      "avg_logprob": -1.478,
+      "no_speech_prob": 0.353
+    },
+    {
+      "id": 338,
+      "start": 1535.32,
+      "end": 1539.32,
+      "text": "happen list happen list, Albert dixtery.",
+      "avg_logprob": -1.478,
+      "no_speech_prob": 0.353
+    },
+    {
+      "id": 339,
+      "start": 1539.32,
+      "end": 1553.76,
+      "text": "So, this is example giving them on what list you can also use other data types of, so",
+      "avg_logprob": -0.691,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 340,
+      "start": 1553.76,
+      "end": 1555.76,
+      "text": "we want to think next one.",
+      "avg_logprob": -0.691,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 341,
+      "start": 1555.76,
+      "end": 1567.76,
+      "text": "So, here I use with the remote, the same remote using here, but differently I am using",
+      "avg_logprob": -0.691,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 342,
+      "start": 1567.76,
+      "end": 1576.38,
+      "text": "a remote method, but there is a remote element which is not there.",
+      "avg_logprob": -0.812,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 343,
+      "start": 1576.38,
+      "end": 1587.24,
+      "text": "Remote function volume, but a set up items, so on my element to that is laid up of a remote",
+      "avg_logprob": -0.812,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 344,
+      "start": 1587.24,
+      "end": 1593.36,
+      "text": "is extended to raise another, but a power element laid up, so you are trying to remote",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.224
+    },
+    {
+      "id": 345,
+      "start": 1593.36,
+      "end": 1597.36,
+      "text": "and simply to raise and raise whole data still.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.224
+    },
+    {
+      "id": 346,
+      "start": 1597.36,
+      "end": 1602.68,
+      "text": "Remote function can be used to remote and item, and even from the set, but when it is",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.224
+    },
+    {
+      "id": 347,
+      "start": 1602.68,
+      "end": 1607.96,
+      "text": "doesn't exist, it tries, that should be not to you, because same examples that we give",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.224
+    },
+    {
+      "id": 348,
+      "start": 1607.96,
+      "end": 1609.96,
+      "text": "you, we lost some output that we give you.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.224
+    },
+    {
+      "id": 349,
+      "start": 1609.96,
+      "end": 1619.4,
+      "text": "You should understand this element is not as well, but I am using instead of this, I",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 350,
+      "start": 1619.4,
+      "end": 1627.88,
+      "text": "am using this card, I am using this card, it is equal to what I can remove only, it will",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 351,
+      "start": 1627.88,
+      "end": 1633.12,
+      "text": "work like, remove it, if element is there it will remove, if element is not there it will",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.06
+    },
+    {
+      "id": 352,
+      "start": 1633.12,
+      "end": 1640.12,
+      "text": "not raise the other, it simply shows it empty, that is why, what is the difference between",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 353,
+      "start": 1640.12,
+      "end": 1645.16,
+      "text": "the remote and the discard, the remote that you use to remove the element, if exist, if",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 354,
+      "start": 1645.16,
+      "end": 1652.32,
+      "text": "exist, it will take, if doesn't exist, remote function will raise and there, discard will",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 355,
+      "start": 1652.32,
+      "end": 1653.32,
+      "text": "not.",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 356,
+      "start": 1653.32,
+      "end": 1654.32,
+      "text": "Okay, understood.",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 357,
+      "start": 1654.32,
+      "end": 1678.04,
+      "text": "Now you can tell me the difference between, difference between, different between, remote",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.916
+    },
+    {
+      "id": 358,
+      "start": 1678.04,
+      "end": 1688.04,
+      "text": "and discard function, one more question, and what is your answer?",
+      "avg_logprob": -0.527,
+      "no_speech_prob": 0.686
+    },
+    {
+      "id": 359,
+      "start": 1688.04,
+      "end": 1695.04,
+      "text": "Both are used to remove the element from the set, but if element doesn't exist, remove",
+      "avg_logprob": -0.527,
+      "no_speech_prob": 0.686
+    },
+    {
+      "id": 360,
+      "start": 1755.04,
+      "end": 1774.04,
+      "text": "the element from the set, if element doesn't exist, it will take, if element doesn't exist,",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.963
+    },
+    {
+      "id": 361,
+      "start": 1774.04,
+      "end": 1794.04,
+      "text": "I have some set up items, I am just using yes, card, 3F, 3F means, one company, 3F means,",
+      "avg_logprob": -0.655,
+      "no_speech_prob": 0.443
+    },
+    {
+      "id": 362,
+      "start": 1854.04,
+      "end": 1861.04,
+      "text": "this is the set, I need to take the money, set the set up items, okay?",
+      "avg_logprob": -0.975,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 363,
+      "start": 1861.04,
+      "end": 1873.04,
+      "text": "What I am doing here, I am deleting set, it is going to be 20, yes, it is going to be 20.",
+      "avg_logprob": -0.975,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 364,
+      "start": 1873.04,
+      "end": 1874.04,
+      "text": "Yes, delete, yes.",
+      "avg_logprob": -0.975,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 365,
+      "start": 1874.04,
+      "end": 1875.04,
+      "text": "Yes.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 366,
+      "start": 1875.04,
+      "end": 1876.04,
+      "text": "Remove the respiration.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 367,
+      "start": 1876.04,
+      "end": 1877.04,
+      "text": "Set to that.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 368,
+      "start": 1877.04,
+      "end": 1878.04,
+      "text": "Yeah.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 369,
+      "start": 1878.04,
+      "end": 1879.04,
+      "text": "I empty set to that.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 370,
+      "start": 1879.04,
+      "end": 1881.04,
+      "text": "That's exactly what I'm going to do.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 371,
+      "start": 1881.04,
+      "end": 1883.04,
+      "text": "In the morning and clock.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 372,
+      "start": 1883.04,
+      "end": 1884.04,
+      "text": "Elements mark there.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 373,
+      "start": 1884.04,
+      "end": 1885.04,
+      "text": "Clear.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 374,
+      "start": 1885.04,
+      "end": 1886.04,
+      "text": "I need.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 375,
+      "start": 1886.04,
+      "end": 1887.04,
+      "text": "Set to that.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 376,
+      "start": 1887.04,
+      "end": 1888.04,
+      "text": "And empty set.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 377,
+      "start": 1888.04,
+      "end": 1889.04,
+      "text": "Correct.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 378,
+      "start": 1889.04,
+      "end": 1890.04,
+      "text": "Set also to eat it.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 379,
+      "start": 1890.04,
+      "end": 1891.04,
+      "text": "Okay.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 380,
+      "start": 1891.04,
+      "end": 1892.04,
+      "text": "You have to eat it.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 381,
+      "start": 1892.04,
+      "end": 1893.04,
+      "text": "Yes.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 382,
+      "start": 1893.04,
+      "end": 1894.04,
+      "text": "So nothing is there.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 383,
+      "start": 1894.04,
+      "end": 1895.04,
+      "text": "If you display.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 384,
+      "start": 1895.04,
+      "end": 1897.04,
+      "text": "If you try to run it, it will show error.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 385,
+      "start": 1897.04,
+      "end": 1898.04,
+      "text": "Otherwise, the error will be forgotten.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 386,
+      "start": 1898.04,
+      "end": 1900.04,
+      "text": "In the end, it will be because it will be deleted.",
+      "avg_logprob": -0.556,
+      "no_speech_prob": 0.211
+    },
+    {
+      "id": 387,
+      "start": 1900.04,
+      "end": 1902.04,
+      "text": "At the moment, there are one or two different buttons.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 388,
+      "start": 1902.04,
+      "end": 1903.04,
+      "text": "Digly and clear.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 389,
+      "start": 1903.04,
+      "end": 1904.04,
+      "text": "Yes.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 390,
+      "start": 1904.04,
+      "end": 1905.04,
+      "text": "One.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 391,
+      "start": 1905.04,
+      "end": 1906.04,
+      "text": "Two.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 392,
+      "start": 1906.04,
+      "end": 1907.04,
+      "text": "Three.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 393,
+      "start": 1907.04,
+      "end": 1908.04,
+      "text": "One.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 394,
+      "start": 1908.04,
+      "end": 1909.04,
+      "text": "Two.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 395,
+      "start": 1909.04,
+      "end": 1910.04,
+      "text": "Two.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 396,
+      "start": 1910.04,
+      "end": 1911.04,
+      "text": "Three.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 397,
+      "start": 1911.04,
+      "end": 1912.04,
+      "text": "Very good.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 398,
+      "start": 1924.04,
+      "end": 1925.04,
+      "text": "Next one.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 399,
+      "start": 1925.04,
+      "end": 1926.04,
+      "text": "Keep ready.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 400,
+      "start": 1926.04,
+      "end": 1927.04,
+      "text": "Keep ready.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 401,
+      "start": 1927.04,
+      "end": 1928.04,
+      "text": "Set operations.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.038
+    },
+    {
+      "id": 402,
+      "start": 1929.04,
+      "end": 1930.04,
+      "text": "Set operations.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 403,
+      "start": 1930.04,
+      "end": 1931.04,
+      "text": "You need to import it.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 404,
+      "start": 1931.04,
+      "end": 1932.04,
+      "text": "You have to pass it.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 405,
+      "start": 1932.04,
+      "end": 1933.04,
+      "text": "Okay.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 406,
+      "start": 1933.04,
+      "end": 1935.04,
+      "text": "Set operations.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 407,
+      "start": 1935.04,
+      "end": 1938.04,
+      "text": "Number one, union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 408,
+      "start": 1938.04,
+      "end": 1939.04,
+      "text": "Number one, union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 409,
+      "start": 1939.04,
+      "end": 1940.04,
+      "text": "Union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 410,
+      "start": 1940.04,
+      "end": 1941.04,
+      "text": "Union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 411,
+      "start": 1941.04,
+      "end": 1942.04,
+      "text": "That's the union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 412,
+      "start": 1942.04,
+      "end": 1943.04,
+      "text": "Number two.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 413,
+      "start": 1943.04,
+      "end": 1944.04,
+      "text": "That's the union.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 414,
+      "start": 1951.04,
+      "end": 1952.04,
+      "text": "Box.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 415,
+      "start": 1952.04,
+      "end": 1953.04,
+      "text": "Come here.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 416,
+      "start": 1954.04,
+      "end": 1956.04,
+      "text": "You can here.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 417,
+      "start": 1956.04,
+      "end": 1958.04,
+      "text": "I'm taking two sets.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 418,
+      "start": 1958.04,
+      "end": 1960.04,
+      "text": "SDG for dough.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 419,
+      "start": 1960.04,
+      "end": 1961.04,
+      "text": "Is it visible?",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 420,
+      "start": 1961.04,
+      "end": 1962.04,
+      "text": "10.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 421,
+      "start": 1962.04,
+      "end": 1963.04,
+      "text": "SDG.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 422,
+      "start": 1963.04,
+      "end": 1964.04,
+      "text": "13.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 423,
+      "start": 1964.04,
+      "end": 1966.04,
+      "text": "50.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 424,
+      "start": 1966.04,
+      "end": 1968.04,
+      "text": "90.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 425,
+      "start": 1968.04,
+      "end": 1970.04,
+      "text": "SDG for dough.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 426,
+      "start": 1970.04,
+      "end": 1972.04,
+      "text": "20.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 427,
+      "start": 1973.04,
+      "end": 1975.04,
+      "text": "50.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 428,
+      "start": 1975.04,
+      "end": 1977.04,
+      "text": "SDG.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 429,
+      "start": 1977.04,
+      "end": 1979.04,
+      "text": "70.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 430,
+      "start": 1979.04,
+      "end": 1980.04,
+      "text": "91.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 431,
+      "start": 1980.04,
+      "end": 1982.04,
+      "text": "91.",
+      "avg_logprob": -0.364,
+      "no_speech_prob": 0.264
+    },
+    {
+      "id": 432,
+      "start": 1982.04,
+      "end": 1985.04,
+      "text": "What are the common items among these?",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 433,
+      "start": 1985.04,
+      "end": 1986.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 434,
+      "start": 1986.04,
+      "end": 1987.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 435,
+      "start": 1987.04,
+      "end": 1988.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 436,
+      "start": 1988.04,
+      "end": 1989.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 437,
+      "start": 1989.04,
+      "end": 1990.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 438,
+      "start": 1990.04,
+      "end": 1991.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 439,
+      "start": 1991.04,
+      "end": 1992.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 440,
+      "start": 1992.04,
+      "end": 1993.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 441,
+      "start": 1993.04,
+      "end": 1994.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 442,
+      "start": 1994.04,
+      "end": 1995.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 443,
+      "start": 1995.04,
+      "end": 1996.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 444,
+      "start": 1996.04,
+      "end": 1997.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 445,
+      "start": 1997.04,
+      "end": 1998.04,
+      "text": "Two.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 446,
+      "start": 1998.04,
+      "end": 1999.04,
+      "text": "Three.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 447,
+      "start": 1999.04,
+      "end": 2000.04,
+      "text": "Now.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 448,
+      "start": 2000.04,
+      "end": 2001.04,
+      "text": "All right.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 449,
+      "start": 2001.04,
+      "end": 2003.04,
+      "text": "So I'm telling you about this one.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 450,
+      "start": 2003.04,
+      "end": 2004.04,
+      "text": "This is ES.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 451,
+      "start": 2004.04,
+      "end": 2006.04,
+      "text": "This is T.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 452,
+      "start": 2006.04,
+      "end": 2009.04,
+      "text": "Union means this is the common part, right?",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 453,
+      "start": 2009.04,
+      "end": 2010.04,
+      "text": "Common part.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 454,
+      "start": 2010.04,
+      "end": 2011.04,
+      "text": "Common part.",
+      "avg_logprob": -0.311,
+      "no_speech_prob": 0.018
+    },
+    {
+      "id": 455,
+      "start": 2011.04,
+      "end": 2013.04,
+      "text": "We enter.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 456,
+      "start": 2013.04,
+      "end": 2014.04,
+      "text": "Union here.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 457,
+      "start": 2014.04,
+      "end": 2016.04,
+      "text": "SD.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 458,
+      "start": 2016.04,
+      "end": 2018.04,
+      "text": "SD.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 459,
+      "start": 2018.04,
+      "end": 2020.04,
+      "text": "Right.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 460,
+      "start": 2020.04,
+      "end": 2022.04,
+      "text": "Now I apply to union.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 461,
+      "start": 2022.04,
+      "end": 2024.04,
+      "text": "Union means common items.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 462,
+      "start": 2024.04,
+      "end": 2025.04,
+      "text": "Because we are common.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 463,
+      "start": 2025.04,
+      "end": 2027.04,
+      "text": "Union means joining.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 464,
+      "start": 2027.04,
+      "end": 2029.04,
+      "text": "Union means joining.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 465,
+      "start": 2029.04,
+      "end": 2032.04,
+      "text": "So this element and this element will be combined together,",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 466,
+      "start": 2032.04,
+      "end": 2033.04,
+      "text": "we'll do that.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 467,
+      "start": 2033.04,
+      "end": 2034.04,
+      "text": "Union.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 468,
+      "start": 2034.04,
+      "end": 2035.04,
+      "text": "Union operator is there.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 469,
+      "start": 2035.04,
+      "end": 2036.04,
+      "text": "Yes.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 470,
+      "start": 2036.04,
+      "end": 2037.04,
+      "text": "Yes.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 471,
+      "start": 2037.04,
+      "end": 2038.04,
+      "text": "Really?",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 472,
+      "start": 2038.04,
+      "end": 2039.04,
+      "text": "Yes.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 473,
+      "start": 2039.04,
+      "end": 2040.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 474,
+      "start": 2040.04,
+      "end": 2042.04,
+      "text": "You must go to the podium.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 475,
+      "start": 2042.04,
+      "end": 2044.04,
+      "text": "You keep asking me to do that.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 476,
+      "start": 2044.04,
+      "end": 2045.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 477,
+      "start": 2045.04,
+      "end": 2046.04,
+      "text": "You keep asking me to do that.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 478,
+      "start": 2046.04,
+      "end": 2047.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 479,
+      "start": 2047.04,
+      "end": 2048.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 480,
+      "start": 2048.04,
+      "end": 2049.04,
+      "text": "So today's my condition, not me.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 481,
+      "start": 2049.04,
+      "end": 2050.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 482,
+      "start": 2050.04,
+      "end": 2051.04,
+      "text": "All right.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 483,
+      "start": 2051.04,
+      "end": 2052.04,
+      "text": "We're going to see that.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 484,
+      "start": 2052.04,
+      "end": 2054.04,
+      "text": "Same example, you tell me.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 485,
+      "start": 2054.04,
+      "end": 2056.04,
+      "text": "In this one, I'll tell you.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 486,
+      "start": 2056.04,
+      "end": 2057.04,
+      "text": "Yes.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 487,
+      "start": 2057.04,
+      "end": 2059.04,
+      "text": "Just use the call-out then.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 488,
+      "start": 2059.04,
+      "end": 2060.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 489,
+      "start": 2060.04,
+      "end": 2061.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 490,
+      "start": 2061.04,
+      "end": 2062.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 491,
+      "start": 2062.04,
+      "end": 2063.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 492,
+      "start": 2063.04,
+      "end": 2064.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 493,
+      "start": 2064.04,
+      "end": 2065.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 494,
+      "start": 2065.04,
+      "end": 2066.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 495,
+      "start": 2066.04,
+      "end": 2067.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 496,
+      "start": 2067.04,
+      "end": 2068.04,
+      "text": "Only.",
+      "avg_logprob": -0.585,
+      "no_speech_prob": 0.077
+    },
+    {
+      "id": 497,
+      "start": 2068.04,
+      "end": 2069.04,
+      "text": "Only.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 498,
+      "start": 2069.04,
+      "end": 2070.04,
+      "text": "On the 15th.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 499,
+      "start": 2070.04,
+      "end": 2071.04,
+      "text": "Yes.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 500,
+      "start": 2074.04,
+      "end": 2076.04,
+      "text": "You're giving us an idea.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 501,
+      "start": 2076.04,
+      "end": 2078.04,
+      "text": "19.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 502,
+      "start": 2078.04,
+      "end": 2079.04,
+      "text": "19.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 503,
+      "start": 2079.04,
+      "end": 2081.04,
+      "text": "Don't beaps.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 504,
+      "start": 2081.04,
+      "end": 2084.04,
+      "text": "You don't need to be this.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 505,
+      "start": 2084.04,
+      "end": 2085.04,
+      "text": "16.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 506,
+      "start": 2085.04,
+      "end": 2088.04,
+      "text": "So you're going to be Latinos.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 507,
+      "start": 2088.04,
+      "end": 2089.04,
+      "text": "Union means different.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 508,
+      "start": 2089.04,
+      "end": 2091.04,
+      "text": "We will not do anything.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 509,
+      "start": 2091.04,
+      "end": 2093.04,
+      "text": "We will not do anything.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 510,
+      "start": 2093.04,
+      "end": 2094.04,
+      "text": "50.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 511,
+      "start": 2094.04,
+      "end": 2095.04,
+      "text": "60.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 512,
+      "start": 2095.04,
+      "end": 2096.04,
+      "text": "30.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 513,
+      "start": 2096.04,
+      "end": 2097.04,
+      "text": "90.",
+      "avg_logprob": -1.492,
+      "no_speech_prob": 0.315
+    },
+    {
+      "id": 514,
+      "start": 2097.04,
+      "end": 2104.04,
+      "text": "So, we are going to do that one. Yes, now, what is the union of VT?",
+      "avg_logprob": -0.675,
+      "no_speech_prob": 0.363
+    },
+    {
+      "id": 515,
+      "start": 2127.04,
+      "end": 2134.04,
+      "text": "You see, these are the items that are came.",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 516,
+      "start": 2134.04,
+      "end": 2140.04,
+      "text": "We are going to debaille each other. Because it is, we are going to debaille each other.",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 517,
+      "start": 2140.04,
+      "end": 2145.04,
+      "text": "The union means elements of first and second set are union.",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 518,
+      "start": 2145.04,
+      "end": 2148.04,
+      "text": "Union for the college or union should take.",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 519,
+      "start": 2148.04,
+      "end": 2151.04,
+      "text": "And for the union should be union, it is a group of.",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 520,
+      "start": 2151.04,
+      "end": 2156.04,
+      "text": "So, union is nothing but operation which is used through",
+      "avg_logprob": -0.71,
+      "no_speech_prob": 0.125
+    },
+    {
+      "id": 521,
+      "start": 2156.04,
+      "end": 2163.04,
+      "text": "combine all the items which are existing on sets.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 522,
+      "start": 2163.04,
+      "end": 2169.04,
+      "text": "So, it means you have to set, it means you set both as combined as it,",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 523,
+      "start": 2169.04,
+      "end": 2173.04,
+      "text": "minus it. So, this is important you try to take over time.",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.016
+    },
+    {
+      "id": 524,
+      "start": 2173.04,
+      "end": 2185.04,
+      "text": "Union, union, a new set, a new set with all the items,",
+      "avg_logprob": -0.184,
+      "no_speech_prob": 0.164
+    },
+    {
+      "id": 525,
+      "start": 2185.04,
+      "end": 2195.04,
+      "text": "a new set with all items, a new set with all the items from both sets are combined.",
+      "avg_logprob": -0.184,
+      "no_speech_prob": 0.164
+    },
+    {
+      "id": 526,
+      "start": 2195.04,
+      "end": 2202.04,
+      "text": "From both sets are combined. From both sets are combined.",
+      "avg_logprob": -0.296,
+      "no_speech_prob": 0.139
+    },
+    {
+      "id": 527,
+      "start": 2202.04,
+      "end": 2210.04,
+      "text": "How many sets are I have taken? Two sets. Two sets.",
+      "avg_logprob": -0.296,
+      "no_speech_prob": 0.139
+    },
+    {
+      "id": 528,
+      "start": 2210.04,
+      "end": 2217.04,
+      "text": "Okay. Here, same example, I am running like this.",
+      "avg_logprob": -0.461,
+      "no_speech_prob": 0.422
+    },
+    {
+      "id": 529,
+      "start": 2217.04,
+      "end": 2224.04,
+      "text": "I have taken two sets.",
+      "avg_logprob": -0.461,
+      "no_speech_prob": 0.422
+    },
+    {
+      "id": 530,
+      "start": 2224.04,
+      "end": 2239.04,
+      "text": "I have taken two sets.",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.503
+    },
+    {
+      "id": 531,
+      "start": 2239.04,
+      "end": 2248.4,
+      "text": "I see, if I do this, if I do this, I see, I see, I see, I see, I see, I see, I see,",
+      "avg_logprob": -1.049,
+      "no_speech_prob": 0.439
+    },
+    {
+      "id": 532,
+      "start": 2248.4,
+      "end": 2249.4,
+      "text": "it is not even.",
+      "avg_logprob": -1.049,
+      "no_speech_prob": 0.439
+    },
+    {
+      "id": 533,
+      "start": 2249.4,
+      "end": 2250.4,
+      "text": "Same example, both are right.",
+      "avg_logprob": -1.049,
+      "no_speech_prob": 0.439
+    },
+    {
+      "id": 534,
+      "start": 2250.4,
+      "end": 2255.24,
+      "text": "Here, I am taking only two sets.",
+      "avg_logprob": -1.049,
+      "no_speech_prob": 0.439
+    },
+    {
+      "id": 535,
+      "start": 2255.24,
+      "end": 2260.12,
+      "text": "And taking one more sets, P is equal to 10.",
+      "avg_logprob": -1.049,
+      "no_speech_prob": 0.439
+    },
+    {
+      "id": 536,
+      "start": 2260.12,
+      "end": 2272.74,
+      "text": "19, 19, 19, 19, 19, 19, 19, 19, 19.",
+      "avg_logprob": -0.867,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 537,
+      "start": 2272.74,
+      "end": 2282.82,
+      "text": "How many sets are there in here?",
+      "avg_logprob": -0.867,
+      "no_speech_prob": 0.366
+    },
+    {
+      "id": 538,
+      "start": 2282.82,
+      "end": 2293.18,
+      "text": "Now, I am combining years with the home T gamma P multiple sets will join you, multiple",
+      "avg_logprob": -0.744,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 539,
+      "start": 2293.18,
+      "end": 2298.94,
+      "text": "sets will be performing union operation over the multiple sets, seven sample, seven",
+      "avg_logprob": -0.744,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 540,
+      "start": 2298.94,
+      "end": 2307.66,
+      "text": "sample by one more set is added, see elements of, elements of core set is added, so all",
+      "avg_logprob": -0.744,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 541,
+      "start": 2307.66,
+      "end": 2320.46,
+      "text": "elements of join here, 10, 20, 30, 50, 90, 60, 70, 90, 91, 92, 98, 99, all elements of",
+      "avg_logprob": -0.353,
+      "no_speech_prob": 0.085
+    },
+    {
+      "id": 542,
+      "start": 2320.46,
+      "end": 2346.94,
+      "text": "join in multiple sets, joining multiple sets, joining multiple sets, joining multiple",
+      "avg_logprob": -0.57,
+      "no_speech_prob": 0.261
+    },
+    {
+      "id": 543,
+      "start": 2346.94,
+      "end": 2357.18,
+      "text": "sets, joining multiple sets, join in multiple sets, I can clear this one out, look for",
+      "avg_logprob": -0.74,
+      "no_speech_prob": 0.428
+    },
+    {
+      "id": 544,
+      "start": 2357.18,
+      "end": 2363.22,
+      "text": "this one, then this one under this one, how about it, whatever I need union one, I",
+      "avg_logprob": -0.74,
+      "no_speech_prob": 0.428
+    },
+    {
+      "id": 545,
+      "start": 2363.22,
+      "end": 2373.1,
+      "text": "set the base up, what sets are going to do, okay, next one, two set are all, j set",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 546,
+      "start": 2373.1,
+      "end": 2383.7,
+      "text": "also the next one does, two set are all, next one, same example, same example, I am going",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 547,
+      "start": 2383.7,
+      "end": 2390.7,
+      "text": "to use, here in front of this same example I am using, in front this union function,",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.066
+    },
+    {
+      "id": 548,
+      "start": 2390.7,
+      "end": 2398.94,
+      "text": "I can also use pipe c 1, pipe at a heart, large rod, how is that like this, so what I am",
+      "avg_logprob": -0.786,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 549,
+      "start": 2398.94,
+      "end": 2412.66,
+      "text": "using is pipe c 1, large rod, R, before being R, this P R, P, before being R, P, before",
+      "avg_logprob": -0.786,
+      "no_speech_prob": 0.213
+    },
+    {
+      "id": 550,
+      "start": 2442.66,
+      "end": 2450.9,
+      "text": "being R, five simplehart between, last requirement with the anchor button almost parallel,",
+      "avg_logprob": -2.964,
+      "no_speech_prob": 0.448
+    },
+    {
+      "id": 551,
+      "start": 2450.9,
+      "end": 2453.58,
+      "text": "only the twenty point of, close home, founder of labour\u4e00\u8d77 put up,",
+      "avg_logprob": -2.964,
+      "no_speech_prob": 0.448
+    },
+    {
+      "id": 552,
+      "start": 2453.58,
+      "end": 2459.28,
+      "text": "up the understood by this simple, so next one, so it is joining multiple sets for",
+      "avg_logprob": -2.964,
+      "no_speech_prob": 0.448
+    },
+    {
+      "id": 553,
+      "start": 2459.28,
+      "end": 2469.88,
+      "text": "using, we can use the whole as a but a different see today, for different say, we worry",
+      "avg_logprob": -2.964,
+      "no_speech_prob": 0.448
+    },
+    {
+      "id": 554,
+      "start": 2469.88,
+      "end": 2481.88,
+      "text": "two sets combining with the pipe. So, here two sets are there. Can I use like this?",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 555,
+      "start": 2481.88,
+      "end": 2488.88,
+      "text": "Can I use a pipe symbol here? This is Natalma. Natalma, other than what is in the",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.146
+    },
+    {
+      "id": 556,
+      "start": 2488.88,
+      "end": 2495.88,
+      "text": "one in the other? Yes, okay. Butchini and the union life are just to be run.",
+      "avg_logprob": -0.9,
+      "no_speech_prob": 0.069
+    },
+    {
+      "id": 557,
+      "start": 2495.88,
+      "end": 2503.88,
+      "text": "Tata, both there. Here I am taking tapul. Here I am taking.",
+      "avg_logprob": -0.9,
+      "no_speech_prob": 0.069
+    },
+    {
+      "id": 558,
+      "start": 2503.88,
+      "end": 2508.88,
+      "text": "Yes, yes, sorry. Yes, I am taking. Yes, on this tapul you can take anything.",
+      "avg_logprob": -0.9,
+      "no_speech_prob": 0.069
+    },
+    {
+      "id": 559,
+      "start": 2508.88,
+      "end": 2512.88,
+      "text": "Tapul, which is parallel to this? This to this is for idea. Here is the meeting.",
+      "avg_logprob": -0.9,
+      "no_speech_prob": 0.069
+    },
+    {
+      "id": 560,
+      "start": 2512.88,
+      "end": 2517.88,
+      "text": "But you are set to be the different data. You are going to union, you are going to join,",
+      "avg_logprob": -0.388,
+      "no_speech_prob": 0.227
+    },
+    {
+      "id": 561,
+      "start": 2517.88,
+      "end": 2524.88,
+      "text": "set to be the different data. When you are using different data, this pipe symbol will not work.",
+      "avg_logprob": -0.388,
+      "no_speech_prob": 0.227
+    },
+    {
+      "id": 562,
+      "start": 2524.88,
+      "end": 2531.88,
+      "text": "That's right. The union life is just to be. And if you are on the sets, you have to.",
+      "avg_logprob": -0.783,
+      "no_speech_prob": 0.326
+    },
+    {
+      "id": 563,
+      "start": 2531.88,
+      "end": 2538.88,
+      "text": "So, if you are in India, you are set to be listed, you have to join the union.",
+      "avg_logprob": -0.783,
+      "no_speech_prob": 0.326
+    },
+    {
+      "id": 564,
+      "start": 2538.88,
+      "end": 2547.88,
+      "text": "It cannot do. I mean, idea pipe symbol is low. I am using union.",
+      "avg_logprob": -0.783,
+      "no_speech_prob": 0.326
+    },
+    {
+      "id": 565,
+      "start": 2548.88,
+      "end": 2554.88,
+      "text": "What are you doing here? Union, union will work. That is only the difference.",
+      "avg_logprob": -0.309,
+      "no_speech_prob": 0.111
+    },
+    {
+      "id": 566,
+      "start": 2554.88,
+      "end": 2559.88,
+      "text": "What is the difference between union and using pipe symbol or a symbol?",
+      "avg_logprob": -0.309,
+      "no_speech_prob": 0.111
+    },
+    {
+      "id": 567,
+      "start": 2559.88,
+      "end": 2566.88,
+      "text": "Both will work like the union only. When it is completely working on sets,",
+      "avg_logprob": -0.309,
+      "no_speech_prob": 0.111
+    },
+    {
+      "id": 568,
+      "start": 2566.88,
+      "end": 2573.88,
+      "text": "when set to be the other data, your joining, accompanying, at the movement, union will work.",
+      "avg_logprob": -0.309,
+      "no_speech_prob": 0.111
+    },
+    {
+      "id": 569,
+      "start": 2574.88,
+      "end": 2578.88,
+      "text": "That is the pipe symbol will not work. That is only the difference.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 570,
+      "start": 2578.88,
+      "end": 2583.88,
+      "text": "In MCQ's, if we get this question, hope you understood.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 571,
+      "start": 2583.88,
+      "end": 2587.88,
+      "text": "I am not going to say the example right side.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 572,
+      "start": 2587.88,
+      "end": 2591.88,
+      "text": "It is not going to work. It is not going to work.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 573,
+      "start": 2591.88,
+      "end": 2594.88,
+      "text": "It is not going to work. It is not going to work.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 574,
+      "start": 2594.88,
+      "end": 2599.88,
+      "text": "It is going to work. Because the combining set to be the different data type.",
+      "avg_logprob": -0.526,
+      "no_speech_prob": 0.288
+    },
+    {
+      "id": 575,
+      "start": 2599.88,
+      "end": 2606.88,
+      "text": "There is a R symbol will not work. It works only when all the set of elements are.",
+      "avg_logprob": -0.421,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 576,
+      "start": 2606.88,
+      "end": 2608.88,
+      "text": "That is it.",
+      "avg_logprob": -0.421,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 577,
+      "start": 2620.88,
+      "end": 2623.88,
+      "text": "I am going to get next one.",
+      "avg_logprob": -0.421,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 578,
+      "start": 2630.88,
+      "end": 2633.88,
+      "text": "Next one is the second one.",
+      "avg_logprob": -0.532,
+      "no_speech_prob": 0.233
+    },
+    {
+      "id": 579,
+      "start": 2633.88,
+      "end": 2636.88,
+      "text": "The second one is the second one.",
+      "avg_logprob": -0.532,
+      "no_speech_prob": 0.233
+    },
+    {
+      "id": 580,
+      "start": 2636.88,
+      "end": 2639.88,
+      "text": "The second one is the Tamil one. That is the Tamil one.",
+      "avg_logprob": -0.532,
+      "no_speech_prob": 0.233
+    },
+    {
+      "id": 581,
+      "start": 2660.88,
+      "end": 2665.88,
+      "text": "From then on, the Tamil one is the Tamil one.",
+      "avg_logprob": -1.285,
+      "no_speech_prob": 0.223
+    },
+    {
+      "id": 582,
+      "start": 2665.88,
+      "end": 2666.88,
+      "text": "I am not going to say the Tamil one.",
+      "avg_logprob": -1.285,
+      "no_speech_prob": 0.223
+    },
+    {
+      "id": 583,
+      "start": 2666.88,
+      "end": 2669.88,
+      "text": "From then on, the Tamil, Tamil one is the Tamil one.",
+      "avg_logprob": -1.285,
+      "no_speech_prob": 0.223
+    },
+    {
+      "id": 584,
+      "start": 2669.88,
+      "end": 2672.88,
+      "text": "Some are the Tamil's.",
+      "avg_logprob": -1.285,
+      "no_speech_prob": 0.223
+    },
+    {
+      "id": 585,
+      "start": 2672.88,
+      "end": 2683.88,
+      "text": "Starting with the Tamil, Tamil, Tamil, Tamil, Tamil, Tamil and Tamil, Tamil.",
+      "avg_logprob": -1.285,
+      "no_speech_prob": 0.223
+    },
+    {
+      "id": 586,
+      "start": 2683.88,
+      "end": 2694.72,
+      "text": "6th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 10th, 15th, 70th, intersection of",
+      "avg_logprob": -1.464,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 587,
+      "start": 2694.72,
+      "end": 2704.92,
+      "text": "\u679c, root of perditionampa.",
+      "avg_logprob": -1.464,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 588,
+      "start": 2704.92,
+      "end": 2721.16,
+      "text": "Common items from both sets, section A, section B, section A, section A, section B, section",
+      "avg_logprob": -0.862,
+      "no_speech_prob": 0.664
+    },
+    {
+      "id": 589,
+      "start": 2721.16,
+      "end": 2726.12,
+      "text": "B, section 2, you know already common items you have by post, you put in the section",
+      "avg_logprob": -0.862,
+      "no_speech_prob": 0.664
+    },
+    {
+      "id": 590,
+      "start": 2726.44,
+      "end": 2728.18,
+      "text": "one going to go to the next section.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 591,
+      "start": 2728.18,
+      "end": 2733.08,
+      "text": "Then I will immediately go to discussion, meeting and going to discussions and",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 592,
+      "start": 2733.08,
+      "end": 2734.04,
+      "text": "questions, advisors.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 593,
+      "start": 2734.04,
+      "end": 2736.08,
+      "text": "You as?...",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 594,
+      "start": 2736.08,
+      "end": 2737.08,
+      "text": "What will happen?",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 595,
+      "start": 2737.08,
+      "end": 2737.6,
+      "text": "Yes, about.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 596,
+      "start": 2737.6,
+      "end": 2741.5,
+      "text": "There is a queue as you can see, there is a queue from we go to turn on the",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 597,
+      "start": 2741.5,
+      "end": 2743.06,
+      "text": "ensure exit services.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 598,
+      "start": 2744.18,
+      "end": 2745.18,
+      "text": "parked.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 599,
+      "start": 2747.28,
+      "end": 2750.28,
+      "text": "Ger Number Staffer.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 600,
+      "start": 2753.92,
+      "end": 2755.76,
+      "text": "This is 6 Foot.",
+      "avg_logprob": -4.033,
+      "no_speech_prob": 0.265
+    },
+    {
+      "id": 601,
+      "start": 2815.76,
+      "end": 2828.16,
+      "text": "gonna remove the six level acts in Duplicates\u6f02 Rebecca took the first position",
+      "avg_logprob": -3.656,
+      "no_speech_prob": 0.48
+    },
+    {
+      "id": 602,
+      "start": 2828.16,
+      "end": 2835.06,
+      "text": "this is just an error, 10 times the liquid n and now 7th here is 2nd position you see",
+      "avg_logprob": -3.656,
+      "no_speech_prob": 0.48
+    },
+    {
+      "id": 603,
+      "start": 2835.06,
+      "end": 2844.72,
+      "text": "the equation that dotted something better no duplicates are not there non-ensex",
+      "avg_logprob": -3.656,
+      "no_speech_prob": 0.48
+    },
+    {
+      "id": 604,
+      "start": 2844.72,
+      "end": 2849.28,
+      "text": "nobody gets a r in r already, says, it's at you start with r",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 605,
+      "start": 2849.28,
+      "end": 2849.66,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 606,
+      "start": 2849.66,
+      "end": 2850.66,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 607,
+      "start": 2850.66,
+      "end": 2851.26,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 608,
+      "start": 2851.26,
+      "end": 2851.94,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 609,
+      "start": 2851.94,
+      "end": 2852.44,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 610,
+      "start": 2852.44,
+      "end": 2852.96,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 611,
+      "start": 2852.96,
+      "end": 2853.44,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 612,
+      "start": 2853.44,
+      "end": 2854.1,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 613,
+      "start": 2854.1,
+      "end": 2855.18,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 614,
+      "start": 2855.18,
+      "end": 2855.68,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 615,
+      "start": 2855.68,
+      "end": 2856.78,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 616,
+      "start": 2856.78,
+      "end": 2857.44,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 617,
+      "start": 2857.44,
+      "end": 2858.44,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 618,
+      "start": 2858.44,
+      "end": 2859.2,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 619,
+      "start": 2859.2,
+      "end": 2860.02,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 620,
+      "start": 2860.02,
+      "end": 2860.82,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 621,
+      "start": 2860.82,
+      "end": 2861.58,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 622,
+      "start": 2861.58,
+      "end": 2862.08,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 623,
+      "start": 2862.08,
+      "end": 2862.98,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 624,
+      "start": 2862.98,
+      "end": 2863.82,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 625,
+      "start": 2863.82,
+      "end": 2864.84,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 626,
+      "start": 2864.84,
+      "end": 2865.84,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 627,
+      "start": 2865.84,
+      "end": 2866.76,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 628,
+      "start": 2866.76,
+      "end": 2867.76,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 629,
+      "start": 2867.76,
+      "end": 2869.08,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 630,
+      "start": 2869.08,
+      "end": 2870.58,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 631,
+      "start": 2870.58,
+      "end": 2872.08,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 632,
+      "start": 2872.08,
+      "end": 2872.76,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 633,
+      "start": 2872.76,
+      "end": 2873.32,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 634,
+      "start": 2873.32,
+      "end": 2874.48,
+      "text": "x",
+      "avg_logprob": -1.534,
+      "no_speech_prob": 0.559
+    },
+    {
+      "id": 635,
+      "start": 2964.48,
+      "end": 2965.48,
+      "text": "Right?",
+      "avg_logprob": -2.003,
+      "no_speech_prob": 0.309
+    },
+    {
+      "id": 636,
+      "start": 2965.48,
+      "end": 2980.5,
+      "text": "So, ok a master, I take intersection of plane adjacent of door or triangle as in the",
+      "avg_logprob": -2.003,
+      "no_speech_prob": 0.309
+    },
+    {
+      "id": 637,
+      "start": 2980.5,
+      "end": 2987.5,
+      "text": "Okay, we have to use what?",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 638,
+      "start": 2987.5,
+      "end": 2989.5,
+      "text": "And this is what?",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 639,
+      "start": 2989.5,
+      "end": 2992.5,
+      "text": "Both are the same, but difference is also in?",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 640,
+      "start": 2992.5,
+      "end": 2993.5,
+      "text": "It is taking advantage of it.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 641,
+      "start": 2993.5,
+      "end": 2995.5,
+      "text": "If I take advantage of it, I shall follow.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 642,
+      "start": 2995.5,
+      "end": 2997.5,
+      "text": "And this is what I am going to do.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 643,
+      "start": 2997.5,
+      "end": 3000.5,
+      "text": "Intersection is the right right.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 644,
+      "start": 3000.5,
+      "end": 3004.5,
+      "text": "Instead of intersection function, we can also can use amperside.",
+      "avg_logprob": -0.718,
+      "no_speech_prob": 0.207
+    },
+    {
+      "id": 645,
+      "start": 3004.5,
+      "end": 3011.5,
+      "text": "And to determine our expected automations from different sets.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 646,
+      "start": 3011.5,
+      "end": 3018.5,
+      "text": "But amperside does not work when set working with a different data type.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 647,
+      "start": 3018.5,
+      "end": 3025.5,
+      "text": "Whereas, intersection we work with a different data type also.",
+      "avg_logprob": -0.501,
+      "no_speech_prob": 0.026
+    },
+    {
+      "id": 648,
+      "start": 3025.5,
+      "end": 3028.5,
+      "text": "Automation.",
+      "avg_logprob": -0.973,
+      "no_speech_prob": 0.458
+    },
+    {
+      "id": 649,
+      "start": 3056.5,
+      "end": 3060.5,
+      "text": "Next one, keep it in difference.",
+      "avg_logprob": -0.789,
+      "no_speech_prob": 0.2
+    },
+    {
+      "id": 650,
+      "start": 3060.5,
+      "end": 3062.5,
+      "text": "Keep it in.",
+      "avg_logprob": -0.789,
+      "no_speech_prob": 0.2
+    },
+    {
+      "id": 651,
+      "start": 3072.5,
+      "end": 3074.5,
+      "text": "Keep it in the center.",
+      "avg_logprob": -0.789,
+      "no_speech_prob": 0.2
+    },
+    {
+      "id": 652,
+      "start": 3085.5,
+      "end": 3103.5,
+      "text": "See here, difference is not required.",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 653,
+      "start": 3103.5,
+      "end": 3108.5,
+      "text": "It is comparing set upon to the center code.",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 654,
+      "start": 3108.5,
+      "end": 3109.5,
+      "text": "Okay.",
+      "avg_logprob": -0.648,
+      "no_speech_prob": 0.084
+    },
+    {
+      "id": 655,
+      "start": 3109.5,
+      "end": 3116.5,
+      "text": "It will take only unique items in set one.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 656,
+      "start": 3116.5,
+      "end": 3120.5,
+      "text": "It will compare set one with the center two.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 657,
+      "start": 3120.5,
+      "end": 3121.5,
+      "text": "Okay.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 658,
+      "start": 3121.5,
+      "end": 3123.5,
+      "text": "I am comparing common items out there.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 659,
+      "start": 3123.5,
+      "end": 3124.5,
+      "text": "Remove.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 660,
+      "start": 3124.5,
+      "end": 3129.5,
+      "text": "Only unique items that is there in set one.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 661,
+      "start": 3129.5,
+      "end": 3135.5,
+      "text": "If it taken and you create a new set, that I have even some new set,",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 662,
+      "start": 3135.5,
+      "end": 3136.5,
+      "text": "that the center will do.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 663,
+      "start": 3136.5,
+      "end": 3137.5,
+      "text": "Access.",
+      "avg_logprob": -0.42,
+      "no_speech_prob": 0.057
+    },
+    {
+      "id": 664,
+      "start": 3137.5,
+      "end": 3139.5,
+      "text": "Different one is giving.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 665,
+      "start": 3139.5,
+      "end": 3142.5,
+      "text": "It gives unique items from set one.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 666,
+      "start": 3142.5,
+      "end": 3143.5,
+      "text": "Set one.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 667,
+      "start": 3143.5,
+      "end": 3144.5,
+      "text": "Set one.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 668,
+      "start": 3144.5,
+      "end": 3146.5,
+      "text": "Password value, individual and individual.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 669,
+      "start": 3146.5,
+      "end": 3150.5,
+      "text": "From the definition power, so that it will give.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 670,
+      "start": 3150.5,
+      "end": 3155.5,
+      "text": "It gives unique items in set one.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 671,
+      "start": 3155.5,
+      "end": 3157.5,
+      "text": "It renews all.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 672,
+      "start": 3157.5,
+      "end": 3160.5,
+      "text": "Do you think it is a set?",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 673,
+      "start": 3160.5,
+      "end": 3162.5,
+      "text": "Can you set each one?",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 674,
+      "start": 3162.5,
+      "end": 3163.5,
+      "text": "I just found the first set.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 675,
+      "start": 3163.5,
+      "end": 3166.5,
+      "text": "That I can't present in the other another set.",
+      "avg_logprob": -0.534,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 676,
+      "start": 3166.5,
+      "end": 3168.5,
+      "text": "It gives unique items in set one.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 677,
+      "start": 3168.5,
+      "end": 3171.5,
+      "text": "The items that are there in the whole set one.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 678,
+      "start": 3171.5,
+      "end": 3174.5,
+      "text": "Which are not there in set two.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 679,
+      "start": 3174.5,
+      "end": 3176.5,
+      "text": "Say, what the pieces are?",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 680,
+      "start": 3176.5,
+      "end": 3177.5,
+      "text": "What the pieces are?",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 681,
+      "start": 3177.5,
+      "end": 3178.5,
+      "text": "The items are not there.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 682,
+      "start": 3178.5,
+      "end": 3180.5,
+      "text": "So, take down the sets up.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 683,
+      "start": 3180.5,
+      "end": 3181.5,
+      "text": "Difference.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 684,
+      "start": 3181.5,
+      "end": 3185.5,
+      "text": "It is equal to a start difference of t.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 685,
+      "start": 3185.5,
+      "end": 3195.5,
+      "text": "You are going to take down this example.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.048
+    },
+    {
+      "id": 686,
+      "start": 3195.5,
+      "end": 3202.5,
+      "text": "I'll show you how it works.",
+      "avg_logprob": -1.564,
+      "no_speech_prob": 0.447
+    },
+    {
+      "id": 687,
+      "start": 3202.5,
+      "end": 3208.5,
+      "text": "Oh, yes, please.",
+      "avg_logprob": -1.564,
+      "no_speech_prob": 0.447
+    },
+    {
+      "id": 688,
+      "start": 3209.5,
+      "end": 3212.5,
+      "text": "Please take advantage.",
+      "avg_logprob": -1.564,
+      "no_speech_prob": 0.447
+    },
+    {
+      "id": 689,
+      "start": 3212.5,
+      "end": 3215.5,
+      "text": "Please take advantage.",
+      "avg_logprob": -1.564,
+      "no_speech_prob": 0.447
+    },
+    {
+      "id": 690,
+      "start": 3245.5,
+      "end": 3247.5,
+      "text": "Okay, next one.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 691,
+      "start": 3247.5,
+      "end": 3249.5,
+      "text": "You start out with this one.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 692,
+      "start": 3249.5,
+      "end": 3251.5,
+      "text": "So, you need to find function difference.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 693,
+      "start": 3251.5,
+      "end": 3255.5,
+      "text": "You can also get use as simple part.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 694,
+      "start": 3259.5,
+      "end": 3261.5,
+      "text": "You can get the master exception here.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 695,
+      "start": 3261.5,
+      "end": 3263.5,
+      "text": "And then you have a point.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 696,
+      "start": 3263.5,
+      "end": 3264.5,
+      "text": "Fine.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 697,
+      "start": 3267.5,
+      "end": 3269.5,
+      "text": "And then you can get a point.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 698,
+      "start": 3269.5,
+      "end": 3271.5,
+      "text": "Yes, the point.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 699,
+      "start": 3271.5,
+      "end": 3273.5,
+      "text": "And then you have a point.",
+      "avg_logprob": -0.834,
+      "no_speech_prob": 0.846
+    },
+    {
+      "id": 700,
+      "start": 3273.5,
+      "end": 3275.5,
+      "text": "And then you have a point.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 701,
+      "start": 3275.5,
+      "end": 3277.5,
+      "text": "And then you have a point.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 702,
+      "start": 3277.5,
+      "end": 3279.5,
+      "text": "Right.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 703,
+      "start": 3279.5,
+      "end": 3283.5,
+      "text": "So, difference is new.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 704,
+      "start": 3283.5,
+      "end": 3285.5,
+      "text": "Unique items from first asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 705,
+      "start": 3285.5,
+      "end": 3287.5,
+      "text": "Unique items from second asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 706,
+      "start": 3287.5,
+      "end": 3289.5,
+      "text": "Unique items from second asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 707,
+      "start": 3289.5,
+      "end": 3291.5,
+      "text": "Unique items from second asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 708,
+      "start": 3291.5,
+      "end": 3293.5,
+      "text": "Unique items from second asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 709,
+      "start": 3293.5,
+      "end": 3295.5,
+      "text": "They will not be considered.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 710,
+      "start": 3295.5,
+      "end": 3299.5,
+      "text": "Only units from second asset.",
+      "avg_logprob": -0.513,
+      "no_speech_prob": 0.021
+    },
+    {
+      "id": 711,
+      "start": 3299.5,
+      "end": 3315.5,
+      "text": "Okay, let us do it, right, next one, symmetry difference, okay minus super 1, 100 even",
+      "avg_logprob": -0.946,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 712,
+      "start": 3315.5,
+      "end": 3321.5,
+      "text": "20 minus, and it difference, minus of different type of idea though, difference,",
+      "avg_logprob": -0.946,
+      "no_speech_prob": 0.316
+    },
+    {
+      "id": 713,
+      "start": 3351.5,
+      "end": 3358.5,
+      "text": "difference, P and A, and it's the inflow of met 1D uniciet arms, green floucane from the uniciet arms,",
+      "avg_logprob": -0.881,
+      "no_speech_prob": 0.401
+    },
+    {
+      "id": 714,
+      "start": 3358.5,
+      "end": 3367.5,
+      "text": "where they will be it's one, no, for example 10, then, P is a P shape, from the leather,",
+      "avg_logprob": -0.881,
+      "no_speech_prob": 0.401
+    },
+    {
+      "id": 715,
+      "start": 3367.5,
+      "end": 3372.5,
+      "text": "but you will not, leather, if you will not, if you will not, if you will not, if you will be 70,",
+      "avg_logprob": -0.881,
+      "no_speech_prob": 0.401
+    },
+    {
+      "id": 716,
+      "start": 3372.5,
+      "end": 3379.5,
+      "text": "70, but if you will be 70, then E elements are uniciet arms, this is what symmetric difference,",
+      "avg_logprob": -0.881,
+      "no_speech_prob": 0.401
+    },
+    {
+      "id": 717,
+      "start": 3379.5,
+      "end": 3386.5,
+      "text": "uniciet arms in set 1, uniciet arms in set 2, different set 1, uniciet arms in set",
+      "avg_logprob": -0.289,
+      "no_speech_prob": 0.088
+    },
+    {
+      "id": 718,
+      "start": 3386.5,
+      "end": 3393.5,
+      "text": "1, I want uniciet arms in set 1, uniciet arms in set 2, we go with the symmetry difference,",
+      "avg_logprob": -0.289,
+      "no_speech_prob": 0.088
+    },
+    {
+      "id": 719,
+      "start": 3393.5,
+      "end": 3402.5,
+      "text": "let's go with this one, symmetry difference, symmetry difference, definitely,",
+      "avg_logprob": -0.289,
+      "no_speech_prob": 0.088
+    },
+    {
+      "id": 720,
+      "start": 3402.5,
+      "end": 3421.5,
+      "text": "which extracts uniciet arms from both sides, which extracts uniciet arms from both sides,",
+      "avg_logprob": -0.426,
+      "no_speech_prob": 0.899
+    },
+    {
+      "id": 721,
+      "start": 3421.5,
+      "end": 3428.5,
+      "text": "uniciet arms, uniciet arms from both sides,",
+      "avg_logprob": -0.497,
+      "no_speech_prob": 0.708
+    },
+    {
+      "id": 722,
+      "start": 3428.5,
+      "end": 3435.5,
+      "text": "70, we are going to go with the equal distance out, insert out this,",
+      "avg_logprob": -0.939,
+      "no_speech_prob": 0.587
+    },
+    {
+      "id": 723,
+      "start": 3435.5,
+      "end": 3448.5,
+      "text": "where you define the function, you can use this mud up,",
+      "avg_logprob": -0.939,
+      "no_speech_prob": 0.587
+    },
+    {
+      "id": 724,
+      "start": 3449.5,
+      "end": 3459.5,
+      "text": "I want to go, capsis for one, capsis for one, capsis for one, capsis for one,",
+      "avg_logprob": -0.691,
+      "no_speech_prob": 0.768
+    },
+    {
+      "id": 725,
+      "start": 3459.5,
+      "end": 3469.5,
+      "text": "are different data, different data is what you are talking about,",
+      "avg_logprob": -0.691,
+      "no_speech_prob": 0.768
+    },
+    {
+      "id": 726,
+      "start": 3470.5,
+      "end": 3475.5,
+      "text": "both are same, both are same, I am going to have capsimales,",
+      "avg_logprob": -0.545,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 727,
+      "start": 3475.5,
+      "end": 3482.5,
+      "text": "but capsimales in the difference is, if the function is work with it,",
+      "avg_logprob": -0.545,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 728,
+      "start": 3482.5,
+      "end": 3485.5,
+      "text": "then with the different data data is work with it,",
+      "avg_logprob": -0.545,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 729,
+      "start": 3485.5,
+      "end": 3492.5,
+      "text": "ok understood, set c is done, set c is done,",
+      "avg_logprob": -0.545,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 730,
+      "start": 3492.5,
+      "end": 3496.5,
+      "text": "it is very, very important, over this I am going to do some exercises,",
+      "avg_logprob": -0.545,
+      "no_speech_prob": 0.454
+    },
+    {
+      "id": 731,
+      "start": 3496.5,
+      "end": 3510.5,
+      "text": "ok now take note that difference is between, everyone, take note that difference is between,",
+      "avg_logprob": -0.356,
+      "no_speech_prob": 0.461
+    },
+    {
+      "id": 732,
+      "start": 3511.5,
+      "end": 3524.5,
+      "text": "one, difference is between, different collections, different collections,",
+      "avg_logprob": -0.575,
+      "no_speech_prob": 0.678
+    },
+    {
+      "id": 733,
+      "start": 3524.5,
+      "end": 3530.5,
+      "text": "different collections, what are sequence data types,",
+      "avg_logprob": -0.575,
+      "no_speech_prob": 0.678
+    },
+    {
+      "id": 734,
+      "start": 3530.5,
+      "end": 3537.5,
+      "text": "or iterative data types, iterative data types, sequence data type,",
+      "avg_logprob": -0.373,
+      "no_speech_prob": 0.413
+    },
+    {
+      "id": 735,
+      "start": 3538.5,
+      "end": 3545.5,
+      "text": "or R, all the different types, collections, first one,",
+      "avg_logprob": -0.535,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 736,
+      "start": 3557.5,
+      "end": 3564.5,
+      "text": "take note key points, first one listed, keep it in listed,",
+      "avg_logprob": -0.535,
+      "no_speech_prob": 0.19
+    },
+    {
+      "id": 737,
+      "start": 3565.5,
+      "end": 3571.5,
+      "text": "first one is, it is order, order, first one, it is order,",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.337
+    },
+    {
+      "id": 738,
+      "start": 3571.5,
+      "end": 3578.5,
+      "text": "pointy pointy, it is unchangeable, unchangeable,",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.337
+    },
+    {
+      "id": 739,
+      "start": 3578.5,
+      "end": 3584.5,
+      "text": "write it off, note it off, note it off, note it off,",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.337
+    },
+    {
+      "id": 740,
+      "start": 3584.5,
+      "end": 3588.5,
+      "text": "list is changeable, it is changeable,",
+      "avg_logprob": -0.427,
+      "no_speech_prob": 0.337
+    },
+    {
+      "id": 741,
+      "start": 3588.5,
+      "end": 3593.5,
+      "text": "write it off, note it off, write it off, note it off,",
+      "avg_logprob": -0.307,
+      "no_speech_prob": 0.126
+    },
+    {
+      "id": 742,
+      "start": 3593.5,
+      "end": 3601.5,
+      "text": "it allows duplicate elements, it allows duplicate elements,",
+      "avg_logprob": -0.307,
+      "no_speech_prob": 0.126
+    },
+    {
+      "id": 743,
+      "start": 3601.5,
+      "end": 3607.5,
+      "text": "it allows duplicate elements, next one, careful,",
+      "avg_logprob": -0.307,
+      "no_speech_prob": 0.126
+    },
+    {
+      "id": 744,
+      "start": 3607.5,
+      "end": 3614.5,
+      "text": "It is order.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 745,
+      "start": 3614.5,
+      "end": 3618.5,
+      "text": "It is.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 746,
+      "start": 3618.5,
+      "end": 3619.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 747,
+      "start": 3619.5,
+      "end": 3626.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 748,
+      "start": 3626.5,
+      "end": 3629.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 749,
+      "start": 3629.5,
+      "end": 3630.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.531,
+      "no_speech_prob": 0.582
+    },
+    {
+      "id": 750,
+      "start": 3630.5,
+      "end": 3633.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 751,
+      "start": 3633.5,
+      "end": 3636.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 752,
+      "start": 3636.5,
+      "end": 3639.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 753,
+      "start": 3639.5,
+      "end": 3642.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 754,
+      "start": 3642.5,
+      "end": 3645.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 755,
+      "start": 3645.5,
+      "end": 3648.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 756,
+      "start": 3648.5,
+      "end": 3651.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 757,
+      "start": 3651.5,
+      "end": 3654.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 758,
+      "start": 3654.5,
+      "end": 3657.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 759,
+      "start": 3657.5,
+      "end": 3659.5,
+      "text": "Unchangeable.",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.256
+    },
+    {
+      "id": 760,
+      "start": 3689.5,
+      "end": 3700.06,
+      "text": "if you do it according to another 5 Physics, if you did it in accordance to your knowledge",
+      "avg_logprob": -4.17,
+      "no_speech_prob": 0.361
+    },
+    {
+      "id": 761,
+      "start": 3700.06,
+      "end": 3713.94,
+      "text": "I will explained very little slightly before series theory, divide it into six sheets",
+      "avg_logprob": -4.17,
+      "no_speech_prob": 0.361
+    },
+    {
+      "id": 762,
+      "start": 3713.94,
+      "end": 3722.18,
+      "text": "number 1 it is unchangeable.",
+      "avg_logprob": -1.2,
+      "no_speech_prob": 0.312
+    },
+    {
+      "id": 763,
+      "start": 3722.18,
+      "end": 3729.86,
+      "text": "Next it is unchangeable, next it is unchangeable.",
+      "avg_logprob": -1.2,
+      "no_speech_prob": 0.312
+    },
+    {
+      "id": 764,
+      "start": 3729.86,
+      "end": 3731.54,
+      "text": "Next it is unchangeable.",
+      "avg_logprob": -1.2,
+      "no_speech_prob": 0.312
+    },
+    {
+      "id": 765,
+      "start": 3731.54,
+      "end": 3746.54,
+      "text": "No, it is unindexial, next to it, not duplicate, not unindexial, duplicate, it does not",
+      "avg_logprob": -0.961,
+      "no_speech_prob": 0.479
+    },
+    {
+      "id": 766,
+      "start": 3746.54,
+      "end": 3766.54,
+      "text": "not do duplicate, next to it, next to it is not it, it is R derider, it is R derider,",
+      "avg_logprob": -0.819,
+      "no_speech_prob": 0.446
+    },
+    {
+      "id": 767,
+      "start": 3827.54,
+      "end": 3838.54,
+      "text": "Okay understood, this is what the key difference is between a list, tuple, set,",
+      "avg_logprob": -0.737,
+      "no_speech_prob": 0.707
+    },
+    {
+      "id": 768,
+      "start": 3838.54,
+      "end": 3857.54,
+      "text": "okay, I will show it to you in one part, I will show it to you in one part,",
+      "avg_logprob": -0.885,
+      "no_speech_prob": 0.34
+    },
+    {
+      "id": 769,
+      "start": 3857.54,
+      "end": 3882.54,
+      "text": "okay, I will show it to you in one part, I will show it to you in one part,",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.683
+    },
+    {
+      "id": 770,
+      "start": 3882.54,
+      "end": 3907.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.368,
+      "no_speech_prob": 0.669
+    },
+    {
+      "id": 771,
+      "start": 3907.54,
+      "end": 3932.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.357,
+      "no_speech_prob": 0.496
+    },
+    {
+      "id": 772,
+      "start": 3932.54,
+      "end": 3957.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.208,
+      "no_speech_prob": 0.907
+    },
+    {
+      "id": 773,
+      "start": 3957.54,
+      "end": 3982.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.207,
+      "no_speech_prob": 0.942
+    },
+    {
+      "id": 774,
+      "start": 3987.54,
+      "end": 4012.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.237,
+      "no_speech_prob": 0.818
+    },
+    {
+      "id": 775,
+      "start": 4017.54,
+      "end": 4042.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.204,
+      "no_speech_prob": 0.857
+    },
+    {
+      "id": 776,
+      "start": 4047.54,
+      "end": 4072.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.181,
+      "no_speech_prob": 0.898
+    },
+    {
+      "id": 777,
+      "start": 4073.54,
+      "end": 4097.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.155,
+      "no_speech_prob": 0.935
+    },
+    {
+      "id": 778,
+      "start": 4098.54,
+      "end": 4122.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.163,
+      "no_speech_prob": 0.942
+    },
+    {
+      "id": 779,
+      "start": 4122.54,
+      "end": 4147.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.149,
+      "no_speech_prob": 0.783
+    },
+    {
+      "id": 780,
+      "start": 4147.54,
+      "end": 4172.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.176,
+      "no_speech_prob": 0.843
+    },
+    {
+      "id": 781,
+      "start": 4177.54,
+      "end": 4202.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.175,
+      "no_speech_prob": 0.686
+    },
+    {
+      "id": 782,
+      "start": 4207.54,
+      "end": 4231.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.229,
+      "no_speech_prob": 0.836
+    },
+    {
+      "id": 783,
+      "start": 4231.54,
+      "end": 4256.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.192,
+      "no_speech_prob": 0.884
+    },
+    {
+      "id": 784,
+      "start": 4261.54,
+      "end": 4286.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.184,
+      "no_speech_prob": 0.842
+    },
+    {
+      "id": 785,
+      "start": 4291.54,
+      "end": 4316.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.169,
+      "no_speech_prob": 0.795
+    },
+    {
+      "id": 786,
+      "start": 4316.54,
+      "end": 4340.54,
+      "text": "okay, I will show it to you in one part, okay, I will show it to you in one part,",
+      "avg_logprob": -0.203,
+      "no_speech_prob": 0.678
+    },
+    {
+      "id": 787,
+      "start": 4340.54,
+      "end": 4350.54,
+      "text": "in the girls, girls, girls, girls, girls, girls, girls, two units preparation is done",
+      "avg_logprob": -0.57,
+      "no_speech_prob": 0.435
+    },
+    {
+      "id": 788,
+      "start": 4350.54,
+      "end": 4356.54,
+      "text": "on that, when they are going to complete, okay, otherwise I will do one thing and Tuesday",
+      "avg_logprob": -0.57,
+      "no_speech_prob": 0.435
+    },
+    {
+      "id": 789,
+      "start": 4356.54,
+      "end": 4364.54,
+      "text": "I have two overs class, two overs lab, right, four overs sex up, no lunch break, two units",
+      "avg_logprob": -0.57,
+      "no_speech_prob": 0.435
+    },
+    {
+      "id": 790,
+      "start": 4365.54,
+      "end": 4366.54,
+      "text": "okay, so start",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 791,
+      "start": 4366.54,
+      "end": 4369.54,
+      "text": "you take lunch of second hour",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 792,
+      "start": 4369.54,
+      "end": 4375.54,
+      "text": "will you take lunch of 2 second hour, will you take lunch of the fourth hour, your third hour",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 793,
+      "start": 4375.54,
+      "end": 4376.54,
+      "text": "your first day",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 794,
+      "start": 4376.54,
+      "end": 4381.54,
+      "text": "don't, don't take lunch, okay, your first day",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 795,
+      "start": 4381.54,
+      "end": 4384.54,
+      "text": "okay, okay, okay",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 796,
+      "start": 4384.54,
+      "end": 4385.54,
+      "text": "okay, okay and say",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 797,
+      "start": 4387.54,
+      "end": 4389.54,
+      "text": "okay, okay, okay",
+      "avg_logprob": -1.35,
+      "no_speech_prob": 0.407
+    },
+    {
+      "id": 798,
+      "start": 4389.54,
+      "end": 4393.54,
+      "text": "If you want to use it, use it, you have to come whatever you want.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 799,
+      "start": 4393.54,
+      "end": 4398.54,
+      "text": "If you want to complete two units, on the other hand, use it, you are going to write exam.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 800,
+      "start": 4398.54,
+      "end": 4400.54,
+      "text": "Because I want to get much time.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 801,
+      "start": 4400.54,
+      "end": 4403.54,
+      "text": "And to use it, it is possible for me to get four hours.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 802,
+      "start": 4403.54,
+      "end": 4406.54,
+      "text": "So, I use the exam.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 803,
+      "start": 4406.54,
+      "end": 4408.54,
+      "text": "Use the exam.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 804,
+      "start": 4408.54,
+      "end": 4409.54,
+      "text": "Hey, how?",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 805,
+      "start": 4409.54,
+      "end": 4411.54,
+      "text": "Let's have a look.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 806,
+      "start": 4411.54,
+      "end": 4416.54,
+      "text": "If you have a question, then you have to say just four minutes till the end exam.",
+      "avg_logprob": -0.681,
+      "no_speech_prob": 0.393
+    },
+    {
+      "id": 807,
+      "start": 4416.54,
+      "end": 4418.54,
+      "text": "If you have a question, then you have to take 5.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 808,
+      "start": 4418.54,
+      "end": 4420.54,
+      "text": "Yes, sir.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 809,
+      "start": 4420.54,
+      "end": 4426.54,
+      "text": "So, you're going to curse for that number, or didn't you curse?",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 810,
+      "start": 4426.54,
+      "end": 4428.54,
+      "text": "I swear, we see.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 811,
+      "start": 4428.54,
+      "end": 4430.54,
+      "text": "Please stop the questions.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 812,
+      "start": 4430.54,
+      "end": 4432.54,
+      "text": "Come on.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 813,
+      "start": 4433.54,
+      "end": 4435.54,
+      "text": "Please stop your pronouncing.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 814,
+      "start": 4435.54,
+      "end": 4441.54,
+      "text": "The reason is because I want to raise the number of people in the exam.",
+      "avg_logprob": -2.283,
+      "no_speech_prob": 0.208
+    },
+    {
+      "id": 815,
+      "start": 4501.54,
+      "end": 4520.54,
+      "text": "in the class, few content work in 3.6, few content will not work in 3.6, above 3.6",
+      "avg_logprob": -0.641,
+      "no_speech_prob": 0.468
+    },
+    {
+      "id": 816,
+      "start": 4610.54,
+      "end": 4619.54,
+      "text": "nothing but smart home ok I think you might have seen this video in social media",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.641
+    },
+    {
+      "id": 817,
+      "start": 4619.54,
+      "end": 4624.54,
+      "text": "but most of the home around today are full-fledged VA, home to the smart home",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.641
+    },
+    {
+      "id": 818,
+      "start": 4624.54,
+      "end": 4627.54,
+      "text": "what is the name of the newspaper?",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.641
+    },
+    {
+      "id": 819,
+      "start": 4627.54,
+      "end": 4629.54,
+      "text": "what is the name of the newspaper?",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.641
+    },
+    {
+      "id": 820,
+      "start": 4629.54,
+      "end": 4631.54,
+      "text": "it is a break-off to Pataloo",
+      "avg_logprob": -0.773,
+      "no_speech_prob": 0.641
+    },
+    {
+      "id": 821,
+      "start": 4631.54,
+      "end": 4636.54,
+      "text": "this newspaper used to produce 50% in my time",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 822,
+      "start": 4636.54,
+      "end": 4639.54,
+      "text": "worldwide conversation with the insurance company",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 823,
+      "start": 4639.54,
+      "end": 4645.26,
+      "text": "which explains how to produce medical\u5339",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 824,
+      "start": 4645.26,
+      "end": 4648.66,
+      "text": "as it is an ayate it is driving such a\ufffd\ufffd",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 825,
+      "start": 4648.66,
+      "end": 4654.86,
+      "text": "Wait the kids at home would also get down to their cars",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 826,
+      "start": 4654.86,
+      "end": 4658.7,
+      "text": "that they have to take id\u00e9",
+      "avg_logprob": -4.118,
+      "no_speech_prob": 0.357
+    },
+    {
+      "id": 827,
+      "start": 4748.7,
+      "end": 4757.7,
+      "text": "If you run the technology at technology, it will not have much time to show that what it will do.",
+      "avg_logprob": -0.882,
+      "no_speech_prob": 0.772
+    },
+    {
+      "id": 828,
+      "start": 4757.7,
+      "end": 4766.7,
+      "text": "Technology and the effect technology, which you need, but it is being home to the nature of art.",
+      "avg_logprob": -0.882,
+      "no_speech_prob": 0.772
+    },
+    {
+      "id": 829,
+      "start": 4796.7,
+      "end": 4798.7,
+      "text": "What is your name?",
+      "avg_logprob": -0.92,
+      "no_speech_prob": 0.759
+    },
+    {
+      "id": 830,
+      "start": 4818.7,
+      "end": 4820.7,
+      "text": "What is your name?",
+      "avg_logprob": -0.92,
+      "no_speech_prob": 0.759
+    },
+    {
+      "id": 831,
+      "start": 4821.7,
+      "end": 4829.7,
+      "text": "You should think of doing good to the not only to your family, the society, to that, and you will not be dancing.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 832,
+      "start": 4830.7,
+      "end": 4836.7,
+      "text": "My parents are not there, my children are not there, my education is good.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 833,
+      "start": 4837.7,
+      "end": 4839.7,
+      "text": "They will do it something. How much did I get?",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 834,
+      "start": 4839.7,
+      "end": 4843.7,
+      "text": "40, 50, 100, 100, 100. This much only.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.398
+    },
+    {
+      "id": 835,
+      "start": 4843.7,
+      "end": 4851.7,
+      "text": "But the same education, if you go around 50 years or 60 years back, that is over 100 years, 200, 300, 400 years.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.25
+    },
+    {
+      "id": 836,
+      "start": 4851.7,
+      "end": 4856.7,
+      "text": "5,000 years back, you go, the schools are there, because there is a group club.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.25
+    },
+    {
+      "id": 837,
+      "start": 4856.7,
+      "end": 4861.7,
+      "text": "People use it to go there, even they don't have the members in the group club.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.25
+    },
+    {
+      "id": 838,
+      "start": 4861.7,
+      "end": 4868.7,
+      "text": "If you look your face into the middle, you will get tetra-continue.",
+      "avg_logprob": -0.445,
+      "no_speech_prob": 0.25
+    },
+    {
+      "id": 839,
+      "start": 4868.7,
+      "end": 4874.7,
+      "text": "And why schools will be different, where schools will be different.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 840,
+      "start": 4874.7,
+      "end": 4876.7,
+      "text": "But concentration is different.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 841,
+      "start": 4876.7,
+      "end": 4880.7,
+      "text": "That too, with joining in the group club, they use it to remove the head.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 842,
+      "start": 4880.7,
+      "end": 4882.7,
+      "text": "What is your name?",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 843,
+      "start": 4882.7,
+      "end": 4884.7,
+      "text": "My name is Annam Asim.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 844,
+      "start": 4884.7,
+      "end": 4887.7,
+      "text": "You hear these things all the time, and you don't know what it is.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 845,
+      "start": 4887.7,
+      "end": 4889.7,
+      "text": "You don't know what it is.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 846,
+      "start": 4889.7,
+      "end": 4891.7,
+      "text": "It's out of town.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 847,
+      "start": 4891.7,
+      "end": 4892.7,
+      "text": "It's out of town.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 848,
+      "start": 4892.7,
+      "end": 4893.7,
+      "text": "Thank you.",
+      "avg_logprob": -0.712,
+      "no_speech_prob": 0.473
+    },
+    {
+      "id": 849,
+      "start": 4894.7,
+      "end": 4895.7,
+      "text": "Thank you.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 850,
+      "start": 4895.7,
+      "end": 4896.7,
+      "text": "It's so nice to meet you.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 851,
+      "start": 4896.7,
+      "end": 4902.7,
+      "text": "I don't know the details, but I am really excited.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 852,
+      "start": 4902.7,
+      "end": 4910.7,
+      "text": "Right, so, I will ask you to go to the club and answer your questions.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 853,
+      "start": 4910.7,
+      "end": 4914.7,
+      "text": "If you talk about schools, you go to the school, and get a new one.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 854,
+      "start": 4914.7,
+      "end": 4916.7,
+      "text": "And you will be like this.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 855,
+      "start": 4916.7,
+      "end": 4917.7,
+      "text": "That is the problem.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 856,
+      "start": 4917.7,
+      "end": 4921.7,
+      "text": "But in the future, our future will be different.",
+      "avg_logprob": -1.57,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 857,
+      "start": 4921.7,
+      "end": 4943.7,
+      "text": "What is good? What is bad? What will go? What not will go? Let's say, education,",
+      "avg_logprob": -0.734,
+      "no_speech_prob": 0.66
+    },
+    {
+      "id": 858,
+      "start": 4943.7,
+      "end": 4965.7,
+      "text": "education, education, education, education, education.",
+      "avg_logprob": -0.791,
+      "no_speech_prob": 0.496
+    }
+  ],
+  "text": "I just remember one of the organizers did it with my colleague. She was a client. Hello, Scott Parking, you get here. And you need to open the printing box at two. One is a tuple, and then one is sex. Okay, keep it in sex. Yes, you need sex in two. Okay, first of all, I want to ask you something. I will ask you something. If you ask me what you want to do, I will ask you something. I will ask you something. And you will say that I am happy for your people. Thank you. first year loan is Rs. 1000 and then will go to Rs. 2.5 come at 6.5. So, the rate is around Rs. 1000. That is a bit too. So, the rate is about Rs. 1000. That is it. Since the 1,000, I have already got the card. It was a easy thing. The only thing is you have to know the flow of its solution. First, mind. Second one, you have to know the integration part which could be affiliated with other one. How? Now, just for those of you who have been created to begin this off-quake, must be in the place. Come here. There's both of them doing some other roles. I know. I know. Man. You should start the rest now, right? What? What's the law? It's not the law. It's not the law. What? What? How are you doing? You're part of it. My name is Larry. Larry. So, parts of the heart of the brain are the secondary. The secondary collection of the meaning was it. Collection of course. The secondary round. There's a separate round. Fick of course. Broom of course. Collection of part. Set up for you. The secondary meaning is collection of elements. It's a collection of items. But as I already told you, the important artifacts that we are discussing from last two weeks is list. It's capital. It's literally strings. And now we have to the set. It's capital marked, but we'll list that very simple one. List. Capital. List. Capital. Capital. It's simple. Stincies different. Dictionary. And the set is quite different from them. So, what? Examiner of the thing. One easy one is combined with the hardware. If list is combined with the dictionary, capital will be combined with the set. Like that in combination, they will ask you questions. So, in the final examination. Question one, for our question two, like that they will give you. As you know the pattern of question paper. So, you need to, if they would like to ask the question, they will ask list combination of the study. Capital combination of list. List. 90% they will give you like this only. If required in different case, different rare case, they will include the spin. Some way. Some way they may be the first question or second question. But the maximum combination is, list and capital are easy. Dictionary and sets are quite different. Okay. Not like them, little different. So, combination of list and sets and they give, are coupled with the dictionary. What combination they will give you? We do not know. But you are covered in these four plus spin. I think we are able to answer the big question. How many marks? 5 marks. 5 marks. 5 marks. Each question carries two and a half marks. For very good understanding, your preparation should be like that. Now, you all are in this concept. In the final examination, you have to call the five marks. Okay, understood. And in each unit, they have to give one more questions to you. If spin is left in here, they will give one more questions only on spins. If list is mister, one more questions only on this theory. Hope you understood. Like that, you are thinking about should be there. Hope you understood. Totally, here, four, they are two. Six questions are going to get. I am going to have one more question. He will list you. This time, capital set, combination by four questions. Okay. One more question. The second unit is going to go to the question here. One marks, two marks. Two marks. So, remember, having given the answer, things say that all the time, you should get it. All the time, the answer. So, your preparation should be very, very often. Okay. We are not going to put a part of combination, we come. And that term, don't go for exception. You prepare like a subject. Okay. I am going to do it. Take one point. Take one point. Take one one point. Take one point. Set some usage. Set is set to set some. Set is a collection. Set is a collection which is another. Unchangeable. Unchangeable analyze. Double quotation. Unchangeable. Double quotation. Unchangeable. Unchangeable. And then, unindexed. Unindexed. Sets are written. Sets are written using curly braces. Okay. braces. Let's have braces. braces. Come here. Let's have braces. We call it curly braces. So, I am using V and S. Is it visible? Now, we are choosing for two. The other half is you know. Let's choose equal two. Sheet. Sheet. Varshmana. Varshmana. Varshmana. Varshmana. They are called point papers. What they need is to take that you take on your own. After that, they are sent in that way. And then, after that, they can send their own to the gate. So, how many elements are there? Oh, all the elements are there. You need same to role, ready? Yes. We call it as A. So, same braces on our own. Dictionary. Dictionary, your elements are loud. Dictionary. These are the elements in future. That is what the difference is. Oh, that's what it is. It is a violent point. Yes. So, set me out. Corruption of elements in the already. Braces. Uncertainly, braces. C.A.M. Corruption we used for. It's different. It's different. It's different. Yeah. Each element is unique. Separately different. There each item is. There each element is a combination of. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. E. \u6709\u4e00 Mr. E. E. E. Ir curious to see what we are doing. Why not? Sorry. As lie there is not even a lie. Only requests are delivered to this man, but here he is also not? Not at all. Not at all. But at least not built in. Okay, understood. So, Example 1. SCG for those who take some measurements, you can take safe and different issue. you can take fruits of vegetable, mass, subject, marks, popularity days, but can you maintain it? Order is, it is order is not maintain, order is not maintain, very very important is there, good sex is important ok, unavoidable and I told you one point it is unindexed, it is unindexed, indexed, yes of 0, 0, first I will not take, first I will not take a window, I will tell you, you do not know, this order will open, yes of the answer you will open up to index value, you will open up to index value, so there is no index value because of an order, a point right no, it is unindexed because it does not follow order, because it is unordered, because it is unordered, in the group index value index value So, you do not know, no, I will not give you, will make sure it is unordered. In the group index value is not red, but red. So, it is unordered, it is unordered. Because it is unordered, in the group index value r, r, r, r, r, r, r, r, r, r, r, r, and in 0, 0, 0, 0, 0 so, we will get element in the set cannot be changed, but can be removed, but can be removed or added, but can be removed or added, but can be removed or added, did you change? Yes. Yes. add all, okay, so from new item is added, it is not happening, it is not happening, it is happening with the add only, but add that, there is no matter the add is in, okay, so I am talking about the add, add that, okay, so I am using add here, new element can be added by using add method, how I transfer, add method is used to add, add method is used to add element to set, element to set, now I am going to try to remove, see, come, so remove method is used to remove the element from the set, see the element is removed, so I cannot change already elements that are there, but what I get to, I can add the new item and I can remove the element from the set, so what method are you using, add method is used to, add element to set, remove method is used to remove, element from the set, you can take the element from the set, you can take the set out, you can take the set out, okay, okay, let's the access item, access item, access item, so I am called as, like a, elements in the set cannot be accessed by using index value code, because it is not maintained that is the reason you code, but the thing is, I would like to access, directly you printed S value like this, instead of that can I access the sets to the help of loads, yes, for I in S when, okay, element is equal to, element is equal to I, okay, what I am doing here, I just want to access the elements that are there in the set by using loop, so access item, how they are accessing, what is that, actually I printed the set with the help of print statement, and second one is, I don't have any test values, how I have to access a, by using loops, okay, access item, access the set items using loop, access set item using loops, you don't know, access set item using loop, okay, access set item using loop, you don't know So, like how we use a sort of object function with the list and the previous law, the same object function which is used to previous the sequence data type, that I have passed and data type, here also we can use same object function. So, whatever we hear, we can use same object function. So, already it is just an object to take one. And here I am taking k is equal to pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times pi times So, how many sets, two sets and heavy, so what I am going, yes I am updating, in the and I would like to check whether the SC is updated or not. Okay, same example we get with this, nothing new. Already existing collection of elements I am updating with the new one, T is not going to be affected, which is going to be updated, this is going to be updated with me, that is what will mean, what we understood. Okay, so here I have two sets, one set is updated with another set of elements. Same example we suppose this is going to happen from the start. I think it is going to be the same, we are already updating the model, it is going to happen. Okay understood. So, it is fine, you are saying two sets are taken, that is good. But what my intention is, same example we are taking. Okay, but instead of set of life could take it as a list. I would like to take like this, does it work sir? What is the set? What is? List. Not only this, you can take couple also nothing but it will work, it will update. Set is combined with the list, but list will be combined with the set. This is what is going to happen. So, here what I did? It is going to be updated, it will be updated. So, what I said is, now what is the list? I will do two different types. Okay, but same update function is going to be updated, it will be updated, yes it will work. But it is going to be updated with the list and it will be combined with the set items. Okay, let us run this one. Is it working or not? Not only a list, we can take couple also. No issue at all. Okay, understood. One third set you can take one definition. Yes sir. Take one example. Efficient. Mm-hmm. Okay, let us run this one. Okay. All right. Now, we object. When you are using update function, when you are using update function with the sets, when you are using update function with sets, you can use. You can use honorable objects. You can use honorable objects like list, happen list happen list, Albert dixtery. So, this is example giving them on what list you can also use other data types of, so we want to think next one. So, here I use with the remote, the same remote using here, but differently I am using a remote method, but there is a remote element which is not there. Remote function volume, but a set up items, so on my element to that is laid up of a remote is extended to raise another, but a power element laid up, so you are trying to remote and simply to raise and raise whole data still. Remote function can be used to remote and item, and even from the set, but when it is doesn't exist, it tries, that should be not to you, because same examples that we give you, we lost some output that we give you. You should understand this element is not as well, but I am using instead of this, I am using this card, I am using this card, it is equal to what I can remove only, it will work like, remove it, if element is there it will remove, if element is not there it will not raise the other, it simply shows it empty, that is why, what is the difference between the remote and the discard, the remote that you use to remove the element, if exist, if exist, it will take, if doesn't exist, remote function will raise and there, discard will not. Okay, understood. Now you can tell me the difference between, difference between, different between, remote and discard function, one more question, and what is your answer? Both are used to remove the element from the set, but if element doesn't exist, remove the element from the set, if element doesn't exist, it will take, if element doesn't exist, I have some set up items, I am just using yes, card, 3F, 3F means, one company, 3F means, this is the set, I need to take the money, set the set up items, okay? What I am doing here, I am deleting set, it is going to be 20, yes, it is going to be 20. Yes, delete, yes. Yes. Remove the respiration. Set to that. Yeah. I empty set to that. That's exactly what I'm going to do. In the morning and clock. Elements mark there. Clear. I need. Set to that. And empty set. Correct. Set also to eat it. Okay. You have to eat it. Yes. So nothing is there. If you display. If you try to run it, it will show error. Otherwise, the error will be forgotten. In the end, it will be because it will be deleted. At the moment, there are one or two different buttons. Digly and clear. Yes. One. Two. Three. One. Two. Two. Three. Very good. Next one. Keep ready. Keep ready. Set operations. Set operations. You need to import it. You have to pass it. Okay. Set operations. Number one, union. Number one, union. Union. Union. That's the union. Number two. That's the union. Box. Come here. You can here. I'm taking two sets. SDG for dough. Is it visible? 10. SDG. 13. 50. 90. SDG for dough. 20. 50. SDG. 70. 91. 91. What are the common items among these? Two. Three. Two. Three. Two. Three. Two. Three. Two. Three. Two. Three. Two. Three. Now. All right. So I'm telling you about this one. This is ES. This is T. Union means this is the common part, right? Common part. Common part. We enter. Union here. SD. SD. Right. Now I apply to union. Union means common items. Because we are common. Union means joining. Union means joining. So this element and this element will be combined together, we'll do that. Union. Union operator is there. Yes. Yes. Really? Yes. Yes. You must go to the podium. You keep asking me to do that. Yes. You keep asking me to do that. Yes. Yes. So today's my condition, not me. Yes. All right. We're going to see that. Same example, you tell me. In this one, I'll tell you. Yes. Just use the call-out then. Only. Only. Only. Only. Only. Only. Only. Only. Only. Only. On the 15th. Yes. You're giving us an idea. 19. 19. Don't beaps. You don't need to be this. 16. So you're going to be Latinos. Union means different. We will not do anything. We will not do anything. 50. 60. 30. 90. So, we are going to do that one. Yes, now, what is the union of VT? You see, these are the items that are came. We are going to debaille each other. Because it is, we are going to debaille each other. The union means elements of first and second set are union. Union for the college or union should take. And for the union should be union, it is a group of. So, union is nothing but operation which is used through combine all the items which are existing on sets. So, it means you have to set, it means you set both as combined as it, minus it. So, this is important you try to take over time. Union, union, a new set, a new set with all the items, a new set with all items, a new set with all the items from both sets are combined. From both sets are combined. From both sets are combined. How many sets are I have taken? Two sets. Two sets. Okay. Here, same example, I am running like this. I have taken two sets. I have taken two sets. I see, if I do this, if I do this, I see, I see, I see, I see, I see, I see, I see, it is not even. Same example, both are right. Here, I am taking only two sets. And taking one more sets, P is equal to 10. 19, 19, 19, 19, 19, 19, 19, 19, 19. How many sets are there in here? Now, I am combining years with the home T gamma P multiple sets will join you, multiple sets will be performing union operation over the multiple sets, seven sample, seven sample by one more set is added, see elements of, elements of core set is added, so all elements of join here, 10, 20, 30, 50, 90, 60, 70, 90, 91, 92, 98, 99, all elements of join in multiple sets, joining multiple sets, joining multiple sets, joining multiple sets, joining multiple sets, join in multiple sets, I can clear this one out, look for this one, then this one under this one, how about it, whatever I need union one, I set the base up, what sets are going to do, okay, next one, two set are all, j set also the next one does, two set are all, next one, same example, same example, I am going to use, here in front of this same example I am using, in front this union function, I can also use pipe c 1, pipe at a heart, large rod, how is that like this, so what I am using is pipe c 1, large rod, R, before being R, this P R, P, before being R, P, before being R, five simplehart between, last requirement with the anchor button almost parallel, only the twenty point of, close home, founder of labour\u4e00\u8d77 put up, up the understood by this simple, so next one, so it is joining multiple sets for using, we can use the whole as a but a different see today, for different say, we worry two sets combining with the pipe. So, here two sets are there. Can I use like this? Can I use a pipe symbol here? This is Natalma. Natalma, other than what is in the one in the other? Yes, okay. Butchini and the union life are just to be run. Tata, both there. Here I am taking tapul. Here I am taking. Yes, yes, sorry. Yes, I am taking. Yes, on this tapul you can take anything. Tapul, which is parallel to this? This to this is for idea. Here is the meeting. But you are set to be the different data. You are going to union, you are going to join, set to be the different data. When you are using different data, this pipe symbol will not work. That's right. The union life is just to be. And if you are on the sets, you have to. So, if you are in India, you are set to be listed, you have to join the union. It cannot do. I mean, idea pipe symbol is low. I am using union. What are you doing here? Union, union will work. That is only the difference. What is the difference between union and using pipe symbol or a symbol? Both will work like the union only. When it is completely working on sets, when set to be the other data, your joining, accompanying, at the movement, union will work. That is the pipe symbol will not work. That is only the difference. In MCQ's, if we get this question, hope you understood. I am not going to say the example right side. It is not going to work. It is not going to work. It is not going to work. It is not going to work. It is going to work. Because the combining set to be the different data type. There is a R symbol will not work. It works only when all the set of elements are. That is it. I am going to get next one. Next one is the second one. The second one is the second one. The second one is the Tamil one. That is the Tamil one. From then on, the Tamil one is the Tamil one. I am not going to say the Tamil one. From then on, the Tamil, Tamil one is the Tamil one. Some are the Tamil's. Starting with the Tamil, Tamil, Tamil, Tamil, Tamil, Tamil and Tamil, Tamil. 6th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 5th, 10th, 15th, 70th, intersection of \u679c, root of perditionampa. Common items from both sets, section A, section B, section A, section A, section B, section B, section 2, you know already common items you have by post, you put in the section one going to go to the next section. Then I will immediately go to discussion, meeting and going to discussions and questions, advisors. You as?... What will happen? Yes, about. There is a queue as you can see, there is a queue from we go to turn on the ensure exit services. parked. Ger Number Staffer. This is 6 Foot. gonna remove the six level acts in Duplicates\u6f02 Rebecca took the first position this is just an error, 10 times the liquid n and now 7th here is 2nd position you see the equation that dotted something better no duplicates are not there non-ensex nobody gets a r in r already, says, it's at you start with r x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x Right? So, ok a master, I take intersection of plane adjacent of door or triangle as in the Okay, we have to use what? And this is what? Both are the same, but difference is also in? It is taking advantage of it. If I take advantage of it, I shall follow. And this is what I am going to do. Intersection is the right right. Instead of intersection function, we can also can use amperside. And to determine our expected automations from different sets. But amperside does not work when set working with a different data type. Whereas, intersection we work with a different data type also. Automation. Next one, keep it in difference. Keep it in. Keep it in the center. See here, difference is not required. It is comparing set upon to the center code. Okay. It will take only unique items in set one. It will compare set one with the center two. Okay. I am comparing common items out there. Remove. Only unique items that is there in set one. If it taken and you create a new set, that I have even some new set, that the center will do. Access. Different one is giving. It gives unique items from set one. Set one. Set one. Password value, individual and individual. From the definition power, so that it will give. It gives unique items in set one. It renews all. Do you think it is a set? Can you set each one? I just found the first set. That I can't present in the other another set. It gives unique items in set one. The items that are there in the whole set one. Which are not there in set two. Say, what the pieces are? What the pieces are? The items are not there. So, take down the sets up. Difference. It is equal to a start difference of t. You are going to take down this example. I'll show you how it works. Oh, yes, please. Please take advantage. Please take advantage. Okay, next one. You start out with this one. So, you need to find function difference. You can also get use as simple part. You can get the master exception here. And then you have a point. Fine. And then you can get a point. Yes, the point. And then you have a point. And then you have a point. And then you have a point. Right. So, difference is new. Unique items from first asset. Unique items from second asset. Unique items from second asset. Unique items from second asset. Unique items from second asset. They will not be considered. Only units from second asset. Okay, let us do it, right, next one, symmetry difference, okay minus super 1, 100 even 20 minus, and it difference, minus of different type of idea though, difference, difference, P and A, and it's the inflow of met 1D uniciet arms, green floucane from the uniciet arms, where they will be it's one, no, for example 10, then, P is a P shape, from the leather, but you will not, leather, if you will not, if you will not, if you will not, if you will be 70, 70, but if you will be 70, then E elements are uniciet arms, this is what symmetric difference, uniciet arms in set 1, uniciet arms in set 2, different set 1, uniciet arms in set 1, I want uniciet arms in set 1, uniciet arms in set 2, we go with the symmetry difference, let's go with this one, symmetry difference, symmetry difference, definitely, which extracts uniciet arms from both sides, which extracts uniciet arms from both sides, uniciet arms, uniciet arms from both sides, 70, we are going to go with the equal distance out, insert out this, where you define the function, you can use this mud up, I want to go, capsis for one, capsis for one, capsis for one, capsis for one, are different data, different data is what you are talking about, both are same, both are same, I am going to have capsimales, but capsimales in the difference is, if the function is work with it, then with the different data data is work with it, ok understood, set c is done, set c is done, it is very, very important, over this I am going to do some exercises, ok now take note that difference is between, everyone, take note that difference is between, one, difference is between, different collections, different collections, different collections, what are sequence data types, or iterative data types, iterative data types, sequence data type, or R, all the different types, collections, first one, take note key points, first one listed, keep it in listed, first one is, it is order, order, first one, it is order, pointy pointy, it is unchangeable, unchangeable, write it off, note it off, note it off, note it off, list is changeable, it is changeable, write it off, note it off, write it off, note it off, it allows duplicate elements, it allows duplicate elements, it allows duplicate elements, next one, careful, It is order. It is. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. Unchangeable. if you do it according to another 5 Physics, if you did it in accordance to your knowledge I will explained very little slightly before series theory, divide it into six sheets number 1 it is unchangeable. Next it is unchangeable, next it is unchangeable. Next it is unchangeable. No, it is unindexial, next to it, not duplicate, not unindexial, duplicate, it does not not do duplicate, next to it, next to it is not it, it is R derider, it is R derider, Okay understood, this is what the key difference is between a list, tuple, set, okay, I will show it to you in one part, I will show it to you in one part, okay, I will show it to you in one part, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, okay, I will show it to you in one part, in the girls, girls, girls, girls, girls, girls, girls, two units preparation is done on that, when they are going to complete, okay, otherwise I will do one thing and Tuesday I have two overs class, two overs lab, right, four overs sex up, no lunch break, two units okay, so start you take lunch of second hour will you take lunch of 2 second hour, will you take lunch of the fourth hour, your third hour your first day don't, don't take lunch, okay, your first day okay, okay, okay okay, okay and say okay, okay, okay If you want to use it, use it, you have to come whatever you want. If you want to complete two units, on the other hand, use it, you are going to write exam. Because I want to get much time. And to use it, it is possible for me to get four hours. So, I use the exam. Use the exam. Hey, how? Let's have a look. If you have a question, then you have to say just four minutes till the end exam. If you have a question, then you have to take 5. Yes, sir. So, you're going to curse for that number, or didn't you curse? I swear, we see. Please stop the questions. Come on. Please stop your pronouncing. The reason is because I want to raise the number of people in the exam. in the class, few content work in 3.6, few content will not work in 3.6, above 3.6 nothing but smart home ok I think you might have seen this video in social media but most of the home around today are full-fledged VA, home to the smart home what is the name of the newspaper? what is the name of the newspaper? it is a break-off to Pataloo this newspaper used to produce 50% in my time worldwide conversation with the insurance company which explains how to produce medical\u5339 as it is an ayate it is driving such a\ufffd\ufffd Wait the kids at home would also get down to their cars that they have to take id\u00e9 If you run the technology at technology, it will not have much time to show that what it will do. Technology and the effect technology, which you need, but it is being home to the nature of art. What is your name? What is your name? You should think of doing good to the not only to your family, the society, to that, and you will not be dancing. My parents are not there, my children are not there, my education is good. They will do it something. How much did I get? 40, 50, 100, 100, 100. This much only. But the same education, if you go around 50 years or 60 years back, that is over 100 years, 200, 300, 400 years. 5,000 years back, you go, the schools are there, because there is a group club. People use it to go there, even they don't have the members in the group club. If you look your face into the middle, you will get tetra-continue. And why schools will be different, where schools will be different. But concentration is different. That too, with joining in the group club, they use it to remove the head. What is your name? My name is Annam Asim. You hear these things all the time, and you don't know what it is. You don't know what it is. It's out of town. It's out of town. Thank you. Thank you. It's so nice to meet you. I don't know the details, but I am really excited. Right, so, I will ask you to go to the club and answer your questions. If you talk about schools, you go to the school, and get a new one. And you will be like this. That is the problem. But in the future, our future will be different. What is good? What is bad? What will go? What not will go? Let's say, education, education, education, education, education, education."
+}

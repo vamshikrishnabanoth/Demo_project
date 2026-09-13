@@ -1,0 +1,27 @@
+{
+  "input_id": "CNN_Foundations",
+  "title": "CNN Foundations: Inductive Biases, Receptive Fields & Spatial Math",
+  "concepts_and_definitions": [
+    "Convolutional Neural Network (CNN)",
+    "Multilayer Perceptron (MLP) limitations on high\u2011resolution images",
+    "Local connectivity (local receptive fields)",
+    "Weight sharing (shared filters)",
+    "Translation equivariance",
+    "Spatial locality",
+    "Feature map",
+    "Stride (S)",
+    "Padding (P)",
+    "Receptive field"
+  ],
+  "mechanisms_and_formulas": [
+    "Output dimension formula: O = floor((W - K + 2P) / S) + 1",
+    "Parameter count for three stacked 3\u00d73 filters: 27\u00b7C^2 versus a single 7\u00d77 filter: 49\u00b7C^2",
+    "Stacking three 3\u00d73 layers yields an effective receptive field of 7\u00d77"
+  ],
+  "examples_and_code_patterns": [
+    "Worked example: W=32, K=5, P=2, S=1 \u2192 O = floor((32\u20115+4)/1)+1 = 32",
+    "Worked example with stride 2: W=32, K=5, P=0, S=2 \u2192 O = floor((32\u20115)/2)+1 = 14",
+    "Comparison of three 3\u00d73 convolutions vs one 7\u00d77 convolution in terms of parameters and non\u2011linearities"
+  ],
+  "factual_summary_text": "The material introduces Convolutional Neural Networks (CNNs) as a solution to the shortcomings of standard Multilayer Perceptrons (MLPs) when processing high\u2011resolution images. Flattening a 256\u00d7256 image for an MLP creates on the order of 200,000 parameters and destroys the spatial relationships inherent in the data. CNNs address this by embedding two key inductive biases: local connectivity, which restricts each neuron to a small spatial region (a receptive field), and weight sharing, which uses the same filter across the entire image. These biases guarantee translation equivariance, meaning that shifting the input image results in an identical shift of the resulting feature map.\n\nA central mathematical tool for designing CNN layers is the output dimension formula O = floor((W - K + 2P) / S) + 1, where W is the input width, K the kernel size, P the padding, and S the stride. The slides walk through concrete calculations: for a 32\u00d732 input with a 5\u00d75 kernel, padding of 2, and stride 1, the output remains 32\u00d732; with stride 2 and no padding, the output reduces to 14\u00d714.\n\nThe concept of receptive field stacking is highlighted as an efficiency mechanism. Stacking three 3\u00d73 convolutional layers yields an effective receptive field of 7\u00d77 while requiring only 27\u00b7C^2 parameters (where C is the number of channels) and providing three nonlinear activation steps, compared to a single 7\u00d77 filter that would need 49\u00b7C^2 parameters and only one nonlinearity. This demonstrates how deeper, smaller kernels can achieve larger receptive fields more parameter\u2011efficiently.\n\nIn summary, the presentation emphasizes that local receptive fields, weight sharing, and translation equivariance form the foundational inductive biases of CNNs, enabling compact, spatially aware representations that are well\u2011suited for visual tasks."
+}

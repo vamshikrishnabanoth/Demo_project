@@ -1,0 +1,25 @@
+{
+  "blueprint_id": "BP_input_18_new_recording_37",
+  "input_id": "input_18_new_recording_37",
+  "topics": [
+    {
+      "topic_id": "T01",
+      "topic": "Overview",
+      "salience_score": 0.5,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Basic programming syntax",
+        "Definition of an algorithm"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

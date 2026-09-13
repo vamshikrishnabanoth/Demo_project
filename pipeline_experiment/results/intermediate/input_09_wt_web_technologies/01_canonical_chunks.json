@@ -1,0 +1,7830 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 7.7
+      },
+      {
+        "start": 7.7,
+        "end": 21.0
+      },
+      {
+        "start": 81.0,
+        "end": 88.0
+      },
+      {
+        "start": 88.0,
+        "end": 97.0
+      },
+      {
+        "start": 97.0,
+        "end": 104.0
+      },
+      {
+        "start": 105.0,
+        "end": 113.0
+      },
+      {
+        "start": 113.0,
+        "end": 128.0
+      },
+      {
+        "start": 128.0,
+        "end": 135.0
+      },
+      {
+        "start": 135.0,
+        "end": 138.0
+      },
+      {
+        "start": 138.0,
+        "end": 145.0
+      },
+      {
+        "start": 145.0,
+        "end": 151.0
+      },
+      {
+        "start": 151.0,
+        "end": 154.0
+      },
+      {
+        "start": 154.0,
+        "end": 156.0
+      },
+      {
+        "start": 156.0,
+        "end": 159.0
+      },
+      {
+        "start": 159.0,
+        "end": 164.0
+      },
+      {
+        "start": 164.0,
+        "end": 171.0
+      },
+      {
+        "start": 171.0,
+        "end": 177.0
+      },
+      {
+        "start": 177.0,
+        "end": 199.0
+      },
+      {
+        "start": 199.0,
+        "end": 202.0
+      },
+      {
+        "start": 202.0,
+        "end": 207.0
+      },
+      {
+        "start": 207.0,
+        "end": 215.0
+      },
+      {
+        "start": 215.0,
+        "end": 227.0
+      },
+      {
+        "start": 227.0,
+        "end": 233.0
+      },
+      {
+        "start": 233.0,
+        "end": 243.0
+      }
+    ],
+    "text": "Kishore Kauraji Rale. And he decorated it. Right. What will be the open corner? When you include this corner, what will be the open corner? When you include this corner, what will be the open? What will be the open corner? Hundred X. Hundred X. Hundred X. Stand up. Hundred X. Stand up. Don't disturb your friends by standing in the middle. Go and stand here the whole so that you do not disturb anyone. You will stand behind your roll number two. Who else wants to speak up? When the safe topics will be hit hard to you in your lab internal one, as well when you are made, don't cry out loud. The safe things will be hit very hard. Whichever will be given to you, that is just for your practice. We will be testing you how you are going to apply whatever you learn for you. A question paper will be totally different without uttering a word which you will be looking at over here. Hopefully you got an essence in your own test. If I had checked yesterday night till 2, I was checking B section papers.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 7.7
+        },
+        {
+          "start": 7.7,
+          "end": 21.0
+        },
+        {
+          "start": 81.0,
+          "end": 88.0
+        },
+        {
+          "start": 88.0,
+          "end": 97.0
+        },
+        {
+          "start": 97.0,
+          "end": 104.0
+        },
+        {
+          "start": 105.0,
+          "end": 113.0
+        },
+        {
+          "start": 113.0,
+          "end": 128.0
+        },
+        {
+          "start": 128.0,
+          "end": 135.0
+        },
+        {
+          "start": 135.0,
+          "end": 138.0
+        },
+        {
+          "start": 138.0,
+          "end": 145.0
+        },
+        {
+          "start": 145.0,
+          "end": 151.0
+        },
+        {
+          "start": 151.0,
+          "end": 154.0
+        },
+        {
+          "start": 154.0,
+          "end": 156.0
+        },
+        {
+          "start": 156.0,
+          "end": 159.0
+        },
+        {
+          "start": 159.0,
+          "end": 164.0
+        },
+        {
+          "start": 164.0,
+          "end": 171.0
+        },
+        {
+          "start": 171.0,
+          "end": 177.0
+        },
+        {
+          "start": 177.0,
+          "end": 199.0
+        },
+        {
+          "start": 199.0,
+          "end": 202.0
+        },
+        {
+          "start": 202.0,
+          "end": 207.0
+        },
+        {
+          "start": 207.0,
+          "end": 215.0
+        },
+        {
+          "start": 215.0,
+          "end": 227.0
+        },
+        {
+          "start": 227.0,
+          "end": 233.0
+        },
+        {
+          "start": 233.0,
+          "end": 243.0
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 243.0,
+        "end": 255.0
+      },
+      {
+        "start": 255.0,
+        "end": 276.0
+      },
+      {
+        "start": 276.0,
+        "end": 286.0
+      },
+      {
+        "start": 286.0,
+        "end": 290.0
+      },
+      {
+        "start": 290.0,
+        "end": 296.0
+      },
+      {
+        "start": 296.0,
+        "end": 300.0
+      },
+      {
+        "start": 300.0,
+        "end": 303.0
+      },
+      {
+        "start": 303.0,
+        "end": 306.0
+      },
+      {
+        "start": 306.0,
+        "end": 308.0
+      },
+      {
+        "start": 308.0,
+        "end": 312.0
+      },
+      {
+        "start": 312.0,
+        "end": 313.0
+      },
+      {
+        "start": 313.0,
+        "end": 318.0
+      },
+      {
+        "start": 318.0,
+        "end": 325.0
+      },
+      {
+        "start": 325.0,
+        "end": 333.0
+      },
+      {
+        "start": 333.0,
+        "end": 339.0
+      },
+      {
+        "start": 339.0,
+        "end": 344.0
+      },
+      {
+        "start": 344.0,
+        "end": 349.0
+      },
+      {
+        "start": 349.0,
+        "end": 355.0
+      },
+      {
+        "start": 355.0,
+        "end": 362.0
+      },
+      {
+        "start": 362.0,
+        "end": 363.0
+      },
+      {
+        "start": 363.0,
+        "end": 365.0
+      },
+      {
+        "start": 365.0,
+        "end": 367.0
+      },
+      {
+        "start": 367.0,
+        "end": 371.0
+      },
+      {
+        "start": 371.0,
+        "end": 375.0
+      },
+      {
+        "start": 375.0,
+        "end": 378.0
+      },
+      {
+        "start": 378.0,
+        "end": 382.0
+      },
+      {
+        "start": 382.0,
+        "end": 384.0
+      },
+      {
+        "start": 384.0,
+        "end": 389.0
+      },
+      {
+        "start": 389.0,
+        "end": 392.0
+      },
+      {
+        "start": 392.0,
+        "end": 396.0
+      },
+      {
+        "start": 396.0,
+        "end": 399.0
+      },
+      {
+        "start": 399.0,
+        "end": 400.0
+      },
+      {
+        "start": 400.0,
+        "end": 406.0
+      },
+      {
+        "start": 406.0,
+        "end": 413.0
+      },
+      {
+        "start": 413.0,
+        "end": 421.0
+      },
+      {
+        "start": 421.0,
+        "end": 424.0
+      }
+    ],
+    "text": "If I stand on my decision, then hardly 3 to 4 guys who got 10, they will get 8.7. Rest 2 marks, 3 marks, 0 marks and that will not be the trace in your mind as well in your lab internal. A section still I had not taken into consideration, but I will be sitting on A section papers. And I will be stringing from A section as well as I will reach it. It will strain me but I will reach a position. A round off and I will make it to the exact marks. I had made whatever you had made mistakes. Don't think that I had not gone through your papers. I will be giving you the papers. You will clearly see how depth I had crossed it with the things. The variation. Wherever you won wrong, all 73 students. And mention. If there is a, I said you earlier in the class itself that even when comma or a curly brace or arrow, you will lose the entire marks, 0. If I stand frame on that, then I would have cut to 0. But, okay, I have provided 100 of 2, 1. At least if they are writing one single line, I have provided a homework. And you are the guys who are not taking anything in common sense. Watch this. I am taking. I am opening. Repending your question paper is not a joke. Thinking from both the things. Whatever I asked, it should be logical, applicable. But, at the same time you should able to understand the paper. At least. I redefined your usage paper only for 12-15 times. Checking again and again and again and again. Whether you could get to the answer or not. But, that will not be the case in your paper. What explain? A blank, blind questions will be given. Repelating from 200 pages of notes is not that much easy. Even in your lab eternal also, we will be giving you a blank questions, blank files. Everything will be included.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 243.0,
+          "end": 255.0
+        },
+        {
+          "start": 255.0,
+          "end": 276.0
+        },
+        {
+          "start": 276.0,
+          "end": 286.0
+        },
+        {
+          "start": 286.0,
+          "end": 290.0
+        },
+        {
+          "start": 290.0,
+          "end": 296.0
+        },
+        {
+          "start": 296.0,
+          "end": 300.0
+        },
+        {
+          "start": 300.0,
+          "end": 303.0
+        },
+        {
+          "start": 303.0,
+          "end": 306.0
+        },
+        {
+          "start": 306.0,
+          "end": 308.0
+        },
+        {
+          "start": 308.0,
+          "end": 312.0
+        },
+        {
+          "start": 312.0,
+          "end": 313.0
+        },
+        {
+          "start": 313.0,
+          "end": 318.0
+        },
+        {
+          "start": 318.0,
+          "end": 325.0
+        },
+        {
+          "start": 325.0,
+          "end": 333.0
+        },
+        {
+          "start": 333.0,
+          "end": 339.0
+        },
+        {
+          "start": 339.0,
+          "end": 344.0
+        },
+        {
+          "start": 344.0,
+          "end": 349.0
+        },
+        {
+          "start": 349.0,
+          "end": 355.0
+        },
+        {
+          "start": 355.0,
+          "end": 362.0
+        },
+        {
+          "start": 362.0,
+          "end": 363.0
+        },
+        {
+          "start": 363.0,
+          "end": 365.0
+        },
+        {
+          "start": 365.0,
+          "end": 367.0
+        },
+        {
+          "start": 367.0,
+          "end": 371.0
+        },
+        {
+          "start": 371.0,
+          "end": 375.0
+        },
+        {
+          "start": 375.0,
+          "end": 378.0
+        },
+        {
+          "start": 378.0,
+          "end": 382.0
+        },
+        {
+          "start": 382.0,
+          "end": 384.0
+        },
+        {
+          "start": 384.0,
+          "end": 389.0
+        },
+        {
+          "start": 389.0,
+          "end": 392.0
+        },
+        {
+          "start": 392.0,
+          "end": 396.0
+        },
+        {
+          "start": 396.0,
+          "end": 399.0
+        },
+        {
+          "start": 399.0,
+          "end": 400.0
+        },
+        {
+          "start": 400.0,
+          "end": 406.0
+        },
+        {
+          "start": 406.0,
+          "end": 413.0
+        },
+        {
+          "start": 413.0,
+          "end": 421.0
+        },
+        {
+          "start": 421.0,
+          "end": 424.0
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 424.0,
+        "end": 433.0
+      },
+      {
+        "start": 433.0,
+        "end": 434.0
+      },
+      {
+        "start": 434.0,
+        "end": 435.0
+      },
+      {
+        "start": 435.0,
+        "end": 442.0
+      },
+      {
+        "start": 442.0,
+        "end": 443.0
+      },
+      {
+        "start": 443.0,
+        "end": 446.0
+      },
+      {
+        "start": 446.0,
+        "end": 449.0
+      },
+      {
+        "start": 449.0,
+        "end": 453.0
+      },
+      {
+        "start": 454.0,
+        "end": 463.0
+      },
+      {
+        "start": 463.0,
+        "end": 473.0
+      },
+      {
+        "start": 473.0,
+        "end": 476.0
+      },
+      {
+        "start": 476.0,
+        "end": 478.0
+      },
+      {
+        "start": 478.0,
+        "end": 480.0
+      },
+      {
+        "start": 481.0,
+        "end": 483.0
+      },
+      {
+        "start": 483.0,
+        "end": 485.0
+      },
+      {
+        "start": 485.0,
+        "end": 488.0
+      },
+      {
+        "start": 488.0,
+        "end": 489.0
+      },
+      {
+        "start": 489.0,
+        "end": 492.0
+      },
+      {
+        "start": 492.0,
+        "end": 499.0
+      },
+      {
+        "start": 499.0,
+        "end": 509.0
+      },
+      {
+        "start": 509.0,
+        "end": 518.0
+      },
+      {
+        "start": 518.0,
+        "end": 536.0
+      },
+      {
+        "start": 536.0,
+        "end": 542.0
+      },
+      {
+        "start": 542.0,
+        "end": 546.0
+      },
+      {
+        "start": 546.0,
+        "end": 551.0
+      },
+      {
+        "start": 551.0,
+        "end": 552.0
+      },
+      {
+        "start": 552.0,
+        "end": 560.0
+      },
+      {
+        "start": 560.0,
+        "end": 562.0
+      },
+      {
+        "start": 562.0,
+        "end": 565.0
+      },
+      {
+        "start": 565.0,
+        "end": 567.0
+      },
+      {
+        "start": 567.0,
+        "end": 570.0
+      },
+      {
+        "start": 570.0,
+        "end": 571.0
+      },
+      {
+        "start": 572.0,
+        "end": 578.0
+      },
+      {
+        "start": 578.0,
+        "end": 584.0
+      },
+      {
+        "start": 584.0,
+        "end": 586.0
+      },
+      {
+        "start": 586.0,
+        "end": 590.0
+      },
+      {
+        "start": 590.0,
+        "end": 597.0
+      },
+      {
+        "start": 597.0,
+        "end": 604.0
+      },
+      {
+        "start": 604.0,
+        "end": 609.0
+      }
+    ],
+    "text": "And event epitons, course, session management, cookies, everything will be there in your lab internet. Fine. What will be the output? Yes, hello. Hello, T-shirt. What will be the output? You can say that answer. What will be the output? Do you know or not? Do you have any idea on that? Anyone? What can be the output? Anyone? Go on. I have given you this task for half an hour. Hopefully, A section. And B section, we have completed it in a study itself. In B section. I can't hear you lovely. That's why you are not saying that. You expect me to ask you using your name. Farglow will register 101, laziness 101. Lizziness will be registered by your Farglow. And you are studying the max Lizziness 200. What does it mean? Is that if more than 100, if it is exceeding 100, laziness, then what happens? A warning will be prompted. Warning will not hold the exhibition. Errors will hold the exhibition. You will be getting only warning. Fine. If you don't want any sort of warning, then you are going to put 0. In notes, it has been minus 1, which is a mistake. Minus 1 is a mistake. Minus 1, you will get an error. If you don't want to set the max limit, then put it as 0. If you are putting set max Lizziness to 0, then what does it mean? You can register as number of Lizziness as you want.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 424.0,
+          "end": 433.0
+        },
+        {
+          "start": 433.0,
+          "end": 434.0
+        },
+        {
+          "start": 434.0,
+          "end": 435.0
+        },
+        {
+          "start": 435.0,
+          "end": 442.0
+        },
+        {
+          "start": 442.0,
+          "end": 443.0
+        },
+        {
+          "start": 443.0,
+          "end": 446.0
+        },
+        {
+          "start": 446.0,
+          "end": 449.0
+        },
+        {
+          "start": 449.0,
+          "end": 453.0
+        },
+        {
+          "start": 454.0,
+          "end": 463.0
+        },
+        {
+          "start": 463.0,
+          "end": 473.0
+        },
+        {
+          "start": 473.0,
+          "end": 476.0
+        },
+        {
+          "start": 476.0,
+          "end": 478.0
+        },
+        {
+          "start": 478.0,
+          "end": 480.0
+        },
+        {
+          "start": 481.0,
+          "end": 483.0
+        },
+        {
+          "start": 483.0,
+          "end": 485.0
+        },
+        {
+          "start": 485.0,
+          "end": 488.0
+        },
+        {
+          "start": 488.0,
+          "end": 489.0
+        },
+        {
+          "start": 489.0,
+          "end": 492.0
+        },
+        {
+          "start": 492.0,
+          "end": 499.0
+        },
+        {
+          "start": 499.0,
+          "end": 509.0
+        },
+        {
+          "start": 509.0,
+          "end": 518.0
+        },
+        {
+          "start": 518.0,
+          "end": 536.0
+        },
+        {
+          "start": 536.0,
+          "end": 542.0
+        },
+        {
+          "start": 542.0,
+          "end": 546.0
+        },
+        {
+          "start": 546.0,
+          "end": 551.0
+        },
+        {
+          "start": 551.0,
+          "end": 552.0
+        },
+        {
+          "start": 552.0,
+          "end": 560.0
+        },
+        {
+          "start": 560.0,
+          "end": 562.0
+        },
+        {
+          "start": 562.0,
+          "end": 565.0
+        },
+        {
+          "start": 565.0,
+          "end": 567.0
+        },
+        {
+          "start": 567.0,
+          "end": 570.0
+        },
+        {
+          "start": 570.0,
+          "end": 571.0
+        },
+        {
+          "start": 572.0,
+          "end": 578.0
+        },
+        {
+          "start": 578.0,
+          "end": 584.0
+        },
+        {
+          "start": 584.0,
+          "end": 586.0
+        },
+        {
+          "start": 586.0,
+          "end": 590.0
+        },
+        {
+          "start": 590.0,
+          "end": 597.0
+        },
+        {
+          "start": 597.0,
+          "end": 604.0
+        },
+        {
+          "start": 604.0,
+          "end": 609.0
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 609.0,
+        "end": 611.0
+      },
+      {
+        "start": 611.0,
+        "end": 613.0
+      },
+      {
+        "start": 613.0,
+        "end": 617.0
+      },
+      {
+        "start": 617.0,
+        "end": 618.0
+      },
+      {
+        "start": 618.0,
+        "end": 621.0
+      },
+      {
+        "start": 621.0,
+        "end": 623.0
+      },
+      {
+        "start": 623.0,
+        "end": 646.0
+      },
+      {
+        "start": 646.0,
+        "end": 656.0
+      },
+      {
+        "start": 656.0,
+        "end": 669.0
+      },
+      {
+        "start": 669.0,
+        "end": 686.0
+      },
+      {
+        "start": 686.0,
+        "end": 698.0
+      },
+      {
+        "start": 698.0,
+        "end": 710.0
+      },
+      {
+        "start": 710.0,
+        "end": 717.0
+      },
+      {
+        "start": 717.0,
+        "end": 727.0
+      },
+      {
+        "start": 748.0,
+        "end": 754.0
+      },
+      {
+        "start": 754.0,
+        "end": 763.0
+      },
+      {
+        "start": 763.0,
+        "end": 768.0
+      },
+      {
+        "start": 768.0,
+        "end": 769.0
+      },
+      {
+        "start": 769.0,
+        "end": 776.0
+      },
+      {
+        "start": 776.0,
+        "end": 777.0
+      },
+      {
+        "start": 777.0,
+        "end": 785.0
+      },
+      {
+        "start": 785.0,
+        "end": 797.0
+      },
+      {
+        "start": 797.0,
+        "end": 798.0
+      },
+      {
+        "start": 798.0,
+        "end": 804.0
+      },
+      {
+        "start": 804.0,
+        "end": 810.0
+      }
+    ],
+    "text": "We don't have any restriction. No warnings. Any number of Lizziness are going to be registered. Fine. If you are keeping it empty. If you are keeping it empty. If you are keeping it empty, set max Lizziness. Just writing once, exerting. But by default, it should be taking 10. Actually, it has to work. But after 10, this thing, it has to throw you an error. If you are keeping it empty, set max Lizziness to 0. If you are keeping it empty, set max Lizziness to 0. If you are keeping it empty. If you are not setting any max limit, if you are not setting anything, if you are commenting on that line, then by default, no j's has a limit for number of Lizziness. And that is going to be 10. Fine. I am commenting on that chart dot set max Lizziness. Fine. Go to core input modules. Okay, over here, what we will be focusing much is what is going to be your buffers, strings, utils. Whereas bar, OAS and FS, we have done earlier in the earlier classes itself. How to work with synchronous file system and asynchronous file system?",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 609.0,
+          "end": 611.0
+        },
+        {
+          "start": 611.0,
+          "end": 613.0
+        },
+        {
+          "start": 613.0,
+          "end": 617.0
+        },
+        {
+          "start": 617.0,
+          "end": 618.0
+        },
+        {
+          "start": 618.0,
+          "end": 621.0
+        },
+        {
+          "start": 621.0,
+          "end": 623.0
+        },
+        {
+          "start": 623.0,
+          "end": 646.0
+        },
+        {
+          "start": 646.0,
+          "end": 656.0
+        },
+        {
+          "start": 656.0,
+          "end": 669.0
+        },
+        {
+          "start": 669.0,
+          "end": 686.0
+        },
+        {
+          "start": 686.0,
+          "end": 698.0
+        },
+        {
+          "start": 698.0,
+          "end": 710.0
+        },
+        {
+          "start": 710.0,
+          "end": 717.0
+        },
+        {
+          "start": 717.0,
+          "end": 727.0
+        },
+        {
+          "start": 748.0,
+          "end": 754.0
+        },
+        {
+          "start": 754.0,
+          "end": 763.0
+        },
+        {
+          "start": 763.0,
+          "end": 768.0
+        },
+        {
+          "start": 768.0,
+          "end": 769.0
+        },
+        {
+          "start": 769.0,
+          "end": 776.0
+        },
+        {
+          "start": 776.0,
+          "end": 777.0
+        },
+        {
+          "start": 777.0,
+          "end": 785.0
+        },
+        {
+          "start": 785.0,
+          "end": 797.0
+        },
+        {
+          "start": 797.0,
+          "end": 798.0
+        },
+        {
+          "start": 798.0,
+          "end": 804.0
+        },
+        {
+          "start": 804.0,
+          "end": 810.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C05",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 810.0,
+        "end": 811.0
+      },
+      {
+        "start": 811.0,
+        "end": 816.0
+      },
+      {
+        "start": 816.0,
+        "end": 822.0
+      },
+      {
+        "start": 822.0,
+        "end": 827.0
+      },
+      {
+        "start": 827.0,
+        "end": 834.0
+      },
+      {
+        "start": 834.0,
+        "end": 842.0
+      },
+      {
+        "start": 842.0,
+        "end": 849.0
+      },
+      {
+        "start": 849.0,
+        "end": 856.0
+      },
+      {
+        "start": 856.0,
+        "end": 863.0
+      },
+      {
+        "start": 863.0,
+        "end": 870.0
+      },
+      {
+        "start": 871.0,
+        "end": 877.0
+      },
+      {
+        "start": 877.0,
+        "end": 882.0
+      },
+      {
+        "start": 882.0,
+        "end": 885.0
+      },
+      {
+        "start": 885.0,
+        "end": 888.0
+      },
+      {
+        "start": 888.0,
+        "end": 892.0
+      },
+      {
+        "start": 892.0,
+        "end": 895.0
+      },
+      {
+        "start": 895.0,
+        "end": 902.0
+      },
+      {
+        "start": 902.0,
+        "end": 909.0
+      },
+      {
+        "start": 909.0,
+        "end": 915.0
+      },
+      {
+        "start": 915.0,
+        "end": 918.0
+      },
+      {
+        "start": 918.0,
+        "end": 923.0
+      },
+      {
+        "start": 923.0,
+        "end": 928.0
+      },
+      {
+        "start": 928.0,
+        "end": 935.0
+      },
+      {
+        "start": 935.0,
+        "end": 940.0
+      },
+      {
+        "start": 940.0,
+        "end": 943.0
+      },
+      {
+        "start": 943.0,
+        "end": 951.0
+      },
+      {
+        "start": 951.0,
+        "end": 955.0
+      },
+      {
+        "start": 955.0,
+        "end": 958.0
+      },
+      {
+        "start": 958.0,
+        "end": 963.0
+      },
+      {
+        "start": 963.0,
+        "end": 965.0
+      },
+      {
+        "start": 965.0,
+        "end": 967.0
+      },
+      {
+        "start": 967.0,
+        "end": 970.0
+      },
+      {
+        "start": 970.0,
+        "end": 975.0
+      },
+      {
+        "start": 975.0,
+        "end": 982.0
+      },
+      {
+        "start": 982.0,
+        "end": 990.0
+      },
+      {
+        "start": 990.0,
+        "end": 994.0
+      }
+    ],
+    "text": "That has been already done. If you want to be able to have a run through FS modules and bar then OS. Go to FS first, ex1. Open everyone has this module number 6. You can close the rest of the fence. Open up module 6. FS modules dot j's, ex1. Open up module 6. Open up module 6. Open up module 6. Have everyone open, run and execute, execute and see what is happening. See here, we can work with files in various ways. You can write to a file, you can read from a file. It is synchronous and asynchronous. You can make it directory, you can delete a directory. You can list the files in a directory. All these operations you can perform it either in synchronous manner or a synchronous manner. If you are using synchronous, then if I am going to read some file in synchronous manner, then the function we are going to use is FS dot read file sync. Write a file, write file sync. If you want to make it directory, make MKDAR sync. Getting my points, list the files again sync. sync is the common term or keyword which you are going to see in the function called. If it is an asynchronous, read file, write file and so on. Make that MKDAR simply MKDAR. So in this case what we are doing here is we are using path.join on the current working directory which is being given using underscore underscore directory name. Can you highlight the lines we are answering? Line number 7 underscore underscore directory name will provide you the current working directory from where you are executing the things. Where this file is present? Where this file is present? I am not taking resolve, I am taking joint. And data is going to be added and then data is going to be joined with the current working directory. And we are checking whether data folder is present or not in if condition. If it is not present, then make it directory for that.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C05",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 810.0,
+          "end": 811.0
+        },
+        {
+          "start": 811.0,
+          "end": 816.0
+        },
+        {
+          "start": 816.0,
+          "end": 822.0
+        },
+        {
+          "start": 822.0,
+          "end": 827.0
+        },
+        {
+          "start": 827.0,
+          "end": 834.0
+        },
+        {
+          "start": 834.0,
+          "end": 842.0
+        },
+        {
+          "start": 842.0,
+          "end": 849.0
+        },
+        {
+          "start": 849.0,
+          "end": 856.0
+        },
+        {
+          "start": 856.0,
+          "end": 863.0
+        },
+        {
+          "start": 863.0,
+          "end": 870.0
+        },
+        {
+          "start": 871.0,
+          "end": 877.0
+        },
+        {
+          "start": 877.0,
+          "end": 882.0
+        },
+        {
+          "start": 882.0,
+          "end": 885.0
+        },
+        {
+          "start": 885.0,
+          "end": 888.0
+        },
+        {
+          "start": 888.0,
+          "end": 892.0
+        },
+        {
+          "start": 892.0,
+          "end": 895.0
+        },
+        {
+          "start": 895.0,
+          "end": 902.0
+        },
+        {
+          "start": 902.0,
+          "end": 909.0
+        },
+        {
+          "start": 909.0,
+          "end": 915.0
+        },
+        {
+          "start": 915.0,
+          "end": 918.0
+        },
+        {
+          "start": 918.0,
+          "end": 923.0
+        },
+        {
+          "start": 923.0,
+          "end": 928.0
+        },
+        {
+          "start": 928.0,
+          "end": 935.0
+        },
+        {
+          "start": 935.0,
+          "end": 940.0
+        },
+        {
+          "start": 940.0,
+          "end": 943.0
+        },
+        {
+          "start": 943.0,
+          "end": 951.0
+        },
+        {
+          "start": 951.0,
+          "end": 955.0
+        },
+        {
+          "start": 955.0,
+          "end": 958.0
+        },
+        {
+          "start": 958.0,
+          "end": 963.0
+        },
+        {
+          "start": 963.0,
+          "end": 965.0
+        },
+        {
+          "start": 965.0,
+          "end": 967.0
+        },
+        {
+          "start": 967.0,
+          "end": 970.0
+        },
+        {
+          "start": 970.0,
+          "end": 975.0
+        },
+        {
+          "start": 975.0,
+          "end": 982.0
+        },
+        {
+          "start": 982.0,
+          "end": 990.0
+        },
+        {
+          "start": 990.0,
+          "end": 994.0
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C06",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 994.0,
+        "end": 1000.0
+      },
+      {
+        "start": 1001.0,
+        "end": 1004.0
+      },
+      {
+        "start": 1004.0,
+        "end": 1011.0
+      },
+      {
+        "start": 1011.0,
+        "end": 1019.0
+      },
+      {
+        "start": 1019.0,
+        "end": 1026.0
+      },
+      {
+        "start": 1027.0,
+        "end": 1035.0
+      },
+      {
+        "start": 1035.0,
+        "end": 1042.0
+      },
+      {
+        "start": 1042.0,
+        "end": 1048.0
+      },
+      {
+        "start": 1048.0,
+        "end": 1050.0
+      },
+      {
+        "start": 1050.0,
+        "end": 1052.0
+      },
+      {
+        "start": 1052.0,
+        "end": 1058.0
+      },
+      {
+        "start": 1058.0,
+        "end": 1061.0
+      },
+      {
+        "start": 1061.0,
+        "end": 1066.0
+      },
+      {
+        "start": 1066.0,
+        "end": 1068.0
+      },
+      {
+        "start": 1068.0,
+        "end": 1069.0
+      },
+      {
+        "start": 1069.0,
+        "end": 1076.0
+      },
+      {
+        "start": 1076.0,
+        "end": 1080.0
+      },
+      {
+        "start": 1080.0,
+        "end": 1087.0
+      },
+      {
+        "start": 1087.0,
+        "end": 1090.0
+      },
+      {
+        "start": 1090.0,
+        "end": 1096.0
+      },
+      {
+        "start": 1096.0,
+        "end": 1100.0
+      },
+      {
+        "start": 1100.0,
+        "end": 1104.0
+      },
+      {
+        "start": 1104.0,
+        "end": 1108.0
+      },
+      {
+        "start": 1108.0,
+        "end": 1117.0
+      },
+      {
+        "start": 1117.0,
+        "end": 1124.0
+      },
+      {
+        "start": 1124.0,
+        "end": 1127.0
+      },
+      {
+        "start": 1127.0,
+        "end": 1132.0
+      },
+      {
+        "start": 1132.0,
+        "end": 1135.0
+      },
+      {
+        "start": 1135.0,
+        "end": 1150.0
+      },
+      {
+        "start": 1150.0,
+        "end": 1153.0
+      },
+      {
+        "start": 1153.0,
+        "end": 1156.0
+      },
+      {
+        "start": 1156.0,
+        "end": 1159.0
+      },
+      {
+        "start": 1159.0,
+        "end": 1167.0
+      },
+      {
+        "start": 1167.0,
+        "end": 1169.0
+      },
+      {
+        "start": 1169.0,
+        "end": 1172.0
+      },
+      {
+        "start": 1172.0,
+        "end": 1177.0
+      }
+    ],
+    "text": "And make it directory for that in a synchronous manner, FS dot MKDAR sync. Getting the things, scroll up. And oh this, wherever we are pointing, make sure that it should be on the top of the screen. And we are passing the variable data folder where we are scrolling the current directory with data. And this MKDAR sync or MKDAR, what it will be doing is, if in the current directory which you are providing, say, can you type it out as a comment. Say, if you are providing, instead of underscore underscore DA, DA directory and name, if you are providing some A slash B slash C, A slash B slash C. What are these A, B, C? There are the directory needs. And within that A, there is, we do have a folder with the name A. Within that, we do have a folder name to be. Within that, we do have a folder C. Within that, data should be created. Are ABC present? No. If ABC directory is not present, what your MKDAR will do is, it will create multiple directives. That is the reason why we will be using recursive. Hopefully, it is not there over here, but in the coming examples, you will see recursive true. Recursive true, why we are using that? Because it has to create recursively, if the provided directory is not present, that we will be looking in further things. But for typing, we are creating a directory with the name data. Then, scroll up to 122. Or you have what we are doing in the data folder, we want to join with example.phd file. This example.phd file is present under data, just expand and check. If you had executed that, you will see that. If you would have executed, data folder is empty. We do not have any example.phd file. If you want, you can delete the example.phd and you can re-run and you can re-check that example.phd will be created dynamically using your right file sync function. Right file sync will be creating. If the file is already present, no issues. It will write to the current file only. But here the process, if the file is already there and certain content is present in that file, it will overwrite that particular file. It will not append, it will overwrite. Getting the things, branch it, go in.",
+    "material_refs": [],
+    "topic_candidates": [
+      "branch"
+    ],
+    "evidence": {
+      "evidence_id": "E_C06",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 994.0,
+          "end": 1000.0
+        },
+        {
+          "start": 1001.0,
+          "end": 1004.0
+        },
+        {
+          "start": 1004.0,
+          "end": 1011.0
+        },
+        {
+          "start": 1011.0,
+          "end": 1019.0
+        },
+        {
+          "start": 1019.0,
+          "end": 1026.0
+        },
+        {
+          "start": 1027.0,
+          "end": 1035.0
+        },
+        {
+          "start": 1035.0,
+          "end": 1042.0
+        },
+        {
+          "start": 1042.0,
+          "end": 1048.0
+        },
+        {
+          "start": 1048.0,
+          "end": 1050.0
+        },
+        {
+          "start": 1050.0,
+          "end": 1052.0
+        },
+        {
+          "start": 1052.0,
+          "end": 1058.0
+        },
+        {
+          "start": 1058.0,
+          "end": 1061.0
+        },
+        {
+          "start": 1061.0,
+          "end": 1066.0
+        },
+        {
+          "start": 1066.0,
+          "end": 1068.0
+        },
+        {
+          "start": 1068.0,
+          "end": 1069.0
+        },
+        {
+          "start": 1069.0,
+          "end": 1076.0
+        },
+        {
+          "start": 1076.0,
+          "end": 1080.0
+        },
+        {
+          "start": 1080.0,
+          "end": 1087.0
+        },
+        {
+          "start": 1087.0,
+          "end": 1090.0
+        },
+        {
+          "start": 1090.0,
+          "end": 1096.0
+        },
+        {
+          "start": 1096.0,
+          "end": 1100.0
+        },
+        {
+          "start": 1100.0,
+          "end": 1104.0
+        },
+        {
+          "start": 1104.0,
+          "end": 1108.0
+        },
+        {
+          "start": 1108.0,
+          "end": 1117.0
+        },
+        {
+          "start": 1117.0,
+          "end": 1124.0
+        },
+        {
+          "start": 1124.0,
+          "end": 1127.0
+        },
+        {
+          "start": 1127.0,
+          "end": 1132.0
+        },
+        {
+          "start": 1132.0,
+          "end": 1135.0
+        },
+        {
+          "start": 1135.0,
+          "end": 1150.0
+        },
+        {
+          "start": 1150.0,
+          "end": 1153.0
+        },
+        {
+          "start": 1153.0,
+          "end": 1156.0
+        },
+        {
+          "start": 1156.0,
+          "end": 1159.0
+        },
+        {
+          "start": 1159.0,
+          "end": 1167.0
+        },
+        {
+          "start": 1167.0,
+          "end": 1169.0
+        },
+        {
+          "start": 1169.0,
+          "end": 1172.0
+        },
+        {
+          "start": 1172.0,
+          "end": 1177.0
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 1,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C07",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1177.0,
+        "end": 1182.0
+      },
+      {
+        "start": 1182.0,
+        "end": 1184.0
+      },
+      {
+        "start": 1184.0,
+        "end": 1187.0
+      },
+      {
+        "start": 1188.0,
+        "end": 1192.0
+      },
+      {
+        "start": 1198.0,
+        "end": 1200.0
+      },
+      {
+        "start": 1200.0,
+        "end": 1204.0
+      },
+      {
+        "start": 1204.0,
+        "end": 1207.0
+      },
+      {
+        "start": 1207.0,
+        "end": 1216.0
+      },
+      {
+        "start": 1216.0,
+        "end": 1220.0
+      },
+      {
+        "start": 1220.0,
+        "end": 1227.0
+      },
+      {
+        "start": 1227.0,
+        "end": 1231.0
+      },
+      {
+        "start": 1231.0,
+        "end": 1234.0
+      },
+      {
+        "start": 1235.0,
+        "end": 1239.0
+      },
+      {
+        "start": 1245.0,
+        "end": 1247.0
+      },
+      {
+        "start": 1247.0,
+        "end": 1251.0
+      },
+      {
+        "start": 1251.0,
+        "end": 1254.0
+      },
+      {
+        "start": 1254.0,
+        "end": 1257.0
+      },
+      {
+        "start": 1257.0,
+        "end": 1258.0
+      },
+      {
+        "start": 1258.0,
+        "end": 1261.0
+      },
+      {
+        "start": 1261.0,
+        "end": 1264.0
+      },
+      {
+        "start": 1264.0,
+        "end": 1266.0
+      },
+      {
+        "start": 1266.0,
+        "end": 1270.0
+      },
+      {
+        "start": 1270.0,
+        "end": 1273.0
+      },
+      {
+        "start": 1273.0,
+        "end": 1274.0
+      },
+      {
+        "start": 1274.0,
+        "end": 1276.0
+      },
+      {
+        "start": 1276.0,
+        "end": 1278.0
+      },
+      {
+        "start": 1278.0,
+        "end": 1280.0
+      },
+      {
+        "start": 1280.0,
+        "end": 1282.0
+      },
+      {
+        "start": 1282.0,
+        "end": 1285.0
+      },
+      {
+        "start": 1285.0,
+        "end": 1289.0
+      },
+      {
+        "start": 1289.0,
+        "end": 1292.0
+      },
+      {
+        "start": 1292.0,
+        "end": 1295.0
+      },
+      {
+        "start": 1295.0,
+        "end": 1298.0
+      },
+      {
+        "start": 1298.0,
+        "end": 1300.0
+      },
+      {
+        "start": 1300.0,
+        "end": 1302.0
+      },
+      {
+        "start": 1302.0,
+        "end": 1304.0
+      },
+      {
+        "start": 1304.0,
+        "end": 1305.0
+      },
+      {
+        "start": 1305.0,
+        "end": 1308.0
+      },
+      {
+        "start": 1308.0,
+        "end": 1309.0
+      },
+      {
+        "start": 1309.0,
+        "end": 1310.0
+      },
+      {
+        "start": 1310.0,
+        "end": 1312.0
+      },
+      {
+        "start": 1312.0,
+        "end": 1314.0
+      },
+      {
+        "start": 1314.0,
+        "end": 1316.0
+      },
+      {
+        "start": 1316.0,
+        "end": 1318.0
+      },
+      {
+        "start": 1318.0,
+        "end": 1320.0
+      },
+      {
+        "start": 1320.0,
+        "end": 1322.0
+      },
+      {
+        "start": 1322.0,
+        "end": 1323.0
+      },
+      {
+        "start": 1323.0,
+        "end": 1325.0
+      },
+      {
+        "start": 1325.0,
+        "end": 1328.0
+      },
+      {
+        "start": 1328.0,
+        "end": 1330.0
+      },
+      {
+        "start": 1330.0,
+        "end": 1332.0
+      },
+      {
+        "start": 1332.0,
+        "end": 1334.0
+      },
+      {
+        "start": 1334.0,
+        "end": 1336.0
+      },
+      {
+        "start": 1336.0,
+        "end": 1338.0
+      },
+      {
+        "start": 1338.0,
+        "end": 1339.0
+      },
+      {
+        "start": 1339.0,
+        "end": 1341.0
+      },
+      {
+        "start": 1341.0,
+        "end": 1343.0
+      },
+      {
+        "start": 1343.0,
+        "end": 1345.0
+      },
+      {
+        "start": 1345.0,
+        "end": 1348.0
+      },
+      {
+        "start": 1348.0,
+        "end": 1352.0
+      },
+      {
+        "start": 1352.0,
+        "end": 1354.0
+      },
+      {
+        "start": 1354.0,
+        "end": 1359.0
+      },
+      {
+        "start": 1359.0,
+        "end": 1360.0
+      },
+      {
+        "start": 1360.0,
+        "end": 1361.0
+      },
+      {
+        "start": 1361.0,
+        "end": 1365.0
+      },
+      {
+        "start": 1365.0,
+        "end": 1369.0
+      },
+      {
+        "start": 1369.0,
+        "end": 1372.0
+      }
+    ],
+    "text": "Sir, acting Charlie, why you are getting lost? Can I know the reason? Sir, I am so much stressed out. If you could save, then I will relax. Can you show your face to your friends? Stand up and join your teammates. Stand up. If you could save me the reason, why you are not feeling them? It is okay, if the reason is genuine. Okay, you are opening the wrong file and you are getting the law. Why me here? Sorry. And you are checking whatever this code is there in session file. Fine. Right file sync will create a file if the file is not present, it will overwrite the content which is available in the example, but in each event, in case you are memory list of technology. Fine. Then if you want to read the file, which you have created just now, then we are going to use read file sync, fs.read file sync and the file file path, and where you are going to basically. And while you are reading, you are going to provide the format, UDF8. If you are not providing the format, what happens? You will be getting the performant strings. The data will be 0, 0, 0, 0, 1, 3F and so on. Providing the format, it will convert the content because at the end of the day, the string stopping by here, learning about the topic is that, at the end of the day, when you are saving certain binary data, such as images, media files, or else video files, these, at the end of the day, on the day, it will be stored, it will be stored, performant, that is ASCII format, that is byte format. We cannot read the data, which is in bytes. So in order to have a conversion from byte sync to, what we will say, human readable language, we are using the format. UDF stands for, UDF also takes to performant. And 8 is 18. UDF 16 means 16 conversions. 5. Example 2. In this example, what we are doing, we are trying to scroll. Till line number 14, same as the previous example 1,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C07",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1177.0,
+          "end": 1182.0
+        },
+        {
+          "start": 1182.0,
+          "end": 1184.0
+        },
+        {
+          "start": 1184.0,
+          "end": 1187.0
+        },
+        {
+          "start": 1188.0,
+          "end": 1192.0
+        },
+        {
+          "start": 1198.0,
+          "end": 1200.0
+        },
+        {
+          "start": 1200.0,
+          "end": 1204.0
+        },
+        {
+          "start": 1204.0,
+          "end": 1207.0
+        },
+        {
+          "start": 1207.0,
+          "end": 1216.0
+        },
+        {
+          "start": 1216.0,
+          "end": 1220.0
+        },
+        {
+          "start": 1220.0,
+          "end": 1227.0
+        },
+        {
+          "start": 1227.0,
+          "end": 1231.0
+        },
+        {
+          "start": 1231.0,
+          "end": 1234.0
+        },
+        {
+          "start": 1235.0,
+          "end": 1239.0
+        },
+        {
+          "start": 1245.0,
+          "end": 1247.0
+        },
+        {
+          "start": 1247.0,
+          "end": 1251.0
+        },
+        {
+          "start": 1251.0,
+          "end": 1254.0
+        },
+        {
+          "start": 1254.0,
+          "end": 1257.0
+        },
+        {
+          "start": 1257.0,
+          "end": 1258.0
+        },
+        {
+          "start": 1258.0,
+          "end": 1261.0
+        },
+        {
+          "start": 1261.0,
+          "end": 1264.0
+        },
+        {
+          "start": 1264.0,
+          "end": 1266.0
+        },
+        {
+          "start": 1266.0,
+          "end": 1270.0
+        },
+        {
+          "start": 1270.0,
+          "end": 1273.0
+        },
+        {
+          "start": 1273.0,
+          "end": 1274.0
+        },
+        {
+          "start": 1274.0,
+          "end": 1276.0
+        },
+        {
+          "start": 1276.0,
+          "end": 1278.0
+        },
+        {
+          "start": 1278.0,
+          "end": 1280.0
+        },
+        {
+          "start": 1280.0,
+          "end": 1282.0
+        },
+        {
+          "start": 1282.0,
+          "end": 1285.0
+        },
+        {
+          "start": 1285.0,
+          "end": 1289.0
+        },
+        {
+          "start": 1289.0,
+          "end": 1292.0
+        },
+        {
+          "start": 1292.0,
+          "end": 1295.0
+        },
+        {
+          "start": 1295.0,
+          "end": 1298.0
+        },
+        {
+          "start": 1298.0,
+          "end": 1300.0
+        },
+        {
+          "start": 1300.0,
+          "end": 1302.0
+        },
+        {
+          "start": 1302.0,
+          "end": 1304.0
+        },
+        {
+          "start": 1304.0,
+          "end": 1305.0
+        },
+        {
+          "start": 1305.0,
+          "end": 1308.0
+        },
+        {
+          "start": 1308.0,
+          "end": 1309.0
+        },
+        {
+          "start": 1309.0,
+          "end": 1310.0
+        },
+        {
+          "start": 1310.0,
+          "end": 1312.0
+        },
+        {
+          "start": 1312.0,
+          "end": 1314.0
+        },
+        {
+          "start": 1314.0,
+          "end": 1316.0
+        },
+        {
+          "start": 1316.0,
+          "end": 1318.0
+        },
+        {
+          "start": 1318.0,
+          "end": 1320.0
+        },
+        {
+          "start": 1320.0,
+          "end": 1322.0
+        },
+        {
+          "start": 1322.0,
+          "end": 1323.0
+        },
+        {
+          "start": 1323.0,
+          "end": 1325.0
+        },
+        {
+          "start": 1325.0,
+          "end": 1328.0
+        },
+        {
+          "start": 1328.0,
+          "end": 1330.0
+        },
+        {
+          "start": 1330.0,
+          "end": 1332.0
+        },
+        {
+          "start": 1332.0,
+          "end": 1334.0
+        },
+        {
+          "start": 1334.0,
+          "end": 1336.0
+        },
+        {
+          "start": 1336.0,
+          "end": 1338.0
+        },
+        {
+          "start": 1338.0,
+          "end": 1339.0
+        },
+        {
+          "start": 1339.0,
+          "end": 1341.0
+        },
+        {
+          "start": 1341.0,
+          "end": 1343.0
+        },
+        {
+          "start": 1343.0,
+          "end": 1345.0
+        },
+        {
+          "start": 1345.0,
+          "end": 1348.0
+        },
+        {
+          "start": 1348.0,
+          "end": 1352.0
+        },
+        {
+          "start": 1352.0,
+          "end": 1354.0
+        },
+        {
+          "start": 1354.0,
+          "end": 1359.0
+        },
+        {
+          "start": 1359.0,
+          "end": 1360.0
+        },
+        {
+          "start": 1360.0,
+          "end": 1361.0
+        },
+        {
+          "start": 1361.0,
+          "end": 1365.0
+        },
+        {
+          "start": 1365.0,
+          "end": 1369.0
+        },
+        {
+          "start": 1369.0,
+          "end": 1372.0
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": true,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C08",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1372.0,
+        "end": 1373.0
+      },
+      {
+        "start": 1373.0,
+        "end": 1375.0
+      },
+      {
+        "start": 1375.0,
+        "end": 1377.0
+      },
+      {
+        "start": 1377.0,
+        "end": 1379.0
+      },
+      {
+        "start": 1379.0,
+        "end": 1381.0
+      },
+      {
+        "start": 1381.0,
+        "end": 1383.0
+      },
+      {
+        "start": 1383.0,
+        "end": 1384.0
+      },
+      {
+        "start": 1384.0,
+        "end": 1386.0
+      },
+      {
+        "start": 1386.0,
+        "end": 1388.0
+      },
+      {
+        "start": 1388.0,
+        "end": 1390.0
+      },
+      {
+        "start": 1390.0,
+        "end": 1391.0
+      },
+      {
+        "start": 1391.0,
+        "end": 1394.0
+      },
+      {
+        "start": 1394.0,
+        "end": 1396.0
+      },
+      {
+        "start": 1396.0,
+        "end": 1399.0
+      },
+      {
+        "start": 1399.0,
+        "end": 1401.0
+      },
+      {
+        "start": 1401.0,
+        "end": 1403.0
+      },
+      {
+        "start": 1403.0,
+        "end": 1405.0
+      },
+      {
+        "start": 1405.0,
+        "end": 1406.0
+      },
+      {
+        "start": 1406.0,
+        "end": 1408.0
+      },
+      {
+        "start": 1408.0,
+        "end": 1410.0
+      },
+      {
+        "start": 1410.0,
+        "end": 1414.0
+      },
+      {
+        "start": 1414.0,
+        "end": 1416.0
+      },
+      {
+        "start": 1416.0,
+        "end": 1419.0
+      },
+      {
+        "start": 1419.0,
+        "end": 1420.0
+      },
+      {
+        "start": 1420.0,
+        "end": 1421.0
+      },
+      {
+        "start": 1421.0,
+        "end": 1423.0
+      },
+      {
+        "start": 1423.0,
+        "end": 1425.0
+      },
+      {
+        "start": 1425.0,
+        "end": 1428.0
+      },
+      {
+        "start": 1428.0,
+        "end": 1429.0
+      },
+      {
+        "start": 1429.0,
+        "end": 1431.0
+      },
+      {
+        "start": 1431.0,
+        "end": 1433.0
+      },
+      {
+        "start": 1433.0,
+        "end": 1435.0
+      },
+      {
+        "start": 1435.0,
+        "end": 1437.0
+      },
+      {
+        "start": 1437.0,
+        "end": 1439.0
+      },
+      {
+        "start": 1439.0,
+        "end": 1441.0
+      },
+      {
+        "start": 1441.0,
+        "end": 1442.0
+      },
+      {
+        "start": 1442.0,
+        "end": 1444.0
+      },
+      {
+        "start": 1444.0,
+        "end": 1445.0
+      },
+      {
+        "start": 1445.0,
+        "end": 1446.0
+      },
+      {
+        "start": 1446.0,
+        "end": 1447.0
+      },
+      {
+        "start": 1447.0,
+        "end": 1450.0
+      },
+      {
+        "start": 1450.0,
+        "end": 1451.0
+      },
+      {
+        "start": 1451.0,
+        "end": 1452.0
+      },
+      {
+        "start": 1452.0,
+        "end": 1453.0
+      },
+      {
+        "start": 1453.0,
+        "end": 1455.0
+      },
+      {
+        "start": 1455.0,
+        "end": 1457.0
+      },
+      {
+        "start": 1457.0,
+        "end": 1459.0
+      },
+      {
+        "start": 1459.0,
+        "end": 1460.0
+      },
+      {
+        "start": 1460.0,
+        "end": 1463.0
+      },
+      {
+        "start": 1463.0,
+        "end": 1465.0
+      },
+      {
+        "start": 1465.0,
+        "end": 1468.0
+      },
+      {
+        "start": 1468.0,
+        "end": 1471.0
+      },
+      {
+        "start": 1471.0,
+        "end": 1473.0
+      },
+      {
+        "start": 1473.0,
+        "end": 1474.0
+      },
+      {
+        "start": 1474.0,
+        "end": 1475.0
+      },
+      {
+        "start": 1475.0,
+        "end": 1478.0
+      },
+      {
+        "start": 1478.0,
+        "end": 1480.0
+      },
+      {
+        "start": 1480.0,
+        "end": 1482.0
+      },
+      {
+        "start": 1482.0,
+        "end": 1484.0
+      },
+      {
+        "start": 1484.0,
+        "end": 1486.0
+      },
+      {
+        "start": 1486.0,
+        "end": 1487.0
+      },
+      {
+        "start": 1487.0,
+        "end": 1489.0
+      },
+      {
+        "start": 1489.0,
+        "end": 1491.0
+      },
+      {
+        "start": 1491.0,
+        "end": 1493.0
+      },
+      {
+        "start": 1493.0,
+        "end": 1494.0
+      },
+      {
+        "start": 1494.0,
+        "end": 1497.0
+      },
+      {
+        "start": 1497.0,
+        "end": 1501.0
+      },
+      {
+        "start": 1501.0,
+        "end": 1504.0
+      },
+      {
+        "start": 1510.0,
+        "end": 1513.0
+      },
+      {
+        "start": 1513.0,
+        "end": 1515.0
+      },
+      {
+        "start": 1515.0,
+        "end": 1518.0
+      },
+      {
+        "start": 1518.0,
+        "end": 1525.0
+      },
+      {
+        "start": 1525.0,
+        "end": 1526.0
+      },
+      {
+        "start": 1526.0,
+        "end": 1528.0
+      },
+      {
+        "start": 1528.0,
+        "end": 1529.0
+      },
+      {
+        "start": 1529.0,
+        "end": 1531.0
+      },
+      {
+        "start": 1531.0,
+        "end": 1532.0
+      },
+      {
+        "start": 1532.0,
+        "end": 1536.0
+      },
+      {
+        "start": 1536.0,
+        "end": 1541.0
+      },
+      {
+        "start": 1541.0,
+        "end": 1543.0
+      },
+      {
+        "start": 1543.0,
+        "end": 1548.0
+      },
+      {
+        "start": 1548.0,
+        "end": 1549.0
+      },
+      {
+        "start": 1549.0,
+        "end": 1550.0
+      },
+      {
+        "start": 1550.0,
+        "end": 1551.0
+      },
+      {
+        "start": 1551.0,
+        "end": 1552.0
+      },
+      {
+        "start": 1552.0,
+        "end": 1553.0
+      },
+      {
+        "start": 1553.0,
+        "end": 1556.0
+      },
+      {
+        "start": 1556.0,
+        "end": 1561.0
+      }
+    ],
+    "text": "the change, which is there is that, I do not want to rewrite the content, which is there is a file. I want to append to the existing file. Then, the function, which we are going to use, is append, append file sync. And every time, please do remember, that we are going to use a candle case. Append file sync, will append a content that is autonomous institution, both the previous line, which we have already written, that is case of memory, instead of take note. Instead of all write. Next example. I am focusing on only the differences, between all these examples. In this example, what we are doing, we are using it, asynchronous way of writing a file and asynchronous way of reading a file. Same thing, without any change, in the code, the change is, instead of read file sync, we are using read file. Instead of write file sync, we are using write file. With error first, condition, convention, error first convention, which we had a discussion yesterday. Hence, whatever parameters, which you are passing, to a callback function, error should be the first thing. Is it mandatory? No. It is a standard convention, which is being followed by error data. If you do not know issues, it is your issue. Next, instead of append file sync, we are using append file. In the same example, you can see at the bottom. Right? Access number 4. What we are doing over here? Unlink. Unlink. What we will do? It will remove. Unlink will remove. What? A file or a director? Unlink will delete a file or a director? Sorry. Remove or delete? Just run and check. Access number 4. Whether it delete a file or a director? Obviously, in this case, it is a file. Obviously, in this case, we are providing the file path. That is whatever file, which you have created. But can we delete? Not in session file. We are in session 6. Space. CD. Space. We are calling. CD. Session 6. 1, 2, 3, 4, 5, 6.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C08",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1372.0,
+          "end": 1373.0
+        },
+        {
+          "start": 1373.0,
+          "end": 1375.0
+        },
+        {
+          "start": 1375.0,
+          "end": 1377.0
+        },
+        {
+          "start": 1377.0,
+          "end": 1379.0
+        },
+        {
+          "start": 1379.0,
+          "end": 1381.0
+        },
+        {
+          "start": 1381.0,
+          "end": 1383.0
+        },
+        {
+          "start": 1383.0,
+          "end": 1384.0
+        },
+        {
+          "start": 1384.0,
+          "end": 1386.0
+        },
+        {
+          "start": 1386.0,
+          "end": 1388.0
+        },
+        {
+          "start": 1388.0,
+          "end": 1390.0
+        },
+        {
+          "start": 1390.0,
+          "end": 1391.0
+        },
+        {
+          "start": 1391.0,
+          "end": 1394.0
+        },
+        {
+          "start": 1394.0,
+          "end": 1396.0
+        },
+        {
+          "start": 1396.0,
+          "end": 1399.0
+        },
+        {
+          "start": 1399.0,
+          "end": 1401.0
+        },
+        {
+          "start": 1401.0,
+          "end": 1403.0
+        },
+        {
+          "start": 1403.0,
+          "end": 1405.0
+        },
+        {
+          "start": 1405.0,
+          "end": 1406.0
+        },
+        {
+          "start": 1406.0,
+          "end": 1408.0
+        },
+        {
+          "start": 1408.0,
+          "end": 1410.0
+        },
+        {
+          "start": 1410.0,
+          "end": 1414.0
+        },
+        {
+          "start": 1414.0,
+          "end": 1416.0
+        },
+        {
+          "start": 1416.0,
+          "end": 1419.0
+        },
+        {
+          "start": 1419.0,
+          "end": 1420.0
+        },
+        {
+          "start": 1420.0,
+          "end": 1421.0
+        },
+        {
+          "start": 1421.0,
+          "end": 1423.0
+        },
+        {
+          "start": 1423.0,
+          "end": 1425.0
+        },
+        {
+          "start": 1425.0,
+          "end": 1428.0
+        },
+        {
+          "start": 1428.0,
+          "end": 1429.0
+        },
+        {
+          "start": 1429.0,
+          "end": 1431.0
+        },
+        {
+          "start": 1431.0,
+          "end": 1433.0
+        },
+        {
+          "start": 1433.0,
+          "end": 1435.0
+        },
+        {
+          "start": 1435.0,
+          "end": 1437.0
+        },
+        {
+          "start": 1437.0,
+          "end": 1439.0
+        },
+        {
+          "start": 1439.0,
+          "end": 1441.0
+        },
+        {
+          "start": 1441.0,
+          "end": 1442.0
+        },
+        {
+          "start": 1442.0,
+          "end": 1444.0
+        },
+        {
+          "start": 1444.0,
+          "end": 1445.0
+        },
+        {
+          "start": 1445.0,
+          "end": 1446.0
+        },
+        {
+          "start": 1446.0,
+          "end": 1447.0
+        },
+        {
+          "start": 1447.0,
+          "end": 1450.0
+        },
+        {
+          "start": 1450.0,
+          "end": 1451.0
+        },
+        {
+          "start": 1451.0,
+          "end": 1452.0
+        },
+        {
+          "start": 1452.0,
+          "end": 1453.0
+        },
+        {
+          "start": 1453.0,
+          "end": 1455.0
+        },
+        {
+          "start": 1455.0,
+          "end": 1457.0
+        },
+        {
+          "start": 1457.0,
+          "end": 1459.0
+        },
+        {
+          "start": 1459.0,
+          "end": 1460.0
+        },
+        {
+          "start": 1460.0,
+          "end": 1463.0
+        },
+        {
+          "start": 1463.0,
+          "end": 1465.0
+        },
+        {
+          "start": 1465.0,
+          "end": 1468.0
+        },
+        {
+          "start": 1468.0,
+          "end": 1471.0
+        },
+        {
+          "start": 1471.0,
+          "end": 1473.0
+        },
+        {
+          "start": 1473.0,
+          "end": 1474.0
+        },
+        {
+          "start": 1474.0,
+          "end": 1475.0
+        },
+        {
+          "start": 1475.0,
+          "end": 1478.0
+        },
+        {
+          "start": 1478.0,
+          "end": 1480.0
+        },
+        {
+          "start": 1480.0,
+          "end": 1482.0
+        },
+        {
+          "start": 1482.0,
+          "end": 1484.0
+        },
+        {
+          "start": 1484.0,
+          "end": 1486.0
+        },
+        {
+          "start": 1486.0,
+          "end": 1487.0
+        },
+        {
+          "start": 1487.0,
+          "end": 1489.0
+        },
+        {
+          "start": 1489.0,
+          "end": 1491.0
+        },
+        {
+          "start": 1491.0,
+          "end": 1493.0
+        },
+        {
+          "start": 1493.0,
+          "end": 1494.0
+        },
+        {
+          "start": 1494.0,
+          "end": 1497.0
+        },
+        {
+          "start": 1497.0,
+          "end": 1501.0
+        },
+        {
+          "start": 1501.0,
+          "end": 1504.0
+        },
+        {
+          "start": 1510.0,
+          "end": 1513.0
+        },
+        {
+          "start": 1513.0,
+          "end": 1515.0
+        },
+        {
+          "start": 1515.0,
+          "end": 1518.0
+        },
+        {
+          "start": 1518.0,
+          "end": 1525.0
+        },
+        {
+          "start": 1525.0,
+          "end": 1526.0
+        },
+        {
+          "start": 1526.0,
+          "end": 1528.0
+        },
+        {
+          "start": 1528.0,
+          "end": 1529.0
+        },
+        {
+          "start": 1529.0,
+          "end": 1531.0
+        },
+        {
+          "start": 1531.0,
+          "end": 1532.0
+        },
+        {
+          "start": 1532.0,
+          "end": 1536.0
+        },
+        {
+          "start": 1536.0,
+          "end": 1541.0
+        },
+        {
+          "start": 1541.0,
+          "end": 1543.0
+        },
+        {
+          "start": 1543.0,
+          "end": 1548.0
+        },
+        {
+          "start": 1548.0,
+          "end": 1549.0
+        },
+        {
+          "start": 1549.0,
+          "end": 1550.0
+        },
+        {
+          "start": 1550.0,
+          "end": 1551.0
+        },
+        {
+          "start": 1551.0,
+          "end": 1552.0
+        },
+        {
+          "start": 1552.0,
+          "end": 1553.0
+        },
+        {
+          "start": 1553.0,
+          "end": 1556.0
+        },
+        {
+          "start": 1556.0,
+          "end": 1561.0
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C09",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1561.0,
+        "end": 1562.0
+      },
+      {
+        "start": 1562.0,
+        "end": 1563.0
+      },
+      {
+        "start": 1563.0,
+        "end": 1567.0
+      },
+      {
+        "start": 1567.0,
+        "end": 1569.0
+      },
+      {
+        "start": 1569.0,
+        "end": 1570.0
+      },
+      {
+        "start": 1570.0,
+        "end": 1571.0
+      },
+      {
+        "start": 1572.0,
+        "end": 1575.0
+      },
+      {
+        "start": 1575.0,
+        "end": 1580.0
+      },
+      {
+        "start": 1580.0,
+        "end": 1583.0
+      },
+      {
+        "start": 1586.0,
+        "end": 1589.0
+      },
+      {
+        "start": 1589.0,
+        "end": 1591.0
+      },
+      {
+        "start": 1591.0,
+        "end": 1594.0
+      },
+      {
+        "start": 1594.0,
+        "end": 1598.0
+      },
+      {
+        "start": 1598.0,
+        "end": 1602.0
+      },
+      {
+        "start": 1602.0,
+        "end": 1605.0
+      },
+      {
+        "start": 1605.0,
+        "end": 1607.0
+      },
+      {
+        "start": 1607.0,
+        "end": 1609.0
+      },
+      {
+        "start": 1609.0,
+        "end": 1611.0
+      },
+      {
+        "start": 1611.0,
+        "end": 1614.0
+      },
+      {
+        "start": 1614.0,
+        "end": 1618.0
+      },
+      {
+        "start": 1629.0,
+        "end": 1631.0
+      },
+      {
+        "start": 1631.0,
+        "end": 1635.0
+      },
+      {
+        "start": 1635.0,
+        "end": 1638.0
+      },
+      {
+        "start": 1638.0,
+        "end": 1640.0
+      },
+      {
+        "start": 1640.0,
+        "end": 1646.0
+      },
+      {
+        "start": 1646.0,
+        "end": 1648.0
+      },
+      {
+        "start": 1648.0,
+        "end": 1651.0
+      },
+      {
+        "start": 1651.0,
+        "end": 1655.0
+      },
+      {
+        "start": 1656.0,
+        "end": 1658.0
+      },
+      {
+        "start": 1671.0,
+        "end": 1672.0
+      },
+      {
+        "start": 1672.0,
+        "end": 1676.0
+      },
+      {
+        "start": 1676.0,
+        "end": 1679.0
+      },
+      {
+        "start": 1686.0,
+        "end": 1689.0
+      },
+      {
+        "start": 1689.0,
+        "end": 1692.0
+      },
+      {
+        "start": 1697.0,
+        "end": 1699.0
+      },
+      {
+        "start": 1699.0,
+        "end": 1702.0
+      },
+      {
+        "start": 1705.0,
+        "end": 1707.0
+      },
+      {
+        "start": 1707.0,
+        "end": 1710.0
+      },
+      {
+        "start": 1716.0,
+        "end": 1720.0
+      },
+      {
+        "start": 1720.0,
+        "end": 1723.0
+      },
+      {
+        "start": 1723.0,
+        "end": 1726.0
+      },
+      {
+        "start": 1726.0,
+        "end": 1733.0
+      },
+      {
+        "start": 1733.0,
+        "end": 1737.0
+      },
+      {
+        "start": 1738.0,
+        "end": 1741.0
+      },
+      {
+        "start": 1743.0,
+        "end": 1747.0
+      },
+      {
+        "start": 1752.0,
+        "end": 1754.0
+      },
+      {
+        "start": 1757.0,
+        "end": 1760.0
+      },
+      {
+        "start": 1764.0,
+        "end": 1766.0
+      },
+      {
+        "start": 1857.0,
+        "end": 1859.4
+      },
+      {
+        "start": 1859.4,
+        "end": 1862.1
+      },
+      {
+        "start": 1865.1,
+        "end": 1866.1
+      },
+      {
+        "start": 1866.1,
+        "end": 1867.6
+      },
+      {
+        "start": 1867.6,
+        "end": 1868.9
+      },
+      {
+        "start": 1868.9,
+        "end": 1870.9
+      },
+      {
+        "start": 1870.9,
+        "end": 1872.9
+      },
+      {
+        "start": 1872.9,
+        "end": 1874.7
+      },
+      {
+        "start": 1877.6,
+        "end": 1880.9
+      },
+      {
+        "start": 1880.9,
+        "end": 1882.9
+      },
+      {
+        "start": 1883.9,
+        "end": 1885.4
+      },
+      {
+        "start": 1975.4,
+        "end": 1983.3
+      },
+      {
+        "start": 1983.3,
+        "end": 1995.8
+      }
+    ],
+    "text": "We are calling. CD. FS modules. Node. EXPY. 4. In this case, it will delete a file. But can we delete a directory using Unlink? Can we delete a directory? That is what I am going to ask. In your opinion, one is going to be exposed to you. One, you have to explore. Whatever I am exposing you, you will not be asked. Whatever you will be exploring, that will be asked. In your opinion. Find with the things. But what I mean? No such file on directory. You have to give any directory data. Data is stored with. What do you do? You remove example.ext from the join. Remove that. Now data is a directory. Now you provide the file path. And check it out. Data is not. No, it is taking example.ext again. It is taking example.ext. But your essay name. What is all this? Is it not? It is not. Is it a proof it? It is not. It is a proof, right? What is proof data? And most of you better than anything. Why it is taking the example.ext? You just can make all the best. It is the proof data. And you will get other data. Pull. Or say session six. Okay. This has been taken over. This is a physical picture. Very good. Very good. At least, a lot of people have seen this and we have seen this. Really, yes. But you can't even say it. You can't make it. I have the same image. But you can't see. Yes. I think finally we can come to try to figure out what should be done, only can't be used on direct use, only can't be used on direct, it can be used only on 5, next answer, only",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C09",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1561.0,
+          "end": 1562.0
+        },
+        {
+          "start": 1562.0,
+          "end": 1563.0
+        },
+        {
+          "start": 1563.0,
+          "end": 1567.0
+        },
+        {
+          "start": 1567.0,
+          "end": 1569.0
+        },
+        {
+          "start": 1569.0,
+          "end": 1570.0
+        },
+        {
+          "start": 1570.0,
+          "end": 1571.0
+        },
+        {
+          "start": 1572.0,
+          "end": 1575.0
+        },
+        {
+          "start": 1575.0,
+          "end": 1580.0
+        },
+        {
+          "start": 1580.0,
+          "end": 1583.0
+        },
+        {
+          "start": 1586.0,
+          "end": 1589.0
+        },
+        {
+          "start": 1589.0,
+          "end": 1591.0
+        },
+        {
+          "start": 1591.0,
+          "end": 1594.0
+        },
+        {
+          "start": 1594.0,
+          "end": 1598.0
+        },
+        {
+          "start": 1598.0,
+          "end": 1602.0
+        },
+        {
+          "start": 1602.0,
+          "end": 1605.0
+        },
+        {
+          "start": 1605.0,
+          "end": 1607.0
+        },
+        {
+          "start": 1607.0,
+          "end": 1609.0
+        },
+        {
+          "start": 1609.0,
+          "end": 1611.0
+        },
+        {
+          "start": 1611.0,
+          "end": 1614.0
+        },
+        {
+          "start": 1614.0,
+          "end": 1618.0
+        },
+        {
+          "start": 1629.0,
+          "end": 1631.0
+        },
+        {
+          "start": 1631.0,
+          "end": 1635.0
+        },
+        {
+          "start": 1635.0,
+          "end": 1638.0
+        },
+        {
+          "start": 1638.0,
+          "end": 1640.0
+        },
+        {
+          "start": 1640.0,
+          "end": 1646.0
+        },
+        {
+          "start": 1646.0,
+          "end": 1648.0
+        },
+        {
+          "start": 1648.0,
+          "end": 1651.0
+        },
+        {
+          "start": 1651.0,
+          "end": 1655.0
+        },
+        {
+          "start": 1656.0,
+          "end": 1658.0
+        },
+        {
+          "start": 1671.0,
+          "end": 1672.0
+        },
+        {
+          "start": 1672.0,
+          "end": 1676.0
+        },
+        {
+          "start": 1676.0,
+          "end": 1679.0
+        },
+        {
+          "start": 1686.0,
+          "end": 1689.0
+        },
+        {
+          "start": 1689.0,
+          "end": 1692.0
+        },
+        {
+          "start": 1697.0,
+          "end": 1699.0
+        },
+        {
+          "start": 1699.0,
+          "end": 1702.0
+        },
+        {
+          "start": 1705.0,
+          "end": 1707.0
+        },
+        {
+          "start": 1707.0,
+          "end": 1710.0
+        },
+        {
+          "start": 1716.0,
+          "end": 1720.0
+        },
+        {
+          "start": 1720.0,
+          "end": 1723.0
+        },
+        {
+          "start": 1723.0,
+          "end": 1726.0
+        },
+        {
+          "start": 1726.0,
+          "end": 1733.0
+        },
+        {
+          "start": 1733.0,
+          "end": 1737.0
+        },
+        {
+          "start": 1738.0,
+          "end": 1741.0
+        },
+        {
+          "start": 1743.0,
+          "end": 1747.0
+        },
+        {
+          "start": 1752.0,
+          "end": 1754.0
+        },
+        {
+          "start": 1757.0,
+          "end": 1760.0
+        },
+        {
+          "start": 1764.0,
+          "end": 1766.0
+        },
+        {
+          "start": 1857.0,
+          "end": 1859.4
+        },
+        {
+          "start": 1859.4,
+          "end": 1862.1
+        },
+        {
+          "start": 1865.1,
+          "end": 1866.1
+        },
+        {
+          "start": 1866.1,
+          "end": 1867.6
+        },
+        {
+          "start": 1867.6,
+          "end": 1868.9
+        },
+        {
+          "start": 1868.9,
+          "end": 1870.9
+        },
+        {
+          "start": 1870.9,
+          "end": 1872.9
+        },
+        {
+          "start": 1872.9,
+          "end": 1874.7
+        },
+        {
+          "start": 1877.6,
+          "end": 1880.9
+        },
+        {
+          "start": 1880.9,
+          "end": 1882.9
+        },
+        {
+          "start": 1883.9,
+          "end": 1885.4
+        },
+        {
+          "start": 1975.4,
+          "end": 1983.3
+        },
+        {
+          "start": 1983.3,
+          "end": 1995.8
+        }
+      ],
+      "dwell_time": 181.9,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C10",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 1995.8,
+        "end": 2007.1
+      },
+      {
+        "start": 2007.1,
+        "end": 2022.1
+      },
+      {
+        "start": 2022.1,
+        "end": 2032.1
+      },
+      {
+        "start": 2032.1,
+        "end": 2037.2
+      },
+      {
+        "start": 2037.2,
+        "end": 2044.2
+      },
+      {
+        "start": 2044.2,
+        "end": 2053.2
+      },
+      {
+        "start": 2053.2,
+        "end": 2063.2
+      },
+      {
+        "start": 2063.2,
+        "end": 2079.2
+      },
+      {
+        "start": 2079.2,
+        "end": 2091.2
+      },
+      {
+        "start": 2091.2,
+        "end": 2098.2
+      },
+      {
+        "start": 2098.2,
+        "end": 2104.2
+      },
+      {
+        "start": 2104.2,
+        "end": 2110.2
+      },
+      {
+        "start": 2110.2,
+        "end": 2116.2
+      },
+      {
+        "start": 2116.2,
+        "end": 2123.2
+      },
+      {
+        "start": 2123.2,
+        "end": 2135.2
+      },
+      {
+        "start": 2135.2,
+        "end": 2143.2
+      },
+      {
+        "start": 2143.2,
+        "end": 2153.2
+      },
+      {
+        "start": 2153.2,
+        "end": 2168.2
+      },
+      {
+        "start": 2168.2,
+        "end": 2186.2
+      }
+    ],
+    "text": "can't be used on a entire direct, it can be used only on the 5, within a direct, example number 5, may get error 10, may get error 6, okay example 6, if you want to require a direct with an R at a, if you want to require a direct with an R at a, sorry, so I can be dealing with it, using only, but you cannot deal with the direct, we will be testing on the direct, it is throwing us the, okay, if you want to deal with the direct with an R at a, it is same as the which we do in your videos, or in your Linux, so we use R and D a R, Linux table, R and D a R for our synchronous, R and D are the same for synchronous, we have some, relating the things, exercise 7, to list the files in an directory, you think you are enjoying right, do share, you are going to explain people first, you are going to explain them first, I will be handing over to you, okay, to list out the files in a particular directory, then we are going to use a read directory, if it is an asynchronous, and if it is a synchronous, then read file sync, and what taught is going to be represented, what will represent the current working directory, where you are, present working directory, and the name for this one, this in Linux, wherever you put, the terminology which we say is period, where is the things, P, R, I, O, D, because when you will be asked in Linux papers writing language, Linux shell commands, we even in them put dot, dot slash, then they will catch you all up, it is not represented as dot, it is represented as period slash, fine, get it to buffers, NodeJS buffers, okay, here you have a work to CD, CD, yeah, NodeJS buffers, can we have, do you have any hand back over there, no, easy, very hand, yeah, blue",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C10",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1995.8,
+          "end": 2007.1
+        },
+        {
+          "start": 2007.1,
+          "end": 2022.1
+        },
+        {
+          "start": 2022.1,
+          "end": 2032.1
+        },
+        {
+          "start": 2032.1,
+          "end": 2037.2
+        },
+        {
+          "start": 2037.2,
+          "end": 2044.2
+        },
+        {
+          "start": 2044.2,
+          "end": 2053.2
+        },
+        {
+          "start": 2053.2,
+          "end": 2063.2
+        },
+        {
+          "start": 2063.2,
+          "end": 2079.2
+        },
+        {
+          "start": 2079.2,
+          "end": 2091.2
+        },
+        {
+          "start": 2091.2,
+          "end": 2098.2
+        },
+        {
+          "start": 2098.2,
+          "end": 2104.2
+        },
+        {
+          "start": 2104.2,
+          "end": 2110.2
+        },
+        {
+          "start": 2110.2,
+          "end": 2116.2
+        },
+        {
+          "start": 2116.2,
+          "end": 2123.2
+        },
+        {
+          "start": 2123.2,
+          "end": 2135.2
+        },
+        {
+          "start": 2135.2,
+          "end": 2143.2
+        },
+        {
+          "start": 2143.2,
+          "end": 2153.2
+        },
+        {
+          "start": 2153.2,
+          "end": 2168.2
+        },
+        {
+          "start": 2168.2,
+          "end": 2186.2
+        }
+      ],
+      "dwell_time": 190.4,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C11",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2186.2,
+        "end": 2198.2
+      },
+      {
+        "start": 2198.2,
+        "end": 2218.2
+      },
+      {
+        "start": 2218.2,
+        "end": 2243.2
+      },
+      {
+        "start": 2243.2,
+        "end": 2268.2
+      },
+      {
+        "start": 2268.2,
+        "end": 2280.2
+      },
+      {
+        "start": 2281.2,
+        "end": 2292.2
+      },
+      {
+        "start": 2293.2,
+        "end": 2313.2
+      },
+      {
+        "start": 2343.2,
+        "end": 2358.2
+      },
+      {
+        "start": 2359.2,
+        "end": 2369.2
+      },
+      {
+        "start": 2369.2,
+        "end": 2383.2
+      },
+      {
+        "start": 2384.2,
+        "end": 2397.2
+      },
+      {
+        "start": 2397.2,
+        "end": 2405.2
+      }
+    ],
+    "text": "shape, standard, make it first one, I do not have time to waste, standard, I will be operating the things, you explain the things, okay, yeah, carry on, those who stick on they will be handed over from that line, okay, fine, these are put, say buffer and unsafe buffer, I will stick buffer, okay, say buffer and unsafe buffer, I will stick buffer, three things, pick on, put it out, call please, say I do not have time in one hour, I have to complete everything, speak out, what is up, come on, come on from your experience, speak out, what is up, put it out, looking for only one hour to complete this, speak on, why you disturb me, why you are disturbing, you do not have time to speak on, by speaking at the output and to be at the port, then why you are speaking, is there anything important, just speak on, then, okay, what do you buy, these papers, these are the first papers, it has to work, transport the data, between files from one database to another database, from one computer to another",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C11",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2186.2,
+          "end": 2198.2
+        },
+        {
+          "start": 2198.2,
+          "end": 2218.2
+        },
+        {
+          "start": 2218.2,
+          "end": 2243.2
+        },
+        {
+          "start": 2243.2,
+          "end": 2268.2
+        },
+        {
+          "start": 2268.2,
+          "end": 2280.2
+        },
+        {
+          "start": 2281.2,
+          "end": 2292.2
+        },
+        {
+          "start": 2293.2,
+          "end": 2313.2
+        },
+        {
+          "start": 2343.2,
+          "end": 2358.2
+        },
+        {
+          "start": 2359.2,
+          "end": 2369.2
+        },
+        {
+          "start": 2369.2,
+          "end": 2383.2
+        },
+        {
+          "start": 2384.2,
+          "end": 2397.2
+        },
+        {
+          "start": 2397.2,
+          "end": 2405.2
+        }
+      ],
+      "dwell_time": 185.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C12",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2405.2,
+        "end": 2412.2
+      },
+      {
+        "start": 2412.2,
+        "end": 2418.2
+      },
+      {
+        "start": 2418.2,
+        "end": 2426.2
+      },
+      {
+        "start": 2426.2,
+        "end": 2435.2
+      },
+      {
+        "start": 2435.2,
+        "end": 2441.2
+      },
+      {
+        "start": 2441.2,
+        "end": 2447.2
+      },
+      {
+        "start": 2447.2,
+        "end": 2457.2
+      },
+      {
+        "start": 2457.2,
+        "end": 2464.2
+      },
+      {
+        "start": 2464.2,
+        "end": 2471.2
+      },
+      {
+        "start": 2471.2,
+        "end": 2483.2
+      },
+      {
+        "start": 2483.2,
+        "end": 2491.2
+      },
+      {
+        "start": 2491.2,
+        "end": 2499.2
+      },
+      {
+        "start": 2499.2,
+        "end": 2507.2
+      },
+      {
+        "start": 2507.2,
+        "end": 2516.2
+      },
+      {
+        "start": 2516.2,
+        "end": 2525.2
+      },
+      {
+        "start": 2525.2,
+        "end": 2536.2
+      },
+      {
+        "start": 2536.2,
+        "end": 2542.2
+      },
+      {
+        "start": 2542.2,
+        "end": 2549.2
+      },
+      {
+        "start": 2549.2,
+        "end": 2566.2
+      },
+      {
+        "start": 2566.2,
+        "end": 2573.2
+      },
+      {
+        "start": 2573.2,
+        "end": 2580.2
+      },
+      {
+        "start": 2580.2,
+        "end": 2587.2
+      }
+    ],
+    "text": "computer through N networking, through N network, through using any property space, it has to work, it has to work, it has to work, when it has been transferred, from one source to the other destination, they get transferred with the form of files, they will be transferred in the form of files, hopefully when we search something on Google, you type it in commentable language, which will be internally translated into files and transferred over the communication channel, then we say it as serial age, whatever topic is saved, at the end of the day, the data will be converted or handled in files, fine, and this to tackle with such type of data, in javascript, we do not have any such things, but it knows that they had explicitly given you a choice to deal with the data in files, basically when we have a registration form, we ask the customers who upload their photos, photo is an image, and your javascript deals with only iris and strings, they don't have the capability to deal with buffers strings, so notice has explicitly provided you a functionality to deal with these things, and one of them is buffers, how to tackle with buffers, how to tackle with the one which is videos or audio files or images or PDF files and electronics, which are transferred over an network or stored in a database or stored in a file in a binary format, so we are going to deal with this buffers from basic to the advanced things, and the first stage is how to create a buffer, the question is how to create a buffer, you can create a buffer in 3 ways, one is, can you get back to the code, it scroller, one is buffers, fine, one is save buffers, second way to create a buffer is unsafe buffer, and third way to create is spring buffers, what is the difference between all these 3 is, when you are creating a same buffer, you are going to allocate certain memory, in this case it has been allocated as 10, it does means that whatever memory",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C12",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2405.2,
+          "end": 2412.2
+        },
+        {
+          "start": 2412.2,
+          "end": 2418.2
+        },
+        {
+          "start": 2418.2,
+          "end": 2426.2
+        },
+        {
+          "start": 2426.2,
+          "end": 2435.2
+        },
+        {
+          "start": 2435.2,
+          "end": 2441.2
+        },
+        {
+          "start": 2441.2,
+          "end": 2447.2
+        },
+        {
+          "start": 2447.2,
+          "end": 2457.2
+        },
+        {
+          "start": 2457.2,
+          "end": 2464.2
+        },
+        {
+          "start": 2464.2,
+          "end": 2471.2
+        },
+        {
+          "start": 2471.2,
+          "end": 2483.2
+        },
+        {
+          "start": 2483.2,
+          "end": 2491.2
+        },
+        {
+          "start": 2491.2,
+          "end": 2499.2
+        },
+        {
+          "start": 2499.2,
+          "end": 2507.2
+        },
+        {
+          "start": 2507.2,
+          "end": 2516.2
+        },
+        {
+          "start": 2516.2,
+          "end": 2525.2
+        },
+        {
+          "start": 2525.2,
+          "end": 2536.2
+        },
+        {
+          "start": 2536.2,
+          "end": 2542.2
+        },
+        {
+          "start": 2542.2,
+          "end": 2549.2
+        },
+        {
+          "start": 2549.2,
+          "end": 2566.2
+        },
+        {
+          "start": 2566.2,
+          "end": 2573.2
+        },
+        {
+          "start": 2573.2,
+          "end": 2580.2
+        },
+        {
+          "start": 2580.2,
+          "end": 2587.2
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C13",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2587.2,
+        "end": 2594.2
+      },
+      {
+        "start": 2594.2,
+        "end": 2605.2
+      },
+      {
+        "start": 2605.2,
+        "end": 2612.2
+      },
+      {
+        "start": 2612.2,
+        "end": 2619.2
+      },
+      {
+        "start": 2619.2,
+        "end": 2628.2
+      },
+      {
+        "start": 2628.2,
+        "end": 2639.2
+      },
+      {
+        "start": 2639.2,
+        "end": 2647.2
+      },
+      {
+        "start": 2647.2,
+        "end": 2654.2
+      },
+      {
+        "start": 2654.2,
+        "end": 2661.2
+      },
+      {
+        "start": 2661.2,
+        "end": 2672.2
+      },
+      {
+        "start": 2672.2,
+        "end": 2679.2
+      },
+      {
+        "start": 2679.2,
+        "end": 2689.2
+      },
+      {
+        "start": 2689.2,
+        "end": 2695.2
+      },
+      {
+        "start": 2695.2,
+        "end": 2706.2
+      },
+      {
+        "start": 2706.2,
+        "end": 2712.2
+      },
+      {
+        "start": 2712.2,
+        "end": 2721.2
+      },
+      {
+        "start": 2721.2,
+        "end": 2729.2
+      },
+      {
+        "start": 2729.2,
+        "end": 2733.2
+      },
+      {
+        "start": 2733.2,
+        "end": 2740.2
+      },
+      {
+        "start": 2740.2,
+        "end": 2747.2
+      },
+      {
+        "start": 2747.2,
+        "end": 2762.2
+      },
+      {
+        "start": 2762.2,
+        "end": 2769.2
+      }
+    ],
+    "text": "which you are allocating me in the size of bytes, please allocate it by cleaning everything, save means the memory should be cleaned up, but it has certain tank latency, it has certain latency, wherever you think that data is sensitive, then you are going to create safe buffers, wherever the data is sensitive, such as your passports, passports are sensitive, so we have to deal with safe buffers, and the installation of, allocation of memory starts from gene, if you are telling 10, 0 to 9, fine, and every byte is as set as 0, 0, for all that is 10 bytes, if you are saying, if you do not want the latency, then if you want high performance, latency is not an issue, and the data is not a case sensitive, the data is not sensitive, where and when you require high performance, in that case you can go with unsafe buffer case, unsafe buffer case, but in unsafe it will not clean up the entire memory which has been given to you, you can have certain of the previous data also, or any garbage collection also, getting the point, whereas creating a buffer using strings, here you are going to load a string into a buffer, string buffer is another part you are loading some string into some variable, and it will be stored as a buffer, storage a string as a buffer, so these are the three things which are, that is the reason why alo, alo, unsafe, alo means alo gate, and from, from means from some file or from some database or from directly I am giving here a static string, static string, that static string, hello buffers will be converted into a buffer string, that is the reason why the third one you are saying it is a buffer when numbers is of zeros, is of zeros you are having numbers in the third buffer, but whereas in first and second buffers all are allocated to zeros, get our two second example, writing data into a buffer, now there is a interesting point over here, when you are observing, if you want to write some data into a buffer, what I am doing",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C13",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2587.2,
+          "end": 2594.2
+        },
+        {
+          "start": 2594.2,
+          "end": 2605.2
+        },
+        {
+          "start": 2605.2,
+          "end": 2612.2
+        },
+        {
+          "start": 2612.2,
+          "end": 2619.2
+        },
+        {
+          "start": 2619.2,
+          "end": 2628.2
+        },
+        {
+          "start": 2628.2,
+          "end": 2639.2
+        },
+        {
+          "start": 2639.2,
+          "end": 2647.2
+        },
+        {
+          "start": 2647.2,
+          "end": 2654.2
+        },
+        {
+          "start": 2654.2,
+          "end": 2661.2
+        },
+        {
+          "start": 2661.2,
+          "end": 2672.2
+        },
+        {
+          "start": 2672.2,
+          "end": 2679.2
+        },
+        {
+          "start": 2679.2,
+          "end": 2689.2
+        },
+        {
+          "start": 2689.2,
+          "end": 2695.2
+        },
+        {
+          "start": 2695.2,
+          "end": 2706.2
+        },
+        {
+          "start": 2706.2,
+          "end": 2712.2
+        },
+        {
+          "start": 2712.2,
+          "end": 2721.2
+        },
+        {
+          "start": 2721.2,
+          "end": 2729.2
+        },
+        {
+          "start": 2729.2,
+          "end": 2733.2
+        },
+        {
+          "start": 2733.2,
+          "end": 2740.2
+        },
+        {
+          "start": 2740.2,
+          "end": 2747.2
+        },
+        {
+          "start": 2747.2,
+          "end": 2762.2
+        },
+        {
+          "start": 2762.2,
+          "end": 2769.2
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C14",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2769.2,
+        "end": 2778.2
+      },
+      {
+        "start": 2778.2,
+        "end": 2787.2
+      },
+      {
+        "start": 2787.2,
+        "end": 2794.2
+      },
+      {
+        "start": 2794.2,
+        "end": 2815.2
+      },
+      {
+        "start": 2815.2,
+        "end": 2824.2
+      },
+      {
+        "start": 2824.2,
+        "end": 2831.2
+      },
+      {
+        "start": 2831.2,
+        "end": 2838.2
+      },
+      {
+        "start": 2838.2,
+        "end": 2845.2
+      },
+      {
+        "start": 2845.2,
+        "end": 2858.2
+      },
+      {
+        "start": 2858.2,
+        "end": 2867.2
+      },
+      {
+        "start": 2867.2,
+        "end": 2879.2
+      },
+      {
+        "start": 2879.2,
+        "end": 2885.2
+      },
+      {
+        "start": 2885.2,
+        "end": 2891.2
+      },
+      {
+        "start": 2891.2,
+        "end": 2904.2
+      },
+      {
+        "start": 2904.2,
+        "end": 2911.2
+      },
+      {
+        "start": 2911.2,
+        "end": 2918.2
+      },
+      {
+        "start": 2918.2,
+        "end": 2926.2
+      },
+      {
+        "start": 2926.2,
+        "end": 2933.2
+      },
+      {
+        "start": 2933.2,
+        "end": 2943.2
+      },
+      {
+        "start": 2943.2,
+        "end": 2950.2
+      }
+    ],
+    "text": "here, I am allocating for 60 bytes to my buffer, the size of my buffer is going to be 60 bytes, you are writing certain things, such as name, Joe, John, and email of the particular person which will start at an index portion of 20, which will start at an index portion of 20, but what is the size of a, John, John, John, John, are you 14 or 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 14 bytes, but I want to start at 20, means how much gap, 5 bytes we have a gap in between the name and the email age, but when you are looking at the output, you will see both the buffers are going to be cluttered without any space, to maintain that space, we are using regular expression, when we are replacing the zeros with, John, in the second row, can you run this once, CD dot dot, CD 0 root, your, CLS, node index.js, see here, this is our output feature, we get usually, but we do have space, can you evaluate the name without any space, hydrating, that is the actual output which we get, we do have zeros, but it is not represented on your console, to have a clear differentiation, we do have zeros, if I want to stay there, I am using regular expressions to replace all the zeros with the dots, all 0 bytes with dot, it is the things, why I am showing you this particular, a question might be there in your object, buffer dot write this, buffer dot write this, started to be there, what, how the output looks like, output looks like this first, not the second one, second we are generating by replacing all zeros with dots, fine, buffer dot write and buffer dot, I look, I look for creation of a buffer, write, write is used to write something into the buffer, if you want to read the data, can you get into the buffer, if you want to read the data from a buffer, then the operation which we use is, we do not have any read,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C14",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2769.2,
+          "end": 2778.2
+        },
+        {
+          "start": 2778.2,
+          "end": 2787.2
+        },
+        {
+          "start": 2787.2,
+          "end": 2794.2
+        },
+        {
+          "start": 2794.2,
+          "end": 2815.2
+        },
+        {
+          "start": 2815.2,
+          "end": 2824.2
+        },
+        {
+          "start": 2824.2,
+          "end": 2831.2
+        },
+        {
+          "start": 2831.2,
+          "end": 2838.2
+        },
+        {
+          "start": 2838.2,
+          "end": 2845.2
+        },
+        {
+          "start": 2845.2,
+          "end": 2858.2
+        },
+        {
+          "start": 2858.2,
+          "end": 2867.2
+        },
+        {
+          "start": 2867.2,
+          "end": 2879.2
+        },
+        {
+          "start": 2879.2,
+          "end": 2885.2
+        },
+        {
+          "start": 2885.2,
+          "end": 2891.2
+        },
+        {
+          "start": 2891.2,
+          "end": 2904.2
+        },
+        {
+          "start": 2904.2,
+          "end": 2911.2
+        },
+        {
+          "start": 2911.2,
+          "end": 2918.2
+        },
+        {
+          "start": 2918.2,
+          "end": 2926.2
+        },
+        {
+          "start": 2926.2,
+          "end": 2933.2
+        },
+        {
+          "start": 2933.2,
+          "end": 2943.2
+        },
+        {
+          "start": 2943.2,
+          "end": 2950.2
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C15",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 2950.2,
+        "end": 2960.2
+      },
+      {
+        "start": 2961.2,
+        "end": 2969.2
+      },
+      {
+        "start": 2969.2,
+        "end": 2977.2
+      },
+      {
+        "start": 2977.2,
+        "end": 2985.2
+      },
+      {
+        "start": 2985.2,
+        "end": 2992.2
+      },
+      {
+        "start": 2992.2,
+        "end": 3002.2
+      },
+      {
+        "start": 3002.2,
+        "end": 3011.2
+      },
+      {
+        "start": 3012.2,
+        "end": 3018.2
+      },
+      {
+        "start": 3018.2,
+        "end": 3027.2
+      },
+      {
+        "start": 3027.2,
+        "end": 3032.2
+      },
+      {
+        "start": 3032.2,
+        "end": 3040.2
+      },
+      {
+        "start": 3040.2,
+        "end": 3052.2
+      },
+      {
+        "start": 3052.2,
+        "end": 3060.2
+      },
+      {
+        "start": 3060.2,
+        "end": 3069.2
+      },
+      {
+        "start": 3069.2,
+        "end": 3079.2
+      },
+      {
+        "start": 3079.2,
+        "end": 3086.2
+      },
+      {
+        "start": 3086.2,
+        "end": 3096.2
+      },
+      {
+        "start": 3096.2,
+        "end": 3105.2
+      },
+      {
+        "start": 3105.2,
+        "end": 3115.2
+      },
+      {
+        "start": 3115.2,
+        "end": 3130.2
+      },
+      {
+        "start": 3130.2,
+        "end": 3140.2
+      }
+    ],
+    "text": "but we have from, from is use instead of, in order to read the data from a particular buffer, learning buffer node is, and you are converting it to, you know certain text formatting a bit, and in the third example, you are providing the, in starting index from where it has to start the reading, and the ending a, and in the next case, you are giving directly 9, 9 is a starting index, but end has not been provided, from 9 it has to start the reading, a particular buffer, 9 index position, that is learning, and not only if you give, but also you can convert this, performance into hexadecimal sign, base 64 day character source, base 64 we do have all together three different conversions, one is universal text formatting, or else hexadecimal or else base 64 week, three different ways to convert a particular text, here we are discussing what are the different ways to tackle with your buffer, we do not never know what is going to be used in a different scenarios, you should be aware about all these things, next, accessing a buffer can we have iterations on a buffer, yes, using either we go for loop or by loop, we have considered here, for of loop, a lander function, for lander loop, for of where we are just iterating over a particular buffer, and first it is going to bring all the buffer, what we will do, the byte, then we are converting ASCII code, and then we are converting the ASCII code into string, and converting a ASCII code into your string, here we are again using a different function, that is from character code, from character code, what that will do, it will convert each and every buffer byte that is ASCII into strings, stringed off from buffer, so from character code, next, copy, it is one thing, copying buffer from one buffer to another buffer, okay, combining two buffers, this going to, those are very simple,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C15",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 2950.2,
+          "end": 2960.2
+        },
+        {
+          "start": 2961.2,
+          "end": 2969.2
+        },
+        {
+          "start": 2969.2,
+          "end": 2977.2
+        },
+        {
+          "start": 2977.2,
+          "end": 2985.2
+        },
+        {
+          "start": 2985.2,
+          "end": 2992.2
+        },
+        {
+          "start": 2992.2,
+          "end": 3002.2
+        },
+        {
+          "start": 3002.2,
+          "end": 3011.2
+        },
+        {
+          "start": 3012.2,
+          "end": 3018.2
+        },
+        {
+          "start": 3018.2,
+          "end": 3027.2
+        },
+        {
+          "start": 3027.2,
+          "end": 3032.2
+        },
+        {
+          "start": 3032.2,
+          "end": 3040.2
+        },
+        {
+          "start": 3040.2,
+          "end": 3052.2
+        },
+        {
+          "start": 3052.2,
+          "end": 3060.2
+        },
+        {
+          "start": 3060.2,
+          "end": 3069.2
+        },
+        {
+          "start": 3069.2,
+          "end": 3079.2
+        },
+        {
+          "start": 3079.2,
+          "end": 3086.2
+        },
+        {
+          "start": 3086.2,
+          "end": 3096.2
+        },
+        {
+          "start": 3096.2,
+          "end": 3105.2
+        },
+        {
+          "start": 3105.2,
+          "end": 3115.2
+        },
+        {
+          "start": 3115.2,
+          "end": 3130.2
+        },
+        {
+          "start": 3130.2,
+          "end": 3140.2
+        }
+      ],
+      "dwell_time": 188.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C16",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3140.2,
+        "end": 3147.2
+      },
+      {
+        "start": 3147.2,
+        "end": 3155.2
+      },
+      {
+        "start": 3155.2,
+        "end": 3162.2
+      },
+      {
+        "start": 3162.2,
+        "end": 3168.2
+      },
+      {
+        "start": 3168.2,
+        "end": 3173.2
+      },
+      {
+        "start": 3173.2,
+        "end": 3183.2
+      },
+      {
+        "start": 3183.2,
+        "end": 3188.2
+      },
+      {
+        "start": 3188.2,
+        "end": 3195.2
+      },
+      {
+        "start": 3195.2,
+        "end": 3202.2
+      },
+      {
+        "start": 3202.2,
+        "end": 3210.2
+      },
+      {
+        "start": 3210.2,
+        "end": 3215.2
+      },
+      {
+        "start": 3215.2,
+        "end": 3222.2
+      },
+      {
+        "start": 3222.2,
+        "end": 3229.2
+      },
+      {
+        "start": 3229.2,
+        "end": 3243.2
+      },
+      {
+        "start": 3243.2,
+        "end": 3262.2
+      },
+      {
+        "start": 3262.2,
+        "end": 3268.2
+      },
+      {
+        "start": 3268.2,
+        "end": 3280.2
+      },
+      {
+        "start": 3280.2,
+        "end": 3293.2
+      },
+      {
+        "start": 3294.2,
+        "end": 3305.2
+      },
+      {
+        "start": 3305.2,
+        "end": 3315.2
+      },
+      {
+        "start": 3315.2,
+        "end": 3327.2
+      }
+    ],
+    "text": "how to copy from one buffer to another buffer, or here the partition part over here is target buffer 0, 0 source buffer, buffer dot land, what each and every one is referring to the parameters which you are passing to the buffer, copy, the parameters which you are passing to the function copy, what you are saying is, you are giving a target, source is being used, from this source you are going to copy to a target buffer, starting question of your source, starting question of your target and lastly, how much you want to copy, I want to copy the entire string, I want to copy the entire buffer, not string buffer, buffer dot land means, the entire complete land of the source, these are the four parameters which we are passing to the copy function, content we have a content, it is very simple, the question will be coming forth, that is what is the difference between concateness file, concateness file, concateness file, concateness file, concateness, what you are doing, you have a buffer one, you have buffer two and you want to combine both the buffers, for combining we are going to use, this is a string uncateness file, if you want to compare two buffers, we are going to use equals, comparing two buffers can be done using equals, buffer one equals buffer, is this one, I do not know, now buffer one equals buffer, for first case it is going to be true and for the second case it will be false, why because buffer one is not equal to buffer, get back to the pipe, slice, slice you have seen in Java strings, the same thing is over here, if you want to extract a part of a buffer, then you are going to slice it, slice and slice in Java strings, 7 to 14, 7 is inclusion, 14 is going to be exclusion, in slice of Java string also the same condition, next all this is the operations which we can perform on it buffers, what we",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C16",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3140.2,
+          "end": 3147.2
+        },
+        {
+          "start": 3147.2,
+          "end": 3155.2
+        },
+        {
+          "start": 3155.2,
+          "end": 3162.2
+        },
+        {
+          "start": 3162.2,
+          "end": 3168.2
+        },
+        {
+          "start": 3168.2,
+          "end": 3173.2
+        },
+        {
+          "start": 3173.2,
+          "end": 3183.2
+        },
+        {
+          "start": 3183.2,
+          "end": 3188.2
+        },
+        {
+          "start": 3188.2,
+          "end": 3195.2
+        },
+        {
+          "start": 3195.2,
+          "end": 3202.2
+        },
+        {
+          "start": 3202.2,
+          "end": 3210.2
+        },
+        {
+          "start": 3210.2,
+          "end": 3215.2
+        },
+        {
+          "start": 3215.2,
+          "end": 3222.2
+        },
+        {
+          "start": 3222.2,
+          "end": 3229.2
+        },
+        {
+          "start": 3229.2,
+          "end": 3243.2
+        },
+        {
+          "start": 3243.2,
+          "end": 3262.2
+        },
+        {
+          "start": 3262.2,
+          "end": 3268.2
+        },
+        {
+          "start": 3268.2,
+          "end": 3280.2
+        },
+        {
+          "start": 3280.2,
+          "end": 3293.2
+        },
+        {
+          "start": 3294.2,
+          "end": 3305.2
+        },
+        {
+          "start": 3305.2,
+          "end": 3315.2
+        },
+        {
+          "start": 3315.2,
+          "end": 3327.2
+        }
+      ],
+      "dwell_time": 186.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C17",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3327.2,
+        "end": 3336.2
+      },
+      {
+        "start": 3336.2,
+        "end": 3343.2
+      },
+      {
+        "start": 3343.2,
+        "end": 3358.2
+      },
+      {
+        "start": 3358.2,
+        "end": 3367.2
+      },
+      {
+        "start": 3368.2,
+        "end": 3374.2
+      },
+      {
+        "start": 3374.2,
+        "end": 3383.2
+      },
+      {
+        "start": 3383.2,
+        "end": 3389.2
+      },
+      {
+        "start": 3389.2,
+        "end": 3396.2
+      },
+      {
+        "start": 3396.2,
+        "end": 3403.2
+      },
+      {
+        "start": 3403.2,
+        "end": 3412.2
+      },
+      {
+        "start": 3412.2,
+        "end": 3419.2
+      },
+      {
+        "start": 3419.2,
+        "end": 3426.2
+      },
+      {
+        "start": 3426.2,
+        "end": 3438.2
+      },
+      {
+        "start": 3438.2,
+        "end": 3444.2
+      },
+      {
+        "start": 3444.2,
+        "end": 3455.2
+      },
+      {
+        "start": 3455.2,
+        "end": 3462.2
+      },
+      {
+        "start": 3462.2,
+        "end": 3469.2
+      },
+      {
+        "start": 3469.2,
+        "end": 3476.2
+      },
+      {
+        "start": 3476.2,
+        "end": 3483.2
+      },
+      {
+        "start": 3483.2,
+        "end": 3488.2
+      },
+      {
+        "start": 3488.2,
+        "end": 3495.2
+      },
+      {
+        "start": 3495.2,
+        "end": 3500.2
+      },
+      {
+        "start": 3500.2,
+        "end": 3507.2
+      },
+      {
+        "start": 3507.2,
+        "end": 3514.2
+      }
+    ],
+    "text": "equals, concateness, slice all these are the operations, the main part is how to create a buffer, how to read a buffer, how to write a buffer, that is it, rest of all the operations which we can perform on it buffers, pipe, pipe, no pipe, we should have pipe buffers string string solution, pipe find, now buffers and strings are closely related with each other, how can I say that is, when you are going to use strings, is that if you have a large file of 10 GB, reading entire 10 GB at once is next to impossible, so what you are going to do, you are going to partition or divide the 10 GB with a small one chance and those small chance will be more into your RAM and you can read those small chance or you can write those small chance into something else, are reading a video or if you are buffering a video, buffering the entire video at once highly impossible, so whenever we watch some video on a YouTube, what happens, it gives a chunk ending, starts playing the chunk, it depends upon your internet speed, and in the process of watching this first chunk, what happens, it will gather the next chunk of it, in videos, so working or reading or writing the data which is over the internet or something, it might be from your database or it might be from some rest APIs, if small small chance can be done using your strings, the data collecting the data in the format of chance, crossing it in the format of chance and storing the data somewhere else in the format of chance, chance is not about the size, a small size of data out of the entire data which is happening, that is said to be strings, strings are not about small small files, a bit of files from the launch content, and when you are writing already, I get buffering comes into the picture, because we are talking about video files, launch files, transfer over the some sort of communication media, some sort of communication media, if it is in a transfer state, obviously it will be in bytes form, never ever it is going to be in its original format, even your strings will be converted into bytes, if something is on a transfer media, reading data from your hard disk into your RAM, that transaction",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C17",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3327.2,
+          "end": 3336.2
+        },
+        {
+          "start": 3336.2,
+          "end": 3343.2
+        },
+        {
+          "start": 3343.2,
+          "end": 3358.2
+        },
+        {
+          "start": 3358.2,
+          "end": 3367.2
+        },
+        {
+          "start": 3368.2,
+          "end": 3374.2
+        },
+        {
+          "start": 3374.2,
+          "end": 3383.2
+        },
+        {
+          "start": 3383.2,
+          "end": 3389.2
+        },
+        {
+          "start": 3389.2,
+          "end": 3396.2
+        },
+        {
+          "start": 3396.2,
+          "end": 3403.2
+        },
+        {
+          "start": 3403.2,
+          "end": 3412.2
+        },
+        {
+          "start": 3412.2,
+          "end": 3419.2
+        },
+        {
+          "start": 3419.2,
+          "end": 3426.2
+        },
+        {
+          "start": 3426.2,
+          "end": 3438.2
+        },
+        {
+          "start": 3438.2,
+          "end": 3444.2
+        },
+        {
+          "start": 3444.2,
+          "end": 3455.2
+        },
+        {
+          "start": 3455.2,
+          "end": 3462.2
+        },
+        {
+          "start": 3462.2,
+          "end": 3469.2
+        },
+        {
+          "start": 3469.2,
+          "end": 3476.2
+        },
+        {
+          "start": 3476.2,
+          "end": 3483.2
+        },
+        {
+          "start": 3483.2,
+          "end": 3488.2
+        },
+        {
+          "start": 3488.2,
+          "end": 3495.2
+        },
+        {
+          "start": 3495.2,
+          "end": 3500.2
+        },
+        {
+          "start": 3500.2,
+          "end": 3507.2
+        },
+        {
+          "start": 3507.2,
+          "end": 3514.2
+        }
+      ],
+      "dwell_time": 186.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C18",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3514.2,
+        "end": 3521.2
+      },
+      {
+        "start": 3521.2,
+        "end": 3528.2
+      },
+      {
+        "start": 3528.2,
+        "end": 3535.2
+      },
+      {
+        "start": 3535.2,
+        "end": 3540.2
+      },
+      {
+        "start": 3541.2,
+        "end": 3547.2
+      },
+      {
+        "start": 3547.2,
+        "end": 3556.2
+      },
+      {
+        "start": 3556.2,
+        "end": 3563.2
+      },
+      {
+        "start": 3563.2,
+        "end": 3570.2
+      },
+      {
+        "start": 3570.2,
+        "end": 3579.2
+      },
+      {
+        "start": 3579.2,
+        "end": 3586.2
+      },
+      {
+        "start": 3586.2,
+        "end": 3588.2
+      },
+      {
+        "start": 3588.2,
+        "end": 3603.2
+      },
+      {
+        "start": 3603.2,
+        "end": 3612.2
+      },
+      {
+        "start": 3612.2,
+        "end": 3618.2
+      },
+      {
+        "start": 3618.2,
+        "end": 3624.2
+      },
+      {
+        "start": 3624.2,
+        "end": 3635.2
+      },
+      {
+        "start": 3635.2,
+        "end": 3642.2
+      },
+      {
+        "start": 3642.2,
+        "end": 3649.2
+      },
+      {
+        "start": 3649.2,
+        "end": 3657.2
+      },
+      {
+        "start": 3657.2,
+        "end": 3664.2
+      },
+      {
+        "start": 3664.2,
+        "end": 3671.2
+      },
+      {
+        "start": 3671.2,
+        "end": 3677.2
+      },
+      {
+        "start": 3677.2,
+        "end": 3684.2
+      },
+      {
+        "start": 3684.2,
+        "end": 3691.2
+      },
+      {
+        "start": 3691.2,
+        "end": 3698.2
+      }
+    ],
+    "text": "is also in bytes form, at the end of the day when you view it, it will be viewed as the normal vulnerability, if you are trying to open a video file in Word, what happens? You will get something which is finite, which you can't understand, what it wants to do, but same video file if you are opening it from micropad, then you can able to read it, get in the distance, because word of meant is not meant for reading a video file, fine? No, not directly to byte, we will start from the first. Over here, when you are working with strings, we have something said to be readable strings, writeable, duplex and pipe, duplex as a name itself indicates that on a stretch, we can read the data and write the data, which you will work, reading writing or writing and reading, both works, whereas coming to reading a particular string, what is a function? How you can read a particular string? You are going to use a function create read string, from some file name or some URL, whatever is that, what will say the arbiter doesn't matter, here I am taking it as a file, it can be anything, it can be a video file, it can be anything, it can be a video, it can be online link, it can be anything, but the main major focus is that, what is a function you are using to read the entire data in two small small chunks is the read, string data, your create the read string is a function which we are already use, create the read string. And over there, if it is a file, then we are using an encoding format as you give, that we are discussing on, what does the size means, that is high watermark, that is 16 into 1024, which is equal to 16 gaming, because we are talking in bytes, so 16 into 1024 becomes your 16KB operator, high watermark is nothing but it is a terminal which is adapted by your strings, it denotes what will be the size of your channel, the size of your channel, by default it is 16KB, if you are not giving also it will rate it as 16KB, but if you want somewhat less than that, if you want 4KB, then you can mention the size of the chain using high watermark, these are the poor parameters which",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C18",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3514.2,
+          "end": 3521.2
+        },
+        {
+          "start": 3521.2,
+          "end": 3528.2
+        },
+        {
+          "start": 3528.2,
+          "end": 3535.2
+        },
+        {
+          "start": 3535.2,
+          "end": 3540.2
+        },
+        {
+          "start": 3541.2,
+          "end": 3547.2
+        },
+        {
+          "start": 3547.2,
+          "end": 3556.2
+        },
+        {
+          "start": 3556.2,
+          "end": 3563.2
+        },
+        {
+          "start": 3563.2,
+          "end": 3570.2
+        },
+        {
+          "start": 3570.2,
+          "end": 3579.2
+        },
+        {
+          "start": 3579.2,
+          "end": 3586.2
+        },
+        {
+          "start": 3586.2,
+          "end": 3588.2
+        },
+        {
+          "start": 3588.2,
+          "end": 3603.2
+        },
+        {
+          "start": 3603.2,
+          "end": 3612.2
+        },
+        {
+          "start": 3612.2,
+          "end": 3618.2
+        },
+        {
+          "start": 3618.2,
+          "end": 3624.2
+        },
+        {
+          "start": 3624.2,
+          "end": 3635.2
+        },
+        {
+          "start": 3635.2,
+          "end": 3642.2
+        },
+        {
+          "start": 3642.2,
+          "end": 3649.2
+        },
+        {
+          "start": 3649.2,
+          "end": 3657.2
+        },
+        {
+          "start": 3657.2,
+          "end": 3664.2
+        },
+        {
+          "start": 3664.2,
+          "end": 3671.2
+        },
+        {
+          "start": 3671.2,
+          "end": 3677.2
+        },
+        {
+          "start": 3677.2,
+          "end": 3684.2
+        },
+        {
+          "start": 3684.2,
+          "end": 3691.2
+        },
+        {
+          "start": 3691.2,
+          "end": 3698.2
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C19",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3698.2,
+        "end": 3701.2
+      },
+      {
+        "start": 3701.2,
+        "end": 3707.2
+      },
+      {
+        "start": 3707.2,
+        "end": 3713.2
+      },
+      {
+        "start": 3713.2,
+        "end": 3718.2
+      },
+      {
+        "start": 3718.2,
+        "end": 3727.2
+      },
+      {
+        "start": 3727.2,
+        "end": 3738.2
+      },
+      {
+        "start": 3738.2,
+        "end": 3749.2
+      },
+      {
+        "start": 3749.2,
+        "end": 3757.2
+      },
+      {
+        "start": 3757.2,
+        "end": 3767.2
+      },
+      {
+        "start": 3767.2,
+        "end": 3773.2
+      },
+      {
+        "start": 3773.2,
+        "end": 3781.2
+      },
+      {
+        "start": 3781.2,
+        "end": 3791.2
+      },
+      {
+        "start": 3791.2,
+        "end": 3800.2
+      },
+      {
+        "start": 3800.2,
+        "end": 3813.2
+      },
+      {
+        "start": 3814.2,
+        "end": 3826.2
+      },
+      {
+        "start": 3826.2,
+        "end": 3834.2
+      },
+      {
+        "start": 3834.2,
+        "end": 3839.2
+      },
+      {
+        "start": 3840.2,
+        "end": 3843.2
+      },
+      {
+        "start": 3845.2,
+        "end": 3848.2
+      },
+      {
+        "start": 3852.2,
+        "end": 3855.2
+      },
+      {
+        "start": 3856.2,
+        "end": 3861.2
+      },
+      {
+        "start": 3861.2,
+        "end": 3869.2
+      },
+      {
+        "start": 3869.2,
+        "end": 3875.2
+      },
+      {
+        "start": 3875.2,
+        "end": 3879.2
+      },
+      {
+        "start": 3879.2,
+        "end": 3885.2
+      },
+      {
+        "start": 3885.2,
+        "end": 3888.2
+      }
+    ],
+    "text": "you are going, one is going to be the encoding and the other one is going to be the size, you have to mention help in along with the file from where you want to read the data in the form of chains, and the function which we are going to use is read, create read strings. And you are storing it in a readable string and on readable string, on readable string you are using event emitters, on readable string you are using event emitters. In this case, anyone who is triggering this event, which is said to be sorry, yeah, is that any emit function which is triggering data, is there any emit function? No, basically when we are using our manual creation of event emitters, we have invoke the listeners using emit, using emit, we have invoked it, but over here it is using an inbuilt emitters, if I am changing data to data 1, it will throw me an error, saying that there is no emitter which is registered with inbuilt, with create read strings, changing to data 1 and the higher run on that, we have some inbuilt emitters, and once the emitter will be taken in data, in event which comes along with the function itself, when you import that, but only 1, 0 1, yeah, readable, 0 1, CD, 0 1, that is CLS, node, index, see, we are not getting any answer, why? Because there is nothing to trigger even data 1, if this data, it should be data 1, it can be else, if you want something else, then create your own emitter, who is asking you to use the inventing? Can not you take into data and read on the things? This time you want an answer. Now the question is, who is going to trigger this on event emitters? It is being invoked, implicitly by your create read strings, and what such emitters are there, you can scroll down, you can see in the comment, we have all those emitters, one is error, end, end, you are going to inform, you are going to inform, end is also one of the important emitter,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C19",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3698.2,
+          "end": 3701.2
+        },
+        {
+          "start": 3701.2,
+          "end": 3707.2
+        },
+        {
+          "start": 3707.2,
+          "end": 3713.2
+        },
+        {
+          "start": 3713.2,
+          "end": 3718.2
+        },
+        {
+          "start": 3718.2,
+          "end": 3727.2
+        },
+        {
+          "start": 3727.2,
+          "end": 3738.2
+        },
+        {
+          "start": 3738.2,
+          "end": 3749.2
+        },
+        {
+          "start": 3749.2,
+          "end": 3757.2
+        },
+        {
+          "start": 3757.2,
+          "end": 3767.2
+        },
+        {
+          "start": 3767.2,
+          "end": 3773.2
+        },
+        {
+          "start": 3773.2,
+          "end": 3781.2
+        },
+        {
+          "start": 3781.2,
+          "end": 3791.2
+        },
+        {
+          "start": 3791.2,
+          "end": 3800.2
+        },
+        {
+          "start": 3800.2,
+          "end": 3813.2
+        },
+        {
+          "start": 3814.2,
+          "end": 3826.2
+        },
+        {
+          "start": 3826.2,
+          "end": 3834.2
+        },
+        {
+          "start": 3834.2,
+          "end": 3839.2
+        },
+        {
+          "start": 3840.2,
+          "end": 3843.2
+        },
+        {
+          "start": 3845.2,
+          "end": 3848.2
+        },
+        {
+          "start": 3852.2,
+          "end": 3855.2
+        },
+        {
+          "start": 3856.2,
+          "end": 3861.2
+        },
+        {
+          "start": 3861.2,
+          "end": 3869.2
+        },
+        {
+          "start": 3869.2,
+          "end": 3875.2
+        },
+        {
+          "start": 3875.2,
+          "end": 3879.2
+        },
+        {
+          "start": 3879.2,
+          "end": 3885.2
+        },
+        {
+          "start": 3885.2,
+          "end": 3888.2
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C20",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 3888.2,
+        "end": 3893.2
+      },
+      {
+        "start": 3893.2,
+        "end": 3901.2
+      },
+      {
+        "start": 3901.2,
+        "end": 3909.2
+      },
+      {
+        "start": 3909.2,
+        "end": 3915.2
+      },
+      {
+        "start": 3915.2,
+        "end": 3922.2
+      },
+      {
+        "start": 3922.2,
+        "end": 3927.2
+      },
+      {
+        "start": 3927.2,
+        "end": 3936.2
+      },
+      {
+        "start": 3936.2,
+        "end": 3942.2
+      },
+      {
+        "start": 3942.2,
+        "end": 3948.2
+      },
+      {
+        "start": 3948.2,
+        "end": 3957.2
+      },
+      {
+        "start": 3957.2,
+        "end": 3961.2
+      },
+      {
+        "start": 3962.2,
+        "end": 3971.2
+      },
+      {
+        "start": 3971.2,
+        "end": 3975.2
+      },
+      {
+        "start": 3975.2,
+        "end": 3978.2
+      },
+      {
+        "start": 3978.2,
+        "end": 3982.2
+      },
+      {
+        "start": 3982.2,
+        "end": 3985.2
+      },
+      {
+        "start": 3985.2,
+        "end": 3988.2
+      },
+      {
+        "start": 3988.2,
+        "end": 3995.2
+      },
+      {
+        "start": 3995.2,
+        "end": 3999.2
+      },
+      {
+        "start": 3999.2,
+        "end": 4003.2
+      },
+      {
+        "start": 4003.2,
+        "end": 4007.2
+      },
+      {
+        "start": 4007.2,
+        "end": 4009.2
+      },
+      {
+        "start": 4009.2,
+        "end": 4013.2
+      },
+      {
+        "start": 4013.2,
+        "end": 4016.2
+      },
+      {
+        "start": 4016.2,
+        "end": 4021.2
+      },
+      {
+        "start": 4021.2,
+        "end": 4024.2
+      },
+      {
+        "start": 4024.2,
+        "end": 4026.2
+      },
+      {
+        "start": 4026.2,
+        "end": 4029.2
+      },
+      {
+        "start": 4029.2,
+        "end": 4031.2
+      },
+      {
+        "start": 4031.2,
+        "end": 4034.2
+      },
+      {
+        "start": 4034.2,
+        "end": 4037.2
+      },
+      {
+        "start": 4037.2,
+        "end": 4039.2
+      },
+      {
+        "start": 4039.2,
+        "end": 4041.2
+      },
+      {
+        "start": 4041.2,
+        "end": 4043.2
+      },
+      {
+        "start": 4044.2,
+        "end": 4046.2
+      },
+      {
+        "start": 4046.2,
+        "end": 4049.2
+      },
+      {
+        "start": 4049.2,
+        "end": 4051.2
+      },
+      {
+        "start": 4051.2,
+        "end": 4053.2
+      },
+      {
+        "start": 4053.2,
+        "end": 4055.2
+      },
+      {
+        "start": 4055.2,
+        "end": 4060.2
+      },
+      {
+        "start": 4060.2,
+        "end": 4066.2
+      },
+      {
+        "start": 4066.2,
+        "end": 4069.2
+      },
+      {
+        "start": 4069.2,
+        "end": 4072.2
+      }
+    ],
+    "text": "you are going to inform the node JS, that this check out data has been read, if you do have the next, please pass on, have you used re-end in this? We have it, in the next example, we will be using it, open writeable, index, here we had used end, just run this as it is for the first time, second time you comment out that end, CLS, node index.js, we are running the index file in writeable, we got data related to file successfully, no reading in that, only write, okay, just commit author, end, end, and re-end this, so finish will not be involved until you inform your node JS, end is used to inform the node JS that, one particular check reading is vendor, and that hopefully in next example, somewhere it is there, I do remember, what is the importance of end end finish? Once node JS gets informed that the process is done, then only it will trigger the finish, but it will finish, call back function, or finish listeners, sorry, finish listeners, it can be said as callback or listeners, one and the same, interchangeably we will be using, just uncomment this, what we are doing already in this, we are trying to write hello into our writeable stream, that is the small check hello, once that is done, then we are moving to the next step, what it is, strings in node JS, once this check is being written, then we are informing the node JS that, all the checks has been written successfully, you can end the process, when you are calling end, it will trigger your finish listener, and whatever is there in the finish listener, it is going to be written on your console. So, this is a sequence of steps, which is going to be executed, if something goes wrong, then the error will come in picture. Next, duplex, if duplex do we have that, no, it is problem,",
+    "material_refs": [],
+    "topic_candidates": [
+      "commit"
+    ],
+    "evidence": {
+      "evidence_id": "E_C20",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 3888.2,
+          "end": 3893.2
+        },
+        {
+          "start": 3893.2,
+          "end": 3901.2
+        },
+        {
+          "start": 3901.2,
+          "end": 3909.2
+        },
+        {
+          "start": 3909.2,
+          "end": 3915.2
+        },
+        {
+          "start": 3915.2,
+          "end": 3922.2
+        },
+        {
+          "start": 3922.2,
+          "end": 3927.2
+        },
+        {
+          "start": 3927.2,
+          "end": 3936.2
+        },
+        {
+          "start": 3936.2,
+          "end": 3942.2
+        },
+        {
+          "start": 3942.2,
+          "end": 3948.2
+        },
+        {
+          "start": 3948.2,
+          "end": 3957.2
+        },
+        {
+          "start": 3957.2,
+          "end": 3961.2
+        },
+        {
+          "start": 3962.2,
+          "end": 3971.2
+        },
+        {
+          "start": 3971.2,
+          "end": 3975.2
+        },
+        {
+          "start": 3975.2,
+          "end": 3978.2
+        },
+        {
+          "start": 3978.2,
+          "end": 3982.2
+        },
+        {
+          "start": 3982.2,
+          "end": 3985.2
+        },
+        {
+          "start": 3985.2,
+          "end": 3988.2
+        },
+        {
+          "start": 3988.2,
+          "end": 3995.2
+        },
+        {
+          "start": 3995.2,
+          "end": 3999.2
+        },
+        {
+          "start": 3999.2,
+          "end": 4003.2
+        },
+        {
+          "start": 4003.2,
+          "end": 4007.2
+        },
+        {
+          "start": 4007.2,
+          "end": 4009.2
+        },
+        {
+          "start": 4009.2,
+          "end": 4013.2
+        },
+        {
+          "start": 4013.2,
+          "end": 4016.2
+        },
+        {
+          "start": 4016.2,
+          "end": 4021.2
+        },
+        {
+          "start": 4021.2,
+          "end": 4024.2
+        },
+        {
+          "start": 4024.2,
+          "end": 4026.2
+        },
+        {
+          "start": 4026.2,
+          "end": 4029.2
+        },
+        {
+          "start": 4029.2,
+          "end": 4031.2
+        },
+        {
+          "start": 4031.2,
+          "end": 4034.2
+        },
+        {
+          "start": 4034.2,
+          "end": 4037.2
+        },
+        {
+          "start": 4037.2,
+          "end": 4039.2
+        },
+        {
+          "start": 4039.2,
+          "end": 4041.2
+        },
+        {
+          "start": 4041.2,
+          "end": 4043.2
+        },
+        {
+          "start": 4044.2,
+          "end": 4046.2
+        },
+        {
+          "start": 4046.2,
+          "end": 4049.2
+        },
+        {
+          "start": 4049.2,
+          "end": 4051.2
+        },
+        {
+          "start": 4051.2,
+          "end": 4053.2
+        },
+        {
+          "start": 4053.2,
+          "end": 4055.2
+        },
+        {
+          "start": 4055.2,
+          "end": 4060.2
+        },
+        {
+          "start": 4060.2,
+          "end": 4066.2
+        },
+        {
+          "start": 4066.2,
+          "end": 4069.2
+        },
+        {
+          "start": 4069.2,
+          "end": 4072.2
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 1,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C21",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 4072.2,
+        "end": 4074.2
+      },
+      {
+        "start": 4074.2,
+        "end": 4076.2
+      },
+      {
+        "start": 4076.2,
+        "end": 4078.2
+      },
+      {
+        "start": 4078.2,
+        "end": 4080.2
+      },
+      {
+        "start": 4080.2,
+        "end": 4083.2
+      },
+      {
+        "start": 4083.2,
+        "end": 4087.2
+      },
+      {
+        "start": 4087.2,
+        "end": 4090.2
+      },
+      {
+        "start": 4090.2,
+        "end": 4093.2
+      },
+      {
+        "start": 4093.2,
+        "end": 4094.2
+      },
+      {
+        "start": 4094.2,
+        "end": 4097.2
+      },
+      {
+        "start": 4097.2,
+        "end": 4099.2
+      },
+      {
+        "start": 4099.2,
+        "end": 4101.2
+      },
+      {
+        "start": 4101.2,
+        "end": 4103.2
+      },
+      {
+        "start": 4103.2,
+        "end": 4106.2
+      },
+      {
+        "start": 4106.2,
+        "end": 4107.2
+      },
+      {
+        "start": 4107.2,
+        "end": 4108.2
+      },
+      {
+        "start": 4108.2,
+        "end": 4111.2
+      },
+      {
+        "start": 4111.2,
+        "end": 4113.2
+      },
+      {
+        "start": 4113.2,
+        "end": 4116.2
+      },
+      {
+        "start": 4116.2,
+        "end": 4119.2
+      },
+      {
+        "start": 4119.2,
+        "end": 4122.2
+      },
+      {
+        "start": 4122.2,
+        "end": 4125.2
+      },
+      {
+        "start": 4125.2,
+        "end": 4127.2
+      },
+      {
+        "start": 4127.2,
+        "end": 4129.2
+      },
+      {
+        "start": 4129.2,
+        "end": 4132.2
+      },
+      {
+        "start": 4132.2,
+        "end": 4133.2
+      },
+      {
+        "start": 4133.2,
+        "end": 4135.2
+      },
+      {
+        "start": 4135.2,
+        "end": 4142.2
+      },
+      {
+        "start": 4142.2,
+        "end": 4144.2
+      },
+      {
+        "start": 4144.2,
+        "end": 4146.2
+      },
+      {
+        "start": 4146.2,
+        "end": 4149.2
+      },
+      {
+        "start": 4149.2,
+        "end": 4151.2
+      },
+      {
+        "start": 4151.2,
+        "end": 4153.2
+      },
+      {
+        "start": 4153.2,
+        "end": 4154.2
+      },
+      {
+        "start": 4154.2,
+        "end": 4156.2
+      },
+      {
+        "start": 4156.2,
+        "end": 4158.2
+      },
+      {
+        "start": 4158.2,
+        "end": 4160.2
+      },
+      {
+        "start": 4160.2,
+        "end": 4161.2
+      },
+      {
+        "start": 4161.2,
+        "end": 4164.2
+      },
+      {
+        "start": 4164.2,
+        "end": 4166.2
+      },
+      {
+        "start": 4166.2,
+        "end": 4168.2
+      },
+      {
+        "start": 4168.2,
+        "end": 4170.2
+      },
+      {
+        "start": 4170.2,
+        "end": 4172.2
+      },
+      {
+        "start": 4172.2,
+        "end": 4173.2
+      },
+      {
+        "start": 4173.2,
+        "end": 4176.2
+      },
+      {
+        "start": 4176.2,
+        "end": 4177.2
+      },
+      {
+        "start": 4177.2,
+        "end": 4180.2
+      },
+      {
+        "start": 4181.2,
+        "end": 4184.2
+      },
+      {
+        "start": 4184.2,
+        "end": 4186.2
+      },
+      {
+        "start": 4186.2,
+        "end": 4188.2
+      },
+      {
+        "start": 4188.2,
+        "end": 4191.2
+      },
+      {
+        "start": 4191.2,
+        "end": 4194.2
+      },
+      {
+        "start": 4194.2,
+        "end": 4197.2
+      },
+      {
+        "start": 4197.2,
+        "end": 4201.2
+      },
+      {
+        "start": 4201.2,
+        "end": 4204.2
+      },
+      {
+        "start": 4204.2,
+        "end": 4207.2
+      },
+      {
+        "start": 4207.2,
+        "end": 4208.2
+      },
+      {
+        "start": 4208.2,
+        "end": 4210.2
+      },
+      {
+        "start": 4210.2,
+        "end": 4212.2
+      },
+      {
+        "start": 4212.2,
+        "end": 4214.2
+      },
+      {
+        "start": 4214.2,
+        "end": 4219.2
+      },
+      {
+        "start": 4219.2,
+        "end": 4223.2
+      },
+      {
+        "start": 4223.2,
+        "end": 4226.2
+      },
+      {
+        "start": 4226.2,
+        "end": 4228.2
+      },
+      {
+        "start": 4228.2,
+        "end": 4230.2
+      },
+      {
+        "start": 4230.2,
+        "end": 4235.2
+      },
+      {
+        "start": 4235.2,
+        "end": 4237.2
+      },
+      {
+        "start": 4239.2,
+        "end": 4242.2
+      },
+      {
+        "start": 4242.2,
+        "end": 4245.2
+      },
+      {
+        "start": 4245.2,
+        "end": 4248.2
+      },
+      {
+        "start": 4248.2,
+        "end": 4252.2
+      },
+      {
+        "start": 4252.2,
+        "end": 4254.2
+      },
+      {
+        "start": 4254.2,
+        "end": 4256.2
+      }
+    ],
+    "text": "it is problem, no, in duplex also we do not have end, where that, I saw somewhere it is there, in pipe, no, in pipe also not there, in writeable only, writeable stream, sorry, no, I was working on an example, hello write capital, transform, transform, yeah, transform, yes, this is the example, which I was been telling, what you can do is, when you are reading a stream of data, when you are reading a stream of data, you can apply transformations on the plateaus, you can have certain modifications to the dataaus on a plateaus, when you read or when you write, you can have a transformation. And generally, one year I am using write, because I do not have any source to read the data from, upper case transformation, dot write of hello, we do have upper case transform, what it has to do, we had a function in this, can you open that function, upper case transform function, no, in that case, in upper case transform function, what you are doing, you are, you are calling the transform, transform is from a stream, stream is a module, which you are encoding, in the stream module, we have transform class, that transform class, you are storing it in an object, name uppercase transform, and on this uppercase transform, you are writing the data, and when you are passing the data into uppercase transform, when you are passing the data into uppercase transform, it will be passed to you at this function, and it will be stored in check, that check will be transferred, transformed into streams, on that stream, you are applying two uppercase, which is, which you know better, two uppercase is a JavaScript method, which will convert all the characters into uppercase, and it will call the callback, if you are not writing callback, or if you are what happens, it will not get back to that particular function again, it will call the execution at the first stream of data, it is a panister, the phase feelings are there, time is up, so can you comment on this, and can you run this, run this, cd.com,",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C21",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 4072.2,
+          "end": 4074.2
+        },
+        {
+          "start": 4074.2,
+          "end": 4076.2
+        },
+        {
+          "start": 4076.2,
+          "end": 4078.2
+        },
+        {
+          "start": 4078.2,
+          "end": 4080.2
+        },
+        {
+          "start": 4080.2,
+          "end": 4083.2
+        },
+        {
+          "start": 4083.2,
+          "end": 4087.2
+        },
+        {
+          "start": 4087.2,
+          "end": 4090.2
+        },
+        {
+          "start": 4090.2,
+          "end": 4093.2
+        },
+        {
+          "start": 4093.2,
+          "end": 4094.2
+        },
+        {
+          "start": 4094.2,
+          "end": 4097.2
+        },
+        {
+          "start": 4097.2,
+          "end": 4099.2
+        },
+        {
+          "start": 4099.2,
+          "end": 4101.2
+        },
+        {
+          "start": 4101.2,
+          "end": 4103.2
+        },
+        {
+          "start": 4103.2,
+          "end": 4106.2
+        },
+        {
+          "start": 4106.2,
+          "end": 4107.2
+        },
+        {
+          "start": 4107.2,
+          "end": 4108.2
+        },
+        {
+          "start": 4108.2,
+          "end": 4111.2
+        },
+        {
+          "start": 4111.2,
+          "end": 4113.2
+        },
+        {
+          "start": 4113.2,
+          "end": 4116.2
+        },
+        {
+          "start": 4116.2,
+          "end": 4119.2
+        },
+        {
+          "start": 4119.2,
+          "end": 4122.2
+        },
+        {
+          "start": 4122.2,
+          "end": 4125.2
+        },
+        {
+          "start": 4125.2,
+          "end": 4127.2
+        },
+        {
+          "start": 4127.2,
+          "end": 4129.2
+        },
+        {
+          "start": 4129.2,
+          "end": 4132.2
+        },
+        {
+          "start": 4132.2,
+          "end": 4133.2
+        },
+        {
+          "start": 4133.2,
+          "end": 4135.2
+        },
+        {
+          "start": 4135.2,
+          "end": 4142.2
+        },
+        {
+          "start": 4142.2,
+          "end": 4144.2
+        },
+        {
+          "start": 4144.2,
+          "end": 4146.2
+        },
+        {
+          "start": 4146.2,
+          "end": 4149.2
+        },
+        {
+          "start": 4149.2,
+          "end": 4151.2
+        },
+        {
+          "start": 4151.2,
+          "end": 4153.2
+        },
+        {
+          "start": 4153.2,
+          "end": 4154.2
+        },
+        {
+          "start": 4154.2,
+          "end": 4156.2
+        },
+        {
+          "start": 4156.2,
+          "end": 4158.2
+        },
+        {
+          "start": 4158.2,
+          "end": 4160.2
+        },
+        {
+          "start": 4160.2,
+          "end": 4161.2
+        },
+        {
+          "start": 4161.2,
+          "end": 4164.2
+        },
+        {
+          "start": 4164.2,
+          "end": 4166.2
+        },
+        {
+          "start": 4166.2,
+          "end": 4168.2
+        },
+        {
+          "start": 4168.2,
+          "end": 4170.2
+        },
+        {
+          "start": 4170.2,
+          "end": 4172.2
+        },
+        {
+          "start": 4172.2,
+          "end": 4173.2
+        },
+        {
+          "start": 4173.2,
+          "end": 4176.2
+        },
+        {
+          "start": 4176.2,
+          "end": 4177.2
+        },
+        {
+          "start": 4177.2,
+          "end": 4180.2
+        },
+        {
+          "start": 4181.2,
+          "end": 4184.2
+        },
+        {
+          "start": 4184.2,
+          "end": 4186.2
+        },
+        {
+          "start": 4186.2,
+          "end": 4188.2
+        },
+        {
+          "start": 4188.2,
+          "end": 4191.2
+        },
+        {
+          "start": 4191.2,
+          "end": 4194.2
+        },
+        {
+          "start": 4194.2,
+          "end": 4197.2
+        },
+        {
+          "start": 4197.2,
+          "end": 4201.2
+        },
+        {
+          "start": 4201.2,
+          "end": 4204.2
+        },
+        {
+          "start": 4204.2,
+          "end": 4207.2
+        },
+        {
+          "start": 4207.2,
+          "end": 4208.2
+        },
+        {
+          "start": 4208.2,
+          "end": 4210.2
+        },
+        {
+          "start": 4210.2,
+          "end": 4212.2
+        },
+        {
+          "start": 4212.2,
+          "end": 4214.2
+        },
+        {
+          "start": 4214.2,
+          "end": 4219.2
+        },
+        {
+          "start": 4219.2,
+          "end": 4223.2
+        },
+        {
+          "start": 4223.2,
+          "end": 4226.2
+        },
+        {
+          "start": 4226.2,
+          "end": 4228.2
+        },
+        {
+          "start": 4228.2,
+          "end": 4230.2
+        },
+        {
+          "start": 4230.2,
+          "end": 4235.2
+        },
+        {
+          "start": 4235.2,
+          "end": 4237.2
+        },
+        {
+          "start": 4239.2,
+          "end": 4242.2
+        },
+        {
+          "start": 4242.2,
+          "end": 4245.2
+        },
+        {
+          "start": 4245.2,
+          "end": 4248.2
+        },
+        {
+          "start": 4248.2,
+          "end": 4252.2
+        },
+        {
+          "start": 4252.2,
+          "end": 4254.2
+        },
+        {
+          "start": 4254.2,
+          "end": 4256.2
+        }
+      ],
+      "dwell_time": 181.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": true,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C22",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 4256.2,
+        "end": 4258.2
+      },
+      {
+        "start": 4258.2,
+        "end": 4260.2
+      },
+      {
+        "start": 4260.2,
+        "end": 4262.2
+      },
+      {
+        "start": 4262.2,
+        "end": 4264.2
+      },
+      {
+        "start": 4265.2,
+        "end": 4273.2
+      },
+      {
+        "start": 4273.2,
+        "end": 4276.2
+      },
+      {
+        "start": 4276.2,
+        "end": 4279.2
+      },
+      {
+        "start": 4279.2,
+        "end": 4283.2
+      },
+      {
+        "start": 4283.2,
+        "end": 4286.2
+      },
+      {
+        "start": 4286.2,
+        "end": 4289.2
+      },
+      {
+        "start": 4289.2,
+        "end": 4292.2
+      },
+      {
+        "start": 4292.2,
+        "end": 4294.2
+      },
+      {
+        "start": 4294.2,
+        "end": 4295.2
+      },
+      {
+        "start": 4295.2,
+        "end": 4297.2
+      },
+      {
+        "start": 4297.2,
+        "end": 4300.2
+      },
+      {
+        "start": 4300.2,
+        "end": 4302.2
+      },
+      {
+        "start": 4302.2,
+        "end": 4305.2
+      },
+      {
+        "start": 4305.2,
+        "end": 4306.2
+      },
+      {
+        "start": 4306.2,
+        "end": 4309.2
+      },
+      {
+        "start": 4309.2,
+        "end": 4311.2
+      },
+      {
+        "start": 4311.2,
+        "end": 4313.2
+      },
+      {
+        "start": 4313.2,
+        "end": 4316.2
+      },
+      {
+        "start": 4316.2,
+        "end": 4317.2
+      },
+      {
+        "start": 4317.2,
+        "end": 4319.2
+      },
+      {
+        "start": 4319.2,
+        "end": 4321.2
+      },
+      {
+        "start": 4321.2,
+        "end": 4323.2
+      },
+      {
+        "start": 4323.2,
+        "end": 4324.2
+      },
+      {
+        "start": 4324.2,
+        "end": 4325.2
+      },
+      {
+        "start": 4325.2,
+        "end": 4328.2
+      },
+      {
+        "start": 4328.2,
+        "end": 4330.2
+      },
+      {
+        "start": 4330.2,
+        "end": 4332.2
+      },
+      {
+        "start": 4332.2,
+        "end": 4333.2
+      },
+      {
+        "start": 4333.2,
+        "end": 4334.2
+      },
+      {
+        "start": 4334.2,
+        "end": 4336.2
+      },
+      {
+        "start": 4336.2,
+        "end": 4337.2
+      },
+      {
+        "start": 4343.2,
+        "end": 4344.2
+      },
+      {
+        "start": 4345.2,
+        "end": 4347.2
+      },
+      {
+        "start": 4354.2,
+        "end": 4356.2
+      },
+      {
+        "start": 4356.2,
+        "end": 4358.2
+      },
+      {
+        "start": 4358.2,
+        "end": 4361.2
+      },
+      {
+        "start": 4361.2,
+        "end": 4363.2
+      },
+      {
+        "start": 4363.2,
+        "end": 4365.2
+      },
+      {
+        "start": 4365.2,
+        "end": 4368.2
+      },
+      {
+        "start": 4368.2,
+        "end": 4370.2
+      },
+      {
+        "start": 4370.2,
+        "end": 4373.2
+      },
+      {
+        "start": 4373.2,
+        "end": 4390.2
+      },
+      {
+        "start": 4390.2,
+        "end": 4396.6
+      },
+      {
+        "start": 4396.6,
+        "end": 4403.9
+      },
+      {
+        "start": 4403.9,
+        "end": 4410.1
+      },
+      {
+        "start": 4410.1,
+        "end": 4416.6
+      },
+      {
+        "start": 4416.6,
+        "end": 4421.8
+      },
+      {
+        "start": 4421.8,
+        "end": 4431.7
+      },
+      {
+        "start": 4431.7,
+        "end": 4439.4
+      },
+      {
+        "start": 4439.4,
+        "end": 4448.7
+      },
+      {
+        "start": 4448.7,
+        "end": 4455.6
+      }
+    ],
+    "text": "cd, transform, node, node index.js, hello, it is taking the first step of data that is hello, and it is holding on there, now just try to call back the things, now just try to call back the things, and it has to have three parameters, then you can have any name, it doesn't matter, n code, second parameter should be an encoding, and third parameter should be a callback function, if you miss anyone of these parameters, then you will be getting thrown to an arrow, hello and go, see second chain is being read, and in the same example, get back to the things, and comment on up to n, n, n, n, that is line number 20, comment on here, check it up, no, here, something, we have this, so, uppercase transform, n is not being called, so, no, get that, okay, uppercase transform must be on data, some chain will string, okay, that is error, if you go, comment on all this, innit? we run this, Okay, we are not ready to finish right, we are not ready to finish right, but end is a function which is used to trigger the node j's saying that I am done with my crossing of the chains. There is no more data to get processed means the entire process has been finished. That is the importance of your end and during the transport if you want to have a transformation then you can do it using your transform class, using your transform class you can apply transformations on the stream of data. What is the stream? It is a chunk of data not the entire file, but small chain which depends upon your watermark. Watermark refers the size of each chain. What else we have? Duplex it is okay all combining 1 and 2, read and write becomes your duplex, pipe, pipe, pipe your pipe means, if you want to copy from one file into another file. Here we are two files example dot t h n output dot t h d. If you want to",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C22",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 4256.2,
+          "end": 4258.2
+        },
+        {
+          "start": 4258.2,
+          "end": 4260.2
+        },
+        {
+          "start": 4260.2,
+          "end": 4262.2
+        },
+        {
+          "start": 4262.2,
+          "end": 4264.2
+        },
+        {
+          "start": 4265.2,
+          "end": 4273.2
+        },
+        {
+          "start": 4273.2,
+          "end": 4276.2
+        },
+        {
+          "start": 4276.2,
+          "end": 4279.2
+        },
+        {
+          "start": 4279.2,
+          "end": 4283.2
+        },
+        {
+          "start": 4283.2,
+          "end": 4286.2
+        },
+        {
+          "start": 4286.2,
+          "end": 4289.2
+        },
+        {
+          "start": 4289.2,
+          "end": 4292.2
+        },
+        {
+          "start": 4292.2,
+          "end": 4294.2
+        },
+        {
+          "start": 4294.2,
+          "end": 4295.2
+        },
+        {
+          "start": 4295.2,
+          "end": 4297.2
+        },
+        {
+          "start": 4297.2,
+          "end": 4300.2
+        },
+        {
+          "start": 4300.2,
+          "end": 4302.2
+        },
+        {
+          "start": 4302.2,
+          "end": 4305.2
+        },
+        {
+          "start": 4305.2,
+          "end": 4306.2
+        },
+        {
+          "start": 4306.2,
+          "end": 4309.2
+        },
+        {
+          "start": 4309.2,
+          "end": 4311.2
+        },
+        {
+          "start": 4311.2,
+          "end": 4313.2
+        },
+        {
+          "start": 4313.2,
+          "end": 4316.2
+        },
+        {
+          "start": 4316.2,
+          "end": 4317.2
+        },
+        {
+          "start": 4317.2,
+          "end": 4319.2
+        },
+        {
+          "start": 4319.2,
+          "end": 4321.2
+        },
+        {
+          "start": 4321.2,
+          "end": 4323.2
+        },
+        {
+          "start": 4323.2,
+          "end": 4324.2
+        },
+        {
+          "start": 4324.2,
+          "end": 4325.2
+        },
+        {
+          "start": 4325.2,
+          "end": 4328.2
+        },
+        {
+          "start": 4328.2,
+          "end": 4330.2
+        },
+        {
+          "start": 4330.2,
+          "end": 4332.2
+        },
+        {
+          "start": 4332.2,
+          "end": 4333.2
+        },
+        {
+          "start": 4333.2,
+          "end": 4334.2
+        },
+        {
+          "start": 4334.2,
+          "end": 4336.2
+        },
+        {
+          "start": 4336.2,
+          "end": 4337.2
+        },
+        {
+          "start": 4343.2,
+          "end": 4344.2
+        },
+        {
+          "start": 4345.2,
+          "end": 4347.2
+        },
+        {
+          "start": 4354.2,
+          "end": 4356.2
+        },
+        {
+          "start": 4356.2,
+          "end": 4358.2
+        },
+        {
+          "start": 4358.2,
+          "end": 4361.2
+        },
+        {
+          "start": 4361.2,
+          "end": 4363.2
+        },
+        {
+          "start": 4363.2,
+          "end": 4365.2
+        },
+        {
+          "start": 4365.2,
+          "end": 4368.2
+        },
+        {
+          "start": 4368.2,
+          "end": 4370.2
+        },
+        {
+          "start": 4370.2,
+          "end": 4373.2
+        },
+        {
+          "start": 4373.2,
+          "end": 4390.2
+        },
+        {
+          "start": 4390.2,
+          "end": 4396.6
+        },
+        {
+          "start": 4396.6,
+          "end": 4403.9
+        },
+        {
+          "start": 4403.9,
+          "end": 4410.1
+        },
+        {
+          "start": 4410.1,
+          "end": 4416.6
+        },
+        {
+          "start": 4416.6,
+          "end": 4421.8
+        },
+        {
+          "start": 4421.8,
+          "end": 4431.7
+        },
+        {
+          "start": 4431.7,
+          "end": 4439.4
+        },
+        {
+          "start": 4439.4,
+          "end": 4448.7
+        },
+        {
+          "start": 4448.7,
+          "end": 4455.6
+        }
+      ],
+      "dwell_time": 184.4,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C23",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 4455.6,
+        "end": 4461.7
+      },
+      {
+        "start": 4461.7,
+        "end": 4467.2
+      },
+      {
+        "start": 4467.2,
+        "end": 4477.5
+      },
+      {
+        "start": 4477.5,
+        "end": 4482.7
+      },
+      {
+        "start": 4482.7,
+        "end": 4488.8
+      },
+      {
+        "start": 4488.8,
+        "end": 4494.5
+      },
+      {
+        "start": 4494.5,
+        "end": 4500.2
+      },
+      {
+        "start": 4500.2,
+        "end": 4514.9
+      },
+      {
+        "start": 4514.9,
+        "end": 4521.9
+      },
+      {
+        "start": 4521.9,
+        "end": 4531.2
+      },
+      {
+        "start": 4531.2,
+        "end": 4539.0
+      },
+      {
+        "start": 4539.0,
+        "end": 4546.7
+      },
+      {
+        "start": 4546.7,
+        "end": 4553.9
+      },
+      {
+        "start": 4553.9,
+        "end": 4564.6
+      },
+      {
+        "start": 4564.6,
+        "end": 4573.6
+      },
+      {
+        "start": 4573.6,
+        "end": 4585.5
+      },
+      {
+        "start": 4585.5,
+        "end": 4592.3
+      },
+      {
+        "start": 4592.3,
+        "end": 4600.3
+      },
+      {
+        "start": 4600.3,
+        "end": 4608.3
+      },
+      {
+        "start": 4608.3,
+        "end": 4616.3
+      },
+      {
+        "start": 4616.3,
+        "end": 4621.3
+      },
+      {
+        "start": 4621.3,
+        "end": 4630.3
+      },
+      {
+        "start": 4630.3,
+        "end": 4639.3
+      }
+    ],
+    "text": "copy the data from example dot t h d to output dot t h d, then we are going to use pipe instead of storing it onto your local this and transferring it to something else directly you can write it from one file to another file. It is quite simple that we are using the dot pipe for a writeable stream. Readable stream dot pipe of writeable stream. Readable stream is the source and writeable stream is the target or this station where you want to write the data. So buffers and streams especially introduce into your notches, the rest of the things which are being part of your JavaScript that is not discussed. Find, get into use. We have only one example or two examples in your JavaScript. So, the first example is not more than that. Call who? Very important call back if I am to promise, promise find very much important call back if I am to promise find. See here the scenario comes into picture that please be at edge. If you understand the things it is okay, we will leave the coding part to tomorrow. But, try to understand the concept when to use this, qualify and bank it yourself. What is the call back if I enter, promise find very much important interview question. You have some application, which has been already developed. It has been developed in 2000 or 2005. Surely if it is be developed in 2005, will be developed with the usage of call back, call back. So, we have certain function in call back, but we are running in 2026, where we are not able to use call back because it gets into help and we are able to use promise or as intent away. Now, whatever that person has developed, I can't sit and rewrite the entire code from scratch. I can't rewrite, it is wasted of my time. Is there any method which will directly transform the call back function which is there already into promise? Can you convert the entire call back into promise? If there is a function, then it should be promise find. Getting my point call back to promise, promise find.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C23",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 4455.6,
+          "end": 4461.7
+        },
+        {
+          "start": 4461.7,
+          "end": 4467.2
+        },
+        {
+          "start": 4467.2,
+          "end": 4477.5
+        },
+        {
+          "start": 4477.5,
+          "end": 4482.7
+        },
+        {
+          "start": 4482.7,
+          "end": 4488.8
+        },
+        {
+          "start": 4488.8,
+          "end": 4494.5
+        },
+        {
+          "start": 4494.5,
+          "end": 4500.2
+        },
+        {
+          "start": 4500.2,
+          "end": 4514.9
+        },
+        {
+          "start": 4514.9,
+          "end": 4521.9
+        },
+        {
+          "start": 4521.9,
+          "end": 4531.2
+        },
+        {
+          "start": 4531.2,
+          "end": 4539.0
+        },
+        {
+          "start": 4539.0,
+          "end": 4546.7
+        },
+        {
+          "start": 4546.7,
+          "end": 4553.9
+        },
+        {
+          "start": 4553.9,
+          "end": 4564.6
+        },
+        {
+          "start": 4564.6,
+          "end": 4573.6
+        },
+        {
+          "start": 4573.6,
+          "end": 4585.5
+        },
+        {
+          "start": 4585.5,
+          "end": 4592.3
+        },
+        {
+          "start": 4592.3,
+          "end": 4600.3
+        },
+        {
+          "start": 4600.3,
+          "end": 4608.3
+        },
+        {
+          "start": 4608.3,
+          "end": 4616.3
+        },
+        {
+          "start": 4616.3,
+          "end": 4621.3
+        },
+        {
+          "start": 4621.3,
+          "end": 4630.3
+        },
+        {
+          "start": 4630.3,
+          "end": 4639.3
+        }
+      ],
+      "dwell_time": 183.7,
+      "repetition_count": 0,
+      "emphasis_markers": [
+        "very important"
+      ],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C24",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 4639.3,
+        "end": 4647.3
+      },
+      {
+        "start": 4647.3,
+        "end": 4657.3
+      },
+      {
+        "start": 4657.3,
+        "end": 4665.3
+      },
+      {
+        "start": 4665.3,
+        "end": 4671.3
+      },
+      {
+        "start": 4671.3,
+        "end": 4678.3
+      },
+      {
+        "start": 4678.3,
+        "end": 4686.3
+      },
+      {
+        "start": 4686.3,
+        "end": 4694.3
+      },
+      {
+        "start": 4694.3,
+        "end": 4704.3
+      },
+      {
+        "start": 4704.3,
+        "end": 4711.3
+      },
+      {
+        "start": 4711.3,
+        "end": 4718.3
+      },
+      {
+        "start": 4718.3,
+        "end": 4725.3
+      },
+      {
+        "start": 4725.3,
+        "end": 4730.3
+      },
+      {
+        "start": 4730.3,
+        "end": 4739.3
+      },
+      {
+        "start": 4739.3,
+        "end": 4747.3
+      },
+      {
+        "start": 4747.3,
+        "end": 4754.3
+      },
+      {
+        "start": 4754.3,
+        "end": 4761.3
+      },
+      {
+        "start": 4761.3,
+        "end": 4767.3
+      },
+      {
+        "start": 4767.3,
+        "end": 4776.3
+      },
+      {
+        "start": 4776.3,
+        "end": 4793.3
+      },
+      {
+        "start": 4794.3,
+        "end": 4800.3
+      },
+      {
+        "start": 4800.3,
+        "end": 4808.3
+      },
+      {
+        "start": 4808.3,
+        "end": 4815.3
+      },
+      {
+        "start": 4815.3,
+        "end": 4823.3
+      }
+    ],
+    "text": "It doesn't happen anyway, any of the way presently, but is there any way to convert a promise into call back? This will not happen, being in 2026. Don't know, but see, I had taken that function converted to call back than my logic and when I am exporting it, it happens that I should convert it to call back so that that guy should understand. The application which is already lost, that should understand. It happens, is there any function which will convert your promise functions into call back? Yes, that is said to be call back if find. Further, it has been given as an example call back if find. We had a student service application where the entire thing is in promise, I have written in latest one, that is promise. If you could see, it is a promise function. Getting the things and promise function will not have any contents within the parameter which is the parameter list. If you are accessing this directly, we don't have any issue, but if you want to access this as a call back function, then we have an issue. So, a simple line of code has changed the entire set. Can you run third example? First show the third example. What we are doing for year in third example? We are trying to call the same function which has been written in promise. That is, it is accepted only I. But over here, we are passing using call back function, that is error first condition, error and student. And I am expected that the promise has to return with the result. Then a roll number and something else. It has to be the part of my result. Can you run this directly? CD filter, CD filter, CD filter, CD filter, one CD. CD, you tell model, CD call back, find model, and run the CLS node, third example, three call back problem. Are you getting the things? In one, I have mentioned the promise. In three, I want to access the promise using call back. You will be drawn with an error. Say that, it is written through promise, it does not accept or use a call back. Can you run four? Can you run four? Four dot call back. Requesting the student and you are getting",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C24",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 4639.3,
+          "end": 4647.3
+        },
+        {
+          "start": 4647.3,
+          "end": 4657.3
+        },
+        {
+          "start": 4657.3,
+          "end": 4665.3
+        },
+        {
+          "start": 4665.3,
+          "end": 4671.3
+        },
+        {
+          "start": 4671.3,
+          "end": 4678.3
+        },
+        {
+          "start": 4678.3,
+          "end": 4686.3
+        },
+        {
+          "start": 4686.3,
+          "end": 4694.3
+        },
+        {
+          "start": 4694.3,
+          "end": 4704.3
+        },
+        {
+          "start": 4704.3,
+          "end": 4711.3
+        },
+        {
+          "start": 4711.3,
+          "end": 4718.3
+        },
+        {
+          "start": 4718.3,
+          "end": 4725.3
+        },
+        {
+          "start": 4725.3,
+          "end": 4730.3
+        },
+        {
+          "start": 4730.3,
+          "end": 4739.3
+        },
+        {
+          "start": 4739.3,
+          "end": 4747.3
+        },
+        {
+          "start": 4747.3,
+          "end": 4754.3
+        },
+        {
+          "start": 4754.3,
+          "end": 4761.3
+        },
+        {
+          "start": 4761.3,
+          "end": 4767.3
+        },
+        {
+          "start": 4767.3,
+          "end": 4776.3
+        },
+        {
+          "start": 4776.3,
+          "end": 4793.3
+        },
+        {
+          "start": 4794.3,
+          "end": 4800.3
+        },
+        {
+          "start": 4800.3,
+          "end": 4808.3
+        },
+        {
+          "start": 4808.3,
+          "end": 4815.3
+        },
+        {
+          "start": 4815.3,
+          "end": 4823.3
+        }
+      ],
+      "dwell_time": 183.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C25",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 4823.3,
+        "end": 4831.3
+      },
+      {
+        "start": 4831.3,
+        "end": 4846.3
+      },
+      {
+        "start": 4846.3,
+        "end": 4859.3
+      },
+      {
+        "start": 4859.3,
+        "end": 4868.3
+      },
+      {
+        "start": 4868.3,
+        "end": 4877.3
+      },
+      {
+        "start": 4877.3,
+        "end": 4887.3
+      },
+      {
+        "start": 4887.3,
+        "end": 4894.3
+      },
+      {
+        "start": 4894.3,
+        "end": 4900.3
+      },
+      {
+        "start": 4900.3,
+        "end": 4906.3
+      },
+      {
+        "start": 4906.3,
+        "end": 4914.3
+      },
+      {
+        "start": 4914.3,
+        "end": 4920.3
+      },
+      {
+        "start": 4920.3,
+        "end": 4926.3
+      },
+      {
+        "start": 4926.3,
+        "end": 4933.3
+      },
+      {
+        "start": 4933.3,
+        "end": 4941.3
+      },
+      {
+        "start": 4941.3,
+        "end": 4952.3
+      },
+      {
+        "start": 4952.3,
+        "end": 4960.3
+      },
+      {
+        "start": 4960.3,
+        "end": 4967.3
+      },
+      {
+        "start": 4967.3,
+        "end": 4980.3
+      },
+      {
+        "start": 4980.3,
+        "end": 4987.3
+      },
+      {
+        "start": 4987.3,
+        "end": 4997.3
+      },
+      {
+        "start": 4997.3,
+        "end": 5005.3
+      }
+    ],
+    "text": "all food. What is the treatment with this two? One line of statement. Can you get back to your VS code? Four, open four call back. What is the line of the change? Is that a scroller? Now, this one. Util dot call back if I am loading Util module and we are using Util dot call back if I am getting students. Get students is the exporter. Open, student, student, student. Student service. One. Student service, what you are exporting audio? Get student. This is being imported over there. Just get back to public. You are importing get student, object destructing, and on that get student what you are applying call back if I internally what you are not just does is it will convert the entire promise into a call back function, which is hidden, which will be done in the background. So, that when you are passing the same call back function, which you have said earlier in example three, then that most of this is a call back function. So, this is the thing which is happening and it will retrieve the result and it will throw you the list. Getting the links, I am going to give promise to call back. I am not writing any a single line of statement. Just I am using call back if I Util dot call back if I that function will convert the call back. So, promise into call back function in the background. Can you try to print get student call back? Try to print what is being saved in get not over here outside. After call back if I statement line number 8 and then I will write it in the editor console dot log of get student call back call back call back this one, the variable student call back yes. Now, I am eager to see in the night one case only in Gujarat then I call. Internally it happens that I got to know but whether it stores the internal function structure on. No, it is giving that it has saved some function. How to see the internal of this? How to table that function? Internally",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C25",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 4823.3,
+          "end": 4831.3
+        },
+        {
+          "start": 4831.3,
+          "end": 4846.3
+        },
+        {
+          "start": 4846.3,
+          "end": 4859.3
+        },
+        {
+          "start": 4859.3,
+          "end": 4868.3
+        },
+        {
+          "start": 4868.3,
+          "end": 4877.3
+        },
+        {
+          "start": 4877.3,
+          "end": 4887.3
+        },
+        {
+          "start": 4887.3,
+          "end": 4894.3
+        },
+        {
+          "start": 4894.3,
+          "end": 4900.3
+        },
+        {
+          "start": 4900.3,
+          "end": 4906.3
+        },
+        {
+          "start": 4906.3,
+          "end": 4914.3
+        },
+        {
+          "start": 4914.3,
+          "end": 4920.3
+        },
+        {
+          "start": 4920.3,
+          "end": 4926.3
+        },
+        {
+          "start": 4926.3,
+          "end": 4933.3
+        },
+        {
+          "start": 4933.3,
+          "end": 4941.3
+        },
+        {
+          "start": 4941.3,
+          "end": 4952.3
+        },
+        {
+          "start": 4952.3,
+          "end": 4960.3
+        },
+        {
+          "start": 4960.3,
+          "end": 4967.3
+        },
+        {
+          "start": 4967.3,
+          "end": 4980.3
+        },
+        {
+          "start": 4980.3,
+          "end": 4987.3
+        },
+        {
+          "start": 4987.3,
+          "end": 4997.3
+        },
+        {
+          "start": 4997.3,
+          "end": 5005.3
+        }
+      ],
+      "dwell_time": 182.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C26",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 5005.3,
+        "end": 5011.3
+      },
+      {
+        "start": 5012.3,
+        "end": 5017.3
+      },
+      {
+        "start": 5017.3,
+        "end": 5029.3
+      },
+      {
+        "start": 5029.3,
+        "end": 5041.3
+      },
+      {
+        "start": 5041.3,
+        "end": 5048.3
+      },
+      {
+        "start": 5048.3,
+        "end": 5054.3
+      },
+      {
+        "start": 5055.3,
+        "end": 5061.3
+      },
+      {
+        "start": 5061.3,
+        "end": 5067.3
+      },
+      {
+        "start": 5067.3,
+        "end": 5074.3
+      },
+      {
+        "start": 5075.3,
+        "end": 5083.3
+      },
+      {
+        "start": 5083.3,
+        "end": 5091.3
+      },
+      {
+        "start": 5091.3,
+        "end": 5098.3
+      },
+      {
+        "start": 5098.3,
+        "end": 5105.3
+      },
+      {
+        "start": 5105.3,
+        "end": 5110.3
+      },
+      {
+        "start": 5110.3,
+        "end": 5115.3
+      },
+      {
+        "start": 5115.3,
+        "end": 5121.3
+      },
+      {
+        "start": 5121.3,
+        "end": 5128.3
+      },
+      {
+        "start": 5151.3,
+        "end": 5167.3
+      },
+      {
+        "start": 5167.3,
+        "end": 5177.3
+      },
+      {
+        "start": 5177.3,
+        "end": 5184.3
+      },
+      {
+        "start": 5184.3,
+        "end": 5192.3
+      },
+      {
+        "start": 5192.3,
+        "end": 5199.3
+      },
+      {
+        "start": 5199.3,
+        "end": 5206.3
+      },
+      {
+        "start": 5206.3,
+        "end": 5211.3
+      }
+    ],
+    "text": "I want to look at whether it is seriously converting it or obviously it has converted it. That is the reason why we are getting that result. In the same manner, promise if I will convert your call back into promise functions. Can you open the promise if I. Strength student service but this time we are writing a call back. This time we are writing a call back on student service ID, call back and we are exporting it as get student only. This is a call back. In the previous case it was a promise. This case it is a call back we are passing it. We are exporting it with a get student and whoever those who want to access this they have to access it as a call back. But the scenario is I have a promise I am going to promises. So, can I convert that call back into promise yes you did not promise that of get students. Get to third example, third fourth example. I am skipping those two steps that is just for your understanding. But exact work is being done in your home. What we are doing here? We are using you did not promise by of get students. Now get a call back. It reads it as a call back function and it will convert it into a promise function. It will convert it into a promise function and on that promise function we are applying. I want the data of the student who is of one or one. We had only one rule number one or one. If I am going with triple name you will get an error saying that student data not convert it into triple name and run. We run the things. So, here we end our day. Tomorrow we will be starting with creation of basic web server using HTTP module. It possible it possible because I have not discussed how to create a server in this HTTP. Then I have to speak on how to handle request and response. Then I have to teach you how to formulate the routes, different types of routes. Then we will get into MongoDB. Let us see how much I get covered. Tomorrow and tomorrow after tomorrow it is somewhat we can say it is important class for you guys because your entire lab interval is based on tomorrow idea.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C26",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 5005.3,
+          "end": 5011.3
+        },
+        {
+          "start": 5012.3,
+          "end": 5017.3
+        },
+        {
+          "start": 5017.3,
+          "end": 5029.3
+        },
+        {
+          "start": 5029.3,
+          "end": 5041.3
+        },
+        {
+          "start": 5041.3,
+          "end": 5048.3
+        },
+        {
+          "start": 5048.3,
+          "end": 5054.3
+        },
+        {
+          "start": 5055.3,
+          "end": 5061.3
+        },
+        {
+          "start": 5061.3,
+          "end": 5067.3
+        },
+        {
+          "start": 5067.3,
+          "end": 5074.3
+        },
+        {
+          "start": 5075.3,
+          "end": 5083.3
+        },
+        {
+          "start": 5083.3,
+          "end": 5091.3
+        },
+        {
+          "start": 5091.3,
+          "end": 5098.3
+        },
+        {
+          "start": 5098.3,
+          "end": 5105.3
+        },
+        {
+          "start": 5105.3,
+          "end": 5110.3
+        },
+        {
+          "start": 5110.3,
+          "end": 5115.3
+        },
+        {
+          "start": 5115.3,
+          "end": 5121.3
+        },
+        {
+          "start": 5121.3,
+          "end": 5128.3
+        },
+        {
+          "start": 5151.3,
+          "end": 5167.3
+        },
+        {
+          "start": 5167.3,
+          "end": 5177.3
+        },
+        {
+          "start": 5177.3,
+          "end": 5184.3
+        },
+        {
+          "start": 5184.3,
+          "end": 5192.3
+        },
+        {
+          "start": 5192.3,
+          "end": 5199.3
+        },
+        {
+          "start": 5199.3,
+          "end": 5206.3
+        },
+        {
+          "start": 5206.3,
+          "end": 5211.3
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C27",
+    "source_type": "VOICE_ONLY",
+    "time_spans": [
+      {
+        "start": 5211.3,
+        "end": 5216.3
+      },
+      {
+        "start": 5216.3,
+        "end": 5223.3
+      },
+      {
+        "start": 5224.3,
+        "end": 5230.3
+      },
+      {
+        "start": 5230.3,
+        "end": 5237.3
+      }
+    ],
+    "text": "And to get on to that we should require all these things. Whatever we had discussed in no chase. And prior to that I have to deal with environment or packing manager. As such and students you can leave the class be sectioned today that I have to take the run.",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C27",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 5211.3,
+          "end": 5216.3
+        },
+        {
+          "start": 5216.3,
+          "end": 5223.3
+        },
+        {
+          "start": 5224.3,
+          "end": 5230.3
+        },
+        {
+          "start": 5230.3,
+          "end": 5237.3
+        }
+      ],
+      "dwell_time": 25.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

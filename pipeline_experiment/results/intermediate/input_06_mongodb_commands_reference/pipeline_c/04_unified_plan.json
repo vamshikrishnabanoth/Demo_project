@@ -1,0 +1,115 @@
+{
+  "input_id": "input_06_mongodb_commands_reference",
+  "title": "MongoDB Command Reference: MongoImport, Indexing & Aggregation Syntax",
+  "total_requested_questions": 5,
+  "total_available_targets": 5,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Data Import and Export",
+      "what_taught_summary": "Students must recall the specific CLI flags for `mongoimport` (e.g., `--jsonArray`, `--type=csv`, `--headerline`) and the distinction between `mongoimport`/`mongoexport` for data transfer versus `mongodump`/`mongorestore` for full backups.",
+      "why_assessed_pedagogy": "To ensure students can correctly identify and select the appropriate command-line utility and syntax for basic data ingestion tasks without requiring complex logic or troubleshooting.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing `mongoimport` with `mongodump`, assuming `mongoimport` creates a full database backup rather than just inserting documents.",
+        "Omitting the `--headerline` flag when importing CSV files, leading to the first row being treated as data instead of column names.",
+        "Using `--jsonArray` for standard line-delimited JSON files, which is only required for JSON arrays wrapped in brackets."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Backup and Restore",
+      "what_taught_summary": "Students must identify `mongodump` and `mongorestore` as the specific tools for creating and restoring full database backups, distinguishing them from document-level import/export utilities.",
+      "why_assessed_pedagogy": "To verify that students can recognize the correct operational tools for disaster recovery and data migration scenarios, a fundamental administrative skill.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Believing that `mongoexport` creates a restorable backup file that can be used with `mongorestore`.",
+        "Assuming `mongodump` only backs up a single collection rather than the entire database or specified namespaces.",
+        "Confusing the restore process with an import process, thinking `mongorestore` requires specific field mapping like `mongoimport`."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C04"
+      ],
+      "source_timestamps_or_slides": [
+        "[540.0s - 720.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Query Operators and Array Updates",
+      "what_taught_summary": "Students must apply update operators like `$set` and `$unset` to modify specific fields, including nested paths (e.g., `attributes.size`) and array indices (e.g., `subjects.2`), and use `.explain(\"executionStats\")` to verify index utilization.",
+      "why_assessed_pedagogy": "To demonstrate the ability to manipulate complex document structures and analyze query performance, ensuring students can write efficient and precise update operations.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Using `$set` to replace an entire array instead of updating a specific index, or vice versa, leading to data loss or unintended structure changes.",
+        "Assuming that creating an index automatically guarantees its use by the query planner without verifying via `.explain()`.",
+        "Confusing `$unset` with `$pull`, using `$unset` to remove a specific element from an array rather than the entire array field."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C05",
+        "E_C06"
+      ],
+      "source_timestamps_or_slides": [
+        "[720.0s - 900.0s]",
+        "[900.0s - 1080.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Aggregation Pipeline",
+      "what_taught_summary": "Students must construct aggregation pipelines using sequential stages such as `$match`, `$group` (with `$sum`/`$push`), `$sort`, and `$project` to transform and analyze data.",
+      "why_assessed_pedagogy": "To demonstrate the ability to design multi-step data processing workflows that filter, aggregate, and reshape data for reporting or analysis.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Placing `$sort` before `$group` unnecessarily, assuming it improves performance when `$group` inherently handles aggregation regardless of input order.",
+        "Using `$match` after `$group` to filter aggregated results, when it is more efficient to filter before grouping if possible.",
+        "Confusing `$project` with `$group`, using `$project` to aggregate values (like sums) instead of just reshaping fields."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C07",
+        "E_C08",
+        "E_C09"
+      ],
+      "source_timestamps_or_slides": [
+        "[1080.0s - 1260.0s]",
+        "[1260.0s - 1440.0s]",
+        "[1440.0s - 1620.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_05",
+      "topic_name": "Indexing and Schema Validation",
+      "what_taught_summary": "Students must explain the purpose of different index types (single-field, compound, unique, sparse) and how schema validation rules (e.g., `bsonType`) enforce data integrity on collection documents.",
+      "why_assessed_pedagogy": "To ensure students understand the underlying mechanisms of performance optimization and data consistency, moving beyond syntax to the conceptual role of indexes and validation.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Believing that a sparse index includes documents where the indexed field is missing, when it actually excludes them.",
+        "Assuming that schema validation prevents all invalid data from being inserted, when it can be configured to warn rather than error.",
+        "Thinking that a compound index on `{a: 1, b: 1}` is equivalent to two separate single-field indexes for queries filtering on both fields."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C10",
+        "E_C11"
+      ],
+      "source_timestamps_or_slides": [
+        "[1620.0s - 1800.0s]",
+        "[1800.0s - 1845.0s]"
+      ]
+    }
+  ]
+}

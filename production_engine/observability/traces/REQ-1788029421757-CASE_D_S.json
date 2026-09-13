@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788029421757-CASE_D_S",
+  "timestamp": "2026-08-29T18:51:21Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": -0.1,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "OUTPUT_PREDICTION",
+    "ERROR_DIAGNOSIS",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 59914.88,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct concepts from the available pool and mapping each to a unique pedagogical facet. This ensures non-redundancy while covering the core curriculum definitions and mechanisms provided. The facets chosen (Concept Understanding, Code Interpretation, Output Prediction, Error Diagnosis, and Practical Application) are appropriate for the EASY difficulty level, focusing on recall, basic syntax recognition, simple execution tracing, and straightforward application."
+}

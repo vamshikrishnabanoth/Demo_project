@@ -1,0 +1,3793 @@
+{
+  "audio_file": "Audio/only voice/New (1).m4a",
+  "title": "Classroom Lecture: Audio Recording New (1)",
+  "duration": 2509.33,
+  "total_segments": 473,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 2.22,
+      "text": "I don't know what to say.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 2,
+      "start": 2.22,
+      "end": 3.46,
+      "text": "So I do.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 3,
+      "start": 3.46,
+      "end": 4.46,
+      "text": "Hey.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 4,
+      "start": 7.48,
+      "end": 8.74,
+      "text": "You got your own treasure",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 5,
+      "start": 8.74,
+      "end": 9.92,
+      "text": "on mine.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 6,
+      "start": 9.92,
+      "end": 10.74,
+      "text": "Yeah.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 7,
+      "start": 10.74,
+      "end": 11.96,
+      "text": "Hold your weighted weight,",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 8,
+      "start": 11.96,
+      "end": 13.44,
+      "text": "I'm playing with my weight.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 9,
+      "start": 13.44,
+      "end": 14.68,
+      "text": "After a few days, I'm going to eat my weight.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 10,
+      "start": 14.68,
+      "end": 15.68,
+      "text": "I'm going to be okay.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 11,
+      "start": 15.68,
+      "end": 17.24,
+      "text": "After a few days, I'm gonna eat my weight.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 12,
+      "start": 17.24,
+      "end": 18.76,
+      "text": "Nah, I'm okay, my weight.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 13,
+      "start": 18.76,
+      "end": 20.68,
+      "text": "I'm okay.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 14,
+      "start": 20.68,
+      "end": 22.1,
+      "text": "I'm gonna go and check it out.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 15,
+      "start": 22.1,
+      "end": 23.58,
+      "text": "I'm going to check it out.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 16,
+      "start": 23.58,
+      "end": 24.68,
+      "text": "I'm gonna go and check it out.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 17,
+      "start": 24.68,
+      "end": 25.62,
+      "text": "Nah, go.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 18,
+      "start": 25.62,
+      "end": 27.44,
+      "text": "I'm going to check you out.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 19,
+      "start": 27.44,
+      "end": 29.0,
+      "text": "I'm gonna go.",
+      "avg_logprob": -2.04,
+      "no_speech_prob": 0.581
+    },
+    {
+      "id": 20,
+      "start": 149.0,
+      "end": 150.0,
+      "text": "Yes.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 21,
+      "start": 150.0,
+      "end": 153.0,
+      "text": "The next one is the first paragraph.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 22,
+      "start": 153.0,
+      "end": 159.0,
+      "text": "I think that the credit price of our college is less affordable than the first we had.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 23,
+      "start": 159.0,
+      "end": 160.0,
+      "text": "We did not pay rent.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 24,
+      "start": 160.0,
+      "end": 161.0,
+      "text": "We were going to be schooled.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 25,
+      "start": 161.0,
+      "end": 165.0,
+      "text": "The first paragraph is for students who are less than 800.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 26,
+      "start": 165.0,
+      "end": 167.0,
+      "text": "The full of credit rates is less than the second and the second is the same.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 27,
+      "start": 167.0,
+      "end": 176.0,
+      "text": "We are also able to get up to the expense of our college and the new one.",
+      "avg_logprob": -1.552,
+      "no_speech_prob": 0.572
+    },
+    {
+      "id": 28,
+      "start": 176.0,
+      "end": 181.0,
+      "text": "on the weekends and on the other side of their culture.",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 29,
+      "start": 181.0,
+      "end": 185.0,
+      "text": "Another reason why college is great is that each of us",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 30,
+      "start": 185.0,
+      "end": 191.0,
+      "text": "are more open and accessible and they interact with the students more freely",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 31,
+      "start": 191.0,
+      "end": 194.0,
+      "text": "than our each of students.",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 32,
+      "start": 194.0,
+      "end": 197.0,
+      "text": "For that, college students give the opportunity to date,",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 33,
+      "start": 197.0,
+      "end": 200.0,
+      "text": "fighting and to listen to the academic sessions.",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 34,
+      "start": 200.0,
+      "end": 204.0,
+      "text": "They know for some reason, some different ways.",
+      "avg_logprob": -0.742,
+      "no_speech_prob": 0.742
+    },
+    {
+      "id": 35,
+      "start": 204.0,
+      "end": 207.0,
+      "text": "Additionally, college offers an offer for students,",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 36,
+      "start": 207.0,
+      "end": 209.0,
+      "text": "as well as students, students, students, students,",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 37,
+      "start": 209.0,
+      "end": 212.0,
+      "text": "students, students, students.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 38,
+      "start": 212.0,
+      "end": 215.0,
+      "text": "But those people are understanding them.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 39,
+      "start": 215.0,
+      "end": 217.0,
+      "text": "But they go on.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 40,
+      "start": 217.0,
+      "end": 220.0,
+      "text": "College is one because of the contrast,",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 41,
+      "start": 220.0,
+      "end": 222.0,
+      "text": "the techniques, and college rates,",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 42,
+      "start": 222.0,
+      "end": 224.0,
+      "text": "with large numbers and features.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 43,
+      "start": 224.0,
+      "end": 228.0,
+      "text": "First and foremost, what is the title you can give to the percentage?",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 44,
+      "start": 228.0,
+      "end": 231.0,
+      "text": "What is the topic sentence?",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.042
+    },
+    {
+      "id": 45,
+      "start": 232.0,
+      "end": 236.0,
+      "text": "Yes, I think that college is one more interesting and exciting",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 46,
+      "start": 236.0,
+      "end": 238.0,
+      "text": "than it used to be at school.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 47,
+      "start": 238.0,
+      "end": 242.0,
+      "text": "Yes, the cohesive devices, you see first of all,",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 48,
+      "start": 242.0,
+      "end": 246.0,
+      "text": "yes, that you have, we have,",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 49,
+      "start": 246.0,
+      "end": 249.0,
+      "text": "yes, another reason.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 50,
+      "start": 249.0,
+      "end": 250.0,
+      "text": "Yes, for the,",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 51,
+      "start": 250.0,
+      "end": 252.0,
+      "text": "traditionally,",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 52,
+      "start": 252.0,
+      "end": 253.0,
+      "text": "at all.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 53,
+      "start": 253.0,
+      "end": 257.0,
+      "text": "Yes, these are the more simple devices that we have used.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 54,
+      "start": 257.0,
+      "end": 260.0,
+      "text": "Next time, next person.",
+      "avg_logprob": -0.46,
+      "no_speech_prob": 0.009
+    },
+    {
+      "id": 55,
+      "start": 261.0,
+      "end": 263.0,
+      "text": "Next time, next person.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 56,
+      "start": 263.0,
+      "end": 265.0,
+      "text": "Our first target,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 57,
+      "start": 265.0,
+      "end": 268.0,
+      "text": "is to have this reaction.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 58,
+      "start": 268.0,
+      "end": 269.0,
+      "text": "And especially,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 59,
+      "start": 269.0,
+      "end": 270.0,
+      "text": "we are going to,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 60,
+      "start": 270.0,
+      "end": 272.0,
+      "text": "like some people are calling us people",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 61,
+      "start": 272.0,
+      "end": 274.0,
+      "text": "and whether they know it,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 62,
+      "start": 274.0,
+      "end": 276.0,
+      "text": "it is nice to meet people,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 63,
+      "start": 276.0,
+      "end": 278.0,
+      "text": "who are able to respond to their questions.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 64,
+      "start": 278.0,
+      "end": 279.0,
+      "text": "Yes, they will.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 65,
+      "start": 279.0,
+      "end": 281.0,
+      "text": "They came in contact with us.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 66,
+      "start": 281.0,
+      "end": 283.0,
+      "text": "We didn't express it.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 67,
+      "start": 283.0,
+      "end": 285.0,
+      "text": "We never talked with them.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 68,
+      "start": 285.0,
+      "end": 287.0,
+      "text": "They won't be able to pass by us like this.",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 69,
+      "start": 287.0,
+      "end": 289.0,
+      "text": "They make me remember,",
+      "avg_logprob": -0.719,
+      "no_speech_prob": 0.617
+    },
+    {
+      "id": 70,
+      "start": 289.0,
+      "end": 291.0,
+      "text": "they are talking both right and right.",
+      "avg_logprob": -0.702,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 71,
+      "start": 291.0,
+      "end": 294.0,
+      "text": "And people may wonder if they think more.",
+      "avg_logprob": -0.702,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 72,
+      "start": 294.0,
+      "end": 297.0,
+      "text": "So, what is the next thing you do?",
+      "avg_logprob": -0.702,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 73,
+      "start": 299.0,
+      "end": 301.0,
+      "text": "Yes.",
+      "avg_logprob": -0.702,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 74,
+      "start": 307.0,
+      "end": 310.0,
+      "text": "Oh, what is the next thing you do?",
+      "avg_logprob": -0.702,
+      "no_speech_prob": 0.132
+    },
+    {
+      "id": 75,
+      "start": 320.0,
+      "end": 322.0,
+      "text": "What is the next thing you do?",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 76,
+      "start": 325.0,
+      "end": 327.0,
+      "text": "What is the next thing you do?",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 77,
+      "start": 327.0,
+      "end": 329.0,
+      "text": "What is the next thing you do?",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 78,
+      "start": 334.0,
+      "end": 336.0,
+      "text": "One of your friends is wonderful people",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 79,
+      "start": 336.0,
+      "end": 338.0,
+      "text": "or emotional people, right?",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 80,
+      "start": 338.0,
+      "end": 340.0,
+      "text": "Yes, what is the next thing?",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 81,
+      "start": 344.0,
+      "end": 347.0,
+      "text": "It is nice to meet people who are able to respond",
+      "avg_logprob": -0.379,
+      "no_speech_prob": 0.122
+    },
+    {
+      "id": 82,
+      "start": 347.0,
+      "end": 349.0,
+      "text": "with the next thing towards them.",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 83,
+      "start": 349.0,
+      "end": 350.0,
+      "text": "They don't.",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 84,
+      "start": 351.0,
+      "end": 353.0,
+      "text": "Yes, what is the next thing?",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 85,
+      "start": 353.0,
+      "end": 354.0,
+      "text": "Is it okay?",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 86,
+      "start": 355.0,
+      "end": 356.0,
+      "text": "Now, then,",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 87,
+      "start": 356.0,
+      "end": 358.0,
+      "text": "what I decided is to have use.",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 88,
+      "start": 362.0,
+      "end": 365.0,
+      "text": "Who are spontaneously who are?",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 89,
+      "start": 365.0,
+      "end": 366.0,
+      "text": "Yes.",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 90,
+      "start": 366.0,
+      "end": 369.0,
+      "text": "Always be the surviving potentials.",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 91,
+      "start": 369.0,
+      "end": 370.0,
+      "text": "Then,",
+      "avg_logprob": -0.515,
+      "no_speech_prob": 0.056
+    },
+    {
+      "id": 92,
+      "start": 371.0,
+      "end": 373.0,
+      "text": "I don't want to do that.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 93,
+      "start": 375.0,
+      "end": 377.0,
+      "text": "That has people.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 94,
+      "start": 377.0,
+      "end": 379.0,
+      "text": "That has people.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 95,
+      "start": 379.0,
+      "end": 381.0,
+      "text": "That's what you want today.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 96,
+      "start": 381.0,
+      "end": 384.0,
+      "text": "Now, the experiment is supposed to be done quite often.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 97,
+      "start": 384.0,
+      "end": 386.0,
+      "text": "Yes, this is getting harder.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 98,
+      "start": 386.0,
+      "end": 388.0,
+      "text": "This will be part of the process.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 99,
+      "start": 388.0,
+      "end": 391.0,
+      "text": "The standard space when I get to the atmosphere",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 100,
+      "start": 391.0,
+      "end": 393.0,
+      "text": "is a lot some of it is engaged",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 101,
+      "start": 393.0,
+      "end": 395.0,
+      "text": "and it is the standard space.",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 102,
+      "start": 395.0,
+      "end": 397.0,
+      "text": "For the tickets produced by the men,",
+      "avg_logprob": -0.669,
+      "no_speech_prob": 0.249
+    },
+    {
+      "id": 103,
+      "start": 397.0,
+      "end": 399.0,
+      "text": "I know we should wrap you over here",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 104,
+      "start": 399.0,
+      "end": 400.0,
+      "text": "once in 20 years.",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 105,
+      "start": 400.0,
+      "end": 402.0,
+      "text": "The temperature of the lights,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 106,
+      "start": 402.0,
+      "end": 403.0,
+      "text": "the temperature of the popolettes",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 107,
+      "start": 403.0,
+      "end": 404.0,
+      "text": "or once again,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 108,
+      "start": 404.0,
+      "end": 406.0,
+      "text": "happens to carry an increase.",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 109,
+      "start": 406.0,
+      "end": 407.0,
+      "text": "The increase in the temperature",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 110,
+      "start": 407.0,
+      "end": 409.0,
+      "text": "will affect all the life of the camera.",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 111,
+      "start": 409.0,
+      "end": 411.0,
+      "text": "The two main characters",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 112,
+      "start": 411.0,
+      "end": 412.0,
+      "text": "are the brain,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 113,
+      "start": 412.0,
+      "end": 413.0,
+      "text": "we know the brain,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 114,
+      "start": 413.0,
+      "end": 415.0,
+      "text": "or the carbon dioxide,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 115,
+      "start": 415.0,
+      "end": 416.0,
+      "text": "and the radiation.",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 116,
+      "start": 416.0,
+      "end": 418.0,
+      "text": "Many governments have been",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 117,
+      "start": 418.0,
+      "end": 419.0,
+      "text": "doing an innovation",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 118,
+      "start": 419.0,
+      "end": 422.0,
+      "text": "for reducing the emissions of the brain of gas.",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 119,
+      "start": 422.0,
+      "end": 423.0,
+      "text": "Some of the steps",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 120,
+      "start": 423.0,
+      "end": 425.0,
+      "text": "take us a large-scale panic of rage,",
+      "avg_logprob": -0.707,
+      "no_speech_prob": 0.358
+    },
+    {
+      "id": 121,
+      "start": 425.0,
+      "end": 427.0,
+      "text": "actually industries that produce",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 122,
+      "start": 427.0,
+      "end": 428.0,
+      "text": "can't be affected.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 123,
+      "start": 428.0,
+      "end": 429.0,
+      "text": "And so, what you want to know",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 124,
+      "start": 429.0,
+      "end": 432.0,
+      "text": "is that the energy is not so wide.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 125,
+      "start": 432.0,
+      "end": 434.0,
+      "text": "So, what is the type you can get?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 126,
+      "start": 434.0,
+      "end": 436.0,
+      "text": "Global warming.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 127,
+      "start": 436.0,
+      "end": 437.0,
+      "text": "Global warming.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 128,
+      "start": 437.0,
+      "end": 438.0,
+      "text": "Okay.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 129,
+      "start": 438.0,
+      "end": 441.0,
+      "text": "So, what are the connections you have there?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 130,
+      "start": 441.0,
+      "end": 442.0,
+      "text": "How many of them?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 131,
+      "start": 442.0,
+      "end": 443.0,
+      "text": "How many of them?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 132,
+      "start": 443.0,
+      "end": 444.0,
+      "text": "How many of them?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 133,
+      "start": 444.0,
+      "end": 445.0,
+      "text": "How many of them?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 134,
+      "start": 445.0,
+      "end": 446.0,
+      "text": "10.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 135,
+      "start": 446.0,
+      "end": 448.0,
+      "text": "Which have jobs?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 136,
+      "start": 448.0,
+      "end": 449.0,
+      "text": "Which day?",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 137,
+      "start": 449.0,
+      "end": 451.0,
+      "text": "There are two main",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 138,
+      "start": 451.0,
+      "end": 452.0,
+      "text": "chances.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 139,
+      "start": 452.0,
+      "end": 453.0,
+      "text": "This one's good for treatment.",
+      "avg_logprob": -0.485,
+      "no_speech_prob": 0.046
+    },
+    {
+      "id": 140,
+      "start": 453.0,
+      "end": 454.0,
+      "text": "And carbon dioxide,",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 141,
+      "start": 454.0,
+      "end": 456.0,
+      "text": "many governments have been doing that.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 142,
+      "start": 456.0,
+      "end": 458.0,
+      "text": "Some of the steps.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 143,
+      "start": 458.0,
+      "end": 459.0,
+      "text": "Yes.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 144,
+      "start": 459.0,
+      "end": 460.0,
+      "text": "Some of the steps.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 145,
+      "start": 460.0,
+      "end": 462.0,
+      "text": "Which way?",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 146,
+      "start": 462.0,
+      "end": 463.0,
+      "text": "Those are the",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 147,
+      "start": 463.0,
+      "end": 465.0,
+      "text": "cohesive technologies",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 148,
+      "start": 465.0,
+      "end": 466.0,
+      "text": "or the panic areas.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 149,
+      "start": 466.0,
+      "end": 468.0,
+      "text": "Now, next, next question.",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 150,
+      "start": 468.0,
+      "end": 471.0,
+      "text": "But now, what is very important?",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 151,
+      "start": 471.0,
+      "end": 472.0,
+      "text": "In the 1990s,",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 152,
+      "start": 472.0,
+      "end": 474.0,
+      "text": "we were able to",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 153,
+      "start": 474.0,
+      "end": 475.0,
+      "text": "take advantage of the",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 154,
+      "start": 475.0,
+      "end": 476.0,
+      "text": "management policy",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 155,
+      "start": 476.0,
+      "end": 477.0,
+      "text": "which is right that",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 156,
+      "start": 477.0,
+      "end": 478.0,
+      "text": "we should be able to",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 157,
+      "start": 478.0,
+      "end": 479.0,
+      "text": "show because",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 158,
+      "start": 479.0,
+      "end": 480.0,
+      "text": "what the energy needs",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 159,
+      "start": 480.0,
+      "end": 481.0,
+      "text": "of the brain",
+      "avg_logprob": -0.642,
+      "no_speech_prob": 0.226
+    },
+    {
+      "id": 160,
+      "start": 481.0,
+      "end": 483.0,
+      "text": "and the resources",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 161,
+      "start": 483.0,
+      "end": 484.0,
+      "text": "for the brain.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 162,
+      "start": 484.0,
+      "end": 485.0,
+      "text": "This term needs to be",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 163,
+      "start": 485.0,
+      "end": 487.0,
+      "text": "important and the needs of the brain.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 164,
+      "start": 487.0,
+      "end": 488.0,
+      "text": "Global warming needs to have",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 165,
+      "start": 488.0,
+      "end": 490.0,
+      "text": "a special result of that.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 166,
+      "start": 490.0,
+      "end": 491.0,
+      "text": "It is the answer to",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 167,
+      "start": 491.0,
+      "end": 492.0,
+      "text": "its transition.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 168,
+      "start": 492.0,
+      "end": 493.0,
+      "text": "It is our",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 169,
+      "start": 493.0,
+      "end": 495.0,
+      "text": "goal in the world to",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 170,
+      "start": 495.0,
+      "end": 497.0,
+      "text": "take over it.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 171,
+      "start": 497.0,
+      "end": 499.0,
+      "text": "We will take over.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 172,
+      "start": 499.0,
+      "end": 502.0,
+      "text": "Something might be",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 173,
+      "start": 502.0,
+      "end": 503.0,
+      "text": "important.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 174,
+      "start": 503.0,
+      "end": 507.0,
+      "text": "We have a way to",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 175,
+      "start": 507.0,
+      "end": 509.0,
+      "text": "contribute to the work.",
+      "avg_logprob": -1.553,
+      "no_speech_prob": 0.386
+    },
+    {
+      "id": 176,
+      "start": 509.0,
+      "end": 531.12,
+      "text": "What is the time you can use for the earlier paragraph, what is the perfect sentence?",
+      "avg_logprob": -0.826,
+      "no_speech_prob": 0.583
+    },
+    {
+      "id": 177,
+      "start": 531.12,
+      "end": 538.56,
+      "text": "Yes, the first one, the other one is getting formal, we are taking the perfect sentence.",
+      "avg_logprob": -0.826,
+      "no_speech_prob": 0.583
+    },
+    {
+      "id": 178,
+      "start": 539.56,
+      "end": 543.56,
+      "text": "So, once we have always had an important lesson, human society.",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 179,
+      "start": 543.56,
+      "end": 547.56,
+      "text": "Okay, what is the time you can use in this book?",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 180,
+      "start": 547.56,
+      "end": 550.56,
+      "text": "Yes, in this book.",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 181,
+      "start": 550.56,
+      "end": 555.56,
+      "text": "Yes, what does the practice which are used?",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 182,
+      "start": 561.56,
+      "end": 564.56,
+      "text": "It is well known.",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 183,
+      "start": 564.56,
+      "end": 566.56,
+      "text": "Yes.",
+      "avg_logprob": -0.65,
+      "no_speech_prob": 0.269
+    },
+    {
+      "id": 184,
+      "start": 567.56,
+      "end": 575.56,
+      "text": "The most important thing is that he has learned that he has learned that the negative is happening here.",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 185,
+      "start": 575.56,
+      "end": 581.56,
+      "text": "Yes, he has learned that what are you busy with?",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 186,
+      "start": 581.56,
+      "end": 584.56,
+      "text": "What are you doing?",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 187,
+      "start": 584.56,
+      "end": 587.56,
+      "text": "What are you doing?",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 188,
+      "start": 587.56,
+      "end": 589.56,
+      "text": "What are you doing?",
+      "avg_logprob": -0.567,
+      "no_speech_prob": 0.072
+    },
+    {
+      "id": 189,
+      "start": 589.56,
+      "end": 592.56,
+      "text": "Okay, how can you call it?",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 190,
+      "start": 592.56,
+      "end": 595.56,
+      "text": "Right?",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 191,
+      "start": 595.56,
+      "end": 598.56,
+      "text": "Right in the middle.",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 192,
+      "start": 598.56,
+      "end": 601.56,
+      "text": "It's a very common question.",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 193,
+      "start": 603.56,
+      "end": 606.56,
+      "text": "And the paragraph is often in your mind.",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 194,
+      "start": 609.56,
+      "end": 612.56,
+      "text": "Okay.",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 195,
+      "start": 612.56,
+      "end": 615.56,
+      "text": "Here, okay.",
+      "avg_logprob": -1.704,
+      "no_speech_prob": 0.488
+    },
+    {
+      "id": 196,
+      "start": 615.56,
+      "end": 634.34,
+      "text": "My name is Ramil, my name is Ramil, my name is Janak Mahal, my name is Vikram and my",
+      "avg_logprob": -2.035,
+      "no_speech_prob": 0.56
+    },
+    {
+      "id": 197,
+      "start": 634.34,
+      "end": 642.34,
+      "text": "They believe that they will not be able to find a guy who comes to the spot and find a guy who is similar to me.",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.802
+    },
+    {
+      "id": 198,
+      "start": 642.34,
+      "end": 646.34,
+      "text": "Twenty-one house should be supposed to be a sign of your project.",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.802
+    },
+    {
+      "id": 199,
+      "start": 646.34,
+      "end": 652.34,
+      "text": "The question is, can our people and we can have a picture of their setting for this?",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.802
+    },
+    {
+      "id": 200,
+      "start": 652.34,
+      "end": 657.34,
+      "text": "However, to this day, they believe that we should be starting our own activities,",
+      "avg_logprob": -0.847,
+      "no_speech_prob": 0.802
+    },
+    {
+      "id": 201,
+      "start": 657.34,
+      "end": 662.34,
+      "text": "and they will either win, rely on the international fear or impossible moves,",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 202,
+      "start": 662.34,
+      "end": 667.34,
+      "text": "work hard is loving that they can make a way out of these new sites.",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 203,
+      "start": 667.34,
+      "end": 671.34,
+      "text": "It is better for people to position 16 because they are investing in these,",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 204,
+      "start": 671.34,
+      "end": 676.34,
+      "text": "and carry on with your being in one setting, and it is very important.",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 205,
+      "start": 676.34,
+      "end": 679.34,
+      "text": "It's so important that they can do this?",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 206,
+      "start": 679.34,
+      "end": 682.34,
+      "text": "It's the first position.",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 207,
+      "start": 682.34,
+      "end": 686.34,
+      "text": "In the next round, superstition or superstition?",
+      "avg_logprob": -0.822,
+      "no_speech_prob": 0.242
+    },
+    {
+      "id": 208,
+      "start": 686.34,
+      "end": 688.34,
+      "text": "What is the topic sentence?",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 209,
+      "start": 688.34,
+      "end": 693.34,
+      "text": "Superstition of 9 points that are not made by companies that are not made by companies,",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 210,
+      "start": 693.34,
+      "end": 696.34,
+      "text": "or a lot of tiny things.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 211,
+      "start": 696.34,
+      "end": 699.34,
+      "text": "Yes, you all know what superstitions are.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 212,
+      "start": 699.34,
+      "end": 703.34,
+      "text": "So, what are the benefits that are used?",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 213,
+      "start": 703.34,
+      "end": 707.34,
+      "text": "For example, it is really important.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 214,
+      "start": 707.34,
+      "end": 714.34,
+      "text": "However, both have similar ideas.",
+      "avg_logprob": -0.505,
+      "no_speech_prob": 0.015
+    },
+    {
+      "id": 215,
+      "start": 714.34,
+      "end": 719.34,
+      "text": "Moving on to the last part of the last Wednesday.",
+      "avg_logprob": -0.608,
+      "no_speech_prob": 0.367
+    },
+    {
+      "id": 216,
+      "start": 774.34,
+      "end": 795.34,
+      "text": "Yes, but in the second game, it has been shown to us.",
+      "avg_logprob": -0.759,
+      "no_speech_prob": 0.551
+    },
+    {
+      "id": 217,
+      "start": 795.34,
+      "end": 801.34,
+      "text": "Yes, but in the second game, it has been shown to us.",
+      "avg_logprob": -0.759,
+      "no_speech_prob": 0.551
+    },
+    {
+      "id": 218,
+      "start": 831.34,
+      "end": 841.34,
+      "text": "What are the benefits?",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.534
+    },
+    {
+      "id": 219,
+      "start": 841.34,
+      "end": 850.34,
+      "text": "The two sides.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.534
+    },
+    {
+      "id": 220,
+      "start": 850.34,
+      "end": 853.34,
+      "text": "The two sides.",
+      "avg_logprob": -0.801,
+      "no_speech_prob": 0.534
+    },
+    {
+      "id": 221,
+      "start": 853.34,
+      "end": 856.84,
+      "text": "Yes, these are the punishments we have here.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 222,
+      "start": 856.84,
+      "end": 857.84,
+      "text": "I'm not giving it.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 223,
+      "start": 857.84,
+      "end": 858.84,
+      "text": "Yes.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 224,
+      "start": 858.84,
+      "end": 860.84,
+      "text": "Now, we want to do the...",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 225,
+      "start": 862.84,
+      "end": 864.34,
+      "text": "Questions you choose.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 226,
+      "start": 864.34,
+      "end": 867.84,
+      "text": "Out of those three, for anyone using their paints,",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 227,
+      "start": 867.84,
+      "end": 869.84,
+      "text": "we will write the title out.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 228,
+      "start": 874.34,
+      "end": 875.84,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.853,
+      "no_speech_prob": 0.287
+    },
+    {
+      "id": 229,
+      "start": 883.34,
+      "end": 885.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.759,
+      "no_speech_prob": 0.737
+    },
+    {
+      "id": 230,
+      "start": 913.34,
+      "end": 915.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.599,
+      "no_speech_prob": 0.906
+    },
+    {
+      "id": 231,
+      "start": 943.34,
+      "end": 945.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.518,
+      "no_speech_prob": 0.853
+    },
+    {
+      "id": 232,
+      "start": 973.34,
+      "end": 975.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.388,
+      "no_speech_prob": 0.919
+    },
+    {
+      "id": 233,
+      "start": 1003.34,
+      "end": 1005.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.328,
+      "no_speech_prob": 0.843
+    },
+    {
+      "id": 234,
+      "start": 1033.34,
+      "end": 1035.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.273,
+      "no_speech_prob": 0.902
+    },
+    {
+      "id": 235,
+      "start": 1063.34,
+      "end": 1065.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.252,
+      "no_speech_prob": 0.901
+    },
+    {
+      "id": 236,
+      "start": 1093.34,
+      "end": 1095.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.19,
+      "no_speech_prob": 0.895
+    },
+    {
+      "id": 237,
+      "start": 1123.34,
+      "end": 1125.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.228,
+      "no_speech_prob": 0.829
+    },
+    {
+      "id": 238,
+      "start": 1153.34,
+      "end": 1155.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.17,
+      "no_speech_prob": 0.903
+    },
+    {
+      "id": 239,
+      "start": 1183.34,
+      "end": 1185.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.212,
+      "no_speech_prob": 0.85
+    },
+    {
+      "id": 240,
+      "start": 1213.34,
+      "end": 1215.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.146,
+      "no_speech_prob": 0.913
+    },
+    {
+      "id": 241,
+      "start": 1243.34,
+      "end": 1245.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.192,
+      "no_speech_prob": 0.853
+    },
+    {
+      "id": 242,
+      "start": 1273.34,
+      "end": 1275.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.17,
+      "no_speech_prob": 0.867
+    },
+    {
+      "id": 243,
+      "start": 1303.34,
+      "end": 1305.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.144,
+      "no_speech_prob": 0.811
+    },
+    {
+      "id": 244,
+      "start": 1305.34,
+      "end": 1307.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.144,
+      "no_speech_prob": 0.811
+    },
+    {
+      "id": 245,
+      "start": 1363.34,
+      "end": 1365.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.138,
+      "no_speech_prob": 0.77
+    },
+    {
+      "id": 246,
+      "start": 1393.34,
+      "end": 1395.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.171,
+      "no_speech_prob": 0.758
+    },
+    {
+      "id": 247,
+      "start": 1395.34,
+      "end": 1397.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.171,
+      "no_speech_prob": 0.758
+    },
+    {
+      "id": 248,
+      "start": 1423.34,
+      "end": 1425.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.156,
+      "no_speech_prob": 0.586
+    },
+    {
+      "id": 249,
+      "start": 1453.34,
+      "end": 1455.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.129,
+      "no_speech_prob": 0.697
+    },
+    {
+      "id": 250,
+      "start": 1483.34,
+      "end": 1485.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.11,
+      "no_speech_prob": 0.747
+    },
+    {
+      "id": 251,
+      "start": 1513.34,
+      "end": 1515.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.13,
+      "no_speech_prob": 0.7
+    },
+    {
+      "id": 252,
+      "start": 1543.34,
+      "end": 1545.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.11,
+      "no_speech_prob": 0.746
+    },
+    {
+      "id": 253,
+      "start": 1545.34,
+      "end": 1547.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.11,
+      "no_speech_prob": 0.746
+    },
+    {
+      "id": 254,
+      "start": 1573.34,
+      "end": 1575.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 255,
+      "start": 1575.34,
+      "end": 1577.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 256,
+      "start": 1577.34,
+      "end": 1579.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 257,
+      "start": 1579.34,
+      "end": 1581.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 258,
+      "start": 1581.34,
+      "end": 1583.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 259,
+      "start": 1583.34,
+      "end": 1585.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 260,
+      "start": 1585.34,
+      "end": 1587.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 261,
+      "start": 1587.34,
+      "end": 1589.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 262,
+      "start": 1589.34,
+      "end": 1591.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 263,
+      "start": 1591.34,
+      "end": 1593.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 264,
+      "start": 1593.34,
+      "end": 1595.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 265,
+      "start": 1595.34,
+      "end": 1597.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 266,
+      "start": 1597.34,
+      "end": 1599.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 267,
+      "start": 1599.34,
+      "end": 1601.34,
+      "text": "Let's read it out.",
+      "avg_logprob": -0.06,
+      "no_speech_prob": 0.635
+    },
+    {
+      "id": 268,
+      "start": 1601.34,
+      "end": 1631.22,
+      "text": "So what we need to write, what we need to write, I write 3D, yes 3D, all 3D is my",
+      "avg_logprob": -0.852,
+      "no_speech_prob": 0.68
+    },
+    {
+      "id": 269,
+      "start": 1631.22,
+      "end": 1641.82,
+      "text": "question, what is my question, do you know, reading books that you really need, and once there",
+      "avg_logprob": -0.982,
+      "no_speech_prob": 0.508
+    },
+    {
+      "id": 270,
+      "start": 1641.82,
+      "end": 1646.94,
+      "text": "are many interesting novels for you, which is why many novel authors, there are different",
+      "avg_logprob": -0.982,
+      "no_speech_prob": 0.508
+    },
+    {
+      "id": 271,
+      "start": 1646.94,
+      "end": 1651.7,
+      "text": "genres to choose from, there are a couple of answers to the stitches and many more.",
+      "avg_logprob": -0.982,
+      "no_speech_prob": 0.508
+    },
+    {
+      "id": 272,
+      "start": 1651.7,
+      "end": 1656.78,
+      "text": "So, reading books are the feature of us, not just me, not to be for our question, but",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.931
+    },
+    {
+      "id": 273,
+      "start": 1656.78,
+      "end": 1661.94,
+      "text": "you know, time consistently, which definitely shows what's the change in the present, the",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.931
+    },
+    {
+      "id": 274,
+      "start": 1661.94,
+      "end": 1666.7,
+      "text": "other side of the point, which includes us, our task, by the way, the real life",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.931
+    },
+    {
+      "id": 275,
+      "start": 1666.7,
+      "end": 1671.7,
+      "text": "right nature, they have all the knowledge together from the beginning to the beginning",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.931
+    },
+    {
+      "id": 276,
+      "start": 1671.7,
+      "end": 1676.7,
+      "text": "of the case, without visiting it, if not, if not all these facts, you know, why they",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.931
+    },
+    {
+      "id": 277,
+      "start": 1676.7,
+      "end": 1678.94,
+      "text": "have to be in the past world.",
+      "avg_logprob": -1.085,
+      "no_speech_prob": 0.338
+    },
+    {
+      "id": 278,
+      "start": 1678.94,
+      "end": 1690.92,
+      "text": "Yes, are you all able to get it, because also you use the things that try to fight up,",
+      "avg_logprob": -1.085,
+      "no_speech_prob": 0.338
+    },
+    {
+      "id": 279,
+      "start": 1690.92,
+      "end": 1694.78,
+      "text": "has anyone else tell them the same thing?",
+      "avg_logprob": -1.085,
+      "no_speech_prob": 0.338
+    },
+    {
+      "id": 280,
+      "start": 1694.78,
+      "end": 1703.76,
+      "text": "Yes, has anyone become of the first set of things which have given you, no one has become",
+      "avg_logprob": -1.085,
+      "no_speech_prob": 0.338
+    },
+    {
+      "id": 281,
+      "start": 1703.76,
+      "end": 1706.76,
+      "text": "Moving on to the next one, let's get done with it.",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.562
+    },
+    {
+      "id": 282,
+      "start": 1708.76,
+      "end": 1709.76,
+      "text": "Yes?",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.562
+    },
+    {
+      "id": 283,
+      "start": 1710.76,
+      "end": 1711.76,
+      "text": "Have we done?",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.562
+    },
+    {
+      "id": 284,
+      "start": 1712.76,
+      "end": 1714.76,
+      "text": "What is the right movement?",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.562
+    },
+    {
+      "id": 285,
+      "start": 1719.76,
+      "end": 1721.76,
+      "text": "Where is the middle? There is a way.",
+      "avg_logprob": -0.692,
+      "no_speech_prob": 0.562
+    },
+    {
+      "id": 286,
+      "start": 1764.76,
+      "end": 1768.76,
+      "text": "What is the right movement?",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 287,
+      "start": 1770.76,
+      "end": 1772.76,
+      "text": "Where is the middle? Where is the middle?",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 288,
+      "start": 1773.76,
+      "end": 1775.76,
+      "text": "The movement is where it goes.",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 289,
+      "start": 1776.76,
+      "end": 1778.76,
+      "text": "Yes? 83?",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 290,
+      "start": 1778.76,
+      "end": 1781.76,
+      "text": "I just don't want to say it's not the right.",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 291,
+      "start": 1781.76,
+      "end": 1782.76,
+      "text": "You know?",
+      "avg_logprob": -0.629,
+      "no_speech_prob": 0.259
+    },
+    {
+      "id": 292,
+      "start": 1793.76,
+      "end": 1795.76,
+      "text": "Where is the middle?",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 293,
+      "start": 1798.76,
+      "end": 1800.76,
+      "text": "Where is the middle?",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 294,
+      "start": 1800.76,
+      "end": 1801.76,
+      "text": "There is a way.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 295,
+      "start": 1801.76,
+      "end": 1803.76,
+      "text": "It's a pointing way of saying that as an individual,",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 296,
+      "start": 1803.76,
+      "end": 1805.76,
+      "text": "I don't want to say that it's a big obstacle.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 297,
+      "start": 1805.76,
+      "end": 1807.76,
+      "text": "We are going to say it's a big obstacle.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 298,
+      "start": 1807.76,
+      "end": 1809.76,
+      "text": "It's a big obstacle, right?",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 299,
+      "start": 1809.76,
+      "end": 1811.76,
+      "text": "This, let's think it's a obstacle.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 300,
+      "start": 1811.76,
+      "end": 1813.76,
+      "text": "To all of us, okay?",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 301,
+      "start": 1813.76,
+      "end": 1815.76,
+      "text": "The big obstacle is determination.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 302,
+      "start": 1815.76,
+      "end": 1817.76,
+      "text": "Is it right?",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 303,
+      "start": 1817.76,
+      "end": 1819.76,
+      "text": "It's a big obstacle here.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 304,
+      "start": 1819.76,
+      "end": 1822.76,
+      "text": "A great example of this is the life of Napoleon.",
+      "avg_logprob": -0.59,
+      "no_speech_prob": 0.598
+    },
+    {
+      "id": 305,
+      "start": 1822.76,
+      "end": 1825.76,
+      "text": "The important is that he has great influence on this.",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 306,
+      "start": 1825.76,
+      "end": 1829.76,
+      "text": "But he was able to take up a vast balance in the history of France.",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 307,
+      "start": 1829.76,
+      "end": 1832.76,
+      "text": "The outside of the country is not just big,",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 308,
+      "start": 1832.76,
+      "end": 1834.76,
+      "text": "but it's a big obstacle.",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 309,
+      "start": 1834.76,
+      "end": 1836.76,
+      "text": "On the story of Napoleon,",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 310,
+      "start": 1836.76,
+      "end": 1838.76,
+      "text": "he decided to be thankful",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 311,
+      "start": 1838.76,
+      "end": 1841.76,
+      "text": "but the honest stories that they were talking about.",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 312,
+      "start": 1841.76,
+      "end": 1843.76,
+      "text": "But you know, the director of the B-roll,",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 313,
+      "start": 1843.76,
+      "end": 1847.76,
+      "text": "which is why he decided that we're being him and we should be going out of this.",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 314,
+      "start": 1847.76,
+      "end": 1851.76,
+      "text": "Therefore, I know what was made to see it in the toilet",
+      "avg_logprob": -0.919,
+      "no_speech_prob": 0.421
+    },
+    {
+      "id": 315,
+      "start": 1851.76,
+      "end": 1853.76,
+      "text": "and I want to ask you the next question.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 316,
+      "start": 1853.76,
+      "end": 1855.76,
+      "text": "You can find it on the train.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 317,
+      "start": 1855.76,
+      "end": 1857.76,
+      "text": "You can see it's accessible.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 318,
+      "start": 1857.76,
+      "end": 1860.76,
+      "text": "This is where we get that impossible.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 319,
+      "start": 1860.76,
+      "end": 1862.76,
+      "text": "It's a word more than you know.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 320,
+      "start": 1862.76,
+      "end": 1866.76,
+      "text": "The next area of innovation that we want.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 321,
+      "start": 1866.76,
+      "end": 1871.76,
+      "text": "We also, that we all need the most basic elements",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 322,
+      "start": 1871.76,
+      "end": 1875.76,
+      "text": "of calculating that vast information.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 323,
+      "start": 1875.76,
+      "end": 1877.76,
+      "text": "A condition of success.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 324,
+      "start": 1877.76,
+      "end": 1879.76,
+      "text": "A condition of success.",
+      "avg_logprob": -0.662,
+      "no_speech_prob": 0.241
+    },
+    {
+      "id": 325,
+      "start": 1879.76,
+      "end": 1883.76,
+      "text": "But one must be aware of this taking undisciplined energy",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 326,
+      "start": 1883.76,
+      "end": 1885.76,
+      "text": "to form this massive amount.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 327,
+      "start": 1885.76,
+      "end": 1888.76,
+      "text": "What it is, the choice is greater than you know.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 328,
+      "start": 1891.76,
+      "end": 1894.76,
+      "text": "You might as well tell us the same topic.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 329,
+      "start": 1894.76,
+      "end": 1896.76,
+      "text": "Yes.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 330,
+      "start": 1899.76,
+      "end": 1903.76,
+      "text": "You might as well tell us the same topic.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 331,
+      "start": 1903.76,
+      "end": 1905.76,
+      "text": "No.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 332,
+      "start": 1905.76,
+      "end": 1907.76,
+      "text": "You have to tell us.",
+      "avg_logprob": -0.437,
+      "no_speech_prob": 0.303
+    },
+    {
+      "id": 333,
+      "start": 1910.76,
+      "end": 1914.76,
+      "text": "Then the last one is the receiving everybody for competition, right?",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 334,
+      "start": 1914.76,
+      "end": 1916.76,
+      "text": "For everybody's victory.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 335,
+      "start": 1916.76,
+      "end": 1918.76,
+      "text": "Yes.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 336,
+      "start": 1918.76,
+      "end": 1920.76,
+      "text": "We start from where?",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 337,
+      "start": 1920.76,
+      "end": 1922.76,
+      "text": "You're off.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 338,
+      "start": 1922.76,
+      "end": 1923.76,
+      "text": "The first one.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 339,
+      "start": 1923.76,
+      "end": 1926.76,
+      "text": "This is the height you need out.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 340,
+      "start": 1926.76,
+      "end": 1927.76,
+      "text": "Mountain.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 341,
+      "start": 1927.76,
+      "end": 1929.76,
+      "text": "Where is the mountain?",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 342,
+      "start": 1929.76,
+      "end": 1932.76,
+      "text": "Three people.",
+      "avg_logprob": -0.609,
+      "no_speech_prob": 0.119
+    },
+    {
+      "id": 343,
+      "start": 1970.76,
+      "end": 1973.76,
+      "text": "Any man has a title on the first one.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 344,
+      "start": 1973.76,
+      "end": 1975.76,
+      "text": "Second topic.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 345,
+      "start": 1979.76,
+      "end": 1981.76,
+      "text": "So, but clearly, I will be telling you",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 346,
+      "start": 1981.76,
+      "end": 1983.76,
+      "text": "a story of knowledge and thoughts for this.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 347,
+      "start": 1983.76,
+      "end": 1985.76,
+      "text": "Science, science, different science,",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 348,
+      "start": 1985.76,
+      "end": 1987.76,
+      "text": "and knowledge is coming up with, in a most robust.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 349,
+      "start": 1987.76,
+      "end": 1989.76,
+      "text": "They offer exciting adventures.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 350,
+      "start": 1989.76,
+      "end": 1991.76,
+      "text": "I imagine it's an adverse,",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 351,
+      "start": 1991.76,
+      "end": 1993.76,
+      "text": "when not new to catch its mind.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 352,
+      "start": 1993.76,
+      "end": 1996.76,
+      "text": "I can't do newspapers, magazines and bio-capists.",
+      "avg_logprob": -0.941,
+      "no_speech_prob": 0.203
+    },
+    {
+      "id": 353,
+      "start": 1996.76,
+      "end": 1998.76,
+      "text": "The provide valuable insights to",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 354,
+      "start": 1998.76,
+      "end": 2000.76,
+      "text": "into real life experience,",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 355,
+      "start": 2000.76,
+      "end": 2002.76,
+      "text": "and to bring you to stay informed,",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 356,
+      "start": 2002.76,
+      "end": 2004.76,
+      "text": "reading source at the bottom of the room",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 357,
+      "start": 2004.76,
+      "end": 2007.76,
+      "text": "and to relax, learn from the past.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 358,
+      "start": 2007.76,
+      "end": 2011.76,
+      "text": "Now, in the next one, the first topic.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 359,
+      "start": 2011.76,
+      "end": 2015.76,
+      "text": "Any man has a first-second topic?",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 360,
+      "start": 2015.76,
+      "end": 2018.76,
+      "text": "Three.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 361,
+      "start": 2018.76,
+      "end": 2020.76,
+      "text": "There is a way in the bathroom.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 362,
+      "start": 2020.76,
+      "end": 2022.76,
+      "text": "You might know that if someone needs a read,",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 363,
+      "start": 2022.76,
+      "end": 2025.76,
+      "text": "they can find a way to achieve this.",
+      "avg_logprob": -0.622,
+      "no_speech_prob": 0.194
+    },
+    {
+      "id": 364,
+      "start": 2026.76,
+      "end": 2030.76,
+      "text": "However, if you set a phone,",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 365,
+      "start": 2030.76,
+      "end": 2032.76,
+      "text": "you have one after the bathroom.",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 366,
+      "start": 2032.76,
+      "end": 2033.76,
+      "text": "I may say that,",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 367,
+      "start": 2033.76,
+      "end": 2036.76,
+      "text": "the person in the previous video is successful.",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 368,
+      "start": 2036.76,
+      "end": 2038.76,
+      "text": "There is no kind of example in this video.",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 369,
+      "start": 2038.76,
+      "end": 2040.76,
+      "text": "I think I hope you will help with",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 370,
+      "start": 2040.76,
+      "end": 2042.76,
+      "text": "as it is a way of the family.",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 371,
+      "start": 2044.76,
+      "end": 2046.76,
+      "text": "He stated that",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 372,
+      "start": 2046.76,
+      "end": 2049.76,
+      "text": "there shall be no ads that",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 373,
+      "start": 2049.76,
+      "end": 2051.76,
+      "text": "the emotional road was made by",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 374,
+      "start": 2051.76,
+      "end": 2053.76,
+      "text": "sharing the pathway of art.",
+      "avg_logprob": -0.604,
+      "no_speech_prob": 0.209
+    },
+    {
+      "id": 375,
+      "start": 2054.76,
+      "end": 2055.76,
+      "text": "Then he stated that",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 376,
+      "start": 2055.76,
+      "end": 2056.76,
+      "text": "it must have been possible",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 377,
+      "start": 2056.76,
+      "end": 2057.76,
+      "text": "for the more forward",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 378,
+      "start": 2057.76,
+      "end": 2058.76,
+      "text": "it will be possible",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 379,
+      "start": 2058.76,
+      "end": 2060.76,
+      "text": "in the future of the future.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 380,
+      "start": 2060.76,
+      "end": 2062.76,
+      "text": "As I said, I consider the success",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 381,
+      "start": 2062.76,
+      "end": 2064.76,
+      "text": "because they might be interested in",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 382,
+      "start": 2064.76,
+      "end": 2065.76,
+      "text": "how the power and science",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 383,
+      "start": 2065.76,
+      "end": 2066.76,
+      "text": "and the environment",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 384,
+      "start": 2066.76,
+      "end": 2067.76,
+      "text": "that we have ever updated",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 385,
+      "start": 2067.76,
+      "end": 2069.76,
+      "text": "is exactly what it is.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 386,
+      "start": 2069.76,
+      "end": 2070.76,
+      "text": "Yes, I think people",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 387,
+      "start": 2070.76,
+      "end": 2072.76,
+      "text": "have not written on any of the topics",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 388,
+      "start": 2072.76,
+      "end": 2075.76,
+      "text": "this year.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 389,
+      "start": 2075.76,
+      "end": 2078.76,
+      "text": "Yes, people have not written on",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 390,
+      "start": 2078.76,
+      "end": 2080.76,
+      "text": "any of the future topics.",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 391,
+      "start": 2080.76,
+      "end": 2081.76,
+      "text": "This year,",
+      "avg_logprob": -0.689,
+      "no_speech_prob": 0.113
+    },
+    {
+      "id": 392,
+      "start": 2082.76,
+      "end": 2084.76,
+      "text": "you do not read.",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 393,
+      "start": 2084.76,
+      "end": 2085.76,
+      "text": "Right?",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 394,
+      "start": 2088.76,
+      "end": 2090.76,
+      "text": "You don't read the book.",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 395,
+      "start": 2090.76,
+      "end": 2093.76,
+      "text": "Yes.",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 396,
+      "start": 2093.76,
+      "end": 2095.76,
+      "text": "You can read the book",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 397,
+      "start": 2095.76,
+      "end": 2097.76,
+      "text": "if you want to read it.",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 398,
+      "start": 2099.76,
+      "end": 2101.76,
+      "text": "Ah, anyone else?",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 399,
+      "start": 2101.76,
+      "end": 2103.76,
+      "text": "Do you want to read the book?",
+      "avg_logprob": -0.646,
+      "no_speech_prob": 0.375
+    },
+    {
+      "id": 400,
+      "start": 2112.76,
+      "end": 2113.76,
+      "text": "Yes.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 401,
+      "start": 2120.76,
+      "end": 2122.76,
+      "text": "You didn't?",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 402,
+      "start": 2122.76,
+      "end": 2124.76,
+      "text": "Yes.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 403,
+      "start": 2124.76,
+      "end": 2127.76,
+      "text": "Thank you.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 404,
+      "start": 2127.76,
+      "end": 2129.76,
+      "text": "We got this word topic.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 405,
+      "start": 2129.76,
+      "end": 2131.76,
+      "text": "You will read.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 406,
+      "start": 2131.76,
+      "end": 2133.76,
+      "text": "Yes, first,",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 407,
+      "start": 2133.76,
+      "end": 2134.76,
+      "text": "to be updated.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 408,
+      "start": 2134.76,
+      "end": 2135.76,
+      "text": "You have accepted that",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 409,
+      "start": 2135.76,
+      "end": 2137.76,
+      "text": "you have written something.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 410,
+      "start": 2137.76,
+      "end": 2139.76,
+      "text": "So, third one who is going to read",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 411,
+      "start": 2139.76,
+      "end": 2140.76,
+      "text": "will start with 90.",
+      "avg_logprob": -0.565,
+      "no_speech_prob": 0.151
+    },
+    {
+      "id": 412,
+      "start": 2141.76,
+      "end": 2143.76,
+      "text": "90.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 413,
+      "start": 2143.76,
+      "end": 2145.76,
+      "text": "You are going to read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 414,
+      "start": 2145.76,
+      "end": 2147.76,
+      "text": "So, what is the topic?",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 415,
+      "start": 2147.76,
+      "end": 2150.76,
+      "text": "First, I will read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 416,
+      "start": 2159.76,
+      "end": 2161.76,
+      "text": "I am going to read a couple of things.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 417,
+      "start": 2161.76,
+      "end": 2163.76,
+      "text": "I am going to read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 418,
+      "start": 2163.76,
+      "end": 2165.76,
+      "text": "I am going to read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 419,
+      "start": 2165.76,
+      "end": 2167.76,
+      "text": "I am going to read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 420,
+      "start": 2167.76,
+      "end": 2169.76,
+      "text": "I am going to read it.",
+      "avg_logprob": -0.704,
+      "no_speech_prob": 0.098
+    },
+    {
+      "id": 421,
+      "start": 2169.76,
+      "end": 2172.76,
+      "text": "I have read it.",
+      "avg_logprob": -0.98,
+      "no_speech_prob": 0.109
+    },
+    {
+      "id": 422,
+      "start": 2190.76,
+      "end": 2193.76,
+      "text": "I have read it.",
+      "avg_logprob": -0.98,
+      "no_speech_prob": 0.109
+    },
+    {
+      "id": 423,
+      "start": 2193.76,
+      "end": 2195.76,
+      "text": "I can read it.",
+      "avg_logprob": -0.98,
+      "no_speech_prob": 0.109
+    },
+    {
+      "id": 424,
+      "start": 2195.76,
+      "end": 2197.76,
+      "text": "Yes, okay.",
+      "avg_logprob": -0.98,
+      "no_speech_prob": 0.109
+    },
+    {
+      "id": 425,
+      "start": 2227.76,
+      "end": 2234.76,
+      "text": "It is also used to get any information or any information basically you want to tell you",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 426,
+      "start": 2234.76,
+      "end": 2235.76,
+      "text": "what is it?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 427,
+      "start": 2235.76,
+      "end": 2236.76,
+      "text": "What is it actually?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 428,
+      "start": 2236.76,
+      "end": 2237.76,
+      "text": "Any information?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 429,
+      "start": 2237.76,
+      "end": 2238.76,
+      "text": "Any information?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 430,
+      "start": 2238.76,
+      "end": 2239.76,
+      "text": "Any information?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 431,
+      "start": 2239.76,
+      "end": 2240.76,
+      "text": "Any information?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 432,
+      "start": 2240.76,
+      "end": 2242.76,
+      "text": "On the third topic.",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 433,
+      "start": 2242.76,
+      "end": 2243.76,
+      "text": "Yes?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 434,
+      "start": 2249.76,
+      "end": 2253.76,
+      "text": "When you keep using chasmity, you should be talking about internet.",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 435,
+      "start": 2253.76,
+      "end": 2255.76,
+      "text": "What have you used it for?",
+      "avg_logprob": -0.651,
+      "no_speech_prob": 0.263
+    },
+    {
+      "id": 436,
+      "start": 2255.76,
+      "end": 2256.76,
+      "text": "I am not able to write it.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 437,
+      "start": 2256.76,
+      "end": 2258.76,
+      "text": "Hi, human ends.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 438,
+      "start": 2258.76,
+      "end": 2261.76,
+      "text": "That's quite a copy.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 439,
+      "start": 2261.76,
+      "end": 2262.76,
+      "text": "That's quite a copy.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 440,
+      "start": 2262.76,
+      "end": 2265.76,
+      "text": "Yes, good, great.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 441,
+      "start": 2265.76,
+      "end": 2267.76,
+      "text": "Next, let's go to the presentation.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 442,
+      "start": 2267.76,
+      "end": 2270.76,
+      "text": "The address we get is the information.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 443,
+      "start": 2270.76,
+      "end": 2272.76,
+      "text": "The address we get is the information.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 444,
+      "start": 2272.76,
+      "end": 2274.76,
+      "text": "The information is the information.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 445,
+      "start": 2274.76,
+      "end": 2278.76,
+      "text": "The information can be used in any kind of information.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 446,
+      "start": 2278.76,
+      "end": 2280.76,
+      "text": "The information is more than that.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 447,
+      "start": 2280.76,
+      "end": 2282.76,
+      "text": "It is sent to us by email.",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.09
+    },
+    {
+      "id": 448,
+      "start": 2312.76,
+      "end": 2314.76,
+      "text": "There is a lot of information.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 449,
+      "start": 2314.76,
+      "end": 2315.76,
+      "text": "There is a lot of information about it.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 450,
+      "start": 2315.76,
+      "end": 2317.76,
+      "text": "There is a lot of information.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 451,
+      "start": 2317.76,
+      "end": 2320.76,
+      "text": "There is a lot of information about it.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 452,
+      "start": 2320.76,
+      "end": 2322.76,
+      "text": "That's quite a lot.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 453,
+      "start": 2322.76,
+      "end": 2325.76,
+      "text": "If you connect with us a little bit,",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 454,
+      "start": 2325.76,
+      "end": 2327.76,
+      "text": "we can go back and see you again.",
+      "avg_logprob": -1.289,
+      "no_speech_prob": 0.217
+    },
+    {
+      "id": 455,
+      "start": 2357.76,
+      "end": 2361.76,
+      "text": "and you see, you're very far from your end of the day.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 456,
+      "start": 2361.76,
+      "end": 2365.76,
+      "text": "You can come here and there makes a plot.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 457,
+      "start": 2365.76,
+      "end": 2368.76,
+      "text": "Then you see not, first and then the same.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 458,
+      "start": 2374.76,
+      "end": 2376.76,
+      "text": "They come out too.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 459,
+      "start": 2376.76,
+      "end": 2377.76,
+      "text": "What is he doing?",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 460,
+      "start": 2377.76,
+      "end": 2378.76,
+      "text": "A.C.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 461,
+      "start": 2378.76,
+      "end": 2379.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 462,
+      "start": 2379.76,
+      "end": 2380.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 463,
+      "start": 2380.76,
+      "end": 2382.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 464,
+      "start": 2382.76,
+      "end": 2383.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 465,
+      "start": 2383.76,
+      "end": 2385.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 466,
+      "start": 2385.76,
+      "end": 2386.76,
+      "text": "A.C. Ford.",
+      "avg_logprob": -0.785,
+      "no_speech_prob": 0.715
+    },
+    {
+      "id": 467,
+      "start": 2387.76,
+      "end": 2391.76,
+      "text": "A.C.",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.305
+    },
+    {
+      "id": 468,
+      "start": 2391.76,
+      "end": 2396.76,
+      "text": "A.C.",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.305
+    },
+    {
+      "id": 469,
+      "start": 2396.76,
+      "end": 2404.76,
+      "text": "A.C.",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.305
+    },
+    {
+      "id": 470,
+      "start": 2404.76,
+      "end": 2414.76,
+      "text": "A.C.",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.305
+    },
+    {
+      "id": 471,
+      "start": 2414.76,
+      "end": 2415.76,
+      "text": "A.C.",
+      "avg_logprob": -0.516,
+      "no_speech_prob": 0.305
+    },
+    {
+      "id": 472,
+      "start": 2505.76,
+      "end": 2507.76,
+      "text": "We're going to take a photo of you.",
+      "avg_logprob": -0.937,
+      "no_speech_prob": 0.587
+    },
+    {
+      "id": 473,
+      "start": 2507.76,
+      "end": 2509.76,
+      "text": "We're going to take a photo of you.",
+      "avg_logprob": -0.937,
+      "no_speech_prob": 0.587
+    }
+  ],
+  "text": "I don't know what to say. So I do. Hey. You got your own treasure on mine. Yeah. Hold your weighted weight, I'm playing with my weight. After a few days, I'm going to eat my weight. I'm going to be okay. After a few days, I'm gonna eat my weight. Nah, I'm okay, my weight. I'm okay. I'm gonna go and check it out. I'm going to check it out. I'm gonna go and check it out. Nah, go. I'm going to check you out. I'm gonna go. Yes. The next one is the first paragraph. I think that the credit price of our college is less affordable than the first we had. We did not pay rent. We were going to be schooled. The first paragraph is for students who are less than 800. The full of credit rates is less than the second and the second is the same. We are also able to get up to the expense of our college and the new one. on the weekends and on the other side of their culture. Another reason why college is great is that each of us are more open and accessible and they interact with the students more freely than our each of students. For that, college students give the opportunity to date, fighting and to listen to the academic sessions. They know for some reason, some different ways. Additionally, college offers an offer for students, as well as students, students, students, students, students, students, students. But those people are understanding them. But they go on. College is one because of the contrast, the techniques, and college rates, with large numbers and features. First and foremost, what is the title you can give to the percentage? What is the topic sentence? Yes, I think that college is one more interesting and exciting than it used to be at school. Yes, the cohesive devices, you see first of all, yes, that you have, we have, yes, another reason. Yes, for the, traditionally, at all. Yes, these are the more simple devices that we have used. Next time, next person. Next time, next person. Our first target, is to have this reaction. And especially, we are going to, like some people are calling us people and whether they know it, it is nice to meet people, who are able to respond to their questions. Yes, they will. They came in contact with us. We didn't express it. We never talked with them. They won't be able to pass by us like this. They make me remember, they are talking both right and right. And people may wonder if they think more. So, what is the next thing you do? Yes. Oh, what is the next thing you do? What is the next thing you do? What is the next thing you do? What is the next thing you do? One of your friends is wonderful people or emotional people, right? Yes, what is the next thing? It is nice to meet people who are able to respond with the next thing towards them. They don't. Yes, what is the next thing? Is it okay? Now, then, what I decided is to have use. Who are spontaneously who are? Yes. Always be the surviving potentials. Then, I don't want to do that. That has people. That has people. That's what you want today. Now, the experiment is supposed to be done quite often. Yes, this is getting harder. This will be part of the process. The standard space when I get to the atmosphere is a lot some of it is engaged and it is the standard space. For the tickets produced by the men, I know we should wrap you over here once in 20 years. The temperature of the lights, the temperature of the popolettes or once again, happens to carry an increase. The increase in the temperature will affect all the life of the camera. The two main characters are the brain, we know the brain, or the carbon dioxide, and the radiation. Many governments have been doing an innovation for reducing the emissions of the brain of gas. Some of the steps take us a large-scale panic of rage, actually industries that produce can't be affected. And so, what you want to know is that the energy is not so wide. So, what is the type you can get? Global warming. Global warming. Okay. So, what are the connections you have there? How many of them? How many of them? How many of them? How many of them? 10. Which have jobs? Which day? There are two main chances. This one's good for treatment. And carbon dioxide, many governments have been doing that. Some of the steps. Yes. Some of the steps. Which way? Those are the cohesive technologies or the panic areas. Now, next, next question. But now, what is very important? In the 1990s, we were able to take advantage of the management policy which is right that we should be able to show because what the energy needs of the brain and the resources for the brain. This term needs to be important and the needs of the brain. Global warming needs to have a special result of that. It is the answer to its transition. It is our goal in the world to take over it. We will take over. Something might be important. We have a way to contribute to the work. What is the time you can use for the earlier paragraph, what is the perfect sentence? Yes, the first one, the other one is getting formal, we are taking the perfect sentence. So, once we have always had an important lesson, human society. Okay, what is the time you can use in this book? Yes, in this book. Yes, what does the practice which are used? It is well known. Yes. The most important thing is that he has learned that he has learned that the negative is happening here. Yes, he has learned that what are you busy with? What are you doing? What are you doing? What are you doing? Okay, how can you call it? Right? Right in the middle. It's a very common question. And the paragraph is often in your mind. Okay. Here, okay. My name is Ramil, my name is Ramil, my name is Janak Mahal, my name is Vikram and my They believe that they will not be able to find a guy who comes to the spot and find a guy who is similar to me. Twenty-one house should be supposed to be a sign of your project. The question is, can our people and we can have a picture of their setting for this? However, to this day, they believe that we should be starting our own activities, and they will either win, rely on the international fear or impossible moves, work hard is loving that they can make a way out of these new sites. It is better for people to position 16 because they are investing in these, and carry on with your being in one setting, and it is very important. It's so important that they can do this? It's the first position. In the next round, superstition or superstition? What is the topic sentence? Superstition of 9 points that are not made by companies that are not made by companies, or a lot of tiny things. Yes, you all know what superstitions are. So, what are the benefits that are used? For example, it is really important. However, both have similar ideas. Moving on to the last part of the last Wednesday. Yes, but in the second game, it has been shown to us. Yes, but in the second game, it has been shown to us. What are the benefits? The two sides. The two sides. Yes, these are the punishments we have here. I'm not giving it. Yes. Now, we want to do the... Questions you choose. Out of those three, for anyone using their paints, we will write the title out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. Let's read it out. So what we need to write, what we need to write, I write 3D, yes 3D, all 3D is my question, what is my question, do you know, reading books that you really need, and once there are many interesting novels for you, which is why many novel authors, there are different genres to choose from, there are a couple of answers to the stitches and many more. So, reading books are the feature of us, not just me, not to be for our question, but you know, time consistently, which definitely shows what's the change in the present, the other side of the point, which includes us, our task, by the way, the real life right nature, they have all the knowledge together from the beginning to the beginning of the case, without visiting it, if not, if not all these facts, you know, why they have to be in the past world. Yes, are you all able to get it, because also you use the things that try to fight up, has anyone else tell them the same thing? Yes, has anyone become of the first set of things which have given you, no one has become Moving on to the next one, let's get done with it. Yes? Have we done? What is the right movement? Where is the middle? There is a way. What is the right movement? Where is the middle? Where is the middle? The movement is where it goes. Yes? 83? I just don't want to say it's not the right. You know? Where is the middle? Where is the middle? There is a way. It's a pointing way of saying that as an individual, I don't want to say that it's a big obstacle. We are going to say it's a big obstacle. It's a big obstacle, right? This, let's think it's a obstacle. To all of us, okay? The big obstacle is determination. Is it right? It's a big obstacle here. A great example of this is the life of Napoleon. The important is that he has great influence on this. But he was able to take up a vast balance in the history of France. The outside of the country is not just big, but it's a big obstacle. On the story of Napoleon, he decided to be thankful but the honest stories that they were talking about. But you know, the director of the B-roll, which is why he decided that we're being him and we should be going out of this. Therefore, I know what was made to see it in the toilet and I want to ask you the next question. You can find it on the train. You can see it's accessible. This is where we get that impossible. It's a word more than you know. The next area of innovation that we want. We also, that we all need the most basic elements of calculating that vast information. A condition of success. A condition of success. But one must be aware of this taking undisciplined energy to form this massive amount. What it is, the choice is greater than you know. You might as well tell us the same topic. Yes. You might as well tell us the same topic. No. You have to tell us. Then the last one is the receiving everybody for competition, right? For everybody's victory. Yes. We start from where? You're off. The first one. This is the height you need out. Mountain. Where is the mountain? Three people. Any man has a title on the first one. Second topic. So, but clearly, I will be telling you a story of knowledge and thoughts for this. Science, science, different science, and knowledge is coming up with, in a most robust. They offer exciting adventures. I imagine it's an adverse, when not new to catch its mind. I can't do newspapers, magazines and bio-capists. The provide valuable insights to into real life experience, and to bring you to stay informed, reading source at the bottom of the room and to relax, learn from the past. Now, in the next one, the first topic. Any man has a first-second topic? Three. There is a way in the bathroom. You might know that if someone needs a read, they can find a way to achieve this. However, if you set a phone, you have one after the bathroom. I may say that, the person in the previous video is successful. There is no kind of example in this video. I think I hope you will help with as it is a way of the family. He stated that there shall be no ads that the emotional road was made by sharing the pathway of art. Then he stated that it must have been possible for the more forward it will be possible in the future of the future. As I said, I consider the success because they might be interested in how the power and science and the environment that we have ever updated is exactly what it is. Yes, I think people have not written on any of the topics this year. Yes, people have not written on any of the future topics. This year, you do not read. Right? You don't read the book. Yes. You can read the book if you want to read it. Ah, anyone else? Do you want to read the book? Yes. You didn't? Yes. Thank you. We got this word topic. You will read. Yes, first, to be updated. You have accepted that you have written something. So, third one who is going to read will start with 90. 90. You are going to read it. So, what is the topic? First, I will read it. I am going to read a couple of things. I am going to read it. I am going to read it. I am going to read it. I am going to read it. I have read it. I have read it. I can read it. Yes, okay. It is also used to get any information or any information basically you want to tell you what is it? What is it actually? Any information? Any information? Any information? Any information? On the third topic. Yes? When you keep using chasmity, you should be talking about internet. What have you used it for? I am not able to write it. Hi, human ends. That's quite a copy. That's quite a copy. Yes, good, great. Next, let's go to the presentation. The address we get is the information. The address we get is the information. The information is the information. The information can be used in any kind of information. The information is more than that. It is sent to us by email. There is a lot of information. There is a lot of information about it. There is a lot of information. There is a lot of information about it. That's quite a lot. If you connect with us a little bit, we can go back and see you again. and you see, you're very far from your end of the day. You can come here and there makes a plot. Then you see not, first and then the same. They come out too. What is he doing? A.C. A.C. Ford. A.C. Ford. A.C. Ford. A.C. Ford. A.C. Ford. A.C. Ford. A.C. A.C. A.C. A.C. A.C. We're going to take a photo of you. We're going to take a photo of you."
+}

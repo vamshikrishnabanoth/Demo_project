@@ -1,0 +1,24 @@
+{
+  "input_id": "Software Engineering Lab: Git/GitHub Collaborative Workflows & Merge Conflicts",
+  "title": "Software Engineering Lab: Git/GitHub Collaborative Workflows & Merge Conflicts",
+  "concepts_and_definitions": [
+    "Code Collaboration: The process of multiple developers working together on the same codebase, typically managed through shared repositories or organizations.",
+    "Forking: Creating a personal copy of an existing public repository to contribute to it without direct write access to the original project.",
+    "Merge Conflicts: Occurrences where two collaborators modify the same lines of code in a file, requiring manual resolution before the merge can be completed.",
+    "Patch Files: Files generated from specific commits that contain the differences (diffs) between versions, used to share changes without a direct repository connection.",
+    "Pull Request (PR): A mechanism for proposing changes to a repository, allowing for review and approval before merging into the main branch."
+  ],
+  "mechanisms_and_formulas": [
+    "Conflict Resolution Workflow: Identify conflict markers (<<<<<<<, =======, >>>>>>>) in the file, manually edit the code to resolve the discrepancy, remove markers, stage the file with 'git add', and commit the changes.",
+    "Patch Generation: Use 'git format-patch' to create patch files from specific commits. The flag '-1' generates a patch for a single commit, while '-3' or a range like '<base_commit>..HEAD' generates patches for multiple commits.",
+    "Branch Synchronization: To keep a feature branch updated, switch to the main branch ('git checkout main'), pull the latest changes ('git pull origin main'), switch back to the feature branch, and merge main into the feature branch ('git merge main').",
+    "Abort Mechanism: If a merge or rebase becomes unmanageable, the process can be reverted to the pre-merge state using 'git merge --abort' or 'git rebase --abort'."
+  ],
+  "examples_and_code_patterns": [
+    "Git Configuration and Remote Verification: 'git config --global user.name \"Your Name\"', 'git config --global user.email you@example.com', and 'git remote -v' to verify connection to the shared repository.",
+    "Cloning and Branching: 'git clone <url>' to get a local copy, followed by creating a new branch for specific features (e.g., 'feature/your-new-feature') to isolate changes.",
+    "Patch Creation Syntax: 'git format-patch -1 abc1234' creates a file named '0001-Your-commit-message.patch' containing the changes from commit abc1234.",
+    "Conflict Marker Pattern: Files with conflicts contain lines like '<<<<<<< HEAD', the conflicting code, '=======', the incoming code, and '>>>>>>> branch-name', which must be manually edited and removed."
+  ],
+  "factual_summary_text": "The material outlines a procedural lab exercise focused on collaborative software development using Git and GitHub. It covers the setup of shared repositories within an organization, including configuring local Git identities, cloning shared repositories, and verifying remote connections. The workflow extends to contributing to external projects via the 'Fork' mechanism, where a user creates a personal copy of a public repository, makes changes on a feature branch, and submits a Pull Request for review and merging by the original repository owner.\n\nA significant portion of the content is dedicated to handling merge conflicts, which occur when multiple collaborators edit the same code segments. The procedure involves identifying conflict markers in the source code, manually resolving the discrepancies, staging the resolved files, and committing the changes. Additionally, the material details the creation and application of patch files using 'git format-patch' to share specific commits, allowing for the transfer of code changes via email or other means without direct repository access. The lab concludes with scenario-based questions requiring the application of these commands to synchronize branches and resolve conflicts in a team environment."
+}

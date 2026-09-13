@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_001_voice_ppt_cnn_theory",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Using the output dimension formula O = floor((W - K + 2P) / S) + 1, what is the output width when W = 32, K = 5, P = 2, and S = 1?",
+      "option_a": "28",
+      "option_b": "30",
+      "option_c": "32",
+      "option_d": "34",
+      "correct_option": "C",
+      "explanation": "Plugging the values into the formula: O = floor((32 - 5 + 2*2) / 1) + 1 = floor((32 - 5 + 4) / 1) + 1 = floor(31 / 1) + 1 = 31 + 1 = 32. Therefore option C is correct. Option A (28) and B (30) result from mistakenly omitting the padding term or mis\u2011applying the floor operation. Option D (34) would require adding padding twice or using a larger stride, which is not the case.",
+      "target_concept": "Output dimension formula",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "Which combination of inductive biases in a CNN guarantees translation equivariance?",
+      "option_a": "Local connectivity only",
+      "option_b": "Weight sharing only",
+      "option_c": "Both local connectivity and weight sharing",
+      "option_d": "Neither; translation equivariance is learned automatically",
+      "correct_option": "C",
+      "explanation": "Translation equivariance arises because each filter (weight sharing) is applied to every spatial location (local connectivity). Neither bias alone is sufficient: local connectivity without weight sharing would treat each location differently, and weight sharing without restricting the receptive field would not enforce locality. Hence option C is correct. Options A and B isolate one bias and miss the synergy required. Option D is incorrect because equivariance is a built\u2011in property of the convolution operation, not something that must be learned.",
+      "target_concept": "Inductive biases \u2013 local connectivity and weight sharing",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "Compared to a single 7\u00d77 convolutional filter, three stacked 3\u00d73 filters require:",
+      "option_a": "Fewer parameters",
+      "option_b": "More parameters",
+      "option_c": "The same number of parameters",
+      "option_d": "Cannot be determined without knowing the number of channels",
+      "correct_option": "A",
+      "explanation": "A single 7\u00d77 filter uses 49\u00b7C\u00b2 parameters (C = number of channels). Three 3\u00d73 filters use 3\u00b79\u00b7C\u00b2 = 27\u00b7C\u00b2 parameters, which is fewer. Therefore option A is correct. Option B is the opposite of the true relationship. Option C would be true only if the kernel sizes were equal. Option D is unnecessary because the factor C\u00b2 appears in both expressions and cancels out when comparing relative sizes.",
+      "target_concept": "Parameter efficiency of stacked convolutions",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "What is the effective receptive field size after stacking three convolutional layers each with a 3\u00d73 kernel (stride\u202f=\u202f1, no padding)?",
+      "option_a": "3\u00d73",
+      "option_b": "5\u00d75",
+      "option_c": "7\u00d77",
+      "option_d": "9\u00d79",
+      "correct_option": "C",
+      "explanation": "Each 3\u00d73 layer expands the receptive field by 2 pixels in each dimension. After three layers, the total expansion is 2\u202f+\u202f2\u202f+\u202f2 = 6, giving a receptive field of (3 + 6) = 7 pixels per side, i.e., 7\u00d77. Hence option C is correct. Option A ignores stacking, option B corresponds to two layers, and option D would require four layers or larger kernels.",
+      "target_concept": "Effective receptive field through stacking",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What is a primary drawback of using a standard Multilayer Perceptron (MLP) on a high\u2011resolution image such as 256\u00d7256?",
+      "option_a": "The MLP would have too few parameters to learn useful features",
+      "option_b": "Spatial relationships between pixels are lost after flattening",
+      "option_c": "Both the excessive parameter count and loss of spatial relationships",
+      "option_d": "MLPs are actually well\u2011suited for high\u2011resolution images; there is no drawback",
+      "correct_option": "C",
+      "explanation": "Flattening a 256\u00d7256 image creates a vector of length 65,536. Connecting this to even a modest hidden layer yields on the order of 200,000+ parameters, which is computationally expensive (option A). Moreover, flattening destroys the 2\u2011D spatial structure, preventing the network from exploiting locality (option B). Therefore both issues together constitute the main drawback, making option C correct. Option D contradicts the well\u2011documented limitations described in the material.",
+      "target_concept": "MLP limitations on high\u2011resolution images",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": null
+    }
+  ]
+}

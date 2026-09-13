@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788030343876-CASE_D_S",
+  "timestamp": "2026-08-29T19:07:07Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": -0.1,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "THEORETICAL_RATIONALE",
+    "OUTPUT_PREDICTION",
+    "MISCONCEPTION_TARGETING",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 84023.2,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting the 5 most distinct core concepts and mechanisms from the available list. To ensure non-redundancy, I mapped each target to a unique pedagogical facet: CONCEPT_UNDERSTANDING for the high-level definition of context switching, CODE_INTERPRETATION for the specific syntax of collection creation, OUTPUT_PREDICTION for the result of a simple insertion, MISCONCEPTION_TARGETING for the distinction between dropping a collection vs. deleting documents, and PRACTICAL_APPLICATION for the basic workflow of switching databases before inserting data. This covers the full lifecycle (switch -> create -> insert -> manage) without repeating the same concept under different angles, as the concepts themselves are distinct enough to support 5 unique easy-level items."
+}

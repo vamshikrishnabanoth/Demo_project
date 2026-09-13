@@ -1,0 +1,26 @@
+{
+  "request_id": "REQ-1788032972901-CASE_A_M",
+  "timestamp": "2026-08-29T19:50:33Z",
+  "input_id": "CASE_A_MONOLOGUE",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "OUTPUT_PREDICTION",
+    "THEORETICAL_RATIONALE",
+    "PARAMETER_CHANGE"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 60854.53,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 targets is fulfilled by selecting 5 distinct concepts from the available 9 and assigning each a unique pedagogical facet to ensure non-redundancy. The selection covers the full pipeline: architecture definition (Class-based), data flow (Forward Prop), error quantification (Loss Function), optimization (Optimizer), and structural mechanics (Layer Connectivity). Facets chosen are CONCEPT_UNDERSTANDING, OUTPUT_PREDICTION, THEORETICAL_RATIONALE, APPLY, and PARAMETER_CHANGE respectively, ensuring a mix of cognitive levels (UNDERSTAND, APPLY, ANALYZE) appropriate for MEDIUM difficulty."
+}

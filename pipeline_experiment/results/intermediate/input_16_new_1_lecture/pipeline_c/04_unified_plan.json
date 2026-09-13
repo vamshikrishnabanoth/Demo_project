@@ -1,0 +1,53 @@
+{
+  "input_id": "input_16_new_1_lecture",
+  "title": "Classroom Lecture: Core Computer Science Principles (Audio Recording New 1)",
+  "total_requested_questions": 5,
+  "total_available_targets": 3,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Fundamentals of Computer Science",
+      "what_taught_summary": "The lecture introduces the fundamental definition of Computer Science as the study of algorithms, data structures, and computational processes, establishing the core vocabulary for the course.",
+      "why_assessed_pedagogy": "This target ensures students can recall the basic terminology and scope of the discipline, providing the necessary foundational context for subsequent theoretical discussions.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing Computer Science with Computer Engineering or hardware maintenance.",
+        "Believing that Computer Science is solely about programming languages rather than abstract problem-solving.",
+        "Assuming that 'computational processes' refers only to physical machine operations rather than logical steps."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Theoretical Foundations",
+      "what_taught_summary": "The session outlines the theoretical underpinnings of computation, including concepts like Turing machines and formal languages, which define the limits and capabilities of what can be computed.",
+      "why_assessed_pedagogy": "Assessing this area verifies that students can identify the key theoretical models that distinguish theoretical computer science from applied software development.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Thinking that theoretical foundations are only relevant to mathematicians and not to practical programmers.",
+        "Misidentifying 'formal languages' as natural human languages used in documentation.",
+        "Assuming that all computational problems are solvable, ignoring the concept of undecidability."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Classroom Lecture Structure",
+      "what_taught_summary": "The lecture explains the pedagogical structure of the course, detailing how topics are sequenced from basic definitions to complex theoretical applications to facilitate learning.",
+      "why_assessed_pedagogy": "This metacognitive framing helps students understand the logical flow of the curriculum, enabling them to self-regulate their study habits and anticipate upcoming content.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Believing that the lecture order is arbitrary and topics can be studied in any sequence without loss of understanding.",
+        "Assuming that the 'structure' refers to the physical layout of the classroom rather than the curriculum design.",
+        "Thinking that metacognitive framing is a technical concept related to data processing rather than a learning strategy."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

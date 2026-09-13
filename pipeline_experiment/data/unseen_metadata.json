@@ -1,0 +1,50 @@
+[
+  {
+    "input_id": "input_16_new_1_lecture",
+    "title": "Classroom Lecture: Core Computer Science Principles (Audio Recording New 1)",
+    "input_type": "VOICE_ONLY",
+    "content_style": "THEORY",
+    "file_path": "pipeline_experiment/data/transcripts/new_1_transcript.json",
+    "duration_seconds": 2509.3
+  },
+  {
+    "input_id": "input_17_new_2_deep_dive",
+    "title": "Classroom Lecture: Advanced Technical Discussion & Q&A (Audio Recording New 2)",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROBLEM_SOLVING",
+    "file_path": "pipeline_experiment/data/transcripts/new_2_transcript.json",
+    "duration_seconds": 4548.8
+  },
+  {
+    "input_id": "input_18_new_recording_37",
+    "title": "Classroom Lecture: Algorithmic Review & Clarifications (Audio Recording 37)",
+    "input_type": "VOICE_ONLY",
+    "content_style": "THEORY",
+    "file_path": "pipeline_experiment/data/transcripts/new_recording_37_1_transcript.json",
+    "duration_seconds": 1170.1
+  },
+  {
+    "input_id": "input_19_new_full_lecture",
+    "title": "Classroom Lecture: Full Conceptual & Code Walkthrough (Audio Recording New)",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROCEDURAL",
+    "file_path": "pipeline_experiment/data/transcripts/new_transcript.json",
+    "duration_seconds": 3640.3
+  },
+  {
+    "input_id": "input_20_pps_jocks_discussion",
+    "title": "Classroom Discussion: Problem Solving in Python Interaction",
+    "input_type": "VOICE_ONLY",
+    "content_style": "CODE",
+    "file_path": "pipeline_experiment/data/transcripts/pps_jocks_transcript.json",
+    "duration_seconds": 320.6
+  },
+  {
+    "input_id": "input_21_voice_classroom",
+    "title": "Classroom Lecture: Live Engineering Exposition (Audio Recording Voice)",
+    "input_type": "VOICE_ONLY",
+    "content_style": "PROCEDURAL",
+    "file_path": "pipeline_experiment/data/transcripts/voice_m4a_transcript.json",
+    "duration_seconds": 3601.8
+  }
+]

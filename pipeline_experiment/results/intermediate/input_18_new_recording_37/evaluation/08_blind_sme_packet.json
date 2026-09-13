@@ -1,0 +1,197 @@
+{
+  "input_id": "input_18_new_recording_37",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "A student writes a Python script that sorts a list of integers using the `list.sort()` method. Which statement best distinguishes the underlying algorithm from the specific code implementation?",
+      "options": {
+        "A": "The algorithm is the specific Python syntax used, while the implementation is the abstract idea of ordering elements.",
+        "B": "The algorithm is the abstract logical procedure for ordering elements, while the implementation is the specific Python code and data structures used to execute it.",
+        "C": "The algorithm and the implementation are identical because the code directly represents the logic without any abstraction.",
+        "D": "The algorithm refers only to the input and output, while the implementation refers to the time complexity of the execution."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because an algorithm is defined as a finite, well-defined sequence of steps to solve a problem, independent of the programming language. The implementation is the concrete realization of that algorithm in a specific language (Python) using specific data structures. Option A reverses the definitions. Option C ignores the abstraction layer between logic and code. Option D incorrectly limits the algorithm to I/O and confuses it with performance metrics."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "If a student were to generate questions based strictly on the provided summary, what would be the most accurate topic for those questions?",
+      "options": {
+        "A": "The time complexity of sorting algorithms.",
+        "B": "The absence of educational content in the source material.",
+        "C": "The implementation of dynamic programming.",
+        "D": "The definition of graph traversal algorithms."
+      },
+      "correct_option": "B",
+      "explanation": "Since the summary states that the source content is empty and contains no educational material, the only accurate topic for questions grounded strictly in this summary is the absence of content itself. Options A, C, and D are incorrect because they refer to specific algorithmic topics that are not present in the source material, as explicitly stated in the summary."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What does the 'factual_summary' field in the provided representation indicate about the input material?",
+      "options": {
+        "A": "It indicates that the material is incomplete but contains partial concepts.",
+        "B": "It indicates that the material is entirely empty of educational content.",
+        "C": "It indicates that the material focuses solely on code patterns.",
+        "D": "It indicates that the material is a theoretical overview without examples."
+      },
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states: 'The provided source content is empty. No educational material... were presented in the input.' This directly supports option B. Option A is incorrect because it suggests partial content, which contradicts the 'empty' description. Options C and D are incorrect because they suggest specific types of content (code patterns or theoretical overview) that are explicitly stated to be absent."
+    },
+    {
+      "blind_id": "Q_BLIND_2424",
+      "question_text": "A programmer needs to find the maximum value in a list of 10 integers. They use a brute-force approach that checks every element against every other element. Why might this approach be considered acceptable in this specific context despite being inefficient for large datasets?",
+      "options": {
+        "A": "Brute-force methods are always the most efficient way to solve any problem.",
+        "B": "The input size is very small, so the constant overhead of a more complex optimized algorithm may outweigh its benefits.",
+        "C": "Brute-force methods are the only correct way to find a maximum value.",
+        "D": "Optimized algorithms cannot handle small input sizes correctly."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because for very small inputs (n=10), the simplicity and low constant factor of a brute-force or simple linear scan are often sufficient, and the overhead of setting up a more complex data structure or algorithm is not justified. Option A is false; brute-force is rarely the most efficient. Option C is false; there are many correct ways to find a maximum. Option D is false; optimized algorithms work correctly on small inputs too."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "Which of the following statements is TRUE based on the provided summary of the lecture?",
+      "options": {
+        "A": "The lecture included detailed code examples for algorithmic review.",
+        "B": "The lecture provided clarifications on specific algorithmic mechanisms.",
+        "C": "The lecture contained no educational material, concepts, or formulas.",
+        "D": "The lecture presented a theoretical overview of algorithmic definitions."
+      },
+      "correct_option": "C",
+      "explanation": "The summary explicitly states that 'No educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented in the input.' This makes option C the only true statement. Options A, B, and D are false because they claim the presence of code examples, clarifications on mechanisms, or theoretical overviews, all of which are explicitly stated to be absent in the summary."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "Two developers implement the same sorting algorithm in different programming languages. Developer A uses C++ on a high-performance server, and Developer B uses Python on a standard laptop. If the input size increases significantly, which factor primarily determines the difference in execution time growth?",
+      "options": {
+        "A": "The speed of the hardware and the specific programming language used.",
+        "B": "The algorithmic time complexity (e.g., O(n log n) vs O(n^2)) relative to the input size.",
+        "C": "The amount of RAM available on the specific machines.",
+        "D": "The number of lines of code written in the implementation."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because algorithmic efficiency is primarily determined by the time complexity class (how runtime grows with input size n). While hardware and language affect constant factors, the asymptotic growth rate is dictated by the algorithm's structure. Option A focuses on constant factors rather than the primary determinant of scalability. Option C is a resource constraint, not the primary driver of algorithmic efficiency growth. Option D is irrelevant to computational complexity."
+    },
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "A procedure is described as follows: 'Repeat: Check if the number is even. If yes, stop. If no, add 1 and repeat.' Which property of a valid algorithm is violated if the input is an odd number that never becomes even through this specific operation (hypothetically)?",
+      "options": {
+        "A": "Definiteness, because the steps are not clearly defined.",
+        "B": "Effectiveness, because the operations cannot be performed by a human.",
+        "C": "Termination, because the procedure may run indefinitely without producing a final output.",
+        "D": "Input, because the procedure does not specify the type of number."
+      },
+      "correct_option": "C",
+      "explanation": "Option C is correct because a valid algorithm must terminate after a finite number of steps for any valid input. If the procedure loops indefinitely, it fails the termination property. Option A is incorrect because the steps are clearly defined. Option B is incorrect because adding 1 is an effective operation. Option D is incorrect because the input type is implied and not the source of the logical flaw described."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "According to the summary, which of the following categories of information is NOT present in the source content?",
+      "options": {
+        "A": "Concepts and definitions",
+        "B": "Mechanisms and formulas",
+        "C": "Examples and code patterns",
+        "D": "All of the above"
+      },
+      "correct_option": "D",
+      "explanation": "The summary states that 'No educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented in the input.' This means that concepts, mechanisms, and examples are all absent. Therefore, 'All of the above' is the correct answer. Options A, B, and C are individually incorrect because they imply that only one category is missing, whereas the summary indicates a total absence of all listed categories."
+    },
+    {
+      "blind_id": "Q_BLIND_7912",
+      "question_text": "Why is pseudocode used in algorithm design instead of writing the solution directly in a specific programming language like Java or C++?",
+      "options": {
+        "A": "Pseudocode is required by law in all software development projects.",
+        "B": "Pseudocode allows for the communication of algorithmic logic independent of specific language syntax, facilitating rigorous analysis and easier conversion to code.",
+        "C": "Pseudocode runs faster than compiled code because it is interpreted by the CPU directly.",
+        "D": "Pseudocode is only used for documentation and cannot be converted into executable code."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because pseudocode serves as a structured intermediate representation that abstracts away language-specific details, allowing focus on the logic and making it easier to analyze and translate into any target language. Option A is factually incorrect. Option C is incorrect; pseudocode is not executable and does not run on CPUs. Option D is incorrect; pseudocode is specifically designed to be translatable to code."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "Based on the provided summary of the lecture, what is the primary characteristic of the source content?",
+      "options": {
+        "A": "It contains detailed algorithmic definitions and formulas.",
+        "B": "It is empty and contains no educational material.",
+        "C": "It presents code patterns for algorithmic review.",
+        "D": "It provides clarifications on specific algorithmic mechanisms."
+      },
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states that the provided source content is empty and that no educational material, concepts, definitions, mechanisms, formulas, or code patterns were presented. Therefore, option B is correct. Options A, C, and D are incorrect because they describe content that the summary explicitly states is absent."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Source Content Analysis",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q01",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Definition of Algorithm vs. Implementation",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q02",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Algorithmic Efficiency and Time Complexity",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q03",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Properties of Correctness (Termination)",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_2424": {
+      "original_id": "Q04",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Brute-Force vs. Optimized Approaches",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_7912": {
+      "original_id": "Q05",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_18_new_recording_37",
+      "target_concept": "Role of Pseudocode",
+      "cognitive_level": "UNDERSTAND"
+    }
+  }
+}

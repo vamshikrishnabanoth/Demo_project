@@ -1,0 +1,5 @@
+{
+  "title": "DSA Problem Solving: Longest Common Prefix Algorithms",
+  "instructor": "Prof. Tapadia / KMIT CSE",
+  "raw_content": "[00:00 - 08:00] In string algorithms, finding the Longest Common Prefix (LCP) across N strings has four standard algorithmic paradigms. Method 1: Horizontal Scanning. LCP(S1...Sn) = LCP(LCP(LCP(S1, S2), S3)...Sn). If at any point the running prefix becomes empty, we break immediately.\n[08:00 - 20:00] Method 2: Vertical Scanning. Compare character by character at index i across all N strings simultaneously. This is superior when an early mismatch occurs in string 2, avoiding scanning the remaining strings completely.\n[20:00 - 32:00] Method 3: Binary Search on Prefix Length. Find minimum string length L_min. Binary search the prefix length from 1 to L_min, checking if all strings match prefix of length mid in O(N * mid) time. Total complexity is O(N * min_len * log(min_len)).\n[32:00 - 40:00] In exams, remember: Trie-based LCP works by inserting all strings into a Trie and traversing from root as long as each node has exactly one child and is not an end-of-word marker."
+}

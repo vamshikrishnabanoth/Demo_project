@@ -1,0 +1,120 @@
+{
+  "blueprint_id": "BP_input_03_ds_lab_programs",
+  "input_id": "input_03_ds_lab_programs",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Singly Linked List Operations",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Pointers",
+        "Node Structure",
+        "Dynamic Memory Allocation"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Doubly Linked List Operations",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE",
+        "COMPARE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Singly Linked List",
+        "Bidirectional Pointers",
+        "Node Structure"
+      ],
+      "evidence_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Circular Linked List Operations",
+      "salience_score": 0.325,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE",
+        "COMPARE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Singly Linked List",
+        "Pointer Manipulation",
+        "Loop Termination Conditions"
+      ],
+      "evidence_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Stack Implementation (Array-based)",
+      "salience_score": 0.25,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Array Indexing",
+        "LIFO Principle",
+        "Stack Overflow/Underflow"
+      ],
+      "evidence_refs": [
+        "E_C11",
+        "E_C12"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Stack Implementation (Linked List-based)",
+      "salience_score": 0.325,
+      "instructional_acts": [
+        "INTRODUCE",
+        "DEMONSTRATE",
+        "COMPARE"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Array-based Stack",
+        "Singly Linked List",
+        "Dynamic Memory Allocation"
+      ],
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

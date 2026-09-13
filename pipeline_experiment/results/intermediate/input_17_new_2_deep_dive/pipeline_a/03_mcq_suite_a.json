@@ -1,0 +1,106 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_17_new_2_deep_dive",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the provided summary, what is the primary reason no specific technical concepts or formulas could be extracted from the source material?",
+      "option_a": "The audio recording was corrupted and unintelligible.",
+      "option_b": "The source content is empty, containing no transcribed text or educational material.",
+      "option_c": "The lecture focused exclusively on non-technical topics.",
+      "option_d": "The summary algorithm failed to process the metadata headers.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly states that the source content is empty and contains no transcribed text, audio data, or educational material. Option A is incorrect because the issue is the absence of content, not corruption. Option C is incorrect because the lack of content prevents any topic determination. Option D is incorrect because the metadata headers were present, but the content chunks were empty.",
+      "target_concept": "Data Availability and Source Integrity",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The state of the input data (empty content chunks).",
+      "why_assessed": "To verify the student's ability to interpret the status of the provided educational resource.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors reflect common assumptions about data processing failures (corruption, algorithm errors) rather than the actual state of empty input."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the factual summary, which specific elements were identified as missing from the input representation?",
+      "option_a": "Metadata headers and slide numbers.",
+      "option_b": "Transcribed text, audio data, and educational material.",
+      "option_c": "Concepts, definitions, and student questions.",
+      "option_d": "Code patterns and formula derivations.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly lists 'no transcribed text, audio data, or educational material' as the missing components. While concepts and code patterns (Options C and D) are also absent, Option B directly quotes the fundamental raw data types that were missing, which led to the inability to extract higher-level concepts. Option A is incorrect because metadata headers were present.",
+      "target_concept": "Data Extraction Prerequisites",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The specific raw data types required for content extraction.",
+      "why_assessed": "To test precise recall of the summary's description of the input state.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors mix up derived concepts (like definitions) with raw data sources, or incorrectly assume metadata was missing."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What does the summary indicate about the composition of the input chunks?",
+      "option_a": "They contained only metadata headers and empty content chunks.",
+      "option_b": "They contained fragmented audio segments without text.",
+      "option_c": "They contained only student Q&A transcripts.",
+      "option_d": "They contained a mix of valid text and corrupted audio.",
+      "correct_option": "A",
+      "explanation": "The summary states: 'The input consists solely of metadata headers and empty content chunks.' This directly supports Option A. Option B is incorrect because there was no audio data. Option C is incorrect because there were no transcripts. Option D is incorrect because there was no valid text.",
+      "target_concept": "Input Structure Analysis",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The structural composition of the input data.",
+      "why_assessed": "To ensure understanding of the technical state of the data pipeline input.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors suggest the presence of partial data (audio, text, or Q&A) which contradicts the 'empty' status described in the summary."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Why was it impossible to generate a factual summary of the lecture content?",
+      "option_a": "The lecture was too advanced for the summarization model.",
+      "option_b": "The input consisted solely of metadata headers and empty content chunks.",
+      "option_c": "The audio recording was in an unsupported language.",
+      "option_d": "The lecture duration exceeded the processing limit.",
+      "correct_option": "B",
+      "explanation": "The summary explicitly links the inability to generate a summary to the fact that 'The input consists solely of metadata headers and empty content chunks.' Options A, C, and D introduce external constraints (complexity, language, duration) that are not mentioned in the provided text.",
+      "target_concept": "Causal Reasoning in Data Processing",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "The causal link between empty input and lack of output.",
+      "why_assessed": "To test the ability to identify the root cause of a system output based on provided evidence.",
+      "evidence_refs": [
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors propose plausible technical reasons for failure that are not supported by the specific evidence in the summary."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following statements accurately reflects the status of the 'concepts_and_definitions' and 'mechanisms_and_formulas' fields in the summary?",
+      "option_a": "They contain partial data due to audio quality issues.",
+      "option_b": "They are empty because no educational material was available to extract from.",
+      "option_c": "They contain metadata headers only.",
+      "option_d": "They are populated with generic technical definitions.",
+      "correct_option": "B",
+      "explanation": "The summary shows empty arrays for 'concepts_and_definitions' and 'mechanisms_and_formulas' and explains that 'no concepts... could be extracted' because the source content is empty. Option A is incorrect as there is no partial data. Option C is incorrect as these fields are for content, not metadata. Option D is incorrect as no definitions were populated.",
+      "target_concept": "Data Structure Interpretation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Concepts and Definitions / Mechanisms and Formulas",
+      "what_taught": "The relationship between empty source data and empty derived data structures.",
+      "why_assessed": "To verify understanding of how missing source data impacts structured output fields.",
+      "evidence_refs": [
+        "concepts_and_definitions",
+        "mechanisms_and_formulas",
+        "factual_summary"
+      ],
+      "misconception_rationale": "Distractors assume the presence of data (partial, generic, or metadata) in fields that are explicitly empty in the representation."
+    }
+  ]
+}

@@ -1,0 +1,2808 @@
+{
+  "audio_file": "deepa madam.mp3.mpeg",
+  "duration_seconds": 3771.32,
+  "language": "en",
+  "raw_content": "[0.0s - 8.7s] So, basically, there are two types of things which are opposite, greatest common divisor,\n[8.7s - 20.1s] and least common multiple, HCF, JCD, one and the same thing, LCM, separate, okay.\n[20.1s - 24.3s] JCD is always bigger or LCM is bigger.\n[24.3s - 47.2s] Okay, so we will try to understand, GCD will come out, LCM will come out, LCM, LCM of what?\n[47.2s - 54.0s] 12. I am going to do the way I was taught, many new ways would have come, I don't know,\n[54.0s - 60.5s] but I will do it in my manner. Now, what is the least common multiple among both of them?\n[60.5s - 64.5s] It is a nice understanding, right?\n[64.5s - 84.5s] So, we will do the other way around, LCM would be 2 into 2 into 3 for 12, and for 8 it is what?\n[84.5s - 100.5s] 2 into 2 into 2, so LCM, let's take out the time, how we were taught, this one is 2, this one is 2, this one is 2, this one is 3, this one is 2,\n[100.5s - 120.5s] this one is 24, LCM, LCM means a number, okay, which will also be available in 8, which will also be available in 12.\n[121.5s - 138.5s] Understood, okay, so is 24 modulo 8 equal to 0, yes, is 24 modulo 12 equal to 0, yes.\n[139.5s - 149.5s] So, if I ask you to find a multiple, not using your math, but using your programming language, what will you do?\n[150.5s - 167.5s] LCM, A, I, B, I, you have to find an I, where I modulo A, you have one either 24, Milathamco.\n[168.5s - 181.5s] 24 modulo 8 was equal to 0, 24 modulo 12 was equal to 0, so what I have to find in that?\n[181.5s - 192.5s] I, so I can go from what to what, since it is least, I will not start from 100, I will start from what?\n[192.5s - 203.5s] 1, okay, I less than, probably 100, I plus plus.\n[203.5s - 221.5s] Now, what is the condition here I am saying, if I modulo A equal equal to 0 and I modulo B is equal to 0, return what?\n[221.5s - 239.5s] Return, I, so I will get what, I will get I as 24 of Isku recursion, 4 and 10, you can use recursion,\n[239.5s - 249.5s] now it is recursion, how to use recursion? This is one way, what other way do you think it can be?\n[249.5s - 259.5s] 8 is 12 and we know this is LCM 24. So, what will I do?\n[260.5s - 266.5s] Computers, I am not talking about. Is there any shorter way? For loops you will get it, not a problem.\n[266.5s - 280.5s] Any other way? 8 at 12 N, sorry 8 plus 8 or 8, 8 into 8 N, 8 plus 8 becomes what?\n[281.5s - 294.5s] 16, I will check if 16 modulo 12 is equal equal to 0, does not happen, then I will do 8 plus 8 plus 8, what it becomes?\n[294.5s - 304.5s] 24, 24 modulo 12, is it equal equal to 0? Yes, so what is my answer? My answer is 24.\n[305.5s - 309.5s] Let us try this to something else also, two ways of doing it.\n[309.5s - 315.5s] One is I can increment it, until both are equal, this is a faster way of doing it,\n[315.5s - 323.5s] because I am trying to check the common multiple between both of them. If there is a common multiple between both of them,\n[323.5s - 331.5s] that means this will, whatever number this guy is capable of producing will be divisible by this guy.\n[332.5s - 338.5s] Whatever this guy is capable of producing, it would be divisible by the other guy.\n[338.5s - 345.5s] So, this table will write 8, 8 plus 8, then next step 8 plus 8 plus 8.\n[345.5s - 353.5s] So, this guy should give me a number which would be divisible by 12.\n[353.5s - 358.5s] So, let us try and do again, let us do it for 4 and 6.\n[360.5s - 364.5s] 4 should give me a number which is divisible by 6.\n[364.5s - 370.5s] So, first I will directly ask, 6, are you divisible by 4? No.\n[370.5s - 375.5s] Then what will I do? If I am not divisible, I will do 4 plus 4.\n[376.5s - 382.5s] Is 8 divisible by 4? Yes, no, yes.\n[382.5s - 389.5s] Then what is my, sorry, sorry, 6.\n[389.5s - 393.5s] It is 6 divisible by 8. What are we doing?\n[393.5s - 400.5s] 4 and 6, I will see him, 1 minute, 1 minute.\n[400.5s - 412.5s] I got it wrong. First time, I have to say 4 modules 6, is it equal to 0? No.\n[412.5s - 419.5s] Then 8 modules 6, is it equal to 0? No, go ahead.\n[419.5s - 429.5s] 4 plus 4 plus 4. What is this? 12 modules 6, is it equal to 0?\n[429.5s - 436.5s] Yes. What is my LCM? 12. This is also one way of getting it.\n[436.5s - 442.5s] If you want to play with 6, you can play with 6 also the other, same way.\n[442.5s - 450.5s] How will you do it with 6? Checking 6, multiples are divisible by 4 or not.\n[450.5s - 455.5s] What is 6's first divisible multiplier? 6, ones are 6.\n[455.5s - 465.5s] So I will take 6 as it is and check over here is 6 modules 4 equal to 0.\n[465.5s - 470.5s] No. Then I will say till 6, you add to yourself.\n[470.5s - 474.5s] Let's go to your next number. That is 6 plus 6.\n[474.5s - 478.5s] 12 modules 4, is it equal to 0? Yes.\n[478.5s - 482.5s] Who is LCM? 12.\n[482.5s - 485.5s] Now for both the things, write recursion.\n[485.5s - 490.5s] For I, I, I will have a thing also and for this guy also.\n[490.5s - 496.5s] Let's take it here. What do we want to do?\n[496.5s - 507.5s] LCM, I take A, I take B, I am keeping a 4 and I am keeping a 6 here for you people to understand.\n[507.5s - 516.5s] For I equal to 1, I less than 100, I plus plus.\n[516.5s - 524.5s] It can be less than 100 or it can be less than or equal to B, greater number.\n[524.5s - 530.5s] Because it is a divisor, you keep it 100 right now, you will otherwise go crazy.\n[530.5s - 548.5s] If loop I modulo A equal equal 0, I modulo B equal equal 0 and condition return I.\n[548.5s - 556.5s] Convert this into recursion.\n[556.5s - 565.5s] Okay? I write the other one here too. LCM, A, B.\n[565.5s - 569.5s] This is 4 and this is 6.\n[569.5s - 574.5s] I add while loop.\n[574.5s - 576.5s] Correct?\n[576.5s - 583.5s] And what will be written below?\n[583.5s - 586.5s] This is my LCM in two ways.\n[586.5s - 590.5s] I, while I, while I, while I.\n[590.5s - 601.5s] Looking at a while loop, how to convert it into recursion, you can do recursion of any sorts.\n[601.5s - 604.5s] Do we want to pass a constant value over?\n[604.5s - 607.5s] Yes.\n[607.5s - 609.5s] So what should we be working on?\n[609.5s - 612.5s] Base case.\n[612.5s - 613.5s] I will help you.\n[613.5s - 615.5s] What is the base condition?\n[615.5s - 618.5s] Which one do you want to implement first?\n[618.5s - 620.5s] For loop.\n[620.5s - 621.5s] Okay.\n[621.5s - 623.5s] What is the base condition in this?\n[623.5s - 629.5s] Should it be 100 or should it be A multiplied by B?\n[629.5s - 631.5s] Which one will learn?\n[631.5s - 634.5s] Work shorter A multiplied by B.\n[634.5s - 635.5s] Okay?\n[635.5s - 654.5s] So, your condition should be, let's create your int LCM is receiving int A int B.\n[654.5s - 659.5s] First we will have to write our base condition.\n[659.5s - 661.5s] Okay?\n[661.5s - 663.5s] First I am writing one minute.\n[663.5s - 666.5s] I will just write base condition and testing condition in this only.\n[666.5s - 667.5s] Okay?\n[667.5s - 674.5s] If I is, I, I need to take it.\n[674.5s - 682.5s] I can't have it.\n[682.5s - 703.5s] It is equals to 0 and I, modulo B is equal to 0, return I.\n[703.5s - 713.5s] It is equal to I plus plus.\n[713.5s - 720.5s] Correct?\n[720.5s - 727.5s] Initially I will send I as 1 because for loop my I is getting initialized to what?\n[727.5s - 728.5s] 1.\n[728.5s - 748.5s] So, at the time of sending it LCM, sorry KCM, LCM of 46 initializing the for loop with 1.\n[748.5s - 751.5s] Okay?\n[751.5s - 754.5s] I will keep on checking.\n[754.5s - 762.5s] 1 modulo 4 is equal to 4 or nothing and I will keep on incrementing I, I plus 1.\n[762.5s - 767.5s] Passing the same A, passing the same B.\n[767.5s - 768.5s] Okay?\n[768.5s - 776.5s] And whenever it gets hit and whenever I find my I, I will return back.\n[776.5s - 784.5s] So, let me check this is the for loop getting created or converted into recursion.\n[784.5s - 788.5s] Let me see whether this works.\n[788.5s - 800.5s] 461, I will just run the file.\n[800.5s - 804.5s] It is giving me 12.\n[804.5s - 805.5s] Okay?\n[805.5s - 807.5s] I got my answer 12.\n[807.5s - 820.5s] If you want to check out with something else, 14 and 6.\n[820.5s - 825.5s] It's coming 42 LCM.\n[825.5s - 840.5s] Let's make the LCM for 2 and 8.\n[840.5s - 843.5s] 8.\n[843.5s - 844.5s] Okay?\n[844.5s - 845.5s] Understood?\n[845.5s - 849.5s] What do you guys do now?\n[849.5s - 851.5s] 4 loops I showed you, right?\n[851.5s - 854.5s] Do the LCM for this time.\n[854.5s - 860.5s] Here, the concept was I was getting incremented.\n[860.5s - 867.5s] Here the concept is A itself is getting incremented.\n[867.5s - 869.5s] So, do the right the second one.\n[869.5s - 876.5s] It will be a base condition in this case.\n[876.5s - 879.5s] And then you will increment what?\n[879.5s - 884.5s] A always.\n[884.5s - 891.5s] Until A does not reach a bigger point where it is getting divided by B.\n[891.5s - 895.5s] This is your LCM.\n[895.5s - 910.5s] If you want I will show you recursion in that also in LCM.\n[910.5s - 917.5s] Stopping condition is what?\n[940.5s - 953.5s] And now I will call LCM to check whether it's working.\n[953.5s - 965.5s] I don't need an eye now.\n[965.5s - 968.5s] Correct? No.\n[968.5s - 972.5s] I am checking what for LCM?\n[972.5s - 976.5s] A should be divisible by B.\n[976.5s - 978.5s] So, what did I check over here?\n[978.5s - 983.5s] If A is divisible by B, I should stop checking for my LCM.\n[983.5s - 985.5s] So, I will return.\n[985.5s - 986.5s] What do I need to return A?\n[986.5s - 989.5s] Because A becomes the LCM.\n[989.5s - 993.5s] Otherwise, if it is not true, what am I doing?\n[993.5s - 1000.5s] I am changing A and saying you are now A plus A.\n[1000.5s - 1005.5s] So, instead of sending A, I am sending what?\n[1005.5s - 1012.5s] A plus A who will become the new A for the next LCM.\n[1012.5s - 1016.5s] So, I will try to run this.\n[1016.5s - 1018.5s] Did I save it?\n[1018.5s - 1025.5s] Yes.\n[1025.5s - 1030.5s] You are getting 8 for 2 and 8.\n[1030.5s - 1048.5s] Let's do for 4 and 6.\n[1048.5s - 1072.5s] Did I save it?\n[1072.5s - 1079.5s] Why is it coming 0?\n[1079.5s - 1092.5s] A plus equal to K.\n[1092.5s - 1099.5s] No, why is it coming?\n[1099.5s - 1107.5s] 8 into A.\n[1107.5s - 1111.5s] So, minimum has to be done.\n[1111.5s - 1112.5s] Out of the 2 minutes.\n[1112.5s - 1121.5s] No, either way it works.\n[1121.5s - 1131.5s] It becomes 4, 8 plus 8.\n[1131.5s - 1137.5s] So, we have got to make sure that A is remaining A.\n[1137.5s - 1160.5s] So, I will keep on incrementing.\n[1160.5s - 1167.5s] No, I plus plus.\n[1191.5s - 1197.5s] No.\n[1197.5s - 1204.5s] No.\n[1204.5s - 1211.5s] No.\n[1234.5s - 1256.5s] So, we are needing I here also because we can't do A plus A.\n[1257.5s - 1261.5s] Okay, LCM clear.\n[1261.5s - 1268.5s] Same thing goes for your JCD also.\n[1268.5s - 1270.5s] Now let's try to understand.\n[1270.5s - 1274.5s] Greatest common divisor.\n[1274.5s - 1279.5s] How are you going to find this one?\n[1279.5s - 1286.5s] Your numbers are 8 and 12 again for JCD.\n[1286.5s - 1297.5s] So, I have 1, 2, 4 and 8.\n[1297.5s - 1300.5s] These are the divisors of 8.\n[1300.5s - 1302.5s] Of 12, what is it?\n[1302.5s - 1314.5s] 1, 12, 6, 2, 4, 3 or 3, 4 whatever.\n[1314.5s - 1318.5s] These are the divisors of 12.\n[1318.5s - 1326.5s] What is the greatest one?\n[1326.5s - 1327.5s] Greatest common divisor.\n[1327.5s - 1331.5s] Right now do we have anything common?\n[1331.5s - 1337.5s] How it will become common?\n[1337.5s - 1349.5s] 8 and 12 is the greatest common divisor.\n[1349.5s - 1352.5s] 4 is the common guy.\n[1353.5s - 1357.5s] Now this is algebra.\n[1357.5s - 1362.5s] How will you do in computers?\n[1362.5s - 1366.5s] Greatest common divisor.\n[1366.5s - 1368.5s] What is a common divisor guys?\n[1368.5s - 1370.5s] Which can divide both of them.\n[1370.5s - 1373.5s] Again can I use a for loop?\n[1373.5s - 1375.5s] Now what is the starting?\n[1376.5s - 1378.5s] A and B are common divisors.\n[1378.5s - 1382.5s] A is 4, A is 8 and B is 12.\n[1382.5s - 1384.5s] What would I start with?\n[1384.5s - 1386.5s] Who is the common divisor for both of them?\n[1386.5s - 1389.5s] Can 12 be a common divisor for both of them?\n[1389.5s - 1395.5s] So where should we start from?\n[1395.5s - 1397.5s] Itna amaja.\n[1397.5s - 1400.5s] Normal asak te apanga.\n[1400.5s - 1403.5s] Can I start from 8?\n[1403.5s - 1406.5s] Yes or no?\n[1406.5s - 1409.5s] So I can start from A.\n[1409.5s - 1415.5s] A and A is A Baba.\n[1415.5s - 1419.5s] GCD of A and B has to be taken out.\n[1419.5s - 1426.5s] For right now I am considering 8 to be 8, B to be 12.\n[1426.5s - 1430.5s] What would you write in the 4 loop to get the GCD?\n[1430.5s - 1433.5s] Greatest common divisor.\n[1433.5s - 1443.5s] Any value I, which can divide A also and B also.\n[1443.5s - 1446.5s] That means either if condition.\n[1446.5s - 1449.5s] If A modulo I.\n[1449.5s - 1450.5s] Correct?\n[1450.5s - 1451.5s] No.\n[1451.5s - 1454.5s] Is equal equal to 0.\n[1454.5s - 1460.5s] And B modulo I is also equal equal to 0.\n[1460.5s - 1463.5s] Then return what?\n[1463.5s - 1466.5s] I or B or A.\n[1466.5s - 1472.5s] You have to find a divisor which can divide A also and which can divide B also.\n[1472.5s - 1474.5s] So what will you return back?\n[1474.5s - 1477.5s] You will return back your I.\n[1477.5s - 1480.5s] So what would be your condition?\n[1480.5s - 1486.5s] If A equal to A, where do you have to stop?\n[1486.5s - 1492.5s] Lesson or equal to 0?\n[1492.5s - 1495.5s] You have to go down.\n[1495.5s - 1498.5s] If you don't come from 8 to 7, you will try 7.\n[1498.5s - 1500.5s] If you don't come from 7 to 6, you will try 6.\n[1500.5s - 1502.5s] Where will you go?\n[1502.5s - 1507.5s] One is the greatest divisor of everybody.\n[1507.5s - 1509.5s] And what will come here?\n[1509.5s - 1514.5s] Minus minus.\n[1514.5s - 1517.5s] First check in the form loop.\n[1517.5s - 1519.5s] GCD is coming.\n[1519.5s - 1521.5s] Then you have to convert this into what?\n[1521.5s - 1527.5s] Recursion.\n[1527.5s - 1529.5s] There are two ways.\n[1529.5s - 1538.5s] You will find one from four loops and you will do it in a while.\n[1538.5s - 1539.5s] Do this recursion.\n[1539.5s - 1541.5s] It's not an efficient one.\n[1541.5s - 1547.5s] I'll show you an efficient one which follows a you kid algorithm.\n[1547.5s - 1549.5s] That is a different thing.\n[1549.5s - 1558.5s] First convert it into recursion.\n[1558.5s - 1561.5s] Is it equal to factorial and fibonacci?\n[1561.5s - 1562.5s] No.\n[1562.5s - 1564.5s] It is.\n[1564.5s - 1566.5s] LCM is like this.\n[1566.5s - 1569.5s] What you are returning is coming.\n[1569.5s - 1570.5s] That's it.\n[1570.5s - 1573.5s] Guys, all you need to do is\n[1580.5s - 1582.5s] this only.\n[1582.5s - 1586.5s] And this is i minus minus.\n[1586.5s - 1589.5s] Okay.\n[1589.5s - 1595.5s] Now, the other part of GCD, what he is saying,\n[1595.5s - 1603.5s] U is called as algorithm.\n[1603.5s - 1607.5s] To find GCD.\n[1607.5s - 1610.5s] We have used a for loop to find it.\n[1610.5s - 1614.5s] For loop is checking for each and every value of i.\n[1614.5s - 1619.5s] This guy tells you.\n[1619.5s - 1624.5s] GCD of 8 and 12.\n[1624.5s - 1627.5s] If I have to find.\n[1627.5s - 1628.5s] Okay.\n[1628.5s - 1632.5s] I will check over here.\n[1633.5s - 1641.5s] If 12, modulo 8 is equal equal 0.\n[1641.5s - 1646.5s] If yes, then 12 becomes my JCD.\n[1646.5s - 1648.5s] Now, answer is no.\n[1648.5s - 1650.5s] Correct?\n[1650.5s - 1653.5s] This is not equal to 0.\n[1653.5s - 1657.5s] Then, I will go for a further call to GCD.\n[1657.5s - 1664.5s] And now, at this point, I will say 8, what will I pass?\n[1664.5s - 1666.5s] I will not pass 12.\n[1666.5s - 1670.5s] I will pass 12, modulo 8.\n[1670.5s - 1674.5s] What is 12, modulo 8?\n[1674.5s - 1675.5s] 4.\n[1675.5s - 1677.5s] So, what will I pass?\n[1677.5s - 1680.5s] I will pass 8 and 4.\n[1680.5s - 1686.5s] Okay.\n[1686.5s - 1687.5s] Yes.\n[1687.5s - 1688.5s] Correct.\n[1688.5s - 1689.5s] 8 and 4.\n[1689.5s - 1693.5s] Now, should I make 4 modulo 8?\n[1693.5s - 1694.5s] It will never come.\n[1694.5s - 1696.5s] So, here, what is the catch?\n[1696.5s - 1700.5s] You have to make sure that whenever you are passing the number,\n[1700.5s - 1704.5s] there is one minimum and there is one maximum.\n[1704.5s - 1710.5s] So, you are always doing max modulo min.\n[1710.5s - 1715.5s] So, in this case, I will do 8 modulo 4.\n[1715.5s - 1718.5s] Is it equal equal to 0?\n[1718.5s - 1720.5s] Yes, it is equal equal to 0.\n[1720.5s - 1729.5s] Then in that case, my minimum is my GCD.\n[1729.5s - 1730.5s] Understood?\n[1730.5s - 1733.5s] Let us try it for some more.\n[1733.5s - 1741.5s] GCD for 9 and 12, suppose.\n[1741.5s - 1743.5s] So, what I will have to do?\n[1743.5s - 1745.5s] Who is the minimum from this?\n[1745.5s - 1746.5s] 9.\n[1746.5s - 1751.5s] So, I will keep 9 as it is and I will say 12 modulo 9.\n[1751.5s - 1754.5s] Is 12 modulo 9 equal to 0?\n[1754.5s - 1755.5s] No, it is not.\n[1755.5s - 1758.5s] What will this reduce to 3?\n[1758.5s - 1759.5s] Correct.\n[1759.5s - 1760.5s] Then what I will do?\n[1760.5s - 1762.5s] I will say GCD.\n[1762.5s - 1765.5s] I have to pass 9 and 3 to you.\n[1765.5s - 1767.5s] What will GCD do?\n[1767.5s - 1770.5s] It will check who is the minimum.\n[1771.5s - 1773.5s] Who is the minimum in this case?\n[1773.5s - 1775.5s] 3 is the minimum.\n[1775.5s - 1777.5s] So, what will I do over here?\n[1777.5s - 1780.5s] I will do 9 modulo 3.\n[1780.5s - 1782.5s] Is it equal equal to 0?\n[1782.5s - 1783.5s] Yes.\n[1783.5s - 1786.5s] So, what becomes the GCD?\n[1786.5s - 1789.5s] The minimum becomes the GCD.\n[1789.5s - 1793.5s] So, the greatest common divisor for both of them is what?\n[1793.5s - 1796.5s] 3.\n[1797.5s - 1802.5s] So, now, how are you going to check this particular thing?\n[1802.5s - 1806.5s] Let's try to write a pseudo code and then you write recursion for it.\n[1806.5s - 1809.5s] So, what is the first step that we have got to check?\n[1809.5s - 1811.5s] I receive.\n[1811.5s - 1813.5s] Let me delete this.\n[1813.5s - 1815.5s] JCD.\n[1815.5s - 1817.5s] I received A.\n[1817.5s - 1819.5s] I receive a B.\n[1819.5s - 1821.5s] First, what am I going to check?\n[1821.5s - 1822.5s] What is minimum?\n[1822.5s - 1824.5s] What is maximum?\n[1824.5s - 1829.5s] So, in C++, you can give minimum of A, B.\n[1829.5s - 1833.5s] You can give maximum of A, B.\n[1833.5s - 1835.5s] You will get the minimum number.\n[1835.5s - 1838.5s] You will get the maximum number.\n[1838.5s - 1839.5s] Okay.\n[1839.5s - 1842.5s] So, once I get my A and B,\n[1842.5s - 1845.5s] I will determine what is minimum, what is maximum,\n[1845.5s - 1852.5s] and I will check if I can directly write this also.\n[1852.5s - 1857.5s] Maximum, modulo,\n[1857.5s - 1862.5s] minimum is equal to 0.\n[1862.5s - 1865.5s] And if this is 0, that means I have found by JCD,\n[1865.5s - 1868.5s] what will I return?\n[1868.5s - 1872.5s] I will return my minimum of A and B.\n[1872.5s - 1875.5s] If you want to take it in variables and don't use directly,\n[1875.5s - 1877.5s] you can do that.\n[1877.5s - 1880.5s] Else, what will you do?\n[1880.5s - 1882.5s] It did not happen.\n[1882.5s - 1884.5s] You have got to go for JCD one more time.\n[1884.5s - 1890.5s] Then what will you do?\n[1890.5s - 1893.5s] You have got to pass minimum and maximum to it.\n[1893.5s - 1894.5s] Okay.\n[1894.5s - 1896.5s] Now, what would you do?\n[1896.5s - 1899.5s] JCD.\n[1899.5s - 1902.5s] Pass this.\n[1902.5s - 1905.5s] And pass this.\n[1905.5s - 1907.5s] Whatever you got it later.\n[1907.5s - 1908.5s] Okay.\n[1908.5s - 1910.5s] Minimum of A plus B.\n[1910.5s - 1911.5s] Okay.\n[1911.5s - 1913.5s] Would you pass minimum of A plus B?\n[1913.5s - 1916.5s] Or would you pass the modulo value?\n[1916.5s - 1918.5s] You will pass the modulo value.\n[1918.5s - 1920.5s] So, you will repeat this again.\n[1920.5s - 1923.5s] You will pass one maximum,\n[1923.5s - 1927.5s] comma, this modulo value.\n[1927.5s - 1928.5s] Correct.\n[1928.5s - 1929.5s] No.\n[1929.5s - 1931.5s] Every time you are doing modulo,\n[1931.5s - 1932.5s] and then passing that value.\n[1932.5s - 1934.5s] Every time you are doing modulo,\n[1934.5s - 1938.5s] you are doing the value.\n[1938.5s - 1940.5s] JCD.\n[1940.5s - 1943.5s] 8 and 12.\n[1943.5s - 1945.5s] First step.\n[1945.5s - 1947.5s] Find minimum.\n[1947.5s - 1950.5s] Find maximum.\n[1950.5s - 1952.5s] Second step.\n[1952.5s - 1954.5s] Check.\n[1954.5s - 1957.5s] What do you need to check?\n[1957.5s - 1963.5s] If maximum modulo minimum is equal to 0.\n[1963.5s - 1966.5s] If yes, return minimum.\n[1966.5s - 1968.5s] If no.\n[1968.5s - 1972.5s] Then what will you do?\n[1972.5s - 1975.5s] You call your JCD again.\n[1975.5s - 1979.5s] Now, at this time, will you pass 8 and 12 to it?\n[1979.5s - 1980.5s] No.\n[1980.5s - 1983.5s] What will you pass?\n[1983.5s - 1985.5s] 12 you reduced.\n[1985.5s - 1987.5s] How did you reduce?\n[1987.5s - 1989.5s] Modulo.\n[1989.5s - 1990.5s] So, 8.\n[1990.5s - 1991.5s] What will you pass?\n[1991.5s - 1993.5s] This will be the minimum.\n[1993.5s - 1995.5s] Whatever the thing is.\n[1995.5s - 1997.5s] And which will you pass 12?\n[1997.5s - 1999.5s] 12 modulo.\n[1999.5s - 2002.5s] I will write here so that you understand.\n[2002.5s - 2004.5s] This will go.\n[2004.5s - 2006.5s] Again, I will receive this.\n[2006.5s - 2007.5s] Now, what will I receive?\n[2007.5s - 2009.5s] 8 and 4.\n[2009.5s - 2010.5s] I will find minimum.\n[2010.5s - 2011.5s] I will find maximum.\n[2011.5s - 2015.5s] Then, 8 modulo 4 equal to 0.\n[2015.5s - 2018.5s] Yes, return 4.\n[2018.5s - 2021.5s] Okay, this is what you have got to do in JCD.\n[2021.5s - 2024.5s] Just write a recursion for this.\n[2024.5s - 2028.5s] This is an algorithm.\n[2028.5s - 2031.5s] Usits algorithm is what they call it as.\n[2031.5s - 2033.5s] To find a JCD.\n[2033.5s - 2036.5s] If you want, I can show you.\n[2036.5s - 2045.5s] We will write a JCD also.\n[2045.5s - 2050.5s] In A, in B.\n[2050.5s - 2063.5s] So, first let me check.\n[2063.5s - 2066.5s] You can do it straight.\n[2066.5s - 2070.5s] But, I am just doing it so that you understand\n[2070.5s - 2073.5s] when you are reading the code.\n[2101.5s - 2103.5s] So, this is what you have got to do.\n[2103.5s - 2106.5s] You can do it straight.\n[2106.5s - 2110.5s] Now, what you have got to do is write here.\n[2110.5s - 2114.5s] And this is what you have got to do.\n[2114.5s - 2117.5s] So, I will write here.\n[2117.5s - 2120.5s] I will write here.\n[2120.5s - 2124.5s] I will write here.\n[2124.5s - 2137.7s] Okay, this is my GCD code.\n[2137.7s - 2142.5s] See check whether it's working.\n[2142.5s - 2151.6s] Now the biggest question comes, when will you use JCD, when will you use your LCM?\n[2151.6s - 2156.0s] So there are two types of problems that we have.\n[2156.0s - 2163.0s] One problem talks about sharing stuff equally.\n[2163.0s - 2173.2s] So whenever you guys have got to divide, it can be time, it can be commodities, it can\n[2173.2s - 2181.1s] be anything where the question says divide all these things among people equally.\n[2181.1s - 2189.7s] At that time you should keep it in mind that you have got to do what JCD, okay.\n[2189.7s - 2206.2s] When it comes to timing, scheduling, time intervals, okay, one is running from 30th speed,\n[2206.2s - 2223.8s] so whenever it is timing scheduler intervals and they talk about a meeting point or they talk\n[2223.8s - 2235.8s] about an intersection point, it means that you are asked to find the LCM.\n[2235.8s - 2249.9s] Then equally JCD, timing intervals, scheduling, so OS may round Robin, okay, shortest job\n[2249.9s - 2258.3s] first, all those things, what are you going to do with LCM, scheduling algorithms.\n[2258.3s - 2264.8s] You have a string, you have to reverse a string using recursion.\n[2265.8s - 2289.6s] Reverse a string means what, print I, A, B, I, M, X, A, L, I, N, A, R.\n[2289.6s - 2294.4s] Now comes one more aspect of recursion.\n[2294.4s - 2304.5s] Make the problem extremely small, solve that problem and repeat it for next, what does\n[2304.5s - 2308.1s] it mean, okay.\n[2308.1s - 2316.0s] Right now we will do that later, let's talk about dog right now, it is easier to follow.\n[2317.0s - 2327.2s] Make a problem small, this string is made up of how many characters, I will reduce this\n[2327.2s - 2343.6s] problem to a one character O or D, what is reverse of this D, so if I have to print a reverse\n[2343.6s - 2352.5s] of this, is this also a string, yes, if I have to print a reverse of a string whose length\n[2352.5s - 2363.0s] is equal to 1, what will I do, give the same back, so the first base condition becomes\n[2363.0s - 2381.0s] if str dot length is equal to 1, what do you need to return, return str, is this understood.\n[2381.0s - 2390.8s] So, we make the problem small, reduce it to its minimum size and see how will you solve,\n[2390.8s - 2401.6s] this is how you will solve, now let's make the problem a little bigger, one step, okay.\n[2401.6s - 2414.2s] This is my string, what is the output O D, okay.\n[2414.2s - 2429.2s] Now how will I print this O D, is the question correct, this I need to solve, fine.\n[2430.2s - 2438.6s] I am saying in recursion, I can get it as, now what tools are available for me, you can send\n[2438.6s - 2448.8s] to God, okay, then you can send to O D, I can send to you, I can send to you, I can send to you,\n[2448.8s - 2454.6s] I can send to you in the second column, how to subtract, then what can you send, D send to you,\n[2454.6s - 2465.5s] now what will happen, you have become a length, one, correct, I will return, returning, what am I\n[2465.5s - 2475.9s] getting back, D, correct, now when I return here and get, I get my D back, this is my input\n[2475.9s - 2492.0s] parameter O D, how will I construct D O, return parameter plus first letter of input parameter,\n[2492.0s - 2504.2s] yes, so what will it become, return parameter plus first letter of input parameter, so\n[2504.2s - 2516.8s] Kaban Gavo, D O, D O Kiskebaz Gya, what is the return parameter, D O, what is the first parameter of\n[2516.8s - 2527.8s] input string, G, so what will I make it, again it became dog, it has to become dog, what we were\n[2527.8s - 2539.3s] trying to, we got God and we converted into what dog, nice, I can, nice, I can, nice,\n[2539.3s - 2547.6s] I can, this make an important string, when do you want to take a action, jadevak ki vapasatevak,\n[2547.9s - 2559.1s] reverse my case in an action, coming back, okay, I am sending good, then I can send to it what,\n[2560.1s - 2565.7s] O D, then I can send to it, O D, then I will send D to it, I will have to stop here,\n[2566.9s - 2575.8s] what comes back, D, then what do I need to do, D, return parameter plus input parameter, return\n[2575.8s - 2590.0s] back O D here, or sorry, D O, then return parameter plus first, D O O, return parameter plus\n[2590.9s - 2602.0s] first parameter, what will it go as, so am I working when I am passing the substring or am I\n[2602.0s - 2609.5s] working when I am getting the answer from the substring, getting on the return time, so let's try to\n[2609.5s - 2630.6s] check this first, okay, I will just remove all this, now we will say void, or do you want to pass a\n[2630.6s - 2643.5s] string, string, reverse is taking a string STR, reverse I will do it, let's see how do we pass\n[2643.5s - 2657.2s] a, k, kum, kse, okay, so if STR dot length becomes empty is equal to 0, I will return,\n[2661.0s - 2673.4s] return empty, or a minute root job, first we will learn basic, we will go reverse, void,\n[2677.0s - 2683.6s] okay, so if the string becomes empty, I return from there, otherwise I am going to print the string as\n[2683.6s - 2702.4s] it is, see out STR and L, okay, and then I am going to return ref STR dot substring one,\n[2702.4s - 2713.6s] first let's try to understand what would this do, okay, I am passing here hello,\n[2716.5s - 2724.7s] don't go inside, what will I print guys, hello, and then I will give a call with a substring,\n[2724.7s - 2733.5s] one, one means from first index, that means I am passing what to it, hello, hello is a STR substring,\n[2734.7s - 2745.2s] it comes here, I don't go here, I print hello, then I pass what, L, L, O, then I print L, L, L, O,\n[2745.2s - 2754.3s] then I pass L, O, then I print L, O, then I pass O, I print O, then I pass empty string,\n[2755.4s - 2760.5s] and then I start returning from there, now the work has been done when while going,\n[2761.4s - 2767.3s] not while coming back, correct, so let's try to check this, how does this look like,\n[2767.3s - 2785.3s] many, many is miracle, ref, hello, old.\n[2798.2s - 2807.3s] Please try to understand how string is going, string goes in a very beautiful manner,\n[2813.5s - 2821.1s] just printing it, doing nothing with it, okay, I'll be supposed,\n[2821.1s - 2831.4s] before we go to reverse, let's do any primitive things, how do I calculate the length of a string,\n[2834.6s - 2844.6s] every time while going or while coming back, going also you can do, yes, you can do,\n[2844.6s - 2861.0s] so I will make here, just don't skip string length,\n[2875.4s - 2881.0s] I'm just checking if string is empty, then I should give 0, this much I know, one case I know,\n[2884.6s - 2894.6s] okay, for the other times, every time the method is getting cold, I will add one to it,\n[2895.1s - 2910.1s] every time I will substring, I will go to O, then it will go to empty string,\n[2911.2s - 2915.6s] correct, at empty string, I am saying 0 goes over here,\n[2916.3s - 2925.9s] what is the return type I'm getting, 0, but this is 1, so I will add return to 1,\n[2928.3s - 2937.5s] this will give 1, I will add return to 1, this becomes 2, I will add return to 1,\n[2938.1s - 2946.2s] and ultimately it gives me what, 3, so I know one case, I only need to design the another case,\n[2946.2s - 2954.2s] I know if it is empty, I have to pass 0, and whenever anybody is giving a call, I have to say plus\n[2954.2s - 2963.3s] 1 to whatever, I have to add plus 1 to it, whatever is the return value, I have to add plus 1 to it,\n[2963.8s - 2968.1s] okay, so now I will just say, see out,\n[2982.9s - 2986.3s] 11 it is giving me, it is even counting what the space in it,\n[2988.6s - 2991.8s] if I increase the space, obviously it will give me more,\n[2993.4s - 3005.7s] 19, okay, this is the caro subjun, I will give you a variation,\n[3011.3s - 3012.8s] I will just give you base condition,\n[3016.0s - 3021.1s] okay, how do you send the substring, how do you go down, then how do you come up,\n[3022.1s - 3029.0s] okay, okay, return value, so then you will understand how to write code, okay,\n[3030.8s - 3036.1s] are you able to get the length, all of you, now did you include space and you are getting the length,\n[3037.5s - 3046.5s] now whatever be the string, I want only the number of characters, you will ignore the space,\n[3051.4s - 3055.7s] all these small things will understand how and where are you going to apply your code,\n[3061.3s - 3065.8s] did you want to, oh, I can't see anything, do you understand my question,\n[3067.0s - 3075.0s] hello, so much space world, what should it give you answer, 10, hello world, what should it give you,\n[3075.8s - 3080.2s] 10, hello world, what should it give you, still 10,\n[3081.9s - 3088.6s] length of a string means you are including whatever is there between two commas,\n[3089.9s - 3094.7s] I am saying don't give me that, give me only characters, what will you do,\n[3097.8s - 3103.4s] yes, and then only return value, would be conditional return,\n[3103.4s - 3109.8s] a fellow world, so much of gap between, but still when I try to run it,\n[3113.7s - 3122.6s] it gives me 10, if I try to remove this,\n[3122.6s - 3140.3s] it still gives me 10, any kind of combination in recursion we have seen,\n[3144.4s - 3146.8s] is the base condition understood by everybody,\n[3152.8s - 3165.0s] I am going like this, when the length condition is 1, I go back and return what to it be,\n[3167.8s - 3175.7s] then I have to collect what, return parameter with first letter of the input parameter,\n[3175.8s - 3185.4s] so I will say return, what do I need to return,\n[3188.6s - 3191.6s] rev off first, let me build the substring,\n[3192.4s - 3205.5s] so this guy is going to give me back what, this guy is going to give me back D,\n[3209.8s - 3215.2s] and I need to take from the input parameter the first letter,\n[3215.9s - 3223.4s] and then combine them together and return back to my colleague, so\n[3228.6s - 3234.5s] I got the return type, I will take STR of the input parameter,\n[3245.9s - 3258.7s] okay, God called to OD, OD called to D, D is this condition, I come back, give this guy D,\n[3262.0s - 3268.1s] now D is returning, first parameter of the input stream, STR,\n[3268.1s - 3276.0s] combining with the return type, okay,\n[3285.1s - 3294.0s] so what do I return, I return DO, then I take return parameter plus first guy,\n[3294.0s - 3298.9s] D, DO, G,\n[3307.8s - 3315.9s] I got reverse, look at the diagram and then write the code, it makes your life easier,\n[3316.7s - 3323.4s] I will explain you how to do palindrome reverse in recursion manner till that time you think about it,\n[3327.2s - 3337.7s] so I have to do reverse, palindrome, not equal, just palindrome or not,\n[3337.7s - 3347.0s] while going or while coming, while coming back, but the essay, yeah essay,\n[3350.2s - 3360.4s] while returning, not while going, I will tell you how, when you have only one always,\n[3361.0s - 3370.7s] whenever you are talking about recursion, what is the extreme case, I having only one\n[3373.0s - 3382.5s] character, is this palindrome, yes, yes or no, so the base condition would be if\n[3382.5s - 3397.0s] STR dot length equal equal to 1, return what, true, correct no,\n[3398.2s - 3409.4s] this length it becomes what, it is true, correct, now you have to go this character and this\n[3409.4s - 3415.9s] character means what, first character and last character of the substring needs to be compared,\n[3419.0s - 3430.6s] so this is the return condition, main is what, if STR of 0 is equal equal to\n[3431.0s - 3442.5s] STR of STR dot length minus 1, last character, first character is equal to last character,\n[3442.5s - 3454.0s] then return what, true, else return what, false, now the way I have to call them, first\n[3454.0s - 3466.4s] main nithinana ji hai, second call me what should I pass, itin or ITI, ITI, then next\n[3466.4s - 3475.6s] way what should I pass, t, when I go inside, what am I checking for this done, first and last done,\n[3475.6s - 3497.4s] first and last done, this is my first thing, what will I pass to it, substring one, no,\n[3498.4s - 3510.6s] substring one, first kato, last kato, so what will come, q, r, s, r, q, then what will come,\n[3511.6s - 3519.7s] rs are, then what will come, s, this is how you should be invoking it, first and foremost,\n[3520.4s - 3530.7s] now while returning back, is s1, is this palindrome, yes, so what do I pass, I pass true to it,\n[3534.1s - 3543.1s] now the first and the last of the substring, are they equal, yes, so what should I pass to it,\n[3543.4s - 3559.8s] true, again what should I see, first, last equal, yes, again pass what to it, true, first, last\n[3559.8s - 3570.0s] last equal, pass what to it, true, understood, okay, let us try to code this,\n[3574.6s - 3580.9s] I am going to receive a string, if it is one, I will pass true,\n[3590.7s - 3607.0s] if I think my strk 0 is equal to my strk, str dot length minus 1, the last index,\n[3607.0s - 3618.6s] if both of them are also equal, I will pass return true, else what will I pass,\n[3620.6s - 3631.0s] return, if they are not true what will I pass, false, correct, and then I am giving a call\n[3631.0s - 3639.1s] to whom again, rev, now the way I am going to pass the substring, should I pass substring 1,\n[3640.2s - 3648.3s] no, first cut, last cut, so the way substring is written over here in c plus pluses,\n[3649.9s - 3659.6s] it says substring, you pass where you want to begin and pass me how many characters you have,\n[3663.4s - 3666.8s] how many characters you want, that means suppose when I hello vola,\n[3668.2s - 3678.0s] substring 1 to 2, I will start from 1 and how many characters I want only 2, what would be the\n[3678.0s - 3695.4s] output EL, if I say 4 characters, ELLO understood, okay, so now I need to check how will I pass my substring\n[3695.4s - 3703.0s] or how will I invoke this method such that I get to pass or my output is,\n[3703.0s - 3713.4s] so what will I say, I have substring, substring 1, how many characters I have sent,\n[3717.8s - 3723.0s] how many characters, 1, 2, 3, how many characters I have sent, total length minus 2,\n[3725.8s - 3730.1s] yes or no, so how many characters will I need,\n[3731.0s - 3738.2s] STR dot length minus 2, minus 2, why did I come,\n[3740.3s - 3746.5s] I have two characters, so how many characters I will do, so how many will I save,\n[3746.5s - 3756.0s] 3, how much string length is 5, minus 2, I will give you 3, substring of\n[3756.0s - 3764.2s] 1 comma, check whether this is working,\n[3764.2s - 3776.5s] okay, is balance room or something else needs to be corrected,",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 8.72,
+      "text": "So, basically, there are two types of things which are opposite, greatest common divisor,"
+    },
+    {
+      "start": 8.72,
+      "end": 20.12,
+      "text": "and least common multiple, HCF, JCD, one and the same thing, LCM, separate, okay."
+    },
+    {
+      "start": 20.12,
+      "end": 24.28,
+      "text": "JCD is always bigger or LCM is bigger."
+    },
+    {
+      "start": 24.28,
+      "end": 47.24,
+      "text": "Okay, so we will try to understand, GCD will come out, LCM will come out, LCM, LCM of what?"
+    },
+    {
+      "start": 47.24,
+      "end": 54.04,
+      "text": "12. I am going to do the way I was taught, many new ways would have come, I don't know,"
+    },
+    {
+      "start": 54.04,
+      "end": 60.48,
+      "text": "but I will do it in my manner. Now, what is the least common multiple among both of them?"
+    },
+    {
+      "start": 60.48,
+      "end": 64.48,
+      "text": "It is a nice understanding, right?"
+    },
+    {
+      "start": 64.48,
+      "end": 84.48,
+      "text": "So, we will do the other way around, LCM would be 2 into 2 into 3 for 12, and for 8 it is what?"
+    },
+    {
+      "start": 84.48,
+      "end": 100.48,
+      "text": "2 into 2 into 2, so LCM, let's take out the time, how we were taught, this one is 2, this one is 2, this one is 2, this one is 3, this one is 2,"
+    },
+    {
+      "start": 100.48,
+      "end": 120.48,
+      "text": "this one is 24, LCM, LCM means a number, okay, which will also be available in 8, which will also be available in 12."
+    },
+    {
+      "start": 121.48,
+      "end": 138.48,
+      "text": "Understood, okay, so is 24 modulo 8 equal to 0, yes, is 24 modulo 12 equal to 0, yes."
+    },
+    {
+      "start": 139.48,
+      "end": 149.48,
+      "text": "So, if I ask you to find a multiple, not using your math, but using your programming language, what will you do?"
+    },
+    {
+      "start": 150.48,
+      "end": 167.48,
+      "text": "LCM, A, I, B, I, you have to find an I, where I modulo A, you have one either 24, Milathamco."
+    },
+    {
+      "start": 168.48,
+      "end": 181.48,
+      "text": "24 modulo 8 was equal to 0, 24 modulo 12 was equal to 0, so what I have to find in that?"
+    },
+    {
+      "start": 181.48,
+      "end": 192.48,
+      "text": "I, so I can go from what to what, since it is least, I will not start from 100, I will start from what?"
+    },
+    {
+      "start": 192.48,
+      "end": 203.48,
+      "text": "1, okay, I less than, probably 100, I plus plus."
+    },
+    {
+      "start": 203.48,
+      "end": 221.48,
+      "text": "Now, what is the condition here I am saying, if I modulo A equal equal to 0 and I modulo B is equal to 0, return what?"
+    },
+    {
+      "start": 221.48,
+      "end": 239.48,
+      "text": "Return, I, so I will get what, I will get I as 24 of Isku recursion, 4 and 10, you can use recursion,"
+    },
+    {
+      "start": 239.48,
+      "end": 249.48,
+      "text": "now it is recursion, how to use recursion? This is one way, what other way do you think it can be?"
+    },
+    {
+      "start": 249.48,
+      "end": 259.48,
+      "text": "8 is 12 and we know this is LCM 24. So, what will I do?"
+    },
+    {
+      "start": 260.48,
+      "end": 266.48,
+      "text": "Computers, I am not talking about. Is there any shorter way? For loops you will get it, not a problem."
+    },
+    {
+      "start": 266.48,
+      "end": 280.48,
+      "text": "Any other way? 8 at 12 N, sorry 8 plus 8 or 8, 8 into 8 N, 8 plus 8 becomes what?"
+    },
+    {
+      "start": 281.48,
+      "end": 294.48,
+      "text": "16, I will check if 16 modulo 12 is equal equal to 0, does not happen, then I will do 8 plus 8 plus 8, what it becomes?"
+    },
+    {
+      "start": 294.48,
+      "end": 304.48,
+      "text": "24, 24 modulo 12, is it equal equal to 0? Yes, so what is my answer? My answer is 24."
+    },
+    {
+      "start": 305.48,
+      "end": 309.48,
+      "text": "Let us try this to something else also, two ways of doing it."
+    },
+    {
+      "start": 309.48,
+      "end": 315.48,
+      "text": "One is I can increment it, until both are equal, this is a faster way of doing it,"
+    },
+    {
+      "start": 315.48,
+      "end": 323.48,
+      "text": "because I am trying to check the common multiple between both of them. If there is a common multiple between both of them,"
+    },
+    {
+      "start": 323.48,
+      "end": 331.48,
+      "text": "that means this will, whatever number this guy is capable of producing will be divisible by this guy."
+    },
+    {
+      "start": 332.48,
+      "end": 338.48,
+      "text": "Whatever this guy is capable of producing, it would be divisible by the other guy."
+    },
+    {
+      "start": 338.48,
+      "end": 345.48,
+      "text": "So, this table will write 8, 8 plus 8, then next step 8 plus 8 plus 8."
+    },
+    {
+      "start": 345.48,
+      "end": 353.48,
+      "text": "So, this guy should give me a number which would be divisible by 12."
+    },
+    {
+      "start": 353.48,
+      "end": 358.48,
+      "text": "So, let us try and do again, let us do it for 4 and 6."
+    },
+    {
+      "start": 360.48,
+      "end": 364.48,
+      "text": "4 should give me a number which is divisible by 6."
+    },
+    {
+      "start": 364.48,
+      "end": 370.48,
+      "text": "So, first I will directly ask, 6, are you divisible by 4? No."
+    },
+    {
+      "start": 370.48,
+      "end": 375.48,
+      "text": "Then what will I do? If I am not divisible, I will do 4 plus 4."
+    },
+    {
+      "start": 376.48,
+      "end": 382.48,
+      "text": "Is 8 divisible by 4? Yes, no, yes."
+    },
+    {
+      "start": 382.48,
+      "end": 389.48,
+      "text": "Then what is my, sorry, sorry, 6."
+    },
+    {
+      "start": 389.48,
+      "end": 393.48,
+      "text": "It is 6 divisible by 8. What are we doing?"
+    },
+    {
+      "start": 393.48,
+      "end": 400.48,
+      "text": "4 and 6, I will see him, 1 minute, 1 minute."
+    },
+    {
+      "start": 400.48,
+      "end": 412.48,
+      "text": "I got it wrong. First time, I have to say 4 modules 6, is it equal to 0? No."
+    },
+    {
+      "start": 412.48,
+      "end": 419.48,
+      "text": "Then 8 modules 6, is it equal to 0? No, go ahead."
+    },
+    {
+      "start": 419.48,
+      "end": 429.48,
+      "text": "4 plus 4 plus 4. What is this? 12 modules 6, is it equal to 0?"
+    },
+    {
+      "start": 429.48,
+      "end": 436.48,
+      "text": "Yes. What is my LCM? 12. This is also one way of getting it."
+    },
+    {
+      "start": 436.48,
+      "end": 442.48,
+      "text": "If you want to play with 6, you can play with 6 also the other, same way."
+    },
+    {
+      "start": 442.48,
+      "end": 450.48,
+      "text": "How will you do it with 6? Checking 6, multiples are divisible by 4 or not."
+    },
+    {
+      "start": 450.48,
+      "end": 455.48,
+      "text": "What is 6's first divisible multiplier? 6, ones are 6."
+    },
+    {
+      "start": 455.48,
+      "end": 465.48,
+      "text": "So I will take 6 as it is and check over here is 6 modules 4 equal to 0."
+    },
+    {
+      "start": 465.48,
+      "end": 470.48,
+      "text": "No. Then I will say till 6, you add to yourself."
+    },
+    {
+      "start": 470.48,
+      "end": 474.48,
+      "text": "Let's go to your next number. That is 6 plus 6."
+    },
+    {
+      "start": 474.48,
+      "end": 478.48,
+      "text": "12 modules 4, is it equal to 0? Yes."
+    },
+    {
+      "start": 478.48,
+      "end": 482.48,
+      "text": "Who is LCM? 12."
+    },
+    {
+      "start": 482.48,
+      "end": 485.48,
+      "text": "Now for both the things, write recursion."
+    },
+    {
+      "start": 485.48,
+      "end": 490.48,
+      "text": "For I, I, I will have a thing also and for this guy also."
+    },
+    {
+      "start": 490.48,
+      "end": 496.48,
+      "text": "Let's take it here. What do we want to do?"
+    },
+    {
+      "start": 496.48,
+      "end": 507.48,
+      "text": "LCM, I take A, I take B, I am keeping a 4 and I am keeping a 6 here for you people to understand."
+    },
+    {
+      "start": 507.48,
+      "end": 516.48,
+      "text": "For I equal to 1, I less than 100, I plus plus."
+    },
+    {
+      "start": 516.48,
+      "end": 524.48,
+      "text": "It can be less than 100 or it can be less than or equal to B, greater number."
+    },
+    {
+      "start": 524.48,
+      "end": 530.48,
+      "text": "Because it is a divisor, you keep it 100 right now, you will otherwise go crazy."
+    },
+    {
+      "start": 530.48,
+      "end": 548.48,
+      "text": "If loop I modulo A equal equal 0, I modulo B equal equal 0 and condition return I."
+    },
+    {
+      "start": 548.48,
+      "end": 556.48,
+      "text": "Convert this into recursion."
+    },
+    {
+      "start": 556.48,
+      "end": 565.48,
+      "text": "Okay? I write the other one here too. LCM, A, B."
+    },
+    {
+      "start": 565.48,
+      "end": 569.48,
+      "text": "This is 4 and this is 6."
+    },
+    {
+      "start": 569.48,
+      "end": 574.48,
+      "text": "I add while loop."
+    },
+    {
+      "start": 574.48,
+      "end": 576.48,
+      "text": "Correct?"
+    },
+    {
+      "start": 576.48,
+      "end": 583.48,
+      "text": "And what will be written below?"
+    },
+    {
+      "start": 583.48,
+      "end": 586.48,
+      "text": "This is my LCM in two ways."
+    },
+    {
+      "start": 586.48,
+      "end": 590.48,
+      "text": "I, while I, while I, while I."
+    },
+    {
+      "start": 590.48,
+      "end": 601.48,
+      "text": "Looking at a while loop, how to convert it into recursion, you can do recursion of any sorts."
+    },
+    {
+      "start": 601.48,
+      "end": 604.48,
+      "text": "Do we want to pass a constant value over?"
+    },
+    {
+      "start": 604.48,
+      "end": 607.48,
+      "text": "Yes."
+    },
+    {
+      "start": 607.48,
+      "end": 609.48,
+      "text": "So what should we be working on?"
+    },
+    {
+      "start": 609.48,
+      "end": 612.48,
+      "text": "Base case."
+    },
+    {
+      "start": 612.48,
+      "end": 613.48,
+      "text": "I will help you."
+    },
+    {
+      "start": 613.48,
+      "end": 615.48,
+      "text": "What is the base condition?"
+    },
+    {
+      "start": 615.48,
+      "end": 618.48,
+      "text": "Which one do you want to implement first?"
+    },
+    {
+      "start": 618.48,
+      "end": 620.48,
+      "text": "For loop."
+    },
+    {
+      "start": 620.48,
+      "end": 621.48,
+      "text": "Okay."
+    },
+    {
+      "start": 621.48,
+      "end": 623.48,
+      "text": "What is the base condition in this?"
+    },
+    {
+      "start": 623.48,
+      "end": 629.48,
+      "text": "Should it be 100 or should it be A multiplied by B?"
+    },
+    {
+      "start": 629.48,
+      "end": 631.48,
+      "text": "Which one will learn?"
+    },
+    {
+      "start": 631.48,
+      "end": 634.48,
+      "text": "Work shorter A multiplied by B."
+    },
+    {
+      "start": 634.48,
+      "end": 635.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 635.48,
+      "end": 654.48,
+      "text": "So, your condition should be, let's create your int LCM is receiving int A int B."
+    },
+    {
+      "start": 654.48,
+      "end": 659.48,
+      "text": "First we will have to write our base condition."
+    },
+    {
+      "start": 659.48,
+      "end": 661.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 661.48,
+      "end": 663.48,
+      "text": "First I am writing one minute."
+    },
+    {
+      "start": 663.48,
+      "end": 666.48,
+      "text": "I will just write base condition and testing condition in this only."
+    },
+    {
+      "start": 666.48,
+      "end": 667.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 667.48,
+      "end": 674.48,
+      "text": "If I is, I, I need to take it."
+    },
+    {
+      "start": 674.48,
+      "end": 682.48,
+      "text": "I can't have it."
+    },
+    {
+      "start": 682.48,
+      "end": 703.48,
+      "text": "It is equals to 0 and I, modulo B is equal to 0, return I."
+    },
+    {
+      "start": 703.48,
+      "end": 713.48,
+      "text": "It is equal to I plus plus."
+    },
+    {
+      "start": 713.48,
+      "end": 720.48,
+      "text": "Correct?"
+    },
+    {
+      "start": 720.48,
+      "end": 727.48,
+      "text": "Initially I will send I as 1 because for loop my I is getting initialized to what?"
+    },
+    {
+      "start": 727.48,
+      "end": 728.48,
+      "text": "1."
+    },
+    {
+      "start": 728.48,
+      "end": 748.48,
+      "text": "So, at the time of sending it LCM, sorry KCM, LCM of 46 initializing the for loop with 1."
+    },
+    {
+      "start": 748.48,
+      "end": 751.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 751.48,
+      "end": 754.48,
+      "text": "I will keep on checking."
+    },
+    {
+      "start": 754.48,
+      "end": 762.48,
+      "text": "1 modulo 4 is equal to 4 or nothing and I will keep on incrementing I, I plus 1."
+    },
+    {
+      "start": 762.48,
+      "end": 767.48,
+      "text": "Passing the same A, passing the same B."
+    },
+    {
+      "start": 767.48,
+      "end": 768.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 768.48,
+      "end": 776.48,
+      "text": "And whenever it gets hit and whenever I find my I, I will return back."
+    },
+    {
+      "start": 776.48,
+      "end": 784.48,
+      "text": "So, let me check this is the for loop getting created or converted into recursion."
+    },
+    {
+      "start": 784.48,
+      "end": 788.48,
+      "text": "Let me see whether this works."
+    },
+    {
+      "start": 788.48,
+      "end": 800.48,
+      "text": "461, I will just run the file."
+    },
+    {
+      "start": 800.48,
+      "end": 804.48,
+      "text": "It is giving me 12."
+    },
+    {
+      "start": 804.48,
+      "end": 805.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 805.48,
+      "end": 807.48,
+      "text": "I got my answer 12."
+    },
+    {
+      "start": 807.48,
+      "end": 820.48,
+      "text": "If you want to check out with something else, 14 and 6."
+    },
+    {
+      "start": 820.48,
+      "end": 825.48,
+      "text": "It's coming 42 LCM."
+    },
+    {
+      "start": 825.48,
+      "end": 840.48,
+      "text": "Let's make the LCM for 2 and 8."
+    },
+    {
+      "start": 840.48,
+      "end": 843.48,
+      "text": "8."
+    },
+    {
+      "start": 843.48,
+      "end": 844.48,
+      "text": "Okay?"
+    },
+    {
+      "start": 844.48,
+      "end": 845.48,
+      "text": "Understood?"
+    },
+    {
+      "start": 845.48,
+      "end": 849.48,
+      "text": "What do you guys do now?"
+    },
+    {
+      "start": 849.48,
+      "end": 851.48,
+      "text": "4 loops I showed you, right?"
+    },
+    {
+      "start": 851.48,
+      "end": 854.48,
+      "text": "Do the LCM for this time."
+    },
+    {
+      "start": 854.48,
+      "end": 860.48,
+      "text": "Here, the concept was I was getting incremented."
+    },
+    {
+      "start": 860.48,
+      "end": 867.48,
+      "text": "Here the concept is A itself is getting incremented."
+    },
+    {
+      "start": 867.48,
+      "end": 869.48,
+      "text": "So, do the right the second one."
+    },
+    {
+      "start": 869.48,
+      "end": 876.48,
+      "text": "It will be a base condition in this case."
+    },
+    {
+      "start": 876.48,
+      "end": 879.48,
+      "text": "And then you will increment what?"
+    },
+    {
+      "start": 879.48,
+      "end": 884.48,
+      "text": "A always."
+    },
+    {
+      "start": 884.48,
+      "end": 891.48,
+      "text": "Until A does not reach a bigger point where it is getting divided by B."
+    },
+    {
+      "start": 891.48,
+      "end": 895.48,
+      "text": "This is your LCM."
+    },
+    {
+      "start": 895.48,
+      "end": 910.48,
+      "text": "If you want I will show you recursion in that also in LCM."
+    },
+    {
+      "start": 910.48,
+      "end": 917.48,
+      "text": "Stopping condition is what?"
+    },
+    {
+      "start": 940.48,
+      "end": 953.48,
+      "text": "And now I will call LCM to check whether it's working."
+    },
+    {
+      "start": 953.48,
+      "end": 965.48,
+      "text": "I don't need an eye now."
+    },
+    {
+      "start": 965.48,
+      "end": 968.48,
+      "text": "Correct? No."
+    },
+    {
+      "start": 968.48,
+      "end": 972.48,
+      "text": "I am checking what for LCM?"
+    },
+    {
+      "start": 972.48,
+      "end": 976.48,
+      "text": "A should be divisible by B."
+    },
+    {
+      "start": 976.48,
+      "end": 978.48,
+      "text": "So, what did I check over here?"
+    },
+    {
+      "start": 978.48,
+      "end": 983.48,
+      "text": "If A is divisible by B, I should stop checking for my LCM."
+    },
+    {
+      "start": 983.48,
+      "end": 985.48,
+      "text": "So, I will return."
+    },
+    {
+      "start": 985.48,
+      "end": 986.48,
+      "text": "What do I need to return A?"
+    },
+    {
+      "start": 986.48,
+      "end": 989.48,
+      "text": "Because A becomes the LCM."
+    },
+    {
+      "start": 989.48,
+      "end": 993.48,
+      "text": "Otherwise, if it is not true, what am I doing?"
+    },
+    {
+      "start": 993.48,
+      "end": 1000.48,
+      "text": "I am changing A and saying you are now A plus A."
+    },
+    {
+      "start": 1000.48,
+      "end": 1005.48,
+      "text": "So, instead of sending A, I am sending what?"
+    },
+    {
+      "start": 1005.48,
+      "end": 1012.48,
+      "text": "A plus A who will become the new A for the next LCM."
+    },
+    {
+      "start": 1012.48,
+      "end": 1016.48,
+      "text": "So, I will try to run this."
+    },
+    {
+      "start": 1016.48,
+      "end": 1018.48,
+      "text": "Did I save it?"
+    },
+    {
+      "start": 1018.48,
+      "end": 1025.48,
+      "text": "Yes."
+    },
+    {
+      "start": 1025.48,
+      "end": 1030.48,
+      "text": "You are getting 8 for 2 and 8."
+    },
+    {
+      "start": 1030.48,
+      "end": 1048.48,
+      "text": "Let's do for 4 and 6."
+    },
+    {
+      "start": 1048.48,
+      "end": 1072.48,
+      "text": "Did I save it?"
+    },
+    {
+      "start": 1072.48,
+      "end": 1079.48,
+      "text": "Why is it coming 0?"
+    },
+    {
+      "start": 1079.48,
+      "end": 1092.48,
+      "text": "A plus equal to K."
+    },
+    {
+      "start": 1092.48,
+      "end": 1099.48,
+      "text": "No, why is it coming?"
+    },
+    {
+      "start": 1099.48,
+      "end": 1107.48,
+      "text": "8 into A."
+    },
+    {
+      "start": 1107.48,
+      "end": 1111.48,
+      "text": "So, minimum has to be done."
+    },
+    {
+      "start": 1111.48,
+      "end": 1112.48,
+      "text": "Out of the 2 minutes."
+    },
+    {
+      "start": 1112.48,
+      "end": 1121.48,
+      "text": "No, either way it works."
+    },
+    {
+      "start": 1121.48,
+      "end": 1131.48,
+      "text": "It becomes 4, 8 plus 8."
+    },
+    {
+      "start": 1131.48,
+      "end": 1137.48,
+      "text": "So, we have got to make sure that A is remaining A."
+    },
+    {
+      "start": 1137.48,
+      "end": 1160.48,
+      "text": "So, I will keep on incrementing."
+    },
+    {
+      "start": 1160.48,
+      "end": 1167.48,
+      "text": "No, I plus plus."
+    },
+    {
+      "start": 1191.48,
+      "end": 1197.48,
+      "text": "No."
+    },
+    {
+      "start": 1197.48,
+      "end": 1204.48,
+      "text": "No."
+    },
+    {
+      "start": 1204.48,
+      "end": 1211.48,
+      "text": "No."
+    },
+    {
+      "start": 1234.48,
+      "end": 1256.48,
+      "text": "So, we are needing I here also because we can't do A plus A."
+    },
+    {
+      "start": 1257.48,
+      "end": 1261.48,
+      "text": "Okay, LCM clear."
+    },
+    {
+      "start": 1261.48,
+      "end": 1268.48,
+      "text": "Same thing goes for your JCD also."
+    },
+    {
+      "start": 1268.48,
+      "end": 1270.48,
+      "text": "Now let's try to understand."
+    },
+    {
+      "start": 1270.48,
+      "end": 1274.48,
+      "text": "Greatest common divisor."
+    },
+    {
+      "start": 1274.48,
+      "end": 1279.48,
+      "text": "How are you going to find this one?"
+    },
+    {
+      "start": 1279.48,
+      "end": 1286.48,
+      "text": "Your numbers are 8 and 12 again for JCD."
+    },
+    {
+      "start": 1286.48,
+      "end": 1297.48,
+      "text": "So, I have 1, 2, 4 and 8."
+    },
+    {
+      "start": 1297.48,
+      "end": 1300.48,
+      "text": "These are the divisors of 8."
+    },
+    {
+      "start": 1300.48,
+      "end": 1302.48,
+      "text": "Of 12, what is it?"
+    },
+    {
+      "start": 1302.48,
+      "end": 1314.48,
+      "text": "1, 12, 6, 2, 4, 3 or 3, 4 whatever."
+    },
+    {
+      "start": 1314.48,
+      "end": 1318.48,
+      "text": "These are the divisors of 12."
+    },
+    {
+      "start": 1318.48,
+      "end": 1326.48,
+      "text": "What is the greatest one?"
+    },
+    {
+      "start": 1326.48,
+      "end": 1327.48,
+      "text": "Greatest common divisor."
+    },
+    {
+      "start": 1327.48,
+      "end": 1331.48,
+      "text": "Right now do we have anything common?"
+    },
+    {
+      "start": 1331.48,
+      "end": 1337.48,
+      "text": "How it will become common?"
+    },
+    {
+      "start": 1337.48,
+      "end": 1349.48,
+      "text": "8 and 12 is the greatest common divisor."
+    },
+    {
+      "start": 1349.48,
+      "end": 1352.48,
+      "text": "4 is the common guy."
+    },
+    {
+      "start": 1353.48,
+      "end": 1357.48,
+      "text": "Now this is algebra."
+    },
+    {
+      "start": 1357.48,
+      "end": 1362.48,
+      "text": "How will you do in computers?"
+    },
+    {
+      "start": 1362.48,
+      "end": 1366.48,
+      "text": "Greatest common divisor."
+    },
+    {
+      "start": 1366.48,
+      "end": 1368.48,
+      "text": "What is a common divisor guys?"
+    },
+    {
+      "start": 1368.48,
+      "end": 1370.48,
+      "text": "Which can divide both of them."
+    },
+    {
+      "start": 1370.48,
+      "end": 1373.48,
+      "text": "Again can I use a for loop?"
+    },
+    {
+      "start": 1373.48,
+      "end": 1375.48,
+      "text": "Now what is the starting?"
+    },
+    {
+      "start": 1376.48,
+      "end": 1378.48,
+      "text": "A and B are common divisors."
+    },
+    {
+      "start": 1378.48,
+      "end": 1382.48,
+      "text": "A is 4, A is 8 and B is 12."
+    },
+    {
+      "start": 1382.48,
+      "end": 1384.48,
+      "text": "What would I start with?"
+    },
+    {
+      "start": 1384.48,
+      "end": 1386.48,
+      "text": "Who is the common divisor for both of them?"
+    },
+    {
+      "start": 1386.48,
+      "end": 1389.48,
+      "text": "Can 12 be a common divisor for both of them?"
+    },
+    {
+      "start": 1389.48,
+      "end": 1395.48,
+      "text": "So where should we start from?"
+    },
+    {
+      "start": 1395.48,
+      "end": 1397.48,
+      "text": "Itna amaja."
+    },
+    {
+      "start": 1397.48,
+      "end": 1400.48,
+      "text": "Normal asak te apanga."
+    },
+    {
+      "start": 1400.48,
+      "end": 1403.48,
+      "text": "Can I start from 8?"
+    },
+    {
+      "start": 1403.48,
+      "end": 1406.48,
+      "text": "Yes or no?"
+    },
+    {
+      "start": 1406.48,
+      "end": 1409.48,
+      "text": "So I can start from A."
+    },
+    {
+      "start": 1409.48,
+      "end": 1415.48,
+      "text": "A and A is A Baba."
+    },
+    {
+      "start": 1415.48,
+      "end": 1419.48,
+      "text": "GCD of A and B has to be taken out."
+    },
+    {
+      "start": 1419.48,
+      "end": 1426.48,
+      "text": "For right now I am considering 8 to be 8, B to be 12."
+    },
+    {
+      "start": 1426.48,
+      "end": 1430.48,
+      "text": "What would you write in the 4 loop to get the GCD?"
+    },
+    {
+      "start": 1430.48,
+      "end": 1433.48,
+      "text": "Greatest common divisor."
+    },
+    {
+      "start": 1433.48,
+      "end": 1443.48,
+      "text": "Any value I, which can divide A also and B also."
+    },
+    {
+      "start": 1443.48,
+      "end": 1446.48,
+      "text": "That means either if condition."
+    },
+    {
+      "start": 1446.48,
+      "end": 1449.48,
+      "text": "If A modulo I."
+    },
+    {
+      "start": 1449.48,
+      "end": 1450.48,
+      "text": "Correct?"
+    },
+    {
+      "start": 1450.48,
+      "end": 1451.48,
+      "text": "No."
+    },
+    {
+      "start": 1451.48,
+      "end": 1454.48,
+      "text": "Is equal equal to 0."
+    },
+    {
+      "start": 1454.48,
+      "end": 1460.48,
+      "text": "And B modulo I is also equal equal to 0."
+    },
+    {
+      "start": 1460.48,
+      "end": 1463.48,
+      "text": "Then return what?"
+    },
+    {
+      "start": 1463.48,
+      "end": 1466.48,
+      "text": "I or B or A."
+    },
+    {
+      "start": 1466.48,
+      "end": 1472.48,
+      "text": "You have to find a divisor which can divide A also and which can divide B also."
+    },
+    {
+      "start": 1472.48,
+      "end": 1474.48,
+      "text": "So what will you return back?"
+    },
+    {
+      "start": 1474.48,
+      "end": 1477.48,
+      "text": "You will return back your I."
+    },
+    {
+      "start": 1477.48,
+      "end": 1480.48,
+      "text": "So what would be your condition?"
+    },
+    {
+      "start": 1480.48,
+      "end": 1486.48,
+      "text": "If A equal to A, where do you have to stop?"
+    },
+    {
+      "start": 1486.48,
+      "end": 1492.48,
+      "text": "Lesson or equal to 0?"
+    },
+    {
+      "start": 1492.48,
+      "end": 1495.48,
+      "text": "You have to go down."
+    },
+    {
+      "start": 1495.48,
+      "end": 1498.48,
+      "text": "If you don't come from 8 to 7, you will try 7."
+    },
+    {
+      "start": 1498.48,
+      "end": 1500.48,
+      "text": "If you don't come from 7 to 6, you will try 6."
+    },
+    {
+      "start": 1500.48,
+      "end": 1502.48,
+      "text": "Where will you go?"
+    },
+    {
+      "start": 1502.48,
+      "end": 1507.48,
+      "text": "One is the greatest divisor of everybody."
+    },
+    {
+      "start": 1507.48,
+      "end": 1509.48,
+      "text": "And what will come here?"
+    },
+    {
+      "start": 1509.48,
+      "end": 1514.48,
+      "text": "Minus minus."
+    },
+    {
+      "start": 1514.48,
+      "end": 1517.48,
+      "text": "First check in the form loop."
+    },
+    {
+      "start": 1517.48,
+      "end": 1519.48,
+      "text": "GCD is coming."
+    },
+    {
+      "start": 1519.48,
+      "end": 1521.48,
+      "text": "Then you have to convert this into what?"
+    },
+    {
+      "start": 1521.48,
+      "end": 1527.48,
+      "text": "Recursion."
+    },
+    {
+      "start": 1527.48,
+      "end": 1529.48,
+      "text": "There are two ways."
+    },
+    {
+      "start": 1529.48,
+      "end": 1538.48,
+      "text": "You will find one from four loops and you will do it in a while."
+    },
+    {
+      "start": 1538.48,
+      "end": 1539.48,
+      "text": "Do this recursion."
+    },
+    {
+      "start": 1539.48,
+      "end": 1541.48,
+      "text": "It's not an efficient one."
+    },
+    {
+      "start": 1541.48,
+      "end": 1547.48,
+      "text": "I'll show you an efficient one which follows a you kid algorithm."
+    },
+    {
+      "start": 1547.48,
+      "end": 1549.48,
+      "text": "That is a different thing."
+    },
+    {
+      "start": 1549.48,
+      "end": 1558.48,
+      "text": "First convert it into recursion."
+    },
+    {
+      "start": 1558.48,
+      "end": 1561.48,
+      "text": "Is it equal to factorial and fibonacci?"
+    },
+    {
+      "start": 1561.48,
+      "end": 1562.48,
+      "text": "No."
+    },
+    {
+      "start": 1562.48,
+      "end": 1564.48,
+      "text": "It is."
+    },
+    {
+      "start": 1564.48,
+      "end": 1566.48,
+      "text": "LCM is like this."
+    },
+    {
+      "start": 1566.48,
+      "end": 1569.48,
+      "text": "What you are returning is coming."
+    },
+    {
+      "start": 1569.48,
+      "end": 1570.48,
+      "text": "That's it."
+    },
+    {
+      "start": 1570.48,
+      "end": 1573.48,
+      "text": "Guys, all you need to do is"
+    },
+    {
+      "start": 1580.48,
+      "end": 1582.48,
+      "text": "this only."
+    },
+    {
+      "start": 1582.48,
+      "end": 1586.48,
+      "text": "And this is i minus minus."
+    },
+    {
+      "start": 1586.48,
+      "end": 1589.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1589.48,
+      "end": 1595.48,
+      "text": "Now, the other part of GCD, what he is saying,"
+    },
+    {
+      "start": 1595.48,
+      "end": 1603.48,
+      "text": "U is called as algorithm."
+    },
+    {
+      "start": 1603.48,
+      "end": 1607.48,
+      "text": "To find GCD."
+    },
+    {
+      "start": 1607.48,
+      "end": 1610.48,
+      "text": "We have used a for loop to find it."
+    },
+    {
+      "start": 1610.48,
+      "end": 1614.48,
+      "text": "For loop is checking for each and every value of i."
+    },
+    {
+      "start": 1614.48,
+      "end": 1619.48,
+      "text": "This guy tells you."
+    },
+    {
+      "start": 1619.48,
+      "end": 1624.48,
+      "text": "GCD of 8 and 12."
+    },
+    {
+      "start": 1624.48,
+      "end": 1627.48,
+      "text": "If I have to find."
+    },
+    {
+      "start": 1627.48,
+      "end": 1628.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1628.48,
+      "end": 1632.48,
+      "text": "I will check over here."
+    },
+    {
+      "start": 1633.48,
+      "end": 1641.48,
+      "text": "If 12, modulo 8 is equal equal 0."
+    },
+    {
+      "start": 1641.48,
+      "end": 1646.48,
+      "text": "If yes, then 12 becomes my JCD."
+    },
+    {
+      "start": 1646.48,
+      "end": 1648.48,
+      "text": "Now, answer is no."
+    },
+    {
+      "start": 1648.48,
+      "end": 1650.48,
+      "text": "Correct?"
+    },
+    {
+      "start": 1650.48,
+      "end": 1653.48,
+      "text": "This is not equal to 0."
+    },
+    {
+      "start": 1653.48,
+      "end": 1657.48,
+      "text": "Then, I will go for a further call to GCD."
+    },
+    {
+      "start": 1657.48,
+      "end": 1664.48,
+      "text": "And now, at this point, I will say 8, what will I pass?"
+    },
+    {
+      "start": 1664.48,
+      "end": 1666.48,
+      "text": "I will not pass 12."
+    },
+    {
+      "start": 1666.48,
+      "end": 1670.48,
+      "text": "I will pass 12, modulo 8."
+    },
+    {
+      "start": 1670.48,
+      "end": 1674.48,
+      "text": "What is 12, modulo 8?"
+    },
+    {
+      "start": 1674.48,
+      "end": 1675.48,
+      "text": "4."
+    },
+    {
+      "start": 1675.48,
+      "end": 1677.48,
+      "text": "So, what will I pass?"
+    },
+    {
+      "start": 1677.48,
+      "end": 1680.48,
+      "text": "I will pass 8 and 4."
+    },
+    {
+      "start": 1680.48,
+      "end": 1686.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1686.48,
+      "end": 1687.48,
+      "text": "Yes."
+    },
+    {
+      "start": 1687.48,
+      "end": 1688.48,
+      "text": "Correct."
+    },
+    {
+      "start": 1688.48,
+      "end": 1689.48,
+      "text": "8 and 4."
+    },
+    {
+      "start": 1689.48,
+      "end": 1693.48,
+      "text": "Now, should I make 4 modulo 8?"
+    },
+    {
+      "start": 1693.48,
+      "end": 1694.48,
+      "text": "It will never come."
+    },
+    {
+      "start": 1694.48,
+      "end": 1696.48,
+      "text": "So, here, what is the catch?"
+    },
+    {
+      "start": 1696.48,
+      "end": 1700.48,
+      "text": "You have to make sure that whenever you are passing the number,"
+    },
+    {
+      "start": 1700.48,
+      "end": 1704.48,
+      "text": "there is one minimum and there is one maximum."
+    },
+    {
+      "start": 1704.48,
+      "end": 1710.48,
+      "text": "So, you are always doing max modulo min."
+    },
+    {
+      "start": 1710.48,
+      "end": 1715.48,
+      "text": "So, in this case, I will do 8 modulo 4."
+    },
+    {
+      "start": 1715.48,
+      "end": 1718.48,
+      "text": "Is it equal equal to 0?"
+    },
+    {
+      "start": 1718.48,
+      "end": 1720.48,
+      "text": "Yes, it is equal equal to 0."
+    },
+    {
+      "start": 1720.48,
+      "end": 1729.48,
+      "text": "Then in that case, my minimum is my GCD."
+    },
+    {
+      "start": 1729.48,
+      "end": 1730.48,
+      "text": "Understood?"
+    },
+    {
+      "start": 1730.48,
+      "end": 1733.48,
+      "text": "Let us try it for some more."
+    },
+    {
+      "start": 1733.48,
+      "end": 1741.48,
+      "text": "GCD for 9 and 12, suppose."
+    },
+    {
+      "start": 1741.48,
+      "end": 1743.48,
+      "text": "So, what I will have to do?"
+    },
+    {
+      "start": 1743.48,
+      "end": 1745.48,
+      "text": "Who is the minimum from this?"
+    },
+    {
+      "start": 1745.48,
+      "end": 1746.48,
+      "text": "9."
+    },
+    {
+      "start": 1746.48,
+      "end": 1751.48,
+      "text": "So, I will keep 9 as it is and I will say 12 modulo 9."
+    },
+    {
+      "start": 1751.48,
+      "end": 1754.48,
+      "text": "Is 12 modulo 9 equal to 0?"
+    },
+    {
+      "start": 1754.48,
+      "end": 1755.48,
+      "text": "No, it is not."
+    },
+    {
+      "start": 1755.48,
+      "end": 1758.48,
+      "text": "What will this reduce to 3?"
+    },
+    {
+      "start": 1758.48,
+      "end": 1759.48,
+      "text": "Correct."
+    },
+    {
+      "start": 1759.48,
+      "end": 1760.48,
+      "text": "Then what I will do?"
+    },
+    {
+      "start": 1760.48,
+      "end": 1762.48,
+      "text": "I will say GCD."
+    },
+    {
+      "start": 1762.48,
+      "end": 1765.48,
+      "text": "I have to pass 9 and 3 to you."
+    },
+    {
+      "start": 1765.48,
+      "end": 1767.48,
+      "text": "What will GCD do?"
+    },
+    {
+      "start": 1767.48,
+      "end": 1770.48,
+      "text": "It will check who is the minimum."
+    },
+    {
+      "start": 1771.48,
+      "end": 1773.48,
+      "text": "Who is the minimum in this case?"
+    },
+    {
+      "start": 1773.48,
+      "end": 1775.48,
+      "text": "3 is the minimum."
+    },
+    {
+      "start": 1775.48,
+      "end": 1777.48,
+      "text": "So, what will I do over here?"
+    },
+    {
+      "start": 1777.48,
+      "end": 1780.48,
+      "text": "I will do 9 modulo 3."
+    },
+    {
+      "start": 1780.48,
+      "end": 1782.48,
+      "text": "Is it equal equal to 0?"
+    },
+    {
+      "start": 1782.48,
+      "end": 1783.48,
+      "text": "Yes."
+    },
+    {
+      "start": 1783.48,
+      "end": 1786.48,
+      "text": "So, what becomes the GCD?"
+    },
+    {
+      "start": 1786.48,
+      "end": 1789.48,
+      "text": "The minimum becomes the GCD."
+    },
+    {
+      "start": 1789.48,
+      "end": 1793.48,
+      "text": "So, the greatest common divisor for both of them is what?"
+    },
+    {
+      "start": 1793.48,
+      "end": 1796.48,
+      "text": "3."
+    },
+    {
+      "start": 1797.48,
+      "end": 1802.48,
+      "text": "So, now, how are you going to check this particular thing?"
+    },
+    {
+      "start": 1802.48,
+      "end": 1806.48,
+      "text": "Let's try to write a pseudo code and then you write recursion for it."
+    },
+    {
+      "start": 1806.48,
+      "end": 1809.48,
+      "text": "So, what is the first step that we have got to check?"
+    },
+    {
+      "start": 1809.48,
+      "end": 1811.48,
+      "text": "I receive."
+    },
+    {
+      "start": 1811.48,
+      "end": 1813.48,
+      "text": "Let me delete this."
+    },
+    {
+      "start": 1813.48,
+      "end": 1815.48,
+      "text": "JCD."
+    },
+    {
+      "start": 1815.48,
+      "end": 1817.48,
+      "text": "I received A."
+    },
+    {
+      "start": 1817.48,
+      "end": 1819.48,
+      "text": "I receive a B."
+    },
+    {
+      "start": 1819.48,
+      "end": 1821.48,
+      "text": "First, what am I going to check?"
+    },
+    {
+      "start": 1821.48,
+      "end": 1822.48,
+      "text": "What is minimum?"
+    },
+    {
+      "start": 1822.48,
+      "end": 1824.48,
+      "text": "What is maximum?"
+    },
+    {
+      "start": 1824.48,
+      "end": 1829.48,
+      "text": "So, in C++, you can give minimum of A, B."
+    },
+    {
+      "start": 1829.48,
+      "end": 1833.48,
+      "text": "You can give maximum of A, B."
+    },
+    {
+      "start": 1833.48,
+      "end": 1835.48,
+      "text": "You will get the minimum number."
+    },
+    {
+      "start": 1835.48,
+      "end": 1838.48,
+      "text": "You will get the maximum number."
+    },
+    {
+      "start": 1838.48,
+      "end": 1839.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1839.48,
+      "end": 1842.48,
+      "text": "So, once I get my A and B,"
+    },
+    {
+      "start": 1842.48,
+      "end": 1845.48,
+      "text": "I will determine what is minimum, what is maximum,"
+    },
+    {
+      "start": 1845.48,
+      "end": 1852.48,
+      "text": "and I will check if I can directly write this also."
+    },
+    {
+      "start": 1852.48,
+      "end": 1857.48,
+      "text": "Maximum, modulo,"
+    },
+    {
+      "start": 1857.48,
+      "end": 1862.48,
+      "text": "minimum is equal to 0."
+    },
+    {
+      "start": 1862.48,
+      "end": 1865.48,
+      "text": "And if this is 0, that means I have found by JCD,"
+    },
+    {
+      "start": 1865.48,
+      "end": 1868.48,
+      "text": "what will I return?"
+    },
+    {
+      "start": 1868.48,
+      "end": 1872.48,
+      "text": "I will return my minimum of A and B."
+    },
+    {
+      "start": 1872.48,
+      "end": 1875.48,
+      "text": "If you want to take it in variables and don't use directly,"
+    },
+    {
+      "start": 1875.48,
+      "end": 1877.48,
+      "text": "you can do that."
+    },
+    {
+      "start": 1877.48,
+      "end": 1880.48,
+      "text": "Else, what will you do?"
+    },
+    {
+      "start": 1880.48,
+      "end": 1882.48,
+      "text": "It did not happen."
+    },
+    {
+      "start": 1882.48,
+      "end": 1884.48,
+      "text": "You have got to go for JCD one more time."
+    },
+    {
+      "start": 1884.48,
+      "end": 1890.48,
+      "text": "Then what will you do?"
+    },
+    {
+      "start": 1890.48,
+      "end": 1893.48,
+      "text": "You have got to pass minimum and maximum to it."
+    },
+    {
+      "start": 1893.48,
+      "end": 1894.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1894.48,
+      "end": 1896.48,
+      "text": "Now, what would you do?"
+    },
+    {
+      "start": 1896.48,
+      "end": 1899.48,
+      "text": "JCD."
+    },
+    {
+      "start": 1899.48,
+      "end": 1902.48,
+      "text": "Pass this."
+    },
+    {
+      "start": 1902.48,
+      "end": 1905.48,
+      "text": "And pass this."
+    },
+    {
+      "start": 1905.48,
+      "end": 1907.48,
+      "text": "Whatever you got it later."
+    },
+    {
+      "start": 1907.48,
+      "end": 1908.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1908.48,
+      "end": 1910.48,
+      "text": "Minimum of A plus B."
+    },
+    {
+      "start": 1910.48,
+      "end": 1911.48,
+      "text": "Okay."
+    },
+    {
+      "start": 1911.48,
+      "end": 1913.48,
+      "text": "Would you pass minimum of A plus B?"
+    },
+    {
+      "start": 1913.48,
+      "end": 1916.48,
+      "text": "Or would you pass the modulo value?"
+    },
+    {
+      "start": 1916.48,
+      "end": 1918.48,
+      "text": "You will pass the modulo value."
+    },
+    {
+      "start": 1918.48,
+      "end": 1920.48,
+      "text": "So, you will repeat this again."
+    },
+    {
+      "start": 1920.48,
+      "end": 1923.48,
+      "text": "You will pass one maximum,"
+    },
+    {
+      "start": 1923.48,
+      "end": 1927.48,
+      "text": "comma, this modulo value."
+    },
+    {
+      "start": 1927.48,
+      "end": 1928.48,
+      "text": "Correct."
+    },
+    {
+      "start": 1928.48,
+      "end": 1929.48,
+      "text": "No."
+    },
+    {
+      "start": 1929.48,
+      "end": 1931.48,
+      "text": "Every time you are doing modulo,"
+    },
+    {
+      "start": 1931.48,
+      "end": 1932.48,
+      "text": "and then passing that value."
+    },
+    {
+      "start": 1932.48,
+      "end": 1934.48,
+      "text": "Every time you are doing modulo,"
+    },
+    {
+      "start": 1934.48,
+      "end": 1938.48,
+      "text": "you are doing the value."
+    },
+    {
+      "start": 1938.48,
+      "end": 1940.48,
+      "text": "JCD."
+    },
+    {
+      "start": 1940.48,
+      "end": 1943.48,
+      "text": "8 and 12."
+    },
+    {
+      "start": 1943.48,
+      "end": 1945.48,
+      "text": "First step."
+    },
+    {
+      "start": 1945.48,
+      "end": 1947.48,
+      "text": "Find minimum."
+    },
+    {
+      "start": 1947.48,
+      "end": 1950.48,
+      "text": "Find maximum."
+    },
+    {
+      "start": 1950.48,
+      "end": 1952.48,
+      "text": "Second step."
+    },
+    {
+      "start": 1952.48,
+      "end": 1954.48,
+      "text": "Check."
+    },
+    {
+      "start": 1954.48,
+      "end": 1957.48,
+      "text": "What do you need to check?"
+    },
+    {
+      "start": 1957.48,
+      "end": 1963.48,
+      "text": "If maximum modulo minimum is equal to 0."
+    },
+    {
+      "start": 1963.48,
+      "end": 1966.48,
+      "text": "If yes, return minimum."
+    },
+    {
+      "start": 1966.48,
+      "end": 1968.48,
+      "text": "If no."
+    },
+    {
+      "start": 1968.48,
+      "end": 1972.48,
+      "text": "Then what will you do?"
+    },
+    {
+      "start": 1972.48,
+      "end": 1975.48,
+      "text": "You call your JCD again."
+    },
+    {
+      "start": 1975.48,
+      "end": 1979.48,
+      "text": "Now, at this time, will you pass 8 and 12 to it?"
+    },
+    {
+      "start": 1979.48,
+      "end": 1980.48,
+      "text": "No."
+    },
+    {
+      "start": 1980.48,
+      "end": 1983.48,
+      "text": "What will you pass?"
+    },
+    {
+      "start": 1983.48,
+      "end": 1985.48,
+      "text": "12 you reduced."
+    },
+    {
+      "start": 1985.48,
+      "end": 1987.48,
+      "text": "How did you reduce?"
+    },
+    {
+      "start": 1987.48,
+      "end": 1989.48,
+      "text": "Modulo."
+    },
+    {
+      "start": 1989.48,
+      "end": 1990.48,
+      "text": "So, 8."
+    },
+    {
+      "start": 1990.48,
+      "end": 1991.48,
+      "text": "What will you pass?"
+    },
+    {
+      "start": 1991.48,
+      "end": 1993.48,
+      "text": "This will be the minimum."
+    },
+    {
+      "start": 1993.48,
+      "end": 1995.48,
+      "text": "Whatever the thing is."
+    },
+    {
+      "start": 1995.48,
+      "end": 1997.48,
+      "text": "And which will you pass 12?"
+    },
+    {
+      "start": 1997.48,
+      "end": 1999.48,
+      "text": "12 modulo."
+    },
+    {
+      "start": 1999.48,
+      "end": 2002.48,
+      "text": "I will write here so that you understand."
+    },
+    {
+      "start": 2002.48,
+      "end": 2004.48,
+      "text": "This will go."
+    },
+    {
+      "start": 2004.48,
+      "end": 2006.48,
+      "text": "Again, I will receive this."
+    },
+    {
+      "start": 2006.48,
+      "end": 2007.48,
+      "text": "Now, what will I receive?"
+    },
+    {
+      "start": 2007.48,
+      "end": 2009.48,
+      "text": "8 and 4."
+    },
+    {
+      "start": 2009.48,
+      "end": 2010.48,
+      "text": "I will find minimum."
+    },
+    {
+      "start": 2010.48,
+      "end": 2011.48,
+      "text": "I will find maximum."
+    },
+    {
+      "start": 2011.48,
+      "end": 2015.48,
+      "text": "Then, 8 modulo 4 equal to 0."
+    },
+    {
+      "start": 2015.48,
+      "end": 2018.48,
+      "text": "Yes, return 4."
+    },
+    {
+      "start": 2018.48,
+      "end": 2021.48,
+      "text": "Okay, this is what you have got to do in JCD."
+    },
+    {
+      "start": 2021.48,
+      "end": 2024.48,
+      "text": "Just write a recursion for this."
+    },
+    {
+      "start": 2024.48,
+      "end": 2028.48,
+      "text": "This is an algorithm."
+    },
+    {
+      "start": 2028.48,
+      "end": 2031.48,
+      "text": "Usits algorithm is what they call it as."
+    },
+    {
+      "start": 2031.48,
+      "end": 2033.48,
+      "text": "To find a JCD."
+    },
+    {
+      "start": 2033.48,
+      "end": 2036.48,
+      "text": "If you want, I can show you."
+    },
+    {
+      "start": 2036.48,
+      "end": 2045.48,
+      "text": "We will write a JCD also."
+    },
+    {
+      "start": 2045.48,
+      "end": 2050.48,
+      "text": "In A, in B."
+    },
+    {
+      "start": 2050.48,
+      "end": 2063.48,
+      "text": "So, first let me check."
+    },
+    {
+      "start": 2063.48,
+      "end": 2066.48,
+      "text": "You can do it straight."
+    },
+    {
+      "start": 2066.48,
+      "end": 2070.48,
+      "text": "But, I am just doing it so that you understand"
+    },
+    {
+      "start": 2070.48,
+      "end": 2073.48,
+      "text": "when you are reading the code."
+    },
+    {
+      "start": 2101.48,
+      "end": 2103.48,
+      "text": "So, this is what you have got to do."
+    },
+    {
+      "start": 2103.48,
+      "end": 2106.48,
+      "text": "You can do it straight."
+    },
+    {
+      "start": 2106.48,
+      "end": 2110.48,
+      "text": "Now, what you have got to do is write here."
+    },
+    {
+      "start": 2110.48,
+      "end": 2114.48,
+      "text": "And this is what you have got to do."
+    },
+    {
+      "start": 2114.48,
+      "end": 2117.48,
+      "text": "So, I will write here."
+    },
+    {
+      "start": 2117.48,
+      "end": 2120.48,
+      "text": "I will write here."
+    },
+    {
+      "start": 2120.48,
+      "end": 2124.48,
+      "text": "I will write here."
+    },
+    {
+      "start": 2124.48,
+      "end": 2137.72,
+      "text": "Okay, this is my GCD code."
+    },
+    {
+      "start": 2137.72,
+      "end": 2142.52,
+      "text": "See check whether it's working."
+    },
+    {
+      "start": 2142.52,
+      "end": 2151.56,
+      "text": "Now the biggest question comes, when will you use JCD, when will you use your LCM?"
+    },
+    {
+      "start": 2151.56,
+      "end": 2156.04,
+      "text": "So there are two types of problems that we have."
+    },
+    {
+      "start": 2156.04,
+      "end": 2163.0,
+      "text": "One problem talks about sharing stuff equally."
+    },
+    {
+      "start": 2163.0,
+      "end": 2173.16,
+      "text": "So whenever you guys have got to divide, it can be time, it can be commodities, it can"
+    },
+    {
+      "start": 2173.16,
+      "end": 2181.08,
+      "text": "be anything where the question says divide all these things among people equally."
+    },
+    {
+      "start": 2181.08,
+      "end": 2189.68,
+      "text": "At that time you should keep it in mind that you have got to do what JCD, okay."
+    },
+    {
+      "start": 2189.68,
+      "end": 2206.2,
+      "text": "When it comes to timing, scheduling, time intervals, okay, one is running from 30th speed,"
+    },
+    {
+      "start": 2206.2,
+      "end": 2223.84,
+      "text": "so whenever it is timing scheduler intervals and they talk about a meeting point or they talk"
+    },
+    {
+      "start": 2223.84,
+      "end": 2235.76,
+      "text": "about an intersection point, it means that you are asked to find the LCM."
+    },
+    {
+      "start": 2235.76,
+      "end": 2249.92,
+      "text": "Then equally JCD, timing intervals, scheduling, so OS may round Robin, okay, shortest job"
+    },
+    {
+      "start": 2249.92,
+      "end": 2258.32,
+      "text": "first, all those things, what are you going to do with LCM, scheduling algorithms."
+    },
+    {
+      "start": 2258.32,
+      "end": 2264.8,
+      "text": "You have a string, you have to reverse a string using recursion."
+    },
+    {
+      "start": 2265.8,
+      "end": 2289.64,
+      "text": "Reverse a string means what, print I, A, B, I, M, X, A, L, I, N, A, R."
+    },
+    {
+      "start": 2289.64,
+      "end": 2294.44,
+      "text": "Now comes one more aspect of recursion."
+    },
+    {
+      "start": 2294.44,
+      "end": 2304.52,
+      "text": "Make the problem extremely small, solve that problem and repeat it for next, what does"
+    },
+    {
+      "start": 2304.52,
+      "end": 2308.08,
+      "text": "it mean, okay."
+    },
+    {
+      "start": 2308.08,
+      "end": 2315.96,
+      "text": "Right now we will do that later, let's talk about dog right now, it is easier to follow."
+    },
+    {
+      "start": 2316.96,
+      "end": 2327.2,
+      "text": "Make a problem small, this string is made up of how many characters, I will reduce this"
+    },
+    {
+      "start": 2327.2,
+      "end": 2343.64,
+      "text": "problem to a one character O or D, what is reverse of this D, so if I have to print a reverse"
+    },
+    {
+      "start": 2343.64,
+      "end": 2352.48,
+      "text": "of this, is this also a string, yes, if I have to print a reverse of a string whose length"
+    },
+    {
+      "start": 2352.48,
+      "end": 2362.96,
+      "text": "is equal to 1, what will I do, give the same back, so the first base condition becomes"
+    },
+    {
+      "start": 2362.96,
+      "end": 2381.0,
+      "text": "if str dot length is equal to 1, what do you need to return, return str, is this understood."
+    },
+    {
+      "start": 2381.0,
+      "end": 2390.84,
+      "text": "So, we make the problem small, reduce it to its minimum size and see how will you solve,"
+    },
+    {
+      "start": 2390.84,
+      "end": 2401.56,
+      "text": "this is how you will solve, now let's make the problem a little bigger, one step, okay."
+    },
+    {
+      "start": 2401.56,
+      "end": 2414.2,
+      "text": "This is my string, what is the output O D, okay."
+    },
+    {
+      "start": 2414.2,
+      "end": 2429.16,
+      "text": "Now how will I print this O D, is the question correct, this I need to solve, fine."
+    },
+    {
+      "start": 2430.16,
+      "end": 2438.64,
+      "text": "I am saying in recursion, I can get it as, now what tools are available for me, you can send"
+    },
+    {
+      "start": 2438.64,
+      "end": 2448.84,
+      "text": "to God, okay, then you can send to O D, I can send to you, I can send to you, I can send to you,"
+    },
+    {
+      "start": 2448.84,
+      "end": 2454.64,
+      "text": "I can send to you in the second column, how to subtract, then what can you send, D send to you,"
+    },
+    {
+      "start": 2454.64,
+      "end": 2465.52,
+      "text": "now what will happen, you have become a length, one, correct, I will return, returning, what am I"
+    },
+    {
+      "start": 2465.52,
+      "end": 2475.88,
+      "text": "getting back, D, correct, now when I return here and get, I get my D back, this is my input"
+    },
+    {
+      "start": 2475.88,
+      "end": 2492.04,
+      "text": "parameter O D, how will I construct D O, return parameter plus first letter of input parameter,"
+    },
+    {
+      "start": 2492.04,
+      "end": 2504.16,
+      "text": "yes, so what will it become, return parameter plus first letter of input parameter, so"
+    },
+    {
+      "start": 2504.16,
+      "end": 2516.8,
+      "text": "Kaban Gavo, D O, D O Kiskebaz Gya, what is the return parameter, D O, what is the first parameter of"
+    },
+    {
+      "start": 2516.8,
+      "end": 2527.84,
+      "text": "input string, G, so what will I make it, again it became dog, it has to become dog, what we were"
+    },
+    {
+      "start": 2527.84,
+      "end": 2539.28,
+      "text": "trying to, we got God and we converted into what dog, nice, I can, nice, I can, nice,"
+    },
+    {
+      "start": 2539.28,
+      "end": 2547.6,
+      "text": "I can, this make an important string, when do you want to take a action, jadevak ki vapasatevak,"
+    },
+    {
+      "start": 2547.92,
+      "end": 2559.12,
+      "text": "reverse my case in an action, coming back, okay, I am sending good, then I can send to it what,"
+    },
+    {
+      "start": 2560.08,
+      "end": 2565.68,
+      "text": "O D, then I can send to it, O D, then I will send D to it, I will have to stop here,"
+    },
+    {
+      "start": 2566.88,
+      "end": 2575.76,
+      "text": "what comes back, D, then what do I need to do, D, return parameter plus input parameter, return"
+    },
+    {
+      "start": 2575.84,
+      "end": 2590.0,
+      "text": "back O D here, or sorry, D O, then return parameter plus first, D O O, return parameter plus"
+    },
+    {
+      "start": 2590.88,
+      "end": 2602.0,
+      "text": "first parameter, what will it go as, so am I working when I am passing the substring or am I"
+    },
+    {
+      "start": 2602.0,
+      "end": 2609.52,
+      "text": "working when I am getting the answer from the substring, getting on the return time, so let's try to"
+    },
+    {
+      "start": 2609.52,
+      "end": 2630.56,
+      "text": "check this first, okay, I will just remove all this, now we will say void, or do you want to pass a"
+    },
+    {
+      "start": 2630.56,
+      "end": 2643.52,
+      "text": "string, string, reverse is taking a string STR, reverse I will do it, let's see how do we pass"
+    },
+    {
+      "start": 2643.52,
+      "end": 2657.2,
+      "text": "a, k, kum, kse, okay, so if STR dot length becomes empty is equal to 0, I will return,"
+    },
+    {
+      "start": 2660.96,
+      "end": 2673.36,
+      "text": "return empty, or a minute root job, first we will learn basic, we will go reverse, void,"
+    },
+    {
+      "start": 2677.04,
+      "end": 2683.6,
+      "text": "okay, so if the string becomes empty, I return from there, otherwise I am going to print the string as"
+    },
+    {
+      "start": 2683.6,
+      "end": 2702.4,
+      "text": "it is, see out STR and L, okay, and then I am going to return ref STR dot substring one,"
+    },
+    {
+      "start": 2702.4,
+      "end": 2713.6,
+      "text": "first let's try to understand what would this do, okay, I am passing here hello,"
+    },
+    {
+      "start": 2716.48,
+      "end": 2724.72,
+      "text": "don't go inside, what will I print guys, hello, and then I will give a call with a substring,"
+    },
+    {
+      "start": 2724.72,
+      "end": 2733.52,
+      "text": "one, one means from first index, that means I am passing what to it, hello, hello is a STR substring,"
+    },
+    {
+      "start": 2734.72,
+      "end": 2745.2,
+      "text": "it comes here, I don't go here, I print hello, then I pass what, L, L, O, then I print L, L, L, O,"
+    },
+    {
+      "start": 2745.2,
+      "end": 2754.32,
+      "text": "then I pass L, O, then I print L, O, then I pass O, I print O, then I pass empty string,"
+    },
+    {
+      "start": 2755.36,
+      "end": 2760.48,
+      "text": "and then I start returning from there, now the work has been done when while going,"
+    },
+    {
+      "start": 2761.36,
+      "end": 2767.28,
+      "text": "not while coming back, correct, so let's try to check this, how does this look like,"
+    },
+    {
+      "start": 2767.28,
+      "end": 2785.28,
+      "text": "many, many is miracle, ref, hello, old."
+    },
+    {
+      "start": 2798.24,
+      "end": 2807.28,
+      "text": "Please try to understand how string is going, string goes in a very beautiful manner,"
+    },
+    {
+      "start": 2813.52,
+      "end": 2821.12,
+      "text": "just printing it, doing nothing with it, okay, I'll be supposed,"
+    },
+    {
+      "start": 2821.12,
+      "end": 2831.44,
+      "text": "before we go to reverse, let's do any primitive things, how do I calculate the length of a string,"
+    },
+    {
+      "start": 2834.56,
+      "end": 2844.56,
+      "text": "every time while going or while coming back, going also you can do, yes, you can do,"
+    },
+    {
+      "start": 2844.56,
+      "end": 2860.96,
+      "text": "so I will make here, just don't skip string length,"
+    },
+    {
+      "start": 2875.36,
+      "end": 2880.96,
+      "text": "I'm just checking if string is empty, then I should give 0, this much I know, one case I know,"
+    },
+    {
+      "start": 2884.64,
+      "end": 2894.56,
+      "text": "okay, for the other times, every time the method is getting cold, I will add one to it,"
+    },
+    {
+      "start": 2895.12,
+      "end": 2910.08,
+      "text": "every time I will substring, I will go to O, then it will go to empty string,"
+    },
+    {
+      "start": 2911.2,
+      "end": 2915.6,
+      "text": "correct, at empty string, I am saying 0 goes over here,"
+    },
+    {
+      "start": 2916.32,
+      "end": 2925.92,
+      "text": "what is the return type I'm getting, 0, but this is 1, so I will add return to 1,"
+    },
+    {
+      "start": 2928.32,
+      "end": 2937.52,
+      "text": "this will give 1, I will add return to 1, this becomes 2, I will add return to 1,"
+    },
+    {
+      "start": 2938.08,
+      "end": 2946.16,
+      "text": "and ultimately it gives me what, 3, so I know one case, I only need to design the another case,"
+    },
+    {
+      "start": 2946.16,
+      "end": 2954.24,
+      "text": "I know if it is empty, I have to pass 0, and whenever anybody is giving a call, I have to say plus"
+    },
+    {
+      "start": 2954.24,
+      "end": 2963.28,
+      "text": "1 to whatever, I have to add plus 1 to it, whatever is the return value, I have to add plus 1 to it,"
+    },
+    {
+      "start": 2963.76,
+      "end": 2968.08,
+      "text": "okay, so now I will just say, see out,"
+    },
+    {
+      "start": 2982.88,
+      "end": 2986.32,
+      "text": "11 it is giving me, it is even counting what the space in it,"
+    },
+    {
+      "start": 2988.64,
+      "end": 2991.76,
+      "text": "if I increase the space, obviously it will give me more,"
+    },
+    {
+      "start": 2993.44,
+      "end": 3005.68,
+      "text": "19, okay, this is the caro subjun, I will give you a variation,"
+    },
+    {
+      "start": 3011.28,
+      "end": 3012.8,
+      "text": "I will just give you base condition,"
+    },
+    {
+      "start": 3016.0,
+      "end": 3021.12,
+      "text": "okay, how do you send the substring, how do you go down, then how do you come up,"
+    },
+    {
+      "start": 3022.08,
+      "end": 3029.04,
+      "text": "okay, okay, return value, so then you will understand how to write code, okay,"
+    },
+    {
+      "start": 3030.8,
+      "end": 3036.08,
+      "text": "are you able to get the length, all of you, now did you include space and you are getting the length,"
+    },
+    {
+      "start": 3037.52,
+      "end": 3046.48,
+      "text": "now whatever be the string, I want only the number of characters, you will ignore the space,"
+    },
+    {
+      "start": 3051.44,
+      "end": 3055.68,
+      "text": "all these small things will understand how and where are you going to apply your code,"
+    },
+    {
+      "start": 3061.28,
+      "end": 3065.84,
+      "text": "did you want to, oh, I can't see anything, do you understand my question,"
+    },
+    {
+      "start": 3066.96,
+      "end": 3075.04,
+      "text": "hello, so much space world, what should it give you answer, 10, hello world, what should it give you,"
+    },
+    {
+      "start": 3075.84,
+      "end": 3080.24,
+      "text": "10, hello world, what should it give you, still 10,"
+    },
+    {
+      "start": 3081.92,
+      "end": 3088.56,
+      "text": "length of a string means you are including whatever is there between two commas,"
+    },
+    {
+      "start": 3089.92,
+      "end": 3094.72,
+      "text": "I am saying don't give me that, give me only characters, what will you do,"
+    },
+    {
+      "start": 3097.84,
+      "end": 3103.36,
+      "text": "yes, and then only return value, would be conditional return,"
+    },
+    {
+      "start": 3103.36,
+      "end": 3109.84,
+      "text": "a fellow world, so much of gap between, but still when I try to run it,"
+    },
+    {
+      "start": 3113.68,
+      "end": 3122.56,
+      "text": "it gives me 10, if I try to remove this,"
+    },
+    {
+      "start": 3122.56,
+      "end": 3140.32,
+      "text": "it still gives me 10, any kind of combination in recursion we have seen,"
+    },
+    {
+      "start": 3144.4,
+      "end": 3146.8,
+      "text": "is the base condition understood by everybody,"
+    },
+    {
+      "start": 3152.8,
+      "end": 3164.96,
+      "text": "I am going like this, when the length condition is 1, I go back and return what to it be,"
+    },
+    {
+      "start": 3167.76,
+      "end": 3175.68,
+      "text": "then I have to collect what, return parameter with first letter of the input parameter,"
+    },
+    {
+      "start": 3175.76,
+      "end": 3185.36,
+      "text": "so I will say return, what do I need to return,"
+    },
+    {
+      "start": 3188.56,
+      "end": 3191.6,
+      "text": "rev off first, let me build the substring,"
+    },
+    {
+      "start": 3192.4,
+      "end": 3205.52,
+      "text": "so this guy is going to give me back what, this guy is going to give me back D,"
+    },
+    {
+      "start": 3209.76,
+      "end": 3215.2,
+      "text": "and I need to take from the input parameter the first letter,"
+    },
+    {
+      "start": 3215.92,
+      "end": 3223.36,
+      "text": "and then combine them together and return back to my colleague, so"
+    },
+    {
+      "start": 3228.56,
+      "end": 3234.48,
+      "text": "I got the return type, I will take STR of the input parameter,"
+    },
+    {
+      "start": 3245.92,
+      "end": 3258.72,
+      "text": "okay, God called to OD, OD called to D, D is this condition, I come back, give this guy D,"
+    },
+    {
+      "start": 3262.0,
+      "end": 3268.08,
+      "text": "now D is returning, first parameter of the input stream, STR,"
+    },
+    {
+      "start": 3268.08,
+      "end": 3276.0,
+      "text": "combining with the return type, okay,"
+    },
+    {
+      "start": 3285.12,
+      "end": 3294.0,
+      "text": "so what do I return, I return DO, then I take return parameter plus first guy,"
+    },
+    {
+      "start": 3294.0,
+      "end": 3298.88,
+      "text": "D, DO, G,"
+    },
+    {
+      "start": 3307.76,
+      "end": 3315.92,
+      "text": "I got reverse, look at the diagram and then write the code, it makes your life easier,"
+    },
+    {
+      "start": 3316.72,
+      "end": 3323.44,
+      "text": "I will explain you how to do palindrome reverse in recursion manner till that time you think about it,"
+    },
+    {
+      "start": 3327.2,
+      "end": 3337.68,
+      "text": "so I have to do reverse, palindrome, not equal, just palindrome or not,"
+    },
+    {
+      "start": 3337.68,
+      "end": 3347.04,
+      "text": "while going or while coming, while coming back, but the essay, yeah essay,"
+    },
+    {
+      "start": 3350.24,
+      "end": 3360.4,
+      "text": "while returning, not while going, I will tell you how, when you have only one always,"
+    },
+    {
+      "start": 3361.04,
+      "end": 3370.72,
+      "text": "whenever you are talking about recursion, what is the extreme case, I having only one"
+    },
+    {
+      "start": 3372.96,
+      "end": 3382.48,
+      "text": "character, is this palindrome, yes, yes or no, so the base condition would be if"
+    },
+    {
+      "start": 3382.48,
+      "end": 3397.04,
+      "text": "STR dot length equal equal to 1, return what, true, correct no,"
+    },
+    {
+      "start": 3398.24,
+      "end": 3409.44,
+      "text": "this length it becomes what, it is true, correct, now you have to go this character and this"
+    },
+    {
+      "start": 3409.44,
+      "end": 3415.92,
+      "text": "character means what, first character and last character of the substring needs to be compared,"
+    },
+    {
+      "start": 3418.96,
+      "end": 3430.56,
+      "text": "so this is the return condition, main is what, if STR of 0 is equal equal to"
+    },
+    {
+      "start": 3431.04,
+      "end": 3442.48,
+      "text": "STR of STR dot length minus 1, last character, first character is equal to last character,"
+    },
+    {
+      "start": 3442.48,
+      "end": 3454.0,
+      "text": "then return what, true, else return what, false, now the way I have to call them, first"
+    },
+    {
+      "start": 3454.0,
+      "end": 3466.4,
+      "text": "main nithinana ji hai, second call me what should I pass, itin or ITI, ITI, then next"
+    },
+    {
+      "start": 3466.4,
+      "end": 3475.6,
+      "text": "way what should I pass, t, when I go inside, what am I checking for this done, first and last done,"
+    },
+    {
+      "start": 3475.6,
+      "end": 3497.44,
+      "text": "first and last done, this is my first thing, what will I pass to it, substring one, no,"
+    },
+    {
+      "start": 3498.4,
+      "end": 3510.56,
+      "text": "substring one, first kato, last kato, so what will come, q, r, s, r, q, then what will come,"
+    },
+    {
+      "start": 3511.6,
+      "end": 3519.68,
+      "text": "rs are, then what will come, s, this is how you should be invoking it, first and foremost,"
+    },
+    {
+      "start": 3520.4,
+      "end": 3530.72,
+      "text": "now while returning back, is s1, is this palindrome, yes, so what do I pass, I pass true to it,"
+    },
+    {
+      "start": 3534.08,
+      "end": 3543.12,
+      "text": "now the first and the last of the substring, are they equal, yes, so what should I pass to it,"
+    },
+    {
+      "start": 3543.36,
+      "end": 3559.84,
+      "text": "true, again what should I see, first, last equal, yes, again pass what to it, true, first, last"
+    },
+    {
+      "start": 3559.84,
+      "end": 3570.0,
+      "text": "last equal, pass what to it, true, understood, okay, let us try to code this,"
+    },
+    {
+      "start": 3574.56,
+      "end": 3580.88,
+      "text": "I am going to receive a string, if it is one, I will pass true,"
+    },
+    {
+      "start": 3590.72,
+      "end": 3606.96,
+      "text": "if I think my strk 0 is equal to my strk, str dot length minus 1, the last index,"
+    },
+    {
+      "start": 3606.96,
+      "end": 3618.56,
+      "text": "if both of them are also equal, I will pass return true, else what will I pass,"
+    },
+    {
+      "start": 3620.56,
+      "end": 3631.04,
+      "text": "return, if they are not true what will I pass, false, correct, and then I am giving a call"
+    },
+    {
+      "start": 3631.04,
+      "end": 3639.12,
+      "text": "to whom again, rev, now the way I am going to pass the substring, should I pass substring 1,"
+    },
+    {
+      "start": 3640.24,
+      "end": 3648.32,
+      "text": "no, first cut, last cut, so the way substring is written over here in c plus pluses,"
+    },
+    {
+      "start": 3649.92,
+      "end": 3659.6,
+      "text": "it says substring, you pass where you want to begin and pass me how many characters you have,"
+    },
+    {
+      "start": 3663.36,
+      "end": 3666.8,
+      "text": "how many characters you want, that means suppose when I hello vola,"
+    },
+    {
+      "start": 3668.24,
+      "end": 3678.0,
+      "text": "substring 1 to 2, I will start from 1 and how many characters I want only 2, what would be the"
+    },
+    {
+      "start": 3678.0,
+      "end": 3695.44,
+      "text": "output EL, if I say 4 characters, ELLO understood, okay, so now I need to check how will I pass my substring"
+    },
+    {
+      "start": 3695.44,
+      "end": 3703.04,
+      "text": "or how will I invoke this method such that I get to pass or my output is,"
+    },
+    {
+      "start": 3703.04,
+      "end": 3713.44,
+      "text": "so what will I say, I have substring, substring 1, how many characters I have sent,"
+    },
+    {
+      "start": 3717.84,
+      "end": 3723.04,
+      "text": "how many characters, 1, 2, 3, how many characters I have sent, total length minus 2,"
+    },
+    {
+      "start": 3725.84,
+      "end": 3730.08,
+      "text": "yes or no, so how many characters will I need,"
+    },
+    {
+      "start": 3731.04,
+      "end": 3738.24,
+      "text": "STR dot length minus 2, minus 2, why did I come,"
+    },
+    {
+      "start": 3740.32,
+      "end": 3746.48,
+      "text": "I have two characters, so how many characters I will do, so how many will I save,"
+    },
+    {
+      "start": 3746.48,
+      "end": 3756.0,
+      "text": "3, how much string length is 5, minus 2, I will give you 3, substring of"
+    },
+    {
+      "start": 3756.0,
+      "end": 3764.24,
+      "text": "1 comma, check whether this is working,"
+    },
+    {
+      "start": 3764.24,
+      "end": 3776.48,
+      "text": "okay, is balance room or something else needs to be corrected,"
+    }
+  ]
+}

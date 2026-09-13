@@ -1,0 +1,24 @@
+{
+  "input_id": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+  "title": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+  "concepts_and_definitions": [
+    "Singly Linked List: A linear data structure where each node contains data and a pointer to the next node.",
+    "Doubly Linked List: A data structure where each node contains data, a pointer to the next node, and a pointer to the previous node, allowing bidirectional traversal.",
+    "Circular Linked List: A linked list where the last node's next pointer references the first node, forming a loop.",
+    "Stack: A LIFO (Last-In, First-Out) data structure supporting push, pop, and peek operations, implemented here using both arrays and linked lists.",
+    "Infix to Postfix Conversion: An algorithm to convert arithmetic expressions from standard notation to reverse Polish notation using a stack."
+  ],
+  "mechanisms_and_formulas": [
+    "Node Insertion (Singly/Doubly): Dynamically allocate a new node, traverse to the tail, and update the next (and prev for doubly) pointers to link the new node.",
+    "Node Deletion: Identify the target node, adjust the previous node's next pointer to skip the target, and deallocate the memory of the removed node.",
+    "Stack Push/Pop (Array): Increment/decrement the top index and assign/retrieve the value at arr[top], checking for overflow (top == max) or underflow (top == -1).",
+    "Infix to Postfix Algorithm: Scan left-to-right; push operators onto the stack, pop operators with higher or equal precedence, and output operands directly to the result string."
+  ],
+  "examples_and_code_patterns": [
+    "C++ Class Implementation: Use of `class Node` with `int data` and `Node* next`/`prev` pointers, and a wrapper class (e.g., `SinglyLinkedList`) managing the `head` pointer.",
+    "Traversal Logic: `while (temp != NULL)` loops for forward traversal and `while (temp->next != NULL)` followed by backward `prev` traversal for doubly linked lists.",
+    "Stack Array Pattern: `arr[++top] = val` for push and `arr[top--]` for pop, with explicit boundary checks for stack overflow and underflow.",
+    "Circular List Logic: Maintaining a `tail` pointer where `tail->next` points to the head, and using `do-while` loops for traversal to handle the circular nature."
+  ],
+  "factual_summary_text": "The provided material presents C++ implementations for fundamental linear data structures, specifically focusing on various types of linked lists and stacks. It details the creation, insertion, deletion, and traversal of Singly, Doubly, and Circular Linked Lists. For Singly Linked Lists, the code demonstrates dynamic node allocation and pointer manipulation to maintain list integrity. Doubly Linked List implementations include logic for bidirectional traversal by adjusting both `prev` and `next` pointers during insertion and deletion. Circular Linked List operations utilize a `tail` pointer to efficiently manage the loop structure, ensuring the last node always points back to the first.\n\nAdditionally, the material covers the implementation of Stacks using both static arrays and Singly Linked Lists. The array-based stack uses an index pointer (`top`) to manage the stack boundary, including checks for overflow and underflow. The linked-list-based stack leverages the head of the list as the top, allowing O(1) push and pop operations by inserting and deleting nodes at the beginning. Finally, the content introduces the algorithm for converting Infix expressions to Postfix notation, utilizing a stack to manage operator precedence and parentheses during the left-to-right scanning process."
+}

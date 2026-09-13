@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "Which of the following best describes the correct application of binary search to find the longest common prefix among a list of strings?",
+      "option_a": "Apply binary search on the characters of the first string, comparing each character with corresponding characters in all strings.",
+      "option_b": "Use binary search on the length of the prefix, checking if all strings share a common prefix of that length.",
+      "option_c": "Perform binary search on the set of strings sorted lexicographically to find the longest common prefix.",
+      "option_d": "Apply binary search on the number of strings, halving the list until only one string remains.",
+      "correct_option": "B",
+      "explanation": "Binary search is applied to the range of possible prefix lengths, not to individual characters. Option B correctly describes this approach. Option A incorrectly applies binary search to characters without considering string length boundaries, leading to out-of-bounds errors. Option C misinterprets binary search on sorted strings, which does not help find a common prefix. Option D is unrelated to the problem.",
+      "target_concept": "Longest Common Prefix - Binary Search Approach",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In a brute-force implementation of longest common prefix, which change would most effectively fix the logical error caused by missing boundary checks?",
+      "option_a": "Add a check to ensure the inner loop does not exceed the length of the current string.",
+      "option_b": "Remove the outer loop over strings and only compare the first two strings.",
+      "option_c": "Replace the nested loops with a single loop that iterates over characters of the first string.",
+      "option_d": "Increase the time complexity by adding an extra nested loop over all strings.",
+      "correct_option": "A",
+      "explanation": "The logical error arises because the inner loop can iterate past the end of a string. Adding a boundary check (option A) ensures the loop stops at the string\u2019s length, fixing the bug. Option B ignores necessary comparisons, option C removes essential comparisons, and option D unnecessarily increases complexity.",
+      "target_concept": "Longest Common Prefix - Brute Force Approach",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "Which of the following best explains why the Java program exhibits a memory leak despite objects going out of scope?",
+      "option_a": "The program holds strong references to objects in a static collection that is never cleared.",
+      "option_b": "The program uses local variables that go out of scope, so objects are automatically garbage collected.",
+      "option_c": "The program creates primitive arrays that are automatically freed by the JVM.",
+      "option_d": "The program uses weak references that prevent the GC from collecting objects.",
+      "correct_option": "A",
+      "explanation": "The memory leak occurs because a static collection holds strong references to objects that are never cleared (option A). Local variables going out of scope (option B) do not prevent GC if no strong references remain. Primitive arrays are automatically freed (option C) but are not the cause. Weak references (option D) actually allow GC to collect objects, so they would not cause a leak.",
+      "target_concept": "Java Memory Management",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S03"
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Which change is most aligned with refactoring the code to follow SOLID principles?",
+      "option_a": "Rename variables to more descriptive names.",
+      "option_b": "Extract a method that encapsulates the validation logic into its own class.",
+      "option_c": "Add more comments to the code.",
+      "option_d": "Duplicate the existing method to handle a new case.",
+      "correct_option": "B",
+      "explanation": "Extracting validation logic into its own class (option B) adheres to SOLID principles, especially Single Responsibility and Open/Closed. Renaming variables (option A) is cosmetic, adding comments (option C) does not refactor, and duplicating methods (option D) violates DRY.",
+      "target_concept": "Code Quality & Refactoring",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S04"
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "In the banana eating problem, why does the greedy strategy of eating the largest bananas first maximize the number of bananas eaten?",
+      "option_a": "Because the total weight limit is high, eating larger bananas uses up capacity quickly.",
+      "option_b": "Because eating smaller bananas first would reduce the number of bananas that can be eaten due to weight constraints.",
+      "option_c": "Because the algorithm sorts bananas by size and picks the smallest first.",
+      "option_d": "Because eating the largest bananas first ensures that the remaining capacity is only one banana.",
+      "correct_option": "B",
+      "explanation": "Eating the largest bananas first maximizes the number of bananas that can be eaten because the weight constraint is tight; choosing smaller bananas first would fill capacity with more weight per banana, reducing the total count (option B). Option A is incorrect because a high capacity would favor smaller bananas. Option C describes the opposite strategy, and option D is nonsensical.",
+      "target_concept": "Banana Eating Problem",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05"
+    }
+  ]
+}

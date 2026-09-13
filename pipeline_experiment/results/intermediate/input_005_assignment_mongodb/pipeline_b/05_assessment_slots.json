@@ -1,0 +1,72 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Aggregation Pipeline Fundamentals",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Explain the purpose and basic structure of an aggregation pipeline, including the flow of documents through stages.",
+    "misconception_target": "Confusing aggregation pipeline stages with standard find query filters",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Aggregation Operators and Stages",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Select and apply appropriate aggregation operators (e.g., $match, $group, $project) to transform a sample dataset as specified.",
+    "misconception_target": "Assuming $match can be used after $group to filter aggregated results",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Performance Tuning for Aggregations",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_ANALYSIS",
+    "assessment_goal": "Analyze an aggregation pipeline to identify performance bottlenecks and recommend indexing or stage reordering.",
+    "misconception_target": "Believing that adding more $match stages always improves performance regardless of index usage",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "E\u2011commerce Data Modeling in MongoDB",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CONCEPTUAL_EXPLANATION",
+    "assessment_goal": "Design an aggregation pipeline that computes total sales per product category using embedded and referenced documents.",
+    "misconception_target": "Treating embedded arrays as separate collections without $unwind",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Business Metrics Derived from Aggregations",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_ANALYSIS",
+    "assessment_goal": "Interpret aggregation results to derive key business metrics such as conversion rate and average order value, and assess their reliability.",
+    "misconception_target": "Confusing count of documents with sum of monetary values when calculating averages",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

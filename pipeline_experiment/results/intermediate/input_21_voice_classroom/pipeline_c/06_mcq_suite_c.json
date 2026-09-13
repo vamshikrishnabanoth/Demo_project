@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_21_voice_classroom",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "What is the primary function of the introductory overview in the live engineering exposition?",
+      "option_a": "To provide detailed implementation instructions for the engineering tasks",
+      "option_b": "To establish the foundational context and high-level structure of the session",
+      "option_c": "To present specific technical formulas required for the subsequent procedures",
+      "option_d": "To list the specific code examples that will be executed during the demonstration",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the overview's role is to set the stage by defining the scope and structure, not to dive into specifics. Option A is a common misconception where students assume the introduction contains the 'how-to' steps. Option C is incorrect because the overview is conceptual, not mathematical. Option D is incorrect because code examples are part of the procedural details, not the introductory framework.",
+      "target_concept": "Lecture Structure and Scope",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.; Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.; Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "Which of the following best describes the content type found in the 'Overview' section of the lecture?",
+      "option_a": "Step-by-step procedural algorithms",
+      "option_b": "Conceptual definitions and high-level context",
+      "option_c": "Detailed implementation code snippets",
+      "option_d": "Specific engineering calculation formulas",
+      "correct_option": "B",
+      "explanation": "Option B is correct as the overview focuses on conceptual definitions to establish context. Option A is incorrect because procedural steps are detailed later. Option C is incorrect because code is a procedural element, not an overview element. Option D is incorrect because formulas are technical specifics, not introductory concepts.",
+      "target_concept": "Content Classification in Lectures",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.; Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.; Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "In the context of the live engineering exposition, what is the relationship between the 'Overview' and the 'Procedural Steps'?",
+      "option_a": "The overview contains the specific steps that are summarized in the procedural section",
+      "option_b": "The overview provides the foundational context for the procedural steps that follow",
+      "option_c": "The procedural steps are a prerequisite for understanding the overview",
+      "option_d": "The overview and procedural steps are independent and unrelated sections",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the overview sets the stage (context) for the procedures. Option A reverses the relationship. Option C is incorrect because the overview comes first and provides the necessary background. Option D is incorrect because the sections are structurally linked in a logical flow.",
+      "target_concept": "Logical Flow of Technical Presentations",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.; Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.; Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Why is it pedagogically important to distinguish the 'Overview' from the 'Specific Technical Procedures' in this lecture?",
+      "option_a": "To ensure students do not attempt to apply specific formulas before understanding the high-level scope",
+      "option_b": "Because the overview contains all the necessary code for the engineering tasks",
+      "option_c": "Because the procedural steps are only relevant to advanced students, not the overview",
+      "option_d": "To allow students to skip the overview and go directly to the implementation details",
+      "correct_option": "A",
+      "explanation": "Option A is correct because understanding the scope (overview) is a prerequisite for correctly applying the specific procedures. Option B is factually incorrect regarding the content of the overview. Option C is incorrect as the overview is for all students. Option D is incorrect as skipping the overview leads to a lack of context.",
+      "target_concept": "Pedagogical Sequencing",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.; Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.; Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Which of the following is NOT a characteristic of the 'Overview' section as presented in the live engineering exposition?",
+      "option_a": "It establishes the foundational context for the session",
+      "option_b": "It introduces the high-level structure of the exposition",
+      "option_c": "It provides detailed implementation instructions for the engineering tasks",
+      "option_d": "It defines the scope of the subsequent technical procedures",
+      "correct_option": "C",
+      "explanation": "Option C is the correct answer because the overview does NOT provide detailed implementation instructions; that is the role of the procedural section. Options A, B, and D are all correct characteristics of the overview section.",
+      "target_concept": "Section-Specific Content Boundaries",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.; Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.; Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+    }
+  ]
+}

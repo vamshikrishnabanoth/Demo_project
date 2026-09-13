@@ -1,0 +1,91 @@
+{
+  "blueprint_id": "BP_input_12_tapadia_buy_and_sell_stock",
+  "input_id": "input_12_tapadia_buy_and_sell_stock",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Problem Definition and Constraints",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Array basics",
+        "Problem constraints definition"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Brute Force Approach",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "EXPLAIN"
+      ],
+      "dominant_mode": "ALGORITHMIC_ANALYSIS",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Nested loops",
+        "Time complexity O(n^2)"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Optimized Single Transaction Solution",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Single pass iteration",
+        "Tracking minimum value",
+        "Max profit calculation"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Infinite Transactions Strategy",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "COMPARE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Greedy algorithm logic",
+        "Summing positive differences"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Dynamic Programming Generalization",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "EXPLAIN",
+        "APPLY"
+      ],
+      "dominant_mode": "ALGORITHMIC_GENERALIZATION",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Dynamic Programming states",
+        "Recurrence relations",
+        "State transition"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "HIGH"
+    }
+  ]
+}

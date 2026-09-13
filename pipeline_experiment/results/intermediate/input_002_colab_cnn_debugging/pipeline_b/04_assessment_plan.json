@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_002_colab_cnn_debugging",
+  "input_id": "input_002_colab_cnn_debugging",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Convolutional Layer Configuration in PyTorch",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Pooling Layers and Multi\u2011layer CNN Architecture",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+      "question_count": 2,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Training Loop, Loss Function, and Optimizer in PyTorch",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

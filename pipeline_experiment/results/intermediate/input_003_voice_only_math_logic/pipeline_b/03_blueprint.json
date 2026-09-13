@@ -1,0 +1,92 @@
+{
+  "blueprint_id": "BP_input_003_voice_only_math_logic",
+  "input_id": "input_003_voice_only_math_logic",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Least Common Multiple (LCM) Computation",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "EXPLANATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Factors",
+        "Multiples",
+        "Prime Factorization",
+        "Division"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Greatest Common Divisor (GCD) via Euclidean Algorithm",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "EXPLANATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Divisibility",
+        "Modulo Operation",
+        "Recursive Thinking",
+        "Basic Euclidean Algorithm Steps"
+      ],
+      "evidence_refs": [
+        "E_C02"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Implicit Operand Swapping When A < B",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Comparison Operators",
+        "Variable Assignment",
+        "Swapping Technique",
+        "Algorithmic Flow Control"
+      ],
+      "evidence_refs": [
+        "E_C03"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Integer Overflow Prevention in Multiplication/Division",
+      "salience_score": 0.15,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "EXPLANATION",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Integer Representation",
+        "Maximum Integer Value",
+        "Multiplication Overflow",
+        "Division Properties",
+        "Safe Arithmetic Practices"
+      ],
+      "evidence_refs": [
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

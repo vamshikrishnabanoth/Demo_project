@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_17_new_2_deep_dive",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "According to the introductory overview of the advanced technical discussion, what is the primary purpose of establishing the foundational framework?",
+      "option_a": "To provide specific calculation formulas for immediate problem-solving",
+      "option_b": "To establish a common baseline of definitions and context for subsequent activities",
+      "option_c": "To outline the specific technical constraints of a single sub-topic",
+      "option_d": "To present optional background information for advanced students",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the overview's goal is to ensure all students share a common baseline of definitions and context to prevent confusion during complex Q&A. Option A is incorrect because the overview focuses on conceptual definitions, not specific calculation formulas. Option C is incorrect because it confuses the general scope of the lecture with the specific constraints of a single sub-topic. Option D is incorrect because the introductory terms are required vocabulary for the assessment, not optional background information.",
+      "target_concept": "Purpose of Foundational Framework",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.; Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.; Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In the context of the lecture's introductory overview, how should students view the key terminology introduced?",
+      "option_a": "As optional background information that can be ignored if not immediately needed",
+      "option_b": "As required vocabulary necessary for understanding the assessment and problem-solving segments",
+      "option_c": "As specific calculation formulas that must be memorized for numerical problems",
+      "option_d": "As technical constraints that apply only to one specific sub-topic of the lecture",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the overview establishes key terminology as required vocabulary for the assessment. Option A is incorrect because the terms are not optional; they are foundational. Option C is incorrect because the overview contains conceptual definitions, not specific calculation formulas. Option D is incorrect because the terminology applies to the general scope of the lecture, not just a single sub-topic.",
+      "target_concept": "Role of Key Terminology",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.; Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.; Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "What is the primary pedagogical reason for establishing a common baseline of definitions before the complex Q&A segment?",
+      "option_a": "To allow students to skip the problem-solving activities if they find the definitions difficult",
+      "option_b": "To prevent confusion during the complex Q&A and problem-solving segments",
+      "option_c": "To provide specific calculation formulas for immediate application",
+      "option_d": "To limit the discussion to the technical constraints of a single sub-topic",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the teacher's aim is to prevent confusion by ensuring a shared understanding of context and definitions. Option A is incorrect because the baseline is a prerequisite, not a skip condition. Option C is incorrect because the overview does not focus on specific calculation formulas. Option D is incorrect because the baseline covers the general scope, not just a single sub-topic.",
+      "target_concept": "Pedagogical Rationale for Baseline Definitions",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.; Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.; Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Which of the following best describes the content focus of the introductory overview in the advanced technical discussion?",
+      "option_a": "Specific calculation formulas for numerical problem-solving",
+      "option_b": "Conceptual definitions and scope of the technical discussion",
+      "option_c": "Detailed technical constraints of a single sub-topic",
+      "option_d": "Optional background information for advanced learners",
+      "correct_option": "B",
+      "explanation": "The correct answer is B because the overview establishes the scope and key terminology, which are conceptual in nature. Option A is incorrect because the overview does not contain specific calculation formulas. Option C is incorrect because it confuses the general scope with specific sub-topic constraints. Option D is incorrect because the information is required, not optional.",
+      "target_concept": "Content Focus of Overview",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.; Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.; Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Why is it important for students to distinguish between the general scope of the lecture and the specific technical constraints of a single sub-topic during the introductory overview?",
+      "option_a": "To avoid confusion and ensure a common baseline of definitions for the entire discussion",
+      "option_b": "To focus exclusively on the specific technical constraints of one sub-topic",
+      "option_c": "To memorize specific calculation formulas for immediate use",
+      "option_d": "To treat the introductory terms as optional background information",
+      "correct_option": "A",
+      "explanation": "The correct answer is A because distinguishing between general scope and specific constraints helps prevent confusion and ensures a common baseline. Option B is incorrect because the overview covers the general scope, not just one sub-topic. Option C is incorrect because the overview does not focus on specific calculation formulas. Option D is incorrect because the introductory terms are required, not optional.",
+      "target_concept": "Distinguishing General Scope from Specific Constraints",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Overview",
+      "what_taught": "The session introduces the foundational framework for the advanced technical discussion, establishing the scope and key terminology required for subsequent problem-solving activities.",
+      "why_assessed": "The teacher aimed to ensure all students share a common baseline of definitions and context to prevent confusion during the complex Q&A and problem-solving segments.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Assuming the introductory overview contains specific calculation formulas rather than conceptual definitions.; Confusing the general scope of the lecture with the specific technical constraints of a single sub-topic.; Believing the introductory terms are optional background information rather than required vocabulary for the assessment."
+    }
+  ]
+}

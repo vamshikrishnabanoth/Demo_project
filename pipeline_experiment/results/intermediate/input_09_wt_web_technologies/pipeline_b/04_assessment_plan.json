@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_09_wt_web_technologies",
+  "input_id": "input_09_wt_web_technologies",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "File System Operations in Node.js",
+      "question_count": 3,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Node.js Buffer Management",
+      "question_count": 2,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Web Technologies Fundamentals",
+      "question_count": 0,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Network Data Transfer",
+      "question_count": 0,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

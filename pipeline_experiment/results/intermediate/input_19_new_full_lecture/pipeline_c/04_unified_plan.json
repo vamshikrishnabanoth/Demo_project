@@ -1,0 +1,68 @@
+{
+  "input_id": "input_19_new_full_lecture",
+  "title": "Classroom Lecture: Full Conceptual & Code Walkthrough (Audio Recording New)",
+  "total_requested_questions": 5,
+  "total_available_targets": 4,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Course Overview and Lecture Structure",
+      "what_taught_summary": "The lecture is structured as a full conceptual and code walkthrough, beginning with an overview of the course objectives and the specific procedural steps to be covered in the session.",
+      "why_assessed_pedagogy": "To ensure students can identify the scope and sequence of the lesson, allowing them to orient themselves within the broader curriculum and anticipate the flow of the procedural demonstration.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming the lecture focuses solely on theoretical concepts without any code implementation.",
+        "Believing the session is a review of previous topics rather than an introduction to new procedural steps.",
+        "Thinking the lecture structure is non-linear or random rather than a guided walkthrough."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Conceptual Frameworks",
+      "what_taught_summary": "The conceptual frameworks underpinning the procedure are explained, detailing the logical relationships and theoretical principles that justify the subsequent code implementation.",
+      "why_assessed_pedagogy": "To verify that students can articulate the 'why' behind the procedure, ensuring they understand the underlying logic rather than just memorizing steps, which is critical for adapting the solution to new contexts.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Confusing the conceptual framework with the specific syntax of the code.",
+        "Assuming the theoretical principles are optional and not required for the code to function.",
+        "Misinterpreting the relationship between the concepts as sequential rather than interdependent."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Code Implementation and Walkthrough",
+      "what_taught_summary": "A detailed code walkthrough demonstrates the practical implementation of the conceptual frameworks, showing specific syntax, function calls, and data structures used to execute the procedure.",
+      "why_assessed_pedagogy": "To assess the student's ability to translate theoretical understanding into functional code, ensuring they can correctly identify and apply the specific programming constructs demonstrated in the lecture.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Using incorrect syntax or function names that do not match the demonstrated implementation.",
+        "Omitting necessary initialization steps or variable declarations shown in the walkthrough.",
+        "Applying the code logic in the wrong order or context, leading to runtime errors."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Procedural Execution Steps",
+      "what_taught_summary": "The procedural execution steps are outlined, providing a step-by-step guide on how to run, test, and validate the implemented code to achieve the desired outcome.",
+      "why_assessed_pedagogy": "To ensure students can independently execute the procedure, moving from passive observation to active practice, which reinforces retention and builds confidence in handling the workflow.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Skipping validation or testing steps, assuming the code runs correctly without verification.",
+        "Executing steps in an incorrect sequence, such as running code before setting up the environment.",
+        "Failing to interpret output logs correctly, leading to incorrect conclusions about the procedure's success."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

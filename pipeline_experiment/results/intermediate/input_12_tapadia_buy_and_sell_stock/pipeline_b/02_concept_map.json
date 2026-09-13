@@ -1,0 +1,57 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Problem Definition and Constraints",
+    "subtopics": [
+      "Single Transaction Constraint",
+      "Infinite Transactions Constraint",
+      "Input/Output Specification",
+      "Edge Cases (e.g., no profit possible)"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Brute Force Approach",
+    "subtopics": [
+      "Nested Loop Iteration",
+      "Time Complexity Analysis (O(n^2))",
+      "Space Complexity Analysis (O(1))",
+      "Correctness Verification"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Optimized Single Transaction Solution",
+    "subtopics": [
+      "Tracking Minimum Price",
+      "Tracking Maximum Profit",
+      "Single Pass Iteration",
+      "Time Complexity Analysis (O(n))"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Infinite Transactions Strategy",
+    "subtopics": [
+      "Greedy Approach",
+      "Capturing All Positive Differences",
+      "Logical Equivalence to Single Transaction",
+      "Time Complexity Analysis (O(n))"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_05",
+    "topic_name": "Dynamic Programming Generalization",
+    "subtopics": [
+      "State Definition (days, transactions)",
+      "Recurrence Relation",
+      "Space Optimization",
+      "Handling K Transactions"
+    ],
+    "associated_chunk_ids": []
+  }
+]

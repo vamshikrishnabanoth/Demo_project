@@ -1,0 +1,108 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_09_wt_web_technologies",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "In a Node.js application, a developer uses `fs.readFileSync()` to load a large configuration file during the initial startup phase. What is the primary impact of this operation on the Node.js event loop?",
+      "option_a": "The event loop is blocked until the file is completely read, preventing the execution of any other pending callbacks or I/O operations.",
+      "option_b": "The event loop continues to process other events while the file is being read in the background by a separate thread.",
+      "option_c": "The operation is queued in the event loop and executed only after all other synchronous code has finished, but it does not block the loop during execution.",
+      "option_d": "The event loop is paused only for the duration of the disk seek time, but I/O callbacks can still be processed concurrently.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because synchronous file system operations in Node.js (indicated by the 'Sync' suffix) execute on the main thread and block the event loop until the operation completes. This prevents the server from handling any other requests or events during that time. Option B is incorrect because Node.js does not automatically offload synchronous operations to a thread pool; only asynchronous operations use the libuv thread pool. Option C is incorrect because synchronous code executes immediately and blocks the loop, rather than being queued. Option D is incorrect because the blockage is total for the main thread, not just for the disk seek time.",
+      "target_concept": "Synchronous vs Asynchronous File System Operations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "The difference between blocking (sync) and non-blocking (async) I/O in Node.js.",
+      "why_assessed": "To ensure students understand the performance implications of using sync methods in a server environment.",
+      "evidence_refs": [
+        "E_C05",
+        "E_C06"
+      ],
+      "misconception_rationale": "Distractors target the common misconception that Node.js is multi-threaded by default for all operations or that sync operations are non-blocking."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "Consider the following code snippet: `fs.readFile('data.json', (err, data) => { console.log('File loaded'); }); console.log('Script started');`. What is the expected order of console output, and why?",
+      "option_a": "'Script started' is printed first, then 'File loaded', because the callback function is executed only after the asynchronous I/O operation completes.",
+      "option_b": "'File loaded' is printed first, then 'Script started', because the callback is invoked immediately when `fs.readFile` is called.",
+      "option_c": "Both messages are printed simultaneously because the event loop processes the callback and the next line of code in parallel.",
+      "option_d": "'Script started' is printed first, but 'File loaded' is never printed because the callback scope is lost after the function call.",
+      "correct_option": "A",
+      "explanation": "Option A is correct. `fs.readFile` is an asynchronous operation. When called, it initiates the I/O process and returns immediately. The callback function is registered to be executed later, once the file is read. Therefore, the next line `console.log('Script started')` executes before the callback. Option B is incorrect because it assumes the callback executes synchronously. Option C is incorrect because JavaScript is single-threaded; it does not execute lines in parallel. Option D is incorrect because the callback retains its closure and will execute when the event loop reaches it.",
+      "target_concept": "Asynchronous Callback Execution Order",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The timing of callback execution relative to the calling function.",
+      "why_assessed": "To verify understanding of the non-blocking nature of async functions and the event loop's role in scheduling callbacks.",
+      "evidence_refs": [
+        "E_C08",
+        "E_C09"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that callbacks execute immediately or that JS execution is parallel."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "A developer needs to append new log entries to an existing file without overwriting the previous content. Which flag should be passed to the `fs.open()` method to achieve this behavior?",
+      "option_a": "'r' (Read only)",
+      "option_b": "'w' (Write, truncating the file if it exists)",
+      "option_c": "'a' (Append, creating the file if it does not exist)",
+      "option_d": "'x' (Exclusive creation, failing if the file already exists)",
+      "correct_option": "C",
+      "explanation": "Option C is correct. The 'a' flag opens the file for appending. If the file exists, the write position is set to the end of the file. If it does not exist, it is created. Option A is incorrect because 'r' is read-only and does not allow writing. Option B is incorrect because 'w' truncates the file to zero length if it exists, which would delete previous logs. Option D is incorrect because 'x' is used for exclusive creation and will throw an error if the file already exists, which is not the desired behavior for logging.",
+      "target_concept": "File System Open Flags",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03",
+      "what_taught": "The specific behaviors of file access flags like 'r', 'w', 'a', and 'x'.",
+      "why_assessed": "To test the ability to select the correct file mode for specific I/O requirements.",
+      "evidence_refs": [
+        "E_C10"
+      ],
+      "misconception_rationale": "Distractors target confusion between write modes (truncate vs append) and read-only modes."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Why is the `Buffer` class preferred over standard JavaScript `String` objects when handling binary data, such as images or network packets, in Node.js?",
+      "option_a": "Strings are immutable and cannot be modified, whereas Buffers allow in-place modification of binary data.",
+      "option_b": "Strings are UTF-8 encoded by default, which can corrupt binary data that does not conform to valid character sequences, whereas Buffers handle raw bytes directly.",
+      "option_c": "Buffers are stored in the heap memory, making them faster to access than Strings which are stored on the stack.",
+      "option_d": "Strings cannot hold more than 255 characters, while Buffers can hold arbitrary amounts of data.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. JavaScript Strings are sequences of UTF-16 code units. When binary data (which may contain invalid UTF-16 sequences) is converted to a String, it can lead to data corruption or unexpected behavior due to encoding/decoding processes. Buffers represent raw byte sequences, allowing for safe and efficient manipulation of binary data. Option A is incorrect because while Strings are immutable, the primary issue with binary data is encoding, not mutability. Option C is incorrect because both Strings and Buffers are heap-allocated objects in V8. Option D is incorrect because Strings can hold much more than 255 characters.",
+      "target_concept": "Buffer vs String for Binary Data",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S04",
+      "what_taught": "The necessity of Buffers for binary data due to String encoding constraints.",
+      "why_assessed": "To ensure students understand the data integrity risks of using Strings for non-textual data.",
+      "evidence_refs": [
+        "E_C11",
+        "E_C13"
+      ],
+      "misconception_rationale": "Distractors target misconceptions about memory location, mutability, and length limits of Strings."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "When creating a small Buffer in Node.js (e.g., `Buffer.alloc(10)`), how does the runtime manage memory allocation to optimize performance?",
+      "option_a": "It always allocates a new, isolated block of memory on the heap for every Buffer creation, regardless of size.",
+      "option_b": "It reuses memory from a pre-allocated pool for small buffers, reducing the overhead of frequent heap allocations.",
+      "option_c": "It allocates memory on the stack to ensure faster access, similar to primitive types.",
+      "option_d": "It requests memory from the operating system for each Buffer, which is the most efficient method for small allocations.",
+      "correct_option": "B",
+      "explanation": "Option B is correct. Node.js uses a memory pool (typically 8KB) to allocate small Buffers. This avoids the overhead of calling the OS allocator for every small buffer creation, which is a common performance bottleneck. Option A is incorrect because it ignores the pooling mechanism. Option C is incorrect because Buffers are objects and are allocated on the heap, not the stack. Option D is incorrect because frequent OS calls for small allocations are inefficient and slow.",
+      "target_concept": "Buffer Memory Pooling",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S05",
+      "what_taught": "The internal memory management strategy for small Buffer allocations.",
+      "why_assessed": "To test understanding of Node.js performance optimizations and memory management internals.",
+      "evidence_refs": [
+        "E_C14",
+        "E_C15"
+      ],
+      "misconception_rationale": "Distractors target the misconception that every object creation results in a unique, direct OS memory allocation."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Binary Search Algorithm",
+    "subtopics": [
+      "Recursive Implementation",
+      "Iterative Implementation",
+      "Time Complexity Analysis",
+      "Java Code Examples"
+    ],
+    "associated_chunk_ids": [
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Median of Two Sorted Arrays",
+    "subtopics": [
+      "Problem Statement",
+      "Approach for Even/Odd Length Merged Arrays",
+      "Java Implementation",
+      "Input/Output Examples"
+    ],
+    "associated_chunk_ids": [
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C12"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Fixed Point Problem",
+    "subtopics": [
+      "Problem Definition",
+      "Recursive Solution Logic",
+      "Java Implementation",
+      "Test Cases and Output"
+    ],
+    "associated_chunk_ids": [
+      "C08",
+      "C13",
+      "C14",
+      "C15"
+    ]
+  }
+]

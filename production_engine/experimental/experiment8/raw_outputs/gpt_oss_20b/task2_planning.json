@@ -1,0 +1,533 @@
+{
+  "model_id": "openai/gpt-oss-120b",
+  "trials": [
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "Definition of the median in the context of two sorted arrays and the invariant that the combined partition must split the total elements equally",
+            "why_assessed": "Ensures students grasp the fundamental definition before applying algorithms",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Confusing median with average"
+            ]
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "Reasoning behind using binary search on the shorter array to achieve O(log\u202fmin(m,n)) time",
+            "why_assessed": "Tests understanding of why this design yields logarithmic complexity",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_02",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming linear scan is optimal"
+            ]
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "Interpretation of a provided implementation snippet, focusing on index calculations and boundary checks",
+            "why_assessed": "Evaluates ability to read and reason about low\u2011level code details",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_CHILD_001",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Misreading i\u20111 as i+1"
+            ]
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "Given two concrete sorted arrays, predict the exact median value returned by the algorithm",
+            "why_assessed": "Requires tracing the algorithm step\u2011by\u2011step under hard conditions",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_EXAMPLE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Forgetting to handle odd total length"
+            ]
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "Identify and fix a bug where the partition indices can become out of range for empty sub\u2011arrays",
+            "why_assessed": "Develops debugging skills for subtle invariant violations",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_BUG_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming empty array never occurs"
+            ]
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "Handling cases where one array is empty, or all elements of one array are smaller than the other",
+            "why_assessed": "Ensures robustness of the solution on extreme inputs",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_03",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Treating empty array as having median 0"
+            ]
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "Effect of swapping the role of the two input arrays on algorithm correctness and performance",
+            "why_assessed": "Tests understanding of why the shorter array is chosen for binary search",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_04",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Believing swapping changes the result"
+            ]
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "Derivation of O(log\u202fmin(m,n)) time and O(1) space bounds, including worst\u2011case scenario analysis",
+            "why_assessed": "Confirms mastery of asymptotic reasoning for this algorithm",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_05",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Confusing input size with number of partitions"
+            ]
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "Comparison between the binary\u2011search based method and the na\u00efve merge\u2011then\u2011pick approach",
+            "why_assessed": "Highlights trade\u2011offs in time, space, and implementation complexity",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_06",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming both have same runtime"
+            ]
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "Core Methodology (Practical Application)",
+            "assessment_facet": "PRACTICAL_APPLICATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses practical application of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "PRACTICAL_APPLICATION": 1
+        },
+        "cognitive_distribution": {
+          "UNDERSTAND": 1,
+          "ANALYZE": 4,
+          "APPLY": 2,
+          "EVALUATE": 3
+        },
+        "planning_strategy_notes": "Because only one core concept is available, we generated ten assessment targets by probing ten different pedagogical facets of the DAA Median of Two Sorted Arrays problem, ensuring each target is distinct and hard."
+      }
+    },
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "Definition of the problem: given two non\u2011decreasing integer arrays of size m and n, find the median of the combined sorted array in O(log\u202f(m+n)) time.",
+            "why_assessed": "Checks that students can precisely state the problem constraints and expected output.",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Confusing median with mean",
+              "Assuming arrays must be of equal length"
+            ]
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "Derivation of the binary\u2011search partition strategy that guarantees left\u2011side elements \u2264 right\u2011side elements across both arrays.",
+            "why_assessed": "Ensures students grasp why the partition method yields the correct median and why logarithmic time is achievable.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_02",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Believing the algorithm relies on merging the arrays",
+              "Thinking the partition must be exactly at half the total length"
+            ]
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "Implementation details: use of integer division to compute partition indices, handling of edge values with +/-\u221e sentinel, and swapping arrays to ensure binary search on the shorter array.",
+            "why_assessed": "Tests ability to read and explain each line of a reference implementation.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_CODE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Misinterpreting the sentinel values as actual data",
+              "Overlooking the array\u2011swap precondition"
+            ]
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "Step\u2011by\u2011step execution on concrete inputs, e.g., A=[1,3,8], B=[7,9,10,11]; compute partitions and derive median 8.",
+            "why_assessed": "Validates tracing ability and correct calculation of the median from intermediate partition values.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_EXAMPLE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Using the wrong partition index for one array",
+              "Averaging the wrong two numbers when total length is even"
+            ]
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "Common bugs: off\u2011by\u2011one in partition calculation, failure to update low/high correctly, missing handling of empty array.",
+            "why_assessed": "Encourages students to locate and fix logical errors in a faulty implementation.",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_BUG_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming the algorithm never needs to check for empty arrays",
+              "Thinking that decreasing high by 1 always moves the partition left"
+            ]
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "Handling of extreme cases: one array empty, arrays of size 1, total length odd vs even, and maximum integer values.",
+            "why_assessed": "Ensures robustness by testing student reasoning on edge conditions.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_EDGE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Returning the first element of the non\u2011empty array without checking parity",
+              "Using INT_MAX/INT_MIN incorrectly as sentinels"
+            ]
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "Effect of altering input sizes, e.g., doubling one array length, and how the partition indices adapt without changing algorithmic complexity.",
+            "why_assessed": "Tests adaptability of the method when problem parameters vary.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_PARAM_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming time complexity changes with uneven size growth",
+              "Believing the partition formula must be recomputed from scratch"
+            ]
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "Proof that the algorithm runs in O(log\u202fmin(m,n)) time and O(1) extra space, including worst\u2011case scenario analysis.",
+            "why_assessed": "Confirms mastery of asymptotic reasoning specific to this algorithm.",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_ANALYSIS_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Confusing O(log\u202f(m+n)) with O(log\u202fm\u202f+\u202flog\u202fn)",
+              "Neglecting the constant\u2011space claim"
+            ]
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "Contrast between the binary\u2011search partition method and the na\u00efve merge\u2011then\u2011pick approach, highlighting trade\u2011offs in time and space.",
+            "why_assessed": "Encourages evaluation of algorithmic design choices.",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_COMP_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Thinking both methods have identical space usage",
+              "Assuming merge approach can be made O(log\u202fn) without extra data structures"
+            ]
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "PRACTICAL_APPLICATION",
+            "what_taught": "Applying the median\u2011of\u2011two\u2011sorted\u2011arrays routine to real\u2011world scenarios such as finding the median salary from two departmental reports without merging full datasets.",
+            "why_assessed": "Demonstrates transfer of the algorithm to a realistic problem domain.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_REAL_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming the algorithm can handle unsorted input",
+              "Overlooking privacy concerns when merging data"
+            ]
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "PRACTICAL_APPLICATION": 1
+        },
+        "cognitive_distribution": {
+          "UNDERSTAND": 1,
+          "ANALYZE": 3,
+          "APPLY": 3,
+          "EVALUATE": 3
+        },
+        "planning_strategy_notes": "Because only one core concept (DAA Median of Two Sorted Arrays) is available, ten assessment targets were generated by probing ten distinct pedagogical facets, ensuring breadth without inventing new topics."
+      }
+    },
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "Definition of the median problem for two sorted arrays and the invariant that the combined median splits the merged order into equal halves.",
+            "why_assessed": "Checks that students grasp the fundamental problem statement and key invariants before applying any algorithm.",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Confusing median with average",
+              "Assuming arrays must be of equal length"
+            ]
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "Derivation of the binary search partition condition (max left \u2264 min right) and why O(log\u202fmin(m,n)) time is achievable.",
+            "why_assessed": "Ensures students can justify the design choices behind the logarithmic solution rather than memorizing steps.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_SLIDE_02",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Believing linear merge is optimal",
+              "Misunderstanding why the smaller array is chosen for binary search"
+            ]
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "Explanation of a reference implementation in C++/Java/Python, focusing on index calculations, sentinel handling, and loop termination conditions.",
+            "why_assessed": "Tests ability to read and map code constructs to the algorithmic idea, a prerequisite for debugging and adaptation.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_CODE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Treating i and j as array lengths instead of partition indices",
+              "Ignoring integer division rounding effects"
+            ]
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "Step\u2011by\u2011step execution trace on two concrete arrays, including intermediate partition values and final median computation.",
+            "why_assessed": "Requires students to simulate the algorithm mentally, reinforcing understanding of control flow and data movement.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_EXAMPLE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Predicting median of merged array without considering partition logic",
+              "Off\u2011by\u2011one errors in index selection"
+            ]
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "Common bugs such as out\u2011of\u2011range access when i=0 or i=m, incorrect sentinel values, and failure to update low/high correctly.",
+            "why_assessed": "Develops diagnostic skills by having students locate and fix realistic implementation errors.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_BUG_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming array bounds are automatically protected",
+              "Thinking that swapping low/high fixes all errors"
+            ]
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "Handling of empty arrays, arrays of length 1, and extreme value extremes (INT_MAX/INT_MIN) as partition boundaries.",
+            "why_assessed": "Ensures robustness by testing understanding of edge conditions that often cause runtime failures.",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_EDGE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Neglecting sentinel initialization",
+              "Assuming both arrays must contain at least two elements"
+            ]
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "Effect of swapping the role of the two input arrays, changing array sizes, and modifying the target rank (e.g., kth smallest instead of median).",
+            "why_assessed": "Promotes flexibility by asking students to adapt the algorithm to altered parameters while preserving correctness.",
+            "cognitive_level": "APPLY",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_VARIANT_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Thinking the algorithm only works for exact median",
+              "Forgetting to recompute partition formulas after swapping"
+            ]
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "Derivation of O(log\u202fmin(m,n)) time and O(1) extra space, and comparison with O(m+n) merge approach.",
+            "why_assessed": "Validates ability to reason about asymptotic performance and space trade\u2011offs, crucial for algorithm selection.",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_ANALYSIS_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Assuming binary search adds linear overhead",
+              "Confusing worst\u2011case with average\u2011case"
+            ]
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "Contrast between the binary\u2011search partition method and the classic merge\u2011then\u2011pick approach, highlighting when each is preferable.",
+            "why_assessed": "Encourages higher\u2011order evaluation of algorithmic design choices in different contexts.",
+            "cognitive_level": "EVALUATE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_COMPARE_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Believing one method is universally superior",
+              "Overlooking memory\u2011usage implications"
+            ]
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "DAA Median of Two Sorted Arrays",
+            "assessment_facet": "MISCONCEPTION_TARGETING",
+            "what_taught": "Specific traps such as treating median index as (m+n)/2 without floor/ceil adjustment for odd total length.",
+            "why_assessed": "Directly addresses a known student misconception to prevent systematic errors.",
+            "cognitive_level": "UNDERSTAND",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_MISCON_01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": [
+              "Using integer division that truncates incorrectly",
+              "Assuming median index is always integer without handling parity"
+            ]
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "MISCONCEPTION_TARGETING": 1
+        },
+        "cognitive_distribution": {
+          "UNDERSTAND": 2,
+          "ANALYZE": 3,
+          "APPLY": 3,
+          "EVALUATE": 2
+        },
+        "planning_strategy_notes": "Because only one core concept is available, we generated ten assessment targets by probing ten distinct pedagogical facets of the DAA Median of Two Sorted Arrays algorithm, ensuring each target focuses on a different facet while keeping difficulty HARD."
+      }
+    }
+  ]
+}

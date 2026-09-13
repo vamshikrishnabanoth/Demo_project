@@ -1,0 +1,32 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Event Listeners",
+    "subtopics": [
+      "addEventListener API",
+      "Event handler functions",
+      "Removing event listeners"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Event Bubbling",
+    "subtopics": [
+      "Propagation from target to root",
+      "stopPropagation method",
+      "Nested element events"
+    ],
+    "associated_chunk_ids": []
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Event Capturing",
+    "subtopics": [
+      "Propagation from root to target",
+      "Capture phase listeners",
+      "Comparison with bubbling"
+    ],
+    "associated_chunk_ids": []
+  }
+]

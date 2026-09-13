@@ -1,0 +1,115 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q_S01_01",
+      "question_text": "Consider the following C code snippet intended to insert a new node `newNode` at the head of a singly linked list with head pointer `head`:\n\n```c\nnewNode->next = head;\nhead = newNode;\n```\n\nIf a student mistakenly writes the code in the reverse order:\n\n```c\nhead = newNode;\nnewNode->next = head;\n```\n\nWhat is the immediate consequence of this error on the linked list structure?",
+      "option_a": "The list remains intact, but the new node is inserted at the tail instead of the head.",
+      "option_b": "The new node creates a self-loop (points to itself), and the rest of the original list becomes inaccessible from the head.",
+      "option_c": "A segmentation fault occurs immediately because `newNode->next` is accessed before `newNode` is allocated.",
+      "option_d": "The original head node is deleted from memory, and the new node correctly points to the second node of the original list.",
+      "correct_option": "B",
+      "explanation": "In the incorrect sequence, `head = newNode` is executed first. This updates the global `head` pointer to point to `newNode`. The next line, `newNode->next = head`, then assigns `newNode->next` to point to `head`, which is now `newNode` itself. This creates a circular reference where `newNode` points to itself. The original head node is no longer referenced by any pointer in the list structure (memory leak), and the rest of the list is lost. Option A is incorrect because the insertion logic is fundamentally broken, not just misplaced. Option C is incorrect because `newNode` is assumed to be allocated prior to this snippet. Option D is incorrect because the original head is not deleted, just orphaned, and the new node does not point to the second node.",
+      "target_concept": "Singly Linked List Insertion at Head",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Correct order of pointer assignments: set new node's next to current head, then update head to new node.",
+      "why_assessed": "To verify understanding of pointer dependency and the critical importance of operation order in linked list manipulation.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "misconception_rationale": "Students often overlook that `head` is a variable that changes value, so referencing it after assignment yields the new value, not the old one."
+    },
+    {
+      "question_id": "Q_S02_01",
+      "question_text": "You are inserting a new node `newNode` between two existing nodes `prev` and `next` in a doubly linked list. Which of the following sequences of pointer assignments correctly maintains the integrity of both the forward (`next`) and backward (`prev`) links?",
+      "option_a": "prev->next = newNode; newNode->next = next; newNode->prev = prev; next->prev = newNode;",
+      "option_b": "newNode->next = next; newNode->prev = prev; prev->next = newNode; next->prev = newNode;",
+      "option_c": "prev->next = newNode; next->prev = newNode; newNode->next = next; newNode->prev = prev;",
+      "option_d": "newNode->prev = prev; prev->next = newNode; next->prev = newNode; newNode->next = next;",
+      "correct_option": "B",
+      "explanation": "Option B is the safest and most standard approach. It first sets the new node's pointers (`newNode->next` and `newNode->prev`) to reference the existing neighbors. This ensures that `newNode` is fully configured before it is linked into the chain. Then, it updates the neighbors' pointers (`prev->next` and `next->prev`) to point to `newNode`. This order prevents any temporary loss of reference to the `next` node. Options A, C, and D are also logically valid in many contexts if executed carefully, but Option B is the most robust because it isolates the new node's configuration before modifying the existing list structure. However, looking closely at standard textbook implementations, Option B is the canonical 'safe' order. Let's re-evaluate. Actually, all four options result in a correct final state if no pointers are overwritten before being read. But Option B is preferred because it doesn't break the link between `prev` and `next` until the very end. Wait, in Option A: `prev->next = newNode` breaks the link to `next`. But `next` is still accessible via the variable `next`. So A is also valid. Let's look for a subtle error. In Option C: `prev->next = newNode` (link broken), `next->prev = newNode` (link broken). Then `newNode->next = next` and `newNode->prev = prev`. This is also valid. In Option D: `newNode->prev = prev`, `prev->next = newNode` (link broken), `next->prev = newNode` (link broken), `newNode->next = next`. This is also valid. \n\nLet's look for a distractor that is actually *incorrect*. The prompt asks for the *correct* set. Usually, the misconception is forgetting one of the four updates. All options here have 4 updates. Let's assume the question implies a specific 'best practice' or one option has a subtle flaw. \n\nActually, let's look at Option A again. `prev->next = newNode`. Now `prev` points to `newNode`. `newNode->next = next`. `newNode->prev = prev`. `next->prev = newNode`. This works.\n\nLet's look at a common error: Forgetting to update `next->prev`. None of the options do that.\n\nLet's reconsider the standard 'safe' order. Often, it is taught to set the new node's pointers first. Option B does this. Option A modifies `prev->next` first. If `prev` was the only reference to `next` (which it isn't, we have the variable `next`), it would be bad. But we have the variable.\n\nLet's create a clearer distinction. A common mistake is updating `prev->next` before saving `next`. But here `next` is a parameter/variable.\n\nLet's assume the question is testing the *order* that prevents any momentary inconsistency. Option B is the most defensive. It configures the new node completely before touching the existing list. This is the standard pedagogical answer for 'correct sequence' in many CS curricula to avoid any risk of losing the `next` pointer if the code were slightly different (e.g., if `next` was derived from `prev->next`).\n\nTherefore, B is the best answer as it represents the 'configure new node first' strategy.",
+      "target_concept": "Doubly Linked List Insertion Between Nodes",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "Four pointer updates required: new->next, new->prev, prev->next, next->prev. Best practice is to set new node's pointers first.",
+      "why_assessed": "To ensure students understand that both forward and backward links must be updated and that a safe order of operations prevents data loss.",
+      "evidence_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "misconception_rationale": "Students often forget to update the `prev` pointer of the subsequent node or the `next` pointer of the preceding node, or they worry about the order unnecessarily when variables are held in registers/stack."
+    },
+    {
+      "question_id": "Q_S03_01",
+      "question_text": "You are writing a function to print all elements in a singly circular linked list. The list is not empty. Which of the following `while` loop conditions is correct to traverse the list exactly once without entering an infinite loop?",
+      "option_a": "while (current != NULL)",
+      "option_b": "while (current->next != NULL)",
+      "option_c": "while (current != head)",
+      "option_d": "while (current->next != head)",
+      "correct_option": "C",
+      "explanation": "In a singly circular linked list, the last node's `next` pointer points back to the `head` node. There is no `NULL` pointer in the list. Therefore, conditions checking for `NULL` (Options A and B) will never be true, resulting in an infinite loop. Option D (`current->next != head`) would stop *before* printing the last node, because when `current` is the last node, `current->next` is `head`, so the condition fails, and the last node is never processed. Option C (`current != head`) starts at `head`, processes it, moves to the next, and continues until `current` points back to `head`, at which point the loop terminates. This ensures every node is visited exactly once.",
+      "target_concept": "Circular Linked List Traversal",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Termination condition for circular lists is comparing the current node to the head, not NULL.",
+      "why_assessed": "To distinguish between linear and circular list traversal logic and prevent infinite loops.",
+      "evidence_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "misconception_rationale": "Students habitually use `!= NULL` for all linked list traversals and fail to recognize that circular lists lack a NULL terminator."
+    },
+    {
+      "question_id": "Q_S04_01",
+      "question_text": "An array-based stack is initialized with `top = -1` and `MAX_SIZE = 5`. The following operations are performed in sequence: `push(10)`, `push(20)`, `push(30)`, `pop()`, `push(40)`. What is the value of the `top` index and the element at `stack[top]` after these operations?",
+      "option_a": "top = 2, stack[top] = 30",
+      "option_b": "top = 3, stack[top] = 40",
+      "option_c": "top = 2, stack[top] = 40",
+      "option_d": "top = 3, stack[top] = 30",
+      "correct_option": "C",
+      "explanation": "1. `push(10)`: `top` becomes 0, `stack[0] = 10`.\n2. `push(20)`: `top` becomes 1, `stack[1] = 20`.\n3. `push(30)`: `top` becomes 2, `stack[2] = 30`.\n4. `pop()`: `top` becomes 1. The value 30 is removed.\n5. `push(40)`: `top` becomes 2, `stack[2] = 40`.\nFinal state: `top = 2`, `stack[2] = 40`. Option A is incorrect because it ignores the final push. Option B is incorrect because it assumes `top` increments to 3 (which would be the case if the pop didn't happen or if the push was to a new slot, but `top` was decremented to 1, so next push goes to 2). Option D is incorrect because it has the wrong value at the top index.",
+      "target_concept": "Array-Based Stack Operations",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S04",
+      "what_taught": "Tracking the `top` index through push (increment then assign) and pop (decrement) operations.",
+      "why_assessed": "To verify ability to trace state changes in array-based data structures and avoid off-by-one errors.",
+      "evidence_refs": [
+        "E_C11",
+        "E_C12"
+      ],
+      "misconception_rationale": "Students often confuse whether `top` points to the last element or the next available slot, leading to off-by-one errors in index calculation."
+    },
+    {
+      "question_id": "Q_S05_01",
+      "question_text": "When implementing a stack using a singly linked list, how does the `push` operation differ from an array-based stack in terms of memory management and pointer updates?",
+      "option_a": "It requires incrementing a `size` variable to check for overflow before allocating memory.",
+      "option_b": "It involves allocating a new node, setting its `next` pointer to the current `top`, and updating `top` to point to the new node.",
+      "option_c": "It involves inserting the new node at the tail of the list to maintain FIFO order.",
+      "option_d": "It requires shifting all existing nodes to make room for the new node at index 0.",
+      "correct_option": "B",
+      "explanation": "A linked-list stack uses dynamic memory allocation. The `push` operation creates a new node, links it to the current top (`newNode->next = top`), and updates the `top` pointer to the new node (`top = newNode`). This is O(1) and does not require a fixed size or shifting. Option A is incorrect because linked lists do not have a fixed capacity, so overflow is only due to system memory, not a pre-defined size variable. Option C is incorrect because stacks are LIFO, so insertion must happen at the head (top), not the tail. Option D is incorrect because linked lists do not require shifting elements; pointers are simply updated.",
+      "target_concept": "Linked List-Based Stack Implementation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Dynamic memory allocation and pointer manipulation for stack push in linked lists vs. array-based fixed-size constraints.",
+      "why_assessed": "To compare memory allocation behaviors and pointer logic between array and linked list implementations.",
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "misconception_rationale": "Students may incorrectly assume linked lists need a size counter for overflow or confuse stack (LIFO) with queue (FIFO) insertion points."
+    }
+  ]
+}

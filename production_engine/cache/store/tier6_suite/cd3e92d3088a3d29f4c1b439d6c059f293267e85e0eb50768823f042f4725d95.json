@@ -1,0 +1,94 @@
+{
+  "input_id": "input_01_daa_unit2",
+  "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=-0.035 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 2,
+  "requested_difficulty": "HARD",
+  "defensible_capacity": 2,
+  "final_question_count": 2,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the O(log(m+n)) algorithm for finding the median of two sorted arrays, we perform a binary search on the smaller array to find a partition index `i`. Let `j` be the corresponding partition index in the larger array such that `i + j = (m + n + 1) / 2`. Which condition must be satisfied to ensure that the partition is valid and the median can be correctly determined from the boundary elements?",
+      "option_a": "The maximum element in the left partition of the first array must be less than or equal to the minimum element in the right partition of the second array, AND the maximum element in the left partition of the second array must be less than or equal to the minimum element in the right partition of the first array.",
+      "option_b": "The element at index `i` in the first array must be strictly less than the element at index `j` in the second array, ensuring that the two arrays remain sorted relative to each other at the split point.",
+      "option_c": "The sum of the elements in the left partition of the first array must be less than the sum of the elements in the right partition of the second array, ensuring a balanced distribution of values.",
+      "option_d": "The index `i` must be exactly half the length of the first array, and `j` must be exactly half the length of the second array, to guarantee that the median is the average of `A[i]` and `B[j]`.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the validity of the partition in the Median of Two Sorted Arrays problem relies on cross-array comparisons. Specifically, `max(A[i-1], B[j-1]) <= min(A[i], B[j])` must hold. This ensures that all elements in the left half (combined) are smaller than all elements in the right half (combined), placing the median at the boundary. Option B is incorrect because comparing `A[i]` and `B[j]` directly does not account for the elements on the other side of the partition (e.g., `A[i-1]` could be larger than `B[j]`). Option C is incorrect because the algorithm relies on order statistics, not the sum of values. Option D is incorrect because the partition indices `i` and `j` are determined by the total length `(m+n+1)/2`, not by simply halving each individual array, which would fail to balance the total number of elements in the left partition.",
+      "target_concept": "Median of Two Sorted Arrays",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "HARD",
+      "what_taught": "The algorithmic approach to finding the median of two sorted arrays in O(log(m+n)) time using a modified binary search that partitions the arrays such that the left half contains the smaller elements and the right half contains the larger elements, ensuring the median lies at the boundary of these partitions.",
+      "why_assessed": "This is a classic HARD problem that tests the student's ability to apply Binary Search not just on a single array, but on the partition indices of two arrays. It requires deep understanding of the Divide and Conquer technique and careful handling of boundary conditions (empty partitions) to ensure correctness.",
+      "evidence_refs": [
+        "T01"
+      ],
+      "misconception_rationale": "Option B targets the misconception of only comparing elements at the split indices without considering the adjacent elements in the other array. Option C targets a fundamental misunderstanding of how medians are derived from sorted data (order vs. sum). Option D targets the misconception that the partition must be proportional to the individual array sizes rather than the total combined size."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "When analyzing the time complexity of Binary Search using the recurrence relation T(n) = T(n/2) + O(1), why does this resolve to O(log n) rather than O(n) or O(n log n)?",
+      "option_a": "Because the problem size is halved at each recursive step, resulting in a logarithmic number of levels in the recursion tree, and the work done at each level is constant, leading to a total work proportional to the height of the tree.",
+      "option_b": "Because the array is divided into two equal halves, and the work done to combine the results from both halves is O(n), which dominates the constant comparison cost.",
+      "option_c": "Because the number of recursive calls is n/2, and each call performs a constant amount of work, resulting in a linear time complexity of O(n).",
+      "option_d": "Because the midpoint calculation involves division, which is an O(log n) operation, and this cost accumulates linearly with the number of elements.",
+      "correct_option": "A",
+      "explanation": "Option A is correct. The recurrence T(n) = T(n/2) + O(1) describes a process where the input size is reduced by half at each step. The number of times you can divide n by 2 before reaching 1 is log2(n). Since the work done at each step (comparing the middle element) is O(1), the total work is O(1) * log(n) = O(log n). Option B describes the recurrence for Merge Sort (T(n) = 2T(n/2) + O(n)), not Binary Search. Option C incorrectly assumes the number of calls is linear (n/2) rather than logarithmic. Option D is factually incorrect; integer division is O(1) in standard computational models, and even if it were complex, it wouldn't change the logarithmic nature of the recursion depth.",
+      "target_concept": "Recurrence relation for Binary Search: T(n) = T(n/2) + O(1)",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "HARD",
+      "what_taught": "The derivation of the time complexity for Binary Search using the Master Theorem or substitution method, showing that T(n) = T(n/2) + O(1) resolves to O(log n) because the problem size is halved at each step, leading to a logarithmic number of recursive calls.",
+      "why_assessed": "This target assesses the student's ability to analyze the mathematical foundation of the algorithm's efficiency. It requires understanding why the recurrence relation takes this specific form and how it leads to the O(log n) bound, distinguishing it from algorithms with T(n) = T(n/2) + O(n) (Merge Sort) or T(n) = T(n-1) + O(1) (Linear Search).",
+      "evidence_refs": [
+        "T02"
+      ],
+      "misconception_rationale": "Option B targets the confusion between Binary Search and Merge Sort recurrences. Option C targets the misconception that halving the array size once implies a linear reduction in steps, failing to recognize the exponential decay of the problem size. Option D targets a misunderstanding of the cost of basic arithmetic operations and the source of the logarithmic factor."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1788253792139-input_01",
+    "trace": {
+      "request_id": "REQ-1788253792139-input_01",
+      "timestamp": "2026-09-01T09:10:48Z",
+      "input_id": "input_01_daa_unit2",
+      "selected_representation": "SUMMARY",
+      "pedagogical_delivery_index": -0.035,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "MISS",
+        "tier4_cross_modal": "MISS",
+        "tier5_representation": "MISS"
+      },
+      "selected_facets": [
+        "PRACTICAL_APPLICATION",
+        "COMPLEXITY_ANALYSIS"
+      ],
+      "initial_generated_count": 2,
+      "first_pass_validated_count": 2,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 2,
+      "total_latency_ms": 56717.91,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "The request for 2 HARD targets was fulfilled by selecting two distinct, high-complexity concepts from the available pool. Target 1 focuses on the 'Median of Two Sorted Arrays' problem, which is a canonical HARD application of Divide and Conquer and Binary Search, requiring complex index manipulation and edge case handling. Target 2 focuses on 'Time Complexity Analysis' specifically regarding the recurrence relation T(n) = T(n/2) + O(1), requiring students to derive the asymptotic bound and understand the mathematical rationale behind the O(log n) result, distinguishing it from linear or quadratic cases."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 56.72,
+    "measured_llm_calls": 3,
+    "pedagogical_delivery_index": -0.035,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "PRACTICAL_APPLICATION": 1,
+      "COMPLEXITY_ANALYSIS": 1
+    },
+    "cognitive_distribution": {
+      "APPLY": 1,
+      "ANALYZE": 1
+    },
+    "planning_notes": "The request for 2 HARD targets was fulfilled by selecting two distinct, high-complexity concepts from the available pool. Target 1 focuses on the 'Median of Two Sorted Arrays' problem, which is a canonical HARD application of Divide and Conquer and Binary Search, requiring complex index manipulation and edge case handling. Target 2 focuses on 'Time Complexity Analysis' specifically regarding the recurrence relation T(n) = T(n/2) + O(1), requiring students to derive the asymptotic bound and understand the mathematical rationale behind the O(log n) result, distinguishing it from linear or quadratic cases.",
+    "system_notice": null
+  }
+}

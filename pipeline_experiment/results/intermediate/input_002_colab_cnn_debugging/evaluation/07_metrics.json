@@ -1,0 +1,47 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 37.6,
+    "source_answerability_percentage": 26.3,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.029,
+    "diversity_score": 0.971,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.4,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 2.8
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 27.9,
+    "source_answerability_percentage": 24.4,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.156,
+    "diversity_score": 0.844,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.667,
+    "average_bloom_level": 3.67,
+    "bloom_distribution": {
+      "APPLY": 0.33,
+      "ANALYZE": 0.67
+    },
+    "specificity_score": 2.4
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_002_colab_cnn_debugging",
+    "topics_grounded_percentage": 75.0,
+    "salience_alignment_score": 4.5,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 4.8,
+    "overall_validity_percentage": 62.7
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.419,
+    "composite_score_blueprint": 0.448,
+    "quality_delta": 0.029,
+    "rationale": "Both representations achieved comparable quality scores within the predefined threshold margin (Q_A=0.419, Q_B=0.448, delta=0.029)."
+  }
+}

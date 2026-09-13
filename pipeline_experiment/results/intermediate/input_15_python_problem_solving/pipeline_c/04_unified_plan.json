@@ -1,0 +1,68 @@
+{
+  "input_id": "input_15_python_problem_solving",
+  "title": "Python Programming & Algorithmic Problem Solving Patterns",
+  "total_requested_questions": 5,
+  "total_available_targets": 4,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Python Programming Fundamentals",
+      "what_taught_summary": "Students are introduced to the basic syntax of Python, including variable assignment, data types, and the fundamental structure of algorithmic logic such as sequential execution and basic control flow.",
+      "why_assessed_pedagogy": "This assessment verifies that students have acquired the foundational vocabulary and syntactic rules necessary to read and write simple Python code, serving as the prerequisite for all subsequent algorithmic tasks.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing Python's dynamic typing with static typing, assuming variables must be declared with a specific type keyword.",
+        "Misinterpreting indentation as purely stylistic rather than a mandatory structural requirement for code blocks.",
+        "Believing that Python executes code in a random order rather than strictly top-to-bottom sequential execution."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Algorithmic Problem Solving Patterns",
+      "what_taught_summary": "The lesson covers the definition of algorithmic problem solving and introduces standard code patterns for problem decomposition, breaking complex tasks into smaller, manageable logical steps.",
+      "why_assessed_pedagogy": "Assessing this topic ensures students recognize the conceptual framework of breaking down problems, which is the core pedagogical objective before they attempt to implement specific solutions.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming that 'problem decomposition' involves writing the entire solution in a single function without intermediate steps.",
+        "Confusing the abstract concept of an algorithm with the specific implementation details of a particular programming language.",
+        "Believing that code patterns are rigid templates that cannot be adapted to different problem contexts."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Data Structures in Python",
+      "what_taught_summary": "Students are introduced to the basic Python data structures (lists, dictionaries, sets) and their role in organizing data within algorithmic logic structures.",
+      "why_assessed_pedagogy": "This target checks if students can identify and name the primary data containers in Python, establishing the necessary conceptual overview for understanding how data is stored and accessed in algorithms.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Thinking that a Python list is a fixed-size array that cannot change length after creation.",
+        "Confusing a dictionary with a list, assuming keys are simply indices rather than unique identifiers.",
+        "Believing that all data structures in Python have the same performance characteristics for accessing elements."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Code Optimization and Efficiency",
+      "what_taught_summary": "The content introduces the concept of code optimization and efficiency, focusing on recognizing basic code patterns that impact performance and the general principles of algorithmic logic structures related to resource usage.",
+      "why_assessed_pedagogy": "This assessment aims to ensure students are aware of the concept of efficiency and can identify basic patterns that contribute to code performance, laying the groundwork for future optimization strategies.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Assuming that shorter code is always more efficient than longer, more explicit code.",
+        "Believing that optimization only applies to complex algorithms and not to simple loops or data access patterns.",
+        "Confusing code readability with code efficiency, assuming that readable code is inherently optimized."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

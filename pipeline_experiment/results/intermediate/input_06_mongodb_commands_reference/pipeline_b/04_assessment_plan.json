@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_06_mongodb_commands_reference",
+  "input_id": "input_06_mongodb_commands_reference",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Data Import and Export",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Backup and Restore",
+      "question_count": 0,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Query Operators and Array Updates",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Aggregation Pipeline",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Indexing and Schema Validation",
+      "question_count": 0,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    }
+  ]
+}

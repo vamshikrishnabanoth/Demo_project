@@ -1,0 +1,44 @@
+{
+  "input_id": "input_13_wt_event_bubbling",
+  "title": "Web Technologies Lecture 2: Event Listeners, Event Bubbling & Event Capturing",
+  "representation_used": "SUMMARY",
+  "routing_rationale": "PDI=0.500 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+  "requested_count": 10,
+  "defensible_capacity": 1,
+  "final_question_count": 1,
+  "questions": [
+    {
+      "question_id": "Q_T1_01",
+      "question_text": "In the context of DOM manipulation, which statement accurately defines an event listener?",
+      "option_a": "It is the specific user action (such as a click or keypress) that triggers a change in the browser's state.",
+      "option_b": "It is a function registered to a specific DOM element that executes in response to a specific event.",
+      "option_c": "It is a global variable attached to the document root that monitors all user interactions across the entire page.",
+      "option_d": "It is a CSS property that defines the visual feedback displayed when a user hovers over an interactive element.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because an event listener is fundamentally a callback function attached to an element (via methods like addEventListener) that runs when a specified event occurs. Option A is incorrect because it describes the 'event' itself, not the listener. Option C is incorrect because listeners can be attached to any element, not just the document root, and they are not global variables. Option D is incorrect because it confuses JavaScript event handling with CSS pseudo-classes.",
+      "target_concept": "Event Listener Definition",
+      "cognitive_level": "UNDERSTAND",
+      "what_taught": "An event listener is a function registered to a DOM element that executes in response to a specific event.",
+      "why_assessed": "Establishes the foundational vocabulary and mechanism for all subsequent event handling concepts.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractor A targets the misconception of confusing the event object/action with the listener function. Distractor C targets the misconception that event handling is limited to the document root or is a global state. Distractor D targets the confusion between JavaScript logic and CSS styling mechanisms."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "total_latency_seconds": 72.69,
+    "measured_llm_calls": 3,
+    "pedagogical_delivery_index": 0.5,
+    "features": {
+      "has_audio": true,
+      "has_ppt": false,
+      "code_density": 0.0,
+      "text_length_words": 1,
+      "pedagogical_marker_density": 0.0,
+      "dialogue_interaction_density": 0.0
+    },
+    "rag_chunks_retrieved_count": 1
+  }
+}

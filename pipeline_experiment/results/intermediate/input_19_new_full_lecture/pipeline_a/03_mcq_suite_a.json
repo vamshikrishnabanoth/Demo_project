@@ -1,0 +1,105 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_19_new_full_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Based on the provided metadata for the 'Classroom Lecture: Full Conceptual & Code Walkthrough', what is the primary input modality of the source material?",
+      "option_a": "Text-based transcript",
+      "option_b": "Voice-only audio recording",
+      "option_c": "Video lecture with subtitles",
+      "option_d": "Interactive simulation",
+      "correct_option": "B",
+      "explanation": "The metadata explicitly states 'Input Type: VOICE_ONLY' and the title includes '(Audio Recording New)'. Option A is incorrect because no transcript was provided. Option C is incorrect as no video is mentioned. Option D is incorrect as no interactive elements are described.",
+      "target_concept": "Source Material Identification",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Metadata",
+      "what_taught": "Identification of input modality",
+      "why_assessed": "To verify understanding of the source material's format",
+      "evidence_refs": [
+        "Title",
+        "Input Type"
+      ],
+      "misconception_rationale": "Students may assume a standard lecture includes video or text transcripts by default."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "According to the factual summary, what is the status of the specific educational content (text, code, formulas) within the provided input chunks?",
+      "option_a": "It contains detailed code snippets and formulas.",
+      "option_b": "It consists solely of a title and metadata with no specific educational text.",
+      "option_c": "It includes conceptual definitions and examples.",
+      "option_d": "It provides a full procedural walkthrough in text form.",
+      "correct_option": "B",
+      "explanation": "The factual summary explicitly states: 'The provided source content consists solely of a title and metadata... No specific educational text, code snippets, formulas, or conceptual definitions were included.' Options A, C, and D contradict this explicit statement.",
+      "target_concept": "Content Availability",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Recognition of missing content",
+      "why_assessed": "To ensure students can distinguish between metadata and actual content",
+      "evidence_refs": [
+        "Factual Summary"
+      ],
+      "misconception_rationale": "Students might assume that because the title mentions 'Code Walkthrough', the code is actually present in the data."
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What is the designated 'Content Style' for this classroom lecture according to the input representation?",
+      "option_a": "THEORETICAL",
+      "option_b": "NARRATIVE",
+      "option_c": "PROCEDURAL",
+      "option_d": "COMPARATIVE",
+      "correct_option": "C",
+      "explanation": "The input representation explicitly lists 'Content Style: PROCEDURAL'. The other options are plausible educational styles but are not the one specified in the metadata.",
+      "target_concept": "Pedagogical Style",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Metadata",
+      "what_taught": "Identification of teaching style",
+      "why_assessed": "To test attention to specific metadata fields",
+      "evidence_refs": [
+        "Content Style"
+      ],
+      "misconception_rationale": "Students may confuse 'Procedural' with 'Narrative' or 'Theoretical' if they do not read the metadata carefully."
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Why could a factual summary of the taught material not be generated from the provided input?",
+      "option_a": "The audio quality was too poor to transcribe.",
+      "option_b": "The input chunks did not contain specific educational text, code, or formulas.",
+      "option_c": "The lecture was too short to summarize.",
+      "option_d": "The content was classified as confidential.",
+      "correct_option": "B",
+      "explanation": "The summary states: 'Consequently, no factual summary of the taught material can be generated' because 'No specific educational text, code snippets, formulas, or conceptual definitions were included in the input chunks.' The other options invent reasons not present in the text.",
+      "target_concept": "Causal Reasoning",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Factual Summary",
+      "what_taught": "Understanding limitations of data extraction",
+      "why_assessed": "To test the ability to link cause (missing data) and effect (no summary)",
+      "evidence_refs": [
+        "Factual Summary"
+      ],
+      "misconception_rationale": "Students might attribute the lack of summary to technical issues (audio quality) rather than data content issues."
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which of the following lists accurately reflects the empty arrays found in the 'concepts_and_definitions', 'mechanisms_and_formulas', and 'examples_and_code_patterns' fields of the input representation?",
+      "option_a": "All three fields contain populated data.",
+      "option_b": "Only 'examples_and_code_patterns' is empty.",
+      "option_c": "All three fields are empty arrays.",
+      "option_d": "Only 'concepts_and_definitions' is empty.",
+      "correct_option": "C",
+      "explanation": "The JSON input shows: \"concepts_and_definitions\": [], \"mechanisms_and_formulas\": [], \"examples_and_code_patterns\": []. This confirms all three are empty. Options A, B, and D incorrectly suggest that some data is present.",
+      "target_concept": "Data Structure Analysis",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Input Representation",
+      "what_taught": "Verification of data presence in structured fields",
+      "why_assessed": "To test precise reading of structured data representations",
+      "evidence_refs": [
+        "Input Representation JSON"
+      ],
+      "misconception_rationale": "Students may overlook the empty brackets and assume data exists based on the field names."
+    }
+  ]
+}

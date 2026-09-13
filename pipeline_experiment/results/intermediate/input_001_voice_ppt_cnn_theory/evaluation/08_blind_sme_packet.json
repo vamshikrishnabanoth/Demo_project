@@ -1,0 +1,159 @@
+{
+  "input_id": "input_001_voice_ppt_cnn_theory",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_9935",
+      "question_text": "Consider two design choices that produce a receptive field of size 5\u00d75 on the input image: (i) a single 5\u00d75 convolution (no padding, stride\u202f1) and (ii) two consecutive 3\u00d73 convolutions (no padding, stride\u202f1). Which statement about their receptive fields is true?",
+      "options": {
+        "A": "The stacked 3\u00d73 convolutions have a larger receptive field than the single 5\u00d75 convolution.",
+        "B": "The single 5\u00d75 convolution has a larger receptive field than the stacked 3\u00d73 convolutions.",
+        "C": "Both designs result in the same 5\u00d75 receptive field.",
+        "D": "The receptive field depends on the number of channels, not the kernel sizes."
+      },
+      "correct_option": "C",
+      "explanation": "Two 3\u00d73 convolutions expand the receptive field by (3\u20111)+(3\u20111)=4 pixels in each dimension, yielding a 5\u00d75 field, exactly the same as a single 5\u00d75 kernel. Option A is a common misconception that stacking always enlarges the field beyond the equivalent large kernel. Option B ignores the additive effect of stacking. Option D is irrelevant; receptive field size is determined by kernel size, stride, and stacking, not channel count. Hence C is correct."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "Compared to a single 7\u00d77 convolutional filter, three stacked 3\u00d73 filters require:",
+      "options": {
+        "A": "Fewer parameters",
+        "B": "More parameters",
+        "C": "The same number of parameters",
+        "D": "Cannot be determined without knowing the number of channels"
+      },
+      "correct_option": "A",
+      "explanation": "A single 7\u00d77 filter uses 49\u00b7C\u00b2 parameters (C = number of channels). Three 3\u00d73 filters use 3\u00b79\u00b7C\u00b2 = 27\u00b7C\u00b2 parameters, which is fewer. Therefore option A is correct. Option B is the opposite of the true relationship. Option C would be true only if the kernel sizes were equal. Option D is unnecessary because the factor C\u00b2 appears in both expressions and cancels out when comparing relative sizes."
+    },
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "Which of the following best explains why a convolutional neural network is not perfectly translation\u2011invariant, especially near image borders?",
+      "options": {
+        "A": "Weight sharing guarantees identical responses for any spatial shift, so borders have no effect.",
+        "B": "Zero\u2011padding or other border handling introduces edge effects that break full translation invariance.",
+        "C": "Local receptive fields limit the network to only small translations, making it invariant only locally.",
+        "D": "Pooling layers destroy all translation information, preventing any invariance."
+      },
+      "correct_option": "B",
+      "explanation": "Option B is correct because the way CNNs handle borders (e.g., zero\u2011padding) creates artificial values that differ from interior pixels, so a feature shifted to the edge is processed differently. Option A is wrong: weight sharing promotes invariance but does not eliminate border effects. Option C confuses locality with invariance; locality enables translation invariance but does not restrict it to small shifts. Option D misstates the role of pooling: pooling provides some robustness to small shifts but does not eliminate translation invariance altogether."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "A 32\u00d732 input feature map is processed by a convolutional layer with kernel size 5\u00d75, stride 2, and padding 1. What is the spatial size of the output feature map?",
+      "options": {
+        "A": "13\u00d713",
+        "B": "14\u00d714",
+        "C": "15\u00d715",
+        "D": "16\u00d716"
+      },
+      "correct_option": "C",
+      "explanation": "The output dimension formula is floor((N+2p\u2011k)/s)+1. Substituting N=32, p=1, k=5, s=2 gives floor((32+2\u20115)/2)+1 = floor(29/2)+1 = 14+1 = 15. Therefore the output is 15\u00d715. Option A (13) and B (14) result from forgetting the +1 or mis\u2011handling the floor operation. Option D (16) comes from adding instead of dividing or using ceiling. The correct answer is C."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "Using the output dimension formula O = floor((W - K + 2P) / S) + 1, what is the output width when W = 32, K = 5, P = 2, and S = 1?",
+      "options": {
+        "A": "28",
+        "B": "30",
+        "C": "32",
+        "D": "34"
+      },
+      "correct_option": "C",
+      "explanation": "Plugging the values into the formula: O = floor((32 - 5 + 2*2) / 1) + 1 = floor((32 - 5 + 4) / 1) + 1 = floor(31 / 1) + 1 = 31 + 1 = 32. Therefore option C is correct. Option A (28) and B (30) result from mistakenly omitting the padding term or mis\u2011applying the floor operation. Option D (34) would require adding padding twice or using a larger stride, which is not the case."
+    },
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "What is the effective receptive field size after stacking three convolutional layers each with a 3\u00d73 kernel (stride\u202f=\u202f1, no padding)?",
+      "options": {
+        "A": "3\u00d73",
+        "B": "5\u00d75",
+        "C": "7\u00d77",
+        "D": "9\u00d79"
+      },
+      "correct_option": "C",
+      "explanation": "Each 3\u00d73 layer expands the receptive field by 2 pixels in each dimension. After three layers, the total expansion is 2\u202f+\u202f2\u202f+\u202f2 = 6, giving a receptive field of (3 + 6) = 7 pixels per side, i.e., 7\u00d77. Hence option C is correct. Option A ignores stacking, option B corresponds to two layers, and option D would require four layers or larger kernels."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "What is a primary drawback of using a standard Multilayer Perceptron (MLP) on a high\u2011resolution image such as 256\u00d7256?",
+      "options": {
+        "A": "The MLP would have too few parameters to learn useful features",
+        "B": "Spatial relationships between pixels are lost after flattening",
+        "C": "Both the excessive parameter count and loss of spatial relationships",
+        "D": "MLPs are actually well\u2011suited for high\u2011resolution images; there is no drawback"
+      },
+      "correct_option": "C",
+      "explanation": "Flattening a 256\u00d7256 image creates a vector of length 65,536. Connecting this to even a modest hidden layer yields on the order of 200,000+ parameters, which is computationally expensive (option A). Moreover, flattening destroys the 2\u2011D spatial structure, preventing the network from exploiting locality (option B). Therefore both issues together constitute the main drawback, making option C correct. Option D contradicts the well\u2011documented limitations described in the material."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "Which combination of inductive biases in a CNN guarantees translation equivariance?",
+      "options": {
+        "A": "Local connectivity only",
+        "B": "Weight sharing only",
+        "C": "Both local connectivity and weight sharing",
+        "D": "Neither; translation equivariance is learned automatically"
+      },
+      "correct_option": "C",
+      "explanation": "Translation equivariance arises because each filter (weight sharing) is applied to every spatial location (local connectivity). Neither bias alone is sufficient: local connectivity without weight sharing would treat each location differently, and weight sharing without restricting the receptive field would not enforce locality. Hence option C is correct. Options A and B isolate one bias and miss the synergy required. Option D is incorrect because equivariance is a built\u2011in property of the convolution operation, not something that must be learned."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Output dimension formula",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Inductive biases \u2013 local connectivity and weight sharing",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Parameter efficiency of stacked convolutions",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Effective receptive field through stacking",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "MLP limitations on high\u2011resolution images",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Inductive Biases in CNNs",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Spatial Output Dimension Calculation",
+      "cognitive_level": "APPLY"
+    },
+    "Q_BLIND_9935": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_001_voice_ppt_cnn_theory",
+      "target_concept": "Receptive Field Stacking and Parameter Efficiency",
+      "cognitive_level": "ANALYZE"
+    }
+  }
+}

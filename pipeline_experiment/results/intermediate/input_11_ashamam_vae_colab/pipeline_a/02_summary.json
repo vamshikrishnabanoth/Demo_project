@@ -1,0 +1,22 @@
+{
+  "input_id": "VAE_FashionMNIST_Ex3",
+  "title": "Variational Autoencoders (VAE) on Fashion-MNIST: Latent Sampling & Loss Functions",
+  "concepts_and_definitions": [
+    "Variational Autoencoder (VAE): A generative model that learns a probability distribution in the latent space rather than a single fixed vector, enabling the generation of new samples.",
+    "Latent Distribution: The probabilistic representation of input data characterized by a mean (\u03bc) and variance (\u03c3\u00b2), as opposed to the deterministic mapping of a standard Autoencoder.",
+    "Reparameterization Trick: A technique used to make the sampling process differentiable by expressing the latent variable as a function of the distribution parameters and an independent random noise variable.",
+    "KL Divergence: A component of the VAE loss function that measures the difference between the learned latent distribution and a standard normal prior distribution.",
+    "Reconstruction Loss: A component of the VAE loss function that measures the error between the original input and the reconstructed output."
+  ],
+  "mechanisms_and_formulas": [
+    "Reparameterization Formula: z = \u03bc + exp(0.5 * log_var) * \u03b5, where \u03b5 is sampled from a standard normal distribution N(0, 1).",
+    "Total VAE Loss: The sum of the reconstruction loss (e.g., binary cross-entropy or MSE) and the KL divergence term, which regularizes the latent space to match a prior distribution.",
+    "Latent Sampling Mechanism: The process of generating new data by sampling latent vectors from the learned distribution and passing them through the decoder."
+  ],
+  "examples_and_code_patterns": [
+    "Data Preprocessing: Loading Fashion-MNIST, normalizing pixel values to [0, 1] by dividing by 255.0, and expanding dimensions to (28, 28, 1) for convolutional or dense input compatibility.",
+    "Encoder Architecture: A Keras Sequential model using Dense layers (256 and 128 units with ReLU activation) that outputs two separate tensors: z_mean and z_log_var.",
+    "Custom Sampling Layer: A TensorFlow Keras Layer implementation that takes z_mean and z_log_var as inputs, generates random noise (epsilon), and computes the latent vector z using the reparameterization trick."
+  ],
+  "factual_summary_text": "The material presents an exercise on building a Variational Autoencoder (VAE) using the Fashion-MNIST dataset to distinguish it from a conventional Autoencoder. While a standard Autoencoder maps inputs to fixed latent vectors, a VAE learns a structured probability distribution defined by a mean (\u03bc) and log variance. The primary objective is to enable the model to sample latent vectors from this distribution to reconstruct existing images and generate new, Fashion-MNIST-like images.\n\nThe implementation details focus on the encoder architecture, which processes flattened input images through dense layers to produce the parameters of the latent distribution. A critical mechanism introduced is the reparameterization trick, implemented via a custom Keras layer, which allows for differentiable sampling by combining the mean, the exponential of half the log variance, and random Gaussian noise. The training process minimizes a total loss function composed of reconstruction error and KL divergence, ensuring the latent space remains structured and suitable for generative sampling."
+}

@@ -1,0 +1,50 @@
+{
+  "input_id": "input_05_assignment_mongodb_crud",
+  "title": "MongoDB CRUD Operations: Amazon Product Management System Queries",
+  "total_requested_questions": 5,
+  "total_available_targets": 2,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "MongoDB Querying and Filtering",
+      "what_taught_summary": "Students are expected to understand how to construct MongoDB queries using comparison operators (<, >) to filter numeric fields such as stock levels and prices, and how to apply projection to return only specific document fields.",
+      "why_assessed_pedagogy": "This target is assessed to ensure students can interpret the logical structure of filtering queries and explain the role of projection in optimizing data retrieval, which is foundational for efficient database interaction.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Confusing the direction of comparison operators (e.g., using > instead of < for 'less than' stock levels).",
+        "Assuming that all fields are returned by default unless explicitly excluded, rather than understanding that projection specifies which fields to include.",
+        "Believing that sorting results is part of the filtering mechanism rather than a separate operation applied after the query."
+      ],
+      "allocated_question_count": 3,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Domain-Specific Data Modeling",
+      "what_taught_summary": "Students are expected to understand how domain-specific data models (e.g., Amazon products) map to MongoDB document structures, including the use of comparison operators to filter based on business-relevant numeric attributes like price and stock.",
+      "why_assessed_pedagogy": "This target is assessed to verify that students can connect abstract database concepts to real-world data modeling scenarios, ensuring they can translate business requirements into appropriate query logic.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming that domain-specific fields (e.g., 'Brand') are automatically indexed or prioritized in queries without explicit specification.",
+        "Misinterpreting the relationship between document structure and query syntax, such as expecting nested fields to be queried without proper path notation.",
+        "Believing that filtering by price and stock requires separate queries rather than a single compound query with multiple conditions."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.0s]",
+        "[180.0s - 300.0s]"
+      ]
+    }
+  ]
+}

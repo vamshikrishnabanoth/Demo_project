@@ -1,0 +1,22 @@
+{
+  "input_id": "Algorithmic Problem Solving: Best Time to Buy and Sell Stock (Single & Infinite Transactions)",
+  "title": "Algorithmic Problem Solving: Best Time to Buy and Sell Stock (Single & Infinite Transactions)",
+  "concepts_and_definitions": [
+    "Stock Trading Problem: An algorithmic challenge to maximize profit based on an array of daily stock prices.",
+    "Single Transaction: A constraint where the trader can buy once and sell once, requiring the identification of the global minimum before the global maximum.",
+    "Infinite Transactions: A constraint allowing unlimited buy/sell pairs, where the optimal strategy involves capturing every consecutive upward price movement.",
+    "Maximum Profit: The highest possible financial gain derived from the difference between selling and buying prices, defaulting to 0 if no profit is possible."
+  ],
+  "mechanisms_and_formulas": [
+    "Single Transaction Logic: Iterate through the price array, maintaining a running minimum price (min_price). Update the maximum profit (max_profit) if the difference between the current price and min_price exceeds the current max_profit.",
+    "Infinite Transactions Logic: Iterate through the price array from index 0 to n-2. If the price at the next day (prices[i+1]) is greater than the current day (prices[i]), add the difference (prices[i+1] - prices[i]) to the total profit.",
+    "Profit Calculation Formula: Profit = Selling Price - Buying Price. For infinite transactions, Total Profit = Sum of all positive differences between consecutive days."
+  ],
+  "examples_and_code_patterns": [
+    "Example 1 (Infinite Transactions): Input [7, 1, 5, 3, 6, 4]. Buy at 1, sell at 5 (profit 4); Buy at 3, sell at 6 (profit 3). Total profit = 7.",
+    "Example 2 (Infinite Transactions): Input [1, 2, 3, 4, 5]. Buy at 1, sell at 5 (profit 4). Alternatively, summing daily gains (1+1+1+1) also yields 4.",
+    "Code Pattern (Single Transaction): C++ loop tracking min_price and max_profit using INT_MAX initialization.",
+    "Code Pattern (Infinite Transactions): C++ loop iterating i from 0 to n-1, adding prices[i+1] - prices[i] to max_profit if prices[i] < prices[i+1]."
+  ],
+  "factual_summary_text": "The material presents two distinct algorithmic approaches to the 'Best Time to Buy and Sell Stock' problem, depending on transaction constraints. The first approach addresses the 'Single Transaction' scenario, where the goal is to find the maximum difference between a selling price and a preceding buying price. The algorithm iterates through the price array once, maintaining a variable for the minimum price seen so far and updating the maximum profit whenever the current price minus the minimum price exceeds the previously recorded maximum. This ensures the optimal buy-sell pair is identified in O(N) time.\n\nThe second approach addresses the 'Infinite Transactions' scenario, where unlimited buy and sell operations are permitted. The optimal strategy here is to capture every upward trend in the stock price. The algorithm iterates through the array and adds the difference between consecutive days to the total profit whenever the next day's price is higher than the current day's price. This greedy approach effectively sums all positive daily gains, which is mathematically equivalent to buying at the start of any rising sequence and selling at the end. Both solutions are demonstrated with C++ pseudo-code and specific numerical examples, such as calculating a profit of 7 for the input [7, 1, 5, 3, 6, 4] by executing two separate transactions."
+}

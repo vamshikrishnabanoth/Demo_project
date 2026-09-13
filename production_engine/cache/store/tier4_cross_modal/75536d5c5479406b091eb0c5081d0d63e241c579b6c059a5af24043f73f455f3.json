@@ -1,0 +1,129 @@
+{
+  "E_C01": [
+    "E_SLIDE_27"
+  ],
+  "E_C02": [],
+  "E_C03": [
+    "E_SLIDE_27"
+  ],
+  "E_C04": [
+    "E_SLIDE_23",
+    "E_SLIDE_27"
+  ],
+  "E_C05": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C06": [
+    "E_SLIDE_24",
+    "E_SLIDE_28"
+  ],
+  "E_C07": [
+    "E_SLIDE_01",
+    "E_SLIDE_24"
+  ],
+  "E_C08": [
+    "E_SLIDE_27",
+    "E_SLIDE_28"
+  ],
+  "E_C09": [],
+  "E_C10": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C11": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C12": [
+    "E_SLIDE_27",
+    "E_SLIDE_24"
+  ],
+  "E_C13": [
+    "E_SLIDE_28",
+    "E_SLIDE_24"
+  ],
+  "E_C14": [
+    "E_SLIDE_24",
+    "E_SLIDE_28"
+  ],
+  "E_C15": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C16": [],
+  "E_C17": [],
+  "E_C18": [
+    "E_SLIDE_26",
+    "E_SLIDE_28"
+  ],
+  "E_C19": [],
+  "E_C20": [
+    "E_SLIDE_27"
+  ],
+  "E_C21": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C22": [
+    "E_SLIDE_04",
+    "E_SLIDE_28"
+  ],
+  "E_C23": [],
+  "E_C24": [
+    "E_SLIDE_04",
+    "E_SLIDE_28"
+  ],
+  "E_C25": [
+    "E_SLIDE_28",
+    "E_SLIDE_04"
+  ],
+  "E_C26": [],
+  "E_C27": [],
+  "E_SLIDE_01": [
+    "E_C07"
+  ],
+  "E_SLIDE_02": [],
+  "E_SLIDE_03": [],
+  "E_SLIDE_04": [
+    "E_C05",
+    "E_C10"
+  ],
+  "E_SLIDE_05": [],
+  "E_SLIDE_06": [],
+  "E_SLIDE_07": [],
+  "E_SLIDE_08": [],
+  "E_SLIDE_09": [],
+  "E_SLIDE_10": [],
+  "E_SLIDE_11": [],
+  "E_SLIDE_12": [],
+  "E_SLIDE_13": [],
+  "E_SLIDE_14": [],
+  "E_SLIDE_15": [],
+  "E_SLIDE_16": [],
+  "E_SLIDE_17": [],
+  "E_SLIDE_18": [],
+  "E_SLIDE_19": [],
+  "E_SLIDE_20": [],
+  "E_SLIDE_21": [],
+  "E_SLIDE_22": [],
+  "E_SLIDE_23": [
+    "E_C04"
+  ],
+  "E_SLIDE_24": [
+    "E_C06",
+    "E_C07"
+  ],
+  "E_SLIDE_25": [],
+  "E_SLIDE_26": [
+    "E_C18"
+  ],
+  "E_SLIDE_27": [
+    "E_C01",
+    "E_C03"
+  ],
+  "E_SLIDE_28": [
+    "E_C05",
+    "E_C06"
+  ]
+}

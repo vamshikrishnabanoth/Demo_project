@@ -1,0 +1,101 @@
+{
+  "experiment": "Experiment 8: LLM Task Specialization & Model Selection Benchmark",
+  "benchmark_date": "2026-08-29T16:04:02Z",
+  "num_repeated_trials": 3,
+  "provider": "Groq Cloud API",
+  "models_evaluated": [
+    {
+      "model_id": "openai/gpt-oss-20b",
+      "model_label": "GPT-OSS 20B (Efficiency Candidate)",
+      "parameter_class": "20B",
+      "task1_representation": {
+        "schema_compliance": "6/6 (100.0%)",
+        "multimodal_preservation": "3/3 (100.0%)",
+        "grounding_violation_rate": "50.0%",
+        "latency_mean_sec": 45.11,
+        "latency_std_sec": 29.32,
+        "latency_formatted": "45.11 \u00b1 29.32 s",
+        "stage1_gate_passed": false
+      },
+      "task2_planning": {
+        "schema_compliance": "3/3 (100.0%)",
+        "grounding_violation_rate": "0.0%",
+        "avg_facets_allocated": 10.0,
+        "latency_mean_sec": 26.49,
+        "latency_std_sec": 16.87,
+        "latency_formatted": "26.49 \u00b1 16.87 s",
+        "stage1_gate_passed": true
+      },
+      "task3_critic": {
+        "defect_recovery": "9/9 (100.0%)",
+        "non_defective_field_preservation": "54/54 (100.0%)",
+        "latency_mean_sec": 35.74,
+        "latency_std_sec": 14.04,
+        "latency_formatted": "35.74 \u00b1 14.04 s",
+        "stage1_gate_passed": true
+      }
+    },
+    {
+      "model_id": "qwen/qwen3.6-27b",
+      "model_label": "Qwen 3.6 27B (Baseline Candidate)",
+      "parameter_class": "27B",
+      "task1_representation": {
+        "schema_compliance": "6/6 (100.0%)",
+        "multimodal_preservation": "3/3 (100.0%)",
+        "grounding_violation_rate": "33.3%",
+        "latency_mean_sec": 147.89,
+        "latency_std_sec": 56.47,
+        "latency_formatted": "147.89 \u00b1 56.47 s",
+        "stage1_gate_passed": false
+      },
+      "task2_planning": {
+        "schema_compliance": "3/3 (100.0%)",
+        "grounding_violation_rate": "0.0%",
+        "avg_facets_allocated": 10.0,
+        "latency_mean_sec": 59.6,
+        "latency_std_sec": 44.92,
+        "latency_formatted": "59.6 \u00b1 44.92 s",
+        "stage1_gate_passed": true
+      },
+      "task3_critic": {
+        "defect_recovery": "9/9 (100.0%)",
+        "non_defective_field_preservation": "54/54 (100.0%)",
+        "latency_mean_sec": 62.01,
+        "latency_std_sec": 17.92,
+        "latency_formatted": "62.01 \u00b1 17.92 s",
+        "stage1_gate_passed": true
+      }
+    },
+    {
+      "model_id": "openai/gpt-oss-120b",
+      "model_label": "GPT-OSS 120B (High-Capability Candidate)",
+      "parameter_class": "120B",
+      "task1_representation": {
+        "schema_compliance": "6/6 (100.0%)",
+        "multimodal_preservation": "3/3 (100.0%)",
+        "grounding_violation_rate": "50.0%",
+        "latency_mean_sec": 38.54,
+        "latency_std_sec": 16.87,
+        "latency_formatted": "38.54 \u00b1 16.87 s",
+        "stage1_gate_passed": false
+      },
+      "task2_planning": {
+        "schema_compliance": "3/3 (100.0%)",
+        "grounding_violation_rate": "0.0%",
+        "avg_facets_allocated": 10.0,
+        "latency_mean_sec": 18.57,
+        "latency_std_sec": 17.16,
+        "latency_formatted": "18.57 \u00b1 17.16 s",
+        "stage1_gate_passed": true
+      },
+      "task3_critic": {
+        "defect_recovery": "9/9 (100.0%)",
+        "non_defective_field_preservation": "54/54 (100.0%)",
+        "latency_mean_sec": 35.48,
+        "latency_std_sec": 16.57,
+        "latency_formatted": "35.48 \u00b1 16.57 s",
+        "stage1_gate_passed": true
+      }
+    }
+  ]
+}

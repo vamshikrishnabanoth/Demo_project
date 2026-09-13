@@ -1,0 +1,74 @@
+{
+  "pipeline_type": "PIPELINE_A_SUMMARY",
+  "input_id": "input_03_ds_lab_programs",
+  "input_type": "CODE",
+  "content_style": "CODE",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which sequence of steps correctly inserts a new node at the end of a singly linked list?",
+      "option_a": "Create the node, set its next to nullptr, traverse to the last node, and set last->next to the new node.",
+      "option_b": "Create the node, set its next to the current head, and update head to the new node.",
+      "option_c": "Create the node, set its prev to the current tail, and update tail to the new node.",
+      "option_d": "Create the node, set its next to the head, and update head to the new node.",
+      "correct_option": "A",
+      "explanation": "Inserting at the end of a singly linked list requires creating the node, ensuring its next pointer is nullptr, locating the current last node by traversal, and linking the last node's next to the new node. Option B describes insertion at the beginning, Option C mixes doubly linked list concepts, and Option D also describes head insertion. Therefore, option A is the only correct description.",
+      "target_concept": "Singly Linked List insertion at end",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "How can a doubly linked list be traversed in reverse order without using extra memory structures?",
+      "option_a": "By following the next pointers starting from the head.",
+      "option_b": "By following the prev pointers starting from the tail.",
+      "option_c": "By pushing each visited node onto a stack and then popping them.",
+      "option_d": "By recursively calling a function on each node.",
+      "correct_option": "B",
+      "explanation": "A doubly linked list maintains a prev pointer in each node, allowing reverse traversal directly from the tail using those pointers. Option A traverses forward, Option C uses an auxiliary stack which is unnecessary, and Option D uses recursion which also requires extra call\u2011stack memory. Hence, option B is correct.",
+      "target_concept": "Doubly Linked List reverse traversal",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "In an array\u2011based stack implementation, which condition indicates that a push operation would cause stack overflow?",
+      "option_a": "top == -1",
+      "option_b": "top == size - 1",
+      "option_c": "top < 0",
+      "option_d": "top > size",
+      "correct_option": "B",
+      "explanation": "For a fixed\u2011size array of length 'size', the top index ranges from 0 to size\u20111. When top equals size\u20111, the array is full; attempting another push would overflow. Option A indicates an empty stack, Option C is also an empty\u2011stack indicator, and Option D is never a valid state for a correctly managed stack. Thus, option B is correct.",
+      "target_concept": "Array\u2011based Stack overflow detection",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "During infix\u2011to\u2011postfix conversion, when the incoming operator has lower precedence than the operator on the top of the stack, what should the algorithm do?",
+      "option_a": "Push the incoming operator onto the stack without popping any operators.",
+      "option_b": "Pop operators from the stack to the output until the stack is empty or an operator with lower precedence appears, then push the incoming operator.",
+      "option_c": "Discard the incoming operator as an error.",
+      "option_d": "Immediately output the incoming operator before any stack operations.",
+      "correct_option": "B",
+      "explanation": "The standard algorithm pops operators of higher or equal precedence from the stack to the output before pushing the new operator, ensuring correct order in the postfix expression. Option A would violate precedence rules, Option C incorrectly treats it as an error, and Option D would place the operator before operands that should precede it. Therefore, option B correctly describes the required action.",
+      "target_concept": "Infix to postfix precedence handling",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "What is the correct effect on pointers when inserting a new node at the end of a circular linked list?",
+      "option_a": "The new node's next pointer is set to nullptr.",
+      "option_b": "The new node becomes the new head of the list.",
+      "option_c": "The new node's next pointer is set to the head, and the tail pointer is updated to the new node.",
+      "option_d": "The list is automatically converted into a doubly linked list.",
+      "correct_option": "C",
+      "explanation": "In a circular linked list, the last node (tail) points back to the head. Inserting at the end requires the new node's next to point to the head, and then updating the tail reference to this new node. Option A would break the circular property, Option B describes head insertion, and Option D introduces unrelated doubly linked list behavior. Hence, option C is correct.",
+      "target_concept": "Circular Linked List insertion at end",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": null
+    }
+  ]
+}

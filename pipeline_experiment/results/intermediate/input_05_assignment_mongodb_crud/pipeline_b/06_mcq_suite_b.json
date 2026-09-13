@@ -1,0 +1,109 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_05_assignment_mongodb_crud",
+  "input_type": "ASSIGNMENT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "In an Amazon product management system, a document contains a top-level field `price` and a nested field `dimensions.weight`. Which of the following statements correctly describes how MongoDB resolves these fields during a query?",
+      "option_a": "Both `price` and `dimensions.weight` are treated as top-level keys in the index, requiring separate index entries for each.",
+      "option_b": "`price` is accessed directly, while `dimensions.weight` is resolved using dot notation to traverse the embedded document structure.",
+      "option_c": "`dimensions.weight` must be accessed via array indexing (e.g., `dimensions[0].weight`) regardless of whether `dimensions` is an object or array.",
+      "option_d": "Nested fields like `dimensions.weight` cannot be queried directly and must be flattened into top-level fields before querying.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because MongoDB uses dot notation to access fields within embedded documents. `price` is a top-level field, while `dimensions.weight` requires traversing the `dimensions` object to reach `weight`. Option A is incorrect because nested fields are not automatically top-level keys; they are part of the parent document's structure. Option C is incorrect because dot notation works for both objects and arrays without requiring explicit array indexing unless specific element access is needed. Option D is incorrect because MongoDB natively supports querying nested fields without flattening.",
+      "target_concept": "MongoDB Querying and Filtering: Dot Notation for Nested Fields",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "Logical difference between top-level and nested field queries using dot notation.",
+      "why_assessed": "To ensure students understand how MongoDB resolves paths in embedded documents, a critical skill for querying complex product data.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that nested fields are top-level keys or require flattening, which are common errors in schema design and querying."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "A product document has an array field `tags` containing [\"electronics\", \"sale\", \"new\"]. Which statement accurately describes the behavior of the query `{ tags: { $gt: \"electronics\" } }`?",
+      "option_a": "The query compares the entire array object to the string \"electronics\" and returns no results.",
+      "option_b": "The query matches if any element in the `tags` array is lexicographically greater than \"electronics\".",
+      "option_c": "The query requires explicit array element indexing (e.g., `tags.0`) to compare individual elements.",
+      "option_d": "The query performs a substring match and returns documents where \"electronics\" is a substring of any tag.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because comparison operators like `$gt` on array fields in MongoDB match if any element in the array satisfies the condition. Option A is incorrect because MongoDB does not compare the entire array object to a scalar value in this context. Option C is incorrect because explicit indexing is not required for general array element matching. Option D is incorrect because `$gt` performs a comparison, not a substring match.",
+      "target_concept": "MongoDB Querying and Filtering: Comparison Operators on Arrays",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "Behavior of comparison operators when applied to array fields.",
+      "why_assessed": "To clarify that comparison operators on arrays match individual elements, not the array structure, which is essential for filtering product tags or ratings.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that comparison operators on arrays compare the entire array or require explicit indexing, which can lead to inefficient or incorrect queries."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "To find products in the categories \"electronics\" or \"books\", which of the following queries is most appropriate and efficient in MongoDB?",
+      "option_a": "`{ category: { $in: [\"electronics\", \"books\"] } }`",
+      "option_b": "`{ category: \"electronics\" }` followed by a separate query for `{ category: \"books\" }` and merging results.",
+      "option_c": "`{ $or: [{ category: \"electronics\" }, { category: \"books\" }] }`",
+      "option_d": "`{ category: { $regex: \"electronics|books\" } }`",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the `$in` operator is specifically designed to match any value in a list, making it more concise and often more efficient than chaining `$or` conditions. Option B is incorrect because it requires multiple queries, which is less efficient. Option C is functionally equivalent but less concise and may have higher overhead. Option D is incorrect because `$regex` performs substring matching, which is not the intended behavior for exact category matches.",
+      "target_concept": "MongoDB Querying and Filtering: $in Operator vs. $or",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Interpretation of $in operator results and its differences from $or.",
+      "why_assessed": "To ensure students understand the syntactic and performance implications of using $in versus $or for categorical filtering.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that $in performs substring matching or is functionally identical to $or without considering performance and syntax."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "In an Amazon-like system, why might it be preferable to embed product reviews within the product document rather than storing them in a separate collection?",
+      "option_a": "Embedding ensures that all related data is normalized, avoiding duplication.",
+      "option_b": "Embedding reduces the need for joins, improving read performance for high-read, low-write scenarios.",
+      "option_c": "Embedding allows for easier scaling of the review collection independently from the product collection.",
+      "option_d": "Embedding is required by MongoDB to maintain referential integrity.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because embedding reviews in the product document reduces the need for joins, which improves read performance, especially in high-read, low-write scenarios. Option A is incorrect because embedding does not normalize data; it denormalizes it. Option C is incorrect because embedding does not allow independent scaling of reviews. Option D is incorrect because MongoDB does not enforce referential integrity through embedding.",
+      "target_concept": "Domain-Specific Data Modeling: Embedding vs. Referencing",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S04",
+      "what_taught": "Justification for embedding product reviews based on read/write access patterns.",
+      "why_assessed": "To ensure students understand the trade-offs between embedding and referencing in MongoDB, particularly for high-read scenarios.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that all related data must be normalized or that embedding is required for referential integrity."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Why is a flexible schema (schema-less) advantageous for storing product attributes like 'color', 'size', and 'material' in MongoDB?",
+      "option_a": "It ensures that all products have identical fields, preventing data inconsistency.",
+      "option_b": "It allows for sparse documents, accommodating varying product types without requiring all fields to be present.",
+      "option_c": "It enforces strict data types for all attributes, ensuring data integrity.",
+      "option_d": "It reduces the storage size of the database by compressing all documents.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because a flexible schema allows for sparse documents, where different products can have different attributes without requiring all fields to be present. Option A is incorrect because a flexible schema does not enforce identical fields. Option C is incorrect because a flexible schema does not enforce strict data types. Option D is incorrect because a flexible schema does not inherently reduce storage size through compression.",
+      "target_concept": "Domain-Specific Data Modeling: Flexible Schema for Heterogeneous Data",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Rationale for using a flexible schema for product attributes.",
+      "why_assessed": "To ensure students understand the advantages of a flexible schema for handling varying product types in MongoDB.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "misconception_rationale": "Distractors target the misconception that a lack of strict schema leads to data inconsistency or that all products must have identical fields."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788032156909-CASE_B_I",
+  "timestamp": "2026-08-29T19:38:47Z",
+  "input_id": "CASE_B_INTERACTIVE",
+  "selected_representation": "BLUEPRINT",
+  "pedagogical_delivery_index": 0.7,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "OFF_BY_ONE_ANALYSIS",
+    "BOUNDARY_EDGE_CASE",
+    "THEORETICAL_RATIONALE",
+    "ERROR_DIAGNOSIS",
+    "OUTPUT_PREDICTION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 170337.66,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 HARD targets was fulfilled by selecting 5 distinct concepts from the available pool and assigning them unique, high-cognitive-load assessment facets. To ensure non-redundancy, each target focuses on a different conceptual component of the Binary Search problem (Partitioning, Boundary Properties, Median Logic, Comparison Conditions, and Pointer Adjustment) and a different pedagogical angle (Off-by-One, Boundary Edge Cases, Theoretical Rationale, Error Diagnosis, and Output Prediction). This ensures comprehensive coverage of the lecture material at a challenging level."
+}

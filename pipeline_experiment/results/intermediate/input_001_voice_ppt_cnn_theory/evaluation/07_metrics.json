@@ -1,0 +1,49 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 39.6,
+    "source_answerability_percentage": 21.0,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.013,
+    "diversity_score": 0.987,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.6,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "REMEMBER": 0.4,
+      "UNDERSTAND": 0.4,
+      "ANALYZE": 0.2
+    },
+    "specificity_score": 2.88
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 32.7,
+    "source_answerability_percentage": 19.3,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.056,
+    "diversity_score": 0.944,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.667,
+    "average_bloom_level": 3.67,
+    "bloom_distribution": {
+      "ANALYZE": 0.67,
+      "APPLY": 0.33
+    },
+    "specificity_score": 2.62
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_001_voice_ppt_cnn_theory",
+    "topics_grounded_percentage": 100.0,
+    "salience_alignment_score": 4.5,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 13.3,
+    "overall_validity_percentage": 74.0
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.415,
+    "composite_score_blueprint": 0.461,
+    "quality_delta": 0.046,
+    "rationale": "Both representations achieved comparable quality scores within the predefined threshold margin (Q_A=0.415, Q_B=0.461, delta=0.046)."
+  }
+}

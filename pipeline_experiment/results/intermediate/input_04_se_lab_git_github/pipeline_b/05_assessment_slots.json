@@ -1,0 +1,74 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Git & GitHub Environment Setup",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Identify the correct sequence of CLI commands required to initialize a local Git repository and configure user identity before the first commit.",
+    "misconception_target": "Confusing 'git init' with 'git clone' or assuming user configuration is global by default without explicit local override.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Collaborative Workflows & Pull Requests",
+    "cognitive_level": "UNDERSTAND",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Explain the purpose of a Pull Request (PR) in the context of code review and how it differs from a direct push to the main branch.",
+    "misconception_target": "Believing that a Pull Request automatically merges code without human review or that it is merely a file transfer mechanism.",
+    "evidence_refs": [
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Merge Conflict Resolution",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Apply the correct Git commands to resolve a merge conflict in a specific file, stage the resolved file, and complete the merge process.",
+    "misconception_target": "Attempting to use 'git commit' directly without resolving the conflict markers or forgetting to stage the file after editing.",
+    "evidence_refs": [
+      "E_C05"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Patch Creation and Application",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Analyze a provided patch file to identify the specific lines of code being modified and determine the correct command to apply it to a target repository.",
+    "misconception_target": "Misinterpreting the '+' and '-' symbols in a diff as literal characters to be added/removed rather than indicators of line changes, or using 'git apply' on a binary file.",
+    "evidence_refs": [
+      "E_C06"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Patch Creation and Application",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Diagnose why a patch application failed due to context mismatch and select the appropriate flag or strategy to force application or revert to a clean state.",
+    "misconception_target": "Assuming that 'git apply' will always succeed if the file exists, ignoring the importance of context lines matching the current file state.",
+    "evidence_refs": [
+      "E_C07"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  }
+]

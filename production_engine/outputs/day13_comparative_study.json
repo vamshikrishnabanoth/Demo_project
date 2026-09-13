@@ -1,0 +1,612 @@
+{
+  "input_id": "input_22_day13_daa_median",
+  "title": "Design & Analysis of Algorithms: Day 13 - Median of Two Sorted Arrays using Binary Search",
+  "audio_duration_seconds": 4647.33,
+  "total_words": 9974,
+  "pipeline_a": {
+    "pipeline": "Pipeline A (Summary-Only)",
+    "representation": "SUMMARY (WHAT)",
+    "latency_seconds": 52.55,
+    "questions_count": 10,
+    "summary_data": {
+      "input_id": "Design & Analysis of Algorithms: Day 13 - Median of Two Sorted Arrays using Binary Search",
+      "title": "Median of Two Sorted Arrays using Binary Search",
+      "concepts_and_definitions": [
+        "Partitioning: The process of dividing two sorted arrays into left and right halves using a mid-point index.",
+        "A Partition / B Partition: The specific mid-element chosen in array A or array B that serves as the boundary for the left and right segments.",
+        "Immediate Left of Partition: The element directly preceding the partition index, which represents the maximum value in the left segment.",
+        "Immediate Right of Partition: The element directly following the partition index, which represents the minimum value in the right segment.",
+        "Binary Search Application: Using binary search to efficiently locate the correct partition point rather than iterating through elements linearly."
+      ],
+      "mechanisms_and_formulas": [
+        "Partition Logic: Divide array A at index mid_A and array B at index mid_B to create four segments: A_left, A_right, B_left, and B_right.",
+        "Boundary Condition: The validity of a partition is determined by checking if the maximum of the left segments is less than or equal to the minimum of the right segments (max(A_left, B_left) <= min(A_right, B_right)).",
+        "Median Calculation: The median is derived from the boundary elements (immediate left and immediate right of the partitions) once the correct partition alignment is found."
+      ],
+      "examples_and_code_patterns": [
+        "Example Data: Arrays A = [1, 3, 5, 7, 9, 15, 25, 72, 0] and B = [2, 4, 6, 8, 10] are used to demonstrate the partitioning concept.",
+        "Partition Illustration: Identifying the mid-element (e.g., 7 in array A) and analyzing the immediate neighbors (5 on the left, 9 on the right) to establish local max/min values.",
+        "Sorted Union Verification: Comparing the partitioned segments against the fully sorted union [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 72] to verify the median location."
+      ],
+      "factual_summary_text": "The session focuses on solving the problem of finding the median of two sorted arrays using binary search, moving away from brute-force merging or linear partitioning. The core mechanism involves partitioning both arrays into left and right halves. The terminology established defines the 'partition' as the mid-element, where the element immediately to its left is the maximum of the left segment, and the element immediately to its right is the minimum of the right segment. This property is crucial for determining the correct alignment of the partitions.\n\nThe algorithm relies on the relationship between these boundary elements. By using binary search to adjust the partition points, the goal is to find a split where the maximum value of the combined left segments is less than or equal to the minimum value of the combined right segments. The example provided uses specific integer arrays to illustrate how the mid-points and their immediate neighbors define the potential median candidates, emphasizing that the median is determined by the boundary values of the correctly aligned partitions rather than scanning the entire merged array."
+    },
+    "questions": [
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of finding the median of two sorted arrays using binary search, what is the specific condition that must be satisfied for a partition to be considered valid?",
+        "option_a": "The sum of the left segments must equal the sum of the right segments.",
+        "option_b": "The maximum of the left segments must be less than or equal to the minimum of the right segments.",
+        "option_c": "The length of the left segments must be exactly equal to the length of the right segments.",
+        "option_d": "The median of array A must be less than the median of array B.",
+        "correct_option": "B",
+        "explanation": "According to the technical summary, the validity of a partition is determined by checking if the maximum of the left segments (max(A_left, B_left)) is less than or equal to the minimum of the right segments (min(A_right, B_right)). This ensures that all elements in the left half are smaller than or equal to all elements in the right half, which is necessary for the median calculation.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "What is the role of the 'Immediate Left of Partition' and 'Immediate Right of Partition' in the algorithm?",
+        "option_a": "They are used to calculate the average of the two arrays.",
+        "option_b": "They represent the maximum value in the left segment and the minimum value in the right segment, respectively.",
+        "option_c": "They are the first and last elements of the original unsorted arrays.",
+        "option_d": "They are used to determine the total length of the merged array.",
+        "correct_option": "B",
+        "explanation": "The summary defines the 'Immediate Left of Partition' as the element directly preceding the partition index, representing the maximum value in the left segment. The 'Immediate Right of Partition' is the element directly following the partition index, representing the minimum value in the right segment. These boundary elements are crucial for determining the median.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "Why is binary search applied in the algorithm for finding the median of two sorted arrays?",
+        "option_a": "To sort the arrays in ascending order before merging.",
+        "option_b": "To efficiently locate the correct partition point rather than iterating through elements linearly.",
+        "option_c": "To remove duplicate elements from the arrays.",
+        "option_d": "To calculate the sum of all elements in both arrays.",
+        "correct_option": "B",
+        "explanation": "The summary states that binary search is used to efficiently locate the correct partition point. This approach avoids the inefficiency of brute-force merging or linear partitioning, allowing the algorithm to find the split where the boundary conditions are met in logarithmic time relative to the smaller array.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of finding the median of two sorted arrays using binary search, what is the specific condition that must be satisfied for a partition to be considered valid?",
+        "option_a": "The sum of the left segments must equal the sum of the right segments.",
+        "option_b": "The maximum of the left segments must be less than or equal to the minimum of the right segments (max(A_left, B_left) <= min(A_right, B_right)).",
+        "option_c": "The length of the left segments must be exactly equal to the length of the right segments.",
+        "option_d": "The mid-point of array A must be greater than the mid-point of array B.",
+        "correct_option": "B",
+        "explanation": "According to the technical summary, the validity of a partition is determined by checking if the maximum of the left segments is less than or equal to the minimum of the right segments. This ensures that all elements in the left half are smaller than or equal to all elements in the right half, which is necessary for the median calculation.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "What is the role of the 'Immediate Left of Partition' and 'Immediate Right of Partition' in the algorithm?",
+        "option_a": "They are used to calculate the average of the entire arrays.",
+        "option_b": "They represent the maximum value in the left segment and the minimum value in the right segment, respectively.",
+        "option_c": "They are the first and last elements of the original unsorted arrays.",
+        "option_d": "They are used to determine the total length of the merged array.",
+        "correct_option": "B",
+        "explanation": "The summary defines the 'Immediate Left of Partition' as the element directly preceding the partition index, representing the maximum value in the left segment. Similarly, the 'Immediate Right of Partition' is the element directly following the partition index, representing the minimum value in the right segment. These boundary elements are crucial for determining the median.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "Why is binary search applied in the 'Median of Two Sorted Arrays' problem instead of linear iteration?",
+        "option_a": "To sort the arrays before merging them.",
+        "option_b": "To efficiently locate the correct partition point rather than iterating through elements linearly.",
+        "option_c": "To remove duplicate elements from the arrays.",
+        "option_d": "To reverse the order of the arrays for comparison.",
+        "correct_option": "B",
+        "explanation": "The summary explicitly states that binary search is used to efficiently locate the correct partition point rather than iterating through elements linearly. This approach improves the time complexity of the solution compared to brute-force methods.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of finding the median of two sorted arrays using binary search, what is the specific condition that must be satisfied for a partition to be considered valid?",
+        "option_a": "The sum of the elements in the left segments must equal the sum of the elements in the right segments.",
+        "option_b": "The maximum value of the combined left segments must be less than or equal to the minimum value of the combined right segments.",
+        "option_c": "The length of the left segment of array A must be exactly equal to the length of the left segment of array B.",
+        "option_d": "The mid-element of array A must be strictly greater than the mid-element of array B.",
+        "correct_option": "B",
+        "explanation": "According to the technical summary, the validity of a partition is determined by checking if the maximum of the left segments is less than or equal to the minimum of the right segments (max(A_left, B_left) <= min(A_right, B_right)). This ensures that all elements in the left half are smaller than or equal to all elements in the right half, which is necessary for the median calculation.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "How is the 'Immediate Left of Partition' defined in the algorithm for finding the median of two sorted arrays?",
+        "option_a": "It is the smallest element in the entire array A.",
+        "option_b": "It is the element directly preceding the partition index, representing the maximum value in the left segment.",
+        "option_c": "It is the average of the two mid-elements of the arrays.",
+        "option_d": "It is the first element of the right segment of array B.",
+        "correct_option": "B",
+        "explanation": "The summary explicitly defines the 'Immediate Left of Partition' as the element directly preceding the partition index, which represents the maximum value in the left segment. This definition is crucial for identifying the boundary values used to calculate the median.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of finding the median of two sorted arrays using binary search, what is the specific condition that must be satisfied for a partition to be considered valid?",
+        "option_a": "The sum of the elements in the left segments must equal the sum of the elements in the right segments.",
+        "option_b": "The maximum value of the combined left segments must be less than or equal to the minimum value of the combined right segments.",
+        "option_c": "The length of the left segment of array A must be exactly equal to the length of the left segment of array B.",
+        "option_d": "The mid-point index of array A must be numerically greater than the mid-point index of array B.",
+        "correct_option": "B",
+        "explanation": "According to the technical summary, the validity of a partition is determined by checking if the maximum of the left segments (max(A_left, B_left)) is less than or equal to the minimum of the right segments (min(A_right, B_right)). This ensures that all elements in the left half are smaller than or equal to all elements in the right half, which is necessary for the median calculation.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "How is the 'Immediate Left of Partition' defined in the algorithm for finding the median of two sorted arrays?",
+        "option_a": "It is the first element of the array that is smaller than the partition element.",
+        "option_b": "It is the element directly preceding the partition index, representing the maximum value in the left segment.",
+        "option_c": "It is the median of the left segment calculated by averaging the first and last elements of the left half.",
+        "option_d": "It is the element at index 0 of the array, serving as the global minimum.",
+        "correct_option": "B",
+        "explanation": "The summary explicitly defines the 'Immediate Left of Partition' as the element directly preceding the partition index. This element represents the maximum value in the left segment, which is a crucial boundary value for determining the median once the correct partition alignment is found.",
+        "cognitive_level": "REMEMBER"
+      }
+    ]
+  },
+  "pipeline_b": {
+    "pipeline": "Pipeline B (Blueprint-Only)",
+    "representation": "BLUEPRINT (WHY)",
+    "latency_seconds": 83.56,
+    "questions_count": 10,
+    "blueprint_data": {
+      "blueprint_id": "BP_input_22_day13_daa_median",
+      "input_id": "input_22_day13_daa_median",
+      "topics": [
+        {
+          "topic_id": "TOP_01",
+          "topic": "Binary Search Partitioning Strategy",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "INTRODUCE"
+          ],
+          "dominant_mode": "CONCEPTUAL_INTRODUCTION",
+          "target_bloom_level": "UNDERSTAND",
+          "prerequisite_concepts": [
+            "Binary Search",
+            "Sorted Arrays"
+          ],
+          "evidence_refs": [
+            "E_C01",
+            "E_C03",
+            "E_C04"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_02",
+          "topic": "Partition Boundary Properties",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "EXPLAIN"
+          ],
+          "dominant_mode": "CONCEPTUAL_EXPLANATION",
+          "target_bloom_level": "UNDERSTAND",
+          "prerequisite_concepts": [
+            "Array Partitioning",
+            "Indexing"
+          ],
+          "evidence_refs": [
+            "E_C05",
+            "E_C06",
+            "E_C07"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_03",
+          "topic": "Median Calculation Logic",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "EXPLAIN"
+          ],
+          "dominant_mode": "LOGICAL_DERIVATION",
+          "target_bloom_level": "UNDERSTAND",
+          "prerequisite_concepts": [
+            "Median Definition",
+            "Even/Odd Length Handling"
+          ],
+          "evidence_refs": [
+            "E_C08",
+            "E_C16",
+            "E_C17",
+            "E_C20"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_04",
+          "topic": "Cross-Array Validity Conditions",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "EXPLAIN"
+          ],
+          "dominant_mode": "CONSTRAINT_ANALYSIS",
+          "target_bloom_level": "ANALYZE",
+          "prerequisite_concepts": [
+            "Partition Boundary Properties",
+            "Sorted Order Invariants"
+          ],
+          "evidence_refs": [
+            "E_C13",
+            "E_C14",
+            "E_C15"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_05",
+          "topic": "Pointer Adjustment and Search Direction",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "EXPLAIN"
+          ],
+          "dominant_mode": "ALGORITHMIC_LOGIC",
+          "target_bloom_level": "ANALYZE",
+          "prerequisite_concepts": [
+            "Binary Search Pointers",
+            "Comparison Logic"
+          ],
+          "evidence_refs": [
+            "E_C21",
+            "E_C22",
+            "E_C23"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_06",
+          "topic": "Worked Example: Initial Setup",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "DEMONSTRATE"
+          ],
+          "dominant_mode": "WORKED_EXAMPLE",
+          "target_bloom_level": "APPLY",
+          "prerequisite_concepts": [
+            "Binary Search Partitioning Strategy",
+            "Array Initialization"
+          ],
+          "evidence_refs": [
+            "E_C24",
+            "E_C25"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_07",
+          "topic": "Worked Example: Validation and Result",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "DEMONSTRATE"
+          ],
+          "dominant_mode": "WORKED_EXAMPLE",
+          "target_bloom_level": "APPLY",
+          "prerequisite_concepts": [
+            "Cross-Array Validity Conditions",
+            "Median Calculation Logic"
+          ],
+          "evidence_refs": [
+            "E_C16",
+            "E_C19"
+          ],
+          "teacher_specificity": "LOW"
+        },
+        {
+          "topic_id": "TOP_08",
+          "topic": "Algorithmic Focus on Left Partition",
+          "salience_score": 0.05,
+          "instructional_acts": [
+            "EXPLAIN"
+          ],
+          "dominant_mode": "OPTIMIZATION_STRATEGY",
+          "target_bloom_level": "ANALYZE",
+          "prerequisite_concepts": [
+            "Time Complexity Analysis",
+            "Binary Search on Smaller Array"
+          ],
+          "evidence_refs": [
+            "E_C10",
+            "E_C11"
+          ],
+          "teacher_specificity": "LOW"
+        }
+      ]
+    },
+    "questions": [
+      {
+        "question_id": "Q1",
+        "question_text": "In the binary search approach to finding the median of two sorted arrays, why is it standard practice to perform the binary search on the smaller array rather than the larger one?",
+        "option_a": "To ensure the partition indices do not exceed the bounds of the larger array.",
+        "option_b": "To minimize the number of iterations in the binary search, thereby optimizing time complexity.",
+        "option_c": "To guarantee that the left partition of the smaller array is always non-empty.",
+        "option_d": "To simplify the calculation of the median by avoiding negative indices.",
+        "correct_option": "B",
+        "explanation": "The time complexity of the binary search is O(log(min(m, n))). By searching on the smaller array, we minimize the number of steps required to find the correct partition, which is the core optimization strategy of this algorithm.",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "When partitioning two sorted arrays A and B into left and right halves, what specific condition must be satisfied for the partition to be valid with respect to the sorted order of the combined elements?",
+        "option_a": "The maximum element of the left partition of A must be less than or equal to the minimum element of the right partition of B.",
+        "option_b": "The sum of elements in the left partition of A must equal the sum of elements in the left partition of B.",
+        "option_c": "The length of the left partition of A must be exactly half the length of array A.",
+        "option_d": "The first element of array A must be less than the first element of array B.",
+        "correct_option": "A",
+        "explanation": "For the partition to correctly represent the median of the merged sorted array, all elements in the left half (from both arrays) must be less than or equal to all elements in the right half. This is verified by checking if max(A_left) <= min(B_right) and max(B_left) <= min(A_right).",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "During the binary search process, if the maximum element of the left partition of array A is greater than the minimum element of the right partition of array B, what adjustment should be made to the search pointers?",
+        "option_a": "Increase the right pointer to include more elements in the right partition of A.",
+        "option_b": "Decrease the right pointer to reduce the size of the left partition of A.",
+        "option_c": "Swap the roles of array A and array B and restart the search.",
+        "option_d": "Calculate the median immediately using the current partition values.",
+        "correct_option": "B",
+        "explanation": "If max(A_left) > min(B_right), it means the partition in A is too far to the right (too many elements in A's left side). To fix this, we must move the partition point in A to the left, which is achieved by decreasing the right pointer (or high bound) of the binary search on A.",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the binary search approach to finding the median of two sorted arrays, why is it standard practice to perform the binary search on the smaller array rather than the larger one?",
+        "option_a": "To ensure the partition index never exceeds the length of the larger array.",
+        "option_b": "To guarantee that the left partition of the larger array is always non-empty.",
+        "option_c": "To reduce the time complexity from O(log(max(m, n))) to O(log(min(m, n))).",
+        "option_d": "To simplify the calculation of the median by avoiding negative indices.",
+        "correct_option": "C",
+        "explanation": "The algorithm's time complexity is determined by the number of binary search steps. By searching on the smaller array, the number of iterations is bounded by log(min(m, n)), which is more efficient than log(max(m, n)).",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "When partitioning two sorted arrays A and B at indices i and j respectively, what condition must be satisfied for the partition to be valid with respect to the sorted order of the combined elements?",
+        "option_a": "A[i-1] must be less than or equal to B[j] AND B[j-1] must be less than or equal to A[i].",
+        "option_b": "A[i] must be less than or equal to B[j] AND B[i] must be less than or equal to A[j].",
+        "option_c": "A[i-1] must be greater than B[j] AND B[j-1] must be greater than A[i].",
+        "option_d": "The sum of elements in the left partitions must equal the sum of elements in the right partitions.",
+        "correct_option": "A",
+        "explanation": "For the partition to be valid, all elements in the left partition must be less than or equal to all elements in the right partition. This specifically requires the maximum of the left side of A (A[i-1]) to be <= the minimum of the right side of B (B[j]), and the maximum of the left side of B (B[j-1]) to be <= the minimum of the right side of A (A[i]).",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "During the binary search process, if the condition A[i-1] > B[j] is found to be true, what adjustment should be made to the search range?",
+        "option_a": "Increase the left pointer (low) because the partition in A is too far to the right.",
+        "option_b": "Decrease the right pointer (high) because the partition in A is too far to the right.",
+        "option_c": "Increase the left pointer (low) because the partition in A is too far to the left.",
+        "option_d": "Decrease the right pointer (high) because the partition in A is too far to the left.",
+        "correct_option": "B",
+        "explanation": "If A[i-1] > B[j], it means the element A[i-1] in the left partition of A is larger than an element B[j] in the right partition of B. This violates the sorted order, indicating that the partition point i in A is too large (too far to the right). Therefore, we must decrease the partition size in A by moving the high pointer to the left (high = i - 1).",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the binary search approach to finding the median of two sorted arrays, why is it standard practice to perform the binary search on the smaller array rather than the larger one?",
+        "option_a": "To ensure the partition indices do not exceed the bounds of the larger array.",
+        "option_b": "To minimize the number of iterations in the binary search loop, thereby optimizing time complexity.",
+        "option_c": "To guarantee that the left partition of the smaller array is always non-empty.",
+        "option_d": "To simplify the calculation of the median by avoiding negative indices in the larger array.",
+        "correct_option": "B",
+        "explanation": "The algorithm's time complexity is O(log(min(m, n))). By searching on the smaller array, we reduce the search space, which directly minimizes the number of binary search steps required to find the correct partition.",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "When determining the search direction in the binary search for the median of two sorted arrays, if the maximum element of the left partition of array A is greater than the minimum element of the right partition of array B, what adjustment should be made to the search pointer?",
+        "option_a": "Move the pointer to the right (increase the partition index) to include more elements in the left partition of A.",
+        "option_b": "Move the pointer to the left (decrease the partition index) to exclude the large element from the left partition of A.",
+        "option_c": "Swap the roles of array A and array B and restart the search.",
+        "option_d": "The partition is valid, so calculate the median immediately.",
+        "correct_option": "B",
+        "explanation": "If max(left_A) > min(right_B), it indicates that the partition in array A is too far to the right, causing elements that should be in the right half to be in the left half. Therefore, the search must move left (decrease the partition index) to correct the balance.",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the binary search approach to finding the median of two sorted arrays, why is the partitioning strategy specifically applied to the shorter array rather than the longer one?",
+        "option_a": "To ensure the median is always an integer rather than a float.",
+        "option_b": "To guarantee that the partition index in the shorter array remains within valid bounds, preventing out-of-bounds access when calculating the corresponding partition in the longer array.",
+        "option_c": "To reduce the time complexity from O(log(m+n)) to O(1).",
+        "option_d": "To ensure that the left partition of the shorter array always contains more elements than the right partition.",
+        "correct_option": "B",
+        "explanation": "The algorithm partitions the shorter array to ensure that the calculated partition index for the longer array (derived from the total length constraint) does not exceed the bounds of the longer array. If the longer array were partitioned, the corresponding index in the shorter array could become negative or exceed its length, leading to invalid memory access or logic errors.",
+        "cognitive_level": "ANALYZE"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "During the binary search process for the median of two sorted arrays, if the maximum element of the left partition of array A is greater than the minimum element of the right partition of array B, what adjustment should be made to the search pointers?",
+        "option_a": "Move the right pointer of array A to the left (decrease the partition size of A).",
+        "option_b": "Move the left pointer of array A to the right (increase the partition size of A).",
+        "option_c": "Swap the roles of array A and array B and restart the search.",
+        "option_d": "Calculate the median immediately using the current partition elements.",
+        "correct_option": "A",
+        "explanation": "If max(left_A) > min(right_B), it indicates that the partition in array A is too far to the right, including elements that should belong to the right half of the combined sorted array. To correct this, the partition in array A must be shifted to the left, which is achieved by moving the right pointer of the binary search in array A to the left.",
+        "cognitive_level": "ANALYZE"
+      }
+    ]
+  },
+  "pipeline_e": {
+    "pipeline": "Pipeline E (Production Engine)",
+    "representation": "BLUEPRINT",
+    "routing_rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+    "latency_seconds": 178.1,
+    "questions_count": 8,
+    "validation_status": "PASSED",
+    "generation_metadata": {
+      "total_latency_seconds": 178.1,
+      "measured_llm_calls": 4,
+      "pedagogical_delivery_index": 0.7,
+      "features": {
+        "has_audio": true,
+        "has_ppt": false,
+        "code_density": 0.0,
+        "text_length_words": 10036,
+        "pedagogical_marker_density": 1.1,
+        "dialogue_interaction_density": 3.19
+      },
+      "rag_chunks_retrieved_count": 9
+    },
+    "questions": [
+      {
+        "question_id": "Q_T01_01",
+        "question_text": "In the binary search algorithm for finding the median of two sorted arrays of lengths m and n, the algorithm partitions the arrays such that the total number of elements in the left partitions of both arrays equals a specific value. What is this value?",
+        "option_a": "(m + n) // 2",
+        "option_b": "(m + n + 1) // 2",
+        "option_c": "max(m, n) // 2",
+        "option_d": "(m + n) / 2.0",
+        "correct_option": "B",
+        "explanation": "The correct answer is B. The invariant requires the left partitions to contain exactly half of the total elements, rounded up if the total length is odd. This is mathematically represented as (m + n + 1) // 2. Option A is incorrect because it fails for odd total lengths (e.g., if m+n=5, (5)//2=2, but we need 3 elements to identify the median). Option C is incorrect because the partition size depends on the combined length, not just the larger array. Option D is incorrect because it results in a float, whereas partition indices must be integers, and it does not handle the odd-length case correctly for integer division logic in this context.",
+        "target_concept": "Partition Size Invariant",
+        "cognitive_level": "UNDERSTAND",
+        "what_taught": "The algorithm partitions the two arrays such that the total number of elements in the left partitions of both arrays equals (m + n + 1) // 2. This ensures the median lies at the boundary of these left partitions.",
+        "why_assessed": "This is the foundational invariant of the algorithm. Students must understand why this specific size is chosen to guarantee that the median is correctly identified at the partition boundary.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C42",
+          "E_C05"
+        ],
+        "misconception_rationale": "Option A targets the common misconception of forgetting the +1 for odd total lengths. Option C targets the misconception that the partition size depends only on the length of the first or larger array. Option D targets the confusion between integer division and floating-point division in the context of index calculation."
+      },
+      {
+        "question_id": "Q_T02_01",
+        "question_text": "Given two sorted arrays of lengths m and n, if the binary search algorithm partitions the first array at index i, how is the corresponding partition index j in the second array calculated?",
+        "option_a": "j = (m + n) // 2 - i",
+        "option_b": "j = (m + n + 1) // 2 - i",
+        "option_c": "j = n // 2 - i",
+        "option_d": "j = (m + n) // 2 + i",
+        "correct_option": "B",
+        "explanation": "The correct answer is B. To maintain the invariant that the total number of elements in the left partitions is (m + n + 1) // 2, if i elements are taken from the first array, the remaining elements for the left partition of the second array must be j = (m + n + 1) // 2 - i. Option A is incorrect because it omits the +1, leading to an incorrect total partition size for odd-length combined arrays. Option C is incorrect because it bases the calculation on the length of the second array alone, ignoring the contribution of the first array to the total median position. Option D is incorrect because it adds i instead of subtracting it, which would increase the total partition size as i increases, violating the constant sum invariant.",
+        "target_concept": "Index Calculation for Partition",
+        "cognitive_level": "APPLY",
+        "what_taught": "If we partition the first array at index i, the partition index j in the second array is calculated as j = (m + n + 1) // 2 - i. This ensures the total left partition size remains constant.",
+        "why_assessed": "Students need to apply the correct formula to determine the corresponding partition index in the second array given a partition index in the first array.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C42",
+          "E_C06"
+        ],
+        "misconception_rationale": "Option A represents the error of forgetting the +1 in the total size calculation. Option C represents the misconception of calculating j based on the length of the second array instead of the total length. Option D represents a sign error in the algebraic relationship between i and j."
+      },
+      {
+        "question_id": "Q_T03_01",
+        "question_text": "In the median of two sorted arrays algorithm, if the partition index i is 0, what value should be used for the maximum element of the left partition of the first array (A[i-1]) to prevent index errors and maintain logical correctness?",
+        "option_a": "A[0]",
+        "option_b": "0",
+        "option_c": "-infinity (-inf)",
+        "option_d": "A[m-1]",
+        "correct_option": "C",
+        "explanation": "The correct answer is C. When i=0, there are no elements in the left partition of array A. To ensure the comparison logic (specifically that max_left_A <= min_right_B) holds true without accessing invalid indices, we use negative infinity (-inf) as the sentinel value. Option A is incorrect because A[0] is the first element of the right partition (or the smallest element of A), not a valid representative for an empty left partition, and using it would break the partition logic. Option B is incorrect because 0 is an arbitrary value that may be greater than actual elements in the array, violating the partition condition. Option D is incorrect because A[m-1] is the last element of the array, which belongs to the right partition or is irrelevant to the left boundary when the left partition is empty.",
+        "target_concept": "Boundary Sentinel Handling",
+        "cognitive_level": "APPLY",
+        "what_taught": "When the partition index i is 0 or m, or j is 0 or n, the algorithm uses negative infinity (-inf) or positive infinity (inf) as sentinels for the elements that do not exist in the partition.",
+        "why_assessed": "Handling edge cases where the partition falls at the very beginning or end of an array is critical for the algorithm to work correctly without index errors.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C06",
+          "E_C42"
+        ],
+        "misconception_rationale": "Option A targets the misconception of using the first element as a boundary when the partition is empty. Option B targets the misconception of using 0 as a neutral sentinel, which fails if the array contains negative numbers. Option D targets the confusion between the left and right partition boundaries."
+      },
+      {
+        "question_id": "Q_T04_01",
+        "question_text": "In the binary search algorithm for finding the median of two sorted arrays, we partition the arrays such that the total number of elements in the left partitions equals the total number of elements in the right partitions (or differs by one). Which set of conditions must be satisfied for the partition to be valid?",
+        "option_a": "max(left1) <= min(right1) AND max(left2) <= min(right2)",
+        "option_b": "max(left1) <= min(right2) AND max(left2) <= min(right1)",
+        "option_c": "max(left1) >= min(right2) AND max(left2) >= min(right1)",
+        "option_d": "max(left1) <= min(right1) AND max(left2) <= min(right1)",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the partition is valid only if every element in the left partitions is less than or equal to every element in the right partitions. This requires cross-array comparisons: the largest element in left1 (max(left1)) must be less than or equal to the smallest element in right2 (min(right2)), and the largest element in left2 (max(left2)) must be less than or equal to the smallest element in right1 (min(right1)). Option A is incorrect because it compares elements within the same array's partitions, which is always true for sorted arrays but does not ensure the global ordering between the two arrays. Option C is incorrect because it reverses the inequality, implying the left side is larger than the right side. Option D is incorrect because it ignores the relationship between left2 and right2, and incorrectly compares left2 to right1 without checking left1 against right2.",
+        "target_concept": "Cross-Array Comparison Conditions",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "The partition is valid if max(left1) <= min(right2) AND max(left2) <= min(right1). These four conditions ensure that all elements in the left partitions are less than or equal to all elements in the right partitions.",
+        "why_assessed": "This is the core logical check that determines if the current partition is correct. Students must understand the specific comparisons required.",
+        "evidence_refs": [
+          "E_C05",
+          "E_C42",
+          "E_C06"
+        ],
+        "misconception_rationale": "Option A targets the misconception of only checking intra-array ordering (which is trivially true) instead of cross-array ordering. Option C targets the misconception of reversing the comparison direction. Option D targets the misconception of incomplete or mismatched cross-array comparisons."
+      },
+      {
+        "question_id": "Q_T05_01",
+        "question_text": "During the binary search process for the median of two sorted arrays, suppose the current partition index `i` in the first array results in `max(left1) > min(right2)`. What adjustment should be made to the binary search pointers to find the correct partition?",
+        "option_a": "Set `low = i + 1` to move the partition to the right.",
+        "option_b": "Set `high = i - 1` to move the partition to the left.",
+        "option_c": "Set `low = i` and `high = i` to terminate the search.",
+        "option_d": "Set `high = i + 1` to expand the search range.",
+        "correct_option": "B",
+        "explanation": "Option B is correct. If `max(left1) > min(right2)`, it means the partition in the first array is too far to the right, causing elements in the left partition of the first array to be larger than elements in the right partition of the second array. To fix this, we need to move the partition in the first array to the left, which is achieved by setting `high = i - 1`. Option A is incorrect because moving the partition to the right would make `max(left1)` even larger, worsening the violation. Option C is incorrect because the current partition is invalid, so the search cannot terminate. Option D is incorrect because expanding the range to the right is the opposite of the required direction and would not help converge on the correct partition.",
+        "target_concept": "Binary Search Direction Adjustment",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "If max(left1) > min(right2), the partition in the first array is too far to the right, so we move the binary search pointer to the left (high = i - 1). If max(left2) > min(right1), the partition is too far to the left, so we move the pointer to the right (low = i + 1).",
+        "why_assessed": "Understanding how to adjust the binary search range based on the comparison results is essential for the algorithm to converge on the correct partition.",
+        "evidence_refs": [
+          "E_C06",
+          "E_C42",
+          "E_C04"
+        ],
+        "misconception_rationale": "Option A targets the misconception of moving the pointer in the wrong direction (right instead of left). Option C targets the misconception of terminating the search prematurely on an invalid partition. Option D targets the misconception of incorrectly updating the high pointer to expand the range rather than contract it."
+      },
+      {
+        "question_id": "Q_T06_01",
+        "question_text": "Assume the total number of elements in the two sorted arrays (m + n) is odd. After finding the valid partition where max(left1) <= min(right2) and max(left2) <= min(right1), how is the median calculated?",
+        "option_a": "The median is the average of max(left1) and min(right1).",
+        "option_b": "The median is max(max(left1), max(left2)).",
+        "option_c": "The median is min(min(right1), min(right2)).",
+        "option_d": "The median is the element at index (m + n) // 2 in the first array.",
+        "correct_option": "B",
+        "explanation": "Option B is correct. When the total length is odd, the partition size is (m + n + 1) // 2, which means the left partitions contain one more element than the right partitions. The median is the largest element in the left partitions, which is max(max(left1), max(left2)). Option A is incorrect because averaging is only used when the total length is even. Option C is incorrect because the median is the largest element on the left, not the smallest on the right. Option D is incorrect because the median is not necessarily at index (m + n) // 2 in the first array; the arrays are not merged, and the index refers to the combined logical position, not a physical index in either array.",
+        "target_concept": "Median Calculation for Odd Total Length",
+        "cognitive_level": "APPLY",
+        "what_taught": "If the total length (m+n) is odd, the median is simply max(left1, left2). This is because the partition size (m+n+1)//2 ensures that the median is the largest element in the left partitions.",
+        "why_assessed": "Students need to apply the correct formula to calculate the median when the total number of elements is odd.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C06",
+          "E_C04"
+        ],
+        "misconception_rationale": "Option A targets the misconception of using the even-length formula (average of boundary elements) for odd lengths. Option C targets the misconception of taking the smallest right-side element instead of the largest left-side element. Option D targets the misconception of trying to access the median via a direct index in one of the original arrays, ignoring the partition logic."
+      },
+      {
+        "question_id": "Q_T07_01",
+        "question_text": "Consider two sorted arrays `nums1` and `nums2` with total length `m + n` being even. The algorithm partitions the arrays such that the left partition contains `left1` and `left2` elements, and the right partition contains `right1` and `right2` elements. Which formula correctly calculates the median?",
+        "option_a": "(max(left1, left2) + min(right1, right2)) / 2",
+        "option_b": "(max(left1) + max(left2)) / 2",
+        "option_c": "(min(left1, left2) + max(right1, right2)) / 2",
+        "option_d": "(max(left1, left2) + min(right1, right2)) // 2",
+        "correct_option": "A",
+        "explanation": "Option A is correct because for an even total length, the median is the average of the two middle elements. In the partitioned view, the largest element of the left half is `max(left1, left2)` and the smallest element of the right half is `min(right1, right2)`. Option B is incorrect because it averages the maximums of the left partitions, ignoring the right partitions entirely. Option C is incorrect because it uses the minimums of the left and maximums of the right, which are the outermost elements, not the middle ones. Option D is incorrect because it uses integer division (`//`), which truncates the decimal part, whereas the median of two integers can be a float (e.g., 1.5).",
+        "target_concept": "Median Calculation for Even Total Length",
+        "cognitive_level": "APPLY",
+        "what_taught": "If the total length (m+n) is even, the median is (max(left1, left2) + min(right1, right2)) / 2. This averages the two middle elements of the combined sorted array.",
+        "why_assessed": "Students need to apply the correct formula to calculate the median when the total number of elements is even.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C06",
+          "E_C16"
+        ],
+        "misconception_rationale": "Distractors target common errors: using integer division instead of floating-point (D), confusing the boundary elements (max of lefts vs max of lefts/rights) (B, C), and failing to identify the correct middle elements in the partitioned array."
+      },
+      {
+        "question_id": "Q_T08_01",
+        "question_text": "In the binary search algorithm for finding the median of two sorted arrays, why is it necessary to ensure that the binary search is performed on the smaller array (i.e., if `len(nums1) > len(nums2)`, swap them)?",
+        "option_a": "To ensure the time complexity is O(log(min(m,n))) instead of O(log(max(m,n))).",
+        "option_b": "To guarantee that the partition index `i` is always less than or equal to `j`.",
+        "option_c": "To simplify the calculation of the median by avoiding negative indices.",
+        "option_d": "To ensure that the arrays are sorted in ascending order before partitioning.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the binary search runs on one of the arrays. By always searching on the smaller array, we minimize the number of iterations, resulting in a time complexity of O(log(min(m,n))). Option B is incorrect because the relationship between `i` and `j` is determined by the partition logic (`j = (m+n)/2 - i`), not by which array is smaller. Option C is incorrect because negative indices are handled by sentinel values (infinity), not by array size swapping. Option D is incorrect because the input arrays are assumed to be already sorted; swapping them does not affect their internal order.",
+        "target_concept": "Search in Smaller Array Optimization",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "To optimize the algorithm, we always perform the binary search on the smaller of the two arrays. This ensures that the time complexity is O(log(min(m,n))) instead of O(log(max(m,n))).",
+        "why_assessed": "This optimization is a key aspect of the algorithm's efficiency. Students should understand why and how to implement this step.",
+        "evidence_refs": [
+          "E_C26",
+          "E_C42",
+          "E_C02"
+        ],
+        "misconception_rationale": "Distractors represent plausible but incorrect justifications: confusing partition index constraints with array size (B), confusing boundary handling with array size (C), and confusing input preconditions with optimization steps (D)."
+      }
+    ]
+  }
+}

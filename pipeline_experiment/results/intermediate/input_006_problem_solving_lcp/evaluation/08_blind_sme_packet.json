@@ -1,0 +1,140 @@
+{
+  "input_id": "input_006_problem_solving_lcp",
+  "blind_questions": [
+    {
+      "blind_id": "Q_BLIND_5012",
+      "question_text": "Vertical scanning is particularly efficient when the first mismatch occurs early in which of the following strings?",
+      "options": {
+        "A": "the first string",
+        "B": "the second string",
+        "C": "the last string",
+        "D": "any string, because vertical scanning always scans column\u2011wise"
+      },
+      "correct_option": "B",
+      "explanation": "Vertical scanning checks characters column by column across all strings. If the second string differs from the first at an early index, the algorithm can stop after examining that column, saving work. A mismatch in the first string would be detected only after comparing it with all others, and a mismatch in the last string would require scanning all previous columns. Option D ignores the early\u2011stop advantage. Hence, option B is correct."
+    },
+    {
+      "blind_id": "Q_BLIND_1409",
+      "question_text": "During the Trie\u2011based longest common prefix algorithm, the traversal from the root stops when:",
+      "options": {
+        "A": "the current node has exactly one child and is not an end\u2011of\u2011word marker",
+        "B": "the current node has more than one child or is marked as an end\u2011of\u2011word",
+        "C": "the current node has no children",
+        "D": "the depth of the traversal reaches the length of the longest string"
+      },
+      "correct_option": "B",
+      "explanation": "In a Trie, the common prefix continues as long as every node on the path has exactly one child and no string ends at that node. The moment a node has multiple children (indicating a divergence) or is an end\u2011of\u2011word (a string terminates), the common prefix cannot be extended further. Option B captures this stopping condition. Option A describes the condition to continue, not to stop. Option C would stop only at leaf nodes, which is not sufficient. Option D is unrelated to the algorithm's logic."
+    },
+    {
+      "blind_id": "Q_BLIND_5506",
+      "question_text": "What is the worst\u2011case time complexity of the horizontal scanning method for longest common prefix?",
+      "options": {
+        "A": "O(N\u202f+\u202fL_min)",
+        "B": "O(N\u202f\u00b7\u202fL_min)",
+        "C": "O(N\u202f\u00b7\u202flog\u202fL_min)",
+        "D": "O(L_min\u00b2)"
+      },
+      "correct_option": "B",
+      "explanation": "Horizontal scanning iteratively computes the LCP of the current prefix with each subsequent string. In the worst case (all strings are identical), each comparison scans the entire current prefix, whose length can be up to L_min. Repeating this for N\u20111 strings yields O(N\u202f\u00b7\u202fL_min). The other options either underestimate the work (A, C) or describe unrelated complexities (D)."
+    },
+    {
+      "blind_id": "Q_BLIND_2824",
+      "question_text": "Which of the following algorithms for finding the longest common prefix has a time complexity of O(N\u202f\u00b7\u202fL_min\u202f\u00b7\u202flog\u202fL_min)?",
+      "options": {
+        "A": "Horizontal scanning",
+        "B": "Vertical scanning",
+        "C": "Binary search on prefix length",
+        "D": "Trie\u2011based traversal"
+      },
+      "correct_option": "C",
+      "explanation": "Binary search on prefix length first determines the shortest string length L_min and then binary\u2011searches the interval [1, L_min]. Each midpoint test scans all N strings up to the current length, costing O(N\u00b7mid). Over log\u202fL_min iterations the total cost is O(N\u00b7L_min\u00b7log\u202fL_min). Horizontal scanning and vertical scanning are O(N\u00b7L_min) in the worst case, while Trie traversal is O(N\u00b7L_min) for building plus O(L_min) for the final walk. Therefore only option C is correct."
+    },
+    {
+      "blind_id": "Q_BLIND_4657",
+      "question_text": "The expression LCP(S\u2081\u2026S\u2099) = LCP(LCP(LCP(S\u2081,S\u2082),S\u2083)\u2026S\u2099) illustrates which principle of longest common prefix computation?",
+      "options": {
+        "A": "The associative property allowing pairwise reduction",
+        "B": "The need to sort strings before processing",
+        "C": "The requirement of a Trie data structure",
+        "D": "The binary\u2011search approach on prefix length"
+      },
+      "correct_option": "A",
+      "explanation": "The formula shows that the longest common prefix of a set can be obtained by repeatedly applying the binary LCP operation to pairs of strings, i.e., reducing the problem iteratively. This reflects the associative (and effectively commutative) nature of the LCP operation, enabling algorithms like horizontal scanning. Options B, C, and D describe specific algorithmic techniques that are not captured by this generic reduction property."
+    },
+    {
+      "blind_id": "Q_BLIND_2679",
+      "question_text": "A student analyzes the following pseudo\u2011code for finding the longest common prefix using a nested loop:\n\nfor i from 0 to length_of_first_string - 1:\n    for each string s in array:\n        if i == length(s) or s[i] != first_string[i]:\n            return prefix up to i\nreturn first_string\n\nThe student claims the algorithm runs in O(N) time, where N is the total number of characters across all strings. Which statement best identifies the flaw in this complexity analysis?\n",
+      "options": {
+        "A": "The outer loop runs at most the length of the shortest string, so the overall complexity is O(N).",
+        "B": "The nested loops cause each character of each string to be examined at most once, yielding O(N) time.",
+        "C": "Because the inner loop iterates over all strings for each character position, the worst\u2011case time is O(N\u202f\u00d7\u202fM), where M is the average string length.",
+        "D": "The algorithm uses a binary search internally, so its complexity is O(log\u202fN)."
+      },
+      "correct_option": "C",
+      "explanation": "In the worst case (all strings share the full prefix), the outer loop iterates M times (average length) and the inner loop scans all N strings each time, giving O(N\u202f\u00d7\u202fM) operations. The student's O(N) claim ignores the repeated scanning of all strings for each character position. Option C correctly describes this inefficiency. Option A mistakenly assumes the loop bound is the shortest string, which still leads to O(N\u202f\u00d7\u202fM). Option B repeats the student's incorrect reasoning. Option D is irrelevant; no binary search is used."
+    },
+    {
+      "blind_id": "Q_BLIND_3286",
+      "question_text": "Consider the following Java method that returns the longest common prefix of an array of strings. The method assumes every string has at least one character and accesses characters by index without any checks.\n\npublic String longestCommonPrefix(String[] strs) {\n    if (strs == null || strs.length == 0) return \"\";\n    for (int i = 0; i < strs[0].length(); i++) {\n        char c = strs[0].charAt(i);\n        for (int j = 1; j < strs.length; j++) {\n            if (i >= strs[j].length() || strs[j].charAt(i) != c) {\n                return strs[0].substring(0, i);\n            }\n        }\n    }\n    return strs[0];\n}\n\nWhich of the following statements correctly identifies the logical error that leads to an index\u2011out\u2011of\u2011bounds exception when the input contains an empty string?\n",
+      "options": {
+        "A": "The method does not verify that the input array itself is non\u2011null.",
+        "B": "The method fails to check whether any string in the array is empty before accessing chars by index.",
+        "C": "The outer loop should iterate over the number of strings, not the length of the first string.",
+        "D": "The return statement should concatenate the prefix instead of using substring."
+      },
+      "correct_option": "B",
+      "explanation": "The bug arises because the code accesses strs[j].charAt(i) without first confirming that strs[j] has a character at position i. If any string is empty, strs[j].length() is 0, making i >= strs[j].length() true only after the first iteration, but the charAt call occurs before the check, causing an IndexOutOfBoundsException. Option B pinpoints this missing empty\u2011string check. Option A is unrelated; the null\u2011array case is already handled. Option C misidentifies the loop purpose\u2014iterating over characters of the first string is correct. Option D describes an unrelated return\u2011value issue."
+    }
+  ],
+  "private_decryption_key": {
+    "Q_BLIND_2824": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Binary Search on Prefix Length",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_1409": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Trie\u2011based LCP",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_5506": {
+      "original_id": "Q3",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Horizontal Scanning",
+      "cognitive_level": "REMEMBER"
+    },
+    "Q_BLIND_5012": {
+      "original_id": "Q4",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Vertical Scanning",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_4657": {
+      "original_id": "Q5",
+      "pipeline": "PIPELINE_A_SUMMARY",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "LCP Reduction Principle",
+      "cognitive_level": "UNDERSTAND"
+    },
+    "Q_BLIND_3286": {
+      "original_id": "Q1",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Handling empty strings in LCP implementations",
+      "cognitive_level": "ANALYZE"
+    },
+    "Q_BLIND_2679": {
+      "original_id": "Q2",
+      "pipeline": "PIPELINE_B_BLUEPRINT",
+      "input_id": "input_006_problem_solving_lcp",
+      "target_concept": "Time\u2011complexity analysis of LCP algorithms",
+      "cognitive_level": "ANALYZE"
+    }
+  }
+}

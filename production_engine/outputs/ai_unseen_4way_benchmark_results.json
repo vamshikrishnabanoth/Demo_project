@@ -1,0 +1,717 @@
+{
+  "benchmark": "Unseen AI Lecture: 4-Way Architectural Comparison",
+  "audio_file": "Audio/only voice/AI 20-8-26 unseen.m4a",
+  "audio_duration_seconds": 2951.96,
+  "total_words": 5410,
+  "total_segments": 556,
+  "pipeline_a": {
+    "metrics": {
+      "pipeline": "A (Summary-Only)",
+      "questions_generated": 10,
+      "latency_seconds": 81.12,
+      "llm_calls": 5,
+      "cognitive_distribution": {
+        "REMEMBER": 5,
+        "UNDERSTAND": 5,
+        "APPLY": 0,
+        "ANALYZE": 0
+      },
+      "cognitive_diversity_score": 50.0,
+      "traceability_rate": 0.0,
+      "misconception_distractor_rate": 0.0,
+      "teacher_intent_alignment": 40.0,
+      "redundancy_rate": 50.0,
+      "overall_quality_score": 44.2
+    },
+    "questions": [
+      {
+        "question_id": "Q1",
+        "question_text": "What is the primary motivation for using autoencoders as described in the lecture summary?",
+        "option_a": "To handle large datasets by learning efficient feature representations through unsupervised learning",
+        "option_b": "To classify images into specific categories using labeled data",
+        "option_c": "To increase the dimensionality of the input data for better visualization",
+        "option_d": "To replace the need for any form of data preprocessing or normalization",
+        "correct_option": "A",
+        "explanation": "The summary explicitly states that the primary motivation is to handle large datasets by learning efficient feature representations through unsupervised learning.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "In the context of the autoencoder architecture described, what is the function of the 'bottleneck' layer?",
+        "option_a": "It expands the compressed representation back to the original dimensions",
+        "option_b": "It maps the input data to a low-dimensional latent space",
+        "option_c": "It normalizes the image data to ensure consistent input scaling",
+        "option_d": "It splits the dataset into training and testing sets",
+        "correct_option": "B",
+        "explanation": "The summary defines the bottleneck (latent space) as the layer with the lowest dimensionality, representing the compressed features, which is the output of the encoder mapping input to this space.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "Which dataset is specifically used in the lab to demonstrate the model's ability to perform unsupervised image reconstruction?",
+        "option_a": "CIFAR-10",
+        "option_b": "Fashion-MNIST",
+        "option_c": "ImageNet",
+        "option_d": "MNIST",
+        "correct_option": "B",
+        "explanation": "The summary states that the lab focuses on building a fully connected autoencoder using the Fashion-MNIST dataset, which contains images of clothing items.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "What is the primary motivation for using autoencoders as described in the lecture summary?",
+        "option_a": "To handle large datasets by learning efficient feature representations through unsupervised learning",
+        "option_b": "To classify images into specific categories using labeled data",
+        "option_c": "To increase the dimensionality of the input data for better visualization",
+        "option_d": "To replace the need for any form of data preprocessing or normalization",
+        "correct_option": "A",
+        "explanation": "The summary explicitly states that the primary motivation is to handle large datasets by learning efficient feature representations through unsupervised learning.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "In the context of the autoencoder architecture described, what is the specific role of the 'bottleneck' layer?",
+        "option_a": "It expands the compressed representation back to the original dimensions",
+        "option_b": "It represents the compressed features of the input with the lowest dimensionality",
+        "option_c": "It maps the input data directly to the final reconstructed output",
+        "option_d": "It normalizes the image data to ensure consistent input scaling",
+        "correct_option": "B",
+        "explanation": "The summary defines the bottleneck (latent space) as the layer with the lowest dimensionality in the autoencoder, representing the compressed features of the input.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "Which dataset is specifically used in this lab to demonstrate the model's ability to perform unsupervised image reconstruction?",
+        "option_a": "CIFAR-10",
+        "option_b": "Fashion-MNIST",
+        "option_c": "ImageNet",
+        "option_d": "MNIST Digits",
+        "correct_option": "B",
+        "explanation": "The summary states that the lab focuses on building a fully connected autoencoder using the Fashion-MNIST dataset, which contains images of clothing items.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "According to the lecture summary, what is the primary motivation for using autoencoders when handling large datasets?",
+        "option_a": "To perform supervised classification using labeled targets",
+        "option_b": "To learn efficient feature representations through unsupervised learning",
+        "option_c": "To increase the dimensionality of the input data for better visualization",
+        "option_d": "To replace the need for data normalization in preprocessing",
+        "correct_option": "B",
+        "explanation": "The summary states that the primary motivation for using autoencoders is to handle large datasets by learning efficient feature representations through unsupervised learning.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "In the context of the autoencoder architecture described, what is the specific term used for the layer with the lowest dimensionality that represents the compressed features?",
+        "option_a": "The bottleneck (latent space)",
+        "option_b": "The reconstructed output",
+        "option_c": "The encoder input",
+        "option_d": "The decoder expansion layer",
+        "correct_option": "A",
+        "explanation": "The summary defines the bottleneck (latent space) as the layer with the lowest dimensionality in the autoencoder, representing the compressed features of the input.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "According to the lecture summary, what is the primary motivation for using autoencoders in the context of large datasets?",
+        "option_a": "To perform supervised classification tasks with high accuracy",
+        "option_b": "To learn efficient feature representations through unsupervised learning",
+        "option_c": "To increase the dimensionality of the input data for better visualization",
+        "option_d": "To replace the need for any form of data preprocessing or normalization",
+        "correct_option": "B",
+        "explanation": "The summary states that the primary motivation for using autoencoders is to handle large datasets by learning efficient feature representations through unsupervised learning.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "In the context of the autoencoder architecture described, what is the specific term used for the output produced by the decoder?",
+        "option_a": "Original Input",
+        "option_b": "Latent Vector",
+        "option_c": "Reconstructed Output",
+        "option_d": "Compressed Feature",
+        "correct_option": "C",
+        "explanation": "The summary explicitly defines the decoder as the component that expands the compressed representation back to original dimensions, producing a 'reconstructed output.'",
+        "cognitive_level": "REMEMBER"
+      }
+    ]
+  },
+  "pipeline_b": {
+    "metrics": {
+      "pipeline": "B (Blueprint-Only)",
+      "questions_generated": 10,
+      "latency_seconds": 94.82,
+      "llm_calls": 6,
+      "cognitive_distribution": {
+        "REMEMBER": 2,
+        "UNDERSTAND": 3,
+        "APPLY": 5,
+        "ANALYZE": 0
+      },
+      "cognitive_diversity_score": 74.3,
+      "traceability_rate": 0.0,
+      "misconception_distractor_rate": 0.0,
+      "teacher_intent_alignment": 60.0,
+      "redundancy_rate": 20.0,
+      "overall_quality_score": 57.6
+    },
+    "questions": [
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of deep learning, what is the primary objective of an autoencoder during the training phase?",
+        "option_a": "To minimize the reconstruction error between the input and the output",
+        "option_b": "To maximize the classification accuracy of the input data",
+        "option_c": "To increase the dimensionality of the input feature space",
+        "option_d": "To eliminate all noise from the dataset before training",
+        "correct_option": "A",
+        "explanation": "An autoencoder is an unsupervised neural network that learns to compress and then reconstruct data. Its training objective is to minimize the difference (reconstruction error) between the original input and the reconstructed output.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "Which of the following best describes the structural flow of data in a standard autoencoder architecture?",
+        "option_a": "Input -> Encoder -> Decoder -> Output",
+        "option_b": "Input -> Decoder -> Encoder -> Output",
+        "option_c": "Encoder -> Input -> Decoder -> Output",
+        "option_d": "Input -> Output -> Encoder -> Decoder",
+        "correct_option": "A",
+        "explanation": "The standard architecture of an autoencoder consists of an encoder that maps the input to a latent representation (bottleneck) and a decoder that maps this latent representation back to the output space.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q3",
+        "question_text": "When implementing a Fully Connected Autoencoder (FC-AE) for the Fashion-MNIST dataset, which layer type is primarily used in the encoder and decoder blocks?",
+        "option_a": "Dense (Fully Connected) layers",
+        "option_b": "Convolutional 2D layers",
+        "option_c": "Recurrent layers",
+        "option_d": "Pooling layers only",
+        "correct_option": "A",
+        "explanation": "A Fully Connected Autoencoder utilizes Dense layers (also known as Fully Connected layers) for both the encoding and decoding processes, treating the input image as a flattened vector rather than preserving its spatial structure.",
+        "cognitive_level": "REMEMBER"
+      },
+      {
+        "question_id": "Q7",
+        "question_text": "In the context of training a Fully Connected Autoencoder (FC-AE) on the Fashion-MNIST dataset, which loss function is most commonly used to measure the reconstruction error between the input and the output?",
+        "option_a": "Mean Squared Error (MSE)",
+        "option_b": "Categorical Cross-Entropy",
+        "option_c": "Binary Cross-Entropy",
+        "option_d": "Hinge Loss",
+        "correct_option": "A",
+        "explanation": "Mean Squared Error (MSE) is the standard loss function for autoencoders when dealing with continuous pixel values, as it measures the average squared difference between the reconstructed image and the original input.",
+        "cognitive_level": "APPLY"
+      },
+      {
+        "question_id": "Q8",
+        "question_text": "When compiling a Keras model for an autoencoder task, which optimizer is frequently chosen for its adaptive learning rate capabilities and robustness to noisy gradients?",
+        "option_a": "SGD (Stochastic Gradient Descent) without momentum",
+        "option_b": "Adam",
+        "option_c": "Adagrad",
+        "option_d": "RMSprop",
+        "correct_option": "B",
+        "explanation": "The Adam optimizer is widely used in deep learning, including autoencoders, because it combines the benefits of AdaGrad and RMSProp, providing efficient convergence and stability during training.",
+        "cognitive_level": "APPLY"
+      },
+      {
+        "question_id": "Q9",
+        "question_text": "After training an autoencoder, which metric is primarily used to evaluate the quality of the reconstructed images in a quantitative manner?",
+        "option_a": "Accuracy",
+        "option_b": "Precision",
+        "option_c": "Recall",
+        "option_d": "Reconstruction Loss (e.g., MSE or MAE)",
+        "correct_option": "D",
+        "explanation": "Since autoencoders are unsupervised and focus on reconstruction rather than classification, metrics like Reconstruction Loss (MSE or MAE) are used to quantify how closely the output matches the input.",
+        "cognitive_level": "APPLY"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of the Fashion-MNIST lab, what is the primary architectural difference between a Fully Connected Autoencoder (FC-AE) and a Convolutional Autoencoder (CAE)?",
+        "option_a": "FC-AE uses dense layers for both encoding and decoding, while CAE uses convolutional and deconvolutional layers.",
+        "option_b": "FC-AE uses only convolutional layers, while CAE uses only dense layers.",
+        "option_c": "FC-AE requires a larger latent space than CAE for all image sizes.",
+        "option_d": "FC-AE is only applicable to grayscale images, while CAE is only applicable to color images.",
+        "correct_option": "A",
+        "explanation": "A Fully Connected Autoencoder relies on dense (fully connected) layers to process the flattened input, whereas a Convolutional Autoencoder utilizes convolutional layers in the encoder and deconvolutional (or upsampling) layers in the decoder to preserve spatial hierarchies.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "When implementing a Fully Connected Autoencoder (FC-AE) for Fashion-MNIST images of size 28x28, what is the required first step in the input layer configuration before applying dense layers?",
+        "option_a": "Flattening the 2D image input into a 1D vector of length 784.",
+        "option_b": "Resizing the image to 32x32 to match standard convolutional filter sizes.",
+        "option_c": "Applying a 2D convolution with a 3x3 kernel to extract initial features.",
+        "option_d": "Normalizing the pixel values to a range of -1 to 1 without changing dimensions.",
+        "correct_option": "A",
+        "explanation": "Fully connected layers expect 1D input. Therefore, a 28x28 image (784 pixels) must be flattened into a vector of size 784 before being passed to the first dense layer of the FC-AE.",
+        "cognitive_level": "APPLY"
+      },
+      {
+        "question_id": "Q1",
+        "question_text": "In the context of the Fashion-MNIST lab, what is the primary architectural difference between a Fully Connected Autoencoder (FC-AE) and a Convolutional Autoencoder (CAE)?",
+        "option_a": "FC-AE uses dense layers for both encoding and decoding, while CAE uses convolutional and deconvolutional layers to preserve spatial features.",
+        "option_b": "FC-AE is only applicable to grayscale images, whereas CAE is exclusively for color images.",
+        "option_c": "CAE requires a larger batch size than FC-AE to converge effectively.",
+        "option_d": "FC-AE utilizes recurrent layers, while CAE utilizes fully connected layers for feature extraction.",
+        "correct_option": "A",
+        "explanation": "The fundamental difference lies in the layer types: FC-AEs flatten the input and use dense layers, losing spatial hierarchy, while CAEs use convolutional operations to maintain spatial relationships, which is crucial for image data like Fashion-MNIST.",
+        "cognitive_level": "UNDERSTAND"
+      },
+      {
+        "question_id": "Q2",
+        "question_text": "When configuring a Fully Connected Autoencoder (FC-AE) for the Fashion-MNIST dataset, which of the following represents a standard layer configuration for the encoder part?",
+        "option_a": "Flatten layer followed by Dense layers with decreasing units (e.g., 784 -> 256 -> 64 -> 16).",
+        "option_b": "Conv2D layers followed by MaxPooling2D layers to reduce spatial dimensions.",
+        "option_c": "LSTM layers followed by Dropout layers to handle sequential image data.",
+        "option_d": "Input layer directly connected to a single Dense layer with 784 units.",
+        "correct_option": "A",
+        "explanation": "A standard FC-AE encoder for image data like Fashion-MNIST (28x28x1) first flattens the input to a 1D vector (784 units) and then passes it through a series of Dense layers with progressively fewer units to create a compressed latent representation.",
+        "cognitive_level": "APPLY"
+      }
+    ]
+  },
+  "pipeline_c": {
+    "metrics": {
+      "pipeline": "C (Unified Full Pipeline)",
+      "questions_generated": 10,
+      "latency_seconds": 325.54,
+      "llm_calls": 6,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 2,
+        "APPLY": 5,
+        "ANALYZE": 3
+      },
+      "cognitive_diversity_score": 74.3,
+      "traceability_rate": 100.0,
+      "misconception_distractor_rate": 100.0,
+      "teacher_intent_alignment": 100.0,
+      "redundancy_rate": 0.0,
+      "overall_quality_score": 92.4
+    },
+    "questions": [
+      {
+        "question_id": "Q_T01_01",
+        "question_text": "In the context of the Fashion-MNIST lab, you are implementing an autoencoder to learn feature representations. Which statement correctly describes the training objective and data requirement for this model?",
+        "option_a": "The model requires labeled data (e.g., 'T-shirt', 'Boot') to learn which features are important for classification, and the output is a class probability.",
+        "option_b": "The model is trained in an unsupervised manner where the input image serves as its own target label, and the goal is to reconstruct the input from a compressed latent representation.",
+        "option_c": "The model requires labeled data to distinguish between different clothing items, but the output is a reconstructed image rather than a class label.",
+        "option_d": "The model is trained in a supervised manner using the Fashion-MNIST labels to guide the compression process, ensuring that only relevant features for classification are retained.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because, as taught in the lab, an autoencoder is an unsupervised learning model where the input data itself is the target. The network learns to compress the input into a latent space and reconstruct it, without needing external labels. Option A is incorrect because autoencoders do not perform classification and do not output class probabilities. Option C is incorrect because it falsely claims labeled data is required; the reconstruction task is self-supervised. Option D is incorrect because it suggests a supervised training process, which contradicts the unsupervised nature of autoencoders.",
+        "target_concept": "Autoencoder Definition & Unsupervised Nature",
+        "cognitive_level": "UNDERSTAND",
+        "what_taught": "An autoencoder is a neural network that learns to compress input data into a lower-dimensional representation (latent space) and reconstruct it. It is trained in an unsupervised manner where the input itself serves as the target label.",
+        "why_assessed": "Establishes the foundational understanding that autoencoders do not require labeled data for classification, distinguishing them from supervised classifiers like standard CNNs.",
+        "evidence_refs": [
+          "E_C04",
+          "E_C10",
+          "E_C12"
+        ],
+        "misconception_rationale": "Distractors A, C, and D reflect the common misconception that neural networks always require labeled data for training or that the primary goal of an autoencoder is classification. Students often confuse the unsupervised reconstruction task with supervised classification tasks."
+      },
+      {
+        "question_id": "Q_T02_01",
+        "question_text": "During the architecture design phase of the autoencoder, you are deciding on the dimensions of the layers. What is the specific functional role of the 'bottleneck' layer in the encoder-decoder structure?",
+        "option_a": "The bottleneck layer is an optional component that can be removed to allow the network to preserve all original information without loss.",
+        "option_b": "The bottleneck layer forces the network to learn essential features by reducing the dimensionality of the data, creating a compressed latent representation.",
+        "option_c": "The bottleneck layer is responsible for decompressing the latent space back into the original input dimensionality for reconstruction.",
+        "option_d": "The bottleneck layer must have a higher dimensionality than the input to ensure that no spatial information is lost during the encoding process.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the bottleneck is the layer with the lowest dimensionality in the network. Its purpose is to force the encoder to discard redundant information and retain only the most essential features for reconstruction. Option A is incorrect because the bottleneck is critical for learning a compressed representation; removing it would result in an identity mapping or no meaningful compression. Option C is incorrect because the decoder, not the bottleneck, performs the expansion back to the input dimension. Option D is incorrect because the bottleneck must be smaller than the input to achieve compression; if it were larger, it would not force feature extraction.",
+        "target_concept": "Encoder-Decoder Architecture & Bottleneck",
+        "cognitive_level": "UNDERSTAND",
+        "what_taught": "The architecture consists of an Encoder that maps input to a compressed latent space (bottleneck) and a Decoder that maps the latent space back to the original input dimensionality. The bottleneck forces the network to learn essential features by reducing dimensionality.",
+        "why_assessed": "Tests the structural understanding of how information flows through the network and the specific role of the bottleneck layer in feature extraction.",
+        "evidence_refs": [
+          "E_C04",
+          "E_C12",
+          "E_C05"
+        ],
+        "misconception_rationale": "Distractors A, C, and D represent misconceptions about the necessity and direction of the bottleneck. Students may think the bottleneck is optional, confuse its role with the decoder's role, or misunderstand the requirement for dimensionality reduction."
+      },
+      {
+        "question_id": "Q_T03_01",
+        "question_text": "You are implementing a Fully Connected (Dense) Autoencoder for the Fashion-MNIST dataset, which consists of 28x28 pixel images. Before feeding the data into the first Dense layer, which preprocessing step is strictly required to ensure the model can process the input correctly?",
+        "option_a": "The 2D image array must be flattened into a 1D vector, and pixel values should be normalized (e.g., scaled to 0-1) for training stability.",
+        "option_b": "The 2D image array can be passed directly to the Dense layer, but pixel values must be normalized to 0-1 to prevent gradient explosion.",
+        "option_c": "The 2D image array must be flattened into a 1D vector, but normalization is unnecessary because the reconstruction task is not sensitive to pixel value scales.",
+        "option_d": "The 2D image array must be resized to 32x32 pixels to match the standard input size for Dense layers, and then flattened.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because Dense layers expect 1D input vectors. Therefore, the 2D image structure (28x28) must be flattened into a 1D vector of length 784. Additionally, normalizing pixel values (typically 0-255 to 0-1) is a standard practice to improve convergence and training stability. Option B is incorrect because Dense layers cannot accept 2D inputs directly. Option C is incorrect because normalization is crucial for stable training in neural networks, including autoencoders. Option D is incorrect because resizing is not a standard requirement for Dense autoencoders on Fashion-MNIST; flattening the original 28x28 image is the correct approach.",
+        "target_concept": "Data Preprocessing for Dense Autoencoders",
+        "cognitive_level": "APPLY",
+        "what_taught": "When using fully connected (Dense) layers for image data, the 2D image structure must be flattened into a 1D vector. Additionally, pixel values are typically normalized (e.g., scaled to 0-1) to improve training stability.",
+        "why_assessed": "Highlights a critical implementation step specific to dense architectures that is often overlooked, distinguishing it from convolutional approaches that preserve spatial dimensions.",
+        "evidence_refs": [
+          "E_C16",
+          "E_C10",
+          "E_C04"
+        ],
+        "misconception_rationale": "Distractors B, C, and D reflect common implementation errors. Students may forget that Dense layers require 1D input (B), underestimate the importance of normalization (C), or confuse preprocessing steps with those used in other architectures or datasets (D)."
+      },
+      {
+        "question_id": "Q_T04_01",
+        "question_text": "In the Autoencoder lab, we are reconstructing Fashion-MNIST images where pixel values are normalized to the range [0, 1]. The instructor initially considered using Softmax for the output layer but corrected this, stating that Softmax is for multi-class classification probabilities. Which activation function should be used for the final layer of the decoder to ensure the reconstructed pixel values remain within the [0, 1] range?",
+        "option_a": "Softmax, because it ensures the output values sum to 1, which is required for image normalization.",
+        "option_b": "ReLU, because it allows for unbounded positive values, preventing the clipping of high-intensity pixels.",
+        "option_c": "Sigmoid, because it squashes the output to the range (0, 1), matching the normalized pixel data range.",
+        "option_d": "Linear (Identity), because the loss function (MSE) will naturally constrain the values during backpropagation.",
+        "correct_option": "C",
+        "explanation": "The correct answer is C. The evidence (E_C13) highlights the distinction between Sigmoid and Softmax. While Softmax is for multi-class classification (where outputs sum to 1), Sigmoid is used for binary classification or regression tasks where individual outputs need to be bounded between 0 and 1. Since Fashion-MNIST pixels are normalized to [0, 1], Sigmoid is the appropriate choice to constrain the reconstruction. Option A is incorrect because Softmax forces the sum of all outputs to 1, which is not the goal for pixel-wise reconstruction. Option B is incorrect because ReLU outputs are unbounded [0, \u221e), which could produce values > 1. Option D is incorrect because a linear activation does not inherently constrain values to [0, 1]; it relies entirely on the weights, which is less stable for bounded regression.",
+        "target_concept": "Output Activation Function Selection",
+        "cognitive_level": "APPLY",
+        "what_taught": "For image reconstruction tasks where pixel values are normalized between 0 and 1, the output layer of the decoder should use a sigmoid activation function to constrain the reconstructed values within this range.",
+        "why_assessed": "Tests the ability to match activation functions to the specific data range and task requirements (regression/reconstruction vs. classification).",
+        "evidence_refs": [
+          "E_C13",
+          "E_C12",
+          "E_C26"
+        ],
+        "misconception_rationale": "Option A targets the misconception that Softmax is universally used for 'probability-like' outputs, ignoring the difference between class probabilities (sum to 1) and pixel intensities (bounded 0-1). Option B targets the common habit of using ReLU for all hidden/output layers, ignoring the need for bounded output. Option D targets the misconception that the loss function alone handles output constraints, ignoring the role of activation functions in defining the output space."
+      },
+      {
+        "question_id": "Q_T05_01",
+        "question_text": "During the compilation of the Autoencoder model in the lab, the instructor selected the Adam optimizer and a specific loss function. Given that the model is trained to reconstruct the input image from the latent representation, which loss function is most appropriate, and what is the target data used for training?",
+        "option_a": "Categorical Crossentropy; the target is the class label (e.g., 'T-shirt').",
+        "option_b": "Mean Squared Error (MSE); the target is the original input image data.",
+        "option_c": "Binary Crossentropy; the target is the binary mask of the image.",
+        "option_d": "Mean Squared Error (MSE); the target is the latent space vector.",
+        "correct_option": "B",
+        "explanation": "The correct answer is B. Evidence E_C14 explicitly states the instructor compiled the model with 'Adam' and 'MSE' (referred to as MSC in the transcript, likely a typo for MSE) as the loss function. The training process involves fitting the model where the input is the image and the target is the same image (auto-encoding). Option A is incorrect because Categorical Crossentropy is for classification tasks with discrete labels, not continuous pixel reconstruction. Option C is incorrect because Binary Crossentropy is for binary classification, not multi-channel pixel regression. Option D is incorrect because the target is the original input, not the latent space; the latent space is the intermediate representation, not the ground truth.",
+        "target_concept": "Model Compilation & Loss Function",
+        "cognitive_level": "APPLY",
+        "what_taught": "The model is compiled with a loss function suitable for regression (such as Mean Squared Error, MSE) and an optimizer like Adam. The target for training is the original input data itself.",
+        "why_assessed": "Verifies understanding of how to configure the training loop for an autoencoder, specifically the choice of loss function for reconstruction tasks.",
+        "evidence_refs": [
+          "E_C14",
+          "E_C04",
+          "E_C26"
+        ],
+        "misconception_rationale": "Option A targets the confusion between autoencoders (unsupervised reconstruction) and classifiers (supervised label prediction). Option C targets the misconception that image pixels are binary classification problems. Option D targets the confusion between the model's internal state (latent space) and the training target (original input)."
+      },
+      {
+        "question_id": "Q_T06_01",
+        "question_text": "After training the Autoencoder on Fashion-MNIST, the reconstructed images appear slightly blurry compared to the originals, but the general shapes of the clothing items are clearly recognizable. The loss curve shows a steady decrease. Based on the instructor's discussion on compression and data handling, what is the most accurate interpretation of this result?",
+        "option_a": "The model failed to learn any features because the reconstruction is not pixel-perfect.",
+        "option_b": "The model is overfitting because the loss is low but the visual quality is degraded.",
+        "option_c": "The model successfully learned the essential features, and the blurriness is an expected trade-off due to compression.",
+        "option_d": "The learning rate was too high, causing the model to skip over fine details during optimization.",
+        "correct_option": "C",
+        "explanation": "The correct answer is C. Evidence E_C03 and E_C17 discuss the purpose of autoencoders as compressing data into a smaller representation. The instructor noted that while models learn well with large data, the compression process inherently involves a trade-off. A 'good' autoencoder produces recognizable reconstructions, even if fine details are lost due to the bottleneck layer. Option A is incorrect because perfect pixel-by-pixel reconstruction is not required; the goal is to capture the essential structure. Option B is incorrect because low loss with recognizable structure indicates good learning, not overfitting (which would typically show low training loss but high validation loss, or memorization of noise). Option D is incorrect because blurriness in autoencoders is primarily a structural consequence of the compression bottleneck, not necessarily an optimization error like a high learning rate.",
+        "target_concept": "Reconstruction Quality Analysis",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "Performance is evaluated by visually comparing the original images with the reconstructed images and analyzing the loss curve. A good autoencoder produces reconstructions that are recognizable but may lack fine details due to compression.",
+        "why_assessed": "Assesses the ability to interpret model outputs and understand the trade-off between compression ratio and reconstruction fidelity.",
+        "evidence_refs": [
+          "E_C03",
+          "E_C14",
+          "E_C17"
+        ],
+        "misconception_rationale": "Option A targets the misconception that autoencoders must be perfect copies of the input. Option B targets the confusion between reconstruction error and overfitting metrics. Option D targets the attribution of structural compression artifacts to hyperparameter tuning errors rather than the architectural design."
+      },
+      {
+        "question_id": "Q_T07_01",
+        "question_text": "In the Autoencoders Lab, we compared Fully Connected (Dense) Autoencoders with Convolutional Autoencoders on Fashion-MNIST. Based on the architectural principles discussed, why is the Convolutional Autoencoder generally preferred for image data like Fashion-MNIST over a Dense Autoencoder?",
+        "option_a": "Convolutional Autoencoders are faster to train because they ignore the spatial arrangement of pixels, treating each pixel as an independent feature.",
+        "option_b": "Dense Autoencoders are preferred because they capture global dependencies immediately across the entire image, whereas Convolutional layers only see local patches.",
+        "option_c": "Convolutional Autoencoders preserve spatial relationships and utilize weight sharing, leading to more efficient learning and better feature extraction for structured image data.",
+        "option_d": "The choice between Dense and Convolutional architectures depends solely on the total number of samples in the dataset, not the structural nature of the input data.",
+        "correct_option": "C",
+        "explanation": "Option C is correct because, as taught, convolutional layers exploit the spatial structure of images (local connectivity) and use weight sharing (same filter across the image), which reduces parameters and improves efficiency compared to dense layers that treat pixels independently. Option A is incorrect because convolutional layers specifically *do* account for spatial arrangement, not ignore it. Option B is incorrect because while dense layers see global dependencies, they are less efficient and do not respect the local spatial hierarchy inherent in images, making them less suitable for image feature extraction in this context. Option D is incorrect because the architectural choice is driven by data structure (spatial vs. tabular), not just dataset size.",
+        "target_concept": "Motivation for Convolutional Autoencoders",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "Convolutional autoencoders are preferred for image data because they preserve spatial relationships and use weight sharing, leading to more efficient learning and better feature extraction compared to fully connected layers which treat pixels independently.",
+        "why_assessed": "Tests the comparative understanding of why one architecture is chosen over another for specific data types (images).",
+        "evidence_refs": [
+          "E_C04",
+          "E_C10",
+          "E_C26"
+        ],
+        "misconception_rationale": "Distractors target common misconceptions: (A) confusing the local nature of convolutions with ignoring structure; (B) overvaluing global connectivity of dense layers over spatial efficiency; (D) attributing architectural choice to dataset size rather than data modality/structure."
+      },
+      {
+        "question_id": "Q_T08_02",
+        "question_text": "When constructing the encoder for a Convolutional Autoencoder in the lab, what is the specific sequence of layer types used to progressively reduce spatial dimensions and increase feature depth before the bottleneck?",
+        "option_a": "Conv2D layers followed by MaxPooling2D layers, eventually flattening the output for the bottleneck.",
+        "option_b": "MaxPooling2D layers followed by Conv2D layers, without any flattening step before the bottleneck.",
+        "option_c": "Conv2D layers followed by UpSampling2D layers to expand the feature maps before the bottleneck.",
+        "option_d": "Dense layers followed by Conv2D layers to convert the image into a vector representation.",
+        "correct_option": "A",
+        "explanation": "Option A is correct. The standard convolutional encoder architecture uses Conv2D to extract features and MaxPooling2D to downsample (reduce spatial dimensions) while increasing depth. A Flatten layer is typically required to convert the 3D feature map into a 1D vector for the dense bottleneck layer. Option B is incorrect because MaxPooling is not the first step (no feature extraction has occurred yet) and flattening is usually necessary. Option C is incorrect because UpSampling2D is used in the *decoder*, not the encoder. Option D is incorrect because starting with Dense layers defeats the purpose of a convolutional encoder for image data.",
+        "target_concept": "Convolutional Encoder Architecture",
+        "cognitive_level": "APPLY",
+        "what_taught": "The convolutional encoder uses Conv2D layers followed by MaxPooling2D layers to progressively reduce spatial dimensions and increase feature depth, eventually flattening the output for the bottleneck if necessary.",
+        "why_assessed": "Details the specific layer types and their sequence in a convolutional autoencoder, distinguishing it from the dense layer stack.",
+        "evidence_refs": [
+          "E_C13",
+          "E_C04",
+          "E_C14"
+        ],
+        "misconception_rationale": "Distractors target: (B) incorrect layer ordering and missing flattening; (C) confusing encoder (downsampling) with decoder (upsampling) operations; (D) mixing dense and convolutional architectures incorrectly."
+      },
+      {
+        "question_id": "Q_T09_03",
+        "question_text": "In the Convolutional Autoencoder decoder, which layer type is primarily used to increase the spatial dimensions of the feature maps, and what must the final layer's output channel count match for a grayscale Fashion-MNIST image?",
+        "option_a": "MaxPooling2D layers are used to expand dimensions; the final layer must have 10 output channels to match the number of classes.",
+        "option_b": "UpSampling2D (or ConvTranspose2D) layers are used to increase spatial dimensions; the final layer must have 1 output channel to match the grayscale input.",
+        "option_c": "Conv2D layers are used to increase spatial dimensions; the final layer must have 3 output channels for RGB images.",
+        "option_d": "Dense layers are used to expand dimensions; the final layer must have 784 output channels to match the flattened input size.",
+        "correct_option": "B",
+        "explanation": "Option B is correct. The decoder reverses the encoder's downsampling by using UpSampling2D (or ConvTranspose2D) to increase spatial resolution. Since Fashion-MNIST images are grayscale, the input has 1 channel, so the final reconstruction layer must also output 1 channel to match the input shape. Option A is incorrect because MaxPooling reduces dimensions, and 10 channels would be for classification, not reconstruction. Option C is incorrect because standard Conv2D with stride 1 does not increase spatial dimensions (it maintains or reduces them depending on padding/stride, but Upsampling is the explicit expansion tool), and Fashion-MNIST is grayscale (1 channel), not RGB (3 channels). Option D is incorrect because Dense layers are not used for spatial expansion in a convolutional decoder, and 784 is the flattened size, not the channel count for the final 2D output.",
+        "target_concept": "Convolutional Decoder Architecture",
+        "cognitive_level": "APPLY",
+        "what_taught": "The convolutional decoder uses UpSampling2D (or ConvTranspose2D) layers to increase spatial dimensions, followed by Conv2D layers to refine the features and reconstruct the image. The final layer must match the input channel count (e.g., 1 for grayscale).",
+        "why_assessed": "Tests the understanding of how to reverse the compression process in a convolutional network, specifically the use of upsampling techniques.",
+        "evidence_refs": [
+          "E_C12",
+          "E_C13",
+          "E_C04"
+        ],
+        "misconception_rationale": "Distractors target: (A) confusing pooling with upsampling and confusing reconstruction channels with classification classes; (C) misunderstanding Conv2D's role in expansion and confusing grayscale with RGB; (D) confusing dense layer usage with convolutional spatial operations and confusing flattened size with channel count."
+      },
+      {
+        "question_id": "T10_Q1",
+        "question_text": "In the context of the Fashion-MNIST autoencoder lab, you have trained a model with a bottleneck layer of dimension 16. After training, you observe that two distinct images of 'sneakers' map to latent vectors that are very close to each other in Euclidean distance, while a 'sneaker' and a 'bag' map to vectors that are far apart. Based on the properties of the latent space discussed in class, what is the primary implication of this geometric arrangement?",
+        "option_a": "The model has failed to learn meaningful features because the latent vectors are not random noise, which is the expected output of an unsupervised encoder.",
+        "option_b": "The latent space has successfully organized the data such that semantic similarity in the input corresponds to geometric proximity, enabling applications like dimensionality reduction or anomaly detection.",
+        "option_c": "The bottleneck dimension of 16 is incorrect; it must be exactly 10 to align with the 10 classes in Fashion-MNIST for the latent space to be valid.",
+        "option_d": "This arrangement is solely useful for 2D visualization of the data and has no practical utility for downstream tasks like compression or identifying outliers.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the core function of the autoencoder's bottleneck is to create a compressed representation where similar inputs (like two sneakers) map to nearby points, preserving semantic structure. This property allows the latent space to be used for dimensionality reduction (since it is compressed) and anomaly detection (since outliers would map to distant, sparse regions). Option A is incorrect because the latent space is not random noise; it is a structured, learned representation. Option C is incorrect because the latent dimension is a hyperparameter chosen for compression ratio and does not need to match the number of classes (10). Option D is incorrect because the latent space is fundamental to the model's utility in compression and anomaly detection, not just visualization.",
+        "target_concept": "Latent Space Interpretation",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "The latent space (bottleneck) contains a compressed representation of the input. In a well-trained autoencoder, similar inputs map to nearby points in the latent space, allowing for potential use in dimensionality reduction or anomaly detection.",
+        "why_assessed": "Connects the architectural component (bottleneck) to its practical utility and theoretical significance in unsupervised learning.",
+        "evidence_refs": [
+          "E_C10",
+          "E_C35",
+          "E_C12"
+        ],
+        "misconception_rationale": "Option A targets the misconception that unsupervised learning produces random, uncorrelated outputs. Option C targets the confusion between classification labels (10 classes) and latent dimensionality. Option D targets the limited view that latent spaces are only for visualization, ignoring their role in compression and anomaly detection."
+      }
+    ]
+  },
+  "pipeline_e": {
+    "metrics": {
+      "pipeline": "E (Adaptive Production Engine)",
+      "questions_generated": 10,
+      "latency_seconds": 202.02,
+      "llm_calls": 4,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 1,
+        "APPLY": 7,
+        "ANALYZE": 1,
+        "EVALUATE": 1
+      },
+      "cognitive_diversity_score": 67.8,
+      "traceability_rate": 100.0,
+      "misconception_distractor_rate": 100.0,
+      "teacher_intent_alignment": 100.0,
+      "redundancy_rate": 0.0,
+      "overall_quality_score": 91.1
+    },
+    "questions": [
+      {
+        "question_id": "AE_LAB_001",
+        "question_text": "In the lab, we constructed a Fully Connected Autoencoder for Fashion-MNIST. The encoder was defined with Dense layers of sizes 128, 64, and 32. According to the structural symmetry principle emphasized in class, which of the following is the correct configuration for the decoder portion of this specific model?",
+        "option_a": "Dense(32, activation='relu'), Dense(64, activation='relu'), Dense(128, activation='relu'), Dense(784, activation='sigmoid')",
+        "option_b": "Dense(64, activation='relu'), Dense(128, activation='relu'), Dense(784, activation='sigmoid')",
+        "option_c": "Dense(128, activation='relu'), Dense(64, activation='relu'), Dense(32, activation='relu'), Dense(784, activation='sigmoid')",
+        "option_d": "Dense(32, activation='relu'), Dense(128, activation='relu'), Dense(64, activation='relu'), Dense(784, activation='sigmoid')",
+        "correct_option": "A",
+        "explanation": "The correct answer is A because the decoder must be the mirror image of the encoder. If the encoder reduces dimensions from 784 -> 128 -> 64 -> 32, the decoder must expand them in reverse order: 32 -> 64 -> 128 -> 784. Option B is incorrect because it skips the 32-unit layer, breaking the symmetry with the encoder's final hidden layer. Option C is incorrect because it repeats the encoder's sequence rather than reversing it, which would not reconstruct the input. Option D is incorrect because the expansion order is wrong (32 -> 128 -> 64), violating the mirror-image requirement.",
+        "target_concept": "Autoencoder Symmetry & Bottleneck",
+        "cognitive_level": "UNDERSTAND",
+        "what_taught": "The structural requirement that the decoder must be the mirror image of the encoder, with the bottleneck layer (latent space) being the narrowest point to force dimensionality reduction.",
+        "why_assessed": "Core architectural principle emphasized during the introduction of autoencoder components. Students often fail to maintain symmetry or place the bottleneck incorrectly.",
+        "evidence_refs": [
+          "E_C21",
+          "E_C28",
+          "E_C16"
+        ],
+        "misconception_rationale": "Distractors represent common errors: skipping layers (B), copying the encoder sequence instead of reversing it (C), and incorrect ordering of expansion layers (D). These reflect a misunderstanding of the 'mirror image' constraint."
+      },
+      {
+        "question_id": "AE_LAB_002",
+        "question_text": "During the preprocessing step for the Fashion-MNIST dataset in the autoencoder lab, the instructor explicitly normalized the pixel values. What is the primary technical reason for rescaling the input data from the range [0, 255] to [0, 1] before feeding it into the network?",
+        "option_a": "To ensure the input values are compatible with the Sigmoid activation function in the output layer, preventing saturation during the forward pass.",
+        "option_b": "To reduce the computational cost of matrix multiplications by using smaller integers instead of floats.",
+        "option_c": "To ensure stable gradient descent and proper behavior of activation functions, as large input values can lead to vanishing or exploding gradients.",
+        "option_d": "To remove noise from the images, as values above 1.0 are considered outliers in the Fashion-MNIST dataset.",
+        "correct_option": "C",
+        "explanation": "The correct answer is C. Normalizing inputs to [0, 1] is critical for stable training. Large input values (0-255) can cause large weight updates, leading to unstable gradients and poor convergence. Option A is incorrect because the input scaling is independent of the output activation function; the output layer's Sigmoid expects the *reconstructed* output to be in [0,1], but the input scaling is for training stability. Option B is incorrect because modern hardware handles floats efficiently, and the primary benefit is numerical stability, not integer arithmetic speed. Option D is incorrect because normalization is a scaling operation, not a denoising technique; all pixel values in MNIST are valid data points, not outliers.",
+        "target_concept": "Fashion-MNIST Preprocessing (Rescaling)",
+        "cognitive_level": "APPLY",
+        "what_taught": "The necessity of rescaling pixel values from [0, 255] to [0, 1] (or normalizing) before feeding data into the autoencoder to ensure stable gradient descent and proper activation function behavior.",
+        "why_assessed": "A critical practical step demonstrated in the code. Students frequently forget this, leading to poor convergence or reconstruction artifacts.",
+        "evidence_refs": [
+          "E_C10",
+          "E_C12",
+          "E_C04"
+        ],
+        "misconception_rationale": "Distractors target misconceptions about the purpose of normalization: confusing it with output activation compatibility (A), computational efficiency (B), or data cleaning/denoising (D). These are plausible but incorrect justifications for a standard preprocessing step."
+      },
+      {
+        "question_id": "AE_LAB_003",
+        "question_text": "You are implementing the Fully Connected Autoencoder for Fashion-MNIST as demonstrated in the lab. The encoder ends with a Dense layer of 32 units (the bottleneck). Which of the following code snippets correctly defines the final layer of the decoder to ensure the model can reconstruct the original 28x28 image?",
+        "option_a": "model.add(Dense(784, activation='linear'))",
+        "option_b": "model.add(Dense(784, activation='sigmoid'))",
+        "option_c": "model.add(Dense(28, activation='sigmoid'))",
+        "option_d": "model.add(Dense(784, activation='relu'))",
+        "correct_option": "B",
+        "explanation": "The correct answer is B. The output layer must have 784 units to match the flattened input size (28x28). Since the input data was normalized to [0, 1], the output layer must use a Sigmoid activation function to constrain the reconstructed pixel values to the same [0, 1] range. Option A is incorrect because 'linear' activation allows outputs to be any real number, which would not match the normalized input range and would result in poor reconstruction metrics. Option C is incorrect because 28 units only represent one row of the image, not the full 784-pixel image. Option D is incorrect because ReLU outputs non-negative values but does not bound them to [0, 1], leading to values potentially exceeding 1.0.",
+        "target_concept": "FC Autoencoder Layer Configuration",
+        "cognitive_level": "APPLY",
+        "what_taught": "The specific sequence of Dense layers for the Fully Connected autoencoder: Input (784) -> Encoder (e.g., 128, 64, 32) -> Bottleneck -> Decoder (32, 64, 128) -> Output (784), with appropriate activation functions (ReLU for hidden, Sigmoid for output).",
+        "why_assessed": "Direct code demonstration target. Tests ability to replicate the specific architecture taught for the FC model.",
+        "evidence_refs": [
+          "E_C12",
+          "E_C13",
+          "E_C35"
+        ],
+        "misconception_rationale": "Distractors target common coding errors: using the wrong activation function for the output (A, D) or incorrect output dimensionality (C). These reflect failures to align the output layer with the input data's shape and value range."
+      },
+      {
+        "question_id": "Q_T4_FC_AE_Loss",
+        "question_text": "In the Autoencoder Lab, you are compiling a Fully Connected Autoencoder to reconstruct Fashion-MNIST images. You have normalized the pixel values to the range [0, 1]. Which compilation configuration correctly reflects the unsupervised nature of the task and the appropriate loss function for pixel-wise reconstruction?",
+        "option_a": "optimizer='Adam', loss='categorical_crossentropy', and training on X_train with y_train (class labels).",
+        "option_b": "optimizer='Adam', loss='mse', and training on X_train with X_train as the target.",
+        "option_c": "optimizer='SGD', loss='binary_crossentropy', and training on X_train with X_test as the target.",
+        "option_d": "optimizer='Adam', loss='sparse_categorical_crossentropy', and training on X_train with X_train as the target.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because autoencoders are unsupervised; the target is the input itself (X_train). MSE (Mean Squared Error) is the standard loss for regression-style pixel reconstruction. Option A is incorrect because categorical_crossentropy is for classification with class labels, not reconstruction. Option C is incorrect because using X_test as the target during training is a data leakage error and violates the training protocol. Option D is incorrect because sparse_categorical_crossentropy is for integer class labels, not pixel values.",
+        "target_concept": "FC Autoencoder Training & Loss",
+        "cognitive_level": "APPLY",
+        "what_taught": "Compiling the model with 'binary_crossentropy' or 'mse' loss and an optimizer like Adam, then training on the same dataset used for input (unsupervised learning).",
+        "why_assessed": "Clarifies the unsupervised nature of the task (input == target) and the choice of loss function for reconstruction.",
+        "evidence_refs": [
+          "E_C14",
+          "E_C10",
+          "E_C15"
+        ],
+        "misconception_rationale": "Distractors target the common confusion between classification losses (categorical/sparse) and regression losses (MSE), as well as the fundamental misunderstanding of unsupervised training targets (using labels or test sets instead of inputs)."
+      },
+      {
+        "question_id": "Q_T5_Recon_Visualization",
+        "question_text": "After training your Fully Connected Autoencoder on Fashion-MNIST, you need to evaluate its performance. According to the lab procedure, what is the correct method to visualize the reconstruction quality?",
+        "option_a": "Plot the training loss curve over 10 epochs to confirm the loss has converged to zero.",
+        "option_b": "Pass the test set (X_test) through the trained model and plot the original test images alongside the model's output (reconstructed images).",
+        "option_c": "Pass the training set (X_train) through the model and plot the bottleneck layer activations to check for information retention.",
+        "option_d": "Plot the original test images alongside the class labels predicted by a separate classifier trained on the bottleneck.",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the lab emphasizes visual assessment by comparing original test images with their reconstructions to gauge quality. Option A is incorrect because low loss does not guarantee good visual reconstruction, and loss rarely reaches zero. Option C is incorrect because the bottleneck represents compressed latent space, not the reconstructed image, and using the training set for final evaluation is prone to overfitting bias. Option D is incorrect because autoencoders do not predict class labels; they reconstruct pixels.",
+        "target_concept": "Reconstruction Visualization",
+        "cognitive_level": "APPLY",
+        "what_taught": "The process of passing test data through the trained model and plotting the original images alongside the reconstructed images to visually assess quality.",
+        "why_assessed": "The primary method of evaluation in this lab. Tests the ability to interpret visual output as a metric for success.",
+        "evidence_refs": [
+          "E_C14",
+          "E_C10",
+          "E_C15"
+        ],
+        "misconception_rationale": "Distractors target the misconception that numerical loss is the sole metric, the confusion between latent space (bottleneck) and output space (reconstruction), and the incorrect use of training data for final visual evaluation."
+      },
+      {
+        "question_id": "Q_T6_FC_Limitations",
+        "question_text": "During the lab, you observe that the Fully Connected (FC) Autoencoder produces blurry and noisy reconstructions of Fashion-MNIST images, even after sufficient training. What is the primary architectural reason for this limitation?",
+        "option_a": "The FC layers treat all pixels as independent inputs, ignoring the spatial locality and structural relationships between neighboring pixels.",
+        "option_b": "The number of training epochs was insufficient, causing the model to underfit the complex patterns in the images.",
+        "option_c": "The bottleneck layer was too large, preventing the model from compressing the data effectively.",
+        "option_d": "The input images were not normalized, causing the activation functions to saturate and lose gradient information.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because FC layers lack the inductive bias of convolutional layers; they do not inherently understand that adjacent pixels are more related than distant ones, leading to loss of fine spatial details (blur). Option B is incorrect because the lab context implies sufficient training was performed, and blurriness is a structural limitation, not just a convergence issue. Option C is incorrect because a larger bottleneck would generally preserve more detail, not cause blurriness; blurriness is often due to the lack of spatial constraints in FC layers. Option D is incorrect because the lab explicitly included a normalization step (scaling to [0,1]) before training.",
+        "target_concept": "FC Autoencoder Limitations (Blurry Reconstructions)",
+        "cognitive_level": "ANALYZE",
+        "what_taught": "The observation that Fully Connected autoencoders often produce blurry or noisy reconstructions because they treat all pixels as independent, ignoring spatial locality.",
+        "why_assessed": "Critical analysis point that motivates the transition to Convolutional Autoencoders. Tests understanding of *why* the FC model fails.",
+        "evidence_refs": [
+          "E_C10",
+          "E_C04",
+          "E_C16"
+        ],
+        "misconception_rationale": "Distractors target common debugging misconceptions: blaming hyperparameters (epochs, bottleneck size) or data preprocessing (normalization) for what is actually an architectural limitation regarding spatial invariance."
+      },
+      {
+        "question_id": "Q_T7_01",
+        "question_text": "In the lab, we constructed the encoder for a Convolutional Autoencoder on Fashion-MNIST. The teacher emphasized that unlike the Fully Connected (FC) autoencoder, the CNN encoder must preserve spatial relationships. Which of the following layer sequences correctly implements the first stage of this encoder, assuming the input is a 28x28x1 image?",
+        "option_a": "Dense(128, activation='relu') -> Flatten()",
+        "option_b": "Conv2D(32, (3,3), activation='relu') -> MaxPooling2D((2,2))",
+        "option_c": "MaxPooling2D((2,2)) -> Conv2D(32, (3,3), activation='relu')",
+        "option_d": "Conv2D(32, (3,3), activation='relu') -> Conv2D(32, (3,3), activation='relu')",
+        "correct_option": "B",
+        "explanation": "Option B is correct because the standard CNN encoder architecture taught in class uses Conv2D to extract features and MaxPooling2D to reduce spatial dimensions while increasing depth. Option A is incorrect because using Dense layers destroys spatial structure, which is the primary reason for using a CNN. Option C is incorrect because applying MaxPooling before any convolution is not a standard feature extraction step; pooling requires prior feature maps. Option D is incorrect because while valid, it does not include the spatial reduction (pooling) step that characterizes the hierarchical downsampling discussed in the lab.",
+        "target_concept": "Convolutional Autoencoder Encoder",
+        "cognitive_level": "APPLY",
+        "what_taught": "Using Conv2D and MaxPooling2D layers in the encoder to extract spatial features, reducing spatial dimensions while increasing channel depth.",
+        "why_assessed": "Key architectural difference from FC. Tests understanding of how CNNs process image data hierarchically.",
+        "evidence_refs": [
+          "E_C35",
+          "E_C21",
+          "E_C04"
+        ],
+        "misconception_rationale": "Distractors target common errors: using Dense layers (A) which ignores the spatial benefit of CNNs, incorrect layer ordering (C), and missing the downsampling step (D)."
+      },
+      {
+        "question_id": "Q_T8_01",
+        "question_text": "When building the decoder for the Convolutional Autoencoder, the goal is to reverse the spatial reduction performed by the encoder. The teacher noted that this process is often tricky. Which layer is specifically required to increase the spatial dimensions of the feature maps back towards the original 28x28 size?",
+        "option_a": "MaxPooling2D",
+        "option_b": "Dense",
+        "option_c": "Conv2DTranspose",
+        "option_d": "Flatten",
+        "correct_option": "C",
+        "explanation": "Option C is correct because Conv2DTranspose (or UpSampling2D followed by Conv2D) is the standard method for upsampling spatial dimensions in a CNN decoder. Option A is incorrect because MaxPooling reduces spatial dimensions, which is the opposite of what is needed. Option B is incorrect because Dense layers operate on flattened data and do not inherently restore 2D spatial structure without complex reshaping and are not the primary upsampling mechanism in CNN decoders. Option D is incorrect because Flatten removes spatial dimensions entirely.",
+        "target_concept": "Convolutional Autoencoder Decoder",
+        "cognitive_level": "APPLY",
+        "what_taught": "Using Conv2DTranspose (or UpSampling2D + Conv2D) in the decoder to reverse the spatial reduction, gradually increasing spatial dimensions back to the original size.",
+        "why_assessed": "The mirror image of the encoder. Tests ability to correctly implement the upsampling process, which is often tricky for students.",
+        "evidence_refs": [
+          "E_C35",
+          "E_C12",
+          "E_C21"
+        ],
+        "misconception_rationale": "Distractors target the confusion between downsampling (MaxPooling) and upsampling, the misuse of Dense layers for spatial restoration, and the destructive nature of Flatten."
+      },
+      {
+        "question_id": "Q_T9_01",
+        "question_text": "The Fashion-MNIST dataset is initially loaded as 1D arrays of shape (784,). To feed this data into the Conv2D layers of the autoencoder, the teacher demonstrated a specific reshaping step. What is the correct target shape for the input tensor in a 'channels_last' format?",
+        "option_a": "(28, 28)",
+        "option_b": "(1, 28, 28)",
+        "option_c": "(28, 28, 1)",
+        "option_d": "(784, 1)",
+        "correct_option": "C",
+        "explanation": "Option C is correct because Conv2D layers in TensorFlow/Keras with 'channels_last' data format expect a 4D input tensor of shape (batch_size, height, width, channels). For a 28x28 grayscale image, this is (28, 28, 1). Option A is incorrect because it lacks the channel dimension. Option B is incorrect because it represents 'channels_first' format, which is not the default or the format demonstrated in the lab. Option D is incorrect because it remains a 2D representation and does not restore the spatial grid required for convolution.",
+        "target_concept": "Input Shape for CNN Autoencoders",
+        "cognitive_level": "APPLY",
+        "what_taught": "Reshaping the 1D flattened image data (784,) into a 3D tensor (28, 28, 1) to match the expected input shape of Conv2D layers.",
+        "why_assessed": "A common technical hurdle when transitioning from FC to CNN models. Tests data manipulation skills specific to CNNs.",
+        "evidence_refs": [
+          "E_C35",
+          "E_C10",
+          "E_C11"
+        ],
+        "misconception_rationale": "Distractors target common shape errors: missing the channel dimension (A), using the wrong channel order (B), and failing to reshape from 1D to 2D spatial grid (D)."
+      },
+      {
+        "question_id": "T10_Q1",
+        "question_text": "In the Autoencoders Lab, you trained both a Fully Connected (FC) and a Convolutional (CNN) Autoencoder on the Fashion-MNIST dataset. Upon visual inspection of the reconstructed images, the CNN Autoencoder produced significantly sharper edges and preserved local texture details (such as the folds in a shirt or the pattern on a shoe) better than the FC Autoencoder, which produced blurry, averaged-out results. Which of the following best explains this difference in reconstruction quality?",
+        "option_a": "The CNN Autoencoder is superior because it processes color channels independently, whereas the FC Autoencoder mixes all pixel values into a single vector, causing color bleeding.",
+        "option_b": "The FC Autoencoder is computationally faster and therefore converges to a local minimum that prioritizes speed over detail, while the CNN Autoencoder's higher computational cost allows it to find a global minimum with higher fidelity.",
+        "option_c": "The CNN Autoencoder learns spatial hierarchies and local patterns through convolutional filters, allowing it to preserve structural details, whereas the FC Autoencoder treats the image as a flat vector, losing spatial context and resulting in blurrier reconstructions.",
+        "option_d": "The difference is negligible for grayscale datasets like Fashion-MNIST; the perceived sharpness is an artifact of the normalization process applied to the test data, which affects the FC model more than the CNN model.",
+        "correct_option": "C",
+        "explanation": "Option C is correct because it accurately reflects the core pedagogical point of the lab: CNNs utilize convolutional layers to detect local features (edges, textures) and build spatial hierarchies, which is crucial for image reconstruction. FC networks flatten the input, destroying the 2D spatial relationship between pixels, leading to loss of fine detail. Option A is incorrect because Fashion-MNIST is grayscale (single channel), so color channel processing is irrelevant. Option B is incorrect because while FC models are faster, the quality difference is architectural (spatial awareness vs. flat vector), not a result of optimization speed or local vs. global minima in this context. Option D is incorrect because the quality difference is significant and inherent to the architecture, not an artifact of normalization.",
+        "target_concept": "Comparative Reconstruction Quality",
+        "cognitive_level": "EVALUATE",
+        "what_taught": "The conclusion that Convolutional Autoencoders produce sharper, more detailed reconstructions than Fully Connected Autoencoders due to their ability to learn spatial hierarchies and local patterns.",
+        "why_assessed": "Synthesizes the entire lab's purpose. Tests the ability to evaluate and compare the two architectures based on visual evidence.",
+        "evidence_refs": [
+          "E_C10",
+          "E_C04",
+          "E_C35"
+        ],
+        "misconception_rationale": "Option A targets the misconception that CNNs are inherently better for color images, ignoring that spatial hierarchy matters for grayscale too. Option B targets the misconception that computational speed directly correlates with reconstruction fidelity or that the difference is due to optimization dynamics rather than architecture. Option D targets the misconception that the quality difference is negligible or an artifact of data preprocessing (normalization) rather than a fundamental architectural limitation."
+      }
+    ],
+    "routing": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint."
+  }
+}

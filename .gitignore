@@ -39,3 +39,9 @@ load_tests/screenshots/
 
 # k6 result exports
 load_tests/results/
+
+# SQLite & Staging
+*.db
+*.sqlite
+production_engine/outputs/checkpoints/
+production_engine/outputs/staging/

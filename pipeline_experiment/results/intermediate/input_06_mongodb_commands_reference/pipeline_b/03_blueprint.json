@@ -1,0 +1,110 @@
+{
+  "blueprint_id": "BP_input_06_mongodb_commands_reference",
+  "input_id": "input_06_mongodb_commands_reference",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Data Import and Export",
+      "salience_score": 0.3,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "REFERENCE_REVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "MongoDB CLI",
+        "JSON format",
+        "File system basics"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03"
+      ],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Backup and Restore",
+      "salience_score": 0.1,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "REFERENCE_REVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Database backup concepts",
+        "MongoDB CLI"
+      ],
+      "evidence_refs": [
+        "E_C04"
+      ],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Query Operators and Array Updates",
+      "salience_score": 0.45,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Basic CRUD operations",
+        "MongoDB document structure",
+        "Array data types"
+      ],
+      "evidence_refs": [
+        "E_C05",
+        "E_C06"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Aggregation Pipeline",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "LIVE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Basic query operators",
+        "Document structure",
+        "Pipeline concept"
+      ],
+      "evidence_refs": [
+        "E_C07",
+        "E_C08",
+        "E_C09"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Indexing and Schema Validation",
+      "salience_score": 0.125,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "REFERENCE_REVIEW",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Database indexing concepts",
+        "Schema design",
+        "Data validation rules"
+      ],
+      "evidence_refs": [
+        "E_C10",
+        "E_C11"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

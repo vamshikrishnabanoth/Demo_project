@@ -1,0 +1,66 @@
+{
+  "PDF": {
+    "sample_size": 2,
+    "average_q_summary": 0.582,
+    "average_q_blueprint": 0.626,
+    "delta": 0.044,
+    "category_winner": "EQUIVALENT (\u2248)",
+    "tested_inputs": [
+      "input_01_daa_unit2",
+      "input_02_cnn_object_detection"
+    ]
+  },
+  "CODE": {
+    "sample_size": 1,
+    "average_q_summary": 0.655,
+    "average_q_blueprint": 0.562,
+    "delta": -0.093,
+    "category_winner": "SUMMARY",
+    "tested_inputs": [
+      "input_03_ds_lab_programs"
+    ]
+  },
+  "NOTES": {
+    "sample_size": 2,
+    "average_q_summary": 0.63,
+    "average_q_blueprint": 0.628,
+    "delta": -0.002,
+    "category_winner": "EQUIVALENT (\u2248)",
+    "tested_inputs": [
+      "input_04_se_lab_git_github",
+      "input_06_mongodb_commands_reference"
+    ]
+  },
+  "ASSIGNMENT": {
+    "sample_size": 1,
+    "average_q_summary": 0.43,
+    "average_q_blueprint": 0.394,
+    "delta": -0.036,
+    "category_winner": "EQUIVALENT (\u2248)",
+    "tested_inputs": [
+      "input_05_assignment_mongodb_crud"
+    ]
+  },
+  "VOICE_ONLY": {
+    "sample_size": 3,
+    "average_q_summary": 0.612,
+    "average_q_blueprint": 0.655,
+    "delta": 0.043,
+    "category_winner": "EQUIVALENT (\u2248)",
+    "tested_inputs": [
+      "input_07_deepa_madam_lecture",
+      "input_08_tapadia_sir_lecture",
+      "input_09_wt_web_technologies"
+    ]
+  },
+  "VOICE_PLUS_PPT": {
+    "sample_size": 1,
+    "average_q_summary": 0.74,
+    "average_q_blueprint": 0.804,
+    "delta": 0.064,
+    "category_winner": "BLUEPRINT",
+    "tested_inputs": [
+      "input_10_binary_trees_audio_ppt"
+    ]
+  }
+}

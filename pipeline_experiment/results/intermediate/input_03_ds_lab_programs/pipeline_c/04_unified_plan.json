@@ -1,0 +1,123 @@
+{
+  "input_id": "input_03_ds_lab_programs",
+  "title": "Data Structures Lab Programs: Linked Lists, Stacks, Queues & Tree Operations",
+  "total_requested_questions": 5,
+  "total_available_targets": 5,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Singly Linked List Operations",
+      "what_taught_summary": "Students learn the structure of a Singly Linked List where each node holds data and a pointer to the next node, and how to implement insertion by dynamically allocating nodes and updating the 'next' pointers to maintain the linear chain.",
+      "why_assessed_pedagogy": "This assessment verifies that students can visualize the unidirectional pointer flow and understand the memory management required to link nodes without a fixed array size.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Believing that a singly linked list allows direct backward traversal using a 'prev' pointer.",
+        "Assuming that inserting a node at the tail requires updating the 'next' pointer of the new node to NULL, but forgetting to update the previous node's 'next' pointer to the new node.",
+        "Confusing the 'head' pointer with the first node's data value rather than its memory address."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]",
+        "[360.0s - 540.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Doubly Linked List Operations",
+      "what_taught_summary": "Students understand the Doubly Linked List structure where nodes contain 'next' and 'prev' pointers, enabling bidirectional traversal, and how insertion requires updating both the new node's pointers and the adjacent nodes' pointers to maintain consistency.",
+      "why_assessed_pedagogy": "The pedagogical goal is to highlight the trade-off between the increased memory overhead of doubly linked lists and the functional benefit of efficient backward traversal compared to singly linked lists.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Forgetting to set the 'prev' pointer of the new node to the previous node during insertion.",
+        "Assuming that deleting a node in a doubly linked list only requires updating the 'next' pointer of the previous node.",
+        "Believing that the 'head' node in a doubly linked list has a NULL 'prev' pointer, whereas in a circular doubly linked list it points to the tail."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C07"
+      ],
+      "source_timestamps_or_slides": [
+        "[540.0s - 720.0s]",
+        "[720.0s - 900.0s]",
+        "[900.0s - 1080.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Circular Linked List Operations",
+      "what_taught_summary": "Students learn that in a Circular Linked List, the last node's 'next' pointer points back to the head node rather than NULL, creating a loop, and how this affects traversal logic which must stop when the current node equals the head again.",
+      "why_assessed_pedagogy": "This topic is assessed to ensure students can distinguish the termination condition of a circular list from a linear list, preventing infinite loops in traversal algorithms.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Using a 'while (temp != NULL)' loop for traversal, which results in an infinite loop because the list never ends with a NULL pointer.",
+        "Assuming that the 'head' pointer is NULL when the list is empty, whereas in some implementations it might point to a dummy node or remain NULL depending on the specific design.",
+        "Believing that inserting a node at the tail in a circular list requires finding the last node by traversing until 'next' is NULL."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C08",
+        "E_C09",
+        "E_C10"
+      ],
+      "source_timestamps_or_slides": [
+        "[1260.0s - 1440.0s]",
+        "[1440.0s - 1620.0s]",
+        "[1620.0s - 1800.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Stack Implementation (Array-based)",
+      "what_taught_summary": "Students understand the array-based Stack implementation where 'push' increments the top index and assigns a value, and 'pop' decrements the top index and retrieves the value, with explicit checks for overflow (top == max) and underflow (top == -1).",
+      "why_assessed_pedagogy": "The assessment focuses on the LIFO behavior and the critical importance of boundary checks to prevent memory corruption or undefined behavior when the stack is full or empty.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Forgetting to check for stack overflow before pushing, leading to writing outside the array bounds.",
+        "Assuming that 'pop' returns the value at 'arr[top]' before decrementing, but then using the decremented index for the return value.",
+        "Believing that the initial value of 'top' should be 0 instead of -1, which would cause the first push to overwrite the first element incorrectly if not handled."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C11",
+        "E_C12"
+      ],
+      "source_timestamps_or_slides": [
+        "[1800.0s - 1980.0s]",
+        "[1980.0s - 2160.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_05",
+      "topic_name": "Stack Implementation (Linked List-based)",
+      "what_taught_summary": "Students learn the linked-list-based Stack implementation where 'push' creates a new node and updates the 'head' pointer to it, and 'pop' retrieves the data from the 'head' node and updates 'head' to 'head->next', effectively removing the top node.",
+      "why_assessed_pedagogy": "This comparison with the array-based stack highlights the dynamic memory advantage of linked lists, where no pre-defined maximum size is needed, and the simplicity of O(1) push/pop operations at the head.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Attempting to traverse to the end of the list to push a new node, which is inefficient and incorrect for a stack where the top is the head.",
+        "Forgetting to delete the old head node after popping, leading to memory leaks.",
+        "Assuming that 'peek' modifies the stack by removing the top element, whereas it should only return the value without altering the structure."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "source_timestamps_or_slides": [
+        "[2160.0s - 2340.0s]",
+        "[2340.0s - 2520.0s]",
+        "[2520.0s - 2700.0s]"
+      ]
+    }
+  ]
+}

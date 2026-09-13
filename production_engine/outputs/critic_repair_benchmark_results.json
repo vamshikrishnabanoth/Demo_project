@@ -1,0 +1,390 @@
+{
+  "test": "Experiment 4: Closed-Loop Critic & Patch-Repair Agent",
+  "recovery_rate_percentage": 100.0,
+  "repair_correctness_percentage": 100.0,
+  "single_field_patches_applied": 8,
+  "escalations_handled": 1,
+  "avg_preserved_fields_count": 8.0,
+  "avg_tokens_per_repair": 743.1,
+  "full_batch_baseline_tokens": 3200,
+  "results": [
+    {
+      "scenario_id": "DEFECT_01_DUPLICATE_OPTION",
+      "name": "Duplicate Option (Option C equals Option A)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [
+        "Duplicate or identical options detected."
+      ],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 659,
+      "latency_seconds": 5.3,
+      "patch_applied": {
+        "question_id": "DEFECT_01",
+        "target_field": "option_c",
+        "replacement_content": "It outputs mean (mu) and log-standard deviation (log sigma); this parameterization is preferred because it directly scales the noise term without requiring an additional square root operation during sampling.",
+        "patch_rationale": "Replacing Option C with a distinct, plausible distractor (confusing log-variance with log-standard deviation) resolves the duplicate option error. The new option is factually incorrect (standard practice is log-variance, not log-std, though log-std is sometimes used in specific implementations, the rationale provided in the original correct answer about 'guaranteeing positive variance' applies specifically to the variance parameter itself, and the standard VAE formulation uses log-variance to avoid sqrt in the reparameterization trick z = mu + exp(0.5*log_var) * eps, whereas log-std would be z = mu + exp(log_std) * eps. More importantly, it is distinct from A, B, and D, restoring the single-correct-answer structure."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_01",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and log-standard deviation (log sigma); this parameterization is preferred because it directly scales the noise term without requiring an additional square root operation during sampling.",
+        "option_d": "It outputs mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the VAE encoder outputs mean (mu) and log-variance (log sigma^2). Exponentiating log-variance guarantees positive variance with numerical stability.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_02_EMPTY_EXPLANATION",
+      "name": "Truncated / Empty Explanation (Empty String)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [
+        "Explanation is too brief or fails to reference the correct key."
+      ],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 640,
+      "latency_seconds": 5.2,
+      "patch_applied": {
+        "question_id": "DEFECT_02",
+        "target_field": "explanation",
+        "replacement_content": "Option A is correct. In a VAE, the encoder outputs the mean (mu) and log-variance (log sigma^2) for each latent dimension. Using log-variance is standard because exponentiating it (exp(log sigma^2)) guarantees that the resulting variance is strictly positive, which is a mathematical requirement for a Gaussian distribution, while also ensuring numerical stability during training. Options B, C, and D are incorrect because outputting variance directly risks negative values, and outputting standard deviation or log-standard deviation is not the standard parameterization used in the reparameterization trick z = mu + sigma * epsilon.",
+        "patch_rationale": "This patch fills the empty explanation field with a detailed justification that confirms Option A is the correct answer, explains the mathematical necessity of log-variance (positivity and stability), and briefly refutes the distractors, thereby satisfying the validation requirement for a substantive explanation referencing the correct key."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_02",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct. In a VAE, the encoder outputs the mean (mu) and log-variance (log sigma^2) for each latent dimension. Using log-variance is standard because exponentiating it (exp(log sigma^2)) guarantees that the resulting variance is strictly positive, which is a mathematical requirement for a Gaussian distribution, while also ensuring numerical stability during training. Options B, C, and D are incorrect because outputting variance directly risks negative values, and outputting standard deviation or log-standard deviation is not the standard parameterization used in the reparameterization trick z = mu + sigma * epsilon.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_03_AMBIGUOUS_DISTRACTOR",
+      "name": "Ambiguous Distractor in Option B (Partially True)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [],
+      "repair_strategy": "TARGETED_ITEM_REGENERATION",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 0,
+      "tokens_consumed": 1820,
+      "latency_seconds": 41.1,
+      "patch_applied": null,
+      "repaired_mcq": {
+        "question_id": "DEFECT_03",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. What are the two specific parameters output by this layer, and what is the primary mathematical reason for using log-variance instead of variance directly?",
+        "option_a": "Mean (mu) and log-variance (log sigma^2); log-variance ensures the variance is strictly positive when exponentiated, providing numerical stability.",
+        "option_b": "Mean (mu) and variance (sigma^2); this is mathematically equivalent and always works in PyTorch without additional constraints.",
+        "option_c": "Mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "Mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct. The VAE encoder outputs the mean (mu) and the log-variance (log sigma^2) for each latent dimension. Using log-variance is standard because exponentiating it (exp(log sigma^2)) guarantees that the resulting variance is strictly positive (sigma^2 > 0), which is a requirement for a valid Gaussian distribution, and it offers better numerical stability during training compared to directly parameterizing variance or standard deviation.",
+        "target_concept": "VAE Encoder Parameterization",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The standard parameterization of the VAE encoder output as mean and log-variance, and the mathematical necessity of log-variance for ensuring positive variance and numerical stability.",
+        "why_assessed": "To verify that the learner understands the specific output structure of the VAE encoder and the mathematical rationale behind the log-variance parameterization choice.",
+        "evidence_refs": [
+          "In Variational Autoencoders (VAEs), the encoder outputs two parameters for each latent dimension: the mean (mu) and the log-variance (log sigma^2).",
+          "The log-variance parameterization is standard because exponential function exp(log sigma^2) guarantees strictly positive variance (sigma^2 > 0) with numerical stability."
+        ],
+        "misconception_rationale": "Option B is a distractor based on the misconception that direct variance parameterization is equivalent and stable, ignoring the constraint that variance must be positive. Option C is a distractor based on the misconception that standard deviation is the standard output, confusing the sampling formula with the encoder output. Option D is a distractor based on the misconception that log-standard deviation is used, which is non-standard and does not directly address the variance positivity constraint in the same way."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_04_KEY_EXPLANATION_MISMATCH",
+      "name": "Key Mismatch (Key is 'A' but Explanation says 'Option B is correct')",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 578,
+      "latency_seconds": 5.0,
+      "patch_applied": {
+        "question_id": "DEFECT_04",
+        "target_field": "explanation",
+        "replacement_content": "Option A is correct because the encoder outputs the mean (mu) and log-variance (log sigma^2). Using log-variance ensures that when exponentiated to obtain the variance, the result is strictly positive, which is required for a valid Gaussian distribution, and it provides better numerical stability during training.",
+        "patch_rationale": "This fix aligns the explanation with the correct option (A) and the verified source evidence, resolving the logical contradiction."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_04",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the encoder outputs the mean (mu) and log-variance (log sigma^2). Using log-variance ensures that when exponentiated to obtain the variance, the result is strictly positive, which is required for a valid Gaussian distribution, and it provides better numerical stability during training.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_05_BRIEF_EXPLANATION",
+      "name": "Too Brief Explanation (< 30 chars)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 642,
+      "latency_seconds": 5.2,
+      "patch_applied": {
+        "question_id": "DEFECT_05",
+        "target_field": "explanation",
+        "replacement_content": "Option A is correct because the VAE encoder must output parameters that guarantee a valid probability distribution. Variance (sigma^2) must be strictly positive. By outputting log-variance (log sigma^2) and exponentiating it during sampling (sigma^2 = exp(log sigma^2)), the model ensures sigma^2 > 0 while maintaining numerical stability. Option B is incorrect because direct variance output does not guarantee positivity without additional activation functions. Option C is incorrect because standard deviation is not the standard parameterization for the Gaussian distribution in VAEs; variance is. Option D is incorrect because log-standard deviation is not the standard convention; log-variance is used to directly parameterize the covariance term in the KL divergence loss.",
+        "patch_rationale": "Replaces the empty/trivial explanation with a detailed pedagogical rationale that confirms the correct answer based on the verified source evidence (positivity and stability) and addresses why the distractors are incorrect."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_05",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the VAE encoder must output parameters that guarantee a valid probability distribution. Variance (sigma^2) must be strictly positive. By outputting log-variance (log sigma^2) and exponentiating it during sampling (sigma^2 = exp(log sigma^2)), the model ensures sigma^2 > 0 while maintaining numerical stability. Option B is incorrect because direct variance output does not guarantee positivity without additional activation functions. Option C is incorrect because standard deviation is not the standard parameterization for the Gaussian distribution in VAEs; variance is. Option D is incorrect because log-standard deviation is not the standard convention; log-variance is used to directly parameterize the covariance term in the KL divergence loss.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_06_MISSING_DISTRACTOR_RATIONALE",
+      "name": "Missing Distractor Misconception Metadata",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [
+        "Missing or generic distractor misconception rationale."
+      ],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 633,
+      "latency_seconds": 34.2,
+      "patch_applied": {
+        "question_id": "DEFECT_06",
+        "target_field": "misconception_rationale",
+        "replacement_content": "Option B targets the misconception that variance can be output directly without risking negative values or numerical instability. Option C targets the confusion between variance and standard deviation in the context of the reparameterization trick. Option D targets the misconception that log-standard deviation is the standard parameterization, confusing the log-space application to variance vs. standard deviation.",
+        "patch_rationale": "This patch replaces the generic 'None' with a detailed rationale explaining the specific pedagogical purpose of each distractor. This satisfies the validation requirement for a non-generic misconception rationale and ensures the question's design is transparent and defensible."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_06",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-standard deviation (log sigma); this prevents gradient explosion in the latent bottleneck.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the VAE encoder outputs mean (mu) and log-variance (log sigma^2). Exponentiating log-variance guarantees positive variance with numerical stability.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Option B targets the misconception that variance can be output directly without risking negative values or numerical instability. Option C targets the confusion between variance and standard deviation in the context of the reparameterization trick. Option D targets the misconception that log-standard deviation is the standard parameterization, confusing the log-space application to variance vs. standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_07_DUPLICATE_OPTION_D",
+      "name": "Duplicate Option (Option D equals Option B)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [
+        "Duplicate or identical options detected."
+      ],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 589,
+      "latency_seconds": 5.0,
+      "patch_applied": {
+        "question_id": "DEFECT_07",
+        "target_field": "option_d",
+        "replacement_content": "It outputs mean (mu) and log-standard-deviation (log sigma); log-standard-deviation is preferred because it directly simplifies the reparameterization trick without requiring an additional square root operation.",
+        "patch_rationale": "Replacing Option D with a distinct, plausible distractor (confusing log-variance with log-standard-deviation) resolves the duplication issue. The new option remains a valid misconception distractor that tests the student's understanding of the specific parameterization (log-variance vs. log-std) while maintaining the question's integrity and difficulty level."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_07",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-standard-deviation (log sigma); log-standard-deviation is preferred because it directly simplifies the reparameterization trick without requiring an additional square root operation.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the VAE encoder outputs mean (mu) and log-variance (log sigma^2). Exponentiating log-variance guarantees positive variance with numerical stability.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_08_STRUCTURAL_STEM_OPTION_INVERSION",
+      "name": "Structural Contradiction (Stem asks for decoder, options give encoder)",
+      "defect_type": "MULTI_FIELD_ESCALATION",
+      "initial_issues": [],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 523,
+      "latency_seconds": 5.1,
+      "patch_applied": {
+        "question_id": "DEFECT_08",
+        "target_field": "question_text",
+        "replacement_content": "In a Variational Autoencoder (VAE), what does the encoder network output for each latent dimension?",
+        "patch_rationale": "Changing 'decoder network' to 'encoder network' aligns the question stem with the correct option (A) and the explanation, which correctly identify that the encoder outputs the mean (mu) and log-variance. This resolves the structural inconsistency and ensures the question accurately tests the target concept of VAE latent parameterization."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_08",
+        "question_text": "In a Variational Autoencoder (VAE), what does the encoder network output for each latent dimension?",
+        "option_a": "It outputs mean (mu) and log-variance.",
+        "option_b": "It outputs latent vector z.",
+        "option_c": "It uses Dense(20) output.",
+        "option_d": "It outputs sampling epsilon.",
+        "correct_option": "A",
+        "explanation": "Option A is correct.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_09_AMBIGUOUS_DISTRACTOR_D",
+      "name": "Ambiguous Distractor in Option D (Misleading Terminology)",
+      "defect_type": "SINGLE_FIELD",
+      "initial_issues": [],
+      "repair_strategy": "FAILED_REPAIR",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 819,
+      "latency_seconds": 5.7,
+      "patch_applied": null,
+      "repaired_mcq": {
+        "question_id": "DEFECT_09",
+        "question_text": "In a Variational Autoencoder (VAE) with a 16-dimensional latent space, the final encoder layer outputs a tensor of size 32. Which two specific parameters does this layer output, and why is log-variance used?",
+        "option_a": "It outputs mean (mu) and log-variance (log sigma^2); log-variance ensures numerical stability and guarantees positive variance when exponentiated.",
+        "option_b": "It outputs mean (mu) and variance (sigma^2); variance is output directly to avoid computing exponentials during sampling.",
+        "option_c": "It outputs mean (mu) and standard deviation (sigma); standard deviation simplifies the sampling formula z = mu + sigma * epsilon.",
+        "option_d": "It outputs mean (mu) and log-variance because standard deviation is always 1.",
+        "correct_option": "A",
+        "explanation": "Option A is correct because the VAE encoder outputs mean (mu) and log-variance (log sigma^2). Exponentiating log-variance guarantees positive variance with numerical stability.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    },
+    {
+      "scenario_id": "DEFECT_10_STRUCTURAL_TOTAL_CORRUPTION",
+      "name": "Total Structural Inconsistency (Options mismatched across concepts)",
+      "defect_type": "MULTI_FIELD_ESCALATION",
+      "initial_issues": [],
+      "repair_strategy": "SINGLE_FIELD_PATCH",
+      "final_validation_passed": true,
+      "is_pedagogically_correct": true,
+      "fields_preserved_count": 8,
+      "tokens_consumed": 528,
+      "latency_seconds": 5.1,
+      "patch_applied": {
+        "question_id": "DEFECT_10",
+        "target_field": "correct_option",
+        "replacement_content": "C",
+        "patch_rationale": "Changing the correct option to 'C' aligns the answer key with the scientifically accurate option provided in the choices and the source evidence. Note: The explanation field also contains an error, but fixing the key is the primary structural repair required to make the question logically consistent with the correct option text. Ideally, the explanation should also be updated, but per the single-field constraint, fixing the key is the most critical step to resolve the 'KEY_MISMATCH' defect category."
+      },
+      "repaired_mcq": {
+        "question_id": "DEFECT_10",
+        "question_text": "Why does the reparameterization trick enable backpropagation?",
+        "option_a": "By computing j = (m+n+1)//2 - i in binary search.",
+        "option_b": "By using YOLO single-stage bounding boxes.",
+        "option_c": "By separating stochastic epsilon from deterministic mu and sigma.",
+        "option_d": "By converting masks to rectangular coordinates.",
+        "correct_option": "C",
+        "explanation": "Option B is correct because YOLO is faster.",
+        "target_concept": "VAE Latent Parameterization",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "what_taught": "The VAE encoder outputs mean (mu) and log-variance (log sigma^2) for each latent dimension.",
+        "why_assessed": "To assess whether students understand why log-variance parameterization is required.",
+        "evidence_refs": [
+          "E_SLIDE_04",
+          "E_C06"
+        ],
+        "misconception_rationale": "Distractors test confusing variance with log-variance or standard deviation."
+      }
+    }
+  ]
+}

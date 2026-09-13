@@ -1,0 +1,525 @@
+{
+  "showcase": "Production Engine (Architecture E) Across Diverse Educational Inputs",
+  "total_inputs_evaluated": 5,
+  "results": [
+    {
+      "input_id": "input_01_daa_median",
+      "title": "Design and Analysis of Algorithms: Finding Median of Two Sorted Arrays in O(log(min(N,M)))",
+      "modality": "VOICE_ONLY",
+      "content_style": "PROBLEM_SOLVING",
+      "representation_routed": "BLUEPRINT",
+      "routing_rationale": "High Pedagogical Delivery Index (PDI=0.700 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+      "pdi_score": 0.7,
+      "latency_seconds": 170.75,
+      "llm_calls": 4,
+      "questions_generated": 2,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 1,
+        "APPLY": 0,
+        "ANALYZE": 1,
+        "EVALUATE": 0
+      },
+      "traceability_rate": 100.0,
+      "misconception_rate": 100.0,
+      "redundancy_rate": 50.0,
+      "questions": [
+        {
+          "question_id": "Q1",
+          "question_text": "In the O(log(min(N,M))) algorithm for finding the median of two sorted arrays A and B, why is binary search performed specifically on the smaller array rather than the larger one?",
+          "option_a": "To ensure the partition index calculated corresponds directly to the median index in the combined sorted array.",
+          "option_b": "To minimize the number of iterations in the binary search loop, thereby guaranteeing the O(log(min(N,M))) time complexity.",
+          "option_c": "Because the larger array cannot be partitioned without violating the sorted order of the combined elements.",
+          "option_d": "To simplify the boundary condition checks by ensuring the left partition of the larger array is always empty.",
+          "correct_option": "B",
+          "explanation": "The correct answer is B. The algorithm's efficiency relies on binary searching the smaller array to reduce the search space to log(min(N,M)). Option A is incorrect because the partition index is a variable determined by the search, not a fixed median index. Option C is incorrect because the larger array can be partitioned; it is just computationally less efficient to search it. Option D is incorrect because the partition of the larger array is determined by the total half-count minus the partition of the smaller array, not by forcing it to be empty.",
+          "target_concept": "Binary Search Partitioning Strategy",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The strategy of partitioning the two sorted arrays such that the left halves contain exactly half of the total elements, using binary search on the smaller array to determine the partition index.",
+          "why_assessed": "This is the core conceptual foundation of the O(log(min(N,M))) solution. The teacher introduced and explained this strategy as the primary mechanism for achieving logarithmic time complexity.",
+          "evidence_refs": [
+            "E_C26",
+            "E_C42",
+            "E_C02"
+          ],
+          "misconception_rationale": "Option A targets the confusion between partition index and median index. Option C targets the misconception that the larger array has structural limitations preventing partitioning. Option D targets the misunderstanding of how the second partition index is derived."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In the O(log(min(N,M))) algorithm for finding the median of two sorted arrays, why is the binary search specifically performed on the smaller array rather than the larger one or the combined length?",
+          "option_a": "To ensure the time complexity is O(log(min(N,M))), which is strictly more efficient than O(log(N+M)) or O(log(max(N,M))), while maintaining O(1) space complexity.",
+          "option_b": "Because the larger array cannot be partitioned correctly without first merging it with the smaller array, which would increase space complexity to O(N+M).",
+          "option_c": "To guarantee that the partition indices always fall within the bounds of the larger array, preventing out-of-bounds access errors during the binary search.",
+          "option_d": "Because the median is always located in the smaller array, so searching the larger array would result in unnecessary comparisons and O(N) time complexity.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because the algorithm's efficiency relies on minimizing the number of binary search steps. By searching the smaller array (size min(N,M)), the worst-case time complexity is bounded by O(log(min(N,M))). This is superior to searching the combined length O(log(N+M)) or the larger array O(log(max(N,M))). The space complexity remains O(1) as no auxiliary arrays are created. Option B is incorrect because the algorithm does not merge the arrays; it uses virtual partitioning. Option C is incorrect because the partition logic handles bounds for both arrays, and searching the smaller array does not inherently prevent out-of-bounds errors in the larger one (though it simplifies the logic). Option D is incorrect because the median is not necessarily in the smaller array; it is determined by the partition points across both arrays.",
+          "target_concept": "Algorithmic Complexity and Efficiency",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The evaluation that the algorithm runs in O(log(min(N,M))) time because binary search is performed on the smaller array, and O(1) space, making it significantly more efficient than the O(N+M) merge approach.",
+          "why_assessed": "The teacher explained and evaluated the complexity, contrasting it with naive approaches. This assesses the student's ability to analyze and justify the algorithm's efficiency, a key learning objective in Design and Analysis of Algorithms.",
+          "evidence_refs": [
+            "E_C42",
+            "E_C26",
+            "E_C02"
+          ],
+          "misconception_rationale": "Option B targets the misconception that partitioning requires merging or extra space. Option C targets the confusion between array bounds and search space selection. Option D targets the fundamental misunderstanding of where the median resides relative to the array sizes."
+        }
+      ]
+    },
+    {
+      "input_id": "input_02_ai_vae_multimodal",
+      "title": "Deep Learning: Variational Autoencoders (VAE) & Latent Space Distribution Modeling on Fashion-MNIST",
+      "modality": "VOICE_PLUS_PPT",
+      "content_style": "PROBLEM_SOLVING",
+      "representation_routed": "UNIFIED",
+      "routing_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=1.000): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+      "pdi_score": 1.0,
+      "latency_seconds": 160.74,
+      "llm_calls": 5,
+      "questions_generated": 3,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 1,
+        "APPLY": 1,
+        "ANALYZE": 1,
+        "EVALUATE": 0
+      },
+      "traceability_rate": 100.0,
+      "misconception_rate": 100.0,
+      "redundancy_rate": 0.0,
+      "questions": [
+        {
+          "question_id": "Q1",
+          "question_text": "In the context of the Fashion-MNIST VAE implementation discussed in class, what is the fundamental structural difference between the latent representation produced by a standard Autoencoder and that of a Variational Autoencoder?",
+          "option_a": "A standard Autoencoder maps an input to a single fixed latent vector, whereas a VAE learns a probability distribution in the latent space characterized by a mean and variance.",
+          "option_b": "A standard Autoencoder uses a discrete set of clusters in the latent space, while a VAE uses a continuous but deterministic mapping to a single point.",
+          "option_c": "A standard Autoencoder models the probability distribution of the input images, while a VAE models the distribution of the reconstructed output images.",
+          "option_d": "A standard Autoencoder outputs a vector with a fixed dimensionality, while a VAE outputs a vector with a variable dimensionality depending on the input complexity.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because the core distinction taught is that VAEs model a distribution (mean and variance) in the latent space rather than a single point, enabling sampling. Option B is incorrect because VAEs use a continuous probabilistic space, not discrete clusters, and standard AEs are deterministic points, not discrete clusters. Option C is incorrect because the 'distribution' in VAE refers to the latent space, not the input or output image distribution. Option D is incorrect because the dimensionality of the latent space is a hyperparameter fixed for both architectures, not variable based on input complexity.",
+          "target_concept": "VAE vs. Standard Autoencoder Latent Representation",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The instructor emphasized that a standard Autoencoder maps to a single fixed vector, while a VAE learns a probability distribution (mean and variance) in the latent space to allow for sampling new data points.",
+          "why_assessed": "This assesses the foundational conceptual shift from deterministic to probabilistic encoding, which is critical for understanding VAE generation capabilities.",
+          "evidence_refs": [
+            "E_C06",
+            "E_SLIDE_01",
+            "E_C05"
+          ],
+          "misconception_rationale": "Distractors target common misconceptions: confusing latent space with input/output distributions (C), thinking latent space is discrete (B), or misunderstanding the nature of the mapping (D)."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "When implementing the encoder for the Fashion-MNIST VAE, the network must output two vectors for each input. Why is the second output specifically the log variance (log \u03c3\u00b2) rather than the variance (\u03c3\u00b2) or standard deviation (\u03c3) directly?",
+          "option_a": "To ensure numerical stability during training and to allow for the easy derivation of the standard deviation for the reparameterization trick.",
+          "option_b": "Because the variance must be a negative value to represent the uncertainty of the latent variables in the Fashion-MNIST dataset.",
+          "option_c": "To act as a binary mask that determines which latent dimensions are active for a specific input image.",
+          "option_d": "Because the standard deviation is a non-linear function that cannot be computed by a neural network, so the log variance is used as a proxy.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because using log variance ensures the variance remains positive (since exp(log \u03c3\u00b2) > 0) and improves numerical stability, which is a key implementation detail discussed. Option B is incorrect because variance is always non-negative, and log variance can be any real number. Option C is incorrect because the second output is a continuous value representing spread, not a binary mask. Option D is incorrect because neural networks can compute standard deviation; the issue is numerical stability and the mathematical requirement for the reparameterization trick.",
+          "target_concept": "Encoder Output Dimensions in VAEs",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The encoder outputs mean (\u03bc) and log variance (log \u03c3\u00b2). The log variance is used for numerical stability and to derive standard deviation for sampling.",
+          "why_assessed": "Students often struggle with why two values are output and specifically why the second is log variance. This assesses understanding of the implementation detail that prevents numerical issues.",
+          "evidence_refs": [
+            "E_C06",
+            "E_C21",
+            "E_C07"
+          ],
+          "misconception_rationale": "Distractors target misconceptions about the nature of variance (B), confusing the output with a mask (C), and misunderstanding computational capabilities of NNs (D)."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "During the training of a Variational Autoencoder (VAE) on the Fashion-MNIST dataset, a student observes that the latent space is highly fragmented, making it impossible to generate valid new images by sampling from the latent distribution. The student argues that this is because the KL Divergence term is 'too high,' preventing the model from learning complex features. Based on the instructor's explanation of the role of KL Divergence, which statement correctly identifies the error in the student's reasoning and the actual function of this term?",
+          "option_a": "The student is incorrect because a high KL Divergence indicates the latent distribution is far from the standard normal; the term acts as a regularizer to force the latent space to be smooth and continuous, enabling meaningful interpolation.",
+          "option_b": "The student is correct because a high KL Divergence indicates the model is capturing complex input features; the term should be removed to allow the latent space to fragment and preserve unique data points.",
+          "option_c": "The student is incorrect because KL Divergence measures the difference between two input images; it should be minimized to ensure the reconstructed images match the original inputs exactly.",
+          "option_d": "The student is correct because the target distribution for the latent space is the distribution of the input data; the fragmentation occurs because the model is not matching the input variance correctly.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because the instructor emphasized that KL Divergence acts as a regularization term forcing the learned latent distribution to be close to a standard normal distribution N(0,1). This ensures the latent space is smooth and continuous, which is necessary for sampling new, valid data points. A high KL Divergence means the latent distribution is *far* from the target standard normal, not that it is learning 'more complex features' in a beneficial way. Option B is incorrect because removing the term leads to fragmentation, not better feature learning, and the goal is not to preserve unique points but to create a continuous manifold. Option C is incorrect because KL Divergence compares the latent distribution to a prior (standard normal), not two input images. Option D is incorrect because the target distribution is a standard normal, not the distribution of the input data.",
+          "target_concept": "Role of KL Divergence as Regularization",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "KL Divergence acts as a regularization term that forces the learned latent distribution to be close to a standard normal distribution (N(0,1)). This ensures that the latent space is smooth and continuous, enabling meaningful interpolation and generation of new samples.",
+          "why_assessed": "Students often view KL Divergence as a mathematical abstraction without understanding its practical purpose. The instructor emphasized that without this term, the latent space would be fragmented, making it impossible to sample new, valid data points.",
+          "evidence_refs": [
+            "E_C06",
+            "E_C16",
+            "E_SLIDE_01"
+          ],
+          "misconception_rationale": "Option B targets the misconception that higher KL is better for complexity. Option C targets the confusion of KL with reconstruction error or image comparison. Option D targets the confusion between the prior distribution (standard normal) and the data distribution."
+        }
+      ]
+    },
+    {
+      "input_id": "input_03_wt_dom_events",
+      "title": "Web Technologies: Document Object Model (DOM) Tree Manipulation & Event-Driven Architecture",
+      "modality": "VOICE_ONLY",
+      "content_style": "CONCEPTUAL",
+      "representation_routed": "BLUEPRINT",
+      "routing_rationale": "High Pedagogical Delivery Index (PDI=0.623 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+      "pdi_score": 0.623,
+      "latency_seconds": 208.06,
+      "llm_calls": 4,
+      "questions_generated": 5,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 2,
+        "APPLY": 2,
+        "ANALYZE": 1,
+        "EVALUATE": 0
+      },
+      "traceability_rate": 100.0,
+      "misconception_rate": 100.0,
+      "redundancy_rate": 0.0,
+      "questions": [
+        {
+          "question_id": "Q1",
+          "question_text": "A student creates a Node.js project with the following package.json configuration:\n{\n  \"name\": \"my-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"src/entry.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  }\n}\n\nThe project directory contains both `src/entry.js` and `index.js`. If another module in the same project executes `require('my-app')`, which file will Node.js load as the entry point?",
+          "option_a": "src/entry.js, because the 'main' field explicitly defines the entry point for the package.",
+          "option_b": "index.js, because Node.js defaults to index.js if it exists in the root directory, overriding the 'main' field.",
+          "option_c": "src/entry.js, because the 'scripts' field maps the 'start' command to the entry point.",
+          "option_d": "Neither file, because the 'main' field is only used for documentation and does not affect module resolution.",
+          "correct_option": "A",
+          "explanation": "The 'main' field in package.json is the standard way to define the entry point of a Node.js package. When a package is required, Node.js looks for the file specified in the 'main' field. In this case, 'src/entry.js' is specified, so it will be loaded. Option B is incorrect because the 'main' field takes precedence over the default 'index.js' behavior. Option C is incorrect because the 'scripts' field defines npm commands (like 'npm start'), not the module entry point for `require()`. Option D is incorrect because the 'main' field is functionally significant for module resolution.",
+          "target_concept": "package.json Metadata and Entry Points",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The role of package.json as the manifest file, specifically the 'name', 'version', 'description', and 'main' fields. The 'main' field defines the entry point of the application, which is the file executed when the package is required or run.",
+          "why_assessed": "Students often confuse the 'main' field with the 'scripts' field or assume the entry point is always 'index.js' regardless of configuration. Assessing this ensures understanding of how Node.js determines the starting file of an application.",
+          "evidence_refs": [
+            "E_C07",
+            "E_C05",
+            "E_C31"
+          ],
+          "misconception_rationale": "Option B targets the misconception that 'index.js' is always the default entry point regardless of configuration. Option C targets the confusion between 'scripts' (npm commands) and 'main' (module entry point). Option D targets the misconception that 'main' is purely for documentation."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "Consider the following directory structure for a Node.js project:\n\nproject/\n\u251c\u2500\u2500 node_modules/\n\u2502   \u2514\u2500\u2500 lodash/\n\u251c\u2500\u2500 src/\n\u2502   \u251c\u2500\u2500 utils/\n\u2502   \u2502   \u2514\u2500\u2500 helper.js\n\u2502   \u2514\u2500\u2500 index.js\n\u2514\u2500\u2500 package.json\n\nIn `src/utils/helper.js`, the code `require('lodash')` is executed. How does Node.js resolve this dependency?",
+          "option_a": "Node.js looks in `src/utils/node_modules` first, then `src/node_modules`, then `project/node_modules`, and finally global modules.",
+          "option_b": "Node.js only looks in `project/node_modules` because dependencies are always resolved from the project root.",
+          "option_c": "Node.js looks in `src/utils/node_modules` first, then `src/node_modules`, then `project/node_modules`, but does not check global modules unless explicitly linked.",
+          "option_d": "Node.js looks in `project/node_modules` first, then `src/node_modules`, then `src/utils/node_modules`.",
+          "correct_option": "C",
+          "explanation": "Node.js uses a hierarchical module resolution algorithm. When a module is required, it starts in the current directory's `node_modules` folder and traverses up the directory tree to parent `node_modules` folders. In this case, it checks `src/utils/node_modules`, then `src/node_modules`, then `project/node_modules`. It does not automatically check global modules unless they are explicitly linked or the `NODE_PATH` environment variable is set. Option A is incorrect because global modules are not part of the default local resolution path. Option B is incorrect because the search is not limited to the project root; it starts locally and moves up. Option D is incorrect because the search order is from the current directory upwards, not from the root downwards.",
+          "target_concept": "node_modules and Dependency Resolution",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The structure of the node_modules directory and how Node.js resolves dependencies. When a module is required, Node.js looks in the local node_modules folder first, then traverses up the directory tree to parent node_modules folders if not found locally.",
+          "why_assessed": "Understanding the resolution algorithm is critical for debugging 'module not found' errors. Students often assume dependencies are global or that the search is limited to the current directory only.",
+          "evidence_refs": [
+            "E_C31",
+            "E_C09",
+            "E_C37"
+          ],
+          "misconception_rationale": "Option A targets the misconception that global modules are automatically checked in the local resolution path. Option B targets the misconception that resolution is limited to the project root. Option D targets the misconception that the search order is from the root downwards rather than from the current directory upwards."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "A student is building a Node.js application and attempts to use the `require` function to import a module in a file that has been configured as an ES Module (via `\"type\": \"module\"` in package.json). The code fails with a ReferenceError. Based on the distinction between module systems taught in class, what is the primary reason for this failure?",
+          "option_a": "The `require` function is asynchronous in ES Modules, causing a timing issue before the module is loaded.",
+          "option_b": "CommonJS and ES Modules are interchangeable, but the file extension must be `.cjs` for `require` to work in any context.",
+          "option_c": "ES Modules do not support the `require` function; `require` is specific to the CommonJS system, which is synchronous and distinct from the asynchronous ES Module system.",
+          "option_d": "The `http` module must be imported first to initialize the module system before `require` can be used.",
+          "correct_option": "C",
+          "explanation": "Option C is correct because the class emphasized that CommonJS (using `require`) and ES Modules (using `import`) are distinct systems. CommonJS is synchronous and default in Node.js, while ES Modules are asynchronous. You cannot use `require` in an ES Module context without specific interop configurations, and they are not freely interchangeable. Option A is incorrect because `require` is synchronous, not asynchronous. Option B is incorrect because the systems are not interchangeable; changing the extension to `.cjs` would make it a CommonJS file, not allow `require` in an ES Module file. Option D is incorrect because the `http` module is unrelated to the initialization of the module system itself.",
+          "target_concept": "Module System: CommonJS vs ES Modules",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The syntax and behavior of CommonJS (require/module.exports) versus ES Modules (import/export). CommonJS is synchronous and used by default in Node.js, while ES Modules are asynchronous and require specific file extensions or package.json configuration.",
+          "why_assessed": "Mixing module systems is a common source of errors. Assessing the distinction helps students understand why 'require' might fail in an ES module context or why 'import' might not work in a CommonJS file without proper configuration.",
+          "evidence_refs": [
+            "E_C09",
+            "E_C31",
+            "E_C05"
+          ],
+          "misconception_rationale": "Distractors target the misconception that the systems are interchangeable (B), that `require` is asynchronous (A), or that unrelated modules like `http` control module loading (D)."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "In the lecture on creating a basic HTTP server, the instructor demonstrated the following code snippet: `const server = http.createServer(handler); const result = server.listen(3000);`. A student asks what the variable `result` contains. Based on the instructor's explanation of the `listen` method's return value, what is the correct description of `result`?",
+          "option_a": "The integer `3000`, representing the port number on which the server is listening.",
+          "option_b": "The server object itself, allowing for further configuration or stopping the server.",
+          "option_c": "A boolean `true` indicating that the server started successfully without errors.",
+          "option_d": "A string containing the URL `http://localhost:3000` where the server is accessible.",
+          "correct_option": "B",
+          "explanation": "Option B is correct because the evidence explicitly states: 'that is not a variable, that is the server object... it is repeating the server object... which is going to be stored in the server object.' The `listen` method returns the server instance, not the port or a status flag. Option A is a common misconception that the method returns the port number. Option C is incorrect because `listen` does not return a boolean status. Option D is incorrect because it does not return a URL string.",
+          "target_concept": "Node.js HTTP Server Creation",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "EASY",
+          "what_taught": "Creating a basic HTTP server using the 'http' module. The server listens on a specified port and handles requests by sending a response with a status code and body. The 'listen' method returns the server object, which can be used to stop the server.",
+          "why_assessed": "This is the foundational step for any web backend. Students often forget to call 'listen' or misunderstand that the server object is returned, not the port number. Assessing this ensures practical application of the http module.",
+          "evidence_refs": [
+            "E_C21",
+            "E_C37",
+            "E_C31"
+          ],
+          "misconception_rationale": "Distractors target the misconception that `listen` returns the port number (A), a success boolean (C), or a URL string (D), rather than the server instance."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In a Node.js application using the `EventEmitter` class, a developer registers a listener for a custom 'data' event and then immediately executes a `console.log('After Emit')` statement after calling `emitter.emit('data')`. Which of the following best describes the execution flow and the role of the EventEmitter in this context?",
+          "option_a": "The `console.log` executes immediately after the `emit` call returns, because the EventEmitter processes the registered listeners synchronously within the current execution context before yielding control back to the caller.",
+          "option_b": "The `console.log` executes before the event listeners, because the EventEmitter is an asynchronous mechanism that queues the event for processing in the next tick of the event loop.",
+          "option_c": "The execution blocks at the `emit` call until all registered listeners have finished their asynchronous I/O operations, ensuring that the `console.log` only runs after the data is fully processed.",
+          "option_d": "The `console.log` executes immediately, but the event listeners are ignored because the EventEmitter is exclusively designed for handling HTTP server requests and not for custom application events.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because, in Node.js, the `EventEmitter.emit()` method is synchronous. It iterates through the registered listeners for the specified event and invokes them immediately within the current call stack. Therefore, any code following the `emit` call (like `console.log`) will execute only after all the listeners have finished running. Option B is incorrect because it confuses the synchronous nature of `emit` with the asynchronous nature of the underlying I/O operations that might trigger the event; the emission itself is not queued for the next tick. Option C is incorrect because `emit` does not block the event loop waiting for asynchronous operations inside the listeners to complete; it only waits for the synchronous execution of the listener functions themselves. Option D is incorrect because `EventEmitter` is a general-purpose utility for any object to emit events, not limited to HTTP requests.",
+          "target_concept": "Event-Driven Architecture in Node.js",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The concept of events in Node.js, where asynchronous operations emit events that can be listened to. The 'EventEmitter' class is the core mechanism, allowing objects to emit events and other objects to listen for them. This is fundamental to how Node.js handles I/O operations without blocking.",
+          "why_assessed": "Event-driven architecture is the core paradigm of Node.js. Students often struggle with the asynchronous nature of events, expecting synchronous execution. Assessing this ensures understanding of how to handle asynchronous flows using event listeners.",
+          "evidence_refs": [
+            "E_C41",
+            "E_C40",
+            "E_C13"
+          ],
+          "misconception_rationale": "Option B targets the misconception that all event-related operations are asynchronous or queued. Option C targets the misconception that `emit` blocks the entire process until async tasks inside listeners finish. Option D targets the misconception that `EventEmitter` is limited to HTTP contexts."
+        }
+      ]
+    },
+    {
+      "input_id": "input_04_ds_binary_trees",
+      "title": "Data Structures & Algorithms: Binary Trees, Strict Binary Trees & Tree Traversals",
+      "modality": "VOICE_PLUS_PPT",
+      "content_style": "PROBLEM_SOLVING",
+      "representation_routed": "UNIFIED",
+      "routing_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=0.968): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+      "pdi_score": 0.968,
+      "latency_seconds": 199.84,
+      "llm_calls": 5,
+      "questions_generated": 5,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 1,
+        "APPLY": 3,
+        "ANALYZE": 1,
+        "EVALUATE": 0
+      },
+      "traceability_rate": 100.0,
+      "misconception_rate": 100.0,
+      "redundancy_rate": 0.0,
+      "questions": [
+        {
+          "question_id": "Q1",
+          "question_text": "In the lecture, we distinguished between Full, Perfect, and Complete binary trees. Consider a binary tree where every level is completely filled, except for the last level, which is filled strictly from left to right. Which of the following statements correctly classifies this tree structure?",
+          "option_a": "It is a Perfect Binary Tree because all internal nodes have two children.",
+          "option_b": "It is a Complete Binary Tree, but it is not necessarily a Full Binary Tree.",
+          "option_c": "It is a Full Binary Tree because the nodes are arranged in a contiguous sequence.",
+          "option_d": "It is a Perfect Binary Tree because the last level is filled left-to-right.",
+          "correct_option": "B",
+          "explanation": "The definition provided in class for a Complete Binary Tree is that all levels are filled except possibly the last, which is filled left-to-right. This structure does not require every node to have 0 or 2 children (the definition of a Full tree); for example, the last node in the left-to-right fill might have only a left child, making it not Full. It is not Perfect because a Perfect tree requires all leaves to be at the same level and all internal nodes to have two children, which is not guaranteed by the 'left-to-right' rule alone if the last level is not full. Therefore, Option B is correct. Option A is incorrect because a Perfect tree must be full and have all leaves at the same depth. Option C is incorrect because 'Full' is a strict constraint on node degrees (0 or 2), not just contiguity. Option D is incorrect because 'Perfect' implies symmetry and fullness, not just left-to-right filling.",
+          "target_concept": "Distinguishing Full, Perfect, and Complete Binary Trees",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "A Full Binary Tree has nodes with 0 or 2 children; a Perfect Binary Tree is full and all leaves are at the same level; a Complete Binary Tree has all levels filled except possibly the last, which is filled left-to-right.",
+          "why_assessed": "Students frequently confuse these three specific types. The instructor explicitly defined each with distinct constraints, making the ability to classify a given tree structure a critical understanding skill.",
+          "evidence_refs": [
+            "E_C26",
+            "E_C11",
+            "E_C14"
+          ],
+          "misconception_rationale": "Option A targets the misconception that 'Complete' implies 'Perfect' or that filling levels implies all nodes are full. Option C targets the confusion between structural contiguity (Complete) and node degree constraints (Full). Option D targets the confusion between the left-to-right filling rule of Complete trees and the symmetry requirement of Perfect trees."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "During the derivation of tree properties, we established relationships between nodes and edges. If you are given a valid binary tree with 15 nodes, how many edges does it contain, and why is this relationship independent of whether the tree is Full, Perfect, or Complete?",
+          "option_a": "14 edges, because every node except the root must have exactly one incoming edge from its parent.",
+          "option_b": "15 edges, because each node in a rooted tree is connected to its parent by an edge.",
+          "option_c": "16 edges, because the root node also requires an edge to anchor the tree structure.",
+          "option_d": "13 edges, because the root node has no children, so it does not contribute to the edge count.",
+          "correct_option": "A",
+          "explanation": "The fundamental property of any rooted tree (including binary trees) is that the number of edges (E) is always one less than the number of nodes (N), i.e., E = N - 1. This is because the root node has no parent and thus no incoming edge, while every other node has exactly one parent and thus exactly one incoming edge. For N=15, E = 15 - 1 = 14. This relationship holds regardless of the tree's shape (Full, Perfect, or Complete) as long as it is a valid tree (connected, acyclic). Option B is incorrect because it assumes the root has an incoming edge. Option C is incorrect because it adds an extra edge for the root. Option D is incorrect because it incorrectly subtracts 2, likely confusing the lack of a parent edge with a lack of child edges or misapplying the formula.",
+          "target_concept": "Node and Edge Count Relationships",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "EASY",
+          "what_taught": "In any binary tree, the number of edges is always one less than the number of nodes (E = N - 1).",
+          "why_assessed": "The instructor derived these formulas to help students verify tree structures without drawing them. This is a core application of the structural properties taught.",
+          "evidence_refs": [
+            "E_C06",
+            "E_C03",
+            "E_C11"
+          ],
+          "misconception_rationale": "Option B represents the common error of assuming every node has a parent edge, forgetting the root exception. Option C represents an off-by-one error in the opposite direction, possibly confusing edges with levels or adding a phantom root edge. Option D represents a calculation error or confusion with the leaf/internal node ratio of full trees, incorrectly subtracting 2."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In a lecture on tree metrics, the instructor emphasized that height is defined by the number of edges on the longest path from the root to a leaf, not the number of nodes. Consider a perfect binary tree where the root is at depth 0 and the leaves are at depth 3. What is the total number of nodes in this tree?",
+          "option_a": "7",
+          "option_b": "8",
+          "option_c": "15",
+          "option_d": "16",
+          "correct_option": "C",
+          "explanation": "The correct answer is C (15). The problem states the leaves are at depth 3, which means the height of the tree (number of edges from root to leaf) is 3. The formula for the total number of nodes in a perfect binary tree of height h is 2^(h+1) - 1. Substituting h=3 gives 2^(3+1) - 1 = 2^4 - 1 = 16 - 1 = 15. Option A (7) is incorrect because it uses the formula 2^h - 1, which would apply if the height were 2 (or if the student confused depth 3 with height 2). Option B (8) is incorrect because it calculates 2^3, which is the number of nodes at the last level only, or the number of nodes if the height were 2 using the wrong formula. Option D (16) is incorrect because it calculates 2^(h+1) without subtracting 1, effectively counting an extra non-existent node or confusing the node count with the number of possible positions in a level.",
+          "target_concept": "Height and Depth Calculations",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The height of a tree is the number of edges on the longest path from the root to a leaf. The depth of a node is the number of edges from the root to that node. For a perfect binary tree of height h, the number of nodes is 2^(h+1) - 1.",
+          "why_assessed": "Off-by-one errors in height/depth calculation are common. The instructor emphasized the difference between counting nodes vs. edges and provided the specific formula for perfect trees.",
+          "evidence_refs": [
+            "E_C23",
+            "E_C21",
+            "E_C22"
+          ],
+          "misconception_rationale": "Distractors target common off-by-one errors: using 2^h instead of 2^(h+1)-1 (Option A), confusing the number of nodes at a specific level with the total count (Option B), and forgetting to subtract 1 from the power of 2 (Option D)."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "During a discussion on tree performance, the instructor presented a binary tree where every internal node has exactly one child, and all children are right children. A student argues that this structure is not a valid binary tree because it lacks the 'branching' characteristic of a tree. Based on the instructor's definition of degenerate trees, which statement is correct?",
+          "option_a": "The student is correct; a binary tree must have at least one node with two children to be valid.",
+          "option_b": "The structure is a valid degenerate binary tree, and its height is O(n), making it equivalent to a linked list in terms of search performance.",
+          "option_c": "The structure is a valid binary tree, but because it is skewed to the right, its height is O(log n).",
+          "option_d": "The structure is invalid because a degenerate tree must alternate between left and right children to maintain balance.",
+          "correct_option": "B",
+          "explanation": "The correct answer is B. A degenerate (or skewed) binary tree is defined as a tree where each node has at most one child. This structure is a valid binary tree. Because each level adds only one node, the height grows linearly with the number of nodes, resulting in O(n) height. This makes operations like search take O(n) time, similar to a linked list. Option A is incorrect because binary trees do not require nodes to have two children; nodes can have 0, 1, or 2 children. Option C is incorrect because a skewed tree has O(n) height, not O(log n); O(log n) height is characteristic of balanced trees. Option D is incorrect because a skewed tree does not need to alternate directions; it can be all left or all right, and it is not balanced.",
+          "target_concept": "Identifying Degenerate and Skewed Trees",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "A degenerate (or skewed) binary tree is one where each node has at most one child, resulting in a structure that resembles a linked list. This leads to O(n) height instead of O(log n).",
+          "why_assessed": "The instructor introduced this as a specific case of binary trees to highlight performance implications. Understanding this structure is key to analyzing worst-case scenarios in tree-based algorithms.",
+          "evidence_refs": [
+            "E_C14",
+            "E_C26",
+            "E_C29"
+          ],
+          "misconception_rationale": "Distractors target misconceptions about validity (Option A), complexity analysis (Option C confusing skewed with balanced), and structural requirements (Option D incorrectly assuming alternation is required for validity or balance)."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In the lecture on Binary Tree Node Structure, the instructor emphasized that a node consists of a data field and two pointers (left and right). Consider a general binary tree where a node 'N' has a value of 10. If we insert a new node with value 20 as the left child of 'N', and then insert a new node with value 30 as the right child of 'N', which of the following statements correctly describes the structural relationship between the nodes with values 20 and 30?",
+          "option_a": "Node 20 is the parent of Node 30 because it was inserted first.",
+          "option_b": "Node 20 and Node 30 are siblings because they share the same parent, Node 10.",
+          "option_c": "Node 20 and Node 30 are in a parent-child relationship because they are connected via the same node's pointers.",
+          "option_d": "Node 20 and Node 30 are independent roots because each insertion creates a new hierarchical branch.",
+          "correct_option": "B",
+          "explanation": "The correct answer is B. In a binary tree, nodes that share the same parent are defined as siblings. Since both Node 20 (left child) and Node 30 (right child) are directly linked to Node 10 (the parent), they are siblings. Option A is incorrect because insertion order does not create a parent-child link between siblings; the parent is the node to which they are attached. Option C is incorrect because a parent-child relationship exists between Node 10 and Node 20, or Node 10 and Node 30, but not between Node 20 and Node 30. Option D is incorrect because inserting children into an existing node does not create new roots; it extends the existing tree structure.",
+          "target_concept": "Binary Tree Node Structure and Construction",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "A binary tree node consists of a data field and two pointers (left and right). Construction involves linking these pointers to form the hierarchical structure, where the order of insertion determines the final shape.",
+          "why_assessed": "The instructor demonstrated how to build a tree from a sequence of insertions. This is a fundamental skill for implementing tree data structures and understanding how data is stored.",
+          "evidence_refs": [
+            "E_C14",
+            "E_C11",
+            "E_C29"
+          ],
+          "misconception_rationale": "Option A targets the misconception that insertion order dictates hierarchy between siblings. Option C targets the confusion between parent-child and sibling relationships. Option D targets the misunderstanding of how tree construction works, assuming new nodes are always roots or disconnected."
+        }
+      ]
+    },
+    {
+      "input_id": "input_05_doc_faster_rcnn_yolo",
+      "title": "Computer Vision: Two-Stage (Faster R-CNN) vs Single-Stage (YOLO) Object Detection Architectures",
+      "modality": "PDF",
+      "content_style": "THEORY",
+      "representation_routed": "SUMMARY",
+      "routing_rationale": "PDI=0.055 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary.",
+      "pdi_score": 0.055,
+      "latency_seconds": 120.98,
+      "llm_calls": 3,
+      "questions_generated": 4,
+      "cognitive_distribution": {
+        "REMEMBER": 0,
+        "UNDERSTAND": 1,
+        "APPLY": 1,
+        "ANALYZE": 2,
+        "EVALUATE": 0
+      },
+      "traceability_rate": 100.0,
+      "misconception_rate": 100.0,
+      "redundancy_rate": 0.0,
+      "questions": [
+        {
+          "question_id": "Q1",
+          "question_text": "In the class comparison of inference latency, the instructor highlighted that YOLO achieves significantly faster inference times compared to Fast R-CNN. Based on the architectural differences discussed, what is the primary reason for this speed advantage?",
+          "option_a": "YOLO uses a Feature Pyramid Network (FPN) to process multiple scales simultaneously, reducing the need for separate region proposals.",
+          "option_b": "YOLO performs detection in a single pass by predicting bounding boxes and class probabilities directly from the feature map, whereas Fast R-CNN requires a separate, computationally expensive region proposal stage.",
+          "option_c": "YOLO is inherently more accurate than Fast R-CNN, allowing it to skip the verification steps that slow down two-stage detectors.",
+          "option_d": "Fast R-CNN is slower because it detects only one object at a time, while YOLO is a single-object detector that processes the entire image in one step.",
+          "correct_option": "B",
+          "explanation": "Option B is correct because the core architectural distinction taught is that single-stage detectors (YOLO) predict boxes and classes in one step, avoiding the bottleneck of the region proposal generation phase found in two-stage detectors (Fast/Faster R-CNN). Option A is incorrect because while FPNs can be used in both architectures, the speed difference is primarily due to the elimination of the proposal stage, not just the FPN. Option C is incorrect because speed does not imply higher accuracy; in fact, two-stage detectors are often more accurate. Option D is incorrect because 'single-stage' refers to the pipeline steps, not the number of objects detected; YOLO detects multiple objects, and Fast R-CNN also detects multiple objects via proposals.",
+          "target_concept": "Architectural Trade-off: Accuracy vs. Speed",
+          "cognitive_level": "UNDERSTAND",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The instructor compared inference latency charts, showing YOLO as faster due to its single-step detection process, while Fast R-CNN is slower due to its multi-step region proposal and classification pipeline.",
+          "why_assessed": "This assesses the student's understanding of the fundamental trade-off between speed and accuracy in object detection architectures, specifically identifying the architectural cause (single-pass vs. two-stage) for the performance difference.",
+          "evidence_refs": [
+            "E_C09",
+            "E_C08",
+            "E_C06"
+          ],
+          "misconception_rationale": "Distractors target common misconceptions: confusing FPN usage with the primary speed factor (A), assuming speed correlates with accuracy (C), and misinterpreting 'single-stage' as 'single-object' (D)."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In the Penn-Fudan dataset implementation discussed in class, the raw data provides pixel-level segmentation masks. Why is it necessary to algorithmically convert these masks into rectangular bounding boxes (min_x, min_y, max_x, max_y) before feeding them into the Fast R-CNN model?",
+          "option_a": "Fast R-CNN is a region-based model that expects rectangular coordinate inputs for its Region Proposal Network and classification head, and cannot directly ingest raw pixel masks as training targets.",
+          "option_b": "The conversion is required solely for visualization purposes to draw overlays on the image, but the model can internally process the raw mask tensors during training.",
+          "option_c": "Pixel masks contain too much data for the GPU memory, so they must be compressed into bounding boxes to reduce the computational load of the convolutional layers.",
+          "option_d": "The conversion is part of the model's internal feature extraction process, where the network automatically transforms masks into boxes during the forward pass if the input is a mask.",
+          "correct_option": "A",
+          "explanation": "Option A is correct because Fast R-CNN is a two-stage detector that relies on rectangular regions for proposal generation and classification; it does not have a segmentation head to accept raw masks as ground truth. Option B is incorrect because the conversion is a data preprocessing step for the model's input format, not just for visualization. Option C is incorrect because the primary reason is architectural compatibility, not memory compression. Option D is incorrect because the model does not automatically convert masks; the data must be pre-processed to match the expected bounding box format.",
+          "target_concept": "Mask-to-Bounding Box Conversion",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "Region-based models like Fast R-CNN require rectangular bounding boxes as input/annotation. Pixel-level segmentation masks must be algorithmically transformed into coordinate-based boxes to align with the model's expected format.",
+          "why_assessed": "The instructor highlighted the necessity of this conversion when using the Penn-Fudan dataset, which originally provides masks. This is a critical data engineering step that students often overlook, assuming models can ingest raw masks directly.",
+          "evidence_refs": [
+            "E_C03",
+            "E_C08",
+            "E_C09"
+          ],
+          "misconception_rationale": "Distractors target the common misconception that object detection models can handle segmentation masks directly (B, D) or that the conversion is a minor optimization/visualization step (B, C) rather than a fundamental requirement of the region-based architecture."
+        },
+        {
+          "question_id": "Q2",
+          "question_text": "When parsing the output of the Fast R-CNN model for visualization as shown in the code walkthrough, the model returns a dictionary. Which of the following correctly identifies the three specific keys and their corresponding data types/values?",
+          "option_a": "'boxes' (tensor of coordinates), 'labels' (tensor of class IDs), and 'scores' (tensor of confidence values).",
+          "option_b": "'regions' (list of polygons), 'classes' (list of string names), and 'probabilities' (list of floats).",
+          "option_c": "'coordinates' (numpy array), 'names' (tensor of class names), and 'confidences' (tensor of binary flags).",
+          "option_d": "'masks' (tensor of pixel values), 'ids' (tensor of instance IDs), and 'weights' (tensor of loss values).",
+          "correct_option": "A",
+          "explanation": "Option A is correct as it matches the specific dictionary structure returned by the model implementation discussed in class: 'boxes' for locations, 'labels' for integer class IDs, and 'scores' for confidence. Option B is incorrect because the output is a dictionary of tensors, not a list of polygons or strings, and the keys are not 'regions' or 'classes'. Option C is incorrect because the keys are not 'coordinates' or 'names', and scores are floats, not binary flags. Option D is incorrect because Fast R-CNN outputs boxes, not masks, and 'weights' are not part of the inference output dictionary.",
+          "target_concept": "Fast R-CNN Output Structure Parsing",
+          "cognitive_level": "APPLY",
+          "difficulty_level": "EASY",
+          "what_taught": "The Fast R-CNN model returns a dictionary containing three specific keys: 'boxes' (tensor of coordinates), 'labels' (tensor of class IDs), and 'scores' (tensor of confidence values).",
+          "why_assessed": "The instructor walked through the code to extract these specific keys for visualization. Understanding the exact structure is necessary for any post-processing task. This tests the ability to map model outputs to specific data structures.",
+          "evidence_refs": [
+            "E_C05",
+            "E_C03",
+            "E_C08"
+          ],
+          "misconception_rationale": "Distractors represent common errors in assuming generic output formats (lists, numpy arrays, or different key names like 'classes' vs 'labels') or confusing detection outputs with segmentation outputs (masks)."
+        },
+        {
+          "question_id": "Q1",
+          "question_text": "In the YOLO object detection pipeline demonstrated in class, you are writing a function to visualize predictions on an input image using OpenCV. You have a `results` object returned by the model. Which code snippet correctly extracts the bounding box coordinates and confidence scores, and prepares them for `cv2.rectangle`?",
+          "option_a": "for result in results:\n    boxes = result['boxes']['xyxy']\n    scores = result['boxes']['conf']\n    for box, score in zip(boxes, scores):\n        x1, y1, x2, y2 = box.tolist()\n        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)",
+          "option_b": "for result in results:\n    boxes = result.boxes.xyxy\n    scores = result.boxes.conf\n    for box, score in zip(boxes, scores):\n        x1, y1, x2, y2 = map(int, box.tolist())\n        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)",
+          "option_c": "for result in results:\n    boxes = result.boxes.xyxy\n    scores = result.boxes.conf\n    for box, score in zip(boxes, scores):\n        x1, y1, x2, y2 = box.tolist()\n        cv2.circle(img, (x1, y1), int(x2), (0, 255, 0), 2)",
+          "option_d": "for result in results:\n    boxes = result.boxes.xyxy\n    scores = result.boxes.conf\n    for box, score in zip(boxes, scores):\n        x1, y1, x2, y2 = map(float, box.tolist())\n        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)",
+          "correct_option": "B",
+          "explanation": "Option B is correct because it uses the object-oriented attribute access (`result.boxes.xyxy`) specific to the YOLO API demonstrated in class, rather than dictionary access. It also correctly converts the tensor coordinates to integers using `map(int, ...)` before passing them to `cv2.rectangle`, which requires integer coordinates. Option A fails because it uses dictionary syntax (`result['boxes']`) which is not the standard interface for this specific YOLO implementation shown. Option C fails because it uses `cv2.circle` instead of `cv2.rectangle` for bounding boxes and does not convert coordinates to integers. Option D fails because it converts coordinates to floats, which will cause an error in `cv2.rectangle` as it expects integer pixel coordinates.",
+          "target_concept": "YOLO Result Extraction & Visualization",
+          "cognitive_level": "ANALYZE",
+          "difficulty_level": "MEDIUM",
+          "what_taught": "The specific attribute access for YOLO results (`boxes.xyxy`, `boxes.conf`) and the necessity of converting tensor coordinates to integers for OpenCV visualization functions.",
+          "why_assessed": "To verify that students can distinguish between the object-oriented API of YOLO and other potential access patterns, and understand the data type requirements for OpenCV drawing functions.",
+          "evidence_refs": [
+            "E_C08",
+            "E_C05",
+            "E_C03"
+          ],
+          "misconception_rationale": "Distractors target common errors: using dictionary access instead of attribute access (A), using the wrong OpenCV function for boxes (C), and failing to cast tensor floats to integers required by OpenCV (A, C, D)."
+        }
+      ]
+    }
+  ]
+}

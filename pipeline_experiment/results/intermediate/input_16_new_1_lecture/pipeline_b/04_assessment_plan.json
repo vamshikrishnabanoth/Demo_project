@@ -1,0 +1,31 @@
+{
+  "plan_id": "PLAN_input_16_new_1_lecture",
+  "input_id": "input_16_new_1_lecture",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Fundamentals of Computer Science",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Theoretical Foundations",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Classroom Lecture Structure",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

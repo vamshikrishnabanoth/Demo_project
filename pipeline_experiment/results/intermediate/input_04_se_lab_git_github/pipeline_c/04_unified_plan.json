@@ -1,0 +1,90 @@
+{
+  "input_id": "input_04_se_lab_git_github",
+  "title": "Software Engineering Lab: Git/GitHub Collaborative Workflows & Merge Conflicts",
+  "total_requested_questions": 5,
+  "total_available_targets": 4,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Git & GitHub Environment Setup",
+      "what_taught_summary": "Students must recall the specific Git commands for global identity configuration ('git config --global user.name/email') and remote verification ('git remote -v'), as well as the definitions of forking and code collaboration.",
+      "why_assessed_pedagogy": "This assessment verifies that students have correctly established their local environment and understand the fundamental terminology required to participate in collaborative workflows, ensuring a solid foundation before complex operations.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Believing that 'git remote -v' modifies the remote URL rather than just displaying it.",
+        "Confusing 'git config --global' with repository-specific configuration, assuming it only applies to the current project.",
+        "Thinking that forking grants direct write access to the original upstream repository."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C01",
+        "E_C02"
+      ],
+      "source_timestamps_or_slides": [
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_02",
+      "topic_name": "Collaborative Workflows & Pull Requests",
+      "what_taught_summary": "Students must explain the purpose of Pull Requests as a review mechanism and describe the sequence of commands used to synchronize a feature branch with the main branch (checkout main, pull, checkout feature, merge main).",
+      "why_assessed_pedagogy": "This target assesses the student's conceptual understanding of the collaborative workflow, ensuring they grasp why synchronization is necessary to prevent future conflicts and how the PR process facilitates code review.",
+      "target_bloom_level": "UNDERSTAND",
+      "misconception_distractor_hints": [
+        "Assuming that merging main into a feature branch automatically pushes the changes to the remote repository.",
+        "Believing that a Pull Request is only created after a merge conflict has occurred.",
+        "Thinking that 'git pull' on a feature branch directly updates it with changes from main without first switching branches."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C03",
+        "E_C04"
+      ],
+      "source_timestamps_or_slides": [
+        "[360.0s - 540.0s]",
+        "[540.0s - 720.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_03",
+      "topic_name": "Merge Conflict Resolution",
+      "what_taught_summary": "Students must apply the conflict resolution workflow by identifying conflict markers (<<<<<<<, =======, >>>>>>>), manually editing the code to resolve discrepancies, removing the markers, and staging the file with 'git add' before committing.",
+      "why_assessed_pedagogy": "This assessment tests the student's ability to execute the specific procedural steps required to resolve merge conflicts, a critical practical skill for maintaining code integrity in a team environment.",
+      "target_bloom_level": "APPLY",
+      "misconception_distractor_hints": [
+        "Attempting to resolve conflicts by simply deleting the entire file or the conflicting section without preserving necessary code from either branch.",
+        "Forgetting to remove the conflict markers (<<<<<<<, =======, >>>>>>>) before staging the file, leading to syntax errors.",
+        "Believing that 'git merge' automatically resolves conflicts without manual intervention."
+      ],
+      "allocated_question_count": 1,
+      "evidence_chunk_refs": [
+        "E_C05"
+      ],
+      "source_timestamps_or_slides": [
+        "[720.0s - 900.0s]"
+      ]
+    },
+    {
+      "target_id": "TGT_04",
+      "topic_name": "Patch Creation and Application",
+      "what_taught_summary": "Students must analyze the syntax of 'git format-patch' to determine the correct flags for generating single-commit patches ('-1') versus multi-commit patches ('-3' or range), and understand the structure of the resulting patch files.",
+      "why_assessed_pedagogy": "This target evaluates the student's ability to debug and select the appropriate tooling for sharing changes, specifically analyzing the implications of different patch generation strategies in scenarios without direct repository access.",
+      "target_bloom_level": "ANALYZE",
+      "misconception_distractor_hints": [
+        "Assuming that 'git format-patch -1' generates a patch for the entire branch history rather than just the single specified commit.",
+        "Believing that patch files contain the full source code of the repository rather than just the differences (diffs).",
+        "Confusing 'git format-patch' with 'git diff', thinking the output is a temporary display rather than a saved file."
+      ],
+      "allocated_question_count": 2,
+      "evidence_chunk_refs": [
+        "E_C06",
+        "E_C07"
+      ],
+      "source_timestamps_or_slides": [
+        "[900.0s - 1080.0s]",
+        "[1080.0s - 1125.0s]"
+      ]
+    }
+  ]
+}

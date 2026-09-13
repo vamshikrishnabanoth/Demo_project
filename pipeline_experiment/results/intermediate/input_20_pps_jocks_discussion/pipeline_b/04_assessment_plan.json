@@ -1,0 +1,31 @@
+{
+  "plan_id": "PLAN_input_20_pps_jocks_discussion",
+  "input_id": "input_20_pps_jocks_discussion",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Python Problem Solving",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Interactive Learning Methods",
+      "question_count": 2,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Code Implementation",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    }
+  ]
+}

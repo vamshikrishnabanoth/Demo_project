@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "DOM Tree Traversal",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the correct property or method used to access the immediate child nodes of a specific DOM element.",
+    "misconception_target": "Confusing the 'children' collection (element nodes only) with 'childNodes' (which includes text and comment nodes).",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "DOM Tree Traversal",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific property used to navigate from a node to its parent node in the DOM hierarchy.",
+    "misconception_target": "Using 'parent' instead of the standard 'parentNode' or 'parentElement' property names.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_01",
+    "topic_name": "DOM Tree Traversal",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Distinguish between methods that traverse siblings (next/previous) and methods that traverse descendants (querySelectorAll).",
+    "misconception_target": "Assuming that 'nextSibling' always returns the next element node, ignoring that it may return a text node.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_02",
+    "topic_name": "Form Validation",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the standard HTML5 attribute used to enforce that a form field must not be empty before submission.",
+    "misconception_target": "Confusing the 'required' attribute with 'validate' or 'mandatory', which are not standard HTML5 validation attributes.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_02",
+    "topic_name": "Form Validation",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific JavaScript property on an input element that indicates whether the current value satisfies the validation constraints.",
+    "misconception_target": "Using 'isValid' or 'checkValidity' as a boolean property instead of the 'validity' object or the 'checkValidity()' method.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

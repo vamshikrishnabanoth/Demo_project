@@ -1,0 +1,56 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Convolutional Layer Configuration in PyTorch",
+    "subtopics": [
+      "nn.Conv2d parameters",
+      "in_channels and out_channels",
+      "kernel_size",
+      "padding and spatial dimensions"
+    ],
+    "associated_chunk_ids": [
+      "C01"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Pooling Layers and Multi\u2011layer CNN Architecture",
+    "subtopics": [
+      "nn.MaxPool2d usage",
+      "stride and kernel size",
+      "effect on tensor shape",
+      "stacking conv layers"
+    ],
+    "associated_chunk_ids": [
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+    "subtopics": [
+      "Flattening with view",
+      "calculating flattened feature size",
+      "nn.Linear input dimension",
+      "Runtime shape error debugging"
+    ],
+    "associated_chunk_ids": [
+      "C03",
+      "C05"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Training Loop, Loss Function, and Optimizer in PyTorch",
+    "subtopics": [
+      "nn.CrossEntropyLoss",
+      "optim.Adam configuration",
+      "optimizer.zero_grad",
+      "loss.backward",
+      "optimizer.step"
+    ],
+    "associated_chunk_ids": [
+      "C04"
+    ]
+  }
+]

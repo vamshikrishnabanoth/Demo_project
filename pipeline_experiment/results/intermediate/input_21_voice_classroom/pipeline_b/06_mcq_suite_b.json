@@ -1,0 +1,104 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_21_voice_classroom",
+  "input_type": "VOICE_ONLY",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "According to the lecture overview, what is the primary objective of the Live Engineering Exposition?",
+      "option_a": "To solve a specific, pre-defined engineering problem for the audience.",
+      "option_b": "To demonstrate a specific engineering process or methodology.",
+      "option_c": "To evaluate the performance of existing engineering systems.",
+      "option_d": "To create new theoretical frameworks for engineering design.",
+      "correct_option": "B",
+      "explanation": "The correct option is B because the assessment goal specifies identifying the purpose as demonstrating a process. Option A is incorrect because the misconception target notes that students often confuse the general topic with solving a specific problem, whereas the exposition is about the process. Option C is incorrect as evaluation is not the stated primary objective. Option D is incorrect because the content is procedural and introductory, not focused on creating new theory.",
+      "target_concept": "Primary Objective of the Exposition",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S01",
+      "what_taught": "The specific purpose of the live engineering exposition is to demonstrate a process.",
+      "why_assessed": "To ensure students distinguish between the general field of engineering and the specific pedagogical goal of the lecture.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors reflect the common error of assuming the lecture is about solving a specific problem or evaluating systems rather than demonstrating a process."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "What is the specific format or medium of the lecture delivery as indicated by the title 'Live Engineering Exposition'?",
+      "option_a": "A pre-recorded video tutorial with visual aids.",
+      "option_b": "A text-based case study analysis.",
+      "option_c": "A live audio exposition.",
+      "option_d": "An interactive simulation lab.",
+      "correct_option": "C",
+      "explanation": "The correct option is C because the title explicitly states 'Live Engineering Exposition' and the input type is VOICE_ONLY, indicating a live audio format. Option A is incorrect because the medium is audio-only, not video. Option B is incorrect because it is not a text-based study. Option D is incorrect because there is no mention of interactive simulations.",
+      "target_concept": "Lecture Delivery Format",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The lecture is delivered as a live audio exposition.",
+      "why_assessed": "To verify students recall the specific medium of instruction, which impacts how they should engage with the material.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors target the misconception that the lecture might be a recorded video or text-based, ignoring the 'Live' and 'Voice Only' constraints."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "What is the input type constraint specified for the assessment context of this lecture?",
+      "option_a": "VISUAL_AIDS",
+      "option_b": "TEXT_BASED",
+      "option_c": "VOICE_ONLY",
+      "option_d": "MULTIMEDIA",
+      "correct_option": "C",
+      "explanation": "The correct option is C because the input type is explicitly defined as VOICE_ONLY. Option A is incorrect because visual aids are not part of the input constraint. Option B is incorrect as it is not text-based. Option D is incorrect because multimedia implies multiple sensory inputs, whereas this is strictly audio.",
+      "target_concept": "Input Type Constraint",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S03",
+      "what_taught": "The assessment relies solely on voice input.",
+      "why_assessed": "To confirm students understand the limitations of the medium and do not expect visual support.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that visual aids or diagrams are required to understand the procedural content."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "How is the content style of the lecture classified?",
+      "option_a": "THEORETICAL",
+      "option_b": "CONCEPTUAL",
+      "option_c": "PROCEDURAL",
+      "option_d": "NARRATIVE",
+      "correct_option": "C",
+      "explanation": "The correct option is C because the content style is explicitly identified as PROCEDURAL. Option A is incorrect because the content is not purely theoretical. Option B is incorrect as it is not just conceptual but step-by-step. Option D is incorrect because it is not a story-based narrative.",
+      "target_concept": "Content Style Classification",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S04",
+      "what_taught": "The lecture follows a procedural, step-by-step structure.",
+      "why_assessed": "To ensure students recognize the structural nature of the content, which affects how they should take notes and follow along.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors target the misconception of misclassifying the content as theoretical or conceptual rather than procedural."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "What is the specific instructional act associated with the 'Overview' topic in this lecture?",
+      "option_a": "EVALUATE",
+      "option_b": "CREATE",
+      "option_c": "INTRODUCE",
+      "option_d": "ANALYZE",
+      "correct_option": "C",
+      "explanation": "The correct option is C because the instructional act is specified as INTRODUCE. Option A is incorrect because evaluation is a higher-order cognitive task not associated with the overview. Option B is incorrect because creating new knowledge is not the goal of an introduction. Option D is incorrect because analysis is not the primary act of the overview section.",
+      "target_concept": "Instructional Act",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "S05",
+      "what_taught": "The overview section serves to introduce foundational concepts.",
+      "why_assessed": "To verify students understand the pedagogical role of the overview section in the learning sequence.",
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "misconception_rationale": "Distractors reflect the misconception that the lecture is meant to evaluate or create new knowledge rather than introduce foundational concepts."
+    }
+  ]
+}

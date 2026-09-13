@@ -1,0 +1,28 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "MongoDB Querying and Filtering",
+    "subtopics": [
+      "Filtering by numeric thresholds (low stock)",
+      "String pattern matching (regex/prefix search)",
+      "Retrieving documents based on specific criteria"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Domain-Specific Data Modeling",
+    "subtopics": [
+      "E-commerce Product Management (Amazon)",
+      "Healthcare Patient Management (Hospital)",
+      "Restaurant Directory Data"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C02"
+    ]
+  }
+]

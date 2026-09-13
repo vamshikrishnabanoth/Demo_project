@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Python Programming Fundamentals",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the correct syntax for defining a function and returning a value in Python.",
+    "misconception_target": "Confusing function definition syntax with variable assignment or using incorrect indentation for the return statement.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Python Programming Fundamentals",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recognize the correct data type for storing a sequence of characters in Python.",
+    "misconception_target": "Believing that strings are stored as lists of integers or that quotes are optional for string literals.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_02",
+    "topic_name": "Algorithmic Problem Solving Patterns",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the algorithmic pattern used to find the minimum value in an unsorted list by iterating through each element.",
+    "misconception_target": "Confusing the linear search pattern with binary search, assuming sorting is required before finding the minimum.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Data Structures in Python",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Distinguish between a list and a tuple based on their mutability characteristics.",
+    "misconception_target": "Assuming that tuples are mutable because they are enclosed in parentheses, or that lists are immutable.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Code Optimization and Efficiency",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the primary benefit of using a dictionary for key-value lookups compared to a list.",
+    "misconception_target": "Believing that lists are faster for key-based lookups because they are simpler, or that dictionaries have constant time complexity for all operations including insertion in all cases without considering hash collisions.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

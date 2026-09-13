@@ -1,0 +1,81 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Analyze a provided LCP implementation to identify logical errors in handling empty strings and varying string lengths",
+    "misconception_target": "Assuming all strings contain at least one character, causing index\u2011out\u2011of\u2011bounds errors",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Evaluate the time\u2011complexity analysis of an LCP algorithm and locate inefficiencies in nested loop structures",
+    "misconception_target": "Confusing O(N\u00b7M) complexity with O(N) where N is number of strings and M is average length",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_01",
+    "topic_name": "Longest Common Prefix (LCP) Problem",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Diagnose incorrect handling of special characters that cause premature termination of the common prefix detection",
+    "misconception_target": "Treating special characters as delimiters and stopping the prefix search too early",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Vertical Scanning Method",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Analyze a vertical scanning implementation to detect off\u2011by\u2011one errors in character indexing across strings",
+    "misconception_target": "Using the length of the first string as loop bound instead of the minimum length of all strings",
+    "evidence_refs": [
+      "E_C02"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Binary Search on Prefix Length",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CONCEPTUAL_COMPARISON",
+    "assessment_goal": "Compare the binary\u2011search based LCP approach with vertical scanning, focusing on correctness of the monotonic predicate used",
+    "misconception_target": "Assuming the predicate is always true for mid values, leading to an infinite search loop",
+    "evidence_refs": [
+      "E_C03"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

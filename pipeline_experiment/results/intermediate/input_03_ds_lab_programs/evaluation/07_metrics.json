@@ -1,0 +1,73 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 54.7,
+    "source_answerability_percentage": 47.1,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.098,
+    "diversity_score": 0.902,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 3.6,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.2,
+      "APPLY": 0.2,
+      "ANALYZE": 0.4,
+      "EVALUATE": 0.2
+    },
+    "specificity_score": 3.37
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 55.0,
+    "source_answerability_percentage": 37.7,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.115,
+    "diversity_score": 0.885,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 3.37
+  },
+  "metrics_unified_pipeline_c": {
+    "source_grounding_percentage": 52.6,
+    "source_answerability_percentage": 48.1,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.166,
+    "diversity_score": 0.834,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 3.26
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_03_ds_lab_programs",
+    "topics_grounded_percentage": 100.0,
+    "salience_alignment_score": 4.5,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 26.7,
+    "overall_validity_percentage": 78.0
+  },
+  "decision": {
+    "winner": "SUMMARY",
+    "composite_score_summary": 0.63,
+    "composite_score_blueprint": 0.528,
+    "quality_delta": -0.102,
+    "rationale": "Summary produced higher composite quality (Q_A=0.63 vs Q_B=0.528, delta=-0.102) on static/factual content."
+  },
+  "three_way_decision": {
+    "winner": "SUMMARY_PIPELINE_A",
+    "q_summary_a": 0.63,
+    "q_blueprint_b": 0.528,
+    "q_unified_c": 0.541,
+    "delta_c_minus_a": -0.089,
+    "delta_c_minus_b": 0.013,
+    "delta_b_minus_a": -0.102,
+    "rationale": "Summary produced highest quality (Q_A=0.63 vs Q_C=0.541, Q_B=0.528)."
+  }
+}

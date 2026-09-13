@@ -1,0 +1,26 @@
+{
+  "input_id": "001",
+  "title": "DSA Problem Solving: Longest Common Prefix Algorithms",
+  "concepts_and_definitions": [
+    "Longest Common Prefix (LCP)",
+    "Horizontal Scanning",
+    "Vertical Scanning",
+    "Binary Search on Prefix Length",
+    "Trie\u2011based LCP",
+    "Minimum string length (L_min)",
+    "End\u2011of\u2011word marker in a Trie"
+  ],
+  "mechanisms_and_formulas": [
+    "LCP(S1\u2026Sn)=LCP(LCP(LCP(S1,S2),S3)\u2026Sn)",
+    "Binary search over prefix length from 1 to L_min with check O(N\u00b7mid)",
+    "Overall time O(N\u00b7L_min\u00b7log\u202fL_min)",
+    "Trie traversal continues while each node has exactly one child and is not an end\u2011of\u2011word"
+  ],
+  "examples_and_code_patterns": [
+    "Horizontal scanning loop that updates a running prefix and breaks when it becomes empty",
+    "Vertical scanning that compares characters at index i across all strings simultaneously",
+    "Binary\u2011search routine that tests whether all strings share the prefix of length mid",
+    "Trie insertion of all strings followed by a walk from the root until a node has multiple children or marks end of a word"
+  ],
+  "factual_summary_text": "The material presents four principal approaches for computing the longest common prefix (LCP) among a set of N strings. The first, Horizontal Scanning, iteratively reduces the problem by computing the LCP of the current prefix with the next string, aborting early if the prefix becomes empty. The second, Vertical Scanning, examines characters column\u2011wise: for each index i it checks the i\u2011th character of every string, stopping at the first mismatch, which is efficient when a mismatch appears early in the second string.\n\nThe third technique applies Binary Search on the possible prefix length. After determining the shortest string length L_min, the algorithm binary\u2011searches the interval [1, L_min], testing at each midpoint whether all strings share a prefix of that length. Each test costs O(N\u00b7mid), yielding an overall complexity of O(N\u00b7L_min\u00b7log\u202fL_min).\n\nThe fourth approach uses a Trie data structure. All strings are inserted into the Trie, then a traversal from the root proceeds as long as each visited node has exactly one child and is not marked as an end\u2011of\u2011word. The characters visited form the LCP. These paradigms provide a toolbox for selecting the most suitable algorithm based on input characteristics such as string length distribution and early mismatch patterns."
+}

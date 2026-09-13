@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_12_tapadia_buy_and_sell_stock",
+  "input_id": "input_12_tapadia_buy_and_sell_stock",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Problem Definition and Constraints",
+      "question_count": 1,
+      "target_bloom": [
+        "REMEMBER"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Brute Force Approach",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Optimized Single Transaction Solution",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Infinite Transactions Strategy",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Dynamic Programming Generalization",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "blueprint_id": "BP_input_006_problem_solving_lcp",
+  "input_id": "input_006_problem_solving_lcp",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Longest Common Prefix (LCP) Problem",
+      "salience_score": 0.4,
+      "instructional_acts": [
+        "APPLY",
+        "DEBUG"
+      ],
+      "dominant_mode": "CODE_DEBUGGING",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "String manipulation",
+        "Array of strings",
+        "Definition of common prefix",
+        "Loop constructs",
+        "Time complexity analysis"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Horizontal Scanning Method",
+      "salience_score": 0.06,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPLANATION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Basic string operations",
+        "Iterating over character positions",
+        "Array traversal"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Vertical Scanning Method",
+      "salience_score": 0.19,
+      "instructional_acts": [
+        "APPLY",
+        "DEBUG"
+      ],
+      "dominant_mode": "CODE_DEBUGGING",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "String indexing",
+        "Character comparison",
+        "Loop control structures"
+      ],
+      "evidence_refs": [
+        "E_C02"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Binary Search on Prefix Length",
+      "salience_score": 0.09,
+      "instructional_acts": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "ANALYZE",
+      "prerequisite_concepts": [
+        "Binary search algorithm",
+        "Monotonic property of prefix length",
+        "Mid-point calculation",
+        "Complexity of logarithmic search"
+      ],
+      "evidence_refs": [
+        "E_C03"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "Trie-based LCP Approach",
+      "salience_score": 0.06,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "CONCEPTUAL_COMPARISON",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Trie (prefix tree) data structure",
+        "Node insertion in a trie",
+        "String traversal in a tree",
+        "Depth\u2011first search basics"
+      ],
+      "evidence_refs": [
+        "E_C04"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

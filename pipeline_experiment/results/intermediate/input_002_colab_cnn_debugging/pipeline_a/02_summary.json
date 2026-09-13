@@ -1,0 +1,33 @@
+{
+  "input_id": "input_001",
+  "title": "PyTorch CNN Layer Building & Shape Mismatch Debugging",
+  "concepts_and_definitions": [
+    "torch.nn.Conv2d",
+    "torch.nn.MaxPool2d",
+    "torch.nn.ReLU",
+    "torch.nn.Linear",
+    "padding",
+    "batch dimension",
+    "flattening with view",
+    "in_features vs out_features",
+    "torch.nn.CrossEntropyLoss",
+    "torch.optim.Adam",
+    "training loop (zero_grad, forward, loss.backward, step)",
+    "shape mismatch error"
+  ],
+  "mechanisms_and_formulas": [
+    "Output shape after Conv2d with padding=1: (B, C_out, H, W) where H and W unchanged",
+    "Output shape after MaxPool2d(2,2): (B, C, H/2, W/2)",
+    "Flattened feature size = C * H * W (e.g., 32\u202f*\u202f8\u202f*\u202f8\u202f=\u202f2048)",
+    "Linear layer computes y = Wx + b with in_features matching flattened size",
+    "Cross\u2011entropy loss combines softmax and negative log\u2011likelihood",
+    "Adam optimizer updates parameters using adaptive moment estimates"
+  ],
+  "examples_and_code_patterns": [
+    "Python class SimpleCNN(nn.Module) with __init__ defining conv1, relu, pool, conv2, fc1",
+    "forward method applying conv\u2011relu\u2011pool twice, then x.view(x.size(0), -1) and returning self.fc1(x)",
+    "Fixing shape mismatch by setting self.fc1 = nn.Linear(32*8*8, 10) instead of nn.Linear(1024,10)",
+    "Training loop: optimizer.zero_grad(); outputs = model(inputs); loss = criterion(outputs, targets); loss.backward(); optimizer.step()"
+  ],
+  "factual_summary_text": "The notebook demonstrates how to construct a simple convolutional neural network in PyTorch and troubleshoot a common shape\u2011mismatch error. Two convolutional layers (Conv2d) with kernel size 3 and padding\u202f1 preserve the 32\u00d732 spatial dimensions of the input image. Each convolution is followed by a ReLU activation and a MaxPool2d(2,2) that halves the height and width, resulting in a tensor of shape (B,\u202f32,\u202f8,\u202f8) after the second pool. The tensor is flattened with x.view(x.size(0), -1), producing a feature vector of length 32\u202f\u00d7\u202f8\u202f\u00d7\u202f8\u202f=\u202f2048 per sample. The original Linear layer was incorrectly defined with in_features\u202f=\u202f1024, causing a RuntimeError when multiplying the flattened tensor (64\u202f\u00d7\u202f2048) with the weight matrix (1024\u202f\u00d7\u202f10). The fix is to set in_features to 2048 and exclude the batch dimension from this count. The model then uses CrossEntropyLoss for classification and the Adam optimizer (learning rate\u202f0.001) within a standard training loop that zeroes gradients, performs a forward pass, computes loss, back\u2011propagates, and updates parameters. After five epochs the training loss drops from roughly 2.14 to 0.42, illustrating successful learning once the dimensionality issue is resolved. The example emphasizes verifying tensor shapes at each layer to avoid similar mismatches."
+}

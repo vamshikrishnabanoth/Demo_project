@@ -1,0 +1,35 @@
+{
+  "input_id": "notes_001",
+  "title": "Distributed Systems: CAP Theorem & Raft Consensus Protocol",
+  "concepts_and_definitions": [
+    "CAP Theorem",
+    "Consistency (C)",
+    "Availability (A)",
+    "Partition Tolerance (P)",
+    "CP systems (e.g., HBase, MongoDB majority writes)",
+    "AP systems (e.g., Cassandra, DynamoDB)",
+    "Raft Consensus Protocol",
+    "Leader Election",
+    "Follower",
+    "Candidate",
+    "Leader",
+    "Term",
+    "Randomized election timeout (150\u202fms\u2013300\u202fms)",
+    "Heartbeats",
+    "Log Replication",
+    "AppendEntries RPC",
+    "Commit",
+    "Safety Invariant"
+  ],
+  "mechanisms_and_formulas": [
+    "In an asynchronous network with possible partitions, a system can guarantee at most one of Consistency or Availability (CAP trade\u2011off)",
+    "Leader election: follower \u2192 candidate after missing heartbeats, increments term, votes for self, requests votes; becomes leader upon receiving votes from a majority",
+    "Log replication: leader appends client command to its log, sends AppendEntries RPC to followers, entry is committed when replicated on a majority",
+    "Safety invariant: if a leader commits a log entry, that entry must appear in the logs of all leaders in higher terms"
+  ],
+  "examples_and_code_patterns": [
+    "AppendEntries RPC call pattern used by the leader to replicate log entries to followers",
+    "Vote request flow during leader election, including term comparison and log up\u2011to\u2011date check"
+  ],
+  "factual_summary_text": "The notes introduce the CAP Theorem, which states that in any asynchronous distributed system that may experience network partitions, a system can provide at most two of the three guarantees: Consistency, Availability, and Partition Tolerance. Because real networks inevitably encounter partitions, designers must choose between CP systems\u2014such as HBase and MongoDB with majority\u2011write settings\u2014and AP systems\u2014such as Cassandra and DynamoDB\u2014that favor availability over strict consistency.\n\nThe second part covers the Raft consensus protocol, which breaks distributed consensus into three orthogonal subproblems. Leader election is triggered when a follower does not receive heartbeats within a randomized timeout (150\u202fms\u2013300\u202fms); it becomes a candidate, increments its term, votes for itself, and solicits votes from other nodes, becoming leader once it secures a majority. Log replication follows, where the elected leader receives client commands, appends them to its local log, and propagates them to followers via AppendEntries RPCs. An entry is considered committed once it is stored on a majority of nodes. Finally, Raft enforces a safety invariant: any entry committed by a leader must be present in the logs of all future leaders in higher terms, which is ensured by denying votes to candidates whose logs are less up\u2011to\u2011date than the voter\u2019s log during elections."
+}

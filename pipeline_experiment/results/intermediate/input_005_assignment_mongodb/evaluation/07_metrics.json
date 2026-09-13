@@ -1,0 +1,50 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 45.2,
+    "source_answerability_percentage": 24.7,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.054,
+    "diversity_score": 0.946,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.4,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.6,
+      "REMEMBER": 0.2,
+      "APPLY": 0.2
+    },
+    "specificity_score": 3.06
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 29.3,
+    "source_answerability_percentage": 25.1,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.145,
+    "diversity_score": 0.855,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.667,
+    "average_bloom_level": 3.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.33,
+      "APPLY": 0.33,
+      "ANALYZE": 0.33
+    },
+    "specificity_score": 2.45
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_005_assignment_mongodb",
+    "topics_grounded_percentage": 80.0,
+    "salience_alignment_score": 3.0,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 14.3,
+    "overall_validity_percentage": 67.3
+  },
+  "decision": {
+    "winner": "EQUIVALENT / INCONCLUSIVE",
+    "composite_score_summary": 0.45,
+    "composite_score_blueprint": 0.423,
+    "quality_delta": -0.027,
+    "rationale": "Both representations achieved comparable quality scores within the predefined threshold margin (Q_A=0.45, Q_B=0.423, delta=-0.027)."
+  }
+}

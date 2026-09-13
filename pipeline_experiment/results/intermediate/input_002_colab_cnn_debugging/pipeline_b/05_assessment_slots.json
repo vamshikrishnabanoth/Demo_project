@@ -1,0 +1,74 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Convolutional Layer Configuration in PyTorch",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEMONSTRATION",
+    "assessment_goal": "Students will construct a nn.Conv2d layer with correct in_channels, out_channels, kernel_size, stride, and padding to achieve a specified output feature map size.",
+    "misconception_target": "Confusing padding calculation leading to off\u2011by\u2011one output dimensions",
+    "evidence_refs": [
+      "E_C01"
+    ],
+    "question_type": "CODE_DEMONSTRATION",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Pooling Layers and Multi\u2011layer CNN Architecture",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEMONSTRATION",
+    "assessment_goal": "Students will analyze how successive convolution and pooling layers affect spatial dimensions and compute the resulting feature map size after a given architecture.",
+    "misconception_target": "Assuming pooling does not change dimensions when stride differs from kernel size",
+    "evidence_refs": [
+      "E_C02"
+    ],
+    "question_type": "CODE_DEMONSTRATION",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Identify and correct shape mismatches when flattening convolutional outputs before feeding into a Linear layer.",
+    "misconception_target": "Neglecting batch dimension or miscalculating flattened size",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_03",
+    "topic_name": "Tensor Shape Mismatch and Fully Connected Layer Setup",
+    "cognitive_level": "ANALYZE",
+    "instructional_mode": "CODE_DEBUGGING",
+    "assessment_goal": "Design the correct Linear layer dimensions to match the flattened output of preceding conv/pool layers.",
+    "misconception_target": "Using output channels instead of total features for Linear input size",
+    "evidence_refs": [
+      "E_C03",
+      "E_C05"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Training Loop, Loss Function, and Optimizer in PyTorch",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "CODE_DEMONSTRATION",
+    "assessment_goal": "Implement a training loop that computes loss with CrossEntropy, performs backpropagation, and updates model parameters using an optimizer.",
+    "misconception_target": "Omitting loss.backward() or optimizer.step() leading to no learning",
+    "evidence_refs": [
+      "E_C04"
+    ],
+    "question_type": "CODE_DEMONSTRATION",
+    "target_options_count": 4
+  }
+]

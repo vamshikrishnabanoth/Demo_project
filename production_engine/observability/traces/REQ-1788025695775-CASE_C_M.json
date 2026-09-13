@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788025695775-CASE_C_M",
+  "timestamp": "2026-08-29T17:52:07Z",
+  "input_id": "CASE_C_MULTIMODAL",
+  "selected_representation": "UNIFIED",
+  "pedagogical_delivery_index": 1.0,
+  "cache_telemetry": {
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "THEORETICAL_RATIONALE",
+    "CONCEPT_UNDERSTANDING",
+    "CODE_INTERPRETATION",
+    "PARAMETER_CHANGE",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 231270.82,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 MEDIUM difficulty targets was fulfilled by selecting 5 distinct concepts from the available 10. To ensure non-redundancy and high quality, each target targets a unique concept and a unique pedagogical facet. The selection covers the core theoretical foundations (VAE Concept, KL Divergence), the critical implementation mechanism (Reparameterization Trick), the architectural structure (Encoder), and the practical application context (Fashion-MNIST). This provides a balanced assessment of understanding, rationale, code interpretation, and application."
+}

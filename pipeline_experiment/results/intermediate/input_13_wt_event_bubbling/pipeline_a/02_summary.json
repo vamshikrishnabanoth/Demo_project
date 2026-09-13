@@ -1,0 +1,23 @@
+{
+  "input_id": "web_tech_lecture_2",
+  "title": "Web Technologies Lecture 2: Event Listeners, Event Bubbling & Event Capturing",
+  "concepts_and_definitions": [
+    "Event Listener: A function registered to a DOM element that executes in response to a specific event (e.g., click, keydown).",
+    "Event Bubbling: The propagation phase where an event travels from the target element up through its ancestors to the document root.",
+    "Event Capturing: The propagation phase where an event travels from the document root down through ancestors to the target element.",
+    "Event Propagation: The complete lifecycle of an event, consisting of the capturing phase, the target phase, and the bubbling phase.",
+    "stopPropagation: A method used to prevent an event from continuing to propagate through the DOM tree."
+  ],
+  "mechanisms_and_formulas": [
+    "Propagation Order: The event flow follows a strict sequence: Capturing (Root -> Target) -> Target -> Bubbling (Target -> Root).",
+    "Listener Registration: The addEventListener(type, listener, useCapture) method determines if the listener is active during the capturing or bubbling phase based on the boolean useCapture argument.",
+    "Event Object Structure: The event object contains properties such as target (the element where the event originated) and currentTarget (the element where the listener is currently executing)."
+  ],
+  "examples_and_code_patterns": [
+    "Basic Listener: document.getElementById('btn').addEventListener('click', function(event) { console.log('Clicked'); });",
+    "Capturing Phase Listener: parentElement.addEventListener('click', handler, true); // true indicates capturing phase",
+    "Bubbling Phase Listener: childElement.addEventListener('click', handler, false); // false (default) indicates bubbling phase",
+    "Stopping Propagation: event.stopPropagation(); // Prevents the event from reaching other listeners in the remaining propagation phases"
+  ],
+  "factual_summary_text": "This lecture segment introduces the fundamental mechanics of event handling in web technologies, focusing on how events are registered and processed within the Document Object Model (DOM). It defines the event listener as the primary mechanism for responding to user interactions and details the two distinct phases of event propagation: capturing and bubbling. The content explains that capturing involves the event traveling from the outermost ancestor down to the target element, while bubbling involves the event traveling from the target element back up to the outermost ancestor. Understanding these phases is critical for managing event flow and preventing unintended side effects in complex DOM structures.\n\nThe material further outlines the procedural methods for controlling this flow, specifically the use of the addEventListener method and its third parameter to specify whether a listener should be active during the capturing or bubbling phase. It also covers the use of event.stopPropagation() to halt the event's journey through the DOM tree. By distinguishing between the target element and the current target element, the lecture provides the necessary conceptual framework for developers to write precise and efficient event-driven JavaScript code."
+}

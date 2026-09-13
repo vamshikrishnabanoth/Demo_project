@@ -1,0 +1,2001 @@
+[
+  {
+    "chunk_id": "C01",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 0.0,
+        "end": 5.0
+      },
+      {
+        "start": 5.0,
+        "end": 10.0
+      },
+      {
+        "start": 10.0,
+        "end": 15.0
+      },
+      {
+        "start": 15.0,
+        "end": 20.0
+      },
+      {
+        "start": 20.0,
+        "end": 25.0
+      },
+      {
+        "start": 25.0,
+        "end": 30.0
+      },
+      {
+        "start": 30.0,
+        "end": 35.0
+      },
+      {
+        "start": 35.0,
+        "end": 40.0
+      },
+      {
+        "start": 40.0,
+        "end": 45.0
+      },
+      {
+        "start": 45.0,
+        "end": 50.0
+      },
+      {
+        "start": 50.0,
+        "end": 55.0
+      },
+      {
+        "start": 55.0,
+        "end": 60.0
+      },
+      {
+        "start": 60.0,
+        "end": 65.0
+      },
+      {
+        "start": 65.0,
+        "end": 70.0
+      },
+      {
+        "start": 70.0,
+        "end": 75.0
+      },
+      {
+        "start": 75.0,
+        "end": 80.0
+      },
+      {
+        "start": 80.0,
+        "end": 85.0
+      },
+      {
+        "start": 85.0,
+        "end": 90.0
+      },
+      {
+        "start": 90.0,
+        "end": 95.0
+      },
+      {
+        "start": 95.0,
+        "end": 100.0
+      },
+      {
+        "start": 100.0,
+        "end": 105.0
+      },
+      {
+        "start": 105.0,
+        "end": 110.0
+      },
+      {
+        "start": 110.0,
+        "end": 115.0
+      },
+      {
+        "start": 115.0,
+        "end": 120.0
+      },
+      {
+        "start": 120.0,
+        "end": 125.0
+      },
+      {
+        "start": 125.0,
+        "end": 130.0
+      },
+      {
+        "start": 130.0,
+        "end": 135.0
+      },
+      {
+        "start": 135.0,
+        "end": 140.0
+      },
+      {
+        "start": 140.0,
+        "end": 145.0
+      },
+      {
+        "start": 145.0,
+        "end": 150.0
+      },
+      {
+        "start": 150.0,
+        "end": 155.0
+      },
+      {
+        "start": 155.0,
+        "end": 160.0
+      },
+      {
+        "start": 160.0,
+        "end": 165.0
+      },
+      {
+        "start": 165.0,
+        "end": 170.0
+      },
+      {
+        "start": 170.0,
+        "end": 175.0
+      },
+      {
+        "start": 175.0,
+        "end": 180.0
+      }
+    ],
+    "text": "LAB ACTION PLAN FOR WEEK 3 Objective: To work on collaborative coding by: Creating Organization. Coordinating with others through a shared repository To resolve conflicts when collaborating on same part of code. To create and apply patch Students need to make note in observation book and also upload the screenshots of above executed exercise and scenario-based question. Collaborative coding. Code collaboration refers to\u00a0the process of multiple people working together on the same codebase. There are two ways of collaborative coding: Creating Organization Coordinating with others through a shared repository Facilitating Collaborative Work by creating Organization Organization - Organizations are shared accounts where businesses and open-source projects can collaborate across many projects at once. Owners and administrators can manage member access to the organization's data and projects with sophisticated security and administrative features. Steps to facilitate collaborative work by creating organization are: Step 1:  Click on New organization in Git hub Click on Create a free organization. Step 2:  Set up your organization by entering the details like name, associated email, account verification, etc. Click on Next Step 3:  Complete the setup by adding members to the group. Now, the invitation goes to other collaborator and they must accept. Next click on complete setup Goto Github and click on Settings  Member privileges  Base permissions  Select write  change base permission to \u201cWrite\u201d Next under, Projects base permissions  Select Write  change base permission to \u201cWrite\u201d Step 4:  Create the remote repository for storing the project related files in Organization.  This repository is accessible to every member of the team as per the permissions given. Note: The repository can be made private so that it is accessible only to the group members rather than being in a public domain. Now all the members of the team can contribute to the development of the project and the different files with all the versions and modification notices will be available in the respective repositories and is accessible to all the members To collaborate effectively on GitHub shared repository by sharing code and coordinating with others through a shared repository. Steps for Collaborator 1 are:  (collaborator-1 has repository that he wants to share with collaborator-2) Go to Settings > collaborators Now in Manage Access click on Add people Now you will be able to see ONE collaborator added",
+    "material_refs": [],
+    "topic_candidates": [],
+    "evidence": {
+      "evidence_id": "E_C01",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 0.0,
+          "end": 5.0
+        },
+        {
+          "start": 5.0,
+          "end": 10.0
+        },
+        {
+          "start": 10.0,
+          "end": 15.0
+        },
+        {
+          "start": 15.0,
+          "end": 20.0
+        },
+        {
+          "start": 20.0,
+          "end": 25.0
+        },
+        {
+          "start": 25.0,
+          "end": 30.0
+        },
+        {
+          "start": 30.0,
+          "end": 35.0
+        },
+        {
+          "start": 35.0,
+          "end": 40.0
+        },
+        {
+          "start": 40.0,
+          "end": 45.0
+        },
+        {
+          "start": 45.0,
+          "end": 50.0
+        },
+        {
+          "start": 50.0,
+          "end": 55.0
+        },
+        {
+          "start": 55.0,
+          "end": 60.0
+        },
+        {
+          "start": 60.0,
+          "end": 65.0
+        },
+        {
+          "start": 65.0,
+          "end": 70.0
+        },
+        {
+          "start": 70.0,
+          "end": 75.0
+        },
+        {
+          "start": 75.0,
+          "end": 80.0
+        },
+        {
+          "start": 80.0,
+          "end": 85.0
+        },
+        {
+          "start": 85.0,
+          "end": 90.0
+        },
+        {
+          "start": 90.0,
+          "end": 95.0
+        },
+        {
+          "start": 95.0,
+          "end": 100.0
+        },
+        {
+          "start": 100.0,
+          "end": 105.0
+        },
+        {
+          "start": 105.0,
+          "end": 110.0
+        },
+        {
+          "start": 110.0,
+          "end": 115.0
+        },
+        {
+          "start": 115.0,
+          "end": 120.0
+        },
+        {
+          "start": 120.0,
+          "end": 125.0
+        },
+        {
+          "start": 125.0,
+          "end": 130.0
+        },
+        {
+          "start": 130.0,
+          "end": 135.0
+        },
+        {
+          "start": 135.0,
+          "end": 140.0
+        },
+        {
+          "start": 140.0,
+          "end": 145.0
+        },
+        {
+          "start": 145.0,
+          "end": 150.0
+        },
+        {
+          "start": 150.0,
+          "end": 155.0
+        },
+        {
+          "start": 155.0,
+          "end": 160.0
+        },
+        {
+          "start": 160.0,
+          "end": 165.0
+        },
+        {
+          "start": 165.0,
+          "end": 170.0
+        },
+        {
+          "start": 170.0,
+          "end": 175.0
+        },
+        {
+          "start": 175.0,
+          "end": 180.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 0,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C02",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 180.0,
+        "end": 185.0
+      },
+      {
+        "start": 185.0,
+        "end": 190.0
+      },
+      {
+        "start": 190.0,
+        "end": 195.0
+      },
+      {
+        "start": 195.0,
+        "end": 200.0
+      },
+      {
+        "start": 200.0,
+        "end": 205.0
+      },
+      {
+        "start": 205.0,
+        "end": 210.0
+      },
+      {
+        "start": 210.0,
+        "end": 215.0
+      },
+      {
+        "start": 215.0,
+        "end": 220.0
+      },
+      {
+        "start": 220.0,
+        "end": 225.0
+      },
+      {
+        "start": 225.0,
+        "end": 230.0
+      },
+      {
+        "start": 230.0,
+        "end": 235.0
+      },
+      {
+        "start": 235.0,
+        "end": 240.0
+      },
+      {
+        "start": 240.0,
+        "end": 245.0
+      },
+      {
+        "start": 245.0,
+        "end": 250.0
+      },
+      {
+        "start": 250.0,
+        "end": 255.0
+      },
+      {
+        "start": 255.0,
+        "end": 260.0
+      },
+      {
+        "start": 260.0,
+        "end": 265.0
+      },
+      {
+        "start": 265.0,
+        "end": 270.0
+      },
+      {
+        "start": 270.0,
+        "end": 275.0
+      },
+      {
+        "start": 275.0,
+        "end": 280.0
+      },
+      {
+        "start": 280.0,
+        "end": 285.0
+      },
+      {
+        "start": 285.0,
+        "end": 290.0
+      },
+      {
+        "start": 290.0,
+        "end": 295.0
+      },
+      {
+        "start": 295.0,
+        "end": 300.0
+      },
+      {
+        "start": 300.0,
+        "end": 305.0
+      },
+      {
+        "start": 305.0,
+        "end": 310.0
+      },
+      {
+        "start": 310.0,
+        "end": 315.0
+      },
+      {
+        "start": 315.0,
+        "end": 320.0
+      },
+      {
+        "start": 320.0,
+        "end": 325.0
+      },
+      {
+        "start": 325.0,
+        "end": 330.0
+      },
+      {
+        "start": 330.0,
+        "end": 335.0
+      },
+      {
+        "start": 335.0,
+        "end": 340.0
+      },
+      {
+        "start": 340.0,
+        "end": 345.0
+      },
+      {
+        "start": 345.0,
+        "end": 350.0
+      },
+      {
+        "start": 350.0,
+        "end": 355.0
+      },
+      {
+        "start": 355.0,
+        "end": 360.0
+      }
+    ],
+    "text": "After this invitation goes to collaborator 2 and they need to accept it. Steps for Collaborator 2 are: \u2705 1. Set Up Git and GitHub In git bash git config --global user.name \"Your Name\" git config --global user.email you@example.com Note : run $ git remote -v If origin  git@github.com:OrgYOG/commonREPO.git (fetch) origin  git@github.com:OrgYOG/commonREPO.git (push) then $ git remote \u2013v // Note now, not connected to any remote \u2705 2. Goto Git hub and copy url of shared repository by collaborator 1 Copy url (option 1) \u2705 3. Clone the Repository Get a local copy of the repo: In git bash git clone https://github.com/username/repository-name.git cd repository-name \u2705 4. Create a Branch for Your Work Always work on a separate branch: In git bash git checkout -b feature/your-feature-name \u2705 5. Make Changes and Commit Edit files, then stage and commit your changes: In git bash to existing file / new file git add . git commit -m \"Add a clear and descriptive commit message\" \u2705 6. Push Your Branch to GitHub In git bash git push origin feature/your-feature-name \u2705 7.  Keep Your Branch Updated (has to be done by owner collaborator 1) Before making new changes: In git bash git checkout main git pull origin main git checkout feature/your-new-feature",
+    "material_refs": [],
+    "topic_candidates": [
+      "commit",
+      "branch"
+    ],
+    "evidence": {
+      "evidence_id": "E_C02",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 180.0,
+          "end": 185.0
+        },
+        {
+          "start": 185.0,
+          "end": 190.0
+        },
+        {
+          "start": 190.0,
+          "end": 195.0
+        },
+        {
+          "start": 195.0,
+          "end": 200.0
+        },
+        {
+          "start": 200.0,
+          "end": 205.0
+        },
+        {
+          "start": 205.0,
+          "end": 210.0
+        },
+        {
+          "start": 210.0,
+          "end": 215.0
+        },
+        {
+          "start": 215.0,
+          "end": 220.0
+        },
+        {
+          "start": 220.0,
+          "end": 225.0
+        },
+        {
+          "start": 225.0,
+          "end": 230.0
+        },
+        {
+          "start": 230.0,
+          "end": 235.0
+        },
+        {
+          "start": 235.0,
+          "end": 240.0
+        },
+        {
+          "start": 240.0,
+          "end": 245.0
+        },
+        {
+          "start": 245.0,
+          "end": 250.0
+        },
+        {
+          "start": 250.0,
+          "end": 255.0
+        },
+        {
+          "start": 255.0,
+          "end": 260.0
+        },
+        {
+          "start": 260.0,
+          "end": 265.0
+        },
+        {
+          "start": 265.0,
+          "end": 270.0
+        },
+        {
+          "start": 270.0,
+          "end": 275.0
+        },
+        {
+          "start": 275.0,
+          "end": 280.0
+        },
+        {
+          "start": 280.0,
+          "end": 285.0
+        },
+        {
+          "start": 285.0,
+          "end": 290.0
+        },
+        {
+          "start": 290.0,
+          "end": 295.0
+        },
+        {
+          "start": 295.0,
+          "end": 300.0
+        },
+        {
+          "start": 300.0,
+          "end": 305.0
+        },
+        {
+          "start": 305.0,
+          "end": 310.0
+        },
+        {
+          "start": 310.0,
+          "end": 315.0
+        },
+        {
+          "start": 315.0,
+          "end": 320.0
+        },
+        {
+          "start": 320.0,
+          "end": 325.0
+        },
+        {
+          "start": 325.0,
+          "end": 330.0
+        },
+        {
+          "start": 330.0,
+          "end": 335.0
+        },
+        {
+          "start": 335.0,
+          "end": 340.0
+        },
+        {
+          "start": 340.0,
+          "end": 345.0
+        },
+        {
+          "start": 345.0,
+          "end": 350.0
+        },
+        {
+          "start": 350.0,
+          "end": 355.0
+        },
+        {
+          "start": 355.0,
+          "end": 360.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 8,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C03",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 360.0,
+        "end": 365.0
+      },
+      {
+        "start": 365.0,
+        "end": 370.0
+      },
+      {
+        "start": 370.0,
+        "end": 375.0
+      },
+      {
+        "start": 375.0,
+        "end": 380.0
+      },
+      {
+        "start": 380.0,
+        "end": 385.0
+      },
+      {
+        "start": 385.0,
+        "end": 390.0
+      },
+      {
+        "start": 390.0,
+        "end": 395.0
+      },
+      {
+        "start": 395.0,
+        "end": 400.0
+      },
+      {
+        "start": 400.0,
+        "end": 405.0
+      },
+      {
+        "start": 405.0,
+        "end": 410.0
+      },
+      {
+        "start": 410.0,
+        "end": 415.0
+      },
+      {
+        "start": 415.0,
+        "end": 420.0
+      },
+      {
+        "start": 420.0,
+        "end": 425.0
+      },
+      {
+        "start": 425.0,
+        "end": 430.0
+      },
+      {
+        "start": 430.0,
+        "end": 435.0
+      },
+      {
+        "start": 435.0,
+        "end": 440.0
+      },
+      {
+        "start": 440.0,
+        "end": 445.0
+      },
+      {
+        "start": 445.0,
+        "end": 450.0
+      },
+      {
+        "start": 450.0,
+        "end": 455.0
+      },
+      {
+        "start": 455.0,
+        "end": 460.0
+      },
+      {
+        "start": 460.0,
+        "end": 465.0
+      },
+      {
+        "start": 465.0,
+        "end": 470.0
+      },
+      {
+        "start": 470.0,
+        "end": 475.0
+      },
+      {
+        "start": 475.0,
+        "end": 480.0
+      },
+      {
+        "start": 480.0,
+        "end": 485.0
+      },
+      {
+        "start": 485.0,
+        "end": 490.0
+      },
+      {
+        "start": 490.0,
+        "end": 495.0
+      },
+      {
+        "start": 495.0,
+        "end": 500.0
+      },
+      {
+        "start": 500.0,
+        "end": 505.0
+      },
+      {
+        "start": 505.0,
+        "end": 510.0
+      },
+      {
+        "start": 510.0,
+        "end": 515.0
+      },
+      {
+        "start": 515.0,
+        "end": 520.0
+      },
+      {
+        "start": 520.0,
+        "end": 525.0
+      },
+      {
+        "start": 525.0,
+        "end": 530.0
+      },
+      {
+        "start": 530.0,
+        "end": 535.0
+      },
+      {
+        "start": 535.0,
+        "end": 540.0
+      }
+    ],
+    "text": "git merge main Exercise on Fork If you're contributing to an existing project:  (in public repository  say of Person1) Note: Person 1means other public repository already exit that is pushed by person 1. Person 2 is you who want to contribute. Note: Following steps needed if you forked from any public repository to contribute to Person 1 1. Go to: `https://github.com/Person1/awesome-project` (of Person 1) 2. Click the \u201cFork\u201d button at the top-right of the page. 3. GitHub will create a copy of that repository in your account (say Person2): https://github.com/your-username/awesome-project as https://github.com/Person2/awesome-project 4. Clone your forked repo: in bash (by Person 2) git clone https://github.com/your-username/awesome-project Make changes. git add . git Commit git push origin main Create or  a \u201cpull request\u201d back to the original repo (`othername/awesome-project) to suggest your changes. (by Person 2) Click at top \u201cPull request\u201d or click on  at top or click on repo \u201cawesome-project\u201d then click on Contribute at top then click on \u201copen pull request\u201d Add title and Add a description if you want. Below it shows what changes you made to file Click on Create pull request Now you see on page message \u201cNO conflicts with base branch\u201d \u2705 6.  By Person 1 Pull requests 1  appears at top in git hub account of Person 1 Clicking on \u201cPull requests\u201d shows: Commit by Person 2. Click on this commit message. It redirect to repository (say awesome-project) Click on \u201cFile changed 1\u201d to see changes made by Person 2 Click on \u201cReview Changes\u201d, add review and  click on \u201csubmit review\u201d Click on Merge pull request Confirm merge Note:  It displays \u201cPull request Successfully merged and closed\u201d to Person 1 Now go to Code and see changes have been merged to the file. In commit it shows: Commit by Person 2 Merge commit by Person 1",
+    "material_refs": [],
+    "topic_candidates": [
+      "branch",
+      "commit"
+    ],
+    "evidence": {
+      "evidence_id": "E_C03",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 360.0,
+          "end": 365.0
+        },
+        {
+          "start": 365.0,
+          "end": 370.0
+        },
+        {
+          "start": 370.0,
+          "end": 375.0
+        },
+        {
+          "start": 375.0,
+          "end": 380.0
+        },
+        {
+          "start": 380.0,
+          "end": 385.0
+        },
+        {
+          "start": 385.0,
+          "end": 390.0
+        },
+        {
+          "start": 390.0,
+          "end": 395.0
+        },
+        {
+          "start": 395.0,
+          "end": 400.0
+        },
+        {
+          "start": 400.0,
+          "end": 405.0
+        },
+        {
+          "start": 405.0,
+          "end": 410.0
+        },
+        {
+          "start": 410.0,
+          "end": 415.0
+        },
+        {
+          "start": 415.0,
+          "end": 420.0
+        },
+        {
+          "start": 420.0,
+          "end": 425.0
+        },
+        {
+          "start": 425.0,
+          "end": 430.0
+        },
+        {
+          "start": 430.0,
+          "end": 435.0
+        },
+        {
+          "start": 435.0,
+          "end": 440.0
+        },
+        {
+          "start": 440.0,
+          "end": 445.0
+        },
+        {
+          "start": 445.0,
+          "end": 450.0
+        },
+        {
+          "start": 450.0,
+          "end": 455.0
+        },
+        {
+          "start": 455.0,
+          "end": 460.0
+        },
+        {
+          "start": 460.0,
+          "end": 465.0
+        },
+        {
+          "start": 465.0,
+          "end": 470.0
+        },
+        {
+          "start": 470.0,
+          "end": 475.0
+        },
+        {
+          "start": 475.0,
+          "end": 480.0
+        },
+        {
+          "start": 480.0,
+          "end": 485.0
+        },
+        {
+          "start": 485.0,
+          "end": 490.0
+        },
+        {
+          "start": 490.0,
+          "end": 495.0
+        },
+        {
+          "start": 495.0,
+          "end": 500.0
+        },
+        {
+          "start": 500.0,
+          "end": 505.0
+        },
+        {
+          "start": 505.0,
+          "end": 510.0
+        },
+        {
+          "start": 510.0,
+          "end": 515.0
+        },
+        {
+          "start": 515.0,
+          "end": 520.0
+        },
+        {
+          "start": 520.0,
+          "end": 525.0
+        },
+        {
+          "start": 525.0,
+          "end": 530.0
+        },
+        {
+          "start": 530.0,
+          "end": 535.0
+        },
+        {
+          "start": 535.0,
+          "end": 540.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 7,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C04",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 540.0,
+        "end": 545.0
+      },
+      {
+        "start": 545.0,
+        "end": 550.0
+      },
+      {
+        "start": 550.0,
+        "end": 555.0
+      },
+      {
+        "start": 555.0,
+        "end": 560.0
+      },
+      {
+        "start": 560.0,
+        "end": 565.0
+      },
+      {
+        "start": 565.0,
+        "end": 570.0
+      },
+      {
+        "start": 570.0,
+        "end": 575.0
+      },
+      {
+        "start": 575.0,
+        "end": 580.0
+      },
+      {
+        "start": 580.0,
+        "end": 585.0
+      },
+      {
+        "start": 585.0,
+        "end": 590.0
+      },
+      {
+        "start": 590.0,
+        "end": 595.0
+      },
+      {
+        "start": 595.0,
+        "end": 600.0
+      },
+      {
+        "start": 600.0,
+        "end": 605.0
+      },
+      {
+        "start": 605.0,
+        "end": 610.0
+      },
+      {
+        "start": 610.0,
+        "end": 615.0
+      },
+      {
+        "start": 615.0,
+        "end": 620.0
+      },
+      {
+        "start": 620.0,
+        "end": 625.0
+      },
+      {
+        "start": 625.0,
+        "end": 630.0
+      },
+      {
+        "start": 630.0,
+        "end": 635.0
+      },
+      {
+        "start": 635.0,
+        "end": 640.0
+      },
+      {
+        "start": 640.0,
+        "end": 645.0
+      },
+      {
+        "start": 645.0,
+        "end": 650.0
+      },
+      {
+        "start": 650.0,
+        "end": 655.0
+      },
+      {
+        "start": 655.0,
+        "end": 660.0
+      },
+      {
+        "start": 660.0,
+        "end": 665.0
+      },
+      {
+        "start": 665.0,
+        "end": 670.0
+      },
+      {
+        "start": 670.0,
+        "end": 675.0
+      },
+      {
+        "start": 675.0,
+        "end": 680.0
+      },
+      {
+        "start": 680.0,
+        "end": 685.0
+      },
+      {
+        "start": 685.0,
+        "end": 690.0
+      },
+      {
+        "start": 690.0,
+        "end": 695.0
+      },
+      {
+        "start": 695.0,
+        "end": 700.0
+      },
+      {
+        "start": 700.0,
+        "end": 705.0
+      },
+      {
+        "start": 705.0,
+        "end": 710.0
+      },
+      {
+        "start": 710.0,
+        "end": 715.0
+      },
+      {
+        "start": 715.0,
+        "end": 720.0
+      }
+    ],
+    "text": "\u2705 7.  Merge the Pull Request (has to be done by both collaborators) Once approved: The repo owner can click Merge pull request \u2705 8.  Keep Your Branch Updated (has to be done by Person 1 and Person 2) Before making new changes: In git bash git checkout main git pull origin main git checkout feature/your-new-feature git merge main cd repository-name To resolve conflicts when collaborating on same part of code. Resolving conflicts when collaborating with GitHub (or Git in general) is a normal part of team development. Conflicts happen when two people make changes to the same part of the code, and Git doesn't know which version to keep. \u2705 Steps to Resolve a Conflict 1. See Which Files Are in Conflict (Say f1.txt) In git bash git status Conflicted files will be marked like: In git bash both modified:  (Say f1.txt) Open the File and Look for Conflict Markers by clicking on Click on Resolve Conflict Git will insert conflict markers in the file like this: def greet(): <<<<<<< HEAD print(\"Hello from First collaborator \") ======= print(\"Hello from second collaborator \") >>>>>>> feature/second collaborator branch This shows the two conflicting changes: HEAD is your version The section below ======= is the other branch\u2019s version or second collaborator branch version 3. Edit the File to Fix the Conflict Choose one version or combine them: def greet(): print(\"Hello from First collaborator \")",
+    "material_refs": [],
+    "topic_candidates": [
+      "branch"
+    ],
+    "evidence": {
+      "evidence_id": "E_C04",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 540.0,
+          "end": 545.0
+        },
+        {
+          "start": 545.0,
+          "end": 550.0
+        },
+        {
+          "start": 550.0,
+          "end": 555.0
+        },
+        {
+          "start": 555.0,
+          "end": 560.0
+        },
+        {
+          "start": 560.0,
+          "end": 565.0
+        },
+        {
+          "start": 565.0,
+          "end": 570.0
+        },
+        {
+          "start": 570.0,
+          "end": 575.0
+        },
+        {
+          "start": 575.0,
+          "end": 580.0
+        },
+        {
+          "start": 580.0,
+          "end": 585.0
+        },
+        {
+          "start": 585.0,
+          "end": 590.0
+        },
+        {
+          "start": 590.0,
+          "end": 595.0
+        },
+        {
+          "start": 595.0,
+          "end": 600.0
+        },
+        {
+          "start": 600.0,
+          "end": 605.0
+        },
+        {
+          "start": 605.0,
+          "end": 610.0
+        },
+        {
+          "start": 610.0,
+          "end": 615.0
+        },
+        {
+          "start": 615.0,
+          "end": 620.0
+        },
+        {
+          "start": 620.0,
+          "end": 625.0
+        },
+        {
+          "start": 625.0,
+          "end": 630.0
+        },
+        {
+          "start": 630.0,
+          "end": 635.0
+        },
+        {
+          "start": 635.0,
+          "end": 640.0
+        },
+        {
+          "start": 640.0,
+          "end": 645.0
+        },
+        {
+          "start": 645.0,
+          "end": 650.0
+        },
+        {
+          "start": 650.0,
+          "end": 655.0
+        },
+        {
+          "start": 655.0,
+          "end": 660.0
+        },
+        {
+          "start": 660.0,
+          "end": 665.0
+        },
+        {
+          "start": 665.0,
+          "end": 670.0
+        },
+        {
+          "start": 670.0,
+          "end": 675.0
+        },
+        {
+          "start": 675.0,
+          "end": 680.0
+        },
+        {
+          "start": 680.0,
+          "end": 685.0
+        },
+        {
+          "start": 685.0,
+          "end": 690.0
+        },
+        {
+          "start": 690.0,
+          "end": 695.0
+        },
+        {
+          "start": 695.0,
+          "end": 700.0
+        },
+        {
+          "start": 700.0,
+          "end": 705.0
+        },
+        {
+          "start": 705.0,
+          "end": 710.0
+        },
+        {
+          "start": 710.0,
+          "end": 715.0
+        },
+        {
+          "start": 715.0,
+          "end": 720.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 4,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C05",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 720.0,
+        "end": 725.0
+      },
+      {
+        "start": 725.0,
+        "end": 730.0
+      },
+      {
+        "start": 730.0,
+        "end": 735.0
+      },
+      {
+        "start": 735.0,
+        "end": 740.0
+      },
+      {
+        "start": 740.0,
+        "end": 745.0
+      },
+      {
+        "start": 745.0,
+        "end": 750.0
+      },
+      {
+        "start": 750.0,
+        "end": 755.0
+      },
+      {
+        "start": 755.0,
+        "end": 760.0
+      },
+      {
+        "start": 760.0,
+        "end": 765.0
+      },
+      {
+        "start": 765.0,
+        "end": 770.0
+      },
+      {
+        "start": 770.0,
+        "end": 775.0
+      },
+      {
+        "start": 775.0,
+        "end": 780.0
+      },
+      {
+        "start": 780.0,
+        "end": 785.0
+      },
+      {
+        "start": 785.0,
+        "end": 790.0
+      },
+      {
+        "start": 790.0,
+        "end": 795.0
+      },
+      {
+        "start": 795.0,
+        "end": 800.0
+      },
+      {
+        "start": 800.0,
+        "end": 805.0
+      },
+      {
+        "start": 805.0,
+        "end": 810.0
+      },
+      {
+        "start": 810.0,
+        "end": 815.0
+      },
+      {
+        "start": 815.0,
+        "end": 820.0
+      },
+      {
+        "start": 820.0,
+        "end": 825.0
+      },
+      {
+        "start": 825.0,
+        "end": 830.0
+      },
+      {
+        "start": 830.0,
+        "end": 835.0
+      },
+      {
+        "start": 835.0,
+        "end": 840.0
+      },
+      {
+        "start": 840.0,
+        "end": 845.0
+      },
+      {
+        "start": 845.0,
+        "end": 850.0
+      },
+      {
+        "start": 850.0,
+        "end": 855.0
+      },
+      {
+        "start": 855.0,
+        "end": 860.0
+      },
+      {
+        "start": 860.0,
+        "end": 865.0
+      },
+      {
+        "start": 865.0,
+        "end": 870.0
+      },
+      {
+        "start": 870.0,
+        "end": 875.0
+      },
+      {
+        "start": 875.0,
+        "end": 880.0
+      },
+      {
+        "start": 880.0,
+        "end": 885.0
+      },
+      {
+        "start": 885.0,
+        "end": 890.0
+      },
+      {
+        "start": 890.0,
+        "end": 895.0
+      },
+      {
+        "start": 895.0,
+        "end": 900.0
+      }
+    ],
+    "text": "print(\"Hello from second collaborator \") Then delete all the conflict markers (<<<<<<<, =======, >>>>>>>). 4. Mark the Conflict as Resolved Once you've edited and saved the file: git add f1.txt 5. Complete the Merge or Pull git commit    # Only needed if you're merging Or if you're rebasing: git rebase --continue \u26a0\ufe0f If You Want to Abort the Merge If it gets messy and you want to cancel: git merge --abort Here below screen shot shows conflict raised when collaborator 1 wanted to merge changes to same line that already collaborator 2 added the line of code at that line  in same file but in their own branch. Example : Merge Conflict \u2013 Changes made to a file by two different users leads to merge conflict as below. Say I am collaborator 2, now Accept invitation from collaborator 1 Next goes to Shared repository by collaborator 1 (say abcrepo) Now open Git bash and clone the shared repo as below steps Step 1: first connect to this \u201cabcrepo\u201d to local repository by clone Now change directory to \u201cabcrepo\u201d Switch to branch feature-abc Now add line in README.md file Now git add, commit Now see status and push to remote branch feature-abc Now go to Github and refresh or click on \u201cabcrepo\u201d, you can see  README.md Step 2: Now collaborator 2 adding line in README.md, save, git add, commit,  push. No conflicts Step 3: Also collaborator 1 adding line in README.md at same line collaborator 2 added, then git add, commit, push gives merge conflict. NOTE IMPORTANT : Now collaborator 2 has to give git pull command then open conflicting file to see conflict markers. Now Edit the File to Fix the Conflict by keeping either or both collaborator changes and remove conflict markers. Add file, commit, and push. To create and apply patch A patch in Git is\u00a0a text file that represents changes between two sets of files, or commits. It's essentially the output of the git diff command, packaged in a format that can be applied to another set of files. Steps: Goto github and take public project url Clone into git bash",
+    "material_refs": [],
+    "topic_candidates": [
+      "branch",
+      "commit"
+    ],
+    "evidence": {
+      "evidence_id": "E_C05",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 720.0,
+          "end": 725.0
+        },
+        {
+          "start": 725.0,
+          "end": 730.0
+        },
+        {
+          "start": 730.0,
+          "end": 735.0
+        },
+        {
+          "start": 735.0,
+          "end": 740.0
+        },
+        {
+          "start": 740.0,
+          "end": 745.0
+        },
+        {
+          "start": 745.0,
+          "end": 750.0
+        },
+        {
+          "start": 750.0,
+          "end": 755.0
+        },
+        {
+          "start": 755.0,
+          "end": 760.0
+        },
+        {
+          "start": 760.0,
+          "end": 765.0
+        },
+        {
+          "start": 765.0,
+          "end": 770.0
+        },
+        {
+          "start": 770.0,
+          "end": 775.0
+        },
+        {
+          "start": 775.0,
+          "end": 780.0
+        },
+        {
+          "start": 780.0,
+          "end": 785.0
+        },
+        {
+          "start": 785.0,
+          "end": 790.0
+        },
+        {
+          "start": 790.0,
+          "end": 795.0
+        },
+        {
+          "start": 795.0,
+          "end": 800.0
+        },
+        {
+          "start": 800.0,
+          "end": 805.0
+        },
+        {
+          "start": 805.0,
+          "end": 810.0
+        },
+        {
+          "start": 810.0,
+          "end": 815.0
+        },
+        {
+          "start": 815.0,
+          "end": 820.0
+        },
+        {
+          "start": 820.0,
+          "end": 825.0
+        },
+        {
+          "start": 825.0,
+          "end": 830.0
+        },
+        {
+          "start": 830.0,
+          "end": 835.0
+        },
+        {
+          "start": 835.0,
+          "end": 840.0
+        },
+        {
+          "start": 840.0,
+          "end": 845.0
+        },
+        {
+          "start": 845.0,
+          "end": 850.0
+        },
+        {
+          "start": 850.0,
+          "end": 855.0
+        },
+        {
+          "start": 855.0,
+          "end": 860.0
+        },
+        {
+          "start": 860.0,
+          "end": 865.0
+        },
+        {
+          "start": 865.0,
+          "end": 870.0
+        },
+        {
+          "start": 870.0,
+          "end": 875.0
+        },
+        {
+          "start": 875.0,
+          "end": 880.0
+        },
+        {
+          "start": 880.0,
+          "end": 885.0
+        },
+        {
+          "start": 885.0,
+          "end": 890.0
+        },
+        {
+          "start": 890.0,
+          "end": 895.0
+        },
+        {
+          "start": 895.0,
+          "end": 900.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 8,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": true,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": true,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C06",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 900.0,
+        "end": 905.0
+      },
+      {
+        "start": 905.0,
+        "end": 910.0
+      },
+      {
+        "start": 910.0,
+        "end": 915.0
+      },
+      {
+        "start": 915.0,
+        "end": 920.0
+      },
+      {
+        "start": 920.0,
+        "end": 925.0
+      },
+      {
+        "start": 925.0,
+        "end": 930.0
+      },
+      {
+        "start": 930.0,
+        "end": 935.0
+      },
+      {
+        "start": 935.0,
+        "end": 940.0
+      },
+      {
+        "start": 940.0,
+        "end": 945.0
+      },
+      {
+        "start": 945.0,
+        "end": 950.0
+      },
+      {
+        "start": 950.0,
+        "end": 955.0
+      },
+      {
+        "start": 955.0,
+        "end": 960.0
+      },
+      {
+        "start": 960.0,
+        "end": 965.0
+      },
+      {
+        "start": 965.0,
+        "end": 970.0
+      },
+      {
+        "start": 970.0,
+        "end": 975.0
+      },
+      {
+        "start": 975.0,
+        "end": 980.0
+      },
+      {
+        "start": 980.0,
+        "end": 985.0
+      },
+      {
+        "start": 985.0,
+        "end": 990.0
+      },
+      {
+        "start": 990.0,
+        "end": 995.0
+      },
+      {
+        "start": 995.0,
+        "end": 1000.0
+      },
+      {
+        "start": 1000.0,
+        "end": 1005.0
+      },
+      {
+        "start": 1005.0,
+        "end": 1010.0
+      },
+      {
+        "start": 1010.0,
+        "end": 1015.0
+      },
+      {
+        "start": 1015.0,
+        "end": 1020.0
+      },
+      {
+        "start": 1020.0,
+        "end": 1025.0
+      },
+      {
+        "start": 1025.0,
+        "end": 1030.0
+      },
+      {
+        "start": 1030.0,
+        "end": 1035.0
+      },
+      {
+        "start": 1035.0,
+        "end": 1040.0
+      },
+      {
+        "start": 1040.0,
+        "end": 1045.0
+      },
+      {
+        "start": 1045.0,
+        "end": 1050.0
+      },
+      {
+        "start": 1050.0,
+        "end": 1055.0
+      },
+      {
+        "start": 1055.0,
+        "end": 1060.0
+      },
+      {
+        "start": 1060.0,
+        "end": 1065.0
+      },
+      {
+        "start": 1065.0,
+        "end": 1070.0
+      },
+      {
+        "start": 1070.0,
+        "end": 1075.0
+      },
+      {
+        "start": 1075.0,
+        "end": 1080.0
+      }
+    ],
+    "text": "Now open file and edit it, add, commit Run git log Create patch with commit hash code as: git format-patch -1 commit-hash-code This creates 0001-commit-from-cloned-person.patch file. Note: git format-patch -1 <commit-hash> -1 means \"create a patch from 1 commit\" This creates a .patch file for a single commit. Example: git format-patch -1 abc1234 This creates a file like 0001-Your-commit-message.patch To create patches for the last 3 commits: git format-patch -3 or Create patches from multiple commits git format-patch <base_commit>..HEAD Get the path of above patch file and email or what\u2019s up to the remote owner of file. Once the remote owner gets the patch file 0001-commit-from-cloned-person.patch next the owner need to apply patch file in his git bash  using git command below: Syntax: git apply my-changes.patch Or, if it's a patch made by git format-patch, use: git am 0001-Your-commit-message.patch git apply 0001-Your-commit-message.patch 4. Scenario based questions on working with remote repository 1. You've cloned a repository and made some changes to a local branch. Now you want to push these changes to the remote repository, but you're getting an error saying \"rejected - non-fast-forward.\" How would you resolve this? 2.  You\u2019ve been working on a feature branch, and now you need to push it to the remote repository. However, the remote repository already has a main branch. How do you push your feature branch without affecting the main branch? 3. You cloned a remote repository, but after a while, the repository\u2019s structure changed and new branches were added. How would you keep your local repository updated with the latest changes from the remote repository? 4. A colleague has pushed some changes to the main branch, but you have local changes in the same branch. You want to pull their changes, but you want to avoid merge conflicts. What steps would you take? 5. You accidentally pushed a sensitive file (e.g., API keys) to the remote repository. How would you fix this situation? 6. You\u2019re working on a feature branch, and your manager requests that you integrate the latest changes from main into your feature branch. What steps would you take? 7. You cloned a remote repository, but later you find that you need to push your changes to a different remote repository. How do you configure your local repository to push to this new remote? 8. After running git pull, you notice that your local branch is behind the remote branch. How would you proceed to bring your local branch up to date without losing your local changes? 9. You\u2019re working on a project with multiple collaborators, and you notice that your local changes conflict with changes that have been pushed by others. How would you resolve the conflicts? 10. You\u2019ve pushed a feature branch to a remote repository, but now you need to delete the branch from the remote. How would you do that? Scenario: You are working on a collaborative project hosted on GitHub with a team of four developers. The main branch is main, and each developer works on their own feature branches. You are assigned to implement a new UI component in a branch called feature/ui-update. Meanwhile, another team member has made a critical bug fix and pushed it directly to the main branch. When you try to push your changes, your push fails due to upstream changes.",
+    "material_refs": [],
+    "topic_candidates": [
+      "commit"
+    ],
+    "evidence": {
+      "evidence_id": "E_C06",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 900.0,
+          "end": 905.0
+        },
+        {
+          "start": 905.0,
+          "end": 910.0
+        },
+        {
+          "start": 910.0,
+          "end": 915.0
+        },
+        {
+          "start": 915.0,
+          "end": 920.0
+        },
+        {
+          "start": 920.0,
+          "end": 925.0
+        },
+        {
+          "start": 925.0,
+          "end": 930.0
+        },
+        {
+          "start": 930.0,
+          "end": 935.0
+        },
+        {
+          "start": 935.0,
+          "end": 940.0
+        },
+        {
+          "start": 940.0,
+          "end": 945.0
+        },
+        {
+          "start": 945.0,
+          "end": 950.0
+        },
+        {
+          "start": 950.0,
+          "end": 955.0
+        },
+        {
+          "start": 955.0,
+          "end": 960.0
+        },
+        {
+          "start": 960.0,
+          "end": 965.0
+        },
+        {
+          "start": 965.0,
+          "end": 970.0
+        },
+        {
+          "start": 970.0,
+          "end": 975.0
+        },
+        {
+          "start": 975.0,
+          "end": 980.0
+        },
+        {
+          "start": 980.0,
+          "end": 985.0
+        },
+        {
+          "start": 985.0,
+          "end": 990.0
+        },
+        {
+          "start": 990.0,
+          "end": 995.0
+        },
+        {
+          "start": 995.0,
+          "end": 1000.0
+        },
+        {
+          "start": 1000.0,
+          "end": 1005.0
+        },
+        {
+          "start": 1005.0,
+          "end": 1010.0
+        },
+        {
+          "start": 1010.0,
+          "end": 1015.0
+        },
+        {
+          "start": 1015.0,
+          "end": 1020.0
+        },
+        {
+          "start": 1020.0,
+          "end": 1025.0
+        },
+        {
+          "start": 1025.0,
+          "end": 1030.0
+        },
+        {
+          "start": 1030.0,
+          "end": 1035.0
+        },
+        {
+          "start": 1035.0,
+          "end": 1040.0
+        },
+        {
+          "start": 1040.0,
+          "end": 1045.0
+        },
+        {
+          "start": 1045.0,
+          "end": 1050.0
+        },
+        {
+          "start": 1050.0,
+          "end": 1055.0
+        },
+        {
+          "start": 1055.0,
+          "end": 1060.0
+        },
+        {
+          "start": 1060.0,
+          "end": 1065.0
+        },
+        {
+          "start": 1065.0,
+          "end": 1070.0
+        },
+        {
+          "start": 1070.0,
+          "end": 1075.0
+        },
+        {
+          "start": 1075.0,
+          "end": 1080.0
+        }
+      ],
+      "dwell_time": 180.0,
+      "repetition_count": 28,
+      "emphasis_markers": [],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": true,
+      "debugging_event": true,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  },
+  {
+    "chunk_id": "C07",
+    "source_type": "NOTES",
+    "time_spans": [
+      {
+        "start": 1080.0,
+        "end": 1085.0
+      },
+      {
+        "start": 1085.0,
+        "end": 1090.0
+      },
+      {
+        "start": 1090.0,
+        "end": 1095.0
+      },
+      {
+        "start": 1095.0,
+        "end": 1100.0
+      },
+      {
+        "start": 1100.0,
+        "end": 1105.0
+      },
+      {
+        "start": 1105.0,
+        "end": 1110.0
+      },
+      {
+        "start": 1110.0,
+        "end": 1115.0
+      },
+      {
+        "start": 1115.0,
+        "end": 1120.0
+      },
+      {
+        "start": 1120.0,
+        "end": 1125.0
+      }
+    ],
+    "text": "Additionally, a teammate has submitted a patch file with a small CSS fix and shared it via email. You need to apply the patch, test it, and merge everything into main without breaking any functionality. 11. What command will you use to bring your local main branch up to date with the remote repository before merging it into your feature branch? 12. How will you update your feature/ui-update branch to reflect the latest changes from main? 13. Which command should you use to attempt pushing your local feature branch again, and what should you do if it fails due to conflicts? 14. How do you apply a .patch file provided by your teammate and include it in your commit history? 15. After successful testing, describe the steps (with commands) to merge your feature branch into main and push it to GitHub. Conclusion: The effective use of Git in student collaborative projects promotes teamwork, organization, and clear communication, allowing students to manage code efficiently and track contributions accurately. By following structured Git workflows and best practices\u2014such as regular commits, feature branching, and resolving conflicts early\u2014students gain valuable experience in real-world development processes. This not only enhances their technical skills but also prepares them for professional teamwork in software engineering, where version control and collaboration are essential. Ultimately, mastering Git empowers students to deliver cleaner, more reliable code and succeed in collaborative environments. SSH KEYS:",
+    "material_refs": [],
+    "topic_candidates": [
+      "branch"
+    ],
+    "evidence": {
+      "evidence_id": "E_C07",
+      "topic_id": null,
+      "time_spans": [
+        {
+          "start": 1080.0,
+          "end": 1085.0
+        },
+        {
+          "start": 1085.0,
+          "end": 1090.0
+        },
+        {
+          "start": 1090.0,
+          "end": 1095.0
+        },
+        {
+          "start": 1095.0,
+          "end": 1100.0
+        },
+        {
+          "start": 1100.0,
+          "end": 1105.0
+        },
+        {
+          "start": 1105.0,
+          "end": 1110.0
+        },
+        {
+          "start": 1110.0,
+          "end": 1115.0
+        },
+        {
+          "start": 1115.0,
+          "end": 1120.0
+        },
+        {
+          "start": 1120.0,
+          "end": 1125.0
+        }
+      ],
+      "dwell_time": 45.0,
+      "repetition_count": 6,
+      "emphasis_markers": [
+        "essential"
+      ],
+      "worked_example": false,
+      "demonstration": false,
+      "student_question": false,
+      "teacher_correction": false,
+      "debugging_event": false,
+      "code_interaction": false,
+      "negative_instruction": false,
+      "source_refs": []
+    }
+  }
+]

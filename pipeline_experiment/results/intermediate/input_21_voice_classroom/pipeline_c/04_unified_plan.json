@@ -1,0 +1,25 @@
+{
+  "input_id": "input_21_voice_classroom",
+  "title": "Classroom Lecture: Live Engineering Exposition (Audio Recording Voice)",
+  "total_requested_questions": 5,
+  "total_available_targets": 1,
+  "assessment_targets": [
+    {
+      "target_id": "TGT_01",
+      "topic_name": "Overview",
+      "what_taught_summary": "The lecture introduces the high-level structure and scope of the live engineering exposition, establishing the foundational context for the subsequent technical procedures.",
+      "why_assessed_pedagogy": "This assessment verifies that students have correctly identified and retained the introductory framework and key terminology presented at the start of the session.",
+      "target_bloom_level": "REMEMBER",
+      "misconception_distractor_hints": [
+        "Confusing the introductory overview with the specific procedural steps detailed later in the lecture.",
+        "Assuming the overview contains specific technical formulas or code examples rather than conceptual definitions.",
+        "Misidentifying the primary purpose of the introduction as providing detailed implementation instructions rather than setting the stage."
+      ],
+      "allocated_question_count": 5,
+      "evidence_chunk_refs": [
+        "E_C01"
+      ],
+      "source_timestamps_or_slides": []
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Data Import and Export",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "REFERENCE_REVIEW",
+    "assessment_goal": "Identify the correct mongoimport command syntax and flags for importing a JSON file into a specific collection, including handling of duplicate keys.",
+    "misconception_target": "Confusing mongoimport with mongorestore or using incorrect flags for JSON parsing (e.g., --jsonArray vs --jsonArray=false).",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_03",
+    "topic_name": "Query Operators and Array Updates",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Construct a correct update operation using the $addToSet operator to ensure unique elements in an array field without duplicating existing values.",
+    "misconception_target": "Using $push instead of $addToSet, leading to duplicate array elements, or misunderstanding the positional operator $ when updating specific array elements.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C06"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Query Operators and Array Updates",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Apply the $in query operator to filter documents where an array field contains any of a specified list of values.",
+    "misconception_target": "Confusing $in with $all (which requires all values to be present) or using $eq incorrectly for array containment checks.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C06"
+    ],
+    "question_type": "NUMERICAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Aggregation Pipeline",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Construct an aggregation pipeline using $match and $group stages to calculate the total sum of a numeric field for documents matching a specific condition.",
+    "misconception_target": "Placing $group before $match, resulting in incorrect aggregation over the entire collection, or using $sum with an incorrect field reference syntax.",
+    "evidence_refs": [
+      "E_C07",
+      "E_C08",
+      "E_C09"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_04",
+    "topic_name": "Aggregation Pipeline",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "LIVE_DEMONSTRATION",
+    "assessment_goal": "Utilize the $unwind stage in an aggregation pipeline to deconstruct an array field into separate documents for subsequent processing.",
+    "misconception_target": "Omitting the $unwind stage, causing array elements to be treated as a single unit in subsequent stages, or misunderstanding the output structure after unwinding.",
+    "evidence_refs": [
+      "E_C07",
+      "E_C08",
+      "E_C09"
+    ],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

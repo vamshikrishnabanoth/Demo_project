@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_08_tapadia_sir_lecture",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Longest Common Prefix Algorithm",
+      "question_count": 2,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Java Memory Management and Garbage Collection",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Hash Map Based Common Prefix Solution",
+      "question_count": 0,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Binary Search for Longest Common Prefix",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Binary Search on Answer Space (Koko Eating Bananas)",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

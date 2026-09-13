@@ -1,0 +1,73 @@
+{
+  "metrics_summary_pipeline_a": {
+    "source_grounding_percentage": 50.0,
+    "source_answerability_percentage": 28.7,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.114,
+    "diversity_score": 0.886,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.0,
+    "average_bloom_level": 2.4,
+    "bloom_distribution": {
+      "UNDERSTAND": 0.4,
+      "APPLY": 0.2,
+      "REMEMBER": 0.2,
+      "ANALYZE": 0.2
+    },
+    "specificity_score": 3.19
+  },
+  "metrics_blueprint_pipeline_b": {
+    "source_grounding_percentage": 24.9,
+    "source_answerability_percentage": 14.6,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.065,
+    "diversity_score": 0.935,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.8,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 2.34
+  },
+  "metrics_unified_pipeline_c": {
+    "source_grounding_percentage": 31.8,
+    "source_answerability_percentage": 20.6,
+    "technical_correctness_rate": 100.0,
+    "redundancy_score": 0.157,
+    "diversity_score": 0.843,
+    "genericness_index": 1.0,
+    "hallucination_rate": 0.8,
+    "average_bloom_level": 2.0,
+    "bloom_distribution": {
+      "UNDERSTAND": 1.0
+    },
+    "specificity_score": 2.53
+  },
+  "blueprint_validity_experiment_b1": {
+    "input_id": "input_05_assignment_mongodb_crud",
+    "topics_grounded_percentage": 50.0,
+    "salience_alignment_score": 3.0,
+    "instructional_act_accuracy": 100.0,
+    "blooms_justification_score": 4.2,
+    "prerequisites_grounded_percentage": 0.0,
+    "overall_validity_percentage": 52.5
+  },
+  "decision": {
+    "winner": "SUMMARY",
+    "composite_score_summary": 0.501,
+    "composite_score_blueprint": 0.328,
+    "quality_delta": -0.173,
+    "rationale": "Summary produced higher composite quality (Q_A=0.501 vs Q_B=0.328, delta=-0.173) on static/factual content."
+  },
+  "three_way_decision": {
+    "winner": "SUMMARY_PIPELINE_A",
+    "q_summary_a": 0.501,
+    "q_blueprint_b": 0.328,
+    "q_unified_c": 0.373,
+    "delta_c_minus_a": -0.128,
+    "delta_c_minus_b": 0.045,
+    "delta_b_minus_a": -0.173,
+    "rationale": "Summary produced highest quality (Q_A=0.501 vs Q_C=0.373, Q_B=0.328)."
+  }
+}

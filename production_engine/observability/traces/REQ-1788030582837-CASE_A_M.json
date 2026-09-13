@@ -1,0 +1,27 @@
+{
+  "request_id": "REQ-1788030582837-CASE_A_M",
+  "timestamp": "2026-08-29T19:10:38Z",
+  "input_id": "CASE_A_MONOLOGUE",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.5,
+  "cache_telemetry": {
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "HIT",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CODE_INTERPRETATION",
+    "THEORETICAL_RATIONALE",
+    "ERROR_DIAGNOSIS",
+    "PARAMETER_CHANGE",
+    "OUTPUT_PREDICTION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 56020.4,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 targets was fulfilled by selecting 5 distinct core concepts from the available pool of 9. To ensure non-redundancy and high quality at a MEDIUM difficulty level, each target was assigned a unique pedagogical facet. This ensures that students are assessed on different cognitive dimensions (e.g., mechanism, rationale, code, error diagnosis, and parameter impact) rather than repeating definition-based questions."
+}

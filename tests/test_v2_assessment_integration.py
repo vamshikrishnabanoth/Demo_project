@@ -3,9 +3,7 @@ import sys
 import asyncio
 
 DEMO_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-STT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Speech_To_Text'))
 sys.path.insert(0, DEMO_DIR)
-sys.path.insert(0, STT_DIR)
 
 from ai_service import generate_assessment_v2, AssessmentV2Request
 

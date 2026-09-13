@@ -1,0 +1,39 @@
+{
+  "plan_id": "PLAN_input_001_voice_ppt_cnn_theory",
+  "input_id": "input_001_voice_ppt_cnn_theory",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Motivation for Convolutional Neural Networks",
+      "question_count": 0,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Inductive Biases in CNNs",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Spatial Output Dimension Calculation",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Receptive Field Stacking and Parameter Efficiency",
+      "question_count": 3,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "plan_id": "PLAN_input_08_tapadia_sir_lecture",
+  "input_id": "input_08_tapadia_sir_lecture",
+  "total_questions": 5,
+  "allocations": [
+    {
+      "topic_id": "TOP_01",
+      "topic_name": "Longest Common Prefix - Binary Search Approach",
+      "question_count": 1,
+      "target_bloom": [
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic_name": "Longest Common Prefix - Brute Force Approach",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic_name": "Java Memory Management",
+      "question_count": 1,
+      "target_bloom": [
+        "ANALYZE"
+      ]
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic_name": "Code Quality & Refactoring",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic_name": "Banana Eating Problem",
+      "question_count": 1,
+      "target_bloom": [
+        "APPLY"
+      ]
+    }
+  ]
+}

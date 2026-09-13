@@ -1,0 +1,52 @@
+[
+  {
+    "topic_id": "TOP_01",
+    "topic_name": "Least Common Multiple (LCM) Computation",
+    "subtopics": [
+      "LCM*GCD = A*B relationship",
+      "Formula LCM = (A*B)/GCD",
+      "Overflow\u2011safe computation order"
+    ],
+    "associated_chunk_ids": [
+      "C01",
+      "C04"
+    ]
+  },
+  {
+    "topic_id": "TOP_02",
+    "topic_name": "Greatest Common Divisor (GCD) via Euclidean Algorithm",
+    "subtopics": [
+      "Iterative remainder method",
+      "Loop condition B != 0",
+      "Termination when B = 0",
+      "Use of modulo operation"
+    ],
+    "associated_chunk_ids": [
+      "C02"
+    ]
+  },
+  {
+    "topic_id": "TOP_03",
+    "topic_name": "Implicit Operand Swapping When A < B",
+    "subtopics": [
+      "Behavior of modulo when dividend < divisor",
+      "Automatic swap without extra variable",
+      "Example A=12, B=18"
+    ],
+    "associated_chunk_ids": [
+      "C03"
+    ]
+  },
+  {
+    "topic_id": "TOP_04",
+    "topic_name": "Integer Overflow Prevention in Multiplication/Division",
+    "subtopics": [
+      "Overflow risk in (A*B)/GCD",
+      "Safe order (A/GCD)*B",
+      "Language specifics C++/Java"
+    ],
+    "associated_chunk_ids": [
+      "C04"
+    ]
+  }
+]

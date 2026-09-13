@@ -1,0 +1,446 @@
+{
+  "model_id": "qwen/qwen3.6-27b",
+  "trials": [
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "Core Methodology (Concept Understanding)",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses concept understanding of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "Core Methodology (Theoretical Rationale)",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses theoretical rationale of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "Core Methodology (Code Interpretation)",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses code interpretation of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "Core Methodology (Output Prediction)",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses output prediction of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "Core Methodology (Error Diagnosis)",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses error diagnosis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "Core Methodology (Boundary Edge Case)",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses boundary edge case of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "Core Methodology (Parameter Change)",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses parameter change of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "Core Methodology (Complexity Analysis)",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses complexity analysis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "Core Methodology (Architectural Comparison)",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses architectural comparison of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "Core Methodology (Practical Application)",
+            "assessment_facet": "PRACTICAL_APPLICATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses practical application of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "PRACTICAL_APPLICATION": 1
+        },
+        "cognitive_distribution": {
+          "ANALYZE": 10
+        },
+        "planning_strategy_notes": "Deterministic fallback expansion"
+      }
+    },
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "Core Methodology (Concept Understanding)",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses concept understanding of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "Core Methodology (Theoretical Rationale)",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses theoretical rationale of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "Core Methodology (Code Interpretation)",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses code interpretation of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "Core Methodology (Output Prediction)",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses output prediction of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "Core Methodology (Error Diagnosis)",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses error diagnosis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "Core Methodology (Boundary Edge Case)",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses boundary edge case of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "Core Methodology (Parameter Change)",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses parameter change of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "Core Methodology (Complexity Analysis)",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses complexity analysis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "Core Methodology (Architectural Comparison)",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses architectural comparison of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "Core Methodology (Practical Application)",
+            "assessment_facet": "PRACTICAL_APPLICATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses practical application of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "PRACTICAL_APPLICATION": 1
+        },
+        "cognitive_distribution": {
+          "ANALYZE": 10
+        },
+        "planning_strategy_notes": "Deterministic fallback expansion"
+      }
+    },
+    {
+      "plan": {
+        "plan_id": "ADAPTIVE_PLAN_DAA_BENCH_HARD",
+        "requested_count": 10,
+        "allocated_count": 10,
+        "requested_difficulty": "HARD",
+        "representation_used": "BLUEPRINT",
+        "targets": [
+          {
+            "target_id": "T01",
+            "concept_name": "Core Methodology (Concept Understanding)",
+            "assessment_facet": "CONCEPT_UNDERSTANDING",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses concept understanding of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T02",
+            "concept_name": "Core Methodology (Theoretical Rationale)",
+            "assessment_facet": "THEORETICAL_RATIONALE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses theoretical rationale of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T03",
+            "concept_name": "Core Methodology (Code Interpretation)",
+            "assessment_facet": "CODE_INTERPRETATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses code interpretation of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T04",
+            "concept_name": "Core Methodology (Output Prediction)",
+            "assessment_facet": "OUTPUT_PREDICTION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses output prediction of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T05",
+            "concept_name": "Core Methodology (Error Diagnosis)",
+            "assessment_facet": "ERROR_DIAGNOSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses error diagnosis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T06",
+            "concept_name": "Core Methodology (Boundary Edge Case)",
+            "assessment_facet": "BOUNDARY_EDGE_CASE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses boundary edge case of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T07",
+            "concept_name": "Core Methodology (Parameter Change)",
+            "assessment_facet": "PARAMETER_CHANGE",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses parameter change of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T08",
+            "concept_name": "Core Methodology (Complexity Analysis)",
+            "assessment_facet": "COMPLEXITY_ANALYSIS",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses complexity analysis of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T09",
+            "concept_name": "Core Methodology (Architectural Comparison)",
+            "assessment_facet": "ARCHITECTURAL_COMPARISON",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses architectural comparison of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          },
+          {
+            "target_id": "T10",
+            "concept_name": "Core Methodology (Practical Application)",
+            "assessment_facet": "PRACTICAL_APPLICATION",
+            "what_taught": "DAA Median of Two Sorted Arrays",
+            "why_assessed": "Assesses practical application of Core Methodology",
+            "cognitive_level": "ANALYZE",
+            "difficulty_level": "HARD",
+            "primary_evidence_id": "E_C01",
+            "supporting_evidence_ids": [],
+            "plausible_misconceptions": []
+          }
+        ],
+        "facet_distribution": {
+          "CONCEPT_UNDERSTANDING": 1,
+          "THEORETICAL_RATIONALE": 1,
+          "CODE_INTERPRETATION": 1,
+          "OUTPUT_PREDICTION": 1,
+          "ERROR_DIAGNOSIS": 1,
+          "BOUNDARY_EDGE_CASE": 1,
+          "PARAMETER_CHANGE": 1,
+          "COMPLEXITY_ANALYSIS": 1,
+          "ARCHITECTURAL_COMPARISON": 1,
+          "PRACTICAL_APPLICATION": 1
+        },
+        "cognitive_distribution": {
+          "ANALYZE": 10
+        },
+        "planning_strategy_notes": "Deterministic fallback expansion"
+      }
+    }
+  ]
+}

@@ -1,0 +1,793 @@
+{
+  "audio_file": "Audio/only voice/Pps jocks.m4a",
+  "title": "Problem Solving & Python Discussion (Short Segment)",
+  "duration": 320.55,
+  "total_segments": 98,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 6.0,
+      "text": "Everyone close your lips, close your lapels, close your mouth.",
+      "avg_logprob": -0.557,
+      "no_speech_prob": 0.099
+    },
+    {
+      "id": 2,
+      "start": 14.0,
+      "end": 21.0,
+      "text": "Look at it, I hope you people are able to understand me.",
+      "avg_logprob": -0.557,
+      "no_speech_prob": 0.099
+    },
+    {
+      "id": 3,
+      "start": 22.0,
+      "end": 24.0,
+      "text": "Are you having any issues, girls?",
+      "avg_logprob": -0.557,
+      "no_speech_prob": 0.099
+    },
+    {
+      "id": 4,
+      "start": 24.0,
+      "end": 26.0,
+      "text": "First time I asked you especially girls.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 5,
+      "start": 26.0,
+      "end": 28.0,
+      "text": "Are you having any issues?",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 6,
+      "start": 28.0,
+      "end": 30.0,
+      "text": "You are not understanding the concepts,",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 7,
+      "start": 31.0,
+      "end": 35.0,
+      "text": "flow, communication, interaction, influence,",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 8,
+      "start": 35.0,
+      "end": 36.0,
+      "text": "difficulty of our part.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 9,
+      "start": 36.0,
+      "end": 38.0,
+      "text": "But there is no issue for girls.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 10,
+      "start": 38.0,
+      "end": 40.0,
+      "text": "Last girl.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 11,
+      "start": 40.0,
+      "end": 42.0,
+      "text": "You said,",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 12,
+      "start": 44.0,
+      "end": 45.0,
+      "text": "boys.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 13,
+      "start": 45.0,
+      "end": 47.0,
+      "text": "No boys.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 14,
+      "start": 48.0,
+      "end": 50.0,
+      "text": "And I called you boys.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 15,
+      "start": 50.0,
+      "end": 52.0,
+      "text": "Boys, boys.",
+      "avg_logprob": -0.602,
+      "no_speech_prob": 0.364
+    },
+    {
+      "id": 16,
+      "start": 53.0,
+      "end": 54.0,
+      "text": "Last.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 17,
+      "start": 58.0,
+      "end": 59.0,
+      "text": "Wait.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 18,
+      "start": 64.0,
+      "end": 65.0,
+      "text": "Good.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 19,
+      "start": 65.0,
+      "end": 67.0,
+      "text": "What do you do with your wrong hand issue?",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 20,
+      "start": 67.0,
+      "end": 68.0,
+      "text": "See, girls.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 21,
+      "start": 68.0,
+      "end": 70.0,
+      "text": "I don't know if there is a problem or problem.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 22,
+      "start": 70.0,
+      "end": 73.0,
+      "text": "I don't know if there is a problem or problem.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 23,
+      "start": 73.0,
+      "end": 74.0,
+      "text": "No issue.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 24,
+      "start": 74.0,
+      "end": 76.0,
+      "text": "Again, there is a problem.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 25,
+      "start": 76.0,
+      "end": 77.0,
+      "text": "Is there a problem?",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 26,
+      "start": 77.0,
+      "end": 79.0,
+      "text": "Shall I go to the same flow?",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 27,
+      "start": 79.0,
+      "end": 81.0,
+      "text": "I'll definitely have a problem.",
+      "avg_logprob": -0.584,
+      "no_speech_prob": 0.083
+    },
+    {
+      "id": 28,
+      "start": 82.0,
+      "end": 84.0,
+      "text": "So, are you comfortable?",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 29,
+      "start": 84.0,
+      "end": 88.0,
+      "text": "If you are comfortable with this 100% assurance I can give you,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 30,
+      "start": 88.0,
+      "end": 91.0,
+      "text": "that you will gain knowledge easily.",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 31,
+      "start": 91.0,
+      "end": 94.0,
+      "text": "But in these, without basic knowledge,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 32,
+      "start": 94.0,
+      "end": 98.0,
+      "text": "if you people start writing your programs for growth,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 33,
+      "start": 98.0,
+      "end": 101.0,
+      "text": "I am making you writing and understanding the problem.",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 34,
+      "start": 101.0,
+      "end": 104.0,
+      "text": "Now, if I write something program over here,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 35,
+      "start": 104.0,
+      "end": 109.0,
+      "text": "sure I can say not 100% I will say 75 to 80%,",
+      "avg_logprob": -0.351,
+      "no_speech_prob": 0.034
+    },
+    {
+      "id": 36,
+      "start": 110.0,
+      "end": 112.0,
+      "text": "80% of the people who are there here,",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 37,
+      "start": 112.0,
+      "end": 115.0,
+      "text": "they will understand what's happening in the program.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 38,
+      "start": 115.0,
+      "end": 119.0,
+      "text": "Till now, that's what RAPO I got with you people.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 39,
+      "start": 119.0,
+      "end": 120.0,
+      "text": "The flow.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 40,
+      "start": 120.0,
+      "end": 122.0,
+      "text": "Now, you are simple with me.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 41,
+      "start": 122.0,
+      "end": 123.0,
+      "text": "I am not ready.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 42,
+      "start": 123.0,
+      "end": 126.0,
+      "text": "I am not ready to worry about my multi-rotol addition.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 43,
+      "start": 126.0,
+      "end": 128.0,
+      "text": "Now, we are entering into the highway.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 44,
+      "start": 128.0,
+      "end": 130.0,
+      "text": "I will be like,",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 45,
+      "start": 130.0,
+      "end": 132.0,
+      "text": "changing the gear,",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 46,
+      "start": 132.0,
+      "end": 134.0,
+      "text": "top gear.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 47,
+      "start": 134.0,
+      "end": 136.0,
+      "text": "But, I will not go with the top gear.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 48,
+      "start": 136.0,
+      "end": 138.0,
+      "text": "I will get medium.",
+      "avg_logprob": -0.417,
+      "no_speech_prob": 0.161
+    },
+    {
+      "id": 49,
+      "start": 138.0,
+      "end": 139.0,
+      "text": "No, you cannot go ahead,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 50,
+      "start": 139.0,
+      "end": 140.0,
+      "text": "no, it's not.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 51,
+      "start": 140.0,
+      "end": 141.0,
+      "text": "So, what we understood,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 52,
+      "start": 141.0,
+      "end": 142.0,
+      "text": "not least,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 53,
+      "start": 142.0,
+      "end": 143.0,
+      "text": "that's why,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 54,
+      "start": 143.0,
+      "end": 144.0,
+      "text": "not highly.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 55,
+      "start": 144.0,
+      "end": 145.0,
+      "text": "In video.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 56,
+      "start": 145.0,
+      "end": 146.0,
+      "text": "Ok?",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 57,
+      "start": 146.0,
+      "end": 147.0,
+      "text": "What we understood?",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 58,
+      "start": 147.0,
+      "end": 148.0,
+      "text": "Yes sir.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 59,
+      "start": 148.0,
+      "end": 149.0,
+      "text": "Are you comfortable?",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 60,
+      "start": 149.0,
+      "end": 150.0,
+      "text": "Yes sir.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 61,
+      "start": 150.0,
+      "end": 151.0,
+      "text": "All right.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 62,
+      "start": 151.0,
+      "end": 152.0,
+      "text": "Fine.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 63,
+      "start": 152.0,
+      "end": 154.0,
+      "text": "My god place,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 64,
+      "start": 154.0,
+      "end": 156.0,
+      "text": "the food feedback from you,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 65,
+      "start": 156.0,
+      "end": 158.0,
+      "text": "that's really hard.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 66,
+      "start": 158.0,
+      "end": 160.0,
+      "text": "I think your feedback,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 67,
+      "start": 160.0,
+      "end": 162.0,
+      "text": "don't take a sense of Business,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 68,
+      "start": 162.0,
+      "end": 163.0,
+      "text": "there is no problem in it,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 69,
+      "start": 163.0,
+      "end": 164.0,
+      "text": "it's law.",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 70,
+      "start": 164.0,
+      "end": 166.0,
+      "text": "First thing you know that food and all,",
+      "avg_logprob": -0.905,
+      "no_speech_prob": 0.11
+    },
+    {
+      "id": 71,
+      "start": 196.0,
+      "end": 203.0,
+      "text": "No one is that same kind of mindset, very difficult to manage all these animals.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 72,
+      "start": 203.0,
+      "end": 210.0,
+      "text": "Human beings go to animals, you don't know that, they are so.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 73,
+      "start": 210.0,
+      "end": 214.0,
+      "text": "Why is he sick at all?",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 74,
+      "start": 214.0,
+      "end": 216.0,
+      "text": "A parotite again.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 75,
+      "start": 216.0,
+      "end": 219.0,
+      "text": "But very brilliant at all.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 76,
+      "start": 219.0,
+      "end": 222.0,
+      "text": "That's why it is ruined other animals.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 77,
+      "start": 222.0,
+      "end": 225.0,
+      "text": "Lion come and stand inside of you.",
+      "avg_logprob": -0.678,
+      "no_speech_prob": 0.403
+    },
+    {
+      "id": 78,
+      "start": 225.0,
+      "end": 227.0,
+      "text": "Human beings have never afraid.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 79,
+      "start": 227.0,
+      "end": 228.0,
+      "text": "You like yellowish, huh?",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 80,
+      "start": 228.0,
+      "end": 230.0,
+      "text": "I like black and white.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 81,
+      "start": 230.0,
+      "end": 232.0,
+      "text": "You like black?",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 82,
+      "start": 232.0,
+      "end": 234.0,
+      "text": "I like black.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 83,
+      "start": 234.0,
+      "end": 235.0,
+      "text": "I like black.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 84,
+      "start": 235.0,
+      "end": 237.0,
+      "text": "But you are intelligent.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 85,
+      "start": 237.0,
+      "end": 238.0,
+      "text": "You like red, huh?",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 86,
+      "start": 238.0,
+      "end": 239.0,
+      "text": "You like black.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 87,
+      "start": 239.0,
+      "end": 241.0,
+      "text": "You like red and white.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 88,
+      "start": 241.0,
+      "end": 243.0,
+      "text": "You like red and white.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 89,
+      "start": 244.0,
+      "end": 246.0,
+      "text": "You like red, huh?",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 90,
+      "start": 246.0,
+      "end": 247.0,
+      "text": "Yes, but it is.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 91,
+      "start": 247.0,
+      "end": 248.0,
+      "text": "You like red?",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 92,
+      "start": 248.0,
+      "end": 250.0,
+      "text": "No.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 93,
+      "start": 250.0,
+      "end": 252.0,
+      "text": "You like red and white.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 94,
+      "start": 252.0,
+      "end": 254.0,
+      "text": "You like red.",
+      "avg_logprob": -0.831,
+      "no_speech_prob": 0.136
+    },
+    {
+      "id": 95,
+      "start": 254.0,
+      "end": 256.0,
+      "text": "You like red, huh?",
+      "avg_logprob": -1.242,
+      "no_speech_prob": 0.055
+    },
+    {
+      "id": 96,
+      "start": 258.0,
+      "end": 259.0,
+      "text": "You like red.",
+      "avg_logprob": -1.242,
+      "no_speech_prob": 0.055
+    },
+    {
+      "id": 97,
+      "start": 319.0,
+      "end": 320.0,
+      "text": "What is that?",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.605
+    },
+    {
+      "id": 98,
+      "start": 320.0,
+      "end": 321.0,
+      "text": "What is that?",
+      "avg_logprob": -0.933,
+      "no_speech_prob": 0.605
+    }
+  ],
+  "text": "Everyone close your lips, close your lapels, close your mouth. Look at it, I hope you people are able to understand me. Are you having any issues, girls? First time I asked you especially girls. Are you having any issues? You are not understanding the concepts, flow, communication, interaction, influence, difficulty of our part. But there is no issue for girls. Last girl. You said, boys. No boys. And I called you boys. Boys, boys. Last. Wait. Good. What do you do with your wrong hand issue? See, girls. I don't know if there is a problem or problem. I don't know if there is a problem or problem. No issue. Again, there is a problem. Is there a problem? Shall I go to the same flow? I'll definitely have a problem. So, are you comfortable? If you are comfortable with this 100% assurance I can give you, that you will gain knowledge easily. But in these, without basic knowledge, if you people start writing your programs for growth, I am making you writing and understanding the problem. Now, if I write something program over here, sure I can say not 100% I will say 75 to 80%, 80% of the people who are there here, they will understand what's happening in the program. Till now, that's what RAPO I got with you people. The flow. Now, you are simple with me. I am not ready. I am not ready to worry about my multi-rotol addition. Now, we are entering into the highway. I will be like, changing the gear, top gear. But, I will not go with the top gear. I will get medium. No, you cannot go ahead, no, it's not. So, what we understood, not least, that's why, not highly. In video. Ok? What we understood? Yes sir. Are you comfortable? Yes sir. All right. Fine. My god place, the food feedback from you, that's really hard. I think your feedback, don't take a sense of Business, there is no problem in it, it's law. First thing you know that food and all, No one is that same kind of mindset, very difficult to manage all these animals. Human beings go to animals, you don't know that, they are so. Why is he sick at all? A parotite again. But very brilliant at all. That's why it is ruined other animals. Lion come and stand inside of you. Human beings have never afraid. You like yellowish, huh? I like black and white. You like black? I like black. I like black. But you are intelligent. You like red, huh? You like black. You like red and white. You like red and white. You like red, huh? Yes, but it is. You like red? No. You like red and white. You like red. You like red, huh? You like red. What is that? What is that?"
+}

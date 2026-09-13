@@ -1,0 +1,24 @@
+{
+  "blueprint_id": "BP_input_17_new_2_deep_dive",
+  "input_id": "input_17_new_2_deep_dive",
+  "topics": [
+    {
+      "topic_id": "T01",
+      "topic": "Overview",
+      "salience_score": 0.5,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "CONCEPTUAL_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Basic course terminology",
+        "General subject context"
+      ],
+      "evidence_refs": [
+        "E_C01"
+      ],
+      "teacher_specificity": "LOW"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_10_binary_trees_audio_ppt",
+  "input_type": "VOICE_PLUS_PPT",
+  "content_style": "THEORY",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "MCQ_01",
+      "question_text": "In the context of binary tree classification, which of the following statements accurately defines a 'full' binary tree?",
+      "option_a": "A binary tree where every level is completely filled with nodes from left to right.",
+      "option_b": "A binary tree where every internal node has exactly two children (left and right).",
+      "option_c": "A binary tree where the number of nodes at level K is always 2^(K-1).",
+      "option_d": "A binary tree where every node has either zero or two children, and the tree is perfectly balanced in height.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the defining characteristic of a full binary tree is that every internal node must have exactly two children. Option A describes a 'complete' or 'perfect' binary tree, not necessarily a full one (a full tree can have gaps if it's not complete, as long as internal nodes have 2 children). Option C is incorrect because the maximum number of nodes at level K is 2^K (assuming root is level 0) or 2^(K-1) if root is level 1, but this is a property of the maximum capacity, not the definition of 'full'. Option D adds an unnecessary constraint of perfect balance; a full binary tree does not need to be perfectly balanced, only that internal nodes have two children.",
+      "target_concept": "Binary Tree Fundamentals and Node Classification",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_01",
+      "what_taught": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08",
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ],
+      "misconception_rationale": "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.; Believing that a node with only one child is valid in a full binary tree.; Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+    },
+    {
+      "question_id": "MCQ_02",
+      "question_text": "For any full binary tree, what is the mathematical relationship between the number of leaf nodes (l) and the number of internal nodes (in)?",
+      "option_a": "l = in",
+      "option_b": "l = in + 1",
+      "option_c": "l = 2 * in",
+      "option_d": "l = in - 1",
+      "correct_option": "B",
+      "explanation": "Option B is correct. In a full binary tree, the number of leaves is always exactly one more than the number of internal nodes (l = in + 1). This can be proven by induction or by counting edges: total nodes n = in + l. Since every internal node has 2 children, total edges = 2 * in. Also, total edges = n - 1 (for a tree). Therefore, 2 * in = (in + l) - 1 => 2 * in = in + l - 1 => in + 1 = l. Option A is incorrect as it applies to some other structures but not full binary trees. Option C is incorrect; this would imply more leaves than internal nodes by a factor of 2, which is not the case. Option D is incorrect as it suggests fewer leaves than internal nodes, which is impossible for a full binary tree with more than one node.",
+      "target_concept": "Types of Binary Trees",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "TGT_02",
+      "what_taught": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08",
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ],
+      "misconception_rationale": "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.; Believing that a node with only one child is valid in a full binary tree.; Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+    },
+    {
+      "question_id": "MCQ_03",
+      "question_text": "A full binary tree has 15 internal nodes. What is the total number of nodes in this tree?",
+      "option_a": "30",
+      "option_b": "31",
+      "option_c": "16",
+      "option_d": "15",
+      "correct_option": "B",
+      "explanation": "Option B is correct. For a full binary tree, the total number of nodes (n) is given by the formula n = 2 * in + 1, where 'in' is the number of internal nodes. Given in = 15, n = 2 * 15 + 1 = 30 + 1 = 31. Option A (30) is incorrect because it forgets to add the root node (or the +1 in the formula). Option C (16) is incorrect because it only calculates the number of leaves (l = in + 1 = 16), not the total nodes. Option D (15) is incorrect because it only counts the internal nodes.",
+      "target_concept": "Mathematical Properties and Formulas of Binary Trees",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "TGT_03",
+      "what_taught": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08",
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ],
+      "misconception_rationale": "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.; Believing that a node with only one child is valid in a full binary tree.; Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+    },
+    {
+      "question_id": "MCQ_04",
+      "question_text": "What is the minimum possible height of a binary tree containing 100 nodes?",
+      "option_a": "floor(log2(100))",
+      "option_b": "ceil(log2(100))",
+      "option_c": "log2(100)",
+      "option_d": "floor(log2(100)) + 1",
+      "correct_option": "A",
+      "explanation": "Option A is correct. The minimum height of a binary tree with n nodes is achieved when the tree is as 'wide' as possible, which corresponds to a complete binary tree. The minimum height is given by floor(log2(n)). For n=100, log2(100) is approximately 6.64, so floor(6.64) = 6. Option B is incorrect because ceil(log2(n)) would give the height of a perfect binary tree with the next power of 2 nodes, which is not the minimum for n=100. Option C is incorrect because height must be an integer. Option D is incorrect because it adds 1, which would correspond to the number of levels if height is defined as the number of edges, but the standard formula for minimum height in terms of levels is floor(log2(n)). Note: Depending on definition (edges vs nodes), height of root is 0. Min height for n nodes is floor(log2(n)).",
+      "target_concept": "Mathematical Properties and Formulas of Binary Trees",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "TGT_03",
+      "what_taught": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08",
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ],
+      "misconception_rationale": "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.; Believing that a node with only one child is valid in a full binary tree.; Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+    },
+    {
+      "question_id": "MCQ_05",
+      "question_text": "Consider a binary tree where the root has a left child, but no right child. The left child has both a left and a right child. All other nodes are leaves. Is this tree a 'complete' binary tree?",
+      "option_a": "Yes, because it is balanced.",
+      "option_b": "No, because the root does not have two children.",
+      "option_c": "No, because nodes are not filled left-to-right at the last level.",
+      "option_d": "Yes, because all internal nodes have two children.",
+      "correct_option": "C",
+      "explanation": "Option C is correct. A complete binary tree requires that all levels are completely filled except possibly the last level, and the last level must be filled from left to right. In the described tree, the root (level 0) has only a left child. This means the right position at level 0 is empty, but there are nodes at level 1 (children of the left child). This violates the 'left-to-right' filling rule for the level where the first gap occurs. Specifically, if we consider the level of the root's children, the right child of the root is missing, but the children of the left child exist. More precisely, a complete tree must have all nodes filled from left to right. If the root has no right child, the tree cannot be complete if there are nodes deeper down that would have been to the right of the missing node in a level-order traversal. Actually, the standard definition is: all levels except possibly the last are completely filled, and all nodes in the last level are as far left as possible. Here, Level 0 has 1 node (max 1). Level 1 has 1 node (left child). The right child of root is missing. Level 2 has 2 nodes (children of left child). The last level (Level 2) is not the first level with gaps. The gap is at Level 1. A complete tree cannot have a gap at Level 1 if Level 2 has nodes. Therefore, it is not complete. Option A is incorrect because balance does not imply completeness. Option B is incorrect because a complete tree does not require every internal node to have two children (only the last level can have nodes with one child, and they must be left children). Option D is incorrect because the root is an internal node with only one child, which is allowed in a complete tree *if* it were the last level, but here it is not the last level, and the structure violates the left-to-right filling of the upper levels.",
+      "target_concept": "Tree Construction and Structural Analysis",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "TGT_04",
+      "what_taught": "Students must distinguish between general binary trees and full binary trees, understanding that a full binary tree requires every internal node to have exactly two children, and that the maximum number of nodes at level K is 2^K.",
+      "why_assessed": "This assessment targets the foundational conceptual definitions to ensure students can correctly classify tree structures before proceeding to complex traversals or algorithmic applications.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C08",
+        "[0.0s - 180.8s]",
+        "[180.8s - 364.8s]",
+        "[1298.8s - 1478.8s]"
+      ],
+      "misconception_rationale": "Confusing a 'full' binary tree with a 'complete' binary tree, assuming all levels must be fully filled.; Believing that a node with only one child is valid in a full binary tree.; Miscalculating the maximum nodes at level K by using 2^(K-1) instead of 2^K."
+    }
+  ]
+}

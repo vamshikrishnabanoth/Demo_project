@@ -1,0 +1,129 @@
+{
+  "blueprint_id": "BP_input_07_deepa_madam_lecture",
+  "input_id": "input_07_deepa_madam_lecture",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Greatest Common Divisor (GCD) Algorithms",
+      "salience_score": 0.413,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Divisibility",
+        "Factors",
+        "Euclidean Algorithm"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C07",
+        "E_C08",
+        "E_C10",
+        "E_C11"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Least Common Multiple (LCM) Algorithms",
+      "salience_score": 0.5,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Greatest Common Divisor (GCD)",
+        "Multiples",
+        "Arithmetic Operations"
+      ],
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Modulo Arithmetic and Divisibility",
+      "salience_score": 0.455,
+      "instructional_acts": [
+        "INTRODUCE",
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "dominant_mode": "WORKED_EXAMPLE",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Integer Division",
+        "Remainder",
+        "Modulo Operator"
+      ],
+      "evidence_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C05",
+        "E_C06",
+        "E_C10",
+        "E_C11"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Recursion and Loop Conversion",
+      "salience_score": 0.271,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "COMPARE"
+      ],
+      "dominant_mode": "CODE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Loops (for/while)",
+        "Function Definitions",
+        "Call Stack"
+      ],
+      "evidence_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_05",
+      "topic": "String Manipulation and Recursion",
+      "salience_score": 0.229,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "APPLY"
+      ],
+      "dominant_mode": "CODE_DEMONSTRATION",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "String Indexing",
+        "Recursion",
+        "Base Cases"
+      ],
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "blueprint_id": "BP_input_19_new_full_lecture",
+  "input_id": "input_19_new_full_lecture",
+  "topics": [
+    {
+      "topic_id": "TOP_01",
+      "topic": "Course Overview and Lecture Structure",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "INTRODUCE"
+      ],
+      "dominant_mode": "LECTURE_OVERVIEW",
+      "target_bloom_level": "REMEMBER",
+      "prerequisite_concepts": [
+        "Course Syllabus",
+        "Learning Objectives"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "LOW"
+    },
+    {
+      "topic_id": "TOP_02",
+      "topic": "Conceptual Frameworks",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CONCEPTUAL_EXPOSITION",
+      "target_bloom_level": "UNDERSTAND",
+      "prerequisite_concepts": [
+        "Basic Programming Terminology",
+        "System Architecture Basics"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "MEDIUM"
+    },
+    {
+      "topic_id": "TOP_03",
+      "topic": "Code Implementation and Walkthrough",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "dominant_mode": "CODE_WALKTHROUGH",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Syntax Rules",
+        "Data Structures",
+        "Control Flow"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "HIGH"
+    },
+    {
+      "topic_id": "TOP_04",
+      "topic": "Procedural Execution Steps",
+      "salience_score": 0.05,
+      "instructional_acts": [
+        "DEMONSTRATE",
+        "PRACTICE"
+      ],
+      "dominant_mode": "PROCEDURAL_GUIDANCE",
+      "target_bloom_level": "APPLY",
+      "prerequisite_concepts": [
+        "Environment Setup",
+        "Command Line Interface",
+        "File Management"
+      ],
+      "evidence_refs": [],
+      "teacher_specificity": "MEDIUM"
+    }
+  ]
+}

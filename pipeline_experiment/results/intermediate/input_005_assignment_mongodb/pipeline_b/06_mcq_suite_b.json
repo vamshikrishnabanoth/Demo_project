@@ -1,0 +1,48 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_005_assignment_mongodb",
+  "input_type": "ASSIGNMENT",
+  "content_style": "PROBLEM_SOLVING",
+  "total_questions": 3,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "Which statement best describes how documents are processed in a MongoDB aggregation pipeline?",
+      "option_a": "Each stage applies a filter similar to a find query and returns a new collection.",
+      "option_b": "Documents pass through a sequence of stages where each stage transforms the documents and passes the result to the next stage.",
+      "option_c": "The pipeline runs all stages in parallel on the original collection.",
+      "option_d": "Only the final stage determines which documents are returned; earlier stages are ignored.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because an aggregation pipeline is a linear sequence of stages; each stage receives the output of the previous stage, transforms it, and forwards it. Option A confuses pipeline stages with find filters and suggests a new collection is created at each stage, which is inaccurate. Option C incorrectly describes parallel execution; stages are executed sequentially. Option D ignores the cumulative effect of earlier stages, which is essential to the pipeline's operation.",
+      "target_concept": "MongoDB Aggregation Pipeline Fundamentals",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01"
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "You need to return only product categories whose total sales exceed 1,000 units. Which pipeline order will correctly produce this result?",
+      "option_a": "$group the documents by category, then $match on the aggregated total.",
+      "option_b": "$match on sales > 1,000, then $group by category, then another $match on the aggregated total.",
+      "option_c": "$group by category, $project the total, then $match on the projected total.",
+      "option_d": "$match on sales > 1,000, then $group by category, then $project the total.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because $match can be placed after $group to filter aggregated results; this is the standard way to keep only groups meeting a condition. Option B adds an unnecessary pre\u2011filter that would exclude individual sales records needed for the total. Option C works but adds an extra $project that is not required for the filter. Option D filters before grouping, which would miss sales that individually are below 1,000 but contribute to a category total above 1,000.",
+      "target_concept": "Aggregation Operators and Stages",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S02"
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "A pipeline starts with $unwind on a large \"items\" array, followed by $match on the field \"items.type\" which is indexed. Which modification is most likely to improve performance?",
+      "option_a": "Move the $match stage before the $unwind stage.",
+      "option_b": "Add another $match stage after $unwind to further filter documents.",
+      "option_c": "Replace $unwind with $project to reshape the document.",
+      "option_d": "Insert a $sort stage before the $match stage.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because placing $match before $unwind allows MongoDB to use the index on \"items.type\" to eliminate many documents early, reducing the number of array elements that need to be unwound. Option B adds filtering after the expensive $unwind, offering little benefit. Option C does not address the need to deconstruct the array for aggregation. Option D introduces sorting, which adds overhead and does not help index utilization for the match condition.",
+      "target_concept": "Performance Tuning for Aggregations",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "S03"
+    }
+  ]
+}

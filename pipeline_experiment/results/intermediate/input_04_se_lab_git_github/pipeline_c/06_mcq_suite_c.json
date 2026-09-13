@@ -1,0 +1,117 @@
+{
+  "pipeline_type": "PIPELINE_C_COMBINED",
+  "input_id": "input_04_se_lab_git_github",
+  "input_type": "NOTES",
+  "content_style": "PROCEDURAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "A student executes the command `git config --global user.name \"Jane Doe\"` and `git config --global user.email \"jane@example.com\"`. Which statement accurately describes the scope and effect of these commands?",
+      "option_a": "These settings apply only to the current repository and will not affect any other projects on the machine.",
+      "option_b": "These settings apply to all Git repositories on the local machine, establishing the default identity for commits.",
+      "option_c": "These settings modify the remote repository's configuration on GitHub, changing the owner's name.",
+      "option_d": "These settings are temporary and will be reset after the terminal session is closed.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the `--global` flag in Git configuration commands applies settings to the user's home directory (typically `~/.gitconfig`), affecting all repositories on that machine. Option A is incorrect because it describes repository-specific configuration (using `git config` without `--global`). Option C is incorrect because local Git configuration does not alter remote server settings. Option D is incorrect because Git configuration is persisted to disk and is not session-dependent.",
+      "target_concept": "Git Global Configuration Scope",
+      "cognitive_level": "REMEMBER",
+      "source_slot_or_topic": "Git & GitHub Environment Setup",
+      "what_taught": "Students must recall the specific Git commands for global identity configuration ('git config --global user.name/email') and remote verification ('git remote -v'), as well as the definitions of forking and code collaboration.",
+      "why_assessed": "This assessment verifies that students have correctly established their local environment and understand the fundamental terminology required to participate in collaborative workflows, ensuring a solid foundation before complex operations.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "[0.0s - 180.0s]",
+        "[180.0s - 360.0s]"
+      ],
+      "misconception_rationale": "Believing that 'git remote -v' modifies the remote URL rather than just displaying it.; Confusing 'git config --global' with repository-specific configuration, assuming it only applies to the current project.; Thinking that forking grants direct write access to the original upstream repository."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "In a collaborative workflow, a developer creates a feature branch, makes changes, and then executes the following sequence: `git checkout main`, `git pull`, `git checkout feature`, `git merge main`. What is the primary purpose of this specific sequence of commands?",
+      "option_a": "To push the feature branch changes to the remote repository and trigger an automatic merge into main.",
+      "option_b": "To synchronize the feature branch with the latest changes from the main branch to minimize future merge conflicts.",
+      "option_c": "To create a Pull Request that allows other developers to review the feature branch code.",
+      "option_d": "To revert the feature branch to the exact state of the main branch, discarding all feature-specific changes.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because merging `main` into the `feature` branch (after updating `main` via `pull`) integrates recent upstream changes into the feature branch. This keeps the feature branch up-to-date and reduces the complexity of conflicts when the feature is eventually merged back into main. Option A is incorrect because `git merge` is a local operation and does not push to remote or trigger PRs. Option C is incorrect because Pull Requests are created via the GitHub interface or `gh` CLI, not by local merge commands. Option D is incorrect because merging main into feature preserves feature changes while adding main's changes; it does not discard them.",
+      "target_concept": "Branch Synchronization Workflow",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "Collaborative Workflows & Pull Requests",
+      "what_taught": "Students must explain the purpose of Pull Requests as a review mechanism and describe the sequence of commands used to synchronize a feature branch with the main branch (checkout main, pull, checkout feature, merge main).",
+      "why_assessed": "This target assesses the student's conceptual understanding of the collaborative workflow, ensuring they grasp why synchronization is necessary to prevent future conflicts and how the PR process facilitates code review.",
+      "evidence_refs": [
+        "E_C03",
+        "E_C04",
+        "[360.0s - 540.0s]",
+        "[540.0s - 720.0s]"
+      ],
+      "misconception_rationale": "Assuming that merging main into a feature branch automatically pushes the changes to the remote repository.; Believing that a Pull Request is only created after a merge conflict has occurred.; Thinking that 'git pull' on a feature branch directly updates it with changes from main without first switching branches."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "During a `git merge`, a conflict occurs in `app.js`. The file now contains lines marked with `<<<<<<< HEAD`, `=======`, and `>>>>>>> feature-branch`. What is the correct procedural step to resolve this conflict before committing?",
+      "option_a": "Delete the entire `app.js` file and re-create it from scratch to avoid syntax errors.",
+      "option_b": "Manually edit the file to keep the desired code from both sections, remove all conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`), and then stage the file with `git add`.",
+      "option_c": "Run `git merge --abort` to cancel the merge and revert to the pre-merge state.",
+      "option_d": "Run `git commit` immediately; Git will automatically remove the conflict markers and save the file.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because resolving a merge conflict requires manual intervention to decide which code to keep, followed by the removal of the conflict markers to ensure valid syntax, and finally staging the resolved file. Option A is incorrect as it is an inefficient and destructive approach that loses history and context. Option C is incorrect because `--abort` cancels the merge entirely rather than resolving it. Option D is incorrect because Git will not allow a commit if conflict markers remain in the file; it will throw an error.",
+      "target_concept": "Merge Conflict Resolution Procedure",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "Merge Conflict Resolution",
+      "what_taught": "Students must apply the conflict resolution workflow by identifying conflict markers (<<<<<<<, =======, >>>>>>>), manually editing the code to resolve discrepancies, removing the markers, and staging the file with 'git add' before committing.",
+      "why_assessed": "This assessment tests the student's ability to execute the specific procedural steps required to resolve merge conflicts, a critical practical skill for maintaining code integrity in a team environment.",
+      "evidence_refs": [
+        "E_C05",
+        "[720.0s - 900.0s]"
+      ],
+      "misconception_rationale": "Attempting to resolve conflicts by simply deleting the entire file or the conflicting section without preserving necessary code from either branch.; Forgetting to remove the conflict markers (<<<<<<<, =======, >>>>>>>) before staging the file, leading to syntax errors.; Believing that 'git merge' automatically resolves conflicts without manual intervention."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "A developer needs to share a single specific commit with a colleague who does not have access to the repository. The developer runs `git format-patch -1 HEAD`. What is the nature of the output generated by this command?",
+      "option_a": "A single file containing the full source code of the repository at that commit.",
+      "option_b": "A single file containing the diff (changes) and metadata for only the most recent commit.",
+      "option_c": "A directory containing patch files for all commits in the current branch history.",
+      "option_d": "A temporary display of the diff in the terminal that is not saved to disk.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because `git format-patch -1` generates a single patch file (`.patch` or `.eml`) that contains the diff and commit metadata for exactly one commit (the one specified, here `HEAD`). Option A is incorrect because patches contain differences, not full source code. Option C is incorrect because the `-1` flag restricts the output to a single commit; without it or with a range, multiple files would be generated. Option D is incorrect because `format-patch` writes files to the working directory, unlike `git diff` which displays to stdout.",
+      "target_concept": "Git Format-Patch Syntax and Output",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Patch Creation and Application",
+      "what_taught": "Students must analyze the syntax of 'git format-patch' to determine the correct flags for generating single-commit patches ('-1') versus multi-commit patches ('-3' or range), and understand the structure of the resulting patch files.",
+      "why_assessed": "This target evaluates the student's ability to debug and select the appropriate tooling for sharing changes, specifically analyzing the implications of different patch generation strategies in scenarios without direct repository access.",
+      "evidence_refs": [
+        "E_C06",
+        "E_C07",
+        "[900.0s - 1080.0s]",
+        "[1080.0s - 1125.0s]"
+      ],
+      "misconception_rationale": "Assuming that 'git format-patch -1' generates a patch for the entire branch history rather than just the single specified commit.; Believing that patch files contain the full source code of the repository rather than just the differences (diffs).; Confusing 'git format-patch' with 'git diff', thinking the output is a temporary display rather than a saved file."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "A student wants to generate patch files for the last three commits on their current branch to send to a reviewer. Which command should they execute?",
+      "option_a": "`git format-patch -1`",
+      "option_b": "`git format-patch -3`",
+      "option_c": "`git diff HEAD~3`",
+      "option_d": "`git log -3 --format=patch`",
+      "correct_option": "B",
+      "explanation": "Option B is correct because `git format-patch -3` generates three separate patch files, one for each of the last three commits. Option A is incorrect because `-1` limits the output to only the most recent commit. Option C is incorrect because `git diff` outputs a combined diff to the terminal and does not create individual patch files with commit metadata suitable for `git am`. Option D is incorrect because `git log` does not have a `--format=patch` flag that generates applicable patch files; it only displays log information.",
+      "target_concept": "Multi-Commit Patch Generation",
+      "cognitive_level": "ANALYZE",
+      "source_slot_or_topic": "Patch Creation and Application",
+      "what_taught": "Students must analyze the syntax of 'git format-patch' to determine the correct flags for generating single-commit patches ('-1') versus multi-commit patches ('-3' or range), and understand the structure of the resulting patch files.",
+      "why_assessed": "This target evaluates the student's ability to debug and select the appropriate tooling for sharing changes, specifically analyzing the implications of different patch generation strategies in scenarios without direct repository access.",
+      "evidence_refs": [
+        "E_C06",
+        "E_C07",
+        "[900.0s - 1080.0s]",
+        "[1080.0s - 1125.0s]"
+      ],
+      "misconception_rationale": "Assuming that 'git format-patch -1' generates a patch for the entire branch history rather than just the single specified commit.; Believing that patch files contain the full source code of the repository rather than just the differences (diffs).; Confusing 'git format-patch' with 'git diff', thinking the output is a temporary display rather than a saved file."
+    }
+  ]
+}

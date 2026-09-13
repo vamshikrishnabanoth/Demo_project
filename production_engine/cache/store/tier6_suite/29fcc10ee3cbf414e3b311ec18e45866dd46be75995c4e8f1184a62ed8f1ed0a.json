@@ -1,0 +1,163 @@
+{
+  "input_id": "CASE_C_MULTIMODAL",
+  "title": "Deep Learning: Variational Autoencoders (Fashion-MNIST)",
+  "representation_used": "UNIFIED",
+  "routing_rationale": "Multimodal Classroom (Audio + PPT/Code with PDI=1.000): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+  "requested_count": 5,
+  "requested_difficulty": "MEDIUM",
+  "defensible_capacity": 5,
+  "final_question_count": 5,
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_text": "In the context of the Fashion-MNIST VAE lecture, why is the latent space modeled as a probability distribution (specifically Gaussian) rather than a single deterministic point, as in a standard autoencoder?",
+      "option_a": "To allow the model to sample new, unique data points from the continuous latent space for generative tasks, rather than just reconstructing existing inputs.",
+      "option_b": "To add random noise to the input data, which acts as a regularizer to prevent overfitting during the reconstruction phase.",
+      "option_c": "To ensure that the encoder outputs a fixed vector that is invariant to small perturbations in the input image.",
+      "option_d": "To reduce the computational complexity of the decoder by allowing it to ignore the variance of the latent representation.",
+      "correct_option": "A",
+      "explanation": "Option A is correct because the core distinction of a VAE is its probabilistic nature; by modeling the latent space as a distribution, the model can sample from it to generate new, unseen data points (e.g., new fashion items) that are not just copies of the training set. Option B is a common misconception; while noise is involved in the reparameterization trick, the primary goal is not just regularization but enabling generation from a continuous space. Option C is incorrect because a VAE does not output a fixed vector; it outputs parameters (mean and variance) for a distribution. Option D is incorrect because modeling a distribution does not inherently reduce decoder complexity; in fact, the decoder must handle sampled values from a continuous space.",
+      "target_concept": "Variational Autoencoder (VAE) Concept",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The VAE differs from a standard autoencoder by modeling the latent space as a probability distribution (typically Gaussian) rather than a single point, allowing for sampling and generation of new data points.",
+      "why_assessed": "Assessing the theoretical rationale helps students understand *why* the probabilistic approach is necessary for generative tasks, distinguishing it from deterministic reconstruction.",
+      "evidence_refs": [
+        "E_CHILD_010",
+        "E_CHILD_009"
+      ],
+      "misconception_rationale": "Distractors target the misconception that VAEs are just autoencoders with added noise (B) or that the latent space remains a fixed point (C). Option D targets a misunderstanding of computational trade-offs."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the training of the Fashion-MNIST VAE, the loss function includes a KL Divergence term. What is the primary function of this term in the context of the latent space structure?",
+      "option_a": "It measures the pixel-wise difference between the original input image and the reconstructed image to ensure high fidelity.",
+      "option_b": "It regularizes the latent space by penalizing the learned distribution for deviating from the prior standard normal distribution, ensuring continuity for generation.",
+      "option_c": "It maximizes the distance between different latent vectors to ensure that distinct fashion items are mapped to far-apart points in the latent space.",
+      "option_d": "It calculates the entropy of the input image to determine the optimal compression ratio for the encoder.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the KL Divergence term measures the difference between the learned latent distribution (q(z|x)) and the prior distribution (p(z), usually standard normal). This forces the latent space to be structured and continuous, which is essential for sampling meaningful new data points. Option A describes the reconstruction loss (e.g., Binary Cross-Entropy or MSE), not the KL term. Option C is incorrect because KL divergence encourages the latent space to be close to the prior (centered and normalized), not necessarily to maximize distances between specific data points (which is more related to contrastive learning or specific manifold structures). Option D is incorrect as KL divergence is not used to calculate input entropy for compression ratios in this context.",
+      "target_concept": "KL Divergence in VAEs",
+      "cognitive_level": "UNDERSTAND",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The KL Divergence term in the VAE loss function measures the difference between the learned latent distribution and the prior distribution (usually a standard normal), regularizing the latent space.",
+      "why_assessed": "Understanding the role of KL Divergence is critical for grasping how the VAE ensures the latent space is structured and continuous, which is essential for generation.",
+      "evidence_refs": [
+        "E_CHILD_010",
+        "E_CHILD_011"
+      ],
+      "misconception_rationale": "Distractors target the misconception that KL divergence measures reconstruction error (A) or that it is used for maximizing separation (C) or calculating input entropy (D). These reflect common confusions between the two main components of the VAE loss function."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the VAE implementation discussed in class, the encoder network outputs two specific vectors to parameterize the latent Gaussian distribution. Which pair of outputs is correct, and why is the second output specifically chosen in that form?",
+      "option_a": "Mean (mu) and Standard Deviation (sigma); sigma is output directly to simplify the sampling calculation z = mu + sigma * epsilon.",
+      "option_b": "Mean (mu) and Log-Variance (log_sigma^2); log-variance is output to ensure numerical stability and guarantee that the variance remains positive during backpropagation.",
+      "option_c": "Mean (mu) and Variance (sigma^2); variance is output directly because the loss function requires the raw second moment for the KL divergence calculation.",
+      "option_d": "Latent Vector (z) and Log-Variance (log_sigma^2); z is output directly to allow the decoder to reconstruct the image without additional sampling steps.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the encoder outputs the mean and the log-variance. As emphasized in the lecture, calculating the variance via the exponential of the log-variance (sigma^2 = exp(log_sigma^2)) ensures that the variance is always positive, which is a critical numerical stability requirement for Gaussian distributions in neural networks. Option A is incorrect because outputting sigma directly does not guarantee positivity without an additional activation function (like softplus), and log-variance is the standard practice for stability. Option C is incorrect because outputting raw variance can lead to negative values if not constrained, causing instability. Option D is incorrect because the encoder does not output the latent vector z directly; z is sampled from the distribution defined by mu and sigma.",
+      "target_concept": "VAE Encoder Architecture",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The encoder network outputs two vectors: the mean (mu) and the log-variance (log_sigma^2) of the latent distribution, which are used to parameterize the Gaussian distribution.",
+      "why_assessed": "Assessing code interpretation ensures students can identify the specific output layers and their roles in defining the latent distribution, a key implementation detail.",
+      "evidence_refs": [
+        "E_CHILD_040",
+        "E_CHILD_013"
+      ],
+      "misconception_rationale": "Distractors target the common misconception that the encoder outputs the latent vector z directly (Option D) or that it outputs the standard deviation/variance directly without the log transformation (Options A and C), which are frequent errors in VAE implementation."
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "During the forward pass of a VAE, the latent variable z is generated using the formula z = mu + sigma * epsilon, where epsilon is sampled from a standard normal distribution. What is the primary purpose of this reparameterization trick in the context of training the network?",
+      "option_a": "It removes the need for a prior distribution, allowing the latent space to be unconstrained and purely data-driven.",
+      "option_b": "It allows gradients to flow through the stochastic sampling operation by moving the randomness to the input (epsilon) rather than the parameters, making the operation differentiable.",
+      "option_c": "It ensures that the sampled latent vector z is always exactly equal to the mean mu, thereby reducing the variance in the latent space to zero.",
+      "option_d": "It computes the gradient of the random number generator itself, allowing the network to learn how to generate better random numbers for the decoder.",
+      "correct_option": "B",
+      "explanation": "Option B is correct because the reparameterization trick separates the stochasticity (epsilon) from the learnable parameters (mu and sigma). Since epsilon is a constant input to the operation z = mu + sigma * epsilon, the derivative with respect to mu and sigma can be computed normally via backpropagation. Option A is incorrect because the prior distribution (typically N(0, I)) is still required for the KL divergence term in the loss function. Option C is incorrect because the variance is not reduced to zero; the term sigma * epsilon introduces the necessary stochasticity. Option D is incorrect because gradients are not computed through the random number generator; the randomness is treated as a fixed input for the backward pass.",
+      "target_concept": "Reparameterization Trick",
+      "cognitive_level": "ANALYZE",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The reparameterization trick allows backpropagation through stochastic nodes by sampling from a distribution parameterized by the network (e.g., z = mu + sigma * epsilon, where epsilon is sampled from a standard normal).",
+      "why_assessed": "Targeting the common misconception that gradients cannot flow through random sampling operations. Students often struggle with how the trick makes the sampling process differentiable.",
+      "evidence_refs": [
+        "E_CHILD_011",
+        "E_CHILD_040"
+      ],
+      "misconception_rationale": "Distractors target the misconception that the trick removes the prior (Option A) or that gradients flow through the random number generator itself (Option D), which are common conceptual errors regarding differentiability in stochastic processes."
+    },
+    {
+      "question_id": "Q1",
+      "question_text": "In the lecture on Variational Autoencoders (VAEs) applied to the Fashion-MNIST dataset, the instructor emphasized that raw pixel values (0-255) must be preprocessed before being fed into the encoder. If a student implements a VAE for Fashion-MNIST but forgets to normalize the input images, keeping them in the range [0, 255], what is the most likely immediate consequence for the training process?",
+      "option_a": "The model will fail to compile because the input shape is incompatible with the convolutional layers.",
+      "option_b": "The reconstruction accuracy will be artificially inflated because higher pixel values provide stronger signal gradients.",
+      "option_c": "The training will likely diverge or converge very slowly because the large input magnitudes cause unstable gradient updates in the early layers.",
+      "option_d": "The latent space will automatically scale to accommodate the larger values, resulting in a more robust representation without any loss in performance.",
+      "correct_option": "C",
+      "explanation": "The correct answer is C. In deep learning, particularly with VAEs, input normalization (e.g., to [0, 1] or [-1, 1]) is critical for stable training. Raw pixel values in [0, 255] are large magnitudes that can lead to large activations and gradients, causing the loss function to behave unstably, leading to divergence or extremely slow convergence. Option A is incorrect because input shape is determined by dimensions (height, width, channels), not value range. Option B is incorrect because larger values do not inherently improve signal quality; they often introduce noise and instability. Option D is incorrect because the latent space does not 'automatically' compensate for poor input scaling; the model's capacity is fixed, and poor input scaling degrades the quality of the learned representation.",
+      "target_concept": "Fashion-MNIST Application Context & Data Preprocessing",
+      "cognitive_level": "APPLY",
+      "difficulty_level": "MEDIUM",
+      "what_taught": "The VAE is applied to the Fashion-MNIST dataset, where images are preprocessed (e.g., normalized to [0, 1] or [-1, 1]) before being fed into the encoder.",
+      "why_assessed": "Assessing practical application ensures students understand the necessary data preprocessing steps and how the model is deployed on a real-world dataset.",
+      "evidence_refs": [
+        "E_CHILD_009",
+        "E_CHILD_010"
+      ],
+      "misconception_rationale": "Option A targets the misconception that value range affects tensor shape compatibility. Option B targets the misconception that higher numerical values equate to better signal strength. Option D targets the misconception that neural networks are invariant to input scaling and will self-correct without preprocessing."
+    }
+  ],
+  "validation_status": "PASSED",
+  "generation_metadata": {
+    "request_id": "REQ-1788034531754-CASE_C_M",
+    "trace": {
+      "request_id": "REQ-1788034531754-CASE_C_M",
+      "timestamp": "2026-08-29T20:16:56Z",
+      "input_id": "CASE_C_MULTIMODAL",
+      "selected_representation": "UNIFIED",
+      "pedagogical_delivery_index": 1.0,
+      "cache_telemetry": {
+        "tier6_assessment_suite": "MISS",
+        "tier3_hierarchical": "HIT",
+        "tier4_cross_modal": "HIT",
+        "tier5_representation": "HIT"
+      },
+      "selected_facets": [
+        "THEORETICAL_RATIONALE",
+        "CONCEPT_UNDERSTANDING",
+        "MISCONCEPTION_TARGETING",
+        "CODE_INTERPRETATION",
+        "PRACTICAL_APPLICATION"
+      ],
+      "initial_generated_count": 5,
+      "first_pass_validated_count": 5,
+      "critic_repairs_count": 0,
+      "final_delivered_count": 5,
+      "total_latency_ms": 84468.88,
+      "status": "PASSED",
+      "repair_actions": [],
+      "planning_notes": "The request for 5 MEDIUM difficulty targets was fulfilled by selecting 5 distinct concepts from the available pool and assigning each a unique pedagogical facet to ensure non-redundancy. The selection covers the theoretical foundation (VAE Concept, KL Divergence), the core mechanism (Reparameterization Trick), the practical implementation (Encoder Architecture), and the application context (Fashion-MNIST). This ensures a balanced assessment of understanding, rationale, code interpretation, and application."
+    },
+    "engine_version": "Architecture E v2.0 (Production Hardened)",
+    "total_latency_seconds": 84.47,
+    "measured_llm_calls": 4,
+    "pedagogical_delivery_index": 1.0,
+    "repairs_performed_count": 0,
+    "facet_distribution": {
+      "THEORETICAL_RATIONALE": 1,
+      "CONCEPT_UNDERSTANDING": 1,
+      "MISCONCEPTION_TARGETING": 1,
+      "CODE_INTERPRETATION": 1,
+      "PRACTICAL_APPLICATION": 1
+    },
+    "cognitive_distribution": {
+      "UNDERSTAND": 2,
+      "ANALYZE": 1,
+      "APPLY": 2
+    },
+    "planning_notes": "The request for 5 MEDIUM difficulty targets was fulfilled by selecting 5 distinct concepts from the available pool and assigning each a unique pedagogical facet to ensure non-redundancy. The selection covers the theoretical foundation (VAE Concept, KL Divergence), the core mechanism (Reparameterization Trick), the practical implementation (Encoder Architecture), and the application context (Fashion-MNIST). This ensures a balanced assessment of understanding, rationale, code interpretation, and application.",
+    "system_notice": null
+  }
+}

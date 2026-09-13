@@ -1,0 +1,62 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Variational Autoencoder (VAE) Architecture",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the core architectural components of a Variational Autoencoder, specifically distinguishing the encoder's output (mean and log-variance) from a standard autoencoder's single latent vector.",
+    "misconception_target": "Confusing the VAE encoder output with a standard autoencoder by expecting a single deterministic latent vector instead of parameters for a probability distribution.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Latent Sampling Techniques",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific mechanism used to sample from the latent distribution, including the application of the reparameterization trick to enable backpropagation through the sampling process.",
+    "misconception_target": "Believing that the latent variable is sampled directly from the distribution in a non-differentiable manner, or confusing the reparameterization trick with simple random noise addition without the scaling by standard deviation.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "VAE Loss Functions",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the two distinct components of the VAE loss function: the reconstruction loss (measuring fidelity) and the KL divergence term (measuring regularization against the prior).",
+    "misconception_target": "Assuming the VAE loss is identical to a standard autoencoder's reconstruction loss, or misidentifying the KL divergence term as a penalty for data variance rather than distributional distance.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Fashion-MNIST Dataset Application",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Recall the specific characteristics of the Fashion-MNIST dataset relevant to VAE implementation, such as image dimensions (28x28), grayscale nature, and the 10-class label structure.",
+    "misconception_target": "Confusing Fashion-MNIST with other datasets like CIFAR-10 (color, 32x32) or MNIST (digits vs. clothing items), leading to incorrect assumptions about input tensor shape or preprocessing requirements.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Model Training and Evaluation",
+    "cognitive_level": "REMEMBER",
+    "instructional_mode": "CONCEPTUAL_OVERVIEW",
+    "assessment_goal": "Identify the standard metrics and visualizations used to evaluate a trained VAE on Fashion-MNIST, such as reconstruction error (MSE/BCE) and qualitative assessment of generated samples.",
+    "misconception_target": "Relying solely on classification accuracy for evaluation, which is not directly applicable to generative models, or ignoring the importance of visual inspection of latent space interpolation.",
+    "evidence_refs": [],
+    "question_type": "CONCEPTUAL_SCENARIO",
+    "target_options_count": 4
+  }
+]

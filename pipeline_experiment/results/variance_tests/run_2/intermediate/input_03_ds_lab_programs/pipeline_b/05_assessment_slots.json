@@ -1,0 +1,82 @@
+[
+  {
+    "slot_id": "S01",
+    "topic_id": "TOP_01",
+    "topic_name": "Singly Linked List Operations",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Write a function to insert a new node at a specified position in a singly linked list and correctly update head and next pointers.",
+    "misconception_target": "Mistaking the update of the head pointer when inserting at position 0, leading to loss of the original list.",
+    "evidence_refs": [
+      "E_C01",
+      "E_C02",
+      "E_C03",
+      "E_C04"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S02",
+    "topic_id": "TOP_02",
+    "topic_name": "Doubly Linked List Operations",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Implement a routine to delete a node with a given key from a doubly linked list, ensuring both prev and next links are correctly reconnected.",
+    "misconception_target": "Forgetting to update the prev pointer of the successor node, causing broken backward traversal.",
+    "evidence_refs": [
+      "E_C05",
+      "E_C06",
+      "E_C07"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S03",
+    "topic_id": "TOP_03",
+    "topic_name": "Circular Linked List Operations",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Create a function that traverses a circular linked list exactly once and returns the count of nodes, handling the loop termination correctly.",
+    "misconception_target": "Using a termination condition that never becomes false, leading to infinite loop.",
+    "evidence_refs": [
+      "E_C08",
+      "E_C09",
+      "E_C10"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S04",
+    "topic_id": "TOP_04",
+    "topic_name": "Stack Implementation using Array",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Write code to push and pop elements on a stack implemented with a fixed-size array, handling overflow and underflow conditions.",
+    "misconception_target": "Incorrectly checking overflow condition after incrementing top index, causing out-of-bounds write.",
+    "evidence_refs": [
+      "E_C11",
+      "E_C12"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  },
+  {
+    "slot_id": "S05",
+    "topic_id": "TOP_05",
+    "topic_name": "Stack Implementation using Singly Linked List",
+    "cognitive_level": "APPLY",
+    "instructional_mode": "DEMONSTRATION",
+    "assessment_goal": "Develop functions to push and pop elements on a stack using a singly linked list, ensuring proper memory allocation and deallocation.",
+    "misconception_target": "Neglecting to free memory of popped nodes, leading to memory leaks.",
+    "evidence_refs": [
+      "E_C13",
+      "E_C14",
+      "E_C15"
+    ],
+    "question_type": "CODE_DEBUG_SCENARIO",
+    "target_options_count": 4
+  }
+]

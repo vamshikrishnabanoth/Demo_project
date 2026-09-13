@@ -1,0 +1,26 @@
+{
+  "request_id": "REQ-1788034616280-CASE_D_S",
+  "timestamp": "2026-08-29T20:18:21Z",
+  "input_id": "CASE_D_STATIC_NOTES",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": 0.05,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "HIT",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "HIT"
+  },
+  "selected_facets": [
+    "CONCEPT_UNDERSTANDING",
+    "CODE_INTERPRETATION",
+    "PRACTICAL_APPLICATION"
+  ],
+  "initial_generated_count": 5,
+  "first_pass_validated_count": 5,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 5,
+  "total_latency_ms": 84990.95,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 5 EASY targets was fulfilled by selecting 5 distinct core concepts from the available pool. To ensure non-redundancy and pedagogical variety at an easy difficulty level, I selected fundamental operators and one key architectural principle. Each target focuses on a different aspect of the aggregation pipeline: basic filtering ($match), array deconstruction ($unwind), joining data ($lookup), aggregation logic ($group), and overall pipeline structure (Multi-Stage Aggregation Pipeline). The facets were chosen to align with foundational understanding (CONCEPT_UNDERSTANDING) and basic application (PRACTICAL_APPLICATION/CODE_INTERPRETATION) suitable for EASY difficulty."
+}

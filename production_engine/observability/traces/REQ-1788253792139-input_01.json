@@ -1,0 +1,25 @@
+{
+  "request_id": "REQ-1788253792139-input_01",
+  "timestamp": "2026-09-01T09:10:48Z",
+  "input_id": "input_01_daa_unit2",
+  "selected_representation": "SUMMARY",
+  "pedagogical_delivery_index": -0.035,
+  "cache_telemetry": {
+    "tier6_assessment_suite": "MISS",
+    "tier3_hierarchical": "MISS",
+    "tier4_cross_modal": "MISS",
+    "tier5_representation": "MISS"
+  },
+  "selected_facets": [
+    "PRACTICAL_APPLICATION",
+    "COMPLEXITY_ANALYSIS"
+  ],
+  "initial_generated_count": 2,
+  "first_pass_validated_count": 2,
+  "critic_repairs_count": 0,
+  "final_delivered_count": 2,
+  "total_latency_ms": 56717.91,
+  "status": "PASSED",
+  "repair_actions": [],
+  "planning_notes": "The request for 2 HARD targets was fulfilled by selecting two distinct, high-complexity concepts from the available pool. Target 1 focuses on the 'Median of Two Sorted Arrays' problem, which is a canonical HARD application of Divide and Conquer and Binary Search, requiring complex index manipulation and edge case handling. Target 2 focuses on 'Time Complexity Analysis' specifically regarding the recurrence relation T(n) = T(n/2) + O(1), requiring students to derive the asymptotic bound and understand the mathematical rationale behind the O(log n) result, distinguishing it from linear or quadratic cases."
+}

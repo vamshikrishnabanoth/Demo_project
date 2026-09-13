@@ -1,0 +1,124 @@
+{
+  "pipeline_type": "PIPELINE_B_BLUEPRINT",
+  "input_id": "input_07_deepa_madam_lecture",
+  "input_type": "VOICE_ONLY",
+  "content_style": "MATHEMATICAL",
+  "total_questions": 5,
+  "questions": [
+    {
+      "question_id": "Q01",
+      "question_text": "Consider the Euclidean Algorithm applied to find the GCD of 48 and 18. The steps are: 48 = 2 * 18 + 12, then 18 = 1 * 12 + 6, then 12 = 2 * 6 + 0. What is the GCD, and why?",
+      "option_a": "The GCD is 0, because the algorithm terminates when the remainder becomes zero.",
+      "option_b": "The GCD is 12, because it is the last divisor used in the division step before the remainder became zero.",
+      "option_c": "The GCD is 6, because it is the last non-zero remainder obtained in the sequence of divisions.",
+      "option_d": "The GCD is 18, because it is the smaller of the two original numbers.",
+      "correct_option": "C",
+      "explanation": "The Euclidean Algorithm states that the GCD of two numbers is the last non-zero remainder in the sequence of divisions. In this case, the remainders are 12, 6, and 0. The last non-zero remainder is 6. Option A is incorrect because 0 is the termination condition, not the GCD. Option B is incorrect because 12 is a divisor in the step that produced the remainder 6, but 6 divides 12, so 12 is not the greatest common divisor. Option D is incorrect because the GCD must divide both numbers; 18 does not divide 48.",
+      "target_concept": "Euclidean Algorithm Logic",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S01",
+      "what_taught": "The step-by-step logic of the Euclidean Algorithm where the remainder becomes the new divisor.",
+      "why_assessed": "To ensure students understand that the GCD is the last non-zero remainder, not the zero remainder or the previous divisor.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C07",
+        "E_C08",
+        "E_C10",
+        "E_C11"
+      ],
+      "misconception_rationale": "Distractors target the common errors of confusing the termination condition (0) with the result, or confusing the last divisor with the last non-zero remainder."
+    },
+    {
+      "question_id": "Q02",
+      "question_text": "Given that GCD(12, 18) = 6, what is the LCM(12, 18) using the relationship LCM(a, b) = (a * b) / GCD(a, b)?",
+      "option_a": "216",
+      "option_b": "36",
+      "option_c": "6",
+      "option_d": "108",
+      "correct_option": "B",
+      "explanation": "Using the formula LCM(a, b) = (a * b) / GCD(a, b), we substitute the values: LCM(12, 18) = (12 * 18) / 6. First, 12 * 18 = 216. Then, 216 / 6 = 36. Option A (216) is the product of the two numbers, which is a common error if the division by GCD is forgotten. Option C (6) is the GCD itself. Option D (108) is half the product, which would be the result if the GCD were 2, but the GCD is 6.",
+      "target_concept": "LCM-GCD Relationship",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S02",
+      "what_taught": "The formula LCM(a, b) = (a * b) / GCD(a, b) and its application.",
+      "why_assessed": "To verify that students can apply the formula correctly and understand that the LCM is not simply the product of the numbers.",
+      "evidence_refs": [
+        "E_C01",
+        "E_C02",
+        "E_C03",
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "misconception_rationale": "Distractors include the product of the numbers (forgetting to divide by GCD) and the GCD value itself, reflecting common calculation errors."
+    },
+    {
+      "question_id": "Q03",
+      "question_text": "In programming, the expression `17 % 5` evaluates to 2. What does this result signify regarding the divisibility of 17 by 5?",
+      "option_a": "17 is exactly divisible by 5, and 2 is the quotient.",
+      "option_b": "17 is not divisible by 5, and 2 is the remainder, indicating 17 is 2 units greater than the nearest multiple of 5.",
+      "option_c": "17 is not divisible by 5, and 2 is the quotient of the integer division.",
+      "option_d": "17 is divisible by 5, and 2 is the remainder of the division.",
+      "correct_option": "B",
+      "explanation": "The modulo operator `%` returns the remainder of the integer division. `17 % 5` equals 2 because 17 = 3 * 5 + 2. A non-zero remainder indicates that the dividend is not exactly divisible by the divisor. The remainder 2 represents the offset from the nearest lower multiple of 5 (which is 15). Option A is incorrect because a remainder of 0 is required for exact divisibility, and 2 is the remainder, not the quotient. Option C is incorrect because 2 is the remainder, not the quotient (the quotient is 3). Option D is incorrect because a non-zero remainder means the number is not divisible.",
+      "target_concept": "Modulo Arithmetic Interpretation",
+      "cognitive_level": "UNDERSTAND",
+      "source_slot_or_topic": "S03",
+      "what_taught": "Interpreting the modulo result as a remainder and its implication for divisibility.",
+      "why_assessed": "To ensure students can distinguish between quotient and remainder and understand the meaning of a non-zero modulo result.",
+      "evidence_refs": [
+        "E_C02",
+        "E_C03",
+        "E_C05",
+        "E_C06",
+        "E_C10",
+        "E_C11"
+      ],
+      "misconception_rationale": "Distractors confuse the remainder with the quotient or incorrectly assert divisibility despite a non-zero remainder."
+    },
+    {
+      "question_id": "Q04",
+      "question_text": "Consider the following recursive GCD function:\n```\ndef gcd(a, b):\n    if b == 0:\n        return a\n    return gcd(b, a % b)\n```\nWhich iterative loop correctly implements the same logic?",
+      "option_a": "while b != 0: a = a % b; b = a",
+      "option_b": "while b != 0: temp = a % b; a = b; b = temp",
+      "option_c": "while a != 0: temp = a % b; a = b; b = temp",
+      "option_d": "while b != 0: a = b; b = a % b",
+      "correct_option": "B",
+      "explanation": "The recursive call `gcd(b, a % b)` updates the parameters such that the new `a` is the old `b`, and the new `b` is the old `a % b`. In an iterative loop, we must preserve the old `a` to calculate `a % b` before overwriting `a`. Option B uses a temporary variable `temp` to store `a % b`, then sets `a = b` and `b = temp`, which correctly mirrors the recursive parameter update. Option A is incorrect because it overwrites `a` before using it to update `b`. Option C is incorrect because the base case is `b == 0`, so the loop should continue while `b != 0`, not `a != 0`. Option D is incorrect because it overwrites `a` with `b` before calculating `a % b`, leading to `b % b` which is 0, causing incorrect logic.",
+      "target_concept": "Recursive to Iterative Conversion",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S04",
+      "what_taught": "Converting a recursive GCD function to an iterative loop, preserving variable updates.",
+      "why_assessed": "To test the ability to translate recursive logic into iterative code, specifically handling variable updates correctly.",
+      "evidence_refs": [
+        "E_C04",
+        "E_C05",
+        "E_C06",
+        "E_C09"
+      ],
+      "misconception_rationale": "Distractors include common errors in variable assignment order (overwriting before use) and incorrect loop termination conditions."
+    },
+    {
+      "question_id": "Q05",
+      "question_text": "Consider the following recursive function to check if a string is a palindrome:\n```\ndef is_palindrome(s):\n    if len(s) <= 1:\n        return True\n    if s[0] != s[-1]:\n        return False\n    return is_palindrome(s[1:-1])\n```\nWhat is the base case for this recursion?",
+      "option_a": "When the string length is 2 and the characters are equal.",
+      "option_b": "When the string length is 0 or 1.",
+      "option_c": "When the first character equals the last character.",
+      "option_d": "When the string is empty.",
+      "correct_option": "B",
+      "explanation": "The base case is the condition that stops the recursion. In the code, `if len(s) <= 1: return True` is the base case. This covers both empty strings (length 0) and single-character strings (length 1), which are trivially palindromes. Option A is incorrect because the function does not stop at length 2; it checks the first and last characters and then recurses on the substring of length 0. Option C is incorrect because this is a recursive step condition, not a base case; if the characters are not equal, it returns False, but if they are equal, it recurses. Option D is incorrect because it only covers length 0, missing the length 1 case which is also a base case.",
+      "target_concept": "Recursive Base Case Identification",
+      "cognitive_level": "APPLY",
+      "source_slot_or_topic": "S05",
+      "what_taught": "Identifying the base case in a recursive string manipulation function.",
+      "why_assessed": "To ensure students can correctly identify the termination condition in recursive algorithms, especially for string operations.",
+      "evidence_refs": [
+        "E_C13",
+        "E_C14",
+        "E_C15"
+      ],
+      "misconception_rationale": "Distractors include partial base cases (only empty string) or confusing recursive step conditions with base cases."
+    }
+  ]
+}

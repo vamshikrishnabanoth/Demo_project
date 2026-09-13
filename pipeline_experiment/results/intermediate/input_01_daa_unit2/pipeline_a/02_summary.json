@@ -1,0 +1,24 @@
+{
+  "input_id": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+  "title": "Design and Analysis of Algorithms - Unit II: Divide & Conquer, Greedy Method",
+  "concepts_and_definitions": [
+    "Binary Search: A divide and conquer algorithm for finding an element in a sorted array by repeatedly dividing the search interval in half.",
+    "Fixed Point: An index i in a sorted array such that the value at that index equals the index itself (A[i] = i).",
+    "Median of Two Sorted Arrays: The middle value of the combined sorted sequence of two distinct sorted arrays, requiring handling of both odd and even total lengths.",
+    "Recurrence Relation: A mathematical equation that defines the time complexity of recursive algorithms, such as T(n) = T(n/2) + O(1) for binary search.",
+    "Divide and Conquer Technique: A problem-solving strategy that breaks a problem into smaller sub-problems, solves them recursively, and combines the results."
+  ],
+  "mechanisms_and_formulas": [
+    "Binary Search Recurrence: T(n) = T(n/2) + c, resulting in a time complexity of O(log n) for both successful and unsuccessful searches.",
+    "Midpoint Calculation: mid = low + (high - low) / 2, used to prevent integer overflow and determine the pivot index in binary search.",
+    "Median Calculation Logic: For even total length, median = (max(left_half) + min(right_half)) / 2.0; for odd total length, median = max(left_half).",
+    "Fixed Point Search Logic: If arr[mid] < mid, search the right half; if arr[mid] > mid, search the left half; if equal, return mid."
+  ],
+  "examples_and_code_patterns": [
+    "Java Implementation of Iterative Binary Search: Uses a while loop to adjust low and high pointers until the target is found or the interval is empty.",
+    "Java Implementation of Recursive Binary Search: Defines a function that calls itself with adjusted low/high bounds based on the comparison of the target with the middle element.",
+    "Median of Two Sorted Arrays Example: Input A[] = {1, 4, 5}, B[] = {2, 3} yields a median of 3 by identifying the correct partition points.",
+    "Fixed Point Example: Input array [-10, -5, 0, 3, 7] yields a fixed point of 3 because the element at index 3 is 3."
+  ],
+  "factual_summary_text": "This educational material covers Unit II of the Design and Analysis of Algorithms course, focusing on the Divide and Conquer technique, specifically through the lens of Binary Search and its applications. The content begins by defining Binary Search as an efficient algorithm for sorted arrays, presenting both recursive and iterative implementations in Java. It details the algorithm's logic, which involves comparing the target value with the middle element and recursively or iteratively narrowing the search space to either the left or right half. The time complexity is analyzed using recurrence relations, establishing that the algorithm operates in O(log n) time for both best and worst-case scenarios.\n\nThe material extends the binary search concept to several specific applications. First, it addresses the problem of finding the median of two sorted arrays of sizes m and n. The approach involves using binary search to find the correct partition in the smaller array such that the elements on the left are less than or equal to the elements on the right, allowing the median to be calculated from the boundary elements. Second, it covers finding a fixed point in a sorted array, where an element's value equals its index. The algorithm compares the middle element with its index to determine which half of the array to search next. The text provides Java code snippets and worked examples for these scenarios, demonstrating input processing, sorting, and the specific logic for determining the median or fixed point."
+}

@@ -1,0 +1,354 @@
+{
+  "PLAN_BENCH_01_DAA": {
+    "title": "DAA: Binary Search on Median of Two Sorted Arrays",
+    "requested_count": 10,
+    "allocated_count": 10,
+    "fulfillment_percentage": 100.0,
+    "unique_concepts": 10,
+    "unique_facets_count": 5,
+    "facet_distribution": {
+      "THEORETICAL_RATIONALE": 2,
+      "CALCULATION_MECHANIC": 2,
+      "DIAGNOSTIC_FAILURE": 3,
+      "BOUNDARY_EDGE_CASE": 2,
+      "COMPLEXITY_TRADE_OFF": 1
+    },
+    "cognitive_distribution": {
+      "ANALYZE": 3,
+      "APPLY": 4,
+      "EVALUATE": 3
+    },
+    "all_evidence_grounded": true,
+    "planning_latency_seconds": 38.4,
+    "planning_strategy_notes": "The request for 10 HARD targets was fulfilled by mapping the 13 available concepts to distinct pedagogical facets. Since 'Problem Definition' and 'Index-Based Access' are lower salience, they were used for foundational but tricky edge cases. The core algorithmic concepts (Partitioning, Boundary Properties, Median Logic) were assessed across multiple facets (Calculation, Diagnostic, Complexity, Rationale) to ensure depth and non-redundancy. Worked examples were leveraged to create diagnostic and calculation targets that require tracing complex state changes.",
+    "targets": [
+      {
+        "target_id": "T01",
+        "concept_name": "Binary Search Partitioning Logic",
+        "assessment_facet": "THEORETICAL_RATIONALE",
+        "what_taught": "The algorithm partitions the two sorted arrays such that the left partition contains exactly (m+n)/2 elements, ensuring the median lies at the boundary of these partitions.",
+        "why_assessed": "Students often memorize the 'search smaller array' rule without understanding *why* the partition size is fixed at half the total length. Assessing the rationale ensures they understand the invariant that enables O(log(min(m,n))) complexity.",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_003",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "The partition size should be based on the length of the larger array to ensure coverage.",
+          "The partition size is arbitrary as long as the elements are sorted."
+        ]
+      },
+      {
+        "target_id": "T02",
+        "concept_name": "Partition Boundary Properties",
+        "assessment_facet": "CALCULATION_MECHANIC",
+        "what_taught": "Given a partition index i in array A, the corresponding partition index j in array B is calculated as j = (m + n + 1) // 2 - i.",
+        "why_assessed": "This specific formula is the mechanical core of the algorithm. Errors here cascade into incorrect median calculations. A hard target requires applying this to non-trivial, uneven array sizes where integer division behavior is critical.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_005",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "j = (m + n) // 2 - i (forgetting the +1 for odd total lengths).",
+          "j = m - i (confusing partition index with array length)."
+        ]
+      },
+      {
+        "target_id": "T03",
+        "concept_name": "Cross-Array Comparison Conditions",
+        "assessment_facet": "DIAGNOSTIC_FAILURE",
+        "what_taught": "The correct partition is found when A[i-1] <= B[j] AND B[j-1] <= A[i]. If A[i-1] > B[j], the partition in A is too far right.",
+        "why_assessed": "Students frequently invert the comparison logic or use strict inequalities (< instead of <=), leading to infinite loops or incorrect median selection in cases with duplicate values across arrays.",
+        "cognitive_level": "EVALUATE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_013",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Using A[i-1] < B[j] instead of <=, which fails when elements are equal.",
+          "Checking only one side of the condition (e.g., only A[i-1] <= B[j])."
+        ]
+      },
+      {
+        "target_id": "T04",
+        "concept_name": "Median Selection Logic",
+        "assessment_facet": "BOUNDARY_EDGE_CASE",
+        "what_taught": "When the total number of elements (m+n) is even, the median is the average of max(A[i-1], B[j-1]) and min(A[i], B[j]). When odd, it is max(A[i-1], B[j-1]).",
+        "why_assessed": "Handling the even vs. odd total length distinction is a common source of off-by-one errors. A hard target requires correctly identifying the four boundary elements and applying the correct aggregation logic for an even-length combined array.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_016",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Always taking the average, even when the total length is odd.",
+          "Taking min(A[i], B[j]) for the lower median instead of max(A[i-1], B[j-1])."
+        ]
+      },
+      {
+        "target_id": "T05",
+        "concept_name": "Binary Search Direction Adjustment",
+        "assessment_facet": "DIAGNOSTIC_FAILURE",
+        "what_taught": "If A[i-1] > B[j], we must decrease i (move left in A). If B[j-1] > A[i], we must increase i (move right in A).",
+        "why_assessed": "The direction of the binary search adjustment is counter-intuitive for many students. A hard diagnostic target presents a specific state where the condition is violated and asks for the correct next step, testing if they understand the causal link between the violation and the search direction.",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_021",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Increasing i when A[i-1] > B[j] (moving in the wrong direction).",
+          "Adjusting the search range in B instead of A."
+        ]
+      },
+      {
+        "target_id": "T06",
+        "concept_name": "Index-Based Element Access",
+        "assessment_facet": "BOUNDARY_EDGE_CASE",
+        "what_taught": "When i=0, A[i-1] is considered -infinity. When i=m, A[i] is considered +infinity. Similarly for B.",
+        "why_assessed": "Handling the sentinel values at the boundaries of the arrays is a critical edge case. A hard target requires the student to correctly substitute these sentinel values into the median calculation formula when the partition falls at the very start or end of an array.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_011",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Attempting to access A[-1] or A[m] directly, causing an index error.",
+          "Using 0 or the last element as a sentinel instead of -inf/+inf."
+        ]
+      },
+      {
+        "target_id": "T07",
+        "concept_name": "Algorithmic Decision Flow",
+        "assessment_facet": "COMPLEXITY_TRADE_OFF",
+        "what_taught": "The binary search is performed on the smaller of the two arrays to minimize the number of iterations, achieving O(log(min(m,n))) time complexity.",
+        "why_assessed": "While the algorithm works on either array, searching the smaller one is a key optimization. A hard target asks the student to justify this choice in terms of asymptotic complexity and to identify what happens if this optimization is ignored (i.e., searching the larger array).",
+        "cognitive_level": "EVALUATE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_023",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Believing the complexity is always O(log(m+n)).",
+          "Thinking searching the larger array is necessary to ensure all elements are considered."
+        ]
+      },
+      {
+        "target_id": "T08",
+        "concept_name": "Worked Example: Median Extraction",
+        "assessment_facet": "CALCULATION_MECHANIC",
+        "what_taught": "In a specific worked example, the final partition indices i and j are found, and the median is calculated by comparing the four boundary elements.",
+        "why_assessed": "This target requires the student to trace through a complex, multi-step example to the final calculation. It tests their ability to maintain state (i, j) through multiple iterations and correctly apply the median formula at the end.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_020",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Losing track of the current i and j values during the trace.",
+          "Applying the median formula before the correct partition is found."
+        ]
+      },
+      {
+        "target_id": "T09",
+        "concept_name": "Problem Definition and Context",
+        "assessment_facet": "THEORETICAL_RATIONALE",
+        "what_taught": "The problem is to find the median of two sorted arrays without merging them, to achieve better than O(m+n) time complexity.",
+        "why_assessed": "Understanding the *constraint* (no merging) is crucial. A hard target asks the student to explain why a simple merge-and-sort approach is suboptimal and how the binary search approach circumvents this limitation.",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_001",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Believing the arrays must be merged to find the median.",
+          "Not recognizing that the sorted property of the input arrays is essential for the binary search approach."
+        ]
+      },
+      {
+        "target_id": "T10",
+        "concept_name": "Worked Example: Initial Setup",
+        "assessment_facet": "DIAGNOSTIC_FAILURE",
+        "what_taught": "The initial setup involves identifying the smaller array and setting the binary search bounds (low=0, high=len(smaller_array)).",
+        "why_assessed": "A common failure is setting the high bound to the length of the larger array or failing to swap the arrays if the first one is larger. A hard diagnostic target presents a scenario where the student must identify the correct initial bounds and justify why the other choice would be incorrect or inefficient.",
+        "cognitive_level": "EVALUATE",
+        "difficulty_level": "HARD",
+        "primary_evidence_id": "E_CHILD_019",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Setting high = len(larger_array) instead of len(smaller_array).",
+          "Not swapping the arrays if the first array is larger, leading to a less efficient search."
+        ]
+      }
+    ]
+  },
+  "PLAN_BENCH_02_VAE": {
+    "title": "Deep Learning: Variational Autoencoders (Fashion-MNIST)",
+    "requested_count": 10,
+    "allocated_count": 10,
+    "fulfillment_percentage": 100.0,
+    "unique_concepts": 10,
+    "unique_facets_count": 6,
+    "facet_distribution": {
+      "CODE_IMPLEMENTATION": 2,
+      "DIAGNOSTIC_FAILURE": 2,
+      "THEORETICAL_RATIONALE": 2,
+      "CALCULATION_MECHANIC": 1,
+      "COMPLEXITY_TRADE_OFF": 2,
+      "BOUNDARY_EDGE_CASE": 1
+    },
+    "cognitive_distribution": {
+      "APPLY": 4,
+      "ANALYZE": 2,
+      "UNDERSTAND": 2,
+      "EVALUATE": 2
+    },
+    "all_evidence_grounded": true,
+    "planning_latency_seconds": 37.8,
+    "planning_strategy_notes": "The request for 10 targets matches the 10 available unique concepts exactly. To ensure high quality and non-redundancy at MEDIUM difficulty, each target focuses on a distinct concept using a varied pedagogical facet. This avoids repetitive question types (e.g., all 'what is X') and instead tests understanding through implementation details, theoretical rationale, and diagnostic reasoning, leveraging the specific evidence references provided for each concept.",
+    "targets": [
+      {
+        "target_id": "T01",
+        "concept_name": "Standard Autoencoder Architectures",
+        "assessment_facet": "CODE_IMPLEMENTATION",
+        "what_taught": "The structural composition of a standard autoencoder, specifically the mapping from input dimension to a lower-dimensional latent space and back to the input dimension.",
+        "why_assessed": "Assessing the tensor shape flow ensures students understand the dimensional constraints required for reconstruction, a fundamental prerequisite for understanding VAEs.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_001",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Believing the latent dimension must be exactly half the input dimension.",
+          "Confusing the encoder output shape with the decoder input shape in terms of batch processing."
+        ]
+      },
+      {
+        "target_id": "T02",
+        "concept_name": "Limitations of Fixed Latent Space",
+        "assessment_facet": "DIAGNOSTIC_FAILURE",
+        "what_taught": "Why deterministic point estimates in a fixed latent space lead to poor generalization and lack of smooth interpolation between data points.",
+        "why_assessed": "Identifying the specific failure mode of standard AEs (discontinuous latent space) is crucial for justifying the move to probabilistic models.",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_003",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Thinking the limitation is purely computational speed.",
+          "Believing that increasing the latent dimension solves the interpolation problem."
+        ]
+      },
+      {
+        "target_id": "T03",
+        "concept_name": "Variational Autoencoder (VAE) Concept",
+        "assessment_facet": "THEORETICAL_RATIONALE",
+        "what_taught": "The shift from modeling P(x|z) with a fixed z to modeling P(z|x) as a distribution, allowing for sampling from the latent space.",
+        "why_assessed": "Understanding the probabilistic shift is the core conceptual leap from AE to VAE; assessing this ensures students grasp the 'why' behind the architecture change.",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_005",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Viewing the VAE as just an AE with noise added to the input.",
+          "Confusing the prior distribution P(z) with the posterior distribution P(z|x)."
+        ]
+      },
+      {
+        "target_id": "T04",
+        "concept_name": "KL Divergence in VAEs",
+        "assessment_facet": "CALCULATION_MECHANIC",
+        "what_taught": "The mathematical formulation of KL divergence between the learned posterior q(z|x) and the prior p(z), typically a Gaussian to Gaussian divergence.",
+        "why_assessed": "Students must be able to identify the components of the KL term (mean and variance) to understand how the model regularizes the latent space.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_014",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Forgetting that the KL term depends on both mean and variance parameters.",
+          "Assuming KL divergence is symmetric (it is not)."
+        ]
+      },
+      {
+        "target_id": "T05",
+        "concept_name": "VAE Loss Function Components",
+        "assessment_facet": "COMPLEXITY_TRADE_OFF",
+        "what_taught": "The ELBO (Evidence Lower Bound) consists of a reconstruction loss (data fit) and a KL divergence term (regularization), representing a trade-off between fidelity and latent space structure.",
+        "why_assessed": "Understanding the trade-off explains why the model doesn't just memorize data (overfitting) or collapse to the prior (underfitting).",
+        "cognitive_level": "EVALUATE",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_018",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Believing the reconstruction loss is the only objective.",
+          "Thinking the KL term is a penalty for large weights (like L2 regularization)."
+        ]
+      },
+      {
+        "target_id": "T06",
+        "concept_name": "VAE Implementation: Data Preprocessing",
+        "assessment_facet": "BOUNDARY_EDGE_CASE",
+        "what_taught": "The necessity of normalizing input data (e.g., scaling pixel values to [0, 1] or [-1, 1]) to match the output activation function (sigmoid/tanh) of the decoder.",
+        "why_assessed": "Ignoring data scaling leads to training instability or poor reconstruction quality, a common practical pitfall in implementation.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_019",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Assuming raw pixel values (0-255) can be used directly with sigmoid output.",
+          "Believing normalization is only needed for classification tasks, not regression/reconstruction."
+        ]
+      },
+      {
+        "target_id": "T07",
+        "concept_name": "VAE Encoder Architecture",
+        "assessment_facet": "CODE_IMPLEMENTATION",
+        "what_taught": "The encoder outputs two vectors: the mean (mu) and the log-variance (log_var) of the latent distribution, rather than a single latent vector.",
+        "why_assessed": "This is a critical implementation detail; failing to output both parameters makes the VAE impossible to train correctly.",
+        "cognitive_level": "APPLY",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_020",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Outputting only the mean and assuming variance is fixed.",
+          "Outputting variance instead of log-variance, which can cause numerical instability."
+        ]
+      },
+      {
+        "target_id": "T08",
+        "concept_name": "Reparameterization Trick",
+        "assessment_facet": "THEORETICAL_RATIONALE",
+        "what_taught": "The technique of sampling z = mu + sigma * epsilon, where epsilon is sampled from a standard normal distribution, to make the sampling operation differentiable.",
+        "why_assessed": "This is the key mathematical insight that allows backpropagation through the stochastic sampling layer. Understanding *why* it works is essential.",
+        "cognitive_level": "UNDERSTAND",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_022",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Believing the gradient flows through the random number generator itself.",
+          "Thinking the trick only works for Gaussian distributions (it works for other factorized distributions too, but Gaussian is standard)."
+        ]
+      },
+      {
+        "target_id": "T09",
+        "concept_name": "VAE Decoder Architecture",
+        "assessment_facet": "DIAGNOSTIC_FAILURE",
+        "what_taught": "The decoder takes the sampled latent vector z and reconstructs the input. A common failure is using a linear output layer instead of an activation function matching the data distribution (e.g., sigmoid for binary pixels).",
+        "why_assessed": "Identifying the mismatch between output activation and data type is a key diagnostic skill for debugging poor reconstruction quality.",
+        "cognitive_level": "ANALYZE",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_024",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Using a softmax output for pixel reconstruction (incorrect for independent pixels).",
+          "Believing the decoder must have the exact same number of layers as the encoder."
+        ]
+      },
+      {
+        "target_id": "T10",
+        "concept_name": "Fashion-MNIST Application Context",
+        "assessment_facet": "COMPLEXITY_TRADE_OFF",
+        "what_taught": "Applying VAEs to Fashion-MNIST involves balancing the latent dimension size; too small loses detail, too large fails to enforce a smooth latent space.",
+        "why_assessed": "This assesses the practical application of the theoretical trade-offs discussed earlier, specifically in the context of the dataset used in the lecture.",
+        "cognitive_level": "EVALUATE",
+        "difficulty_level": "MEDIUM",
+        "primary_evidence_id": "E_CHILD_020",
+        "supporting_evidence_ids": [],
+        "plausible_misconceptions": [
+          "Assuming a larger latent space always yields better reconstruction.",
+          "Believing the latent dimension should match the input image size (28x28=784)."
+        ]
+      }
+    ]
+  }
+}
