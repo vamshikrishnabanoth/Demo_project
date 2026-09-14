@@ -843,7 +843,7 @@ exports.createQuiz = async (req, res) => {
                 topic: topic || content || '',
                 isLive: isLiveFinal,
                 isAssessment: isAssessment === 'true' || isAssessment === true,
-                status: isLiveFinal ? 'waiting' : 'finished',
+                status: isLiveFinal ? 'waiting' : 'active',
                 assignedGroups: parsedGroups,
                 assignedStudents: parsedStudents,
                 autoBroadcast: parsedAutoBroadcast,
@@ -2698,13 +2698,15 @@ exports.getLiveQuizzes = async (req, res) => {
             where: { id: req.user.id }
         });
 
-        // Fetch currently active quizzes AND finished live quizzes (for async practice)
+        // Fetch currently active quizzes, finished live quizzes (for async practice), and active assessments
         const quizzes = await prisma.quiz.findMany({
             where: {
                 OR: [
                     { isActive: true },
                     // Finished live quizzes are surfaced in the Assessments tab for async practice
-                    { isLive: true, status: 'finished' }
+                    { isLive: true, status: 'finished' },
+                    // Assessment quizzes published by teachers
+                    { isAssessment: true, status: 'active' }
                 ]
             },
             orderBy: { createdAt: 'desc' }
@@ -2721,8 +2723,15 @@ exports.getLiveQuizzes = async (req, res) => {
                 
                 // 3. If restricted, check assignedStudents
                 if (quiz.assignedStudents && quiz.assignedStudents.includes(user.id)) return true;
+
+                // 4. If no targeting at all (empty assignedGroups and empty assignedStudents),
+                //    the quiz is a broadcast-to-all — visible to every student
+                const hasNoGroupTargeting = !quiz.assignedGroups ||
+                    (Array.isArray(quiz.assignedGroups) && quiz.assignedGroups.length === 0);
+                const hasNoStudentTargeting = !quiz.assignedStudents || quiz.assignedStudents.length === 0;
+                if (hasNoGroupTargeting && hasNoStudentTargeting) return true;
                 
-                // 4. Check assignedGroups targeting parameters
+                // 5. Check assignedGroups targeting parameters
                 if (quiz.assignedGroups) {
                     try {
                         const groups = typeof quiz.assignedGroups === 'string' ? JSON.parse(quiz.assignedGroups) : quiz.assignedGroups;

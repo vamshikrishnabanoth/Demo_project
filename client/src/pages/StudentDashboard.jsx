@@ -78,6 +78,22 @@ export default function StudentDashboard() {
     const [redeeming, setRedeeming] = useState(false);
     const [showTicket, setShowTicket] = useState(null); // holds perk object to show ticket
 
+    // Assessments States
+    const [assessments, setAssessments] = useState([]);
+    const [loadingAssessments, setLoadingAssessments] = useState(false);
+
+    const fetchAssessments = async () => {
+        setLoadingAssessments(true);
+        try {
+            const res = await api.get('/quiz/available');
+            setAssessments((res.data || []).filter(q => q.isAssessment));
+        } catch (err) {
+            console.error('Failed to load assessments', err);
+        } finally {
+            setLoadingAssessments(false);
+        }
+    };
+
     // Read-only: just hydrate UI state, no DB mutations
     const fetchGamification = async () => {
         try {
@@ -121,12 +137,16 @@ export default function StudentDashboard() {
         if (user?.id) {
             socket.emit('identify', user.id);
             fetchGamification();
+            fetchAssessments();
         }
     }, [user]);
 
     useEffect(() => {
         if (activeTab === 'gamification' && user?.id) {
             initGamification();
+        }
+        if (activeTab === 'assessments' && user?.id) {
+            fetchAssessments();
         }
     }, [activeTab]);
 
@@ -470,7 +490,7 @@ export default function StudentDashboard() {
                     })()}
 
                     {/* Tab Controls */}
-                    <div className="flex justify-center gap-4 max-w-2xl mx-auto">
+                    <div className="flex justify-center gap-3 max-w-3xl mx-auto">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
@@ -481,6 +501,17 @@ export default function StudentDashboard() {
                             style={activeTab === 'link' ? { color: '#ffffff' } : {}}
                         >
                             Join Quiz
+                        </button>
+                        <button
+                            onClick={() => { if (!isLoading) setActiveTab('assessments'); }}
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-1.5 ${
+                                activeTab === 'assessments'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                            }`}
+                            style={activeTab === 'assessments' ? { color: '#ffffff' } : {}}
+                        >
+                            <FileText size={15} /> Assessments {assessments.length > 0 && <span className="bg-emerald-500 text-black px-1.5 py-0.5 rounded-full text-[10px] font-bold not-italic">{assessments.length}</span>}
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('arena'); }}
@@ -495,14 +526,14 @@ export default function StudentDashboard() {
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
-                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 ${
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-1.5 ${
                                 activeTab === 'gamification'
                                     ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
                                     : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
                             style={activeTab === 'gamification' ? { color: '#ffffff' } : {}}
                         >
-                            <Trophy size={16} /> Missions & Perks
+                            <Trophy size={15} /> Missions & Perks
                         </button>
                     </div>
 
@@ -934,6 +965,143 @@ export default function StudentDashboard() {
                                         )}
                                     </div>
                                 </div>
+                            </motion.div>
+                        ) : activeTab === 'assessments' ? (
+                            <motion.div
+                                key="tab-assessments"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.4 }}
+                                className="space-y-6 max-w-4xl mx-auto"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-2">
+                                            <FileText className="text-[var(--text-accent)]" size={24} /> Assigned Assessments
+                                        </h2>
+                                        <p className="text-xs text-[var(--text-secondary)] mt-1">
+                                            View and complete scheduled assignments assigned by your teachers.
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={fetchAssessments}
+                                        disabled={loadingAssessments}
+                                        className="text-xs px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border-color)] hover:border-[var(--bg-accent)] transition-all flex items-center gap-1 font-bold"
+                                    >
+                                        {loadingAssessments ? <Loader2 size={14} className="animate-spin" /> : '🔄 Refresh'}
+                                    </button>
+                                </div>
+
+                                {loadingAssessments ? (
+                                    <div className="py-16 text-center text-slate-400 font-medium flex flex-col items-center gap-3">
+                                        <Loader2 size={32} className="animate-spin text-[var(--text-accent)]" />
+                                        <span>Loading assigned assessments...</span>
+                                    </div>
+                                ) : assessments.length === 0 ? (
+                                    <div className="py-16 text-center bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-8">
+                                        <FileCheck size={48} className="mx-auto text-slate-500 mb-4 opacity-50" />
+                                        <h3 className="text-lg font-bold text-[var(--text-primary)]">No Active Assessments</h3>
+                                        <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-md mx-auto">
+                                            There are currently no active assigned assessments available for you. Check back later when your teacher publishes a new assessment.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {assessments.map(quiz => {
+                                            const now = new Date();
+                                            const startTime = quiz.startTime ? new Date(quiz.startTime) : null;
+                                            const endTime = quiz.endTime ? new Date(quiz.endTime) : null;
+
+                                            let statusBadge = { label: 'ACTIVE', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' };
+                                            let isExecutable = true;
+
+                                            if (quiz.hasAttempted) {
+                                                statusBadge = { label: 'COMPLETED', color: 'bg-blue-500/20 text-blue-400 border-blue-500/40' };
+                                                isExecutable = false;
+                                            } else if (startTime && now < startTime) {
+                                                statusBadge = { label: 'UPCOMING', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40' };
+                                                isExecutable = false;
+                                            } else if (endTime && now > endTime) {
+                                                statusBadge = { label: 'EXPIRED', color: 'bg-red-500/20 text-red-400 border-red-500/40' };
+                                                isExecutable = false;
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={quiz.id}
+                                                    className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-5 flex flex-col justify-between hover:border-[var(--bg-accent)]/50 transition-all shadow-lg relative overflow-hidden"
+                                                >
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <h3 className="text-base font-extrabold text-[var(--text-primary)] leading-snug">
+                                                                {quiz.title}
+                                                            </h3>
+                                                            <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full border shrink-0 ${statusBadge.color}`}>
+                                                                {statusBadge.label}
+                                                            </span>
+                                                        </div>
+
+                                                        {quiz.description && (
+                                                            <p className="text-xs text-[var(--text-secondary)] line-clamp-2">
+                                                                {quiz.description}
+                                                            </p>
+                                                        )}
+
+                                                        <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-white/5 text-[var(--text-secondary)] font-medium">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Clock size={13} className="text-[var(--text-accent)] shrink-0" />
+                                                                <span>Duration: {quiz.duration > 0 ? `${quiz.duration} Mins` : 'Untimed'}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Book size={13} className="text-[var(--text-accent)] shrink-0" />
+                                                                <span>Questions: {quiz._count?.questions || quiz.questions?.length || 0}</span>
+                                                            </div>
+                                                            {startTime && (
+                                                                <div className="col-span-2 flex items-center gap-1.5 text-slate-400">
+                                                                    <span className="font-bold text-[10px] uppercase text-slate-500">Starts:</span>
+                                                                    <span>{startTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                                                                </div>
+                                                            )}
+                                                            {endTime && (
+                                                                <div className="col-span-2 flex items-center gap-1.5 text-slate-400">
+                                                                    <span className="font-bold text-[10px] uppercase text-slate-500">Ends:</span>
+                                                                    <span>{endTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
+                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                            Code: <span className="text-[var(--text-accent)]">{quiz.joinCode}</span>
+                                                        </span>
+                                                        {quiz.hasAttempted ? (
+                                                            <button
+                                                                onClick={() => navigate(`/result/${quiz.resultId || quiz.id}`)}
+                                                                className="px-4 py-2 bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 font-bold text-xs rounded-xl border border-blue-500/40 transition-all flex items-center gap-1.5"
+                                                            >
+                                                                <BarChart3 size={14} /> View Results
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
+                                                                disabled={!isExecutable}
+                                                                className={`px-4 py-2 font-black text-xs rounded-xl uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                                                                    isExecutable
+                                                                        ? 'bg-[var(--bg-accent)] text-white hover:shadow-[0_0_15px_var(--bg-accent-glow)]'
+                                                                        : 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed'
+                                                                }`}
+                                                            >
+                                                                <Play size={14} fill="currentColor" /> Start Assessment
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </motion.div>
                         ) : null}
                     </AnimatePresence>
