@@ -199,12 +199,6 @@ export default function AttemptQuiz() {
         });
 
 
-        socket.on('sync_timer', ({ timeLeft }) => {
-            console.log('Syncing timer from server:', timeLeft);
-            targetEndTimeRef.current = Date.now() + (timeLeft * 1000);
-            setTimeLeft(timeLeft);
-        });
-
         socket.on('change_question', ({ questionIndex }) => {
             console.log('Teacher changed question to:', questionIndex);
             const nextIdx = parseInt(questionIndex);
@@ -216,12 +210,6 @@ export default function AttemptQuiz() {
             // Clearing waitingForState here ensures first-time joiners are not stuck on the sync screen.
             setWaitingForState(false);
 
-            // Reset state for new question
-            if (quiz && !quiz.duration) {
-                const newDuration = quiz.timerPerQuestion || 30;
-                targetEndTimeRef.current = Date.now() + (newDuration * 1000);
-                setTimeLeft(newDuration);
-            }
             // Persist new position offline
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
         });
@@ -1220,65 +1208,7 @@ export default function AttemptQuiz() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    {!isReviewMode && !result && (quiz.timerPerQuestion > 0 || quiz.duration > 0) && (
-                        <div className="flex flex-col items-center">
-                            <div className="relative w-20 h-20">
-                                {/* Ambient Glow for low time */}
-                                <AnimatePresence>
-                                    {timeLeft <= 5 && (
-                                        <motion.div 
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: [0, 0.4, 0], scale: [0.8, 1.4, 0.8] }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 1, repeat: Infinity }}
-                                            className="absolute inset-0 bg-red-500 rounded-full blur-xl"
-                                        />
-                                    )}
-                                </AnimatePresence>
 
-                                {/* Background Ring */}
-                                <svg className="w-full h-full transform -rotate-90">
-                                    <circle
-                                        cx="40"
-                                        cy="40"
-                                        r="36"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                        fill="transparent"
-                                        className="text-slate-200"
-                                    />
-                                    {/* Progress Ring */}
-                                    <motion.circle
-                                        cx="40"
-                                        cy="40"
-                                        r="36"
-                                        stroke={timeLeft <= 5 ? '#ef4444' : '#0f172a'}
-                                        strokeWidth="4"
-                                        fill="transparent"
-                                        strokeDasharray="226.2"
-                                        initial={{ strokeDashoffset: 226.2 }}
-                                        animate={{ strokeDashoffset: 226.2 * (1 - timeLeft / (quiz.timerType === 'totalTime' ? ((quiz.duration || 10) * 60) : (quiz.timerPerQuestion || 30))) }}
-                                        transition={{ duration: 1, ease: "linear" }}
-                                        strokeLinecap="round"
-                                    />
-                                </svg>
-
-                                {/* Countdown Text */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <motion.span 
-                                        key={timeLeft}
-                                        initial={{ scale: 1.1, opacity: 0.8 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        className={`text-2xl font-black italic tracking-tighter leading-none ${timeLeft <= 5 ? 'text-red-500' : 'text-[#0f172a]'}`}
-                                        style={{ color: timeLeft <= 5 ? '#ef4444' : '#0f172a' }}
-                                    >
-                                        {timeLeft}
-                                    </motion.span>
-                                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 ${timeLeft <= 5 ? 'text-red-500' : 'text-slate-500'}`}>Sec</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                     {isReviewMode && (
                         <div className="bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
                             Yield: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}

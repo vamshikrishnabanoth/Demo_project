@@ -868,54 +868,47 @@ io.to(realQuizId).emit(
                 console.log(`[QuizStart] Integrity verified for quiz ${quizId} (hash OK)`);
             }
 
-            // Calculate duration in ms
-            let durationMs = 0;
-            if (quiz.duration > 0) {
-                durationMs = quiz.duration * 60 * 1000;
-            } else {
-                // Per-question: estimate total time
-                durationMs = (quiz.questions.length * (quiz.timerPerQuestion || 30)) * 1000;
+            // ── 1-Hour Backend Disruption Safeguard ────────────────────────────
+            const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour (60 minutes)
+            const safetyEndTime = Date.now() + ONE_HOUR_MS;
+
+            // Clear any existing safety timer for this room
+            const existingRoomState = roomState.get(quizId);
+            if (existingRoomState && existingRoomState.safetyTimeout) {
+                clearTimeout(existingRoomState.safetyTimeout);
             }
-            const endTime = Date.now() + durationMs;
+
+            // Set 1-hour safety timeout to auto-finalize quiz if disrupted or un-ended
+            const safetyTimeout = setTimeout(async () => {
+                console.log(`[SafetyTimeout] 1-hour limit reached for quiz ${quizId}. Auto-ending quiz...`);
+                try {
+                    quizState.closeQuiz(quizId);
+                    roomState.delete(quizId);
+                    await quizState.drainWrites(quizId, 10000);
+                    await prisma.quiz.update({
+                        where: { id: quizId },
+                        data: { status: 'finished' }
+                    });
+                    io.to(quizId).emit('quiz_ended');
+                    quizState.cleanupQuiz(quizId);
+                } catch (timeoutErr) {
+                    console.error(`[SafetyTimeout] Error auto-ending quiz ${quizId}:`, timeoutErr.message);
+                }
+            }, ONE_HOUR_MS);
 
             // ── Initialize authoritative in-memory quiz state ─────────────────
-            // This pre-loads quiz data so answer submissions require ZERO DB reads.
-            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, endTime, status: 'started' });
+            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, status: 'started' });
             // ─────────────────────────────────────────────────────────────────
 
             const state = roomState.get(quizId) || {};
-            roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, endTime });
+            roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, safetyTimeout, startedAt: Date.now() });
 
             await prisma.quiz.update({
                 where: { id: quizId },
-                data: { status: 'started', endTime: new Date(endTime) } // Persist endTime so scheduler can reload after server restart
+                data: { status: 'started', endTime: new Date(safetyEndTime) }
             });
             io.to(quizId).emit('quiz_started');
-            io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
-
-            // Auto-terminate when global timer expires (for duration-based quizzes)
-            if (quiz.duration > 0) {
-                setTimeout(async () => {
-                    const currentState = roomState.get(quizId.toString());
-                    if (currentState && currentState.status !== 'finished') {
-                        roomState.delete(quizId.toString());
-                        quizState.closeQuiz(quizId);
-                        try {
-                            // Drain pending writes before auto-finishing
-                            await quizState.drainWrites(quizId, 8000);
-                            await prisma.quiz.update({
-                                where: { id: quizId },
-                                data: { status: 'finished' }
-                            });
-                        } catch (err2) {
-                            console.error('Error auto-finishing quiz:', err2.message);
-                        }
-                        io.to(quizId).emit('quiz_ended');
-                        console.log(`Quiz ${quizId} auto-terminated after global timer expired.`);
-                        quizState.cleanupQuiz(quizId);
-                    }
-                }, durationMs + 3000); // small buffer
-            }
+            console.log(`[QuizStart] Quiz ${quizId} started. 1-hour safety timeout active.`);
         } catch (err) {
             console.error('Error starting quiz:', err);
         }
@@ -935,7 +928,11 @@ io.to(realQuizId).emit(
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
 
-            // ── STEP 1: Stop accepting new submissions immediately ─────────────
+            // ── STEP 1: Clear safety timer & stop accepting new submissions ────
+            const existingRoomState = roomState.get(quizId);
+            if (existingRoomState && existingRoomState.safetyTimeout) {
+                clearTimeout(existingRoomState.safetyTimeout);
+            }
             quizState.closeQuiz(quizId);
             roomState.delete(quizId);
             console.log(`[QuizEnd] Quiz ${quizId} closed to new submissions.`);
@@ -1129,30 +1126,14 @@ io.to(realQuizId).emit(
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
 
-        // PERFORMANCE: Use in-memory quiz state instead of DB lookup.
-        // Ownership was verified at start_quiz. JWT guarantees role=teacher here.
-        const memState = quizState.getQuizState(quizId);
+        const qIdx = parseInt(questionIndex);
         const state = roomState.get(quizId) || {};
+        roomState.set(quizId, { ...state, currentQuestion: qIdx });
 
-        // Get quiz timing from in-memory state (loaded at start_quiz)
-        const quizData = memState?.quiz;
+        // Update in-memory state for student reconnect sync
+        quizState.updateQuizState(quizId, { currentQuestion: qIdx });
 
-        // Reset Master Time for the new question if it's per-question
-        let endTime = null;
-        if (quizData && quizData.duration === 0) {
-            endTime = Date.now() + ((quizData.timerPerQuestion || 30) * 1000);
-        } else if (!quizData && state.endTime) {
-            // Memory state unavailable — keep existing timer
-        }
-
-        if (endTime) state.endTime = endTime;
-        roomState.set(quizId, { ...state, currentQuestion: parseInt(questionIndex) });
-
-        // Also update quizState for reconnect sync
-        quizState.updateQuizState(quizId, { currentQuestion: parseInt(questionIndex), ...(endTime ? { endTime } : {}) });
-
-        io.to(quizId).emit('change_question', { questionIndex });
-        if (endTime) io.to(quizId).emit('sync_timer', { timeLeft: Math.max(0, Math.ceil((endTime - Date.now()) / 1000)) });
+        io.to(quizId).emit('change_question', { questionIndex: qIdx });
     });
 
     // Tracking which question a student is currently viewing

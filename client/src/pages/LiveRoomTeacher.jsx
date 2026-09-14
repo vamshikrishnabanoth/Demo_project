@@ -118,10 +118,6 @@ export default function LiveRoomTeacher() {
 
         socket.on('change_question', ({ questionIndex }) => {
             setCurrentQuestion(parseInt(questionIndex));
-            if (quiz && !quiz.duration) {
-                setTimeLeft(quiz.timerPerQuestion || 30);
-                setIsTimerRunning(true);
-            }
         });
 
         socket.on('student_focus_update', ({ studentId, username, questionIndex }) => {
@@ -137,12 +133,6 @@ export default function LiveRoomTeacher() {
         socket.on('question_leaderboard', (data) => {
             setLeaderboard(data.leaderboard);
             setLiveInsights(data.liveInsights);
-        });
-
-        socket.on('sync_timer', ({ timeLeft }) => {
-            console.log('Syncing timer from server:', timeLeft);
-            setTimeLeft(timeLeft);
-            if (timeLeft > 0) setIsTimerRunning(true);
         });
 
         socket.on('restoreState', (state) => {
@@ -372,32 +362,7 @@ if (socket.connected) {
         }
     };
 
-    useEffect(() => {
-        if (!quiz) return;
 
-        if (quiz.duration > 0) {
-            if (!hasInitializedTimer.current) {
-                setTimeLeft(quiz.duration * 60);
-                hasInitializedTimer.current = true;
-            }
-        } else if (!isTimerRunning && quiz.status === 'started' && timeLeft === 30) {
-            setTimeLeft(quiz.timerPerQuestion || 30);
-            setIsTimerRunning(true);
-        }
-
-        if (!isTimerRunning || quiz.status !== 'started') return;
-
-        const timer = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    setIsTimerRunning(false);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [isTimerRunning, quiz]);
 
     // Offline / Reconnect handling
     useEffect(() => {
@@ -654,10 +619,9 @@ if (socket.connected) {
                     <div className="flex-1 bg-white border-2 border-slate-100 rounded-[3rem] p-8 shadow-2xl shadow-slate-200/50 relative overflow-hidden">
                         <div className="relative z-10">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className={`px-5 py-2 rounded-full font-black italic flex items-center gap-2 text-2xl ${timeLeft <= 20 ? 'bg-red-500 text-white animate-pulse' : 'bg-[#0f172a] text-white'}`}>
-                                    <Clock size={28} /> {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                <div className="px-5 py-2 rounded-full font-black italic flex items-center gap-2 text-sm bg-emerald-500 text-white shadow-md">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span> LIVE SESSION
                                 </div>
-                                <span className="text-slate-300 font-bold tracking-widest uppercase text-xs">REMAINING TIME</span>
                             </div>
                             <h1 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter truncate">
                                 {cleanQuizTitle(quiz?.title) || 'Active Session'}
