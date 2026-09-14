@@ -237,18 +237,22 @@ const AssessmentsHistory = () => {
                                                 {item.isAttempted ? (
                                                     <>
                                                         <div className="bg-[var(--text-accent)] text-[var(--bg-primary)] px-4 py-1.5 rounded-lg font-black text-xs italic shadow-lg">
-                                                            {accuracy}%
+                                                            Score: {item.score}%
                                                         </div>
                                                         {item.rank && (
-                                                            <div className="bg-white/5 px-4 py-1.5 rounded-lg text-white/60 font-black text-xs italic border border-white/5">
+                                                            <div className="bg-emerald-500/10 border border-emerald-500/30 px-4 py-1.5 rounded-lg text-emerald-400 font-black text-xs italic">
                                                                 Rank #{item.rank}
                                                             </div>
                                                         )}
-
                                                     </>
                                                 ) : (
-                                                    <div className="bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-lg text-rose-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
-                                                        <XCircle size={12} aria-hidden="true" /> No Attempt
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="bg-rose-500/10 border border-rose-500/30 px-4 py-1.5 rounded-lg text-rose-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                                                            <XCircle size={14} aria-hidden="true" /> MISSED / NO ATTEMPT
+                                                        </div>
+                                                        <span className="text-[10px] text-slate-500 font-bold italic">
+                                                            Missed — You did not attempt this assessment before it expired. Review unavailable.
+                                                        </span>
                                                     </div>
                                                 )}
                                             </div>
@@ -259,11 +263,14 @@ const AssessmentsHistory = () => {
                                                         className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--bg-accent)] !text-white font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-md"
                                                         style={{ color: '#ffffff' }}
                                                     >
-                                                        <Activity size={16} aria-hidden="true" /> View Analytics
+                                                        <Activity size={16} aria-hidden="true" /> View Review & Analytics
                                                     </button>
                                                 ) : (
-                                                    <button className="w-full sm:w-auto px-8 py-2.5 rounded-xl bg-[var(--bg-primary)] text-[var(--text-secondary)] font-black text-[10px] uppercase tracking-widest border border-[var(--border-color)] cursor-not-allowed opacity-60">
-                                                        Locked
+                                                    <button 
+                                                        disabled
+                                                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-white/5 text-slate-500 font-black text-[10px] uppercase tracking-widest border border-white/10 cursor-not-allowed opacity-60"
+                                                    >
+                                                        Review Unavailable
                                                     </button>
                                                 )}
                                             </div>

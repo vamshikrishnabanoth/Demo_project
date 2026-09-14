@@ -2651,20 +2651,24 @@ exports.generateQuizQuestions = async (req, res) => {
 
 exports.getStudentHistory = async (req, res) => {
     try {
-        const finishedQuizzes = await prisma.quiz.findMany({
-            where: {
-                OR: [
-                    { status: 'finished' },
-                    { isActive: false }
-                ]
-            },
-            orderBy: { createdAt: 'desc' }
+        const studentId = req.user.id;
+        const now = new Date();
+
+        // 1. Fetch all completed attempts for this student
+        const studentResults = await prisma.result.findMany({
+            where: { studentId: studentId, status: 'completed' },
+            include: { quiz: true },
+            orderBy: { completedAt: 'desc' }
         });
 
-        const history = await Promise.all(finishedQuizzes.map(async (quiz) => {
-            const result = await prisma.result.findFirst({
-                where: { quizId: quiz.id, studentId: req.user.id }
-            });
+        const attemptedQuizIds = new Set(studentResults.map(r => r.quizId));
+
+        const historyItems = [];
+
+        // Build attempted items
+        for (const resItem of studentResults) {
+            const quiz = resItem.quiz;
+            if (!quiz) continue;
 
             const teacher = await prisma.user.findUnique({
                 where: { id: quiz.createdById },
@@ -2672,40 +2676,76 @@ exports.getStudentHistory = async (req, res) => {
             });
 
             // Calculate Rank
-            let rank = null;
-            if (result) {
-                const allResults = await prisma.result.findMany({
-                    where: { quizId: quiz.id },
-                    orderBy: [
-                        { score: 'desc' },
-                        { completedAt: 'asc' }
-                    ]
-                });
-                const studentIndex = allResults.findIndex(r => r.studentId === req.user.id);
-                rank = studentIndex !== -1 ? studentIndex + 1 : null;
-            }
+            const allResults = await prisma.result.findMany({
+                where: { quizId: quiz.id, status: 'completed' },
+                orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
+            });
+            const studentIndex = allResults.findIndex(r => r.studentId === studentId);
+            const rank = studentIndex !== -1 ? studentIndex + 1 : null;
 
-            return {
+            const totalQ = Array.isArray(quiz.questions) ? quiz.questions.length : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions).length : 0);
+
+            historyItems.push({
                 id: quiz.id,
+                resultId: resItem.id,
                 title: quiz.title,
-                topic: quiz.topic,
+                topic: quiz.topic || quiz.title,
                 subject: quiz.topic || 'General',
-                conductedBy: teacher ? teacher.username : 'Unknown',
+                conductedBy: teacher ? teacher.username : 'Teacher',
                 description: quiz.description,
-                date: result ? result.completedAt : quiz.createdAt,
-                startedAt: result ? result.startedAt : null,
-                completedAt: result ? result.completedAt : null,
-                score: result ? result.score : 0,
-                totalQuestions: quiz.questions.length,
-                status: result ? 'Completed' : 'Missed',
-                isAttempted: !!result,
+                date: resItem.completedAt || resItem.startedAt || quiz.createdAt,
+                startedAt: resItem.startedAt,
+                completedAt: resItem.completedAt,
+                score: resItem.score,
+                totalQuestions: totalQ,
+                status: 'Completed',
+                isAttempted: true,
                 rank: rank
-            };
-        }));
+            });
+        }
 
-        res.json(history);
+        // 2. Fetch missed/expired assessments targeted to student that were NEVER attempted
+        const missedQuizzes = await prisma.quiz.findMany({
+            where: {
+                isAssessment: true,
+                endTime: { lt: now },
+                id: { notIn: Array.from(attemptedQuizIds) }
+            },
+            orderBy: { endTime: 'desc' }
+        });
+
+        for (const quiz of missedQuizzes) {
+            const teacher = await prisma.user.findUnique({
+                where: { id: quiz.createdById },
+                select: { username: true }
+            });
+            const totalQ = Array.isArray(quiz.questions) ? quiz.questions.length : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions).length : 0);
+
+            historyItems.push({
+                id: quiz.id,
+                resultId: null,
+                title: quiz.title,
+                topic: quiz.topic || quiz.title,
+                subject: quiz.topic || 'General',
+                conductedBy: teacher ? teacher.username : 'Teacher',
+                description: quiz.description,
+                date: quiz.endTime || quiz.createdAt,
+                startedAt: null,
+                completedAt: null,
+                score: 0,
+                totalQuestions: totalQ,
+                status: 'Missed',
+                isAttempted: false,
+                rank: null
+            });
+        }
+
+        // Sort combined list by date descending
+        historyItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        res.json(historyItems);
     } catch (err) {
-        console.error(err.message);
+        console.error('getStudentHistory error:', err.message);
         res.status(500).json({ msg: 'Server Error' });
     }
 };

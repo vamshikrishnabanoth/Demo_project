@@ -1208,7 +1208,12 @@ export default function AttemptQuiz() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-
+                    {timeLeft > 0 && !isReviewMode && !result && (
+                        <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
+                            <Clock size={14} className={timeLeft < 60 ? 'animate-bounce' : ''} />
+                            <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+                        </div>
+                    )}
                     {isReviewMode && (
                         <div className="bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
                             Yield: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}

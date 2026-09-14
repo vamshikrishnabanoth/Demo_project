@@ -69,7 +69,7 @@ export default function Assessments() {
         errorMessage: 'Could not load assessment records'
     });
 
-    const safeQuizzes = quizzes || [];
+    const safeQuizzes = (quizzes || []).filter(q => q.isAssessment === true);
 
     const filteredQuizzes = safeQuizzes.filter(q => {
         const matchesSearch = q.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -84,46 +84,33 @@ export default function Assessments() {
         return matchesSearch && matchesDifficulty && matchesStatus;
     });
 
-    const handleAttemptClick = async (quiz) => {
-        if (quiz.accessType === 'public') {
-            navigate(`/quiz/attempt/${quiz.id}`);
-        } else {
-            // Private: prompt for PIN
-            const { value: pin } = await royalAlert.fire({
-                title: 'Enter 6-Digit PIN',
-                text: `"${quiz.title}" is a private assessment. Enter the code to gain access:`,
-                input: 'text',
-                inputPlaceholder: 'ENTER PIN...',
-                showCancelButton: true,
-                confirmButtonText: 'SYNC ARENA',
-                cancelButtonText: 'ABORT',
-                inputAttributes: {
-                    maxlength: '6',
-                    autocapitalize: 'off',
-                    autocorrect: 'off',
-                    style: 'text-align: center; font-weight: 900; letter-spacing: 0.2em; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; color: #fff; width: 80%; margin: 1.5rem auto;'
-                },
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You must enter a Join Quiz PIN!';
-                    }
-                    if (value.length !== 6) {
-                        return 'The PIN must be exactly 6 characters!';
-                    }
-                }
-            });
+    const handleAttemptClick = (quiz) => {
+        const now = new Date();
+        const startTime = quiz.startTime ? new Date(quiz.startTime) : null;
+        const endTime = quiz.endTime ? new Date(quiz.endTime) : null;
 
-            if (pin) {
-                try {
-                    // Try to join with the PIN to validate it
-                    await api.post('/quiz/join', { code: pin });
-                     toast.success('Join Quiz Synchronized!');
-                    navigate(`/quiz/attempt/${quiz.id}`);
-                } catch (err) {
-                    showError('Link Rejected', err.response?.data?.msg || 'Incorrect access PIN.');
-                }
-            }
+        const startStr = startTime ? startTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+        const endStr = endTime ? endTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+
+        if (startTime && now < startTime) {
+            return royalAlert.fire({
+                icon: 'info',
+                title: '🔒 Assessment Not Started',
+                text: `This assessment has not started yet. It will start at ${startStr}. Please check back then!`,
+                confirmButtonText: 'UNDERSTOOD'
+            });
         }
+
+        if (endTime && now > endTime) {
+            return royalAlert.fire({
+                icon: 'error',
+                title: '⏰ Assessment Expired',
+                text: `The window for this assessment closed at ${endStr}. This assessment is no longer available for attempt.`,
+                confirmButtonText: 'CLOSE'
+            });
+        }
+
+        navigate(`/quiz/attempt/${quiz.id}`);
     };
 
     const completedQuizzes = safeQuizzes.filter(q => q.isAttempted);
@@ -346,46 +333,25 @@ export default function Assessments() {
                                                 </div>
                                             </div>
 
-                                            {quiz.isLocked ? (
-                                                <button
-                                                    disabled
-                                                    className="bg-slate-100 border border-slate-300 text-slate-400 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
-                                                >
-                                                    Locked
-                                                    <Lock size={14} aria-hidden="true" />
-                                                </button>
-                                            ) : quiz.isExpired && !quiz.isAssessment ? (
-                                                <button
-                                                    disabled
-                                                    className="bg-slate-100 border border-slate-300 text-slate-400 px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed"
-                                                >
-                                                    Expired
-                                                    <AlertCircle size={14} aria-hidden="true" />
-                                                </button>
-                                            ) : (
-                                                <div className="flex items-center gap-3">
-                                                    {/* ANALYTICS — only when student has at least one attempt */}
-                                                    {quiz.isAttempted && (
-                                                        <button
-                                                            onClick={() => navigate(`/analytics/quiz/${quiz.id}`)}
-                                                            className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-300 px-5 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-sm"
-                                                            title="View detailed analytics"
-                                                        >
-                                                            <BarChart2 size={14} aria-hidden="true" />
-                                                            Analytics
-                                                        </button>
-                                                    )}
-                                                    {/* START — always available for unlimited practice */}
+                                            <div className="flex items-center gap-3">
+                                                {quiz.isAttempted && (
                                                     <button
-                                                        onClick={() => navigate(`/quiz/attempt/${quiz.id}`)}
-                                                        className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md"
-                                                        title={quiz.isAttempted ? 'Practice again' : (quiz.isExpired ? 'Practice' : 'Start assessment')}
+                                                        onClick={() => navigate(`/analytics/quiz/${quiz.id}`)}
+                                                        className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-300 px-5 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-sm"
+                                                        title="View detailed analytics"
                                                     >
-                                                        <Play size={14} fill="currentColor" aria-hidden="true" />
-                                                        {quiz.isExpired ? 'Practice' : 'Start'}
+                                                        <BarChart2 size={14} aria-hidden="true" />
+                                                        Analytics
                                                     </button>
-                                                </div>
-                                            )}
+                                                )}
+                                                <button
+                                                    onClick={() => handleAttemptClick(quiz)}
+                                                    className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md"
+                                                >
+                                                    <Play size={14} fill="currentColor" aria-hidden="true" />
+                                                    {quiz.isAttempted ? 'Retake Assessment' : 'Start Assessment'}
+                                                </button>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 );
