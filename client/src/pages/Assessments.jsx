@@ -323,9 +323,9 @@ export default function Assessments() {
                                                     {/* Timing and metadata indicators */}
                                                     <div className="flex flex-col gap-1.5">
                                                         <div className="flex items-center gap-4 text-[#555555] text-[10px] font-bold uppercase tracking-widest">
-                                                            <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.totalQuestions || 0} Min</span>
+                                                            <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.duration > 0 ? `${quiz.duration} Mins` : 'Untimed'}</span>
+                                                            <span className="flex items-center gap-1.5"><BookOpen size={12} aria-hidden="true" /> {quiz.totalQuestions || 0} Questions</span>
                                                             <span className="flex items-center gap-1.5"><Filter size={12} aria-hidden="true" /> {quiz.difficulty || 'Normal'}</span>
-                                                            <span className="flex items-center gap-1.5"><Trophy size={12} aria-hidden="true" /> {(quiz.totalQuestions || 0) * 10} Pts</span>
                                                         </div>
                                                         {quiz.isLocked && startStr && (
                                                             <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider flex items-center gap-1">

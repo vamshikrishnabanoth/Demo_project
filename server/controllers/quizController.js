@@ -2727,11 +2727,6 @@ exports.getLiveQuizzes = async (req, res) => {
                     { isAssessment: true, status: 'active' }
                 ]
             },
-            include: {
-                _count: {
-                    select: { questions: true }
-                }
-            },
             orderBy: { createdAt: 'desc' }
         });
 
