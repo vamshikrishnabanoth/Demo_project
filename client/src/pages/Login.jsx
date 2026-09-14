@@ -68,7 +68,7 @@ export default function Login() {
     useEffect(() => {
         const wakeUp = async () => {
             try {
-                const BACKEND = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+                const BACKEND = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://quiz-backend-qgro.onrender.com';
                 await fetch(`${BACKEND}/health`, {
                     method: 'GET',
                     signal: AbortSignal.timeout(90000),
