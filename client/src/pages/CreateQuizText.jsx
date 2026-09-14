@@ -117,9 +117,12 @@ export default function CreateQuizText() {
 
     useEffect(() => {
         if (isAssessment) {
-            setTimerType('timePerQuestion');
-        } else {
             setTimerType('totalTime');
+            if (!duration || duration === 0) setDuration(20);
+        } else {
+            setTimerType('manual');
+            setDuration(0);
+            setTimerPerQuestion(0);
         }
     }, [isAssessment]);
 
@@ -241,16 +244,12 @@ export default function CreateQuizText() {
         }
 
         try {
-            const sanitizedTimerPerQuestion = timerType === 'timePerQuestion' 
-                ? Math.min(300, Math.max(0, parseInt(timerPerQuestion) || 30))
-                : 30;
-
             const res = await api.post('/quiz/create', {
                 title: title.trim(),
                 questions,
-                duration: timerType === 'totalTime' ? (parseInt(duration) || 30) : 0,
-                timerPerQuestion: sanitizedTimerPerQuestion,
-                timerType: timerType || 'timePerQuestion',
+                duration: isAssessment ? (parseInt(duration) || 20) : 0,
+                timerPerQuestion: 0,
+                timerType: isAssessment ? 'totalTime' : 'manual',
                 accessType: accessType || 'private',
                 startTime: finalStartTime || null,
                 endTime: finalEndTime || null,
@@ -416,66 +415,85 @@ export default function CreateQuizText() {
                                         />
                                     </GlassCard>
 
-                                    {/* Column 2: Assignment Mode Toggle */}
+                                    {/* Column 2: Quiz Creation Mode (Live Quiz vs Assignment) */}
                                     <GlassCard className="flex flex-col justify-center p-4">
-                                        <div className="flex items-center justify-between cursor-pointer group select-none h-full" onClick={() => setIsAssessment(!isAssessment)}>
-                                            <div className="flex flex-col justify-center">
-                                                <span className="block font-black text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em]">Assignment Mode</span>
-                                                <span className="block font-black text-sm text-[var(--text-primary)] uppercase tracking-tight italic mt-1">
-                                                    {isAssessment ? 'Assessment Exam' : 'Live Interactive Quiz'}
-                                                </span>
-                                                <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block mt-1">
-                                                    {isAssessment ? 'Self-paced homework task' : 'Manual Time, Team Link Rooms'}
-                                                </span>
-                                            </div>
-                                            <div className="relative w-10 h-5 flex-shrink-0">
-                                                <input 
-                                                    type="checkbox" 
-                                                    className="sr-only peer" 
-                                                    checked={isAssessment} 
-                                                    onChange={(e) => setIsAssessment(e.target.checked)} 
-                                                />
-                                                <div className="w-10 h-5 bg-slate-300 peer-checked:bg-[var(--bg-accent)] rounded-full transition-all ring-1 ring-slate-400"></div>
-                                                <div className="absolute left-1 top-0.5 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-5 shadow-sm"></div>
-                                            </div>
+                                        <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-2">Quiz Creation Mode</label>
+                                        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setIsAssessment(false);
+                                                    setDuration(0);
+                                                    setTimerPerQuestion(0);
+                                                }}
+                                                className={`py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${!isAssessment ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
+                                            >
+                                                <span>⚡ Live Quiz</span>
+                                                <span className="text-[8px] font-medium opacity-80">No Timer</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setIsAssessment(true);
+                                                    if (!duration || duration === 0) setDuration(20);
+                                                }}
+                                                className={`py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${isAssessment ? 'bg-violet-600 text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
+                                            >
+                                                <span>📋 Assignment</span>
+                                                <span className="text-[8px] font-medium opacity-80">Fixed Duration</span>
+                                            </button>
                                         </div>
                                     </GlassCard>
 
-                                    {/* Column 3: Timer Mode */}
+                                    {/* Column 3: Timer & Duration Controls */}
                                     <GlassCard className="flex flex-col justify-center gap-2 p-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-0">Timer Mode</label>
-                                                <div className="bg-white border border-[var(--border-color)] rounded-xl py-1 px-3 text-[var(--text-primary)] font-black italic text-xs uppercase tracking-tighter shadow-sm">
-                                                    {isAssessment ? 'Time Per Question' : 'Total Quiz Time'}
+                                        {!isAssessment ? (
+                                            <div className="space-y-1.5 text-center flex flex-col items-center justify-center h-full">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Live Quiz Timer</label>
+                                                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 px-4 py-2 rounded-xl text-xs font-black italic uppercase tracking-wider flex items-center justify-center gap-2">
+                                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                                    No Timer (Manual Navigation)
+                                                </div>
+                                                <span className="text-[9px] text-slate-400 font-semibold">Teacher advances questions manually</span>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Assignment Duration</label>
+                                                    <span className="text-xs font-black text-violet-700 italic">{duration || 20} Mins</span>
+                                                </div>
+                                                
+                                                {/* Preset Duration Buttons */}
+                                                <div className="grid grid-cols-3 gap-1.5">
+                                                    {[15, 20, 30].map(mins => (
+                                                        <button
+                                                            key={mins}
+                                                            type="button"
+                                                            onClick={() => setDuration(mins)}
+                                                            className={`py-1.5 rounded-lg text-xs font-black italic transition-all cursor-pointer ${parseInt(duration) === mins ? 'bg-violet-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                                                        >
+                                                            {mins} Mins
+                                                        </button>
+                                                    ))}
+                                                </div>
+
+                                                <div className="pt-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider shrink-0">Custom:</span>
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            max="300"
+                                                            value={duration}
+                                                            onChange={(e) => { const v = parseInt(e.target.value); setDuration(isNaN(v) ? '' : v); }}
+                                                            placeholder="Minutes"
+                                                            className="w-full bg-white border border-[var(--border-color)] rounded-xl py-1 px-2.5 text-[var(--text-primary)] font-black italic outline-none focus:border-violet-600 transition-all text-xs"
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            {isAssessment ? (
-                                                <div className="animate-in slide-in-from-top-2 duration-200 pt-1">
-                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Seconds Per Screen</label>
-                                                    <input
-                                                        type="number"
-                                                        min="5"
-                                                        max="300"
-                                                        value={timerPerQuestion}
-                                                        onChange={(e) => { const v = parseInt(e.target.value); setTimerPerQuestion(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm text-sm"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="animate-in slide-in-from-top-2 duration-200 pt-1">
-                                                    <label className="block text-[9px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Total Minutes</label>
-                                                    <input
-                                                        type="number"
-                                                        min="1"
-                                                        max="300"
-                                                        value={duration}
-                                                        onChange={(e) => { const v = parseInt(e.target.value); setDuration(isNaN(v) ? '' : v); }}
-                                                        className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-[var(--text-primary)] font-black italic outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm text-sm"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
+                                        )}
                                     </GlassCard>
                                 </div>
 
