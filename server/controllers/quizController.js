@@ -1479,34 +1479,6 @@ exports.submitQuiz = async (req, res) => {
             };
         });
 
-        // If this is a self-paced practice assessment, do NOT write to the database (protecting teacher dashboards and analytics).
-        // Return a dynamically computed result directly to the student.
-        if (quiz.isAssessment) {
-            const now = new Date();
-            const startedAt = new Date(now.getTime() - (totalTimeTaken * 1000));
-            const normalizedQuestions = normalizeQuestions(quiz.questions);
-
-            const dummyResult = {
-                id: 'practice-result-' + Math.random().toString(36).substring(2, 9),
-                quizId: quizId,
-                studentId: req.user.id,
-                score,
-                totalTimeTaken,
-                totalQuestions: quiz.questions.length,
-                answers: formattedAnswers,
-                status: 'completed',
-                startedAt: startedAt,
-                completedAt: now,
-                lastAnsweredAt: now,
-                quizTitle: quiz.title,
-                questions: normalizedQuestions,
-                rank: 1,
-                totalParticipants: 1,
-                maxPossibleScore
-            };
-            return res.json(dummyResult);
-        }
-
         // Assessments AND finished live quizzes (async practice) allow unlimited re-attempts.
         // The DB has a unique constraint on (quizId, studentId), so we upsert:
         // update the existing record with the latest attempt's data, or create if none exists.
@@ -1553,7 +1525,9 @@ exports.submitQuiz = async (req, res) => {
             }
             return res.json({
                 ...result,
-                maxPossibleScore
+                maxPossibleScore,
+                quizTitle: quiz.title,
+                questions: normalizeQuestions(quiz.questions)
             });
         }
 
@@ -2683,7 +2657,10 @@ exports.getStudentHistory = async (req, res) => {
             const studentIndex = allResults.findIndex(r => r.studentId === studentId);
             const rank = studentIndex !== -1 ? studentIndex + 1 : null;
 
-            const totalQ = Array.isArray(quiz.questions) ? quiz.questions.length : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions).length : 0);
+            const questionsArr = Array.isArray(quiz.questions) ? quiz.questions : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : []);
+            const totalQ = questionsArr.length;
+            const maxPossibleScore = questionsArr.reduce((acc, q) => acc + (q.points || 10), 0) || totalQ * 10;
+            const scorePercent = maxPossibleScore > 0 ? Math.round((resItem.score / maxPossibleScore) * 100) : 0;
 
             historyItems.push({
                 id: quiz.id,
@@ -2696,7 +2673,9 @@ exports.getStudentHistory = async (req, res) => {
                 date: resItem.completedAt || resItem.startedAt || quiz.createdAt,
                 startedAt: resItem.startedAt,
                 completedAt: resItem.completedAt,
-                score: resItem.score,
+                score: scorePercent,
+                rawScore: resItem.score,
+                maxPossibleScore,
                 totalQuestions: totalQ,
                 status: 'Completed',
                 isAttempted: true,
@@ -2858,11 +2837,16 @@ exports.getLiveQuizzes = async (req, res) => {
             // The Assessments tab uses this flag to show START (async practice) + RESULT buttons.
             const wasLiveCompleted = quiz.isLive && quiz.status === 'finished';
 
+            let questionsArr = Array.isArray(quiz.questions) ? quiz.questions : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : []);
+            let maxPossibleScore = questionsArr.reduce((acc, q) => acc + (q.points || 10), 0) || (totalQ * 10);
+            let scorePercent = (result && maxPossibleScore > 0) ? Math.round((result.score / maxPossibleScore) * 100) : 0;
+
             return {
                 ...quizData,
                 ...(isTeacherOrAdmin ? { questions } : {}),
                 isAttempted: !!result,
-                score: result ? result.score : 0,
+                score: scorePercent,
+                rawScore: result ? result.score : 0,
                 totalQuestions: totalQ,
                 isLocked,
                 isExpired,
