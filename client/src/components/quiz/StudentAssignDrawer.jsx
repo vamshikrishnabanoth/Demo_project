@@ -3,7 +3,7 @@ import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    X,
+    X as XIcon,
     Search,
     Users,
     UserCheck,
@@ -342,7 +342,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                         className="p-2.5 hover:bg-white/5 rounded-2xl text-slate-400 hover:text-white transition-all active:scale-95"
                         aria-label="Close targeting drawer"
                     >
-                        <X size={18} />
+                        <XIcon size={18} />
                     </button>
                 </div>
 

@@ -9,7 +9,7 @@ import {
     BookOpen,
     History,
     Menu,
-    X,
+    X as XIcon,
     MessageSquare,
     Pin,
     GraduationCap,
@@ -308,7 +308,7 @@ export default function DashboardLayout({ children, role }) {
                                     onClick={() => setMobileOpen(false)}
                                     className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-black/5 cursor-pointer"
                                 >
-                                    <X size={22} />
+                                    <XIcon size={22} />
                                 </button>
                             </div>
 
@@ -410,7 +410,7 @@ export default function DashboardLayout({ children, role }) {
                                     onClick={() => setMessagesOpen(false)}
                                     className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                                 >
-                                    <X size={20} />
+                                    <XIcon size={20} />
                                 </button>
                             </div>
 

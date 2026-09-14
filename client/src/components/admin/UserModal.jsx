@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { X, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { X as XIcon, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, KeyRound, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -286,7 +286,7 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                             )}
                             <button onClick={onClose}
                                 className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                                <X size={16} />
+                                <XIcon size={16} />
                             </button>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    X, Award, ArrowRight,
+    X as XIcon, Award, ArrowRight,
     Loader2, Users, Filter, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -142,7 +142,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                             onClick={onClose} 
                             className="w-9 h-9 rounded-xl bg-amber-100/60 hover:bg-amber-200 text-amber-900 flex items-center justify-center transition-all cursor-pointer"
                         >
-                            <X size={18} />
+                            <XIcon size={18} />
                         </button>
                     </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Calendar, Lock, AlertTriangle, CheckCircle, X } from 'lucide-react';
+import { Clock, Calendar, Lock, AlertTriangle, CheckCircle, X as XIcon } from 'lucide-react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 
@@ -116,7 +116,7 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2 text-white/50 hover:text-white transition-colors bg-white/5 rounded-xl hover:bg-white/10">
-                            <X size={20} />
+                            <XIcon size={20} />
                         </button>
                     </div>
 

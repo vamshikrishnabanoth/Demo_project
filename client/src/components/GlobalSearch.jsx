@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, BookOpen, User, Hash, CornerDownLeft, Sparkles, Loader2 } from 'lucide-react';
+import { Search, X as XIcon, BookOpen, User, Hash, CornerDownLeft, Sparkles, Loader2 } from 'lucide-react';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
 
@@ -254,7 +254,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                             className="p-1.5 hover:bg-[var(--bg-primary)] rounded-lg transition-colors text-[var(--text-secondary)] shrink-0 flex items-center justify-center"
                                             title="Clear search"
                                         >
-                                            <X size={16} />
+                                            <XIcon size={16} />
                                         </button>
                                     )}
                                     <button 

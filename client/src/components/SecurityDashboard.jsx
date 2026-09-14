@@ -4,7 +4,7 @@ import {
     ShieldCheck, 
     AlertTriangle, 
     Search, 
-    X, 
+    X as XIcon, 
     ChevronRight, 
     User, 
     Clock, 
@@ -241,7 +241,7 @@ export function SecurityDashboard({ students = [] }) {
                             className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:bg-red-500/10 hover:text-red-500 transition-colors cursor-pointer"
                             aria-label="Close details"
                         >
-                            <X size={18} />
+                            <XIcon size={18} />
                         </button>
                     </div>
 

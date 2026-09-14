@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    X, Upload, FileText, CheckCircle2, AlertTriangle,
+    X as XIcon, Upload, FileText, CheckCircle2, AlertTriangle,
     Download, ArrowRight, Loader2, Info, Hash, User,
     Mail, BookOpen, Grid, Calendar, BookMarked, Phone,
     Heart, ShieldCheck, CheckSquare
@@ -153,7 +153,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
-                            <X size={18} />
+                            <XIcon size={18} />
                         </button>
                     </div>
 

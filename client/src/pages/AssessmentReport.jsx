@@ -7,7 +7,7 @@ import {
 import { 
     Trophy, Clock, Target, AlertCircle, ArrowLeft, 
     CheckCircle2, XCircle, Brain, 
-    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X, Home, Code
+    Zap, TrendingUp, HelpCircle, Activity, Sparkles, X as XIcon, Home, Code
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
@@ -612,7 +612,7 @@ const AssessmentReport = () => {
                                         className="p-3 rounded-2xl bg-slate-100 text-[#0f172a] hover:bg-slate-200 active:scale-95 transition-all border border-slate-300 shadow-xs cursor-pointer"
                                         aria-label="Close review"
                                     >
-                                        <X size={20} />
+                                        <XIcon size={20} />
                                     </button>
                                 </div>
 

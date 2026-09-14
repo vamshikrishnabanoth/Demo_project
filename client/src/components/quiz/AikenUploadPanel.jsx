@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, FileText, X, CheckCircle, Zap, AlertTriangle } from 'lucide-react';
+import { Upload, FileText, X as XIcon, CheckCircle, Zap, AlertTriangle } from 'lucide-react';
 import { parseAiken } from '../../utils/parsers';
 import { PremiumButton } from '../ui/Primitives';
 import toast from 'react-hot-toast';

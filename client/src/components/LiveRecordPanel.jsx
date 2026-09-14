@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X, WifiOff, RefreshCw } from 'lucide-react';
+import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X as XIcon, WifiOff, RefreshCw } from 'lucide-react';
 import api from '../utils/api';
 import AgentPipelineLoader from './loaders/AgentPipelineLoader';
 import { 
@@ -397,7 +397,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                 onClick={() => setError(null)}
                                 className="text-slate-400 hover:text-slate-200"
                             >
-                                <X size={16} />
+                                <XIcon size={16} />
                             </button>
                         </div>
                     )}
@@ -481,7 +481,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                 onClick={handleConfigCancel}
                                 className="p-1 rounded-lg text-slate-400 hover:text-slate-200"
                             >
-                                <X size={20} />
+                                <XIcon size={20} />
                             </button>
                         </div>
 

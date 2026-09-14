@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import {
-    X,
+    X as XIcon,
     Megaphone,
     Users,
     Clock,

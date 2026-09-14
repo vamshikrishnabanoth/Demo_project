@@ -7,7 +7,7 @@ import {
     RefreshCw, Database, Cpu, Lock, Wifi, HardDrive,
     TrendingUp, Clock, Zap, CheckCircle2, Megaphone,
     ArrowUpRight, BarChart2, Search, Edit3, Trash2, Ban,
-    Plus, X, Upload, Award, ArrowUpDown, Eye, Download,
+    Plus, X as XIcon, Upload, Award, ArrowUpDown, Eye, Download,
     Briefcase, BookOpen, Mail, Crown, Filter, Layers, RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -482,7 +482,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
                                 aria-label="Clear search"
                             >
-                                <X size={16} />
+                                <XIcon size={16} />
                             </button>
                         )}
                     </div>
@@ -765,7 +765,7 @@ function AdminTeachersTab({ setUserModal }) {
                         />
                         {search && (
                             <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
-                                <X size={16} />
+                                <XIcon size={16} />
                             </button>
                         )}
                     </div>
@@ -947,7 +947,7 @@ function AdminAdminsTab({ setUserModal }) {
                         />
                         {search && (
                             <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
-                                <X size={16} />
+                                <XIcon size={16} />
                             </button>
                         )}
                     </div>

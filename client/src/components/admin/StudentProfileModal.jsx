@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    X, User, Mail, Calendar, BookOpen, Grid, BookMarked,
+    X as XIcon, User, Mail, Calendar, BookOpen, Grid, BookMarked,
     Shield, Clock, KeyRound, Ban, Edit3, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +33,7 @@ export default function StudentProfileModal({ student, onClose, onEdit, onSuspen
                             Student Profile Record
                         </span>
                         <button onClick={onClose} className="p-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all cursor-pointer">
-                            <X size={16} />
+                            <XIcon size={16} />
                         </button>
                     </div>
 

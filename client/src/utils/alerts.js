@@ -1,6 +1,6 @@
 import React from 'react';
 import toast from 'react-hot-toast';
-import { CheckCircle2, AlertCircle, HelpCircle, X, Info } from 'lucide-react';
+import { CheckCircle2, AlertCircle, HelpCircle, X as XIcon, Info } from 'lucide-react';
 
 /**
  * Professional, High-Contrast White-Text Alert System for ProjectK.
@@ -55,7 +55,7 @@ export const showSuccess = (title, text, duration = 2400) => {
                 onClick: () => toast.dismiss(t.id),
                 className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
                 style: { color: '#ffffff' }
-            }, React.createElement(X, { size: 16 }))
+            }, React.createElement(XIcon, { size: 16 }))
         ])
     ), { duration, id, position: 'top-right' });
 };
@@ -95,7 +95,7 @@ export const showError = (title, text, duration = 3800) => {
                 onClick: () => toast.dismiss(t.id),
                 className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
                 style: { color: '#ffffff' }
-            }, React.createElement(X, { size: 16 }))
+            }, React.createElement(XIcon, { size: 16 }))
         ])
     ), { duration, id, position: 'top-right' });
 };
@@ -135,7 +135,7 @@ export const showInfo = (title, text, duration = 2400) => {
                 onClick: () => toast.dismiss(t.id),
                 className: 'text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0 cursor-pointer',
                 style: { color: '#ffffff' }
-            }, React.createElement(X, { size: 16 }))
+            }, React.createElement(XIcon, { size: 16 }))
         ])
     ), { duration, id, position: 'top-right' });
 };
