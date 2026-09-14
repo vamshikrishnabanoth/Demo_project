@@ -1055,7 +1055,7 @@ export default function StudentDashboard() {
                                                             </div>
                                                             <div className="flex items-center gap-1.5">
                                                                 <Book size={13} className="text-[var(--text-accent)] shrink-0" />
-                                                                <span>Questions: {quiz._count?.questions || quiz.questions?.length || 0}</span>
+                                                                <span>Questions: {quiz._count?.questions ?? (Array.isArray(quiz.questions) ? quiz.questions.length : (quiz.questions ? JSON.parse(quiz.questions).length : 0))}</span>
                                                             </div>
                                                             {startTime && (
                                                                 <div className="col-span-2 flex items-center gap-1.5 text-slate-400">
@@ -1072,10 +1072,7 @@ export default function StudentDashboard() {
                                                         </div>
                                                     </div>
 
-                                                    <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
-                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                            Code: <span className="text-[var(--text-accent)]">{quiz.joinCode}</span>
-                                                        </span>
+                                                    <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-end">
                                                         {quiz.hasAttempted ? (
                                                             <button
                                                                 onClick={() => navigate(`/result/${quiz.resultId || quiz.id}`)}

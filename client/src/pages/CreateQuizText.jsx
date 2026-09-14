@@ -217,8 +217,8 @@ export default function CreateQuizText() {
         let finalEndTime   = null;
 
         if (isAssessment) {
-            finalStartTime = startTime;
-            finalEndTime   = endTime;
+            finalStartTime = startTime ? new Date(startTime).toISOString() : null;
+            finalEndTime   = endTime ? new Date(endTime).toISOString() : null;
 
             if (startNow) {
                 finalStartTime = new Date().toISOString();

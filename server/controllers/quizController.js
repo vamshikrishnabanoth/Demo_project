@@ -838,8 +838,26 @@ exports.createQuiz = async (req, res) => {
                 duration: duration ? parseInt(duration) : 0,
                 timerType: timerType || 'timePerQuestion',
                 accessType: accessType || 'private',
-                startTime: startTime ? new Date(startTime) : null,
-                endTime: endTime ? new Date(endTime) : null,
+                startTime: (() => {
+                    if (!startTime) return null;
+                    if (typeof startTime === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(startTime) && !startTime.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(startTime)) {
+                        const [dPart, tPart] = startTime.split('T');
+                        const [y, m, d] = dPart.split('-').map(Number);
+                        const [hh, mm, ss] = tPart.split(':').map(Number);
+                        return new Date(y, m - 1, d, hh, mm, ss || 0);
+                    }
+                    return new Date(startTime);
+                })(),
+                endTime: (() => {
+                    if (!endTime) return null;
+                    if (typeof endTime === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(endTime) && !endTime.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(endTime)) {
+                        const [dPart, tPart] = endTime.split('T');
+                        const [y, m, d] = dPart.split('-').map(Number);
+                        const [hh, mm, ss] = tPart.split(':').map(Number);
+                        return new Date(y, m - 1, d, hh, mm, ss || 0);
+                    }
+                    return new Date(endTime);
+                })(),
                 topic: topic || content || '',
                 isLive: isLiveFinal,
                 isAssessment: isAssessment === 'true' || isAssessment === true,
@@ -2708,6 +2726,11 @@ exports.getLiveQuizzes = async (req, res) => {
                     // Assessment quizzes published by teachers
                     { isAssessment: true, status: 'active' }
                 ]
+            },
+            include: {
+                _count: {
+                    select: { questions: true }
+                }
             },
             orderBy: { createdAt: 'desc' }
         });
