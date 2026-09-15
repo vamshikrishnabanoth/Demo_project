@@ -399,30 +399,30 @@ export default function CyberQuest() {
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none -ml-64 -mb-64" />
 
             {/* HEADER BAR */}
-            <header className="max-w-7xl mx-auto w-full px-6 flex justify-between items-center border-b border-white/5 pb-4 relative z-50">
+            <header className="max-w-7xl mx-auto w-full px-6 flex justify-between items-center border-b border-white/10 pb-4 relative z-50">
                 <div className="flex items-center gap-3">
-                    <div className="bg-[var(--bg-accent)]/10 border border-[var(--bg-accent)]/30 w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-accent)] shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+                    <div className="bg-cyan-500/10 border border-cyan-400/30 w-10 h-10 rounded-lg flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                         <Zap size={20} />
                     </div>
                     <div>
-                        <h1 className="text-md sm:text-lg font-black tracking-tight uppercase italic leading-none">
-                            Cyber <span className="text-[var(--text-accent)]">Quest</span>
+                        <h1 className="text-md sm:text-lg font-black tracking-tight uppercase italic leading-none text-white">
+                            Cyber <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">Quest</span>
                         </h1>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Topic: {topicTitle}</p>
+                        <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-1">Topic: {topicTitle}</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <button 
                         onClick={() => setMuted(!muted)}
-                        className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 text-slate-400 hover:text-white"
+                        className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 text-white font-bold"
                         title={muted ? 'Unmute game sound' : 'Mute game sound'}
                     >
                         {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                     </button>
                     <button 
                         onClick={() => navigate('/student-dashboard')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 font-bold uppercase tracking-wider text-xs italic text-slate-300 hover:text-white"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all border border-white/15 font-bold uppercase tracking-wider text-xs italic text-white"
                     >
                         <Home size={14} /> Exit
                     </button>
@@ -490,18 +490,18 @@ export default function CyberQuest() {
                                 
                                 {/* Question Card */}
                                 <div className="bg-[#0e1424]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 flex-1 flex flex-col justify-between shadow-[0_25px_80px_rgba(0,0,0,0.6)] relative overflow-hidden group">
-                                    <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-6">
+                                    <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
                                         <div className="flex items-center gap-2">
-                                            <span className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border border-[var(--bg-accent)]/20 shadow-[0_0_10px_rgba(0,240,255,0.1)]">
+                                            <span className="bg-cyan-500/20 text-cyan-300 font-black text-[11px] uppercase tracking-widest px-3 py-1 rounded-md border border-cyan-400/40 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
                                                 Level {currentLevel}
                                             </span>
-                                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                            <span className="text-xs text-slate-200 font-bold uppercase tracking-widest">
                                                 Tier: {currentLevel <= 3 ? 'Easy' : currentLevel <= 6 ? 'Medium' : currentLevel <= 8 ? 'Hard' : 'Expert'}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Accumulated Score</span>
-                                            <span className="font-mono text-lg font-black text-[var(--text-accent)] drop-shadow-[0_0_10px_rgba(0,240,255,0.2)]">{score} pts</span>
+                                            <span className="text-xs text-slate-300 font-black uppercase tracking-widest">Accumulated Score</span>
+                                            <span className="font-mono text-xl font-black text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">{score} pts</span>
                                         </div>
                                     </div>
 
@@ -521,7 +521,7 @@ export default function CyberQuest() {
                                             const isEliminated = eliminatedOptions.includes(option);
 
                                             // Determine Option Colors based on state
-                                            let cardStyle = 'border-white/10 bg-white/[0.04] hover:border-white/30 text-white hover:bg-white/10';
+                                            let cardStyle = 'border-slate-700 bg-[#121829] hover:border-cyan-400 hover:bg-[#1a233b] text-white font-bold shadow-md';
                                             if (isEliminated) {
                                                 cardStyle = 'border-white/5 bg-transparent opacity-20 pointer-events-none text-white/40';
                                             } else if (feedbackState === 'correct') {
@@ -542,10 +542,10 @@ export default function CyberQuest() {
                                                     className={`p-5 rounded-2xl border text-left font-semibold text-sm transition-all duration-300 flex items-center justify-between cursor-pointer h-auto ${cardStyle}`}
                                                 >
                                                     <span className="flex gap-3 items-center min-w-0 flex-1">
-                                                        <span className="font-mono uppercase text-[var(--text-accent)] font-black text-xs border border-[var(--text-accent)]/20 px-2 py-0.5 rounded bg-white/5 shrink-0">
+                                                        <span className="font-mono uppercase text-cyan-400 font-black text-xs border border-cyan-400/40 px-2 py-0.5 rounded bg-cyan-950/50 shrink-0">
                                                             {['A', 'B', 'C', 'D'][idx]}
                                                         </span>
-                                                        <span className="break-words whitespace-normal min-w-0">{option}</span>
+                                                        <span className="break-words whitespace-normal min-w-0 text-white font-bold text-base">{option}</span>
                                                     </span>
                                                     {feedbackState === 'correct' && isCorrectChoice && <CheckCircle size={16} className="text-emerald-400 shrink-0" />}
                                                 </button>
@@ -559,11 +559,11 @@ export default function CyberQuest() {
                                             <motion.div
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                className="mt-6 p-4 rounded-xl border border-white/5 bg-white/5 text-xs text-slate-300 flex gap-3 items-start"
+                                                className="mt-6 p-4 rounded-xl border border-white/10 bg-white/5 text-xs text-slate-200 flex gap-3 items-start"
                                             >
-                                                <HelpCircle size={16} className="text-[var(--text-accent)] shrink-0 mt-0.5" />
+                                                <HelpCircle size={16} className="text-cyan-400 shrink-0 mt-0.5" />
                                                 <div>
-                                                    <p className="font-black uppercase tracking-wider text-[var(--text-accent)] mb-1">Concept Matrix Breakdown</p>
+                                                    <p className="font-black uppercase tracking-wider text-cyan-400 mb-1">Concept Matrix Breakdown</p>
                                                     <p>{activeQuestion.explanation}</p>
                                                 </div>
                                             </motion.div>
@@ -572,10 +572,10 @@ export default function CyberQuest() {
                                 </div>
 
                                 {/* Interactive Lifelines Panel */}
-                                <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-5 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between">
+                                <div className="bg-[#0e1424]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between">
                                     <div className="text-center md:text-left">
-                                        <h4 className="font-black text-xs uppercase tracking-widest text-slate-400">Available Cyber Lifelines</h4>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Utilize each emergency lifeline once per game</p>
+                                        <h4 className="font-black text-xs uppercase tracking-widest text-slate-200">Available Cyber Lifelines</h4>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Utilize each emergency lifeline once per game</p>
                                     </div>
 
                                     <div className="flex gap-4 w-full md:w-auto">
@@ -587,7 +587,7 @@ export default function CyberQuest() {
                                             className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl border font-bold text-xs uppercase tracking-wider italic transition-all duration-300 cursor-pointer ${
                                                 used5050 
                                                     ? 'border-white/5 bg-transparent text-slate-600 cursor-not-allowed opacity-30'
-                                                    : 'border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 text-cyan-400 hover:scale-[1.02]'
+                                                    : 'border-cyan-400/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-black hover:scale-[1.02] shadow-[0_0_10px_rgba(6,182,212,0.15)]'
                                             }`}
                                         >
                                             <RefreshCw size={14} /> 50:50
@@ -601,8 +601,8 @@ export default function CyberQuest() {
                                                 usedShield
                                                     ? 'border-white/5 bg-transparent text-slate-600 cursor-not-allowed opacity-30'
                                                     : shieldActive 
-                                                        ? 'border-amber-500 bg-amber-500/20 text-amber-300 animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.2)]'
-                                                        : 'border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 text-amber-400 hover:scale-[1.02]'
+                                                        ? 'border-amber-400 bg-amber-500/30 text-amber-200 font-black animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                                                        : 'border-amber-400/50 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-black hover:scale-[1.02] shadow-[0_0_10px_rgba(245,158,11,0.15)]'
                                             }`}
                                         >
                                             <Shield size={14} /> {shieldActive ? 'Shield Active' : 'Shield'}
@@ -615,7 +615,7 @@ export default function CyberQuest() {
                                             className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl border font-bold text-xs uppercase tracking-wider italic transition-all duration-300 cursor-pointer ${
                                                 usedSkip
                                                     ? 'border-white/5 bg-transparent text-slate-600 cursor-not-allowed opacity-30'
-                                                    : 'border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 text-purple-400 hover:scale-[1.02]'
+                                                    : 'border-purple-400/50 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 font-black hover:scale-[1.02] shadow-[0_0_10px_rgba(168,85,247,0.15)]'
                                             }`}
                                         >
                                             <Sparkles size={14} /> Skip
@@ -627,9 +627,9 @@ export default function CyberQuest() {
                             </div>
 
                             {/* Animated Progression Points Ladder (Right 1 column) */}
-                            <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                                <div className="border-b border-white/5 pb-4 mb-4">
-                                    <h4 className="font-black text-xs uppercase tracking-widest text-slate-400 text-center">Score Escalation Ladder</h4>
+                            <div className="bg-[#0e1424]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                                <div className="border-b border-white/10 pb-4 mb-4">
+                                    <h4 className="font-black text-xs uppercase tracking-widest text-slate-200 text-center">Score Escalation Ladder</h4>
                                 </div>
 
                                 <div className="flex-1 flex flex-col gap-2.5 justify-center">
@@ -637,11 +637,11 @@ export default function CyberQuest() {
                                         const isActive = item.level === currentLevel;
                                         const isCompleted = item.level < currentLevel;
 
-                                        let stepStyle = 'border-white/5 bg-transparent text-slate-500';
+                                        let stepStyle = 'border-white/10 bg-white/5 text-slate-300 font-bold hover:text-white hover:bg-white/10';
                                         if (isActive) {
-                                            stepStyle = 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/10 text-white font-black shadow-[0_0_15px_rgba(0,240,255,0.15)] scale-[1.02]';
+                                            stepStyle = 'border-cyan-400 bg-cyan-500/20 text-white font-black shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400/50 scale-[1.02]';
                                         } else if (isCompleted) {
-                                            stepStyle = 'border-emerald-500/20 bg-emerald-500/5 text-emerald-400';
+                                            stepStyle = 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-bold';
                                         }
 
                                         return (
