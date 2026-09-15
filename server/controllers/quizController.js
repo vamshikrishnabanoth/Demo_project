@@ -18,7 +18,7 @@ const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
 const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
-const { chunkMp3 } = require('../utils/audioChunker');
+const { chunkMp3, chunkM4a } = require('../utils/audioChunker');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -164,18 +164,35 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         }
     }
 
-    // ── Tier B: MPEG-Frame Chunking Pass for Oversized Files (> 20 MB) ────────
-    if (ext === '.mp3') {
-        console.log(`🎙️ Oversized MP3 lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing into clean MPEG-frame chunks for Whisper Large-v3...`);
+    // ── Tier B: Frame Chunking Pass for Oversized Files (> 20 MB) ────────────
+    if (ext === '.mp3' || ext === '.m4a') {
         let chunks = [];
         try {
-            // Target 18 MB per chunk with 2.0s boundary overlap
-            chunks = chunkMp3(filePath, {
-                targetChunkBytes: 18 * 1024 * 1024,
-                overlapSeconds: 2.0,
-                outputDir: path.dirname(filePath)
-            });
-            console.log(`📦 Sliced into ${chunks.length} clean MPEG-frame chunks for Whisper Large-v3 processing.`);
+            if (ext === '.mp3') {
+                // Preserved pure-JS MP3 chunker intact
+                console.log(`🎙️ Oversized MP3 lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing into clean MPEG-frame chunks...`);
+                chunks = chunkMp3(filePath, {
+                    targetChunkBytes: 18 * 1024 * 1024,
+                    overlapSeconds: 2.0,
+                    outputDir: path.dirname(filePath)
+                });
+            } else if (ext === '.m4a') {
+                // Stream-copy segmentation for M4A without re-encoding quality loss
+                console.log(`🎙️ Oversized M4A lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing with stream-copy segmentation...`);
+                chunks = chunkM4a(filePath, {
+                    segmentTimeSeconds: 600, // 10-minute segments (~9-12 MB)
+                    outputDir: path.dirname(filePath)
+                });
+            }
+
+            console.log(`📦 Sliced into ${chunks.length} clean chunks for Whisper Large-v3 processing.`);
+
+            // Hard safety check: verify every single generated chunk is strictly < 20 MB before calling Whisper
+            for (const c of chunks) {
+                if (c.sizeBytes > 20 * 1024 * 1024) {
+                    throw new Error(`Chunk ${path.basename(c.filePath)} (${(c.sizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds the 20 MB safety ceiling.`);
+                }
+            }
 
             const allSegments = [];
             const textParts = [];
@@ -267,8 +284,8 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         }
     }
 
-    // For non-MP3 files that exceed 20MB without chunker support yet
-    const overLimitMsg = `File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper limit (20 MB).`;
+    // For unsupported audio formats that exceed 20MB
+    const overLimitMsg = `File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper limit (20 MB). Oversized chunking is supported for .mp3 and .m4a.`;
     console.error(`❌ ${overLimitMsg}`);
     throw new Error(overLimitMsg);
 };

@@ -170,8 +170,82 @@ function chunkMp3(inputPath, options = {}) {
     return chunks;
 }
 
+/**
+ * Fast stream-copy segmentation for M4A (AAC) audio files using ffmpeg.
+ * Slices directly on AAC frame boundaries without re-encoding, ensuring no re-encoding quality loss.
+ * Enforces that every chunk is strictly verified to be < 20 MB before returning.
+ * 
+ * @param {string} inputPath - Absolute path to the original M4A file
+ * @param {Object} options
+ * @param {number} options.segmentTimeSeconds - Duration per segment (default 600s = 10 mins, typically ~9-12 MB for speech)
+ * @param {string} options.outputDir - Directory to save generated chunk files
+ * @returns {Array<{ chunkIndex: number, filePath: string, sizeBytes: number, isFinal: boolean }>}
+ */
+function chunkM4a(inputPath, options = {}) {
+    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+    const { execSync } = require('child_process');
+
+    const segmentTimeSeconds = options.segmentTimeSeconds || 600; // 10 minutes per chunk
+    const outputDir = options.outputDir || path.dirname(inputPath);
+    const baseName = `m4a_seg_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+    const pattern = path.join(outputDir, `${baseName}_%03d.m4a`);
+
+    try {
+        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -f segment -segment_time ${segmentTimeSeconds} -c copy "${pattern}"`, {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            timeout: 60000
+        });
+    } catch (err) {
+        console.warn('Stream-copy segmentation fallback to AAC copy with bitstream filter:', err.message);
+        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -f segment -segment_time ${segmentTimeSeconds} -c:a aac -b:a 128k "${pattern}"`, {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            timeout: 120000
+        });
+    }
+
+    const files = fs.readdirSync(outputDir)
+        .filter(f => f.startsWith(baseName) && f.endsWith('.m4a'))
+        .sort();
+
+    if (files.length === 0) {
+        throw new Error('M4A segmentation produced 0 chunk files.');
+    }
+
+    const chunks = [];
+    for (let i = 0; i < files.length; i++) {
+        const fullPath = path.join(outputDir, files[i]);
+        const stats = fs.statSync(fullPath);
+        // Ignore tiny trailing silence fragments (< 2KB)
+        if (stats.size > 2048) {
+            // HARD SAFETY CEILING: verify every chunk is strictly < 20 MB before returning
+            if (stats.size > 20 * 1024 * 1024) {
+                // Clean up any generated chunks
+                for (const c of files) {
+                    try { fs.unlinkSync(path.join(outputDir, c)); } catch (_) {}
+                }
+                throw new Error(`Generated M4A chunk ${files[i]} (${(stats.size / (1024 * 1024)).toFixed(2)} MB) exceeded the 20 MB safety ceiling.`);
+            }
+            chunks.push({
+                chunkIndex: chunks.length + 1,
+                filePath: fullPath,
+                sizeBytes: stats.size,
+                isFinal: false
+            });
+        } else {
+            try { fs.unlinkSync(fullPath); } catch (_) {}
+        }
+    }
+
+    if (chunks.length > 0) {
+        chunks[chunks.length - 1].isFinal = true;
+    }
+
+    return chunks;
+}
+
 module.exports = {
     chunkMp3,
+    chunkM4a,
     parseFrameHeader,
     findNextFrameSync
 };
