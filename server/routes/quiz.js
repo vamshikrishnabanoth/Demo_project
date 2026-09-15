@@ -38,7 +38,7 @@ const FILE_SIGNATURES = {
 };
 
 function verifyFileMagicBytes(filePath, ext) {
-    const isAudioExt = ['.webm', '.mp3', '.wav', '.m4a', '.ogg', '.aac', '.flac'].includes(ext);
+    const isAudioExt = ['.webm', '.mp3', '.wav', '.m4a', '.ogg', '.aac', '.flac', '.opus', '.mp4'].includes(ext);
     
     try {
         const fs = require('fs');

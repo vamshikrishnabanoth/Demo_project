@@ -70,25 +70,33 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
     // 2. Cloud fallback to Groq Whisper API (whisper-large-v3) with verbose_json for timestamps
     const groqKey = process.env.GROQ_API_KEY;
-    if (groqKey) {
+    const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
+    const fileSizeBytes = stats ? stats.size : 0;
+    const GROQ_MAX_BYTES = 24 * 1024 * 1024; // 24 MB safe threshold (Groq has a strict 25 MB payload limit)
+
+    const mimeMap = {
+        '.mp3': 'audio/mpeg',
+        '.wav': 'audio/wav',
+        '.m4a': 'audio/mp4',
+        '.mp4': 'audio/mp4',
+        '.webm': 'audio/webm',
+        '.ogg': 'audio/ogg',
+        '.oga': 'audio/ogg',
+        '.opus': 'audio/ogg',
+        '.flac': 'audio/flac',
+        '.aac': 'audio/aac'
+    };
+
+    if (groqKey && fileSizeBytes <= GROQ_MAX_BYTES) {
         try {
-            console.log('🎙️ Calling Groq Cloud Whisper (whisper-large-v3, verbose_json)...');
+            console.log(`🎙️ Calling Groq Cloud Whisper (whisper-large-v3, verbose_json, size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
             const ext = path.extname(filePath).toLowerCase();
             const validGroqExts = ['.mp3', '.mp4', '.mpeg', '.mpga', '.m4a', '.wav', '.webm', '.flac', '.ogg', '.oga'];
             let uploadFilename = path.basename(filePath);
             if (!validGroqExts.includes(ext)) {
                 uploadFilename = path.basename(filePath, ext) + '.mp3';
             }
-            const mimeMap = {
-                '.mp3': 'audio/mpeg',
-                '.wav': 'audio/wav',
-                '.m4a': 'audio/mp4',
-                '.webm': 'audio/webm',
-                '.ogg': 'audio/ogg',
-                '.oga': 'audio/ogg',
-                '.flac': 'audio/flac',
-                '.aac': 'audio/aac'
-            };
+
             const FormData = require('form-data');
             const form = new FormData();
             form.append('file', fs.createReadStream(filePath), {
@@ -147,26 +155,18 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             console.error('❌ Groq Cloud Transcription Error:', groqErr.response?.data || groqErr.message);
             console.log('ℹ️ Groq Whisper failed. Falling back to Deepgram Nova-2...');
         }
+    } else if (fileSizeBytes > GROQ_MAX_BYTES) {
+        console.log(`ℹ️ File size is ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB (>24 MB limit for Groq). Routing directly to Deepgram Nova-2...`);
     } else {
         console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
     }
 
-    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files & direct binary stream)
+    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files up to 2GB & direct binary stream)
     const deepgramKey = process.env.DEEPGRAM_API_KEY;
     if (deepgramKey) {
         try {
-            console.log('🎙️ Calling Deepgram Nova-2 fallback...');
+            console.log(`🎙️ Calling Deepgram Nova-2 (file size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
             const ext = path.extname(filePath).toLowerCase();
-            const mimeMap = {
-                '.mp3': 'audio/mpeg',
-                '.wav': 'audio/wav',
-                '.m4a': 'audio/mp4',
-                '.webm': 'audio/webm',
-                '.ogg': 'audio/ogg',
-                '.oga': 'audio/ogg',
-                '.flac': 'audio/flac',
-                '.aac': 'audio/aac'
-            };
             const buffer = fs.readFileSync(filePath);
             const deepgramResp = await axios.post(
                 'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&utterances=true',
@@ -178,7 +178,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                     },
                     maxContentLength: Infinity,
                     maxBodyLength: Infinity,
-                    timeout: 45000
+                    timeout: 60000
                 }
             );
 
@@ -229,6 +229,8 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         } catch (dgErr) {
             console.error('❌ Deepgram Cloud Transcription Error:', dgErr.response?.data || dgErr.message);
         }
+    } else {
+        console.warn('⚠️ DEEPGRAM_API_KEY is missing in environment variables.');
     }
 
     return null;
@@ -3277,7 +3279,12 @@ exports.generateQuizFromVoice = async (req, res) => {
             const transcript = await transcribeAudio(absolutePath);
             if (!transcript || transcript.trim().length < 20) {
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
-                failTask(taskId, 'Could not capture clear speech. Please try speaking closer to the mic.');
+                const origName = req.file.originalname || '';
+                const isRec = origName.includes('recording') || origName.includes('blob') || origName.endsWith('.webm');
+                const errMsg = isRec 
+                    ? 'Could not capture clear speech. Please try speaking closer to the mic.'
+                    : `Could not transcribe audio from "${origName}". Please ensure the audio contains clear speech.`;
+                failTask(taskId, errMsg);
                 return;
             }
 
@@ -3735,6 +3742,10 @@ exports.transcribe = async (req, res) => {
     }
 
     const absolutePath = path.resolve(req.file.path);
+    const originalName = req.file.originalname || '';
+    const ext = path.extname(originalName).toLowerCase();
+    const isRecorded = originalName.includes('recording') || originalName.includes('blob') || ext === '.webm';
+
     try {
         const transcript = await transcribeAudio(absolutePath);
         
@@ -3742,7 +3753,10 @@ exports.transcribe = async (req, res) => {
         try { fs.unlinkSync(absolutePath); } catch (_) {}
 
         if (!transcript || transcript.trim().length < 5) {
-            return res.status(422).json({ msg: 'Could not capture clear speech. Please try speaking closer to the mic.' });
+            const failMsg = isRecorded
+                ? 'Could not capture clear speech. Please try speaking closer to the mic.'
+                : `Could not transcribe "${originalName}". The audio may be silent, low quality, or the speech recognition service encountered an issue.`;
+            return res.status(422).json({ msg: failMsg });
         }
 
         const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
@@ -3756,7 +3770,7 @@ exports.transcribe = async (req, res) => {
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
         try { fs.unlinkSync(absolutePath); } catch (_) {}
-        res.status(500).json({ msg: 'Transcription failed' });
+        res.status(500).json({ msg: `Transcription failed: ${err.message || 'Internal Server Error'}` });
     }
 };
 

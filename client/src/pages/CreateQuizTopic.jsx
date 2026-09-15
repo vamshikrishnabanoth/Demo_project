@@ -340,7 +340,7 @@ export default function CreateQuizTopic() {
         if (!file) return;
 
         const ext = file.name.split('.').pop().toLowerCase();
-        const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac'].includes(ext);
+        const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
         const isTxt = ext === 'txt';
 
         if (isTxt) {
@@ -361,14 +361,15 @@ export default function CreateQuizTopic() {
             };
             reader.readAsText(file);
         } else if (isAudio) {
-            const toastId = toast.loading(`Transcribing "${file.name}"...`);
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+            const toastId = toast.loading(`Uploading & transcribing "${file.name}" (${fileSizeMB} MB)... This may take up to a minute.`);
             try {
                 const formData = new FormData();
                 formData.append('file', file);
 
                 const transcribeRes = await api.post('/quiz/transcribe', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
-                    timeout: 180000
+                    timeout: 240000
                 });
 
                 if (transcribeRes.data && transcribeRes.data.text) {
@@ -384,10 +385,10 @@ export default function CreateQuizTopic() {
                 }
             } catch (err) {
                 console.error('Lecture transcription failed:', err);
-                toast.error(`Transcription failed: ${err.response?.data?.msg || err.message}`, { id: toastId });
+                toast.error(`Transcription failed: ${err.response?.data?.msg || err.message}`, { id: toastId, duration: 6000 });
             }
         } else {
-            toast.error('Unsupported lecture file format. Use .mp3, .wav, .m4a, .webm, .ogg, or .txt');
+            toast.error('Unsupported lecture file format. Supported: .mp3, .wav, .m4a, .webm, .ogg, .aac, .flac, .opus, or .txt');
         }
 
         e.target.value = '';
@@ -1082,7 +1083,7 @@ export default function CreateQuizTopic() {
                             ref={lectureFileInputRef}
                             onChange={handleLectureFileUpload} 
                             className="hidden"
-                            accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.txt"
+                            accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.opus,.txt"
                         />
 
                         {/* 3. SOURCE MATERIAL DOCKET LIST (Compact Empty State py-5) */}
