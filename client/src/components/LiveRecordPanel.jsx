@@ -298,7 +298,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                 onComplete: (result) => {
                     if (result.questions && result.questions.length > 0) {
                         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        onQuestionsLoaded(result.questions, result.title || `Recording (${timeStr})`, result.agentReport);
+                        onQuestionsLoaded(result.questions, result.title || `Recording (${timeStr})`, result.agentReport, result.lectureDepth);
                     } else {
                         setError('No questions were generated from the recording. Please try speaking for longer.');
                     }

@@ -194,16 +194,24 @@ export default function CreateQuizTopic() {
         checkRecovery();
     }, []);
 
-    // Fetch unified pedagogical lecture depth whenever text content in docket changes
+    // Fetch unified pedagogical lecture depth strictly for voice/audio inputs
     useEffect(() => {
-        const combinedText = inputs
+        const hasVoice = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio');
+        if (!hasVoice) {
+            setLectureDepth(null);
+            setDetectedFocus([]);
+            return;
+        }
+
+        const voiceTexts = inputs
+            .filter(inp => inp.type === 'voice' || inp.type === 'audio')
             .map(inp => inp.content || '')
             .join(' ');
         
-        if (combinedText.length > 25) {
+        if (voiceTexts.length > 25) {
             const timer = setTimeout(async () => {
                 try {
-                    const res = await api.post('/quiz/analyze-depth', { text: combinedText });
+                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts });
                     if (res.data && res.data.isAcademic) {
                         setLectureDepth(res.data.lectureDepth);
                         setDetectedFocus(res.data.detectedFocus || []);
@@ -213,7 +221,7 @@ export default function CreateQuizTopic() {
                     }
                 } catch (_) {
                     // Local fallback
-                    const words = combinedText.trim().split(/\s+/).length;
+                    const words = voiceTexts.trim().split(/\s+/).length;
                     const rating = words > 150 ? 'Comprehensive' : (words > 50 ? 'Developing' : 'Introductory');
                     setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Moderate', reasoning: 'Present' } });
                 }
@@ -736,7 +744,8 @@ export default function CreateQuizTopic() {
 
             startPolling(taskId, {
                 onComplete: (result) => {
-                    if (result.lectureDepth) {
+                    const hasVoice = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') || Boolean(result.isVoice);
+                    if (hasVoice && result.lectureDepth) {
                         setLectureDepth(result.lectureDepth);
                     }
                     navigate('/create-quiz/text', {
@@ -746,8 +755,9 @@ export default function CreateQuizTopic() {
                             title: result.title || `Quiz: ${inputs[0]?.source_name}`,
                             duration: result.duration || 10,
                             source: 'generated',
+                            isVoice: hasVoice,
                             agentReport: result.agentReport || null,
-                            lectureDepth: result.lectureDepth || lectureDepth,
+                            lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
                             notice: result.notice || null
                         },
                     });
@@ -787,8 +797,8 @@ export default function CreateQuizTopic() {
                         </p>
                     </div>
 
-                    {/* Lecture Depth Rating Badge */}
-                    {lectureDepth && (
+                    {/* Lecture Depth Rating Badge (Voice input only) */}
+                    {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && (
                         <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl px-5 py-3 flex items-center gap-4 shadow-sm">
                             <Award className="text-purple-600 shrink-0" size={24} />
                             <div>
@@ -1159,8 +1169,8 @@ export default function CreateQuizTopic() {
                             )}
                         </div>
 
-                        {/* 4. LECTURE PROFILE & DEPTH CARD */}
-                        {lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
+                        {/* 4. LECTURE PROFILE & DEPTH CARD (Voice input only) */}
+                        {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
                             <div className="p-4 bg-purple-50/70 border-2 border-purple-200 rounded-2xl space-y-2.5 shadow-xs transition-all">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] font-black text-purple-900 uppercase tracking-widest flex items-center gap-1.5">

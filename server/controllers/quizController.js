@@ -17,6 +17,7 @@ const { logPipelineStep } = require('../utils/logger');
 const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
 const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
+const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -49,7 +50,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             },
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
-            timeout: 120000 // 2 minutes for local Whisper execution
+            timeout: 5000 // 5s timeout to fast-fail if local Python service is offline
         });
 
         if (response.data && response.data.status === 'success') {
@@ -72,9 +73,28 @@ const transcribeAudioWithTimestamps = async (filePath) => {
     if (groqKey) {
         try {
             console.log('🎙️ Calling Groq Cloud Whisper (whisper-large-v3, verbose_json)...');
+            const ext = path.extname(filePath).toLowerCase();
+            const validGroqExts = ['.mp3', '.mp4', '.mpeg', '.mpga', '.m4a', '.wav', '.webm', '.flac', '.ogg', '.oga'];
+            let uploadFilename = path.basename(filePath);
+            if (!validGroqExts.includes(ext)) {
+                uploadFilename = path.basename(filePath, ext) + '.mp3';
+            }
+            const mimeMap = {
+                '.mp3': 'audio/mpeg',
+                '.wav': 'audio/wav',
+                '.m4a': 'audio/mp4',
+                '.webm': 'audio/webm',
+                '.ogg': 'audio/ogg',
+                '.oga': 'audio/ogg',
+                '.flac': 'audio/flac',
+                '.aac': 'audio/aac'
+            };
             const FormData = require('form-data');
             const form = new FormData();
-            form.append('file', fs.createReadStream(filePath), path.basename(filePath));
+            form.append('file', fs.createReadStream(filePath), {
+                filename: uploadFilename,
+                contentType: mimeMap[ext] || 'audio/mpeg'
+            });
             form.append('model', 'whisper-large-v3');
             form.append('response_format', 'verbose_json');
             form.append('prompt', 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.');
@@ -266,6 +286,8 @@ const extractText = async (filePath) => {
             extracted = result.value || '';
         } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             extracted = await parsePptOrPptx(filePath);
+        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+            extracted = (await transcribeAudio(filePath)) || '';
         } else {
             extracted = fs.readFileSync(filePath, 'utf8');
         }
@@ -347,6 +369,8 @@ const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
             const s = Math.max(0, (start - 1) * chunksPerSlide);
             const e = Math.min(chunks.length, end * chunksPerSlide);
             return chunks.slice(s, e).join('\n');
+        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+            return (await transcribeAudio(filePath)) || '';
         }
         return fs.readFileSync(filePath, 'utf8');
     } catch (err) {
@@ -2595,11 +2619,16 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let extractedText = null;
             let absolutePath = null;
+            let isVoiceSource = false;
             
             if (req.file) {
                 absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
-                if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+                const AUDIO_EXTS = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'];
+                if (AUDIO_EXTS.includes(ext)) {
+                    isVoiceSource = true;
+                    extractedText = await transcribeAudio(absolutePath);
+                } else if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
                      extractedText = await extractTextWithRange(absolutePath, start, end);
                 }
             }
@@ -2697,12 +2726,20 @@ exports.generateQuizQuestions = async (req, res) => {
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
 
             const finalTaskObj = getTaskFromMgr(taskId);
+            let lectureDepth = null;
+            if (isVoiceSource && extractedText) {
+                const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText);
+                lectureDepth = depthAnalysis.lectureDepth;
+            }
+
             completeTask(taskId, {
                 questions:       finalQuestions,
                 title:           extractedTitle,
                 duration:        10,
                 agentReport,
                 finalValidation: validation,
+                lectureDepth,
+                isVoice:         isVoiceSource,
                 lobbySummary:    lobby_summary || null,
                 aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null,
                 metadata: {
@@ -2978,6 +3015,10 @@ exports.generateQuizFromVoice = async (req, res) => {
         // =========================================================================
         let delegatedToEngine = false;
         try {
+            const isEngineUp = await checkAiServiceOnline(AI_SERVICE_URL);
+            if (!isEngineUp) {
+                throw new Error('Architecture E engine is offline (fast-tracking to Node pipeline)');
+            }
             console.log(`\n🎙️ [Voice Generator] Attempting submission to Architecture E v2.0 at ${AI_SERVICE_URL}/assessments/submit...`);
             updateTaskStage(taskId, 0, 'Submitting to Architecture E Engine (10%)');
 
@@ -3068,11 +3109,15 @@ exports.generateQuizFromVoice = async (req, res) => {
                                 };
                             });
 
+                            const transcriptText = suite.transcript || suite.transcript_summary || '';
+                            const depthAnalysis = depthAnalyzer.analyzeLecture(transcriptText);
+
                             completeTask(taskId, {
                                 questions: normalizedQuestions,
                                 title: suite.title || voiceTitle,
                                 transcript: suite.transcript_summary || '',
                                 duration: 10,
+                                lectureDepth: depthAnalysis.lectureDepth,
                                 agentReport: {
                                     verdict: 'approved',
                                     avgScore: suite.overall_quality_score ? Math.round(suite.overall_quality_score * 100) : 95,
@@ -3176,6 +3221,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             updateTaskStage(taskId, 7, 'Preparing Final Quiz');
             const validation = finalQuizValidator(questions, difficulty || 'Medium');
+            const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
 
             completeTask(taskId, {
                 questions: questions,
@@ -3184,6 +3230,7 @@ exports.generateQuizFromVoice = async (req, res) => {
                 duration: 10,
                 agentReport: { verdict: 'approved', avgScore: 95, questionsChanged: 0, fallback: false },
                 finalValidation: validation,
+                lectureDepth: depthAnalysis.lectureDepth,
                 isVoice: true,
                 metadata: { executionMessages }
             });
@@ -3538,6 +3585,15 @@ exports.getFileMetadata = async (req, res) => {
                 extractedText = '';
                 totalCount = 1;
             }
+        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+            try {
+                extractedText = (await transcribeAudio(absolutePath)) || '';
+                totalCount = Math.max(1, Math.ceil((extractedText || '').split(/\s+/).length / 150));
+            } catch (aErr) {
+                console.warn('Audio metadata transcription error:', aErr.message);
+                extractedText = '';
+                totalCount = 1;
+            }
         }
 
         // Store in documentStore for page-scoped retrieval
@@ -3571,8 +3627,6 @@ exports.getFileMetadata = async (req, res) => {
         return res.status(500).json({ msg: 'Failed to extract file metadata' });
     }
 };
-
-const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 
 exports.analyzeDepth = async (req, res) => {
     try {

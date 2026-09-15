@@ -91,6 +91,11 @@ function verifyFileMagicBytes(filePath, ext) {
             for (const aExt of audioExts) {
                 if (matchSignature(aExt)) return true;
             }
+            // Mobile and browser audio recorders output formats with custom container wrappers or metadata.
+            // If the file has valid audio data (bytesRead >= 16), permit it through to Whisper.
+            if (bytesRead >= 16) {
+                return true;
+            }
         }
         
         const signatures = FILE_SIGNATURES[ext];

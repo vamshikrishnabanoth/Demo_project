@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -44,6 +44,8 @@ export default function CreateQuizText() {
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
     const [regeneratingIdx, setRegeneratingIdx] = useState(null);
     const [finalValidation, setFinalValidation] = useState(null);
+    const [lectureDepth, setLectureDepth] = useState(null);
+    const [isVoice, setIsVoice] = useState(false);
 
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
@@ -93,6 +95,12 @@ export default function CreateQuizText() {
             if (location.state.gameType)         setGameType(location.state.gameType);
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
             if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
+            if (location.state.isVoice || location.state.isAudio || location.state.source === 'voice') {
+                setIsVoice(true);
+            }
+            if (location.state.lectureDepth) {
+                setLectureDepth(location.state.lectureDepth);
+            }
 
             if (location.state.isTemplate || location.state.source === 'template') {
                 toast.success('Template Loaded for Preview & Publishing');
@@ -642,6 +650,38 @@ export default function CreateQuizText() {
                                         agentReport={agentReport}
                                         onRegenerateQuestion={handleRegenerateQuestion}
                                     />
+                                )}
+
+                                {/* ── Teaching Depth (Voice Quizzes Only) ── */}
+                                {isVoice && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
+                                    <div className="p-5 bg-purple-50/80 border-2 border-purple-200 rounded-3xl space-y-3 shadow-xs animate-in fade-in duration-200">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-black text-purple-900 uppercase tracking-widest flex items-center gap-2">
+                                                <Sparkles size={16} className="text-purple-600" />
+                                                Teaching Depth: <span className="font-bold text-purple-700">{lectureDepth.rating}</span>
+                                            </span>
+                                            <span className="text-xs font-mono font-black text-purple-700 bg-purple-100 px-3 py-1 rounded-full border border-purple-300">
+                                                Score: {lectureDepth.score}/100
+                                            </span>
+                                        </div>
+
+                                        {lectureDepth.characteristics && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
+                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
+                                                    Concepts: <span className="font-black text-purple-800">{lectureDepth.characteristics.conceptExplanation || 'Developing'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
+                                                    Reasoning: <span className="font-black text-purple-800">{lectureDepth.characteristics.reasoning || 'Present'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
+                                                    Examples: <span className="font-black text-purple-800">{lectureDepth.characteristics.examples || 'Light'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
+                                                    Procedures: <span className="font-black text-purple-800">{lectureDepth.characteristics.procedures || 'Light'}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
 
                                 {/* Questions Matrix */}
