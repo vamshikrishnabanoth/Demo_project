@@ -1379,11 +1379,14 @@ exports.getQuizById = async (req, res) => {
                     return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
                 }
             }
-            normalizedQuestions = normalizedQuestions.map(q => {
-                // Strip every field that reveals the correct answer to students
-                const { correctAnswer, explanation, correct_option, correctOption, ...safeQuestion } = q;
-                return safeQuestion;
-            });
+            const isGameArena = quiz.gameType && quiz.gameType !== 'standard';
+            if (!isGameArena) {
+                normalizedQuestions = normalizedQuestions.map(q => {
+                    // Strip every field that reveals the correct answer to students
+                    const { correctAnswer, explanation, correct_option, correctOption, ...safeQuestion } = q;
+                    return safeQuestion;
+                });
+            }
         }
 
         // SECURITY: Destructure raw questions out of quiz so the original

@@ -143,6 +143,7 @@ export default function CyberQuest() {
     // UI Helpers
     const [selectedOption, setSelectedOption] = useState(null);
     const [feedbackState, setFeedbackState] = useState(null); // 'correct' | 'incorrect' | 'shield-blocked'
+    const [userAnswers, setUserAnswers] = useState({});
     const [muted, setMuted] = useState(false);
 
     const activeQuestion = questions[currentLevel - 1] || questions[0];
@@ -167,7 +168,7 @@ export default function CyberQuest() {
             // 2. If launched as an official quiz assessment, submit to quiz engine
             if (quizId) {
                 const payloadAnswers = questions.map((q, idx) => ({
-                    selectedOption: idx < answeredCorrectly ? q.correctAnswer : '',
+                    selectedOption: userAnswers[idx] || (idx < answeredCorrectly ? q.correctAnswer : ''),
                     timeTaken: 0
                 }));
                 api.post('/quiz/submit', {
@@ -176,7 +177,7 @@ export default function CyberQuest() {
                 }).catch(err => console.error('Failed to submit quiz attempt:', err));
             }
         }
-    }, [gameStatus, currentLevel, sessionId, quizId, questions]);
+    }, [gameStatus, currentLevel, sessionId, quizId, questions, userAnswers]);
 
     // ── Synthesized Sound Effects ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -261,6 +262,7 @@ export default function CyberQuest() {
     const handleSelectOption = (option) => {
         if (feedbackState !== null) return; // block multiple fast clicks
         setSelectedOption(option);
+        setUserAnswers(prev => ({ ...prev, [currentLevel - 1]: option }));
 
         const isCorrect = option === activeQuestion.correctAnswer;
 
@@ -350,6 +352,7 @@ export default function CyberQuest() {
 
         setFeedbackState('correct');
         playSound('correct');
+        setUserAnswers(prev => ({ ...prev, [currentLevel - 1]: activeQuestion.correctAnswer }));
         const currentPoints = LADDER.find(l => l.level === currentLevel)?.points || 100;
         setUsedSkip(true);
 
@@ -518,17 +521,17 @@ export default function CyberQuest() {
                                             const isEliminated = eliminatedOptions.includes(option);
 
                                             // Determine Option Colors based on state
-                                            let cardStyle = 'border-white/5 bg-white/[0.02] hover:border-white/20 text-[#1f2937]';
+                                            let cardStyle = 'border-white/10 bg-white/[0.04] hover:border-white/30 text-white hover:bg-white/10';
                                             if (isEliminated) {
-                                                cardStyle = 'border-white/5 bg-transparent opacity-20 pointer-events-none';
+                                                cardStyle = 'border-white/5 bg-transparent opacity-20 pointer-events-none text-white/40';
                                             } else if (feedbackState === 'correct') {
-                                                if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/10 text-[#1f2937] shadow-[0_0_15px_rgba(16,185,129,0.15)]';
-                                                else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.01] opacity-30 text-[#1f2937]';
+                                                if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)] font-bold';
+                                                else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.01] opacity-30 text-white/50';
                                             } else if (feedbackState === 'incorrect') {
-                                                if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/10 text-[#1f2937]';
-                                                else if (isSelected) cardStyle = 'border-red-500 bg-red-500/10 text-[#1f2937] shadow-[0_0_15px_rgba(239,68,68,0.15)]';
+                                                if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold';
+                                                else if (isSelected) cardStyle = 'border-red-500 bg-red-500/20 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.25)] font-bold';
                                             } else if (feedbackState === 'shield-blocked') {
-                                                if (isSelected) cardStyle = 'border-amber-500 bg-amber-500/10 text-[#1f2937] shadow-[0_0_15px_rgba(245,158,11,0.15)] animate-pulse';
+                                                if (isSelected) cardStyle = 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.25)] animate-pulse';
                                             }
 
                                             return (

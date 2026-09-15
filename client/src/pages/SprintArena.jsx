@@ -132,6 +132,7 @@ export default function SprintArena() {
     const [floatingTexts, setFloatingTexts] = useState([]); // Array of floating indicator tags
     const [selectedOption, setSelectedOption] = useState(null);
     const [feedbackType, setFeedbackType] = useState(null); // 'correct' | 'wrong'
+    const [userAnswers, setUserAnswers] = useState({});
     const [muted, setMuted] = useState(false);
 
     const activeQuestion = questions[currentQuestion] || questions[0];
@@ -160,7 +161,7 @@ export default function SprintArena() {
 
             if (quizId) {
                 const payloadAnswers = questions.map((q, idx) => ({
-                    selectedOption: idx < correctAnswers ? q.correctAnswer : '',
+                    selectedOption: userAnswers[idx] || (idx < correctAnswers ? q.correctAnswer : ''),
                     timeTaken: 0
                 }));
                 api.post('/quiz/submit', {
@@ -169,7 +170,7 @@ export default function SprintArena() {
                 }).catch(err => console.error('Failed to submit quiz attempt:', err));
             }
         }
-    }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId, quizId, questions]);
+    }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId, quizId, questions, userAnswers]);
 
     // ── Synthesized Audio Synthesis ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -258,6 +259,7 @@ export default function SprintArena() {
     const handleSelectOption = (option) => {
         if (feedbackType !== null) return;
         setSelectedOption(option);
+        setUserAnswers(prev => ({ ...prev, [currentQuestion]: option }));
 
         const isCorrect = option === activeQuestion.correctAnswer;
         const floatId = Date.now();
@@ -520,13 +522,13 @@ export default function SprintArena() {
                                     const isSelected = selectedOption === option;
                                     const isCorrectChoice = option === activeQuestion.correctAnswer;
 
-                                    let cardStyle = 'border-white/5 bg-white/[0.02] hover:border-white/20 text-[#1f2937]';
+                                    let cardStyle = 'border-white/10 bg-white/[0.04] hover:border-white/30 text-white hover:bg-white/10';
                                     if (feedbackType === 'correct') {
-                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/10 text-[#1f2937] shadow-[0_0_15px_rgba(16,185,129,0.15)]';
-                                        else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.01] opacity-30 text-[#1f2937]';
+                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)] font-bold';
+                                        else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.01] opacity-30 text-white/50';
                                     } else if (feedbackType === 'wrong') {
-                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/10 text-[#1f2937]';
-                                        else if (isSelected) cardStyle = 'border-pink-500 bg-pink-500/10 text-[#1f2937] shadow-[0_0_15px_rgba(219,39,119,0.15)]';
+                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold';
+                                        else if (isSelected) cardStyle = 'border-pink-500 bg-pink-500/20 text-pink-300 shadow-[0_0_15px_rgba(219,39,119,0.25)] font-bold';
                                     }
 
                                     return (
