@@ -6,7 +6,8 @@ import AuthContext from '../context/AuthContext';
 import { 
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
-    PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw
+    PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
+    AlertCircle, CheckCircle
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
@@ -276,6 +277,93 @@ export default function CreateQuizTopic() {
         pollIntervalRef.current = setInterval(doPoll, 1500);
     }, [stopPolling]);
 
+    // ── Unified Audio File Ingestion & Whisper Transcription ─────────────────
+    // Immediately after file selection, creates a docket item with status: 'transcribing'
+    // Retries update the existing docket item in-place without creating duplicates.
+    const processAudioFile = async (file, existingId = null) => {
+        const id = existingId || Math.random().toString();
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+
+        if (!existingId) {
+            // Immediately after file selection: show in docket card
+            const newInput = {
+                id,
+                type: 'voice',
+                file,
+                source_name: file.name,
+                fileSizeMB,
+                status: 'transcribing',
+                fetchingMetadata: true,
+                content: '',
+                errorMsg: null
+            };
+            setInputs(prev => [...prev, newInput]);
+        } else {
+            // In-place retry: mark existing item as transcribing
+            setInputs(prev => prev.map(item => item.id === id ? {
+                ...item,
+                status: 'transcribing',
+                fetchingMetadata: true,
+                errorMsg: null
+            } : item));
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 300000
+            });
+
+            if (transcribeRes.data && transcribeRes.data.text && transcribeRes.data.text.trim().length >= 5) {
+                setInputs(prev => prev.map(item => item.id === id ? {
+                    ...item,
+                    status: 'ready',
+                    fetchingMetadata: false,
+                    content: transcribeRes.data.text,
+                    lectureDepth: transcribeRes.data.lectureDepth || null,
+                    errorMsg: null
+                } : item));
+                if (transcribeRes.data.lectureDepth) {
+                    setLectureDepth(transcribeRes.data.lectureDepth);
+                }
+                toast.success(`Lecture "${file.name}" transcribed and ready!`);
+            } else {
+                const failReason = transcribeRes.data?.msg || 'Could not extract intelligible speech from audio.';
+                setInputs(prev => prev.map(item => item.id === id ? {
+                    ...item,
+                    status: 'error',
+                    fetchingMetadata: false,
+                    errorMsg: failReason
+                } : item));
+                toast.error(failReason);
+            }
+        } catch (err) {
+            console.error('Lecture transcription failed:', err);
+            const errorMsg = err.response?.data?.msg || err.response?.data?.error || err.message || 'Transcription failed';
+            setInputs(prev => prev.map(item => item.id === id ? {
+                ...item,
+                status: 'error',
+                fetchingMetadata: false,
+                errorMsg: errorMsg
+            } : item));
+            toast.error(`Transcription failed: ${errorMsg}`, { duration: 6000 });
+        }
+    };
+
+    // Retry an existing docket item in-place
+    const retryAudioTranscription = async (id) => {
+        const target = inputs.find(item => item.id === id);
+        if (!target) return;
+        if (!target.file) {
+            toast.error('Audio file is no longer in browser memory. Please select the file again.');
+            return;
+        }
+        await processAudioFile(target.file, id);
+    };
+
     // Handle File Uploads
     const handleFileUpload = async (e) => {
         const files = Array.from(e.target.files);
@@ -283,6 +371,14 @@ export default function CreateQuizTopic() {
 
         for (const file of files) {
             const ext = file.name.split('.').pop().toLowerCase();
+            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
+
+            // Automatically route audio files to the dedicated Whisper pipeline
+            if (isAudio) {
+                await processAudioFile(file);
+                continue;
+            }
+
             const id = Math.random().toString();
             const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
 
@@ -336,59 +432,39 @@ export default function CreateQuizTopic() {
 
     // Handle Lecture File Upload (.mp3, .wav, .m4a, .webm, .ogg, .txt)
     const handleLectureFileUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
 
-        const ext = file.name.split('.').pop().toLowerCase();
-        const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
-        const isTxt = ext === 'txt';
+        for (const file of files) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac', 'opus'].includes(ext);
+            const isTxt = ext === 'txt';
 
-        if (isTxt) {
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                const text = event.target.result;
-                if (!text || text.trim().length < 10) {
-                    toast.error('Lecture transcript file is too short.');
-                    return;
-                }
-                setInputs(prev => [...prev, {
-                    id: Math.random().toString(),
-                    type: 'voice',
-                    content: text,
-                    source_name: `Lecture Transcript (${file.name})`
-                }]);
-                toast.success(`Added lecture transcript "${file.name}"`);
-            };
-            reader.readAsText(file);
-        } else if (isAudio) {
-            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-            const toastId = toast.loading(`Uploading & transcribing "${file.name}" (${fileSizeMB} MB)... This may take up to a minute.`);
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                const transcribeRes = await api.post('/quiz/transcribe', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                    timeout: 240000
-                });
-
-                if (transcribeRes.data && transcribeRes.data.text) {
+            if (isTxt) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const text = event.target.result;
+                    if (!text || text.trim().length < 10) {
+                        toast.error(`Lecture transcript file "${file.name}" is too short.`);
+                        return;
+                    }
                     setInputs(prev => [...prev, {
                         id: Math.random().toString(),
                         type: 'voice',
-                        content: transcribeRes.data.text,
-                        source_name: `Lecture Audio (${file.name})`
+                        content: text,
+                        source_name: `Lecture Transcript (${file.name})`,
+                        status: 'ready',
+                        fetchingMetadata: false
                     }]);
-                    toast.success(`Lecture transcribed and added to docket!`, { id: toastId });
-                } else {
-                    toast.error('Could not extract transcription from audio.', { id: toastId });
-                }
-            } catch (err) {
-                console.error('Lecture transcription failed:', err);
-                toast.error(`Transcription failed: ${err.response?.data?.msg || err.message}`, { id: toastId, duration: 6000 });
+                    toast.success(`Added lecture transcript "${file.name}"`);
+                };
+                reader.readAsText(file);
+            } else if (isAudio) {
+                // Immediately after file selection: process and show in docket
+                await processAudioFile(file);
+            } else {
+                toast.error(`Unsupported format for "${file.name}". Supported: .mp3, .wav, .m4a, .webm, .ogg, .aac, .flac, .opus, or .txt`);
             }
-        } else {
-            toast.error('Unsupported lecture file format. Supported: .mp3, .wav, .m4a, .webm, .ogg, .aac, .flac, .opus, or .txt');
         }
 
         e.target.value = '';
@@ -688,23 +764,31 @@ export default function CreateQuizTopic() {
     };
 
     // Direct Generation Submission
+    const hasTranscribingAudio = inputs.some(inp => (inp.type === 'voice' || inp.type === 'audio') && inp.status === 'transcribing');
+
     const handleGenerateQuiz = async () => {
         if (inputs.length === 0 || isGenerating) {
             if (inputs.length === 0) toast.error('Please add at least one source input (document, voice recording, or text).');
             return;
         }
 
+        if (hasTranscribingAudio) {
+            toast.error('Please wait for lecture audio transcription to complete before generating the quiz.');
+            return;
+        }
+
         setSubmitting(true);
 
         const formData = new FormData();
-        const fileInputs = inputs.filter(inp => inp.file);
-        const textInputs = inputs.filter(inp => !inp.file && inp.content);
+        // Send documents/images as raw files; voice recordings & audio are supplied via text_prompts
+        const fileInputs = inputs.filter(inp => inp.file && inp.type !== 'voice' && inp.type !== 'audio');
+        const textInputs = inputs.filter(inp => (!inp.file || inp.type === 'voice' || inp.type === 'audio') && inp.content);
 
         fileInputs.forEach(inp => {
             formData.append('files', inp.file);
         });
 
-        const fileConfigs = inputs.filter(inp => inp.type !== 'text').map(inp => ({
+        const fileConfigs = fileInputs.map(inp => ({
             name: inp.source_name,
             documentId: inp.documentId,
             startPage: inp.startPage || 1,
@@ -718,6 +802,9 @@ export default function CreateQuizTopic() {
         formData.append('difficulty', difficulty);
 
         const textPromptsList = textInputs.map(t => {
+            if (t.type === 'voice' || t.type === 'audio') {
+                return `Lecture Audio Transcript: ${t.source_name}\n${t.content}`;
+            }
             if (t.type !== 'text' && t.startPage && t.endPage && t.content) {
                 const lines = t.content.split('\n');
                 const totalLines = lines.length;
@@ -1081,6 +1168,7 @@ export default function CreateQuizTopic() {
                         <input 
                             type="file" 
                             ref={lectureFileInputRef}
+                            multiple
                             onChange={handleLectureFileUpload} 
                             className="hidden"
                             accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.opus,.txt"
@@ -1101,11 +1189,13 @@ export default function CreateQuizTopic() {
                                             <div className="flex items-center justify-between gap-3">
                                                 <div className="flex items-center gap-3 flex-1 min-w-0">
                                                     <div className="p-2.5 bg-[var(--bg-accent)]/10 rounded-xl text-[var(--text-accent)] shrink-0">
-                                                        {inp.type === 'pdf' ? <FileText size={18} /> : inp.type === 'voice' ? <Mic size={18} /> : <FileCode size={18} />}
+                                                        {inp.type === 'pdf' ? <FileText size={18} /> : (inp.type === 'voice' || inp.type === 'audio') ? <Mic size={18} /> : <FileCode size={18} />}
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <p className="text-xs sm:text-sm font-black text-[var(--text-primary)] truncate">{inp.source_name}</p>
-                                                        <p className="text-[9px] font-extrabold text-[var(--text-secondary)] uppercase tracking-wider">{inp.type}</p>
+                                                        <p className="text-[9px] font-extrabold text-[var(--text-secondary)] uppercase tracking-wider">
+                                                            {inp.type === 'voice' ? 'Audio Lecture' : inp.type}
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <button 
@@ -1119,9 +1209,52 @@ export default function CreateQuizTopic() {
                                                 </button>
                                             </div>
 
-                                            {inp.fetchingMetadata && (
+                                            {inp.fetchingMetadata && (inp.type !== 'voice' && inp.type !== 'audio') && (
                                                 <div className="text-[10px] font-black text-[var(--text-accent)] uppercase animate-pulse pt-2 border-t border-[var(--border-color)]/60">
                                                     ⚡ Reading document page length...
+                                                </div>
+                                            )}
+
+                                            {/* Audio / Voice Ingestion Status & Retry Banner */}
+                                            {(inp.type === 'voice' || inp.type === 'audio') && (
+                                                <div className="pt-2 border-t border-[var(--border-color)]/60">
+                                                    {inp.status === 'transcribing' ? (
+                                                        <div className="flex items-center gap-2 text-amber-700 bg-amber-50/80 p-2.5 rounded-xl border border-amber-200">
+                                                            <Loader2 size={14} className="animate-spin shrink-0 text-amber-600" />
+                                                            <span className="text-[10px] font-black uppercase tracking-wider animate-pulse">
+                                                                ⚡ Transcribing with Whisper Large-v3... {inp.fileSizeMB ? `(${inp.fileSizeMB} MB)` : ''}
+                                                            </span>
+                                                        </div>
+                                                    ) : inp.status === 'error' ? (
+                                                        <div className="flex items-center justify-between gap-2 bg-red-50/80 p-2.5 rounded-xl border border-red-200 text-red-700">
+                                                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                                <AlertCircle size={15} className="text-red-500 shrink-0" />
+                                                                <span className="text-[10px] font-bold truncate" title={inp.errorMsg || 'Transcription failed'}>
+                                                                    {inp.errorMsg || 'Transcription failed'}
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => retryAudioTranscription(inp.id)}
+                                                                className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
+                                                                title="Retry transcription in-place"
+                                                            >
+                                                                <RefreshCw size={11} /> Retry
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center justify-between gap-2 bg-emerald-50/60 p-2 rounded-xl border border-emerald-200/60 text-emerald-800">
+                                                            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider">
+                                                                <CheckCircle size={13} className="text-emerald-600" />
+                                                                Ready ({inp.content ? inp.content.trim().split(/\s+/).length : 0} words)
+                                                            </span>
+                                                            {inp.fileSizeMB && (
+                                                                <span className="text-[10px] font-bold text-slate-500">
+                                                                    {inp.fileSizeMB} MB
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -1283,10 +1416,10 @@ export default function CreateQuizTopic() {
                 <div className="p-4 lg:p-6 pt-0 w-full">
                     <button
                         type="button"
-                        disabled={inputs.length === 0 || isGenerating}
+                        disabled={inputs.length === 0 || isGenerating || hasTranscribingAudio}
                         onClick={handleGenerateQuiz}
                         className={`w-full py-4.5 px-8 font-black text-sm sm:text-base uppercase tracking-[0.15em] rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 border-2 cursor-pointer ${
-                            inputs.length === 0 || isGenerating
+                            inputs.length === 0 || isGenerating || hasTranscribingAudio
                                 ? 'bg-[var(--bg-saffron)]/80 text-white border-[var(--bg-saffron)] opacity-80 cursor-not-allowed'
                                 : 'bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white border-[var(--bg-saffron)] active:scale-[0.99]'
                         }`}
@@ -1297,6 +1430,13 @@ export default function CreateQuizTopic() {
                                 <Loader2 className="animate-spin text-white" size={20} />
                                 <span className="!text-white font-black uppercase tracking-widest text-base" style={{ color: '#ffffff' }}>
                                     Generating MCQs...
+                                </span>
+                            </>
+                        ) : hasTranscribingAudio ? (
+                            <>
+                                <Loader2 className="animate-spin text-white" size={20} />
+                                <span className="!text-white font-black uppercase tracking-widest text-base" style={{ color: '#ffffff' }}>
+                                    Transcribing Lecture Audio...
                                 </span>
                             </>
                         ) : (

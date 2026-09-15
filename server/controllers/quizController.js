@@ -90,16 +90,46 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
     };
 
+    // Bounded retry policy for Groq Whisper (maximum 2 retries on 429 rate limits, respecting Retry-After)
+    const callGroqWithRetry = async (createPayloadFn, maxRetries = 2) => {
+        let lastError = null;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const payload = createPayloadFn();
+                return await groqClient.audio.transcriptions.create(payload);
+            } catch (err) {
+                lastError = err;
+                const status = err.status || err.statusCode || (err.response && err.response.status);
+                const is429 = status === 429 || (err.message && err.message.includes('429'));
+                if (is429 && attempt < maxRetries) {
+                    const retryAfterHeader = err.headers?.['retry-after'] || err.response?.headers?.['retry-after'];
+                    let delayMs = 1500 * Math.pow(2, attempt); // 1.5s, 3.0s
+                    if (retryAfterHeader) {
+                        const parsed = parseFloat(retryAfterHeader);
+                        if (!isNaN(parsed) && parsed > 0 && parsed <= 10) {
+                            delayMs = Math.ceil(parsed * 1000);
+                        }
+                    }
+                    console.warn(`⏳ Groq Whisper rate limit (429). Bounded retry ${attempt + 1}/${maxRetries} after ${delayMs}ms...`);
+                    await new Promise(res => setTimeout(res, delayMs));
+                    continue;
+                }
+                throw err;
+            }
+        }
+        throw lastError;
+    };
+
     // ── Tier A: Single Direct Pass (Files <= 20 MB) ──────────────────────────
     if (fileSizeBytes <= GROQ_MAX_BYTES) {
         try {
             console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-            const data = await groqClient.audio.transcriptions.create({
+            const data = await callGroqWithRetry(() => ({
                 file: fs.createReadStream(filePath),
                 model: 'whisper-large-v3',
                 response_format: 'verbose_json',
                 prompt: 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
-            });
+            }), 2);
 
             const fullText = (data.text || '').trim();
             const rawSegs = Array.isArray(data.segments) ? data.segments : [];
@@ -130,7 +160,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             }
         } catch (groqErr) {
             console.error('❌ Whisper Large-v3 Direct Transcription Error:', groqErr.message || groqErr);
-            return null;
+            throw groqErr;
         }
     }
 
@@ -156,14 +186,14 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 const chunkNum = i + 1;
                 console.log(`🎙️ [Whisper Large-v3] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
 
-                const chunkData = await groqClient.audio.transcriptions.create({
+                const chunkData = await callGroqWithRetry(() => ({
                     file: fs.createReadStream(chunk.filePath),
                     model: 'whisper-large-v3',
                     response_format: 'verbose_json',
                     prompt: i === 0 
                         ? 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
                         : `Continuing classroom lecture. Previous context: ${textParts.join(' ').slice(-200)}`
-                });
+                }), 2);
 
                 const chunkText = (chunkData.text || '').trim();
                 const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
@@ -175,7 +205,6 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 let filteredSegs = chunkSegs;
                 if (i > 0 && textParts.length > 0) {
                     const prevChunkEndText = textParts[textParts.length - 1].slice(-150).toLowerCase();
-                    // If first 1-2 segments of this chunk repeat the trailing words of the previous chunk, skip them
                     filteredSegs = chunkSegs.filter((seg, segIdx) => {
                         if (segIdx < 3 && seg.start < 3.0) {
                             const cleanSeg = (seg.text || '').trim().toLowerCase();
@@ -234,18 +263,24 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             for (const c of chunks) {
                 try { if (fs.existsSync(c.filePath)) fs.unlinkSync(c.filePath); } catch (_) {}
             }
-            return null;
+            throw chunkErr;
         }
     }
 
     // For non-MP3 files that exceed 20MB without chunker support yet
-    console.error(`❌ File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper provider size limit.`);
-    return null;
+    const overLimitMsg = `File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper limit (20 MB).`;
+    console.error(`❌ ${overLimitMsg}`);
+    throw new Error(overLimitMsg);
 };
 
 const transcribeAudio = async (filePath) => {
-    const result = await transcribeAudioWithTimestamps(filePath);
-    return result ? result.text : null;
+    try {
+        const result = await transcribeAudioWithTimestamps(filePath);
+        return result ? result.text : null;
+    } catch (err) {
+        console.warn('transcribeAudio error:', err.message);
+        return null;
+    }
 };
 
 // Mock AI Generation for fallback
@@ -3754,16 +3789,24 @@ exports.transcribe = async (req, res) => {
     const isRecorded = originalName.includes('recording') || originalName.includes('blob') || ext === '.webm';
 
     try {
-        const result = await transcribeAudioWithTimestamps(absolutePath);
-        
-        // Clean up audio file
-        try { fs.unlinkSync(absolutePath); } catch (_) {}
+        let result;
+        try {
+            result = await transcribeAudioWithTimestamps(absolutePath);
+        } catch (transcribeErr) {
+            console.error('Whisper transcription failed:', transcribeErr);
+            const status = transcribeErr.status || transcribeErr.statusCode || (transcribeErr.response && transcribeErr.response.status);
+            const is429 = status === 429 || (transcribeErr.message && transcribeErr.message.includes('429'));
+            const errMsg = is429
+                ? 'Speech recognition service is temporarily rate limited. Please retry in a few moments.'
+                : (transcribeErr.message || 'Speech recognition service encountered an issue.');
+            return res.status(500).json({ msg: errMsg, error: errMsg });
+        }
 
         const transcript = result ? result.text : null;
         if (!transcript || transcript.trim().length < 5) {
             const failMsg = isRecorded
                 ? 'Could not capture clear speech. Please try speaking closer to the mic.'
-                : `Could not transcribe "${originalName}". Please ensure the audio contains audible spoken English and is not silent.`;
+                : `Could not extract intelligible speech from "${originalName}". Please ensure the audio contains audible spoken English and is not silent.`;
             return res.status(422).json({ msg: failMsg });
         }
 
@@ -3777,8 +3820,9 @@ exports.transcribe = async (req, res) => {
         });
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
-        try { fs.unlinkSync(absolutePath); } catch (_) {}
         res.status(500).json({ msg: `Transcription failed: ${err.message || 'Internal Server Error'}` });
+    } finally {
+        try { if (fs.existsSync(absolutePath)) fs.unlinkSync(absolutePath); } catch (_) {}
     }
 };
 
