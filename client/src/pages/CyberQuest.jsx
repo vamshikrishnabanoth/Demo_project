@@ -147,11 +147,15 @@ export default function CyberQuest() {
 
     const activeQuestion = questions[currentLevel - 1] || questions[0];
 
-    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    const quizId = location.state?.quizId;
+
+    // Submit Gamification Score & Assessment Result
     useEffect(() => {
         if ((gameStatus === 'victory' || gameStatus === 'gameover') && !hasSubmitted.current) {
             hasSubmitted.current = true;
             const answeredCorrectly = gameStatus === 'victory' ? 10 : Math.max(0, currentLevel - 1);
+            
+            // 1. Submit gamification score
             api.post('/students/game-score', {
                 gameType: 'cyber_quest',
                 correctAnswers: answeredCorrectly,
@@ -159,8 +163,20 @@ export default function CyberQuest() {
                 duration: 0, // CyberQuest is untimed
                 sessionId: sessionId
             }).catch(err => console.error('Failed to save score:', err));
+
+            // 2. If launched as an official quiz assessment, submit to quiz engine
+            if (quizId) {
+                const payloadAnswers = questions.map((q, idx) => ({
+                    selectedOption: idx < answeredCorrectly ? q.correctAnswer : '',
+                    timeTaken: 0
+                }));
+                api.post('/quiz/submit', {
+                    quizId,
+                    answers: payloadAnswers
+                }).catch(err => console.error('Failed to submit quiz attempt:', err));
+            }
         }
-    }, [gameStatus, currentLevel, sessionId]);
+    }, [gameStatus, currentLevel, sessionId, quizId, questions]);
 
     // ── Synthesized Sound Effects ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -683,18 +699,37 @@ export default function CyberQuest() {
                                 </div>
 
                                 <div className="flex gap-4">
-                                    <button
-                                        onClick={handleReset}
-                                        className="flex-1 h-14 rounded-2xl bg-emerald-500 text-black font-black text-md italic uppercase tracking-wider border border-emerald-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.25)] cursor-pointer"
-                                    >
-                                        Play Again
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/student-dashboard')}
-                                        className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
-                                    >
-                                        Dashboard
-                                    </button>
+                                    {quizId ? (
+                                        <>
+                                            <button
+                                                onClick={() => navigate(`/report/${quizId}`)}
+                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 text-black font-black text-xs italic uppercase tracking-wider border border-emerald-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.25)] cursor-pointer"
+                                            >
+                                                View Report
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/assessments')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Games Arena
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleReset}
+                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 text-black font-black text-md italic uppercase tracking-wider border border-emerald-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.25)] cursor-pointer"
+                                            >
+                                                Play Again
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/student-dashboard')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Dashboard
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
@@ -735,18 +770,37 @@ export default function CyberQuest() {
                                 </div>
 
                                 <div className="flex gap-4">
-                                    <button
-                                        onClick={handleReset}
-                                        className="flex-1 h-14 rounded-2xl bg-red-500 text-white font-black text-md italic uppercase tracking-wider border border-red-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.25)] cursor-pointer"
-                                    >
-                                        Retry Quest
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/student-dashboard')}
-                                        className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
-                                    >
-                                        Dashboard
-                                    </button>
+                                    {quizId ? (
+                                        <>
+                                            <button
+                                                onClick={() => navigate(`/report/${quizId}`)}
+                                                className="flex-1 h-14 rounded-2xl bg-red-500 text-white font-black text-xs italic uppercase tracking-wider border border-red-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.25)] cursor-pointer"
+                                            >
+                                                View Report
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/assessments')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Games Arena
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleReset}
+                                                className="flex-1 h-14 rounded-2xl bg-red-500 text-white font-black text-md italic uppercase tracking-wider border border-red-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.25)] cursor-pointer"
+                                            >
+                                                Retry Quest
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/student-dashboard')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Dashboard
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

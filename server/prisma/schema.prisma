@@ -84,6 +84,7 @@ model Quiz {
   topic            String?
   isLive           Boolean  @default(false)
   isAssessment     Boolean  @default(false)
+  gameType         String?  @default("cyber_quest") // 'cyber_quest', 'sprint_arena', 'match_up', 'standard'
   status           String   @default("waiting") // 'waiting', 'started', 'finished'
   assignedGroups   Json?    // Stores targeting parameters e.g. [{ branch: 'CSE', section: 'A', year: '3', semester: '1' }]
   assignedStudents String[] @default([]) // Selected User IDs

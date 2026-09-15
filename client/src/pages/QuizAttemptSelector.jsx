@@ -27,6 +27,21 @@ export default function QuizAttemptSelector() {
         fetchQuiz();
     }, [id]);
 
+    useEffect(() => {
+        if (quiz && !quiz.isLive) {
+            const statePayload = { questions: quiz.questions, title: quiz.title, quizId: quiz.id };
+            const gType = quiz.gameType || 'cyber_quest';
+            
+            if (gType === 'cyber_quest') {
+                navigate('/cyber-quest', { replace: true, state: statePayload });
+            } else if (gType === 'sprint_arena') {
+                navigate('/sprint-arena', { replace: true, state: statePayload });
+            } else if (gType === 'match_up') {
+                navigate('/match-up-arena', { replace: true, state: statePayload });
+            }
+        }
+    }, [quiz, navigate]);
+
     if (loading) return <WaitingRoomLoader message="Synchronizing Arena Link..." />;
     
     if (error || !quiz) {
@@ -49,7 +64,9 @@ export default function QuizAttemptSelector() {
 
     if (quiz.isLive) {
         return <AttemptQuiz />;
-    } else {
+    } else if (quiz.gameType === 'standard') {
         return <AssessmentAttempt />;
+    } else {
+        return <WaitingRoomLoader message="Entering Game Arena..." />;
     }
 }

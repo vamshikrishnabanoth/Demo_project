@@ -729,7 +729,7 @@ exports.getFileMetadata = async (req, res) => {
 
 exports.createQuiz = async (req, res) => {
     try {
-        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType, autoBroadcast } = req.body;
+        let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, gameType, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType, autoBroadcast } = req.body;
         let finalQuestions = [];
 
         // --- UNIQUE QUIZ NAME CHECK ---
@@ -886,6 +886,7 @@ exports.createQuiz = async (req, res) => {
                 topic: topic || content || '',
                 isLive: isLiveFinal,
                 isAssessment: isAssessment === 'true' || isAssessment === true,
+                gameType: gameType || (isAssessment === 'true' || isAssessment === true ? 'cyber_quest' : 'standard'),
                 status: isLiveFinal ? 'waiting' : 'active',
                 assignedGroups: parsedGroups,
                 assignedStudents: parsedStudents,
@@ -1998,9 +1999,9 @@ exports.updateQuiz = async (req, res) => {
             }
             if (!isAdmin) {
                 // Non-admin teachers can only update non-content fields on locked quizzes
-                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType'];
+                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType'];
                 const requestedFields = Object.keys(req.body);
-                const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive'].includes(f));
+                const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive', 'gameType'].includes(f));
                 if (forbidden.length > 0) {
                     return res.status(403).json({
                         msg: `Quiz is locked. Cannot modify: ${forbidden.join(', ')}. Duplicate this quiz to make structural changes.`,
@@ -2021,6 +2022,7 @@ exports.updateQuiz = async (req, res) => {
         if (timerPerQuestion !== undefined) updateData.timerPerQuestion = parseInt(timerPerQuestion);
         if (duration !== undefined) updateData.duration = parseInt(duration);
         if (isAssessment !== undefined) updateData.isAssessment = isAssessment === 'true' || isAssessment === true;
+        if (req.body.gameType) updateData.gameType = req.body.gameType;
         if (timerType) updateData.timerType = timerType;
         if (accessType) updateData.accessType = accessType;
         if (startTime !== undefined) updateData.startTime = startTime ? new Date(startTime) : null;

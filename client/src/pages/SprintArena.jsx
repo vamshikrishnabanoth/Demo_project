@@ -143,7 +143,9 @@ export default function SprintArena() {
     useEffect(() => { timerRef.current = timer; }, [timer]);
     useEffect(() => { statusRef.current = gameStatus; }, [gameStatus]);
 
-    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    const quizId = location.state?.quizId;
+
+    // Submit Gamification Score & Assessment Result
     useEffect(() => {
         if (gameStatus === 'gameover' && !hasSubmitted.current) {
             hasSubmitted.current = true;
@@ -155,8 +157,19 @@ export default function SprintArena() {
                 wrongAnswers: wrongAnswers,
                 sessionId: sessionId
             }).catch(err => console.error('Failed to save score:', err));
+
+            if (quizId) {
+                const payloadAnswers = questions.map((q, idx) => ({
+                    selectedOption: idx < correctAnswers ? q.correctAnswer : '',
+                    timeTaken: 0
+                }));
+                api.post('/quiz/submit', {
+                    quizId,
+                    answers: payloadAnswers
+                }).catch(err => console.error('Failed to submit quiz attempt:', err));
+            }
         }
-    }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId]);
+    }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId, quizId, questions]);
 
     // ── Synthesized Audio Synthesis ──────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -585,18 +598,37 @@ export default function SprintArena() {
                             </div>
 
                             <div className="flex gap-4 max-w-md mx-auto">
-                                <button
-                                    onClick={handleReset}
-                                    className="flex-1 h-14 rounded-2xl bg-pink-600 text-white font-black text-md italic uppercase tracking-wider border border-pink-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(219,39,119,0.25)] cursor-pointer"
-                                >
-                                    <RotateCw size={14} className="inline mr-2" /> Play Again
-                                </button>
-                                <button
-                                    onClick={() => navigate('/student-dashboard')}
-                                    className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
-                                >
-                                    Dashboard
-                                </button>
+                                {quizId ? (
+                                    <>
+                                        <button
+                                            onClick={() => navigate(`/report/${quizId}`)}
+                                            className="flex-1 h-14 rounded-2xl bg-pink-600 text-white font-black text-xs italic uppercase tracking-wider border border-pink-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(219,39,119,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
+                                        >
+                                            View Report
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/assessments')}
+                                            className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                        >
+                                            Games Arena
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={handleReset}
+                                            className="flex-1 h-14 rounded-2xl bg-pink-600 text-white font-black text-md italic uppercase tracking-wider border border-pink-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(219,39,119,0.25)] cursor-pointer"
+                                        >
+                                            <RotateCw size={14} className="inline mr-2" /> Play Again
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/student-dashboard')}
+                                            className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                        >
+                                            Dashboard
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>

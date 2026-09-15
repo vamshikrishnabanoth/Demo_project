@@ -84,7 +84,9 @@ export default function MatchUpArena() {
     const completionPercentage = cards.length > 0 ? Math.round((matchedCards.length / cards.length) * 100) : 0;
     const totalPairs = cards.length / 2;
 
-    // Submit Gamification Score — raw metrics only (anti-cheat: backend computes XP)
+    const quizId = location.state?.quizId;
+
+    // Submit Gamification Score & Assessment Result
     useEffect(() => {
         if (gameStatus === 'victory' && !hasSubmitted.current) {
             hasSubmitted.current = true;
@@ -96,8 +98,19 @@ export default function MatchUpArena() {
                 moves: moves,                    // total card flips made
                 sessionId: sessionId
             }).catch(err => console.error('Failed to save score:', err));
+
+            if (quizId) {
+                const payloadAnswers = normalizedQuestions.map((q) => ({
+                    selectedOption: q.correctAnswer,
+                    timeTaken: 0
+                }));
+                api.post('/quiz/submit', {
+                    quizId,
+                    answers: payloadAnswers
+                }).catch(err => console.error('Failed to submit quiz attempt:', err));
+            }
         }
-    }, [gameStatus, correctMatches, totalPairs, timer, moves, sessionId]);
+    }, [gameStatus, correctMatches, totalPairs, timer, moves, sessionId, quizId, normalizedQuestions]);
 
     // ── Synthesized Sound Oscillators ─────────────────────────────────────────
     const playSound = useCallback((type) => {
@@ -625,18 +638,37 @@ export default function MatchUpArena() {
                                 </div>
 
                                 <div className="flex gap-4 max-w-md mx-auto">
-                                    <button
-                                        onClick={handleReset}
-                                        className="flex-1 h-14 rounded-2xl bg-purple-600 text-white font-black text-md italic uppercase tracking-wider border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(168,85,247,0.25)] cursor-pointer"
-                                    >
-                                        <RotateCw size={14} className="inline mr-2" /> Play Again
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/student-dashboard')}
-                                        className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
-                                    >
-                                        Dashboard
-                                    </button>
+                                    {quizId ? (
+                                        <>
+                                            <button
+                                                onClick={() => navigate(`/report/${quizId}`)}
+                                                className="flex-1 h-14 rounded-2xl bg-purple-600 text-white font-black text-xs italic uppercase tracking-wider border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(168,85,247,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
+                                            >
+                                                View Report
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/assessments')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Games Arena
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleReset}
+                                                className="flex-1 h-14 rounded-2xl bg-purple-600 text-white font-black text-md italic uppercase tracking-wider border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(168,85,247,0.25)] cursor-pointer"
+                                            >
+                                                <RotateCw size={14} className="inline mr-2" /> Play Again
+                                            </button>
+                                            <button
+                                                onClick={() => navigate('/student-dashboard')}
+                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            >
+                                                Dashboard
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

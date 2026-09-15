@@ -285,6 +285,26 @@ export default function Assessments() {
                                                 <div>
                                                     <div className="flex flex-wrap items-center gap-3 mb-1">
                                                         <h3 className="text-lg font-black text-[#111111] group-hover:text-[var(--text-accent)] transition-colors">{cleanQuizTitle(quiz.title)}</h3>
+                                                        {quiz.gameType === 'cyber_quest' && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-800 flex items-center gap-1">
+                                                                🏆 CYBER QUEST
+                                                            </span>
+                                                        )}
+                                                        {quiz.gameType === 'sprint_arena' && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-800 flex items-center gap-1">
+                                                                ⚡ SPRINT ARENA
+                                                            </span>
+                                                        )}
+                                                        {quiz.gameType === 'match_up' && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-800 flex items-center gap-1">
+                                                                🧩 MATCH-UP ARENA
+                                                            </span>
+                                                        )}
+                                                        {(!quiz.gameType || quiz.gameType === 'standard') && (
+                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-500/10 border border-slate-500/30 text-slate-700 flex items-center gap-1">
+                                                                📝 STANDARD MODE
+                                                            </span>
+                                                        )}
                                                         {quiz.isLocked && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-700 animate-pulse">
                                                                 SCHEDULED
