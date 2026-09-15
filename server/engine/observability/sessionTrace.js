@@ -83,6 +83,10 @@ class SessionTrace {
     const filename = `${stageOrder}_${stageName.toLowerCase()}.json`;
     await debugRecorder.recordStage(this.sessionId, filename, stageRecord);
 
+    if (output && output.representationMode) {
+      this.representationMode = output.representationMode;
+    }
+
     // 3. Level 3: SSE Progress & Debug Event Broadcast
     if (this.progressCallback && typeof this.progressCallback === 'function') {
       this.progressCallback({
@@ -94,7 +98,8 @@ class SessionTrace {
         model,
         decisions,
         calculations,
-        outputSummary: typeof output === 'object' ? Object.keys(output) : 'done'
+        outputSummary: typeof output === 'object' ? Object.keys(output) : 'done',
+        representation_mode: this.representationMode || (output && output.representationMode) || null
       });
     }
 

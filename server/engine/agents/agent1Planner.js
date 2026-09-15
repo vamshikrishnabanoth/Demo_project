@@ -34,7 +34,7 @@ class Agent1Planner {
     // 2. Build prompt for Agent 1 Planning
     const systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
 Analyze the session evidence and generate an Assessment Plan in valid JSON format.
-You must plan up to ${requestedCount} primary assessment targets AND ${Math.max(1, Math.ceil(requestedCount * 0.3))} reserve targets.
+You must plan up to ${requestedCount} primary assessment targets AND ${Math.max(3, Math.ceil(requestedCount * 0.5))} reserve targets.
 
 CENTRAL PRINCIPLES:
 1. STRICT EVIDENCE GROUNDING: Every target MUST be directly derived from statements in [SESSION CONTENT].

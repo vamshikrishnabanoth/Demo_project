@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -46,7 +46,9 @@ export default function CreateQuizText() {
     const [finalValidation, setFinalValidation] = useState(null);
     const [lectureDepth, setLectureDepth] = useState(null);
     const [isVoice, setIsVoice] = useState(false);
-
+    const [pipelineNotice, setPipelineNotice] = useState(null);
+    const [isPartialYield, setIsPartialYield] = useState(false);
+    const [requestedCount, setRequestedCount] = useState(null);
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -100,6 +102,15 @@ export default function CreateQuizText() {
             }
             if (location.state.lectureDepth) {
                 setLectureDepth(location.state.lectureDepth);
+            }
+            if (location.state.notice) {
+                setPipelineNotice(location.state.notice);
+            }
+            if (location.state.isPartial) {
+                setIsPartialYield(true);
+            }
+            if (location.state.requestedCount) {
+                setRequestedCount(location.state.requestedCount);
             }
 
             if (location.state.isTemplate || location.state.source === 'template') {
@@ -361,6 +372,40 @@ export default function CreateQuizText() {
                         )}
                     </div>
                 </div>
+
+                {/* Evidence Grounding & Partial Yield Notice Banner */}
+                {pipelineNotice && (
+                    <div className="mb-6 bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-indigo-950/80 border border-blue-500/30 rounded-2xl p-4 shadow-lg flex items-start justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="flex items-start gap-3.5">
+                            <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-400/30 shrink-0 mt-0.5">
+                                <ShieldCheck size={20} className="stroke-[2.5]" />
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-blue-300">
+                                        Evidence-Grounded Generation Policy
+                                    </h4>
+                                    {requestedCount && (
+                                        <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200 text-[10px] font-bold">
+                                            {questions.length} Delivered of {requestedCount} Requested
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                                    {pipelineNotice}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setPipelineNotice(null)}
+                            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+                            title="Dismiss Notice"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
 
                 {/* Tab Interface - Centered */}
                 {!isGeneratedSource && (

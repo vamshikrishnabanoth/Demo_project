@@ -282,6 +282,7 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
             status: task.status,
             stage: task.stage,
             stageLabel: task.stageLabel,
+            representation_mode: task.representation_mode || (task.result && task.result.representation_mode) || null,
             result: task.result,
         });
     }
@@ -290,6 +291,7 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
         status: task.status,
         stage: task.stage,
         stageLabel: task.stageLabel,
+        representation_mode: task.representation_mode || null,
         error: task.error || null,
     });
 });

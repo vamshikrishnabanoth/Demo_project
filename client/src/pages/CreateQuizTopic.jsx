@@ -147,6 +147,7 @@ export default function CreateQuizTopic() {
     const [polling, setPolling] = useState(false);
     const [stage, setStage] = useState(0);
     const [stageLabel, setStageLabel] = useState('Generating Questions');
+    const [representationMode, setRepresentationMode] = useState(null);
     const [elapsed, setElapsed] = useState(0);
     const [pollError, setPollError] = useState(null);
     const pollIntervalRef = useRef(null);
@@ -245,6 +246,7 @@ export default function CreateQuizTopic() {
         setPolling(true);
         setStage(0);
         setStageLabel('Generating Questions');
+        setRepresentationMode(null);
         setElapsed(0);
         setPollError(null);
         startTimeRef.current = Date.now();
@@ -256,9 +258,10 @@ export default function CreateQuizTopic() {
         const doPoll = async () => {
             try {
                 const res = await api.get(`/quiz/generate/status/${taskId}`);
-                const { status, stage: s, stageLabel: sl, result, error: e } = res.data;
+                const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: e } = res.data;
                 if (s !== undefined) setStage(s);
                 if (sl) setStageLabel(sl);
+                if (rm) setRepresentationMode(rm);
 
                 if (status === 'COMPLETED' && result) {
                     stopPolling();
@@ -899,6 +902,21 @@ export default function CreateQuizTopic() {
                     if (hasVoice && result.lectureDepth) {
                         setLectureDepth(result.lectureDepth);
                     }
+
+                    if (result.notice || result.isPartial || (result.questions && result.questions.length < questionCount)) {
+                        const count = result.questions ? result.questions.length : 0;
+                        toast(`Generated ${count} grounded questions. Additional questions were withheld to prevent hallucination without supporting evidence.`, {
+                            icon: '🛡️',
+                            duration: 7000,
+                            style: {
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                padding: '16px',
+                                color: '#fff',
+                                background: '#0f172a',
+                            }
+                        });
+                    }
+
                     navigate('/create-quiz/text', {
                         state: {
                             taskId: taskId,
@@ -909,7 +927,11 @@ export default function CreateQuizTopic() {
                             isVoice: hasVoice,
                             agentReport: result.agentReport || null,
                             lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
-                            notice: result.notice || null
+                            notice: result.notice || (result.questions && result.questions.length < questionCount ? `${result.questions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
+                            isPartial: Boolean(result.isPartial || (result.questions && result.questions.length < questionCount)),
+                            requestedCount: result.requestedCount || questionCount,
+                            deliveredCount: result.questions ? result.questions.length : 0,
+                            representationMode: result.representation_mode || representationMode || null
                         },
                     });
                 },
@@ -932,6 +954,7 @@ export default function CreateQuizTopic() {
                     stageLabel={stageLabel}
                     elapsed={elapsed}
                     isVoice={false}
+                    representationMode={representationMode}
                 />
             )}
 

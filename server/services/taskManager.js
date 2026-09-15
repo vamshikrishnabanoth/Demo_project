@@ -40,6 +40,7 @@ function createTask() {
         status: 'RUNNING',
         stage: 0,
         stageLabel: 'Ingesting & Analyzing Material',
+        representation_mode: null,
         createdAt: Date.now(),
     });
     return id;
@@ -50,8 +51,9 @@ function createTask() {
  * @param {string} taskId
  * @param {number} stage  0-7
  * @param {string} label  Human-readable label
+ * @param {string} [representationMode] 'SUMMARY' | 'BLUEPRINT' | 'UNIFIED'
  */
-function updateTaskStage(taskId, stage, label) {
+function updateTaskStage(taskId, stage, label, representationMode) {
     const task = tasks.get(taskId);
     if (!task || task.status !== 'RUNNING') return;
     // Strictly monotonic progression: never regress stage index backwards
@@ -60,6 +62,9 @@ function updateTaskStage(taskId, stage, label) {
     }
     if (label) {
         task.stageLabel = label;
+    }
+    if (representationMode) {
+        task.representation_mode = representationMode;
     }
 }
 

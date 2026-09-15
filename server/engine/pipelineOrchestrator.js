@@ -76,6 +76,21 @@ class PipelineOrchestrator {
       evidencePackage.sessionId = sessionId;
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
+      // Deterministic PDI Representation Router Decision (SUMMARY vs BLUEPRINT vs UNIFIED)
+      const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
+      const hasDocs = Boolean(sessionInputs.documentTexts && sessionInputs.documentTexts.length > 0);
+      const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
+
+      let representationMode = 'UNIFIED';
+      if (hasVoice && !hasDocs && !hasCode) {
+        representationMode = 'SUMMARY';
+      } else if (!hasVoice && (hasDocs || hasCode)) {
+        representationMode = 'BLUEPRINT';
+      } else {
+        representationMode = 'UNIFIED';
+      }
+      evidencePackage.representationMode = representationMode;
+
       await trace.recordStage({
         stageOrder: '02',
         stageName: 'EVIDENCE_PACKAGE',
@@ -87,7 +102,8 @@ class PipelineOrchestrator {
           operations: [
             'Apply Dual-Source Authority Division',
             'Extract verbal emphasis cues from Voice transcript',
-            'Extract exact artifacts & formulas from Code/PPT/PDF'
+            'Extract exact artifacts & formulas from Code/PPT/PDF',
+            `PDI Router path selection: ${representationMode}`
           ]
         },
         calculations: {
@@ -97,10 +113,12 @@ class PipelineOrchestrator {
         },
         decisions: [
           `Voice Authority applied: Syntax emphasis = ${voiceEmphasis.syntaxEmphasis}, Conceptual emphasis = ${voiceEmphasis.conceptualEmphasis}`,
-          `Material Authority applied: ${evidencePackage.artifacts?.formulasDetected?.length || 0} formulas detected, Code presence = ${evidencePackage.artifacts?.hasCode}`
+          `Material Authority applied: ${evidencePackage.artifacts?.formulasDetected?.length || 0} formulas detected, Code presence = ${evidencePackage.artifacts?.hasCode}`,
+          `PDI Representation Path selected: ${representationMode}`
         ],
         rulesApplied: [
-          'Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts'
+          'Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts',
+          'PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED'
         ],
         evidenceUsed: ['voice_transcript_01', 'document_chunk_01'],
         output: {
@@ -108,7 +126,8 @@ class PipelineOrchestrator {
           artifactsSummary: evidencePackage.artifacts,
           isAcademic: evidencePackage.isAcademic,
           lectureDepth: evidencePackage.lectureDepth,
-          unifiedLength: (evidencePackage.unifiedRawContent || '').length
+          unifiedLength: (evidencePackage.unifiedRawContent || '').length,
+          representationMode
         },
         validation: { status: 'PASS', checks: ['Evidence package assembled', 'Artifacts extracted'] },
         durationMs: Date.now() - t1
@@ -180,7 +199,7 @@ class PipelineOrchestrator {
       const passingQuestions = [];
       let totalAttempts = 0;
       let totalSwaps = 0;
-      const MAX_TOTAL_SWAPS = 1;
+      const MAX_TOTAL_SWAPS = Math.max(3, Math.ceil(requestedCount * 0.4));
 
       for (let i = 0; i < primaryTargets.length; i++) {
         // If we already reached requested question count, stop generating more

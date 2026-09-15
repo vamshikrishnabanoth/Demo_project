@@ -5,7 +5,7 @@ const PIPELINE_STAGES = [
     { label: 'Ingesting & Analyzing Material',             sub: 'Verifying inputs, removing noise, and validating content structure…',     icon: '📥' },
     { label: 'Packaging Evidence & Knowledge Graph',        sub: 'Extracting concepts, key claims, formulas, and artifacts…',              icon: '🕸️' },
     { label: 'Assessment Planning & TC Analysis',           sub: 'Calibrating depth, cognitive levels, and planning targets…',             icon: '📐' },
-    { label: 'Generating Questions via AI',                 sub: 'Formulating grounded candidate questions via AI gateway…',              icon: '⚡' },
+    { label: 'Generating Questions via AI',                 sub: 'Formulating evidence-grounded candidate questions from concept graph…',  icon: '⚡' },
     { label: 'Validating Options & Deterministic Schema',   sub: 'Enforcing 4 distinct options and multi-factor anti-redundancy checks…',  icon: '🛡️' },
     { label: 'Auditing Derivability & Pedagogical Quality', sub: 'Auditing 5-tier derivability, student answerability, and distractors…', icon: '🔍' },
     { label: 'Reviewing Balance & Curriculum Coverage',     sub: 'Reviewing cognitive distribution, cluster balance, and curriculum…',     icon: '⚖️' },
@@ -38,7 +38,7 @@ const CONNECTIONS = [
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
 ];
 
-export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0 }) {
+export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0, representationMode = null }) {
     const stageList = PIPELINE_STAGES;
 
     const [activeStage, setActiveStage] = useState(() => {
@@ -171,11 +171,18 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                     />
                 </div>
 
-                {/* Stage Badge */}
-                <div className="mt-2 px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
-                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
-                        Multi-Agent Pipeline · Stage {activeStage + 1} of {stageList.length}
-                    </p>
+                {/* Architecture E Badge & PDI Representation Path */}
+                <div className="mt-2 flex flex-col items-center gap-1.5">
+                    <div className="px-3.5 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
+                        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
+                            ARCHITECTURE E · STAGE {activeStage + 1} OF {stageList.length}
+                        </p>
+                    </div>
+                    <div className="px-3 py-0.5 rounded-md bg-slate-100 border border-slate-200">
+                        <p className="text-[8.5px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            REPRESENTATION PATH: <span className="text-[#133E87] font-black">{representationMode || 'DETERMINING REPRESENTATION...'}</span>
+                        </p>
+                    </div>
                 </div>
             </motion.div>
         </div>

@@ -655,7 +655,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                             label = `${mapped.label} (${firstDec})`;
                         }
                     }
-                    updateTaskStage(taskId, mapped.stage, label);
+                    updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
                 }
             }
         };
@@ -665,6 +665,15 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
             if (taskId) {
                 updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
+                const { getTask: getTaskForMeta } = require('../services/taskManager');
+                const tObj = getTaskForMeta(taskId);
+                if (tObj) {
+                    tObj.pipelineNotice = result.notice || null;
+                    tObj.isPartial = Boolean(result.pipelineStatus === 'COMPLETED_WITH_PARTIAL_FULFILLMENT' || (result.questions.length < sessionInputs.count));
+                    tObj.requestedCount = sessionInputs.count;
+                    tObj.deliveredCount = result.questions.length;
+                    tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
+                }
             }
             return result.questions;
         }
@@ -2887,6 +2896,11 @@ exports.generateQuizQuestions = async (req, res) => {
                 isVoice:         isVoiceSource,
                 lobbySummary:    lobby_summary || null,
                 aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null,
+                isPartial:       (finalTaskObj && finalTaskObj.isPartial) !== undefined ? finalTaskObj.isPartial : (finalQuestions.length < questionCount),
+                requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
+                deliveredCount:  finalQuestions.length,
+                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
+                representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || null,
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []
                 }
