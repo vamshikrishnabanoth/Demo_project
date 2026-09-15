@@ -413,10 +413,10 @@ export default function CyberQuest() {
                         <Zap size={20} />
                     </div>
                     <div>
-                        <h1 className="text-md sm:text-lg font-black tracking-tight uppercase italic leading-none text-white">
-                            Cyber <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">Quest</span>
+                        <h1 className="text-md sm:text-lg font-black tracking-tight uppercase italic leading-none" style={{ color: '#ffffff' }}>
+                            <span style={{ color: '#ffffff' }}>Cyber </span><span className="text-cyan-400" style={{ color: '#22d3ee', textShadow: '0 0 10px rgba(6,182,212,0.6)' }}>Quest</span>
                         </h1>
-                        <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-1">Topic: {topicTitle}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: '#cbd5e1' }}>Topic: {topicTitle}</p>
                     </div>
                 </div>
 
@@ -714,13 +714,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={() => navigate(`/report/${quizId}`)}
-                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 text-black font-black text-xs italic uppercase tracking-wider border border-emerald-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.25)] cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 font-black text-xs italic uppercase tracking-wider border border-emerald-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.35)] cursor-pointer"
+                                                style={{ color: '#000000' }}
                                             >
                                                 View Report
                                             </button>
                                             <button
                                                 onClick={() => navigate('/assessments')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-xs italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Games Arena
                                             </button>
@@ -729,13 +731,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={handleReset}
-                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 text-black font-black text-md italic uppercase tracking-wider border border-emerald-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.25)] cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 font-black text-md italic uppercase tracking-wider border border-emerald-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.35)] cursor-pointer"
+                                                style={{ color: '#000000' }}
                                             >
                                                 Play Again
                                             </button>
                                             <button
                                                 onClick={() => navigate('/student-dashboard')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-md italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Dashboard
                                             </button>
@@ -753,7 +757,7 @@ export default function CyberQuest() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-xl w-full text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-red-500/20 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(239,68,68,0.15)] relative overflow-hidden"
+                            className="max-w-xl w-full text-center space-y-8 bg-[#1a0a0a]/90 backdrop-blur-2xl border border-red-500/30 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(239,68,68,0.2)] relative overflow-hidden"
                         >
                             <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 to-transparent pointer-events-none" />
                             
@@ -763,19 +767,19 @@ export default function CyberQuest() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-red-500">
+                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]">
                                         SYSTEM CRASH!
                                     </h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your neural matrix connection has collapsed</p>
+                                    <p className="font-bold uppercase tracking-[0.2em] text-[10px]" style={{ color: '#cbd5e1' }}>Your neural matrix connection has collapsed</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto my-6">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Acquired Score</p>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: '#cbd5e1' }}>Acquired Score</p>
                                         <p className="text-2xl font-mono font-black text-red-400 mt-1">{score}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Highest Level</p>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: '#cbd5e1' }}>Highest Level</p>
                                         <p className="text-2xl font-mono font-black text-white mt-1">Level {currentLevel}</p>
                                     </div>
                                 </div>
@@ -785,13 +789,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={() => navigate(`/report/${quizId}`)}
-                                                className="flex-1 h-14 rounded-2xl bg-red-500 text-white font-black text-xs italic uppercase tracking-wider border border-red-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.25)] cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-red-500 font-black text-xs italic uppercase tracking-wider border border-red-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.35)] cursor-pointer"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 View Report
                                             </button>
                                             <button
                                                 onClick={() => navigate('/assessments')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-xs italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Games Arena
                                             </button>
@@ -800,13 +806,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={handleReset}
-                                                className="flex-1 h-14 rounded-2xl bg-red-500 text-white font-black text-md italic uppercase tracking-wider border border-red-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.25)] cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-red-500 font-black text-md italic uppercase tracking-wider border border-red-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.35)] cursor-pointer"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Retry Quest
                                             </button>
                                             <button
                                                 onClick={() => navigate('/student-dashboard')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-md italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
+                                                style={{ color: '#ffffff' }}
                                             >
                                                 Dashboard
                                             </button>
