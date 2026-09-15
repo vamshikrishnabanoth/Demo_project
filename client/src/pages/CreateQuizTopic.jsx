@@ -5,7 +5,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
 import { 
     Hash, Sparkles, Loader2, Database, 
-    FileText, FileCode, Plus, Trash2, Mic, X, Award,
+    FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
@@ -1235,7 +1235,7 @@ export default function CreateQuizTopic() {
                                 onClick={() => setShowTextModal(false)}
                                 className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800"
                             >
-                                <X size={18} />
+                                <XIcon size={18} />
                             </button>
                         </div>
 

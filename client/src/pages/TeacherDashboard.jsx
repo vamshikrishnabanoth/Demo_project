@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
-    FileText, Type, Book, Cpu, Sparkles, Mic, ArrowRight, X, Edit3 
+    FileText, Type, Book, Cpu, Sparkles, Mic, ArrowRight, X as XIcon, Edit3 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -110,7 +110,7 @@ export default function TeacherDashboard() {
                                 className="absolute top-6 right-6 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-all cursor-pointer border-none outline-none"
                                 aria-label="Close dialog"
                             >
-                                <X size={18} />
+                                <XIcon size={18} />
                             </button>
 
                             {/* Header */}

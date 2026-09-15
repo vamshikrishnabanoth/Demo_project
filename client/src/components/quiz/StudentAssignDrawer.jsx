@@ -474,7 +474,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                                             onClick={() => removeGroup(g.branch, g.section)}
                                             className="text-slate-400 hover:text-red-400 transition-colors ml-1"
                                         >
-                                            <X size={10} />
+                                            <XIcon size={10} />
                                         </button>
                                     </div>
                                 ))}
@@ -490,7 +490,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                                             onClick={() => toggleStudentSelection(s)}
                                             className="text-slate-400 hover:text-red-400 transition-colors ml-1"
                                         >
-                                            <X size={10} />
+                                            <XIcon size={10} />
                                         </button>
                                     </div>
                                 ))}

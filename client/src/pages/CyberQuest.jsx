@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Sparkles, Shield, RefreshCw, Trophy, Zap, AlertTriangle, ArrowRight, 
-    X, CheckCircle, HelpCircle, Volume2, VolumeX, Home
+    X as XIcon, CheckCircle, HelpCircle, Volume2, VolumeX, Home
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';

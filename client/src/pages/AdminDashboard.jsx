@@ -1232,7 +1232,7 @@ function AdminDirectoryTab({ setUserModal }) {
                     />
                     {search && (
                         <button onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search">
-                            <X size={16} />
+                            <XIcon size={16} />
                         </button>
                     )}
                 </div>
